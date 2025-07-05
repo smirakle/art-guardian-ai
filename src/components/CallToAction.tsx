@@ -34,7 +34,10 @@ const CallToAction = () => {
                     type="email"
                     className="flex-1"
                   />
-                  <Button className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground">
+                  <Button 
+                    className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground"
+                    onClick={() => window.location.href = '/monitoring'}
+                  >
                     Get Started
                     <ArrowRight className="ml-2 w-4 h-4" />
                   </Button>
