@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Shield, Upload, Activity, Home } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users } from "lucide-react";
 
 const Navigation = () => {
   const currentPath = window.location.pathname;
@@ -7,7 +7,8 @@ const Navigation = () => {
   const navItems = [
     { path: "/", label: "Home", icon: Home },
     { path: "/upload", label: "Upload", icon: Upload },
-    { path: "/monitoring", label: "Monitoring", icon: Activity }
+    { path: "/monitoring", label: "Monitoring", icon: Activity },
+    { path: "/community", label: "Community", icon: Users }
   ];
 
   return (
