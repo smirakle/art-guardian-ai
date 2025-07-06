@@ -20,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import MonitoringChart from "@/components/MonitoringChart";
 import AlertsPanel from "@/components/AlertsPanel";
 import LiveFeed from "@/components/LiveFeed";
+import DeepWebScan from "@/components/DeepWebScan";
 
 interface MonitoringStats {
   totalScans: number;
@@ -126,12 +127,12 @@ const Monitoring = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-destructive">{stats.activeAlerts}</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="text-xs text-muted-foreground flex items-center">
                 Threat Level: 
                 <Badge variant={getStatusColor(stats.threatLevel)} className="ml-2 text-xs">
                   {stats.threatLevel.toUpperCase()}
                 </Badge>
-              </p>
+              </div>
             </CardContent>
           </Card>
 
@@ -163,8 +164,9 @@ const Monitoring = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+            <TabsTrigger value="deep-scan">Deep Web Scan</TabsTrigger>
             <TabsTrigger value="alerts">Alerts</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="live-feed">Live Feed</TabsTrigger>
@@ -202,6 +204,10 @@ const Monitoring = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="deep-scan">
+            <DeepWebScan />
           </TabsContent>
 
           <TabsContent value="alerts">
