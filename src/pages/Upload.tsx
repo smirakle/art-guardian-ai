@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Upload as UploadIcon, 
   Image, 
@@ -16,9 +17,11 @@ import {
   CheckCircle,
   AlertTriangle,
   Plus,
-  X
+  X,
+  Camera
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import VisualRecognition from "@/components/VisualRecognition";
 
 interface UploadedFile {
   id: string;
@@ -187,12 +190,27 @@ const Upload = () => {
         {/* Header */}
         <div className="text-center">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">
-            Upload Your Artwork
+            Upload & Analyze Your Artwork
           </h1>
           <p className="text-muted-foreground text-lg">
-            Secure your creative work with AI-powered monitoring and protection
+            Secure your creative work with AI-powered protection and visual recognition
           </p>
         </div>
+
+        {/* Main Tabs */}
+        <Tabs defaultValue="upload" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="upload" className="flex items-center gap-2">
+              <UploadIcon className="w-4 h-4" />
+              Upload & Protect
+            </TabsTrigger>
+            <TabsTrigger value="analyze" className="flex items-center gap-2">
+              <Camera className="w-4 h-4" />
+              Visual Recognition
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="upload" className="space-y-6">
 
         {/* Upload Area */}
         <Card className="bg-card/50 backdrop-blur-sm border-border/50">
@@ -409,17 +427,23 @@ const Upload = () => {
           </CardContent>
         </Card>
 
-        {/* Submit Button */}
-        <div className="text-center">
-          <Button
-            size="lg"
-            className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground px-8 py-6 text-lg"
-            disabled={files.length === 0}
-          >
-            <Shield className="w-5 h-5 mr-2" />
-            Start Protection
-          </Button>
-        </div>
+            {/* Submit Button */}
+            <div className="text-center">
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground px-8 py-6 text-lg"
+                disabled={files.length === 0}
+              >
+                <Shield className="w-5 h-5 mr-2" />
+                Start Protection
+              </Button>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="analyze">
+            <VisualRecognition />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
