@@ -8,6 +8,7 @@ const Navigation = () => {
     { path: "/", label: "Home", icon: Home },
     { path: "/upload", label: "Upload", icon: Upload },
     { path: "/monitoring", label: "Monitoring", icon: Activity },
+    { path: "/deep-scan", label: "Deep Scan", icon: Shield },
     { path: "/community", label: "Community", icon: Users }
   ];
 

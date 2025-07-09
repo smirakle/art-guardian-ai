@@ -7,6 +7,7 @@ import Navigation from "@/components/Navigation";
 import Index from "./pages/Index";
 import Upload from "./pages/Upload";
 import Monitoring from "./pages/Monitoring";
+import DeepWebScan from "./components/DeepWebScan";
 import Community from "./pages/Community";
 import NotFound from "./pages/NotFound";
 
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/upload" element={<Upload />} />
             <Route path="/monitoring" element={<Monitoring />} />
+            <Route path="/deep-scan" element={<DeepWebScan />} />
             <Route path="/community" element={<Community />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

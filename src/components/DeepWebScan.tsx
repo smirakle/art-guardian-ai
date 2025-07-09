@@ -1,291 +1,377 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
   Search, 
+  Shield, 
+  AlertTriangle, 
+  Eye, 
   Globe, 
-  ShoppingCart, 
-  Users, 
-  Image, 
-  AlertTriangle,
-  CheckCircle,
   Clock,
-  Shield,
-  Eye,
+  ExternalLink,
   Zap
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-
-interface ScanTarget {
-  id: string;
-  name: string;
-  type: 'marketplace' | 'social' | 'content' | 'darkweb';
-  icon: any;
-  progress: number;
-  status: 'pending' | 'scanning' | 'completed' | 'found';
-  results: number;
-  threats: number;
-}
 
 interface ScanResult {
-  platform: string;
-  url: string;
+  id: string;
+  marketplace: string;
+  title: string;
   similarity: number;
-  status: 'violation' | 'suspicious' | 'monitored';
-  timestamp: string;
-  details: string;
+  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  dateFound: string;
+  price?: string;
+  url: string;
+  status: 'active' | 'removed' | 'investigating';
 }
 
+const mockResults: ScanResult[] = [
+  {
+    id: '1',
+    marketplace: 'Dark Auction House',
+    title: 'Digital Art Collection #1',
+    similarity: 94,
+    riskLevel: 'critical',
+    dateFound: '2024-01-08',
+    price: '0.5 BTC',
+    url: 'onion://darkauction.v3/item/12345',
+    status: 'active'
+  },
+  {
+    id: '2',
+    marketplace: 'Shadow Market',
+    title: 'Premium Art Bundle',
+    similarity: 87,
+    riskLevel: 'high',
+    dateFound: '2024-01-07',
+    price: '200 XMR',
+    url: 'onion://shadowmkt.v3/listing/67890',
+    status: 'investigating'
+  },
+  {
+    id: '3',
+    marketplace: 'Deep Gallery',
+    title: 'Stolen Digital Assets',
+    similarity: 76,
+    riskLevel: 'medium',
+    dateFound: '2024-01-06',
+    url: 'onion://deepgal.v3/gallery/abc123',
+    status: 'removed'
+  }
+];
+
 const DeepWebScan = () => {
-  const { toast } = useToast();
   const [isScanning, setIsScanning] = useState(false);
-  const [overallProgress, setOverallProgress] = useState(0);
-  const [scanResults, setScanResults] = useState<ScanResult[]>([]);
-  const [targets, setTargets] = useState<ScanTarget[]>([
-    { id: '1', name: 'Etsy', type: 'marketplace', icon: ShoppingCart, progress: 0, status: 'pending', results: 0, threats: 0 },
-    { id: '2', name: 'eBay', type: 'marketplace', icon: ShoppingCart, progress: 0, status: 'pending', results: 0, threats: 0 },
-    { id: '3', name: 'Amazon', type: 'marketplace', icon: ShoppingCart, progress: 0, status: 'pending', results: 0, threats: 0 },
-    { id: '4', name: 'Instagram', type: 'social', icon: Users, progress: 0, status: 'pending', results: 0, threats: 0 },
-    { id: '5', name: 'Pinterest', type: 'social', icon: Users, progress: 0, status: 'pending', results: 0, threats: 0 },
-    { id: '6', name: 'Facebook', type: 'social', icon: Users, progress: 0, status: 'pending', results: 0, threats: 0 },
-    { id: '7', name: 'DeviantArt', type: 'content', icon: Image, progress: 0, status: 'pending', results: 0, threats: 0 },
-    { id: '8', name: 'Behance', type: 'content', icon: Image, progress: 0, status: 'pending', results: 0, threats: 0 },
-    { id: '9', name: 'ArtStation', type: 'content', icon: Image, progress: 0, status: 'pending', results: 0, threats: 0 },
-    { id: '10', name: 'Dark Web Networks', type: 'darkweb', icon: Shield, progress: 0, status: 'pending', results: 0, threats: 0 },
-  ]);
+  const [scanProgress, setScanProgress] = useState(0);
+  const [results, setResults] = useState<ScanResult[]>([]);
+  const [activeTab, setActiveTab] = useState("overview");
 
-  const startDeepScan = async () => {
+  const startScan = async () => {
     setIsScanning(true);
-    setOverallProgress(0);
-    setScanResults([]);
-    
-    toast({
-      title: "Deep Web Scan Initiated",
-      description: "Comprehensive search across all platforms has begun",
-    });
+    setScanProgress(0);
+    setResults([]);
 
-    // Reset all targets
-    setTargets(prev => prev.map(target => ({
-      ...target,
-      progress: 0,
-      status: 'pending',
-      results: 0,
-      threats: 0
-    })));
-
-    // Simulate scanning each target
-    for (let i = 0; i < targets.length; i++) {
-      const target = targets[i];
-      
-      // Update status to scanning
-      setTargets(prev => prev.map(t => 
-        t.id === target.id ? { ...t, status: 'scanning' } : t
-      ));
-
-      // Simulate scanning progress
-      for (let progress = 0; progress <= 100; progress += 10) {
-        await new Promise(resolve => setTimeout(resolve, 200));
-        
-        setTargets(prev => prev.map(t => 
-          t.id === target.id ? { ...t, progress } : t
-        ));
-        
-        setOverallProgress((i * 100 + progress) / targets.length);
-      }
-
-      // Generate random results
-      const results = Math.floor(Math.random() * 50) + 10;
-      const threats = Math.floor(Math.random() * 5);
-      const status = threats > 0 ? 'found' : 'completed';
-
-      setTargets(prev => prev.map(t => 
-        t.id === target.id ? { 
-          ...t, 
-          status: status, 
-          results, 
-          threats 
-        } : t
-      ));
-
-      // Add scan results if threats found
-      if (threats > 0) {
-        const newResults: ScanResult[] = Array.from({ length: threats }, (_, index) => ({
-          platform: target.name,
-          url: `https://${target.name.toLowerCase()}.com/item/${Math.random().toString(36).substr(2, 9)}`,
-          similarity: Math.floor(Math.random() * 30) + 70,
-          status: Math.random() > 0.5 ? 'violation' : 'suspicious',
-          timestamp: new Date().toISOString(),
-          details: `Potential copyright infringement detected with ${Math.floor(Math.random() * 30) + 70}% similarity match`
-        }));
-        
-        setScanResults(prev => [...prev, ...newResults]);
-      }
-    }
-
-    setIsScanning(false);
-    
-    toast({
-      title: "Deep Web Scan Complete",
-      description: `Scan completed. ${scanResults.length} potential threats detected.`,
-      variant: scanResults.length > 0 ? "destructive" : "default"
-    });
+    // Simulate scanning progress
+    const interval = setInterval(() => {
+      setScanProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setIsScanning(false);
+          setResults(mockResults);
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 500);
   };
 
-  const getStatusColor = (status: string) => {
+  const getRiskBadgeVariant = (risk: string) => {
+    switch (risk) {
+      case 'critical': return 'destructive';
+      case 'high': return 'secondary';
+      case 'medium': return 'outline';
+      default: return 'default';
+    }
+  };
+
+  const getStatusBadgeVariant = (status: string) => {
     switch (status) {
-      case 'found': return 'destructive';
-      case 'scanning': return 'secondary';
-      case 'completed': return 'default';
+      case 'active': return 'destructive';
+      case 'removed': return 'default';
+      case 'investigating': return 'secondary';
       default: return 'outline';
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'found': return AlertTriangle;
-      case 'scanning': return Search;
-      case 'completed': return CheckCircle;
-      default: return Clock;
-    }
-  };
-
   return (
-    <div className="space-y-6">
-      {/* Scan Controls */}
-      <Card className="bg-card/50 backdrop-blur-sm border-border/50">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Globe className="w-5 h-5 text-primary" />
-            Deep Web Scan
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">
-                Comprehensive search across marketplaces, social media, content platforms, and dark web
-              </p>
-              {isScanning && (
-                <div className="mt-2">
-                  <Progress value={overallProgress} className="w-full" />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Overall Progress: {Math.round(overallProgress)}%
-                  </p>
-                </div>
-              )}
-            </div>
-            <Button 
-              onClick={startDeepScan} 
-              disabled={isScanning}
-              className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
-            >
-              {isScanning ? (
-                <>
-                  <Search className="w-4 h-4 mr-2 animate-spin" />
-                  Scanning...
-                </>
-              ) : (
-                <>
-                  <Eye className="w-4 h-4 mr-2" />
-                  Start Deep Scan
-                </>
-              )}
-            </Button>
+    <div className="min-h-screen bg-background pt-20 pb-12">
+      <div className="container mx-auto px-4">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Dark Web Scanner
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Advanced monitoring of dark web marketplaces for stolen or unauthorized art sales
+            </p>
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Scan Targets Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        {targets.map((target) => {
-          const Icon = target.icon;
-          const StatusIcon = getStatusIcon(target.status);
-          
-          return (
-            <Card key={target.id} className="bg-card/50 backdrop-blur-sm border-border/50">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <Icon className="w-5 h-5 text-primary" />
-                  <Badge variant={getStatusColor(target.status)}>
-                    <StatusIcon className="w-3 h-3 mr-1" />
-                    {target.status.toUpperCase()}
-                  </Badge>
+          {/* Scan Control */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Search className="w-5 h-5" />
+                Deep Web Surveillance
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                <div className="text-sm text-muted-foreground">
+                  Scan across 150+ dark web marketplaces and forums
                 </div>
-                
-                <h3 className="font-medium text-sm mb-2">{target.name}</h3>
-                
-                {target.status === 'scanning' && (
-                  <Progress value={target.progress} className="mb-2" />
-                )}
-                
-                <div className="space-y-1 text-xs text-muted-foreground">
-                  <div className="flex justify-between">
-                    <span>Results:</span>
-                    <span>{target.results}</span>
+                <Button 
+                  onClick={startScan} 
+                  disabled={isScanning}
+                  className="flex items-center gap-2"
+                >
+                  <Zap className="w-4 h-4" />
+                  {isScanning ? 'Scanning...' : 'Start Deep Scan'}
+                </Button>
+              </div>
+              
+              {isScanning && (
+                <div className="mt-4">
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>Scanning marketplaces...</span>
+                    <span>{scanProgress}%</span>
                   </div>
-                  {target.threats > 0 && (
-                    <div className="flex justify-between text-destructive">
-                      <span>Threats:</span>
-                      <span className="font-medium">{target.threats}</span>
-                    </div>
-                  )}
+                  <Progress value={scanProgress} className="w-full" />
                 </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Results */}
+          {results.length > 0 && (
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="threats">Active Threats</TabsTrigger>
+                <TabsTrigger value="history">Scan History</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="overview" className="space-y-6">
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="w-5 h-5 text-destructive" />
+                        <div>
+                          <div className="text-2xl font-bold">3</div>
+                          <div className="text-xs text-muted-foreground">Critical Threats</div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-2">
+                        <Eye className="w-5 h-5 text-primary" />
+                        <div>
+                          <div className="text-2xl font-bold">12</div>
+                          <div className="text-xs text-muted-foreground">Monitored Items</div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-2">
+                        <Globe className="w-5 h-5 text-accent" />
+                        <div>
+                          <div className="text-2xl font-bold">150+</div>
+                          <div className="text-xs text-muted-foreground">Marketplaces</div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-5 h-5 text-secondary" />
+                        <div>
+                          <div className="text-2xl font-bold">24/7</div>
+                          <div className="text-xs text-muted-foreground">Monitoring</div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Recent Findings */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Recent Findings</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {results.map((result) => (
+                      <div key={result.id} className="border rounded-lg p-4 space-y-3">
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-1">
+                            <h4 className="font-medium">{result.title}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              Found on: {result.marketplace}
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Badge variant={getRiskBadgeVariant(result.riskLevel)}>
+                              {result.riskLevel}
+                            </Badge>
+                            <Badge variant={getStatusBadgeVariant(result.status)}>
+                              {result.status}
+                            </Badge>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center justify-between text-sm">
+                          <div className="flex items-center gap-4">
+                            <span>Similarity: {result.similarity}%</span>
+                            <span>Found: {result.dateFound}</span>
+                            {result.price && <span>Price: {result.price}</span>}
+                          </div>
+                          <Button variant="outline" size="sm">
+                            <ExternalLink className="w-3 h-3 mr-1" />
+                            Investigate
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="threats" className="space-y-6">
+                <Alert>
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertDescription>
+                    Critical threats require immediate attention. Contact legal authorities for copyright enforcement.
+                  </AlertDescription>
+                </Alert>
+
+                <div className="space-y-4">
+                  {results.filter(r => r.riskLevel === 'critical' || r.riskLevel === 'high').map((result) => (
+                    <Card key={result.id} className="border-destructive/50">
+                      <CardContent className="p-6">
+                        <div className="flex items-start justify-between mb-4">
+                          <div>
+                            <h3 className="font-semibold text-lg">{result.title}</h3>
+                            <p className="text-muted-foreground">{result.marketplace}</p>
+                          </div>
+                          <Badge variant={getRiskBadgeVariant(result.riskLevel)} className="text-xs">
+                            {result.riskLevel} risk
+                          </Badge>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                          <div>
+                            <span className="text-muted-foreground">Similarity:</span>
+                            <div className="font-medium">{result.similarity}%</div>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Date Found:</span>
+                            <div className="font-medium">{result.dateFound}</div>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Price:</span>
+                            <div className="font-medium">{result.price || 'N/A'}</div>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Status:</span>
+                            <div className="font-medium capitalize">{result.status}</div>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-2 mt-4">
+                          <Button variant="destructive" size="sm">
+                            <Shield className="w-3 h-3 mr-1" />
+                            File DMCA
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            <Eye className="w-3 h-3 mr-1" />
+                            Monitor
+                          </Button>
+                          <Button variant="ghost" size="sm">
+                            <ExternalLink className="w-3 h-3 mr-1" />
+                            View Details
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="history" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Scan History</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between p-3 border rounded">
+                        <div>
+                          <div className="font-medium">Full Deep Web Scan</div>
+                          <div className="text-sm text-muted-foreground">January 8, 2024 - 14:32</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-medium">3 threats found</div>
+                          <div className="text-sm text-muted-foreground">150 marketplaces scanned</div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between p-3 border rounded">
+                        <div>
+                          <div className="font-medium">Targeted Scan</div>
+                          <div className="text-sm text-muted-foreground">January 7, 2024 - 09:15</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-medium">1 threat found</div>
+                          <div className="text-sm text-muted-foreground">75 marketplaces scanned</div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          )}
+
+          {/* Empty State */}
+          {!isScanning && results.length === 0 && (
+            <Card className="text-center py-12">
+              <CardContent>
+                <Search className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-xl font-semibold mb-2">No Recent Scans</h3>
+                <p className="text-muted-foreground mb-6">
+                  Start a deep web scan to monitor for unauthorized use of your artwork
+                </p>
+                <Button onClick={startScan} className="flex items-center gap-2 mx-auto">
+                  <Zap className="w-4 h-4" />
+                  Begin Monitoring
+                </Button>
               </CardContent>
             </Card>
-          );
-        })}
+          )}
+        </div>
       </div>
-
-      {/* Scan Results */}
-      {scanResults.length > 0 && (
-        <Card className="bg-card/50 backdrop-blur-sm border-border/50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-destructive">
-              <AlertTriangle className="w-5 h-5" />
-              Threats Detected ({scanResults.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {scanResults.map((result, index) => (
-                <div key={index} className="border border-destructive/20 rounded-lg p-3 bg-destructive/5">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="destructive">{result.platform}</Badge>
-                        <Badge variant={result.status === 'violation' ? 'destructive' : 'secondary'}>
-                          {result.status.toUpperCase()}
-                        </Badge>
-                        <span className="text-sm font-medium">{result.similarity}% Similarity</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{result.details}</p>
-                      <a 
-                        href={result.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-xs text-primary hover:underline"
-                      >
-                        {result.url}
-                      </a>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(result.timestamp).toLocaleTimeString()}
-                      </p>
-                      <Button size="sm" variant="destructive" className="mt-2">
-                        <Zap className="w-3 h-3 mr-1" />
-                        Take Action
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 };
