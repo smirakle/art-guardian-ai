@@ -18,9 +18,12 @@ const Navigation = () => {
           {/* Logo */}
           <div className="flex items-center gap-2">
             <Shield className="w-8 h-8 text-primary" />
-            <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              ArtGuard AI
-            </span>
+            <div className="flex flex-col">
+              <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                TSMO
+              </span>
+              <span className="text-xs text-muted-foreground">Your Art. Our Watch</span>
+            </div>
           </div>
 
           {/* Navigation Links */}
