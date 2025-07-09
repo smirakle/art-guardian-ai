@@ -26,12 +26,15 @@ env.allowLocalModels = false;
 env.useBrowserCache = true;
 
 interface AnalysisResult {
-  type: 'classification' | 'similarity' | 'copyright';
+  type: 'classification' | 'similarity' | 'copyright' | 'reverse-search';
   confidence: number;
   label: string;
   description: string;
   riskLevel: 'low' | 'medium' | 'high';
   suggestions: string[];
+  sourceUrl?: string;
+  platform?: string;
+  dateFound?: string;
 }
 
 interface ImageAnalysis {
@@ -146,6 +149,48 @@ const VisualRecognition = () => {
           'Set up automated alerts'
         ]
       });
+
+      // Simulate reverse image search
+      const reverseSearchResults = [
+        { platform: 'Instagram', confidence: 85 + Math.random() * 15, url: 'instagram.com/artist123' },
+        { platform: 'Pinterest', confidence: 70 + Math.random() * 20, url: 'pinterest.com/boards/art' },
+        { platform: 'DeviantArt', confidence: 60 + Math.random() * 25, url: 'deviantart.com/gallery' },
+        { platform: 'ArtStation', confidence: 45 + Math.random() * 30, url: 'artstation.com/artwork' },
+        { platform: 'Behance', confidence: 30 + Math.random() * 40, url: 'behance.net/portfolio' }
+      ].filter(() => Math.random() > 0.4); // Randomly include results
+
+      if (reverseSearchResults.length > 0) {
+        const topMatch = reverseSearchResults[0];
+        results.push({
+          type: 'reverse-search',
+          confidence: topMatch.confidence,
+          label: `Found on ${reverseSearchResults.length} platform${reverseSearchResults.length > 1 ? 's' : ''}`,
+          description: `Image detected on ${topMatch.platform} with ${topMatch.confidence.toFixed(1)}% match confidence`,
+          riskLevel: topMatch.confidence > 90 ? 'high' : topMatch.confidence > 70 ? 'medium' : 'low',
+          platform: topMatch.platform,
+          sourceUrl: topMatch.url,
+          dateFound: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+          suggestions: [
+            `Image found on ${reverseSearchResults.length} platform${reverseSearchResults.length > 1 ? 's' : ''}`,
+            'Review usage rights and permissions',
+            'Consider filing DMCA takedown if unauthorized',
+            'Set up monitoring alerts for this image'
+          ]
+        });
+      } else {
+        results.push({
+          type: 'reverse-search',
+          confidence: 100,
+          label: 'No matches found',
+          description: 'No instances of this image were found across monitored platforms',
+          riskLevel: 'low',
+          suggestions: [
+            'Image appears to be unique',
+            'Consider watermarking for protection',
+            'Register for continuous monitoring'
+          ]
+        });
+      }
 
       setImages(prev => prev.map((img, i) => 
         i === index ? { 
@@ -315,10 +360,11 @@ const VisualRecognition = () => {
                 {/* Results */}
                 {image.results.length > 0 && (
                   <Tabs defaultValue="classification" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3">
+                    <TabsList className="grid w-full grid-cols-4">
                       <TabsTrigger value="classification">Classification</TabsTrigger>
                       <TabsTrigger value="copyright">Copyright</TabsTrigger>
                       <TabsTrigger value="similarity">Similarity</TabsTrigger>
+                      <TabsTrigger value="reverse-search">Reverse Search</TabsTrigger>
                     </TabsList>
 
                     {image.results.map((result, resultIndex) => (
@@ -353,12 +399,36 @@ const VisualRecognition = () => {
                           </ul>
                         </div>
 
-                        {result.riskLevel === 'high' && (
-                          <Button size="sm" variant="destructive" className="w-full">
-                            <Shield className="w-3 h-3 mr-1" />
-                            Take Protection Action
-                          </Button>
-                        )}
+                         {/* Additional info for reverse search results */}
+                         {result.type === 'reverse-search' && result.platform && (
+                           <div className="space-y-2 pt-2 border-t border-border/30">
+                             <div className="text-xs text-muted-foreground space-y-1">
+                               <div className="flex justify-between">
+                                 <span>Platform:</span>
+                                 <span className="font-medium">{result.platform}</span>
+                               </div>
+                               {result.sourceUrl && (
+                                 <div className="flex justify-between">
+                                   <span>Source:</span>
+                                   <span className="font-medium text-primary truncate ml-2">{result.sourceUrl}</span>
+                                 </div>
+                               )}
+                               {result.dateFound && (
+                                 <div className="flex justify-between">
+                                   <span>Found:</span>
+                                   <span className="font-medium">{result.dateFound}</span>
+                                 </div>
+                               )}
+                             </div>
+                           </div>
+                         )}
+
+                         {result.riskLevel === 'high' && (
+                           <Button size="sm" variant="destructive" className="w-full">
+                             <Shield className="w-3 h-3 mr-1" />
+                             Take Protection Action
+                           </Button>
+                         )}
                       </TabsContent>
                     ))}
                   </Tabs>
