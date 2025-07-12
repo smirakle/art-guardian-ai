@@ -22,9 +22,9 @@ const UploadArea = ({ onFileUpload, isInitializing, isEmpty }: UploadAreaProps) 
             </div>
             <div>
               <h3 className="text-lg font-medium">No Images Uploaded</h3>
-              <p className="text-sm text-muted-foreground">
-                Upload images to start AI-powered copyright analysis and visual recognition
-              </p>
+            <p className="text-sm text-muted-foreground">
+              Upload images, videos, or audio files to start AI-powered copyright analysis and visual recognition
+            </p>
             </div>
             <Button 
               onClick={() => fileInputRef.current?.click()}
@@ -37,7 +37,7 @@ const UploadArea = ({ onFileUpload, isInitializing, isEmpty }: UploadAreaProps) 
               ref={fileInputRef}
               type="file"
               multiple
-              accept="image/*"
+              accept="image/*,video/*,audio/*"
               onChange={(e) => onFileUpload(e.target.files)}
               className="hidden"
             />
@@ -59,7 +59,7 @@ const UploadArea = ({ onFileUpload, isInitializing, isEmpty }: UploadAreaProps) 
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-muted-foreground mb-2">
-              Upload images for AI-powered copyright detection, similarity analysis, and content classification
+              Upload images, videos, or audio files for AI-powered copyright detection, similarity analysis, and content classification
             </p>
             {isInitializing && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -80,7 +80,7 @@ const UploadArea = ({ onFileUpload, isInitializing, isEmpty }: UploadAreaProps) 
               ref={fileInputRef}
               type="file"
               multiple
-              accept="image/*"
+              accept="image/*,video/*,audio/*"
               onChange={(e) => onFileUpload(e.target.files)}
               className="hidden"
             />

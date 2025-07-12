@@ -82,8 +82,8 @@ const Upload = () => {
         progress: 0
       };
 
-      // Create preview for images
-      if (file.type.startsWith('image/')) {
+      // Create preview for images and videos
+      if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
         const reader = new FileReader();
         reader.onload = (e) => {
           setFiles(prev => prev.map(f => 
@@ -237,12 +237,12 @@ const Upload = () => {
               <Image className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
               <h3 className="text-lg font-semibold mb-2">Drop your files here</h3>
               <p className="text-muted-foreground mb-4">
-                Support for JPG, PNG, GIF, SVG, PDF up to 50MB each
+                Support for images, videos, audio, and PDFs up to 50MB each
               </p>
               <Input
                 type="file"
                 multiple
-                accept="image/*,.pdf"
+                accept="image/*,video/*,audio/*,.pdf"
                 onChange={handleFileSelect}
                 className="hidden"
                 id="file-upload"
@@ -267,7 +267,11 @@ const Upload = () => {
               {files.map((file) => (
                 <div key={file.id} className="flex items-center gap-4 p-4 border border-border/30 rounded-lg">
                   {file.preview ? (
-                    <img src={file.preview} alt={file.name} className="w-12 h-12 object-cover rounded" />
+                    file.type.startsWith('video/') ? (
+                      <video src={file.preview} className="w-12 h-12 object-cover rounded" muted />
+                    ) : (
+                      <img src={file.preview} alt={file.name} className="w-12 h-12 object-cover rounded" />
+                    )
                   ) : (
                     <FileText className="w-12 h-12 text-muted-foreground" />
                   )}
@@ -331,6 +335,8 @@ const Upload = () => {
                     <SelectItem value="illustration">Illustration</SelectItem>
                     <SelectItem value="graphic-design">Graphic Design</SelectItem>
                     <SelectItem value="painting">Painting</SelectItem>
+                    <SelectItem value="video">Video Content</SelectItem>
+                    <SelectItem value="audio">Audio Content</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
