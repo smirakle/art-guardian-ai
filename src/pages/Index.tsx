@@ -861,7 +861,7 @@ const Index = () => {
       <section className="py-20 px-4 bg-gradient-to-r from-primary to-accent text-primary-foreground">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Your Art. Our Watch.
+            Protect Your Creative Work
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
             Join thousands of artists who trust TSMO to protect their creative work. 
