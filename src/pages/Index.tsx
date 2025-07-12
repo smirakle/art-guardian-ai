@@ -469,7 +469,42 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-4 gap-8">
+            {/* Student Plan */}
+            <Card className="border-2 border-border hover:border-primary/50 transition-colors">
+              <CardHeader>
+                <Badge className="mx-auto mb-4 bg-blue-600">Student</Badge>
+                <CardTitle className="text-center">Student</CardTitle>
+                <div className="text-center">
+                  <div className="text-4xl font-bold">$19</div>
+                  <div className="text-muted-foreground">/month</div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Up to 25 artworks</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Basic visual recognition</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Monthly monitoring reports</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Email support</span>
+                  </div>
+                </div>
+                <Button className="w-full" variant="outline">
+                  Start Free Trial
+                </Button>
+              </CardContent>
+            </Card>
+
             {/* Basic Plan */}
             <Card className="border-2 border-border hover:border-primary/50 transition-colors">
               <CardHeader>
