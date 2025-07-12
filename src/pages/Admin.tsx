@@ -172,6 +172,12 @@ const Admin = () => {
     toast.success("Full network sweep initiated across 2,000+ sites");
   };
 
+  const handleTargetedScan = () => {
+    toast.success("Targeted high-risk scan initiated across 500 priority sites", {
+      description: "Focusing on dark web marketplaces, underground forums, and known threat vectors"
+    });
+  };
+
   return (
     <div className="min-h-screen bg-white pt-20 pb-12">
       <div className="container mx-auto px-4">
@@ -484,7 +490,7 @@ const Admin = () => {
                         <Globe className="w-4 h-4 mr-2" />
                         Full Network Sweep (2,000+ sites)
                       </Button>
-                      <Button variant="outline" className="w-full">
+                      <Button variant="outline" className="w-full" onClick={handleTargetedScan}>
                         <Eye className="w-4 h-4 mr-2" />
                         Targeted High-Risk Scan (500 sites)
                       </Button>
