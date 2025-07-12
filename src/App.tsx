@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Upload from "./pages/Upload";
 import Monitoring from "./pages/Monitoring";
 import Demo from "./pages/Demo";
+import Admin from "./pages/Admin";
 import DeepWebScan from "./components/DeepWebScan";
 import BlockchainVerification from "./components/BlockchainVerification";
 import Community from "./pages/Community";
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/upload" element={<Upload />} />
             <Route path="/monitoring" element={<Monitoring />} />
             <Route path="/demo" element={<Demo />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="/deep-scan" element={<DeepWebScan />} />
             <Route path="/blockchain" element={<BlockchainVerification />} />
             <Route path="/community" element={<Community />} />
