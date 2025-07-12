@@ -10,6 +10,7 @@ import MonitoringMetrics from "@/components/monitoring/MonitoringMetrics";
 import PlatformCoverage from "@/components/monitoring/PlatformCoverage";
 import DetectionTrends from "@/components/monitoring/DetectionTrends";
 import ResponseTimes from "@/components/monitoring/ResponseTimes";
+import DailyReport from "@/components/DailyReport";
 
 interface MonitoringStats {
   totalScans: number;
@@ -100,6 +101,9 @@ const Monitoring = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <DetectionTrends />
               <ResponseTimes />
+              <div className="lg:col-span-2">
+                <DailyReport type="monitoring" />
+              </div>
             </div>
           </TabsContent>
 

@@ -15,6 +15,7 @@ import {
   ExternalLink,
   Zap
 } from "lucide-react";
+import DailyReport from "@/components/DailyReport";
 
 interface ScanResult {
   id: string;
@@ -320,36 +321,40 @@ const DeepWebScan = () => {
               </TabsContent>
 
               <TabsContent value="history" className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Scan History</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between p-3 border rounded">
-                        <div>
-                          <div className="font-medium">Full Deep Web Scan</div>
-                          <div className="text-sm text-muted-foreground">January 8, 2024 - 14:32</div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Scan History</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between p-3 border rounded">
+                          <div>
+                            <div className="font-medium">Full Deep Web Scan</div>
+                            <div className="text-sm text-muted-foreground">January 8, 2024 - 14:32</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-medium">3 threats found</div>
+                            <div className="text-sm text-muted-foreground">150 marketplaces scanned</div>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <div className="font-medium">3 threats found</div>
-                          <div className="text-sm text-muted-foreground">150 marketplaces scanned</div>
+                        
+                        <div className="flex items-center justify-between p-3 border rounded">
+                          <div>
+                            <div className="font-medium">Targeted Scan</div>
+                            <div className="text-sm text-muted-foreground">January 7, 2024 - 09:15</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-medium">1 threat found</div>
+                            <div className="text-sm text-muted-foreground">75 marketplaces scanned</div>
+                          </div>
                         </div>
                       </div>
-                      
-                      <div className="flex items-center justify-between p-3 border rounded">
-                        <div>
-                          <div className="font-medium">Targeted Scan</div>
-                          <div className="text-sm text-muted-foreground">January 7, 2024 - 09:15</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-medium">1 threat found</div>
-                          <div className="text-sm text-muted-foreground">75 marketplaces scanned</div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                  
+                  <DailyReport type="deep-scan" />
+                </div>
               </TabsContent>
             </Tabs>
           )}
