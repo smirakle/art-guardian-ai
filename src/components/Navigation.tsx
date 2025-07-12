@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Shield, Upload, Activity, Home, Users } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2 } from "lucide-react";
 
 const Navigation = () => {
   const currentPath = window.location.pathname;
@@ -9,6 +9,7 @@ const Navigation = () => {
     { path: "/upload", label: "Upload", icon: Upload },
     { path: "/monitoring", label: "Monitoring", icon: Activity },
     { path: "/deep-scan", label: "Deep Scan", icon: Shield },
+    { path: "/blockchain", label: "Blockchain", icon: Link2 },
     { path: "/community", label: "Community", icon: Users }
   ];
 
