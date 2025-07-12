@@ -7,6 +7,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { toast } from "sonner";
 import { 
   Shield, 
   AlertTriangle, 
@@ -29,7 +35,11 @@ import {
   Cpu,
   HardDrive,
   Wifi,
-  Search
+  Search,
+  Timer,
+  Target,
+  Radar,
+  Save
 } from "lucide-react";
 
 interface AdminStats {
@@ -51,6 +61,16 @@ interface ThreatAlert {
   timestamp: string;
   source: string;
   status: 'active' | 'investigating' | 'resolved';
+}
+
+interface SweepConfig {
+  frequency: string;
+  scope: string;
+  deepScanEnabled: boolean;
+  priorityTargets: string[];
+  maxConcurrentScans: number;
+  alertThreshold: number;
+  autoResponse: boolean;
 }
 
 const mockAdminStats: AdminStats = {
@@ -100,6 +120,16 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
   const [autoScaling, setAutoScaling] = useState(true);
+  const [sweepConfig, setSweepConfig] = useState<SweepConfig>({
+    frequency: "hourly",
+    scope: "comprehensive",
+    deepScanEnabled: true,
+    priorityTargets: ["dark-web", "social-media", "marketplaces"],
+    maxConcurrentScans: 500,
+    alertThreshold: 75,
+    autoResponse: true
+  });
+  const [configDialogOpen, setConfigDialogOpen] = useState(false);
 
   useEffect(() => {
     // Simulate real-time updates
@@ -131,6 +161,15 @@ const Admin = () => {
       case 'resolved': return 'default';
       default: return 'outline';
     }
+  };
+
+  const handleSaveConfig = () => {
+    toast.success("Sweep configuration updated successfully");
+    setConfigDialogOpen(false);
+  };
+
+  const handleStartSweep = () => {
+    toast.success("Full network sweep initiated across 2,000+ sites");
   };
 
   return (
@@ -437,13 +476,10 @@ const Admin = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-3">
-                      <Button 
+                       <Button 
                         className="w-full" 
                         size="lg"
-                        onClick={() => {
-                          // Start comprehensive network sweep
-                          console.log("Starting full network sweep across 2,000+ sites");
-                        }}
+                        onClick={handleStartSweep}
                       >
                         <Globe className="w-4 h-4 mr-2" />
                         Full Network Sweep (2,000+ sites)
@@ -648,10 +684,111 @@ const Admin = () => {
                         <BarChart3 className="w-4 h-4 mr-2" />
                         View Analytics
                       </Button>
-                      <Button variant="outline" size="sm">
-                        <Settings className="w-4 h-4 mr-2" />
-                        Configure Sweep
-                      </Button>
+                      <Dialog open={configDialogOpen} onOpenChange={setConfigDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm">
+                            <Settings className="w-4 h-4 mr-2" />
+                            Configure Sweep
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2">
+                              <Settings className="w-5 h-5" />
+                              Sweep Configuration
+                            </DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-6">
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="frequency">Scan Frequency</Label>
+                                <Select value={sweepConfig.frequency} onValueChange={(value) => setSweepConfig({...sweepConfig, frequency: value})}>
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="continuous">Continuous</SelectItem>
+                                    <SelectItem value="hourly">Every Hour</SelectItem>
+                                    <SelectItem value="daily">Daily</SelectItem>
+                                    <SelectItem value="weekly">Weekly</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="scope">Scan Scope</Label>
+                                <Select value={sweepConfig.scope} onValueChange={(value) => setSweepConfig({...sweepConfig, scope: value})}>
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="comprehensive">Comprehensive (2000+ sites)</SelectItem>
+                                    <SelectItem value="targeted">Targeted (500 sites)</SelectItem>
+                                    <SelectItem value="priority">Priority Only (100 sites)</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-4">
+                              <div className="flex items-center justify-between">
+                                <div className="space-y-1">
+                                  <Label>Deep Scan Analysis</Label>
+                                  <p className="text-sm text-muted-foreground">Enable AI-powered deep threat analysis</p>
+                                </div>
+                                <Switch 
+                                  checked={sweepConfig.deepScanEnabled} 
+                                  onCheckedChange={(checked) => setSweepConfig({...sweepConfig, deepScanEnabled: checked})}
+                                />
+                              </div>
+                              
+                              <div className="flex items-center justify-between">
+                                <div className="space-y-1">
+                                  <Label>Auto Response</Label>
+                                  <p className="text-sm text-muted-foreground">Automatically respond to detected threats</p>
+                                </div>
+                                <Switch 
+                                  checked={sweepConfig.autoResponse} 
+                                  onCheckedChange={(checked) => setSweepConfig({...sweepConfig, autoResponse: checked})}
+                                />
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label>Max Concurrent Scans: {sweepConfig.maxConcurrentScans}</Label>
+                              <Slider
+                                value={[sweepConfig.maxConcurrentScans]}
+                                onValueChange={(value) => setSweepConfig({...sweepConfig, maxConcurrentScans: value[0]})}
+                                max={1000}
+                                min={50}
+                                step={50}
+                                className="w-full"
+                              />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label>Alert Threshold: {sweepConfig.alertThreshold}%</Label>
+                              <Slider
+                                value={[sweepConfig.alertThreshold]}
+                                onValueChange={(value) => setSweepConfig({...sweepConfig, alertThreshold: value[0]})}
+                                max={100}
+                                min={25}
+                                step={5}
+                                className="w-full"
+                              />
+                            </div>
+                            
+                            <div className="flex justify-end gap-2">
+                              <Button variant="outline" onClick={() => setConfigDialogOpen(false)}>
+                                Cancel
+                              </Button>
+                              <Button onClick={handleSaveConfig}>
+                                <Save className="w-4 h-4 mr-2" />
+                                Save Configuration
+                              </Button>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                   </div>
                 </CardContent>
