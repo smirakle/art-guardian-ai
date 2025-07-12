@@ -169,19 +169,19 @@ const BlockchainVerification = () => {
           
           * { margin: 0; padding: 0; box-sizing: border-box; }
           
-          .certificate {
-            width: 768px;
-            height: 960px;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            color: white;
-            font-family: 'Inter', sans-serif;
-            position: relative;
-            padding: 60px;
-            display: flex;
-            flex-direction: column;
-            border: 8px solid #3b82f6;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-          }
+           .certificate {
+             width: 768px;
+             height: 960px;
+             background: white;
+             color: #1e293b;
+             font-family: 'Inter', sans-serif;
+             position: relative;
+             padding: 60px;
+             display: flex;
+             flex-direction: column;
+             border: 8px solid #3b82f6;
+             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+           }
           
           .header {
             text-align: center;
@@ -222,58 +222,58 @@ const BlockchainVerification = () => {
             margin-bottom: 30px;
           }
           
-          .certificate-title {
-            font-size: 28px;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 40px;
-            color: #f1f5f9;
-          }
-          
-          .content {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 200px 1fr;
-            gap: 30px;
-            margin-bottom: 40px;
-          }
-          
-          .artwork-preview {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-          }
-          
-          .artwork-image {
-            width: 180px;
-            height: 180px;
-            object-fit: cover;
-            border-radius: 12px;
-            border: 2px solid rgba(59, 130, 246, 0.3);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            margin-bottom: 15px;
-            background: rgba(255,255,255,0.05);
-          }
-          
-          .artwork-placeholder {
-            width: 180px;
-            height: 180px;
-            border-radius: 12px;
-            border: 2px dashed rgba(59, 130, 246, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            color: rgba(59, 130, 246, 0.5);
-            margin-bottom: 15px;
-            background: rgba(255,255,255,0.02);
-          }
-          
-          .artwork-info {
-            text-align: center;
-            font-size: 12px;
-            color: #94a3b8;
-          }
+           .certificate-title {
+             font-size: 28px;
+             font-weight: 600;
+             text-align: center;
+             margin-bottom: 40px;
+             color: #1e293b;
+           }
+           
+           .content {
+             flex: 1;
+             display: grid;
+             grid-template-columns: 200px 1fr;
+             gap: 30px;
+             margin-bottom: 40px;
+           }
+           
+           .artwork-preview {
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+           }
+           
+           .artwork-image {
+             width: 180px;
+             height: 180px;
+             object-fit: cover;
+             border-radius: 12px;
+             border: 2px solid rgba(59, 130, 246, 0.3);
+             box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+             margin-bottom: 15px;
+             background: #f8fafc;
+           }
+           
+           .artwork-placeholder {
+             width: 180px;
+             height: 180px;
+             border-radius: 12px;
+             border: 2px dashed rgba(59, 130, 246, 0.3);
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             font-size: 48px;
+             color: rgba(59, 130, 246, 0.5);
+             margin-bottom: 15px;
+             background: #f8fafc;
+           }
+           
+           .artwork-info {
+             text-align: center;
+             font-size: 12px;
+             color: #64748b;
+           }
           
           .verification-fields {
             display: grid;
@@ -281,41 +281,41 @@ const BlockchainVerification = () => {
             gap: 20px;
           }
           
-          .field {
-            background: rgba(255,255,255,0.05);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-          }
-          
-          .field-label {
-            font-size: 12px;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-            font-weight: 600;
-          }
-          
-          .field-value {
-            font-size: 14px;
-            color: #f1f5f9;
-            word-break: break-all;
-            line-height: 1.4;
-            font-family: 'Monaco', 'Menlo', monospace;
-          }
-          
-          .hash-field {
-            grid-column: 1 / -1;
-          }
-          
-          .footer {
-            text-align: center;
-            border-top: 1px solid rgba(59, 130, 246, 0.2);
-            padding-top: 30px;
-            color: #94a3b8;
-            font-size: 12px;
-          }
+           .field {
+             background: #f8fafc;
+             padding: 20px;
+             border-radius: 12px;
+             border: 1px solid rgba(59, 130, 246, 0.2);
+           }
+           
+           .field-label {
+             font-size: 12px;
+             color: #64748b;
+             text-transform: uppercase;
+             letter-spacing: 1px;
+             margin-bottom: 8px;
+             font-weight: 600;
+           }
+           
+           .field-value {
+             font-size: 14px;
+             color: #1e293b;
+             word-break: break-all;
+             line-height: 1.4;
+             font-family: 'Monaco', 'Menlo', monospace;
+           }
+           
+           .hash-field {
+             grid-column: 1 / -1;
+           }
+           
+           .footer {
+             text-align: center;
+             border-top: 1px solid rgba(59, 130, 246, 0.2);
+             padding-top: 30px;
+             color: #64748b;
+             font-size: 12px;
+           }
           
           .verification-badge {
             display: inline-flex;
@@ -367,7 +367,7 @@ const BlockchainVerification = () => {
                   `<div class="artwork-placeholder">🎨</div>`
                 }
                 <div class="artwork-info">
-                  <div style="font-weight: 600; color: #f1f5f9; margin-bottom: 4px;">Protected Artwork</div>
+                  <div style="font-weight: 600; color: #1e293b; margin-bottom: 4px;">Protected Artwork</div>
                   <div>${record.fileName}</div>
                 </div>
               </div>
