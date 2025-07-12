@@ -32,7 +32,7 @@ import {
   Play,
   ChevronRight
 } from 'lucide-react';
-import tsmoLogo from "@/assets/tsmo-logo.png";
+import tsmoLogo from "@/assets/tsmo-artist-logo.png";
 
 const Index = () => {
   const { toast } = useToast();
@@ -79,8 +79,8 @@ const Index = () => {
           <div className="mb-8">
             <img 
               src={tsmoLogo} 
-              alt="TSMO Logo" 
-              className="h-24 md:h-32 mx-auto object-contain"
+              alt="TSMO Artist Protection Logo" 
+              className="h-32 md:h-48 lg:h-56 mx-auto object-contain"
             />
           </div>
           
