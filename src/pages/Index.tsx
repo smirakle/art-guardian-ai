@@ -33,6 +33,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
+import MonitoringFlow from "@/components/MonitoringFlow";
 
 const Index = () => {
   const { toast } = useToast();
@@ -140,6 +141,11 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Monitoring Flow Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-muted/20">
+        <MonitoringFlow />
+      </section>
+
       {/* Interactive Demo Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
@@ -149,10 +155,10 @@ const Index = () => {
               Live Demo
             </Badge>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              See TSMO in Action
+              Try TSMO Analysis
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Watch how our AI instantly analyzes artwork for copyright infringement and monitors the web for unauthorized use
+              Upload your artwork and see our AI protection system in action
             </p>
           </div>
 
