@@ -15,13 +15,18 @@ import {
   BookOpen,
   Shield,
   AlertTriangle,
-  TrendingUp
+  TrendingUp,
+  ExternalLink,
+  Scale,
+  FileText,
+  Gavel
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Community = () => {
   const { toast } = useToast();
   const [newPost, setNewPost] = useState({ title: "", content: "", category: "strategy" });
+  const [activeTab, setActiveTab] = useState("share");
 
   const handleSubmitPost = (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,6 +91,93 @@ const Community = () => {
     }
   ];
 
+  const legalResources = [
+    {
+      category: "Copyright Registration",
+      icon: FileText,
+      resources: [
+        {
+          title: "U.S. Copyright Office",
+          description: "Official copyright registration and information",
+          url: "https://www.copyright.gov/"
+        },
+        {
+          title: "Library of Congress Copyright Basics",
+          description: "Comprehensive guide to copyright fundamentals",
+          url: "https://www.copyright.gov/what-is-copyright/"
+        },
+        {
+          title: "Creative Commons",
+          description: "Flexible copyright licenses for creators",
+          url: "https://creativecommons.org/"
+        }
+      ]
+    },
+    {
+      category: "Legal Aid & Pro Bono",
+      icon: Scale,
+      resources: [
+        {
+          title: "Volunteer Lawyers for the Arts",
+          description: "Free and low-cost legal services for artists",
+          url: "https://www.vlany.org/"
+        },
+        {
+          title: "Arts Law Centre",
+          description: "Legal information and assistance for artists",
+          url: "https://www.artslaw.com.au/"
+        },
+        {
+          title: "California Lawyers for the Arts",
+          description: "Legal assistance for creative professionals",
+          url: "https://calawyersforthearts.org/"
+        }
+      ]
+    },
+    {
+      category: "IP Law Resources",
+      icon: Gavel,
+      resources: [
+        {
+          title: "USPTO Trademark Search",
+          description: "Search existing trademarks and file applications",
+          url: "https://www.uspto.gov/trademarks"
+        },
+        {
+          title: "World Intellectual Property Organization",
+          description: "International IP protection and resources",
+          url: "https://www.wipo.int/"
+        },
+        {
+          title: "Electronic Frontier Foundation",
+          description: "Digital rights and fair use guidance",
+          url: "https://www.eff.org/"
+        }
+      ]
+    },
+    {
+      category: "Templates & Forms",
+      icon: BookOpen,
+      resources: [
+        {
+          title: "Cease and Desist Templates",
+          description: "Legal letter templates for IP infringement",
+          url: "https://www.nolo.com/legal-encyclopedia/cease-desist-letter-sample.html"
+        },
+        {
+          title: "Artist Contracts & Agreements",
+          description: "Contract templates for commissioned work",
+          url: "https://www.theartistslawyer.com/contracts/"
+        },
+        {
+          title: "DMCA Takedown Notice Generator",
+          description: "Tool to create DMCA takedown requests",
+          url: "https://www.dmca.com/toolkit/dmca-takedown-notice"
+        }
+      ]
+    }
+  ];
+
   const stats = [
     { label: "Active Members", value: "12,450", icon: Users },
     { label: "Protection Strategies", value: "3,240", icon: Shield },
@@ -125,11 +217,12 @@ const Community = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <Tabs defaultValue="share" className="mb-8">
-              <TabsList className="grid w-full grid-cols-3">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="share">Share Strategy</TabsTrigger>
                 <TabsTrigger value="community">Community Posts</TabsTrigger>
                 <TabsTrigger value="experts">Expert Advice</TabsTrigger>
+                <TabsTrigger value="legal">Legal Resources</TabsTrigger>
               </TabsList>
 
               <TabsContent value="share" className="space-y-6">
@@ -242,6 +335,41 @@ const Community = () => {
                   </Card>
                 ))}
               </TabsContent>
+
+              <TabsContent value="legal" className="space-y-6">
+                {legalResources.map((category, categoryIndex) => {
+                  const Icon = category.icon;
+                  return (
+                    <Card key={categoryIndex}>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Icon className="w-5 h-5 text-primary" />
+                          {category.category}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {category.resources.map((resource, resourceIndex) => (
+                          <div key={resourceIndex} className="flex items-start gap-3 p-3 border border-border rounded-lg hover:bg-secondary/50 transition-colors">
+                            <div className="flex-1">
+                              <h4 className="font-medium mb-1">{resource.title}</h4>
+                              <p className="text-sm text-muted-foreground mb-2">{resource.description}</p>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => window.open(resource.url, '_blank')}
+                                className="text-xs"
+                              >
+                                <ExternalLink className="w-3 h-3 mr-1" />
+                                Visit Resource
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </TabsContent>
             </Tabs>
           </div>
 
@@ -257,7 +385,11 @@ const Community = () => {
                   <AlertTriangle className="w-4 h-4 mr-2" />
                   Report IP Theft
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline"
+                  onClick={() => setActiveTab("legal")}
+                >
                   <BookOpen className="w-4 h-4 mr-2" />
                   Legal Resources
                 </Button>
