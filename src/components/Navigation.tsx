@@ -15,22 +15,22 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border/50">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <Shield className="w-12 h-12 text-primary" />
+            <Shield className="w-8 h-8 md:w-12 md:h-12 text-primary" />
             <div className="flex flex-col">
-              <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 TSMO
               </span>
-              <span className="text-xs text-muted-foreground">Your Art. Our Watch</span>
+              <span className="text-xs text-muted-foreground hidden sm:block">Your Art. Our Watch</span>
             </div>
           </div>
 
-          {/* Navigation Links */}
-          <div className="flex items-center gap-1">
+          {/* Mobile Navigation Links - Horizontal Scroll */}
+          <div className="flex items-center gap-1 overflow-x-auto max-w-[50vw] md:max-w-none scrollbar-hide">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = currentPath === item.path;
@@ -40,23 +40,25 @@ const Navigation = () => {
                   key={item.path}
                   variant={isActive ? "default" : "ghost"}
                   onClick={() => window.location.href = item.path}
-                  className={`flex items-center gap-2 ${
+                  className={`flex items-center gap-1 md:gap-2 min-w-max px-2 md:px-3 text-xs md:text-sm ${
                     isActive 
                       ? "bg-primary text-primary-foreground" 
                       : "hover:bg-secondary/50"
                   }`}
+                  size="sm"
                 >
-                  <Icon className="w-4 h-4" />
-                  {item.label}
+                  <Icon className="w-3 h-3 md:w-4 md:h-4" />
+                  <span className="hidden sm:inline">{item.label}</span>
                 </Button>
               );
             })}
           </div>
 
-          {/* CTA Button */}
+          {/* CTA Button - Hidden on smallest screens */}
           <Button
-            className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground"
+            className="hidden md:flex bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground text-sm"
             onClick={() => window.location.href = "/upload"}
+            size="sm"
           >
             Protect Your Art
           </Button>

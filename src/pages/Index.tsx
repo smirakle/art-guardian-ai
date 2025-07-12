@@ -69,41 +69,56 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4">
+      <section className="pt-24 sm:pt-32 pb-20 px-4">
         <div className="container mx-auto text-center max-w-6xl">
-          <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm">
+          <Badge variant="secondary" className="mb-6 px-3 sm:px-4 py-2 text-xs sm:text-sm">
             🔒 Trusted by 10,000+ Artists Worldwide
           </Badge>
           
           {/* TSMO Logo */}
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8">
             <img 
               src={tsmoLogo} 
               alt="TSMO Multimedia Creative Protection Logo" 
-              className="h-32 md:h-48 lg:h-56 mx-auto object-contain"
+              className="h-24 sm:h-32 md:h-48 lg:h-56 mx-auto object-contain"
             />
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
             Protect Your Art.<br />
             <span className="text-foreground">Own Your Future.</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-4">
             Advanced AI-powered protection for digital artists. Monitor, verify, and secure your creative work 
             with blockchain technology and real-time threat detection.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <Button size="lg" className="px-8 py-3 text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12 px-4">
+            <Button 
+              size="lg" 
+              className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+              onClick={() => window.location.href = "/upload"}
+            >
               Start Protecting Your Art
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
-            <Button variant="outline" size="lg" className="px-8 py-3 text-lg">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg"
+              onClick={() => window.location.href = "/demo"}
+            >
+              <Play className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
               Watch Demo
             </Button>
           </div>
-          
+        </div>
+      </section>
+      
+      {/* Stats Section */}
+      <section className="bg-gray-50 py-16 px-4">
+        <div className="container mx-auto max-w-4xl">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-3xl font-bold text-primary">24/7</div>

@@ -92,6 +92,38 @@ All colors MUST be HSL.
     --sidebar-border: 220 40% 20%;
     --sidebar-ring: 220 95% 65%;
   }
+
+  /* Mobile scrollbar hiding */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 640px) {
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    
+    /* Better touch targets */
+    button {
+      min-height: 44px;
+    }
+    
+    /* Prevent zoom on input focus */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="search"],
+    input[type="url"],
+    textarea {
+      font-size: 16px;
+    }
+  }
 }
 
 @layer base {
