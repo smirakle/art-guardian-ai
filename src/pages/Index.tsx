@@ -32,6 +32,7 @@ import {
   Play,
   ChevronRight
 } from 'lucide-react';
+import tsmoLogo from "@/assets/tsmo-logo.png";
 
 const Index = () => {
   const { toast } = useToast();
@@ -73,6 +74,15 @@ const Index = () => {
           <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm">
             🔒 Trusted by 10,000+ Artists Worldwide
           </Badge>
+          
+          {/* TSMO Logo */}
+          <div className="mb-8">
+            <img 
+              src={tsmoLogo} 
+              alt="TSMO Logo" 
+              className="h-24 md:h-32 mx-auto object-contain"
+            />
+          </div>
           
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
             Protect Your Art.<br />
