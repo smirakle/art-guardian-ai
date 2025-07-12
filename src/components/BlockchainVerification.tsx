@@ -17,6 +17,7 @@ import {
   Copy,
   Fingerprint
 } from 'lucide-react';
+import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 
 interface VerificationRecord {
   id: string;
@@ -147,7 +148,15 @@ const BlockchainVerification = () => {
     });
   };
 
-  const downloadCertificate = (record: VerificationRecord) => {
+  const downloadCertificate = async (record: VerificationRecord) => {
+    // Convert logo to base64 for embedding
+    const logoResponse = await fetch(tsmoLogo);
+    const logoBlob = await logoResponse.blob();
+    const logoBase64 = await new Promise<string>((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.readAsDataURL(logoBlob);
+    });
     // Create certificate HTML for 8x10 inch format (768x960px at 96 DPI)
     const certificateHTML = `
       <!DOCTYPE html>
@@ -179,19 +188,23 @@ const BlockchainVerification = () => {
             margin-bottom: 40px;
           }
           
-          .logo {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            font-weight: 700;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
-          }
+           .logo {
+             width: 150px;
+             height: 150px;
+             margin: 0 auto 20px;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             border-radius: 12px;
+             overflow: hidden;
+             box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+           }
+           
+           .logo img {
+             width: 100%;
+             height: 100%;
+             object-fit: contain;
+           }
           
           .company-name {
             font-size: 32px;
@@ -339,7 +352,7 @@ const BlockchainVerification = () => {
           <div class="watermark">VERIFIED</div>
           <div class="content-wrapper">
             <div class="header">
-              <div class="logo">T</div>
+              <div class="logo"><img src="${logoBase64}" alt="TSMO Logo"></div>
               <div class="company-name">TSMO</div>
               <div class="slogan">Your Art. Our Watch.</div>
               <div class="verification-badge">✓ BLOCKCHAIN VERIFIED</div>
