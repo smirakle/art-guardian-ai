@@ -160,19 +160,44 @@ const Community = () => {
       icon: BookOpen,
       resources: [
         {
-          title: "Cease and Desist Templates",
-          description: "Legal letter templates for IP infringement",
-          url: "https://www.nolo.com/legal-encyclopedia/cease-desist-letter-sample.html"
+          title: "Artist Commission Contract Template",
+          description: "Comprehensive contract template for commissioned artwork with payment terms and usage rights",
+          url: "https://www.lawdepot.com/contracts/commission-agreement/"
         },
         {
-          title: "Artist Contracts & Agreements",
-          description: "Contract templates for commissioned work",
-          url: "https://www.theartistslawyer.com/contracts/"
+          title: "Licensing Agreement Templates",
+          description: "Templates for licensing your artwork for commercial use, merchandise, and reproduction",
+          url: "https://www.nolo.com/legal-encyclopedia/licensing-artwork.html"
         },
         {
-          title: "DMCA Takedown Notice Generator",
-          description: "Tool to create DMCA takedown requests",
-          url: "https://www.dmca.com/toolkit/dmca-takedown-notice"
+          title: "Copyright Assignment Forms",
+          description: "Legal forms for transferring or retaining copyright ownership",
+          url: "https://www.copyright.gov/forms/"
+        },
+        {
+          title: "Cease and Desist Letter Generator",
+          description: "Step-by-step tool to create professional cease and desist letters for IP infringement",
+          url: "https://www.lawdepot.com/contracts/cease-and-desist-letter/"
+        },
+        {
+          title: "DMCA Takedown Notice Template",
+          description: "Official DMCA takedown request template for removing stolen content from websites",
+          url: "https://www.copyright.gov/legislation/dmca.pdf"
+        },
+        {
+          title: "Artist Invoice Templates",
+          description: "Professional invoice templates specifically designed for artists and creative services",
+          url: "https://www.thebalancesmb.com/free-invoice-templates-for-artists-1794421"
+        },
+        {
+          title: "Model Release Forms",
+          description: "Legal forms for obtaining permission to use someone's likeness in your artwork",
+          url: "https://asmp.org/articles/model-release-forms/"
+        },
+        {
+          title: "Gallery Representation Agreement",
+          description: "Template contracts for artists entering into representation agreements with galleries",
+          url: "https://www.artbusiness.com/gallerycontract.html"
         }
       ]
     }
