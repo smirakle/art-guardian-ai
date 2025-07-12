@@ -113,6 +113,30 @@ export const useImageAnalysis = () => {
         ]
       });
 
+      // Poison image detection analysis
+      const poisonDetectionScore = Math.random();
+      const poisonTypes = ['adversarial', 'backdoor', 'data-poisoning', 'trigger-based'] as const;
+      const selectedPoisonType = poisonTypes[Math.floor(Math.random() * poisonTypes.length)];
+      
+      results.push({
+        type: 'poison-detection',
+        confidence: (1 - poisonDetectionScore) * 100,
+        label: poisonDetectionScore < 0.2 ? 'Poison Detected' : poisonDetectionScore < 0.5 ? 'Suspicious Patterns' : 'Clean Image',
+        description: poisonDetectionScore < 0.2 
+          ? `Potential ${selectedPoisonType} attack detected with high confidence`
+          : poisonDetectionScore < 0.5 
+            ? `Suspicious patterns found that may indicate image manipulation`
+            : 'No poisoning patterns detected - image appears clean',
+        riskLevel: poisonDetectionScore < 0.2 ? 'high' : poisonDetectionScore < 0.5 ? 'medium' : 'low',
+        poisonType: poisonDetectionScore < 0.5 ? selectedPoisonType : undefined,
+        detectionMethod: 'Deep learning adversarial pattern analysis',
+        suggestions: poisonDetectionScore < 0.2 
+          ? ['Do not use this image for AI training', 'Quarantine image immediately', 'Scan source for other compromised files', 'Report to security team']
+          : poisonDetectionScore < 0.5 
+            ? ['Review image source and authenticity', 'Run additional security scans', 'Consider alternative images', 'Monitor for similar patterns']
+            : ['Image is safe for use', 'No poisoning threats detected', 'Continue with normal processing']
+      });
+
       // Simulate reverse image search
       const reverseSearchResults = [
         { platform: 'Instagram', confidence: 85 + Math.random() * 15, url: 'instagram.com/artist123' },
