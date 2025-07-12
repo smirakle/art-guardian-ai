@@ -32,7 +32,7 @@ import {
   Play,
   ChevronRight
 } from 'lucide-react';
-import tsmoLogo from "@/assets/tsmo-slogan-logo.png";
+import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 
 const Index = () => {
   const { toast } = useToast();
