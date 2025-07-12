@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import VisualRecognition from "@/components/VisualRecognition";
 import AnimatedDemo from "@/components/AnimatedDemo";
+import MonitoringFlow from "@/components/MonitoringFlow";
 
 const Demo = () => {
   const [activeDemo, setActiveDemo] = useState("video");
@@ -40,10 +41,10 @@ const Demo = () => {
     },
     {
       id: "monitoring",
-      title: "Live Monitoring",
+      title: "How TSMO Works",
       icon: Search,
-      description: "See how we track your artwork across the internet",
-      component: <MonitoringDemo />
+      description: "See the 6 automated steps of TSMO's monitoring system",
+      component: <MonitoringFlow />
     },
     {
       id: "blockchain",
@@ -251,38 +252,6 @@ const Demo = () => {
 };
 
 // Demo Components
-const MonitoringDemo = () => (
-  <div className="space-y-6">
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <Card className="p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-          <span className="text-sm font-medium">Active Monitors</span>
-        </div>
-        <p className="text-2xl font-bold">1,247</p>
-      </Card>
-      <Card className="p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-          <span className="text-sm font-medium">Potential Matches</span>
-        </div>
-        <p className="text-2xl font-bold">23</p>
-      </Card>
-      <Card className="p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-          <span className="text-sm font-medium">Confirmed Theft</span>
-        </div>
-        <p className="text-2xl font-bold">3</p>
-      </Card>
-    </div>
-    <div className="text-center">
-      <Button className="bg-gradient-to-r from-primary to-accent">
-        Try Live Monitoring Demo
-      </Button>
-    </div>
-  </div>
-);
 
 const BlockchainDemo = () => (
   <div className="space-y-6">
