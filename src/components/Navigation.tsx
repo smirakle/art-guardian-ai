@@ -25,7 +25,7 @@ const Navigation = () => {
               <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 TSMO
               </span>
-              <span className="text-xs text-muted-foreground hidden sm:block">Your Art. Our Watch</span>
+              
             </div>
           </div>
 
