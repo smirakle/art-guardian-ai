@@ -178,6 +178,12 @@ const Admin = () => {
     });
   };
 
+  const handleDeepIntelligence = () => {
+    toast.success("Deep Intelligence Analysis initiated", {
+      description: "AI-powered behavioral pattern analysis and threat correlation across all monitored networks"
+    });
+  };
+
   return (
     <div className="min-h-screen bg-white pt-20 pb-12">
       <div className="container mx-auto px-4">
@@ -494,7 +500,7 @@ const Admin = () => {
                         <Eye className="w-4 h-4 mr-2" />
                         Targeted High-Risk Scan (500 sites)
                       </Button>
-                      <Button variant="outline" className="w-full">
+                      <Button variant="outline" className="w-full" onClick={handleDeepIntelligence}>
                         <Database className="w-4 h-4 mr-2" />
                         Deep Intelligence Analysis
                       </Button>
