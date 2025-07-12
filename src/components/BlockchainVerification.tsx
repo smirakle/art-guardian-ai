@@ -136,23 +136,225 @@ const BlockchainVerification = () => {
   };
 
   const downloadCertificate = (record: VerificationRecord) => {
-    const certificate = {
-      fileName: record.fileName,
-      hash: record.hash,
-      blockchainId: record.blockchainId,
-      timestamp: record.timestamp,
-      transactionHash: record.transactionHash,
-      certificateId: `TSMO-CERT-${record.id}`,
-      issuer: "TSMO Blockchain Verification System"
-    };
+    // Create certificate HTML for 8x10 inch format (768x960px at 96 DPI)
+    const certificateHTML = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>TSMO Blockchain Certificate</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+          
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          
+          .certificate {
+            width: 768px;
+            height: 960px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            border: 8px solid #3b82f6;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+          }
+          
+          .header {
+            text-align: center;
+            margin-bottom: 40px;
+          }
+          
+          .logo {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+          }
+          
+          .company-name {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+          }
+          
+          .slogan {
+            font-size: 18px;
+            color: #94a3b8;
+            font-weight: 400;
+            margin-bottom: 30px;
+          }
+          
+          .certificate-title {
+            font-size: 28px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #f1f5f9;
+          }
+          
+          .content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+          }
+          
+          .field {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+          }
+          
+          .field-label {
+            font-size: 12px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 600;
+          }
+          
+          .field-value {
+            font-size: 14px;
+            color: #f1f5f9;
+            word-break: break-all;
+            line-height: 1.4;
+            font-family: 'Monaco', 'Menlo', monospace;
+          }
+          
+          .hash-field {
+            grid-column: 1 / -1;
+          }
+          
+          .footer {
+            text-align: center;
+            border-top: 1px solid rgba(59, 130, 246, 0.2);
+            padding-top: 30px;
+            color: #94a3b8;
+            font-size: 12px;
+          }
+          
+          .verification-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 20px;
+          }
+          
+          .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 80px;
+            color: rgba(59, 130, 246, 0.05);
+            font-weight: 700;
+            z-index: 0;
+            pointer-events: none;
+          }
+          
+          .content-wrapper {
+            position: relative;
+            z-index: 1;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="certificate">
+          <div class="watermark">VERIFIED</div>
+          <div class="content-wrapper">
+            <div class="header">
+              <div class="logo">T</div>
+              <div class="company-name">TSMO</div>
+              <div class="slogan">Your Art. Our Watch.</div>
+              <div class="verification-badge">✓ BLOCKCHAIN VERIFIED</div>
+            </div>
+            
+            <h2 class="certificate-title">Certificate of Blockchain Verification</h2>
+            
+            <div class="content">
+              <div class="field">
+                <div class="field-label">Artwork File</div>
+                <div class="field-value">${record.fileName}</div>
+              </div>
+              
+              <div class="field">
+                <div class="field-label">Blockchain ID</div>
+                <div class="field-value">${record.blockchainId}</div>
+              </div>
+              
+              <div class="field">
+                <div class="field-label">Verification Date</div>
+                <div class="field-value">${record.timestamp}</div>
+              </div>
+              
+              <div class="field">
+                <div class="field-label">Certificate ID</div>
+                <div class="field-value">TSMO-CERT-${record.id}</div>
+              </div>
+              
+              <div class="field hash-field">
+                <div class="field-label">Cryptographic Hash</div>
+                <div class="field-value">${record.hash}</div>
+              </div>
+              
+              <div class="field hash-field">
+                <div class="field-label">Transaction Hash</div>
+                <div class="field-value">${record.transactionHash}</div>
+              </div>
+            </div>
+            
+            <div class="footer">
+              <p><strong>This certificate serves as immutable proof of creation and ownership</strong></p>
+              <p>Issued by TSMO Blockchain Verification System</p>
+              <p>Certificate ID: TSMO-CERT-${record.id} | Generated: ${new Date().toLocaleString()}</p>
+              <p style="margin-top: 10px; font-size: 10px;">
+                This certificate is cryptographically secured and can be verified on the blockchain.
+                Any unauthorized reproduction or modification will be detectable.
+              </p>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
 
-    const blob = new Blob([JSON.stringify(certificate, null, 2)], { type: 'application/json' });
+    // Create and download the certificate as HTML
+    const blob = new Blob([certificateHTML], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `TSMO_Certificate_${record.fileName}.json`;
+    a.download = `TSMO_Certificate_${record.fileName.replace(/\.[^/.]+$/, "")}.html`;
     a.click();
     URL.revokeObjectURL(url);
+
+    // Also create a print-ready version notification
+    setTimeout(() => {
+      toast({
+        title: "Certificate Downloaded",
+        description: "Open the HTML file in your browser and print to save as PDF for 8x10 format.",
+      });
+    }, 1000);
   };
 
   return (
