@@ -26,6 +26,7 @@ interface VerificationRecord {
   timestamp: string;
   status: 'pending' | 'verified' | 'failed';
   transactionHash: string;
+  preview?: string;
 }
 
 const BlockchainVerification = () => {
@@ -97,6 +98,16 @@ const BlockchainVerification = () => {
       setVerificationProgress(100);
       await new Promise(resolve => setTimeout(resolve, 500));
 
+      // Create preview for images
+      let preview = '';
+      if (selectedFile.type.startsWith('image/')) {
+        const reader = new FileReader();
+        preview = await new Promise((resolve) => {
+          reader.onload = (e) => resolve(e.target?.result as string);
+          reader.readAsDataURL(selectedFile);
+        });
+      }
+
       const newRecord: VerificationRecord = {
         id: Date.now().toString(),
         fileName: selectedFile.name,
@@ -104,7 +115,8 @@ const BlockchainVerification = () => {
         blockchainId: `ETH-${String(Math.floor(Math.random() * 999999)).padStart(6, '0')}`,
         timestamp: new Date().toLocaleString(),
         status: 'verified',
-        transactionHash: `0x${Math.random().toString(16).substr(2, 64)}`
+        transactionHash: `0x${Math.random().toString(16).substr(2, 64)}`,
+        preview // Add preview to the record
       };
 
       setVerificationRecord(newRecord);
@@ -208,9 +220,52 @@ const BlockchainVerification = () => {
           .content {
             flex: 1;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 200px 1fr;
             gap: 30px;
             margin-bottom: 40px;
+          }
+          
+          .artwork-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+          
+          .artwork-image {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.05);
+          }
+          
+          .artwork-placeholder {
+            width: 180px;
+            height: 180px;
+            border-radius: 12px;
+            border: 2px dashed rgba(59, 130, 246, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: rgba(59, 130, 246, 0.5);
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.02);
+          }
+          
+          .artwork-info {
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+          }
+          
+          .verification-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
           }
           
           .field {
@@ -293,34 +348,47 @@ const BlockchainVerification = () => {
             <h2 class="certificate-title">Certificate of Blockchain Verification</h2>
             
             <div class="content">
-              <div class="field">
-                <div class="field-label">Artwork File</div>
-                <div class="field-value">${record.fileName}</div>
+              <div class="artwork-preview">
+                ${record.preview ? 
+                  `<img src="${record.preview}" alt="Artwork Preview" class="artwork-image">` :
+                  `<div class="artwork-placeholder">🎨</div>`
+                }
+                <div class="artwork-info">
+                  <div style="font-weight: 600; color: #f1f5f9; margin-bottom: 4px;">Protected Artwork</div>
+                  <div>${record.fileName}</div>
+                </div>
               </div>
               
-              <div class="field">
-                <div class="field-label">Blockchain ID</div>
-                <div class="field-value">${record.blockchainId}</div>
-              </div>
-              
-              <div class="field">
-                <div class="field-label">Verification Date</div>
-                <div class="field-value">${record.timestamp}</div>
-              </div>
-              
-              <div class="field">
-                <div class="field-label">Certificate ID</div>
-                <div class="field-value">TSMO-CERT-${record.id}</div>
-              </div>
-              
-              <div class="field hash-field">
-                <div class="field-label">Cryptographic Hash</div>
-                <div class="field-value">${record.hash}</div>
-              </div>
-              
-              <div class="field hash-field">
-                <div class="field-label">Transaction Hash</div>
-                <div class="field-value">${record.transactionHash}</div>
+              <div class="verification-fields">
+                <div class="field">
+                  <div class="field-label">Blockchain ID</div>
+                  <div class="field-value">${record.blockchainId}</div>
+                </div>
+                
+                <div class="field">
+                  <div class="field-label">Verification Date</div>
+                  <div class="field-value">${record.timestamp}</div>
+                </div>
+                
+                <div class="field">
+                  <div class="field-label">Certificate ID</div>
+                  <div class="field-value">TSMO-CERT-${record.id}</div>
+                </div>
+                
+                <div class="field">
+                  <div class="field-label">File Type</div>
+                  <div class="field-value">${record.fileName.split('.').pop()?.toUpperCase() || 'UNKNOWN'}</div>
+                </div>
+                
+                <div class="field hash-field">
+                  <div class="field-label">Cryptographic Hash</div>
+                  <div class="field-value">${record.hash}</div>
+                </div>
+                
+                <div class="field hash-field">
+                  <div class="field-label">Transaction Hash</div>
+                  <div class="field-value">${record.transactionHash}</div>
+                </div>
               </div>
             </div>
             
