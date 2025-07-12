@@ -61,7 +61,7 @@ const Monitoring = () => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/5 to-accent/5 p-6">
+    <div className="min-h-screen bg-white p-6">
       <div className="container mx-auto space-y-6">
         {/* Header */}
         <MonitoringHeader 

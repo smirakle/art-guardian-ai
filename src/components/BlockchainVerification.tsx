@@ -439,7 +439,7 @@ const BlockchainVerification = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 py-12">
+    <div className="min-h-screen bg-white py-12">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-4">

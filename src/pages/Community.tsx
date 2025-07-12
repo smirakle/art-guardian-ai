@@ -211,7 +211,7 @@ const Community = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background py-8">
+    <div className="min-h-screen bg-white py-8">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
