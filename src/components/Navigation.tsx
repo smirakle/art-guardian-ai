@@ -17,10 +17,10 @@ const Navigation = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20 md:h-24">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <Shield className="w-8 h-8 md:w-12 md:h-12 text-primary" />
+            <Shield className="w-16 h-16 md:w-24 md:h-24 text-primary" />
             <div className="flex flex-col">
               <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 TSMO

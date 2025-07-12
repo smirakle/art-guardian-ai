@@ -81,7 +81,7 @@ const Index = () => {
             <img 
               src={tsmoLogo} 
               alt="TSMO Multimedia Creative Protection Logo" 
-              className="h-24 sm:h-32 md:h-48 lg:h-56 mx-auto object-contain"
+              className="h-48 sm:h-64 md:h-96 lg:h-112 mx-auto object-contain"
             />
           </div>
           

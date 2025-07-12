@@ -21,7 +21,7 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
           <img 
             src={tsmoLogo} 
             alt="TSMO Multimedia Creative Protection Logo" 
-            className="h-32 w-32 mx-auto object-contain"
+            className="h-64 w-64 mx-auto object-contain"
           />
         </div>
         
