@@ -431,22 +431,44 @@ const Community = () => {
                 <CardTitle className="text-lg">Featured Resources</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <h4 className="font-medium mb-1">IP Protection Checklist</h4>
+                <div className="border border-border rounded-lg p-3 hover:bg-secondary/50 transition-colors cursor-pointer"
+                     onClick={() => window.open('https://www.copyright.gov/help/faq/faq-general.html', '_blank')}>
+                  <h4 className="font-medium mb-1 flex items-center gap-2">
+                    IP Protection Checklist
+                    <ExternalLink className="w-3 h-3 text-muted-foreground" />
+                  </h4>
                   <p className="text-sm text-muted-foreground">
-                    Essential steps every artist should take
+                    Essential steps every artist should take from the U.S. Copyright Office
                   </p>
                 </div>
-                <div>
-                  <h4 className="font-medium mb-1">Copyright Registration Guide</h4>
+                <div className="border border-border rounded-lg p-3 hover:bg-secondary/50 transition-colors cursor-pointer"
+                     onClick={() => window.open('https://www.copyright.gov/registration/', '_blank')}>
+                  <h4 className="font-medium mb-1 flex items-center gap-2">
+                    Copyright Registration Guide
+                    <ExternalLink className="w-3 h-3 text-muted-foreground" />
+                  </h4>
                   <p className="text-sm text-muted-foreground">
-                    Step-by-step legal protection process
+                    Step-by-step legal protection process and online registration
                   </p>
                 </div>
-                <div>
-                  <h4 className="font-medium mb-1">Watermarking Best Practices</h4>
+                <div className="border border-border rounded-lg p-3 hover:bg-secondary/50 transition-colors cursor-pointer"
+                     onClick={() => window.open('https://www.adobe.com/creativecloud/photography/discover/how-to-watermark-photos.html', '_blank')}>
+                  <h4 className="font-medium mb-1 flex items-center gap-2">
+                    Watermarking Best Practices
+                    <ExternalLink className="w-3 h-3 text-muted-foreground" />
+                  </h4>
                   <p className="text-sm text-muted-foreground">
-                    Protect without compromising aesthetics
+                    Protect without compromising aesthetics - Adobe's complete guide
+                  </p>
+                </div>
+                <div className="border border-border rounded-lg p-3 hover:bg-secondary/50 transition-colors cursor-pointer"
+                     onClick={() => window.open('https://www.artbusiness.com/protect.html', '_blank')}>
+                  <h4 className="font-medium mb-1 flex items-center gap-2">
+                    Artist Rights Protection
+                    <ExternalLink className="w-3 h-3 text-muted-foreground" />
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Comprehensive guide to protecting your artwork and business
                   </p>
                 </div>
               </CardContent>
