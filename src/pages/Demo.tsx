@@ -18,11 +18,19 @@ import {
   Zap
 } from "lucide-react";
 import VisualRecognition from "@/components/VisualRecognition";
+import AnimatedDemo from "@/components/AnimatedDemo";
 
 const Demo = () => {
-  const [activeDemo, setActiveDemo] = useState("visual");
+  const [activeDemo, setActiveDemo] = useState("video");
 
   const demoFeatures = [
+    {
+      id: "video",
+      title: "Video Demo",
+      icon: Play,
+      description: "Watch our animated characters explain how TSMO protects your artwork",
+      component: <AnimatedDemo />
+    },
     {
       id: "visual",
       title: "Visual Recognition",
@@ -106,7 +114,7 @@ const Demo = () => {
           </div>
 
           <Tabs value={activeDemo} onValueChange={setActiveDemo} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-8">
+            <TabsList className="grid w-full grid-cols-4 mb-8">
               {demoFeatures.map((feature) => (
                 <TabsTrigger key={feature.id} value={feature.id} className="flex items-center gap-2">
                   <feature.icon className="w-4 h-4" />
