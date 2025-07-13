@@ -25,7 +25,7 @@ const MaintenanceMode = () => {
 
   const handleAdminAccess = () => {
     // Simple password check - in production, this should be more secure
-    if (adminPassword === 'tsmo-admin-2024') {
+    if (adminPassword === 'Mirakle23!') {
       toggleMaintenanceMode(false);
       setAdminDialogOpen(false);
       setAdminPassword('');
