@@ -744,6 +744,118 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Submit Testimonial Section */}
+      <section className="py-20 px-4 bg-gradient-to-r from-muted/20 to-background">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Share Your TSMO Experience
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Help other artists learn about TSMO by sharing your success story
+            </p>
+          </div>
+
+          <Card className="border-0 shadow-xl bg-card/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Star className="w-5 h-5 text-primary" />
+                Write Your Testimonial
+              </CardTitle>
+              <CardDescription>
+                Tell us how TSMO has helped protect your creative work
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                toast({
+                  title: "Thank you!",
+                  description: "Your testimonial has been submitted for review.",
+                });
+              }} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Your Name</label>
+                    <Input placeholder="Sarah Chen" required />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Your Profession</label>
+                    <Input placeholder="Digital Artist" required />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Rating</label>
+                  <div className="flex items-center space-x-1">
+                    {[1, 2, 3, 4, 5].map((rating) => (
+                      <button
+                        key={rating}
+                        type="button"
+                        className="hover:scale-110 transition-transform"
+                        onClick={(e) => {
+                          const stars = e.currentTarget.parentElement?.querySelectorAll('button');
+                          stars?.forEach((star, index) => {
+                            const starIcon = star.querySelector('svg');
+                            if (starIcon) {
+                              if (index < rating) {
+                                starIcon.classList.add('fill-yellow-400', 'text-yellow-400');
+                                starIcon.classList.remove('text-muted-foreground');
+                              } else {
+                                starIcon.classList.remove('fill-yellow-400', 'text-yellow-400');
+                                starIcon.classList.add('text-muted-foreground');
+                              }
+                            }
+                          });
+                        }}
+                      >
+                        <Star className="w-6 h-6 text-muted-foreground transition-colors cursor-pointer" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Your Experience</label>
+                  <Textarea 
+                    placeholder="Tell us how TSMO helped protect your artwork. What features did you find most valuable? How did it impact your business?"
+                    rows={4}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Company/Studio (Optional)</label>
+                  <Input placeholder="Your studio name or leave blank" />
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <input type="checkbox" id="consent" className="rounded" required />
+                  <label htmlFor="consent" className="text-sm text-muted-foreground">
+                    I consent to TSMO using my testimonial in marketing materials
+                  </label>
+                </div>
+
+                <Button 
+                  type="submit" 
+                  className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+                  size="lg"
+                >
+                  Submit Testimonial
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          <div className="text-center mt-8">
+            <p className="text-sm text-muted-foreground">
+              All testimonials are reviewed before publication. Thank you for helping other artists discover TSMO!
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Contact Section */}
       <section className="py-20 px-4">
         <div className="container mx-auto max-w-4xl">
