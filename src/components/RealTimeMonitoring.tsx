@@ -155,7 +155,14 @@ const RealTimeMonitoring = () => {
 
   const startNewScan = async (artworkId: string) => {
     try {
-      const { error } = await supabase
+      // Find the artwork
+      const artwork = artworks.find(a => a.id === artworkId);
+      if (!artwork) {
+        throw new Error('Artwork not found');
+      }
+
+      // Create scan record
+      const { data: scan, error: scanError } = await supabase
         .from('monitoring_scans')
         .insert({
           artwork_id: artworkId,
@@ -163,17 +170,88 @@ const RealTimeMonitoring = () => {
           status: 'running',
           started_at: new Date().toISOString(),
           total_sources: 100
-        });
+        })
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (scanError) throw scanError;
 
       toast({
         title: "Scan Started",
-        description: "New monitoring scan initiated for your artwork",
+        description: "Real-time monitoring scan initiated for your artwork",
       });
+
+      // Get the first image file from storage to analyze
+      if (artwork.file_paths.length > 0) {
+        const firstImagePath = artwork.file_paths[0];
+        
+        // Get the image from storage
+        const { data: imageData, error: imageError } = await supabase.storage
+          .from('artwork')
+          .download(firstImagePath);
+
+        if (imageError) {
+          console.error('Error downloading image:', imageError);
+          return;
+        }
+
+        // Convert blob to base64 for analysis
+        const reader = new FileReader();
+        reader.onload = async () => {
+          try {
+            const base64Data = reader.result as string;
+            const base64Image = base64Data.split(',')[1]; // Remove data:image/...;base64, prefix
+
+            // Call the visual recognition edge function
+            const { data: analysisData, error: analysisError } = await supabase.functions
+              .invoke('visual-recognition', {
+                body: {
+                  image: base64Image,
+                  artworkId: artworkId,
+                  scanId: scan.id,
+                  searchQuery: `${artwork.title} ${artwork.category}`,
+                  enableRealTimeMonitoring: true
+                }
+              });
+
+            if (analysisError) {
+              console.error('Analysis error:', analysisError);
+              
+              // Update scan status to failed
+              await supabase
+                .from('monitoring_scans')
+                .update({ status: 'failed' })
+                .eq('id', scan.id);
+              
+              toast({
+                title: "Analysis Failed",
+                description: "Failed to analyze artwork for monitoring",
+                variant: "destructive",
+              });
+            } else {
+              toast({
+                title: "Analysis Complete",
+                description: "Artwork is now being monitored across web and dark web",
+              });
+            }
+          } catch (error: any) {
+            console.error('Processing error:', error);
+            
+            // Update scan status to failed
+            await supabase
+              .from('monitoring_scans')
+              .update({ status: 'failed' })
+              .eq('id', scan.id);
+          }
+        };
+
+        reader.readAsDataURL(imageData);
+      }
+
     } catch (error: any) {
+      console.error('Scan error:', error);
       toast({
-        title: "Scan Failed",
+        title: "Scan Failed", 
         description: error.message,
         variant: "destructive",
       });
