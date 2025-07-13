@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { 
   Eye, 
   Shield, 
@@ -13,7 +15,9 @@ import {
   ExternalLink,
   Scan,
   Globe,
-  Activity
+  Activity,
+  Trash2,
+  MoreVertical
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -258,6 +262,52 @@ const RealTimeMonitoring = () => {
     }
   };
 
+  const deleteArtwork = async (artworkId: string) => {
+    try {
+      const artwork = artworks.find(a => a.id === artworkId);
+      if (!artwork) {
+        throw new Error('Artwork not found');
+      }
+
+      // Delete files from storage
+      if (artwork.file_paths.length > 0) {
+        const { error: storageError } = await supabase.storage
+          .from('artwork')
+          .remove(artwork.file_paths);
+        
+        if (storageError) {
+          console.error('Error deleting files from storage:', storageError);
+        }
+      }
+
+      // Delete the artwork record (this will cascade delete related scans and matches)
+      const { error: deleteError } = await supabase
+        .from('artwork')
+        .delete()
+        .eq('id', artworkId);
+
+      if (deleteError) throw deleteError;
+
+      toast({
+        title: "Artwork Deleted",
+        description: "Your artwork and all related monitoring data have been removed",
+      });
+
+      // Refresh the data
+      await loadArtworks();
+      await loadScans();
+      await loadMatches();
+
+    } catch (error: any) {
+      console.error('Delete error:', error);
+      toast({
+        title: "Delete Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'running': return 'text-blue-500';
@@ -353,14 +403,50 @@ const RealTimeMonitoring = () => {
                         {artwork.status}
                       </Badge>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => startNewScan(artwork.id)}
-                    >
-                      <Scan className="w-4 h-4 mr-2" />
-                      New Scan
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => startNewScan(artwork.id)}
+                      >
+                        <Scan className="w-4 h-4 mr-2" />
+                        New Scan
+                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreVertical className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Delete Artwork
+                              </DropdownMenuItem>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete Artwork</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to delete "{artwork.title}"? This action cannot be undone and will remove all monitoring data, scans, and matches associated with this artwork.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction 
+                                  onClick={() => deleteArtwork(artwork.id)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </div>
                 ))
               )}
