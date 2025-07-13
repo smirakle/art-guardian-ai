@@ -23,8 +23,8 @@ const AboutTsmo = () => {
             </p>
           </div>
           
-          <div className="prose prose-lg max-w-none text-foreground">
-            <div className="space-y-6 text-lg leading-relaxed">
+          <div className="prose max-w-none text-foreground">
+            <div className="space-y-6 text-base leading-relaxed">
               <p>
                 After graduating from art school, I was eager to share my work with the world. Like many emerging artists, I turned to the internet to build my portfolio, hoping it would help me land freelance jobs, commissions, and gallery interest. I uploaded my digital illustrations, photography, and mixed media pieces onto platforms meant to connect creatives with clients. At first, the responses were encouraging—people liked my work, some even shared it. It felt like a promising start.
               </p>
