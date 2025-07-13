@@ -56,6 +56,15 @@ const AboutTsmo = () => {
               <p>
                 We want creators to feel safe sharing their work, knowing that someone has their back. Because when you spend your life creating something unique, you shouldn't have to worry about it being stolen—you should be able to focus on making more of what only you can make.
               </p>
+              
+              <div className="mt-12 pt-8 border-t border-border">
+                <p className="text-xl font-medium text-primary text-center">
+                  Thank you for joining TSMO.
+                </p>
+                <p className="text-lg text-muted-foreground text-center mt-2">
+                  - Shirleena Cunningham, Founder & CEO
+                </p>
+              </div>
             </div>
           </div>
         </div>
