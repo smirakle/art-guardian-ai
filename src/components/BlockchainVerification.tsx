@@ -195,12 +195,14 @@ const BlockchainVerification = () => {
              justify-content: center;
              border-radius: 12px;
              overflow: hidden;
+             background: transparent;
            }
            
            .logo img {
              width: 100%;
              height: 100%;
              object-fit: contain;
+             background: transparent;
            }
           
            .company-name {
