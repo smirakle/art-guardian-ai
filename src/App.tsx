@@ -54,8 +54,16 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/upload" element={<Upload />} />
-                <Route path="/monitoring" element={<Monitoring />} />
+                <Route path="/upload" element={
+                  <ProtectedRoute>
+                    <Upload />
+                  </ProtectedRoute>
+                } />
+                <Route path="/monitoring" element={
+                  <ProtectedRoute>
+                    <Monitoring />
+                  </ProtectedRoute>
+                } />
                 <Route path="/demo" element={<Demo />} />
                 <Route path="/admin" element={
                   <ProtectedRoute requiredRole="admin">
@@ -65,9 +73,21 @@ const App = () => {
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/success" element={<Success />} />
-                <Route path="/deep-scan" element={<DeepWebScan />} />
-                <Route path="/blockchain" element={<BlockchainVerification />} />
-                <Route path="/community" element={<Community />} />
+                <Route path="/deep-scan" element={
+                  <ProtectedRoute>
+                    <DeepWebScan />
+                  </ProtectedRoute>
+                } />
+                <Route path="/blockchain" element={
+                  <ProtectedRoute>
+                    <BlockchainVerification />
+                  </ProtectedRoute>
+                } />
+                <Route path="/community" element={
+                  <ProtectedRoute>
+                    <Community />
+                  </ProtectedRoute>
+                } />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
