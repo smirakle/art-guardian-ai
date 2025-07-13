@@ -19,7 +19,8 @@ import {
   Plus,
   X,
   Camera,
-  FolderOpen
+  FolderOpen,
+  Link
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -50,6 +51,8 @@ const Upload = () => {
   const [enableWatermark, setEnableWatermark] = useState(true);
   const [enableBlockchain, setEnableBlockchain] = useState(false);
   const [isProtecting, setIsProtecting] = useState(false);
+  const [urlInput, setUrlInput] = useState("");
+  const [urls, setUrls] = useState<string[]>([]);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -73,6 +76,46 @@ const Upload = () => {
       const selectedFiles = Array.from(e.target.files);
       processFiles(selectedFiles);
     }
+  };
+
+  const validateUrl = (url: string): boolean => {
+    const supportedDomains = [
+      'youtube.com', 'youtu.be', 'm.youtube.com',
+      'tiktok.com', 'vm.tiktok.com', 'vt.tiktok.com',
+      'instagram.com', 'instagr.am',
+      'facebook.com', 'fb.watch', 'm.facebook.com',
+      'twitter.com', 'x.com', 't.co'
+    ];
+    
+    try {
+      const urlObj = new URL(url);
+      return supportedDomains.some(domain => urlObj.hostname.includes(domain));
+    } catch {
+      return false;
+    }
+  };
+
+  const addUrl = () => {
+    if (urlInput.trim() && !urls.includes(urlInput.trim())) {
+      if (validateUrl(urlInput.trim())) {
+        setUrls([...urls, urlInput.trim()]);
+        setUrlInput("");
+        toast({
+          title: "URL Added",
+          description: "Video link has been added for protection",
+        });
+      } else {
+        toast({
+          title: "Invalid URL",
+          description: "Please enter a valid YouTube, TikTok, Instagram, Facebook, or X video link",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const removeUrl = (urlToRemove: string) => {
+    setUrls(urls.filter(url => url !== urlToRemove));
   };
 
   const processFiles = async (fileList: File[]) => {
@@ -272,10 +315,10 @@ const Upload = () => {
 
   const handleStartProtection = async () => {
     // Validation
-    if (files.length === 0) {
+    if (files.length === 0 && urls.length === 0) {
       toast({
-        title: "No Files Selected",
-        description: "Please upload at least one file to protect",
+        title: "No Content Selected",
+        description: "Please upload at least one file or add a video link to protect",
         variant: "destructive",
       });
       return;
@@ -316,8 +359,9 @@ const Upload = () => {
       }));
       setFiles(protectedFiles);
 
-      // Get file paths from uploaded files
+      // Get file paths from uploaded files and URLs
       const filePaths = files.map(file => `${user!.id}/${Date.now()}-${file.name}`);
+      const allPaths = [...filePaths, ...urls];
 
       // Create artwork record in database
       const { data: artwork, error: artworkError } = await supabase
@@ -329,7 +373,7 @@ const Upload = () => {
           category,
           tags: tags.length > 0 ? tags : null,
           license_type: licenseType || null,
-          file_paths: filePaths,
+          file_paths: allPaths,
           enable_watermark: enableWatermark,
           enable_blockchain: enableBlockchain,
           status: 'protected'
@@ -365,9 +409,10 @@ const Upload = () => {
       setFiles(finalFiles);
 
       // Success notification
+      const totalItems = files.length + urls.length;
       toast({
         title: "Protection Complete!",
-        description: `${files.length} file(s) are now protected and being monitored 24/7`,
+        description: `${totalItems} item(s) are now protected and being monitored 24/7`,
       });
 
       console.log("Protection applied with:", {
@@ -447,8 +492,20 @@ const Upload = () => {
               <Image className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
               <h3 className="text-lg font-semibold mb-2">Drop your files here</h3>
               <p className="text-muted-foreground mb-4">
-                Support for images, videos, audio, and PDFs up to 50MB each
+                Support for files up to 50MB each and video links from YouTube, TikTok, Instagram, Facebook, and X
               </p>
+              <div className="flex gap-2 mb-4">
+                <Input
+                  placeholder="Paste YouTube, TikTok, Instagram, Facebook, or X video link..."
+                  value={urlInput}
+                  onChange={(e) => setUrlInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && addUrl()}
+                />
+                <Button onClick={addUrl} variant="outline">
+                  <Link className="w-4 h-4 mr-2" />
+                  Add Link
+                </Button>
+              </div>
               <input
                 type="file"
                 multiple
@@ -486,6 +543,36 @@ const Upload = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* URLs List */}
+        {urls.length > 0 && (
+          <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+            <CardHeader>
+              <CardTitle>Added Video Links</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {urls.map((url, index) => (
+                <div key={index} className="flex items-center justify-between p-3 border border-border/30 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Link className="w-5 h-5 text-primary" />
+                    <div>
+                      <p className="font-medium truncate max-w-[400px]">{url}</p>
+                      <Badge variant="secondary" className="text-xs">Video Link</Badge>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeUrl(url)}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
 
         {/* File List */}
         {files.length > 0 && (
