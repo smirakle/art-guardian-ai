@@ -2,7 +2,11 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Star, Shield, Zap, Crown, Building2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { CheckCircle, Star, Shield, Zap, Crown, Building2, CreditCard, User, Mail, Phone, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -10,6 +14,59 @@ const Pricing = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    company: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: '',
+    cardNumber: '',
+    expiryDate: '',
+    cvv: '',
+    cardName: ''
+  });
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleFormSubmit = (planId: string) => {
+    // Basic validation
+    const requiredFields = ['firstName', 'lastName', 'email', 'cardNumber', 'expiryDate', 'cvv'];
+    const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
+    
+    if (missingFields.length > 0) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Account Created Successfully!",
+      description: `Welcome to ${planId} plan! Your protection is now active.`,
+    });
+
+    // Reset form and redirect
+    setFormData({
+      firstName: '', lastName: '', email: '', phone: '', company: '',
+      address: '', city: '', state: '', zipCode: '', country: '',
+      cardNumber: '', expiryDate: '', cvv: '', cardName: ''
+    });
+    setSelectedPlan(null);
+    
+    setTimeout(() => {
+      navigate('/upload');
+    }, 2000);
+  };
 
   const plans = [
     {
@@ -133,6 +190,235 @@ const Pricing = () => {
     return `$${price}`;
   };
 
+  const SignUpForm = ({ plan }: { plan: any }) => {
+    return (
+      <div className="space-y-6 max-h-[70vh] overflow-y-auto">
+        {/* Personal Information */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 mb-4">
+            <User className="w-5 h-5 text-primary" />
+            <h3 className="text-lg font-semibold">Personal Information</h3>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="firstName">First Name *</Label>
+              <Input
+                id="firstName"
+                value={formData.firstName}
+                onChange={(e) => handleInputChange('firstName', e.target.value)}
+                placeholder="John"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Last Name *</Label>
+              <Input
+                id="lastName"
+                value={formData.lastName}
+                onChange={(e) => handleInputChange('lastName', e.target.value)}
+                placeholder="Doe"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="email">Email Address *</Label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                placeholder="john@example.com"
+                className="pl-10"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="phone">Phone Number</Label>
+            <div className="relative">
+              <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="phone"
+                value={formData.phone}
+                onChange={(e) => handleInputChange('phone', e.target.value)}
+                placeholder="+1 (555) 123-4567"
+                className="pl-10"
+              />
+            </div>
+          </div>
+
+          {(plan.id === 'professional' || plan.id === 'enterprise') && (
+            <div className="space-y-2">
+              <Label htmlFor="company">Company/Organization</Label>
+              <Input
+                id="company"
+                value={formData.company}
+                onChange={(e) => handleInputChange('company', e.target.value)}
+                placeholder="Your Company Name"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Billing Address */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 mb-4">
+            <MapPin className="w-5 h-5 text-primary" />
+            <h3 className="text-lg font-semibold">Billing Address</h3>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="address">Street Address</Label>
+            <Input
+              id="address"
+              value={formData.address}
+              onChange={(e) => handleInputChange('address', e.target.value)}
+              placeholder="123 Main St"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="city">City</Label>
+              <Input
+                id="city"
+                value={formData.city}
+                onChange={(e) => handleInputChange('city', e.target.value)}
+                placeholder="New York"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="state">State</Label>
+              <Input
+                id="state"
+                value={formData.state}
+                onChange={(e) => handleInputChange('state', e.target.value)}
+                placeholder="NY"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="zipCode">ZIP Code</Label>
+              <Input
+                id="zipCode"
+                value={formData.zipCode}
+                onChange={(e) => handleInputChange('zipCode', e.target.value)}
+                placeholder="10001"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="country">Country</Label>
+            <Select value={formData.country} onValueChange={(value) => handleInputChange('country', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select country" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="us">United States</SelectItem>
+                <SelectItem value="ca">Canada</SelectItem>
+                <SelectItem value="uk">United Kingdom</SelectItem>
+                <SelectItem value="au">Australia</SelectItem>
+                <SelectItem value="de">Germany</SelectItem>
+                <SelectItem value="fr">France</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Credit Card Information */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 mb-4">
+            <CreditCard className="w-5 h-5 text-primary" />
+            <h3 className="text-lg font-semibold">Payment Information</h3>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="cardName">Name on Card *</Label>
+            <Input
+              id="cardName"
+              value={formData.cardName}
+              onChange={(e) => handleInputChange('cardName', e.target.value)}
+              placeholder="John Doe"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="cardNumber">Card Number *</Label>
+            <div className="relative">
+              <CreditCard className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="cardNumber"
+                value={formData.cardNumber}
+                onChange={(e) => handleInputChange('cardNumber', e.target.value)}
+                placeholder="1234 5678 9012 3456"
+                className="pl-10"
+                maxLength={19}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="expiryDate">Expiry Date *</Label>
+              <Input
+                id="expiryDate"
+                value={formData.expiryDate}
+                onChange={(e) => handleInputChange('expiryDate', e.target.value)}
+                placeholder="MM/YY"
+                maxLength={5}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="cvv">CVV *</Label>
+              <Input
+                id="cvv"
+                value={formData.cvv}
+                onChange={(e) => handleInputChange('cvv', e.target.value)}
+                placeholder="123"
+                maxLength={4}
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Plan Summary */}
+        <div className="bg-muted/50 p-4 rounded-lg">
+          <h4 className="font-semibold mb-2">Plan Summary</h4>
+          <div className="flex justify-between items-center">
+            <span>{plan.name} Plan ({billingCycle})</span>
+            <span className="font-bold">
+              {formatPrice(plan.price[billingCycle])}{typeof plan.price[billingCycle] === 'number' ? `/${billingCycle === 'monthly' ? 'mo' : 'yr'}` : ''}
+            </span>
+          </div>
+          {plan.discount && (
+            <div className="text-sm text-green-600 mt-1">
+              {plan.discount} - You save ${typeof plan.originalPrice?.[billingCycle] === 'number' && typeof plan.price[billingCycle] === 'number' ? 
+                plan.originalPrice[billingCycle] - plan.price[billingCycle] : 0}!
+            </div>
+          )}
+        </div>
+
+        <Button
+          onClick={() => handleFormSubmit(plan.name)}
+          className="w-full py-3 text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+        >
+          Start My Protection Plan
+        </Button>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 py-12">
       <div className="container mx-auto px-6 max-w-7xl">
@@ -243,21 +529,48 @@ const Pricing = () => {
                   </div>
 
                   {/* Sign Up Button */}
-                  <Button
-                    onClick={() => handleSignUp(plan.id)}
-                    className={`w-full py-6 text-lg font-semibold ${
-                      plan.popular 
-                        ? 'bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90' 
-                        : ''
-                    }`}
-                    variant={plan.popular ? 'default' : 'outline'}
-                  >
-                    {plan.id === 'enterprise' ? 'Contact Sales' : 'Start Protection'}
-                  </Button>
+                  {plan.id === 'enterprise' ? (
+                    <Button
+                      onClick={() => handleSignUp(plan.id)}
+                      className="w-full py-6 text-lg font-semibold"
+                      variant="outline"
+                    >
+                      Contact Sales
+                    </Button>
+                  ) : (
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          className={`w-full py-6 text-lg font-semibold ${
+                            plan.popular 
+                              ? 'bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90' 
+                              : ''
+                          }`}
+                          variant={plan.popular ? 'default' : 'outline'}
+                        >
+                          Start Protection
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                          <DialogTitle className="flex items-center gap-2">
+                            <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${plan.color} flex items-center justify-center`}>
+                              <plan.icon className="w-4 h-4 text-white" />
+                            </div>
+                            Sign Up for {plan.name} Plan
+                          </DialogTitle>
+                          <DialogDescription>
+                            Complete your information to start protecting your creative work
+                          </DialogDescription>
+                        </DialogHeader>
+                        <SignUpForm plan={plan} />
+                      </DialogContent>
+                    </Dialog>
+                  )}
 
                   {plan.id !== 'enterprise' && (
                     <p className="text-xs text-center text-muted-foreground">
-                      14-day free trial • No credit card required
+                      14-day free trial • Cancel anytime
                     </p>
                   )}
                 </CardContent>
