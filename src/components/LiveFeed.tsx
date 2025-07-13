@@ -39,67 +39,77 @@ const LiveFeed = ({ isActive }: LiveFeedProps) => {
     
     const messages = {
       scan: [
-        `Scanning ${platform} for unauthorized usage`,
-        `Deep scan initiated across ${platform} marketplace`,
-        `Visual recognition scan completed on ${platform}`,
-        `AI-powered content analysis running on ${platform}`
+        `Uploaded artwork being scanned on ${platform}`,
+        `Deep monitoring initiated for uploaded file on ${platform}`,
+        `Visual recognition analyzing uploaded artwork on ${platform}`,
+        `AI-powered scan of uploaded content running on ${platform}`,
+        `Protected upload being monitored across ${platform}`
       ],
       detection: [
-        `Potential match found on ${platform}`,
-        `Similar artwork detected on ${platform}`,
-        `Possible unauthorized use identified on ${platform}`,
-        `Visual similarity alert triggered for ${platform}`
+        `Uploaded artwork match detected on ${platform}`,
+        `Similar uploaded content found on ${platform}`,
+        `Potential unauthorized use of uploaded file on ${platform}`,
+        `Visual similarity alert for uploaded artwork on ${platform}`,
+        `Copyright infringement detected for uploaded content on ${platform}`
       ],
       protection: [
-        `Artwork successfully protected on ${platform}`,
-        `Copyright claim submitted to ${platform}`,
-        `DMCA takedown request sent to ${platform}`,
-        `Legal protection activated for ${platform} content`
+        `Uploaded artwork successfully protected on ${platform}`,
+        `Copyright claim filed for uploaded content on ${platform}`,
+        `DMCA takedown request sent for uploaded artwork to ${platform}`,
+        `Legal protection activated for uploaded file on ${platform}`,
+        `Watermark verification completed for uploaded content`
       ],
       alert: [
-        `High-priority alert generated for ${platform}`,
-        `Commercial usage detected on ${platform}`,
-        `License violation reported on ${platform}`,
-        `Watermark removal detected on ${platform}`
+        `High-priority alert: uploaded artwork found on ${platform}`,
+        `Commercial usage of uploaded content detected on ${platform}`,
+        `License violation of uploaded artwork reported on ${platform}`,
+        `Watermark removal detected on uploaded file found on ${platform}`,
+        `Multiple instances of uploaded artwork found on ${platform}`
       ],
       resolution: [
-        `Copyright issue resolved on ${platform}`,
-        `Infringing content removed from ${platform}`,
-        `Settlement reached with ${platform} user`,
-        `Licensing agreement established for ${platform}`
+        `Copyright issue resolved for uploaded artwork on ${platform}`,
+        `Infringing uploaded content removed from ${platform}`,
+        `Settlement reached regarding uploaded artwork on ${platform}`,
+        `Licensing agreement established for uploaded content on ${platform}`,
+        `Uploaded artwork protection successfully enforced on ${platform}`
       ]
     };
 
     const details = {
       scan: [
-        'Advanced AI algorithms analyzing visual content',
-        'Cross-referencing with protected artwork database',
-        'Metadata comparison and hash matching in progress',
-        'Reverse image search across platform database'
+        'Uploaded artwork being analyzed with advanced AI algorithms',
+        'Cross-referencing uploaded content with protected artwork database',
+        'Metadata comparison and hash matching for uploaded files in progress',
+        'Reverse image search of uploaded artwork across platform database',
+        'Digital fingerprinting of uploaded content completed'
       ],
       detection: [
-        'Confidence level: 87% - Manual review recommended',
-        'Similarity score: 94% - High probability match',
-        'Multiple instances found - Bulk action suggested',
-        'Commercial context detected - Priority escalation'
+        'Uploaded artwork similarity detected - Confidence level: 87%',
+        'High probability match found for uploaded content - Score: 94%',
+        'Multiple instances of uploaded artwork found - Bulk action suggested',
+        'Commercial context detected for uploaded file - Priority escalation',
+        'Unauthorized modification of uploaded artwork detected'
       ],
       protection: [
-        'Legal documentation automatically generated',
-        'Platform notification system engaged',
-        'Artist notification sent via secure channel',
-        'Evidence package compiled for legal proceedings'
+        'Legal documentation for uploaded artwork automatically generated',
+        'Platform notification system engaged for uploaded content',
+        'Artist notification sent regarding uploaded artwork protection',
+        'Evidence package compiled for uploaded artwork legal proceedings',
+        'Copyright registration completed for uploaded content'
       ],
       alert: [
-        'Immediate action required - Potential revenue loss',
-        'High-value artwork compromised - Premium support activated',
-        'Multiple platform violation - Cross-platform response initiated',
-        'Repeat offender detected - Enhanced monitoring activated'
+        'Immediate action required - Uploaded artwork revenue at risk',
+        'High-value uploaded artwork compromised - Premium support activated',
+        'Multiple platform violation of uploaded content detected',
+        'Repeat offender targeting uploaded artwork - Enhanced monitoring activated',
+        'Commercial exploitation of uploaded artwork detected'
       ],
       resolution: [
-        'Artist compensation secured - Case closed',
-        'Offending party complied - Monitoring continues',
-        'Platform cooperation confirmed - Future prevention measures applied',
-        'Legal precedent established - Database updated'
+        'Uploaded artwork compensation secured - Case closed',
+        'Offending party complied regarding uploaded content - Monitoring continues',
+        'Platform cooperation confirmed for uploaded artwork protection',
+        'Legal precedent established for uploaded content - Database updated',
+        'Uploaded artwork licensing agreement successfully negotiated'
       ]
     };
 

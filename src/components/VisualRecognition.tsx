@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useImageAnalysis } from "@/hooks/useImageAnalysis";
 import { ImageAnalysis } from "@/types/visual-recognition";
+import { supabase } from "@/integrations/supabase/client";
 import UploadArea from "./visual-recognition/UploadArea";
 import ImageAnalysisCard from "./visual-recognition/ImageAnalysisCard";
 import RealTimeMonitoring from "./RealTimeMonitoring";
@@ -43,10 +44,48 @@ const VisualRecognition = () => {
 
     setImages(prev => [...prev, ...newImages]);
 
-    // Start analyzing each image
+    // Start analyzing each image and create monitoring scan
     const startIndex = images.length;
-    newImages.forEach((_, index) => {
-      analyzeImage(newImages[index].file, startIndex + index, setImages);
+    newImages.forEach(async (image, index) => {
+      // Start visual analysis
+      analyzeImage(image.file, startIndex + index, setImages);
+      
+      // Also create a monitoring scan for continuous protection
+      try {
+        const { data: user } = await supabase.auth.getUser();
+        if (user.user) {
+          // Create temporary artwork record for quick analysis
+          const tempArtwork = {
+            title: `Quick Analysis - ${image.file.name}`,
+            description: 'Temporary artwork for visual recognition analysis',
+            category: 'digital',
+            user_id: user.user.id,
+            file_paths: [], // Will be empty for quick analysis
+            status: 'analyzing'
+          };
+
+          const { data: artwork } = await supabase
+            .from('artwork')
+            .insert(tempArtwork)
+            .select()
+            .single();
+
+          if (artwork) {
+            // Create monitoring scan
+            await supabase
+              .from('monitoring_scans')
+              .insert({
+                artwork_id: artwork.id,
+                scan_type: 'visual-recognition',
+                status: 'running',
+                started_at: new Date().toISOString(),
+                total_sources: 50
+              });
+          }
+        }
+      } catch (error) {
+        console.log('Could not create monitoring scan:', error);
+      }
     });
   }, [images.length, analyzeImage, toast]);
 
