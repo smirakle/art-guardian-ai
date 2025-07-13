@@ -32,7 +32,7 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-20 md:h-24">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <Shield className="w-16 h-16 md:w-24 md:h-24 text-primary" />
+            <Shield className="w-8 h-8 md:w-10 md:h-10 text-primary" />
             <div className="flex flex-col">
               <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 TSMO
