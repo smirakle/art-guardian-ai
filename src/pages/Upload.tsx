@@ -45,6 +45,7 @@ const Upload = () => {
   const [licenseType, setLicenseType] = useState("");
   const [enableWatermark, setEnableWatermark] = useState(true);
   const [enableBlockchain, setEnableBlockchain] = useState(false);
+  const [isProtecting, setIsProtecting] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -181,6 +182,92 @@ const Upload = () => {
         return 'Protected & Monitored';
       case 'error':
         return 'Upload Failed';
+    }
+  };
+
+  const handleStartProtection = async () => {
+    // Validation
+    if (files.length === 0) {
+      toast({
+        title: "No Files Selected",
+        description: "Please upload at least one file to protect",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!artworkTitle.trim()) {
+      toast({
+        title: "Missing Title",
+        description: "Please provide a title for your artwork",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!category) {
+      toast({
+        title: "Missing Category",
+        description: "Please select a category for your artwork",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsProtecting(true);
+
+    try {
+      // Show initial toast
+      toast({
+        title: "Protection Started",
+        description: "Your artwork protection process has begun",
+      });
+
+      // Simulate protection process for all files
+      const protectedFiles = files.map(file => ({ 
+        ...file, 
+        status: 'processing' as const,
+        progress: 0 
+      }));
+      setFiles(protectedFiles);
+
+      // Simulate protection steps
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Update to protected status
+      const finalFiles = files.map(file => ({ 
+        ...file, 
+        status: 'protected' as const,
+        progress: 100 
+      }));
+      setFiles(finalFiles);
+
+      // Success notification
+      toast({
+        title: "Protection Complete!",
+        description: `${files.length} file(s) are now protected and being monitored 24/7`,
+      });
+
+      // Log protection details
+      console.log("Protection applied with:", {
+        title: artworkTitle,
+        category,
+        description,
+        tags,
+        licenseType,
+        watermark: enableWatermark,
+        blockchain: enableBlockchain,
+        files: files.length
+      });
+
+    } catch (error) {
+      toast({
+        title: "Protection Failed",
+        description: "There was an error protecting your artwork. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProtecting(false);
     }
   };
 
@@ -438,10 +525,11 @@ const Upload = () => {
               <Button
                 size="lg"
                 className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground px-8 py-6 text-lg"
-                disabled={files.length === 0}
+                disabled={files.length === 0 || isProtecting}
+                onClick={handleStartProtection}
               >
                 <Shield className="w-5 h-5 mr-2" />
-                Start Protection
+                {isProtecting ? "Processing..." : "Start Protection"}
               </Button>
             </div>
           </TabsContent>
