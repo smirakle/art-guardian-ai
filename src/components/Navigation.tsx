@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Shield, Upload, Activity, Home, Users, Link2, Settings } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, Settings, UserCog } from "lucide-react";
 
 const Navigation = () => {
   const currentPath = window.location.pathname;
@@ -11,7 +11,8 @@ const Navigation = () => {
     { path: "/deep-scan", label: "Deep Scan", icon: Shield },
     { path: "/blockchain", label: "Blockchain", icon: Link2 },
     { path: "/pricing", label: "Pricing", icon: Settings },
-    { path: "/community", label: "Community", icon: Users }
+    { path: "/community", label: "Community", icon: Users },
+    { path: "/admin", label: "Admin", icon: UserCog, isAdmin: true }
   ];
 
   return (
@@ -43,8 +44,10 @@ const Navigation = () => {
                   className={`flex items-center gap-1 md:gap-2 min-w-max px-2 md:px-3 text-xs md:text-sm ${
                     isActive 
                       ? "bg-primary text-primary-foreground" 
+                      : item.isAdmin
+                      ? "hover:bg-destructive/20 text-destructive hover:text-destructive"
                       : "hover:bg-secondary/50"
-                  }`}
+                  } ${item.isAdmin ? "border border-destructive/30" : ""}`}
                   size="sm"
                 >
                   <Icon className="w-3 h-3 md:w-4 md:h-4" />
