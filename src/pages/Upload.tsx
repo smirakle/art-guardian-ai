@@ -334,12 +334,28 @@ const Upload = () => {
                 className="hidden"
                 id="file-upload"
               />
-              <Label htmlFor="file-upload">
-                <Button variant="outline" className="cursor-pointer">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Choose Files
-                </Button>
-              </Label>
+              <input
+                type="file"
+                {...({ webkitdirectory: "" } as any)}
+                multiple
+                onChange={handleFileSelect}
+                style={{ display: 'none' }}
+                id="folder-upload"
+              />
+              <div className="flex gap-3">
+                <Label htmlFor="file-upload">
+                  <Button variant="outline" className="cursor-pointer">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Choose Files
+                  </Button>
+                </Label>
+                <Label htmlFor="folder-upload">
+                  <Button variant="outline" className="cursor-pointer">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Upload Folder
+                  </Button>
+                </Label>
+              </div>
             </div>
           </CardContent>
         </Card>

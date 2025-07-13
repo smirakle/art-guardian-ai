@@ -10,7 +10,7 @@ const Navigation = () => {
     { path: "/monitoring", label: "Monitoring", icon: Activity },
     { path: "/deep-scan", label: "Deep Scan", icon: Shield },
     { path: "/blockchain", label: "Blockchain", icon: Link2 },
-    { path: "/admin", label: "Admin", icon: Settings },
+    { path: "/pricing", label: "Pricing", icon: Settings },
     { path: "/community", label: "Community", icon: Users }
   ];
 
@@ -57,10 +57,10 @@ const Navigation = () => {
           {/* CTA Button - Hidden on smallest screens */}
           <Button
             className="hidden md:flex bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground text-sm"
-            onClick={() => window.location.href = "/upload"}
+            onClick={() => window.location.href = "/pricing"}
             size="sm"
           >
-            Protect Your Art
+            Get Protected
           </Button>
         </div>
       </div>

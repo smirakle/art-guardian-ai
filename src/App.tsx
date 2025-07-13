@@ -12,6 +12,7 @@ import Monitoring from "./pages/Monitoring";
 import Demo from "./pages/Demo";
 import Admin from "./pages/Admin";
 import Checkout from "./pages/Checkout";
+import Pricing from "./pages/Pricing";
 import DeepWebScan from "./components/DeepWebScan";
 import BlockchainVerification from "./components/BlockchainVerification";
 import Community from "./pages/Community";
@@ -52,6 +53,7 @@ const App = () => {
               <Route path="/demo" element={<Demo />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/checkout" element={<Checkout />} />
+              <Route path="/pricing" element={<Pricing />} />
               <Route path="/deep-scan" element={<DeepWebScan />} />
               <Route path="/blockchain" element={<BlockchainVerification />} />
               <Route path="/community" element={<Community />} />

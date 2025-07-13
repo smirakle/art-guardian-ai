@@ -130,9 +130,9 @@ const Index = () => {
             <Button 
               size="lg" 
               className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
-              onClick={() => window.location.href = "/upload"}
+              onClick={() => window.location.href = "/pricing"}
             >
-              Start Protecting Your Art
+              Choose Your Protection Plan
               <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
             <Button 
@@ -554,9 +554,9 @@ const Index = () => {
                 <Button 
                   className="w-full" 
                   variant="outline"
-                  onClick={() => handleFreeTrial("Student")}
+                  onClick={() => window.location.href="/pricing"}
                 >
-                  Start Free Trial
+                  Choose This Plan
                 </Button>
               </CardContent>
             </Card>
@@ -592,9 +592,9 @@ const Index = () => {
                 <Button 
                   className="w-full" 
                   variant="outline"
-                  onClick={() => handleFreeTrial("Starter")}
+                  onClick={() => window.location.href="/pricing"}
                 >
-                  Start Free Trial
+                  Choose This Plan
                 </Button>
               </CardContent>
             </Card>
@@ -638,9 +638,9 @@ const Index = () => {
                 </div>
                 <Button 
                   className="w-full bg-gradient-to-r from-primary to-accent"
-                  onClick={() => handleFreeTrial("Professional")}
+                  onClick={() => window.location.href="/pricing"}
                 >
-                  Start Free Trial
+                  Choose This Plan
                 </Button>
               </CardContent>
             </Card>
@@ -684,17 +684,9 @@ const Index = () => {
                 <Button 
                   className="w-full" 
                   variant="outline"
-                  onClick={() => {
-                    toast({
-                      title: "Contact Sales",
-                      description: "Redirecting to enterprise consultation form...",
-                    });
-                    setTimeout(() => {
-                      window.location.href = "/contact?type=enterprise";
-                    }, 1500);
-                  }}
+                  onClick={() => window.location.href="/pricing"}
                 >
-                  Contact Sales
+                  View Plans
                 </Button>
               </CardContent>
             </Card>
