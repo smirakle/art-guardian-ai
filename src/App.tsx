@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import MaintenanceMode from "@/components/MaintenanceMode";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { useMaintenanceMode } from "@/lib/maintenance";
 import Index from "./pages/Index";
 import Upload from "./pages/Upload";
@@ -13,6 +15,7 @@ import Demo from "./pages/Demo";
 import Admin from "./pages/Admin";
 import Checkout from "./pages/Checkout";
 import Pricing from "./pages/Pricing";
+import Auth from "./pages/Auth";
 import DeepWebScan from "./components/DeepWebScan";
 import BlockchainVerification from "./components/BlockchainVerification";
 import Community from "./pages/Community";
@@ -41,27 +44,34 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Navigation />
-          <div className="pt-16">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/upload" element={<Upload />} />
-              <Route path="/monitoring" element={<Monitoring />} />
-              <Route path="/demo" element={<Demo />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/deep-scan" element={<DeepWebScan />} />
-              <Route path="/blockchain" element={<BlockchainVerification />} />
-              <Route path="/community" element={<Community />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </div>
-        </BrowserRouter>
+        <AuthProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Navigation />
+            <div className="pt-16">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/upload" element={<Upload />} />
+                <Route path="/monitoring" element={<Monitoring />} />
+                <Route path="/demo" element={<Demo />} />
+                <Route path="/admin" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <Admin />
+                  </ProtectedRoute>
+                } />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/deep-scan" element={<DeepWebScan />} />
+                <Route path="/blockchain" element={<BlockchainVerification />} />
+                <Route path="/community" element={<Community />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+          </BrowserRouter>
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
