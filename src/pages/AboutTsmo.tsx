@@ -1,4 +1,5 @@
 import React from 'react';
+import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 
 const AboutTsmo = () => {
   return (
@@ -7,6 +8,13 @@ const AboutTsmo = () => {
       <section className="py-20 px-4 bg-background">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-12">
+            <div className="mb-8">
+              <img 
+                src={tsmoLogo} 
+                alt="TSMO Logo" 
+                className="h-24 md:h-32 mx-auto object-contain"
+              />
+            </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
               About TSMO
             </h1>
