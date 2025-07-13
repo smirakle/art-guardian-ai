@@ -72,15 +72,15 @@ const VisualRecognition = () => {
 
           if (artwork) {
             // Create monitoring scan
-            await supabase
-              .from('monitoring_scans')
-              .insert({
-                artwork_id: artwork.id,
-                scan_type: 'visual-recognition',
-                status: 'running',
-                started_at: new Date().toISOString(),
-                total_sources: 50
-              });
+              await supabase
+                .from('monitoring_scans')
+                .insert({
+                  artwork_id: artwork.id,
+                  scan_type: 'visual-recognition',
+                  status: 'running',
+                  started_at: new Date().toISOString(),
+                  total_sources: 1500
+                });
           }
         }
       } catch (error) {

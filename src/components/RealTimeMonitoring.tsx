@@ -169,7 +169,7 @@ const RealTimeMonitoring = () => {
           scan_type: 'deep',
           status: 'running',
           started_at: new Date().toISOString(),
-          total_sources: 100
+          total_sources: 1250
         })
         .select()
         .single();

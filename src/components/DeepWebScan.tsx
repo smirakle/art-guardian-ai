@@ -132,7 +132,7 @@ const DeepWebScan = () => {
             <CardContent>
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
                 <div className="text-sm text-muted-foreground">
-                  Scan across 150+ dark web marketplaces and forums
+                  Scan across 1,200+ dark web marketplaces and forums
                 </div>
                 <Button 
                   onClick={startScan} 
@@ -197,7 +197,7 @@ const DeepWebScan = () => {
                       <div className="flex items-center gap-2">
                         <Globe className="w-5 h-5 text-accent" />
                         <div>
-                          <div className="text-2xl font-bold">150+</div>
+                          <div className="text-2xl font-bold">1,200+</div>
                           <div className="text-xs text-muted-foreground">Marketplaces</div>
                         </div>
                       </div>
@@ -335,7 +335,7 @@ const DeepWebScan = () => {
                           </div>
                           <div className="text-right">
                             <div className="font-medium">3 threats found</div>
-                            <div className="text-sm text-muted-foreground">150 marketplaces scanned</div>
+                            <div className="text-sm text-muted-foreground">1,200 marketplaces scanned</div>
                           </div>
                         </div>
                         
@@ -346,7 +346,7 @@ const DeepWebScan = () => {
                           </div>
                           <div className="text-right">
                             <div className="font-medium">1 threat found</div>
-                            <div className="text-sm text-muted-foreground">75 marketplaces scanned</div>
+                            <div className="text-sm text-muted-foreground">850 marketplaces scanned</div>
                           </div>
                         </div>
                       </div>
