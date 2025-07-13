@@ -197,8 +197,32 @@ const Upload = () => {
     }, 200);
   };
 
-  const removeFile = (fileId: string) => {
+  const removeFile = async (fileId: string) => {
+    const fileToRemove = files.find(f => f.id === fileId);
+    
+    // Remove from local state
     setFiles(prev => prev.filter(f => f.id !== fileId));
+    
+    // If file was uploaded to storage, delete it
+    if (fileToRemove && fileToRemove.status === 'protected' && user) {
+      try {
+        const fileName = `${user.id}/${Date.now()}-${fileToRemove.name}`;
+        const { error } = await supabase.storage
+          .from('artwork')
+          .remove([fileName]);
+          
+        if (error) {
+          console.error('Error deleting file from storage:', error);
+        } else {
+          toast({
+            title: "File Removed",
+            description: `${fileToRemove.name} has been deleted`,
+          });
+        }
+      } catch (error) {
+        console.error('Error removing file:', error);
+      }
+    }
   };
 
   const addTag = () => {
@@ -488,7 +512,8 @@ const Upload = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => removeFile(file.id)}
-                        className="text-muted-foreground hover:text-destructive"
+                        className="text-muted-foreground hover:text-destructive transition-colors"
+                        title="Remove file"
                       >
                         <X className="w-4 h-4" />
                       </Button>
