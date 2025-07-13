@@ -74,9 +74,9 @@ const Pricing = () => {
       name: 'Student',
       icon: Star,
       description: 'Perfect for students and emerging artists',
-      price: { monthly: 9, yearly: 90 },
-      originalPrice: { monthly: 15, yearly: 150 },
-      discount: '40% OFF',
+      price: { monthly: 19, yearly: 190 },
+      originalPrice: { monthly: 25, yearly: 250 },
+      discount: '24% OFF',
       color: 'from-blue-500 to-purple-600',
       features: [
         'Up to 50 artworks protected',
