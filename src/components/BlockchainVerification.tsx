@@ -179,7 +179,6 @@ const BlockchainVerification = () => {
              padding: 60px;
              display: flex;
              flex-direction: column;
-             border: 8px solid #3b82f6;
              box-shadow: 0 20px 40px rgba(0,0,0,0.3);
            }
           
