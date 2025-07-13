@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { CheckCircle, Star, Shield, Zap, Crown, Building2, CreditCard, User, Mail, Phone, MapPin } from "lucide-react";
+import { CheckCircle, Star, Shield, Zap, Crown, Building2, CreditCard, User, Mail, Phone, MapPin, Lock, UserCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -19,6 +19,9 @@ const Pricing = () => {
     firstName: '',
     lastName: '',
     email: '',
+    username: '',
+    password: '',
+    confirmPassword: '',
     phone: '',
     company: '',
     address: '',
@@ -38,13 +41,32 @@ const Pricing = () => {
 
   const handleFormSubmit = (planId: string) => {
     // Basic validation
-    const requiredFields = ['firstName', 'lastName', 'email', 'cardNumber', 'expiryDate', 'cvv'];
+    const requiredFields = ['firstName', 'lastName', 'email', 'username', 'password', 'confirmPassword', 'cardNumber', 'expiryDate', 'cvv'];
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
     
     if (missingFields.length > 0) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Password validation
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Password Mismatch",
+        description: "Passwords do not match. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      toast({
+        title: "Password Too Short",
+        description: "Password must be at least 8 characters long.",
         variant: "destructive",
       });
       return;
@@ -57,8 +79,8 @@ const Pricing = () => {
 
     // Reset form and redirect
     setFormData({
-      firstName: '', lastName: '', email: '', phone: '', company: '',
-      address: '', city: '', state: '', zipCode: '', country: '',
+      firstName: '', lastName: '', email: '', username: '', password: '', confirmPassword: '', 
+      phone: '', company: '', address: '', city: '', state: '', zipCode: '', country: '',
       cardNumber: '', expiryDate: '', cvv: '', cardName: ''
     });
     setSelectedPlan(null);
@@ -236,6 +258,57 @@ const Pricing = () => {
                 className="pl-10"
                 required
               />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="username">Username *</Label>
+            <div className="relative">
+              <UserCheck className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="username"
+                value={formData.username}
+                onChange={(e) => handleInputChange('username', e.target.value)}
+                placeholder="johndoe123"
+                className="pl-10"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="password">Password *</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  placeholder="Enter password"
+                  className="pl-10"
+                  required
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Must be at least 8 characters long
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm Password *</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={formData.confirmPassword}
+                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                  placeholder="Confirm password"
+                  className="pl-10"
+                  required
+                />
+              </div>
             </div>
           </div>
 
