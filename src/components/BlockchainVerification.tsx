@@ -189,15 +189,14 @@ const BlockchainVerification = () => {
           }
           
            .logo {
-             width: 150px;
-             height: 150px;
+             width: 300px;
+             height: 300px;
              margin: 0 auto 20px;
              display: flex;
              align-items: center;
              justify-content: center;
              border-radius: 12px;
              overflow: hidden;
-             box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
            }
            
            .logo img {
