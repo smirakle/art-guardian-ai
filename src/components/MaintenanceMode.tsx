@@ -1,18 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useMaintenanceMode } from '@/lib/maintenance';
 import { 
   Wrench, 
   Clock, 
   Shield, 
   Mail,
   Twitter,
-  MessageCircle
+  MessageCircle,
+  Settings,
+  Power
 } from 'lucide-react';
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 
 const MaintenanceMode = () => {
+  const { toggleMaintenanceMode } = useMaintenanceMode();
+  const [adminDialogOpen, setAdminDialogOpen] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+  const handleAdminAccess = () => {
+    // Simple password check - in production, this should be more secure
+    if (adminPassword === 'tsmo-admin-2024') {
+      toggleMaintenanceMode(false);
+      setAdminDialogOpen(false);
+      setAdminPassword('');
+      setPasswordError('');
+    } else {
+      setPasswordError('Invalid admin password');
+    }
+  };
+
+  const handlePasswordKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleAdminAccess();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex items-center justify-center p-4">
       <div className="max-w-2xl mx-auto text-center space-y-8">
@@ -82,6 +110,66 @@ const MaintenanceMode = () => {
                   <span className="text-sm">New deep web scanning capabilities</span>
                 </div>
               </div>
+            </div>
+
+            {/* Admin Override */}
+            <div className="border-t pt-6">
+              <Dialog open={adminDialogOpen} onOpenChange={setAdminDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-primary">
+                    <Settings className="w-3 h-3 mr-1" />
+                    Admin Access
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <Power className="w-5 h-5 text-primary" />
+                      Administrator Override
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      Enter admin password to disable maintenance mode:
+                    </p>
+                    <div className="space-y-2">
+                      <Input
+                        type="password"
+                        placeholder="Admin password"
+                        value={adminPassword}
+                        onChange={(e) => {
+                          setAdminPassword(e.target.value);
+                          setPasswordError('');
+                        }}
+                        onKeyPress={handlePasswordKeyPress}
+                      />
+                      {passwordError && (
+                        <p className="text-sm text-destructive">{passwordError}</p>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button 
+                        onClick={handleAdminAccess}
+                        className="flex-1"
+                        disabled={!adminPassword}
+                      >
+                        <Power className="w-4 h-4 mr-2" />
+                        Disable Maintenance Mode
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => {
+                          setAdminDialogOpen(false);
+                          setAdminPassword('');
+                          setPasswordError('');
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
 
             {/* Contact Information */}
