@@ -1,0 +1,136 @@
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import Stripe from "https://esm.sh/stripe@14.21.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+const logStep = (step: string, details?: any) => {
+  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+  console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
+};
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  const supabaseClient = createClient(
+    Deno.env.get("SUPABASE_URL") ?? "",
+    Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+  );
+
+  try {
+    logStep("Function started");
+
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
+    logStep("Stripe key verified");
+
+    const { planId, billingCycle, email, promoCode } = await req.json();
+    logStep("Request data received", { planId, billingCycle, email, promoCode });
+
+    const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
+
+    // Define plan pricing
+    const planPricing = {
+      student: { monthly: 1900, yearly: 19000 }, // $19/month, $190/year
+      starter: { monthly: 2900, yearly: 29000 }, // $29/month, $290/year  
+      professional: { monthly: 7900, yearly: 79000 }, // $79/month, $790/year
+    };
+
+    if (!planPricing[planId as keyof typeof planPricing]) {
+      throw new Error("Invalid plan selected");
+    }
+
+    const pricing = planPricing[planId as keyof typeof planPricing];
+    const amount = pricing[billingCycle as keyof typeof pricing];
+    logStep("Plan pricing determined", { planId, billingCycle, amount });
+
+    // Check if customer already exists
+    const customers = await stripe.customers.list({ email, limit: 1 });
+    let customerId;
+    if (customers.data.length > 0) {
+      customerId = customers.data[0].id;
+      logStep("Found existing customer", { customerId });
+    } else {
+      logStep("No existing customer found");
+    }
+
+    // Prepare session configuration
+    const sessionConfig: any = {
+      customer: customerId,
+      customer_email: customerId ? undefined : email,
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: { 
+              name: `TSMO ${planId.charAt(0).toUpperCase() + planId.slice(1)} Plan`,
+              description: `Copyright protection for artists - ${planId} tier`
+            },
+            unit_amount: amount,
+            recurring: { 
+              interval: billingCycle === 'monthly' ? 'month' : 'year' 
+            },
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "subscription",
+      success_url: `${req.headers.get("origin")}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${req.headers.get("origin")}/pricing`,
+      metadata: {
+        planId,
+        billingCycle,
+      },
+    };
+
+    // Handle promotional code
+    if (promoCode && promoCode.toLowerCase() === 'freemonth') {
+      logStep("Applying promotional code", { promoCode });
+      
+      // Create or retrieve coupon for one month free
+      let coupon;
+      try {
+        coupon = await stripe.coupons.retrieve('one-month-free');
+        logStep("Found existing coupon");
+      } catch (error) {
+        // Create the coupon if it doesn't exist
+        coupon = await stripe.coupons.create({
+          id: 'one-month-free',
+          name: 'One Month Free',
+          duration: 'once',
+          amount_off: billingCycle === 'monthly' ? amount : Math.floor(amount / 12), // One month's worth
+          currency: 'usd',
+        });
+        logStep("Created new coupon", { couponId: coupon.id });
+      }
+      
+      sessionConfig.discounts = [{
+        coupon: coupon.id,
+      }];
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionConfig);
+    logStep("Checkout session created", { sessionId: session.id, url: session.url });
+
+    return new Response(JSON.stringify({ 
+      url: session.url,
+      sessionId: session.id
+    }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200,
+    });
+
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logStep("ERROR in create-checkout-session", { message: errorMessage });
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500,
+    });
+  }
+});

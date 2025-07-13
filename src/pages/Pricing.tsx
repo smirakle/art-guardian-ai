@@ -6,15 +6,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { CheckCircle, Star, Shield, Zap, Crown, Building2, CreditCard, User, Mail, Phone, MapPin, Lock, UserCheck } from "lucide-react";
+import { CheckCircle, Star, Shield, Zap, Crown, Building2, CreditCard, User, Mail, Phone, MapPin, Lock, UserCheck, Tag } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const Pricing = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [promoCode, setPromoCode] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -39,55 +42,51 @@ const Pricing = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleFormSubmit = (planId: string) => {
-    // Basic validation
-    const requiredFields = ['firstName', 'lastName', 'email', 'username', 'password', 'confirmPassword', 'cardNumber', 'expiryDate', 'cvv'];
-    const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
+  const handleFormSubmit = async (planId: string) => {
+    if (!formData.email) {
+      toast({
+        title: "Missing Email",
+        description: "Please enter your email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsProcessing(true);
     
-    if (missingFields.length > 0) {
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        body: {
+          planId: planId.toLowerCase(),
+          billingCycle,
+          email: formData.email,
+          promoCode: promoCode.trim() || undefined
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        // Open Stripe checkout in a new tab
+        window.open(data.url, '_blank');
+        
+        toast({
+          title: "Redirecting to Checkout",
+          description: promoCode && promoCode.toLowerCase() === 'freemonth' 
+            ? "Your promotional code has been applied! One month free." 
+            : "Opening secure payment page...",
+        });
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
       toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields",
+        title: "Checkout Error",
+        description: "Failed to create checkout session. Please try again.",
         variant: "destructive",
       });
-      return;
+    } finally {
+      setIsProcessing(false);
     }
-
-    // Password validation
-    if (formData.password !== formData.confirmPassword) {
-      toast({
-        title: "Password Mismatch",
-        description: "Passwords do not match. Please try again.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (formData.password.length < 8) {
-      toast({
-        title: "Password Too Short",
-        description: "Password must be at least 8 characters long.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    toast({
-      title: "Account Created Successfully!",
-      description: `Welcome to ${planId} plan! Your protection is now active.`,
-    });
-
-    // Reset form and redirect
-    setFormData({
-      firstName: '', lastName: '', email: '', username: '', password: '', confirmPassword: '', 
-      phone: '', company: '', address: '', city: '', state: '', zipCode: '', country: '',
-      cardNumber: '', expiryDate: '', cvv: '', cardName: ''
-    });
-    setSelectedPlan(null);
-    
-    setTimeout(() => {
-      navigate('/upload');
-    }, 2000);
   };
 
   const plans = [
@@ -405,6 +404,31 @@ const Pricing = () => {
           </div>
         </div>
 
+        {/* Promotional Code */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 mb-4">
+            <Tag className="w-5 h-5 text-primary" />
+            <h3 className="text-lg font-semibold">Promotional Code</h3>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="promoCode">Promotional Code (Optional)</Label>
+            <div className="relative">
+              <Tag className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="promoCode"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value)}
+                placeholder="Enter promo code (e.g., FREEMONTH)"
+                className="pl-10"
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Enter "FREEMONTH" for one month free on your subscription!
+            </p>
+          </div>
+        </div>
+
         {/* Credit Card Information */}
         <div className="space-y-4">
           <div className="flex items-center gap-2 mb-4">
@@ -484,9 +508,10 @@ const Pricing = () => {
 
         <Button
           onClick={() => handleFormSubmit(plan.name)}
-          className="w-full py-3 text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+          disabled={isProcessing}
+          className="w-full py-3 text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 disabled:opacity-50"
         >
-          Start My Protection Plan
+          {isProcessing ? "Processing..." : "Start My Protection Plan"}
         </Button>
       </div>
     );
