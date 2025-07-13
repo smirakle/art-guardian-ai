@@ -21,6 +21,9 @@ export default {
 			fontFamily: {
 				'times': ['"Times New Roman"', 'Times', 'serif'],
 			},
+			fontSize: {
+				'13pt': '13pt',
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
