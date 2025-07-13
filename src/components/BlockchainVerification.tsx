@@ -176,21 +176,20 @@ const BlockchainVerification = () => {
              color: #1e293b;
              font-family: 'Inter', sans-serif;
              position: relative;
-             padding: 60px;
+             padding: 40px;
              display: flex;
              flex-direction: column;
-             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
            }
           
-          .header {
-            text-align: center;
-            margin-bottom: 40px;
-          }
+           .header {
+             text-align: center;
+             margin-bottom: 20px;
+           }
           
            .logo {
-             width: 300px;
-             height: 300px;
-             margin: 0 auto 20px;
+             width: 200px;
+             height: 200px;
+             margin: 0 auto 15px;
              display: flex;
              align-items: center;
              justify-content: center;
@@ -204,37 +203,37 @@ const BlockchainVerification = () => {
              object-fit: contain;
            }
           
-          .company-name {
-            font-size: 32px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-          }
-          
-          .slogan {
-            font-size: 18px;
-            color: #94a3b8;
-            font-weight: 400;
-            margin-bottom: 30px;
-          }
-          
-           .certificate-title {
+           .company-name {
              font-size: 28px;
-             font-weight: 600;
-             text-align: center;
-             margin-bottom: 40px;
-             color: #1e293b;
+             font-weight: 700;
+             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+             -webkit-background-clip: text;
+             -webkit-text-fill-color: transparent;
+             margin-bottom: 6px;
            }
+          
+           .slogan {
+             font-size: 16px;
+             color: #94a3b8;
+             font-weight: 400;
+             margin-bottom: 20px;
+           }
+          
+            .certificate-title {
+              font-size: 24px;
+              font-weight: 600;
+              text-align: center;
+              margin-bottom: 25px;
+              color: #1e293b;
+            }
            
-           .content {
-             flex: 1;
-             display: grid;
-             grid-template-columns: 200px 1fr;
-             gap: 30px;
-             margin-bottom: 40px;
-           }
+            .content {
+              flex: 1;
+              display: grid;
+              grid-template-columns: 180px 1fr;
+              gap: 20px;
+              margin-bottom: 20px;
+            }
            
            .artwork-preview {
              display: flex;
@@ -242,30 +241,29 @@ const BlockchainVerification = () => {
              align-items: center;
            }
            
-           .artwork-image {
-             width: 180px;
-             height: 180px;
-             object-fit: cover;
-             border-radius: 12px;
-             border: 2px solid rgba(59, 130, 246, 0.3);
-             box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-             margin-bottom: 15px;
-             background: #f8fafc;
-           }
+            .artwork-image {
+              width: 160px;
+              height: 160px;
+              object-fit: cover;
+              border-radius: 12px;
+              border: 2px solid rgba(59, 130, 246, 0.3);
+              margin-bottom: 12px;
+              background: #f8fafc;
+            }
            
-           .artwork-placeholder {
-             width: 180px;
-             height: 180px;
-             border-radius: 12px;
-             border: 2px dashed rgba(59, 130, 246, 0.3);
-             display: flex;
-             align-items: center;
-             justify-content: center;
-             font-size: 48px;
-             color: rgba(59, 130, 246, 0.5);
-             margin-bottom: 15px;
-             background: #f8fafc;
-           }
+            .artwork-placeholder {
+              width: 160px;
+              height: 160px;
+              border-radius: 12px;
+              border: 2px dashed rgba(59, 130, 246, 0.3);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 40px;
+              color: rgba(59, 130, 246, 0.5);
+              margin-bottom: 12px;
+              background: #f8fafc;
+            }
            
            .artwork-info {
              text-align: center;
@@ -273,18 +271,18 @@ const BlockchainVerification = () => {
              color: #64748b;
            }
           
-          .verification-fields {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-          }
-          
-           .field {
-             background: #f8fafc;
-             padding: 20px;
-             border-radius: 12px;
-             border: 1px solid rgba(59, 130, 246, 0.2);
+           .verification-fields {
+             display: grid;
+             grid-template-columns: 1fr 1fr;
+             gap: 15px;
            }
+          
+            .field {
+              background: #f8fafc;
+              padding: 15px;
+              border-radius: 12px;
+              border: 1px solid rgba(59, 130, 246, 0.2);
+            }
            
            .field-label {
              font-size: 12px;
@@ -307,13 +305,13 @@ const BlockchainVerification = () => {
              grid-column: 1 / -1;
            }
            
-           .footer {
-             text-align: center;
-             border-top: 1px solid rgba(59, 130, 246, 0.2);
-             padding-top: 30px;
-             color: #64748b;
-             font-size: 12px;
-           }
+            .footer {
+              text-align: center;
+              border-top: 1px solid rgba(59, 130, 246, 0.2);
+              padding-top: 20px;
+              color: #64748b;
+              font-size: 11px;
+            }
           
           .verification-badge {
             display: inline-flex;
