@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      artwork: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          enable_blockchain: boolean | null
+          enable_watermark: boolean | null
+          file_paths: string[]
+          id: string
+          license_type: string | null
+          status: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          enable_blockchain?: boolean | null
+          enable_watermark?: boolean | null
+          file_paths: string[]
+          id?: string
+          license_type?: string | null
+          status?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          enable_blockchain?: boolean | null
+          enable_watermark?: boolean | null
+          file_paths?: string[]
+          id?: string
+          license_type?: string | null
+          status?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

@@ -18,9 +18,12 @@ import {
   AlertTriangle,
   Plus,
   X,
-  Camera
+  Camera,
+  FolderOpen
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import VisualRecognition from "@/components/VisualRecognition";
 
 interface UploadedFile {
@@ -35,6 +38,7 @@ interface UploadedFile {
 
 const Upload = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [artworkTitle, setArtworkTitle] = useState("");
@@ -71,8 +75,17 @@ const Upload = () => {
     }
   };
 
-  const processFiles = (fileList: File[]) => {
-    fileList.forEach((file) => {
+  const processFiles = async (fileList: File[]) => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to upload files",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    for (const file of fileList) {
       const fileId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
       const newFile: UploadedFile = {
         id: fileId,
@@ -96,9 +109,57 @@ const Upload = () => {
 
       setFiles(prev => [...prev, newFile]);
 
-      // Simulate upload progress
-      simulateUpload(fileId);
-    });
+      // Upload to Supabase storage
+      await uploadFile(file, fileId);
+    }
+  };
+
+  const uploadFile = async (file: File, fileId: string) => {
+    try {
+      // Create file path with user ID folder structure
+      const fileName = `${user!.id}/${Date.now()}-${file.name}`;
+      
+      // Upload to Supabase storage
+      const { data, error } = await supabase.storage
+        .from('artwork')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      // Update file status to processing
+      setFiles(prev => prev.map(f => 
+        f.id === fileId ? { ...f, status: 'processing', progress: 100 } : f
+      ));
+
+      // Simulate processing time
+      setTimeout(() => {
+        setFiles(prev => prev.map(f => 
+          f.id === fileId ? { ...f, status: 'protected' } : f
+        ));
+        
+        toast({
+          title: "File Uploaded",
+          description: `${file.name} has been uploaded successfully`,
+        });
+      }, 1000);
+
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      setFiles(prev => prev.map(f => 
+        f.id === fileId ? { ...f, status: 'error' } : f
+      ));
+      
+      toast({
+        title: "Upload Failed",
+        description: error.message || "Failed to upload file",
+        variant: "destructive",
+      });
+    }
   };
 
   const simulateUpload = (fileId: string) => {
@@ -326,35 +387,39 @@ const Upload = () => {
               <p className="text-muted-foreground mb-4">
                 Support for images, videos, audio, and PDFs up to 50MB each
               </p>
-              <Input
+              <input
                 type="file"
                 multiple
                 accept="image/*,video/*,audio/*,.pdf"
                 onChange={handleFileSelect}
-                className="hidden"
+                style={{ display: 'none' }}
                 id="file-upload"
               />
               <input
                 type="file"
-                {...({ webkitdirectory: "" } as any)}
                 multiple
+                {...({ webkitdirectory: "true" } as any)}
                 onChange={handleFileSelect}
                 style={{ display: 'none' }}
                 id="folder-upload"
               />
               <div className="flex gap-3">
-                <Label htmlFor="file-upload">
-                  <Button variant="outline" className="cursor-pointer">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Choose Files
-                  </Button>
-                </Label>
-                <Label htmlFor="folder-upload">
-                  <Button variant="outline" className="cursor-pointer">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Upload Folder
-                  </Button>
-                </Label>
+                <Button 
+                  variant="outline" 
+                  onClick={() => document.getElementById('file-upload')?.click()}
+                  className="cursor-pointer"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Choose Files
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => document.getElementById('folder-upload')?.click()}
+                  className="cursor-pointer"
+                >
+                  <FolderOpen className="w-4 h-4 mr-2" />
+                  Upload Folder
+                </Button>
               </div>
             </div>
           </CardContent>
