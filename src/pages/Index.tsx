@@ -61,9 +61,40 @@ const Index = () => {
 
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const data = {
+      firstName: formData.get('firstName'),
+      lastName: formData.get('lastName'),
+      email: formData.get('email'),
+      subject: formData.get('subject'),
+      message: formData.get('message')
+    };
+    
+    // Simulate form submission
+    setTimeout(() => {
+      toast({
+        title: "Message Sent Successfully!",
+        description: `Thank you ${data.firstName}! We'll get back to you within 24 hours.`,
+      });
+      (e.target as HTMLFormElement).reset();
+    }, 1000);
+  };
+
+  const handlePricingPlan = (plan: string) => {
     toast({
-      title: "Message Sent!",
-      description: "We'll get back to you within 24 hours.",
+      title: `${plan} Plan Selected`,
+      description: "Redirecting to checkout...",
+    });
+    // In a real app, this would redirect to a payment processor
+    setTimeout(() => {
+      window.location.href = `/checkout?plan=${plan.toLowerCase()}`;
+    }, 1500);
+  };
+
+  const handleFreeTrial = (plan: string) => {
+    toast({
+      title: "Free Trial Started!",
+      description: `Your 14-day ${plan} trial is now active. Check your email for setup instructions.`,
     });
   };
 
@@ -520,7 +551,11 @@ const Index = () => {
                     <span className="text-sm">Email support</span>
                   </div>
                 </div>
-                <Button className="w-full" variant="outline">
+                <Button 
+                  className="w-full" 
+                  variant="outline"
+                  onClick={() => handleFreeTrial("Student")}
+                >
                   Start Free Trial
                 </Button>
               </CardContent>
@@ -554,7 +589,11 @@ const Index = () => {
                     <span className="text-sm">Email support</span>
                   </div>
                 </div>
-                <Button className="w-full" variant="outline">
+                <Button 
+                  className="w-full" 
+                  variant="outline"
+                  onClick={() => handleFreeTrial("Starter")}
+                >
                   Start Free Trial
                 </Button>
               </CardContent>
@@ -597,7 +636,10 @@ const Index = () => {
                     <span className="text-sm">Priority support</span>
                   </div>
                 </div>
-                <Button className="w-full bg-gradient-to-r from-primary to-accent">
+                <Button 
+                  className="w-full bg-gradient-to-r from-primary to-accent"
+                  onClick={() => handleFreeTrial("Professional")}
+                >
                   Start Free Trial
                 </Button>
               </CardContent>
@@ -639,7 +681,19 @@ const Index = () => {
                     <span className="text-sm">Legal assistance</span>
                   </div>
                 </div>
-                <Button className="w-full" variant="outline">
+                <Button 
+                  className="w-full" 
+                  variant="outline"
+                  onClick={() => {
+                    toast({
+                      title: "Contact Sales",
+                      description: "Redirecting to enterprise consultation form...",
+                    });
+                    setTimeout(() => {
+                      window.location.href = "/contact?type=enterprise";
+                    }, 1500);
+                  }}
+                >
                   Contact Sales
                 </Button>
               </CardContent>
@@ -882,24 +936,24 @@ const Index = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="text-sm font-medium mb-2 block">First Name</label>
-                      <Input placeholder="John" />
+                      <Input name="firstName" placeholder="John" required />
                     </div>
                     <div>
                       <label className="text-sm font-medium mb-2 block">Last Name</label>
-                      <Input placeholder="Doe" />
+                      <Input name="lastName" placeholder="Doe" required />
                     </div>
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Email</label>
-                    <Input type="email" placeholder="john@example.com" />
+                    <Input name="email" type="email" placeholder="john@example.com" required />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Subject</label>
-                    <Input placeholder="I'm interested in..." />
+                    <Input name="subject" placeholder="I'm interested in..." required />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Message</label>
-                    <Textarea placeholder="Tell us about your art protection needs..." rows={4} />
+                    <Textarea name="message" placeholder="Tell us about your art protection needs..." rows={4} required />
                   </div>
                   <Button type="submit" className="w-full bg-gradient-to-r from-primary to-accent">
                     Send Message
