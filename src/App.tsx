@@ -9,6 +9,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { useMaintenanceMode } from "@/lib/maintenance";
 import Index from "./pages/Index";
+import AboutTsmo from "./pages/AboutTsmo";
 import Upload from "./pages/Upload";
 import Monitoring from "./pages/Monitoring";
 import Demo from "./pages/Demo";
@@ -53,6 +54,7 @@ const App = () => {
             <div className="pt-16">
               <Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/about-tsmo" element={<AboutTsmo />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/upload" element={
                   <ProtectedRoute>

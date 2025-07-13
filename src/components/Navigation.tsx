@@ -17,6 +17,7 @@ const Navigation = () => {
 
   const navItems = [
     { path: "/", label: "Home", icon: Home },
+    { path: "/about-tsmo", label: "About TSMO", icon: User },
     { path: "/upload", label: "Upload", icon: Upload },
     { path: "/monitoring", label: "Monitoring", icon: Activity },
     { path: "/deep-scan", label: "Deep Scan", icon: Shield },
