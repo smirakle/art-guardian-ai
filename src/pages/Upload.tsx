@@ -284,16 +284,53 @@ const Upload = () => {
         description: "Your artwork protection process has begun",
       });
 
-      // Simulate protection process for all files
+      // Update files to processing status
       const protectedFiles = files.map(file => ({ 
         ...file, 
         status: 'processing' as const,
-        progress: 0 
+        progress: 50 
       }));
       setFiles(protectedFiles);
 
-      // Simulate protection steps
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Get file paths from uploaded files
+      const filePaths = files.map(file => `${user!.id}/${Date.now()}-${file.name}`);
+
+      // Create artwork record in database
+      const { data: artwork, error: artworkError } = await supabase
+        .from('artwork')
+        .insert({
+          user_id: user!.id,
+          title: artworkTitle,
+          description: description || null,
+          category,
+          tags: tags.length > 0 ? tags : null,
+          license_type: licenseType || null,
+          file_paths: filePaths,
+          enable_watermark: enableWatermark,
+          enable_blockchain: enableBlockchain,
+          status: 'protected'
+        })
+        .select()
+        .single();
+
+      if (artworkError) {
+        throw artworkError;
+      }
+
+      // Start monitoring scan for the artwork
+      const { error: scanError } = await supabase
+        .from('monitoring_scans')
+        .insert({
+          artwork_id: artwork.id,
+          scan_type: 'comprehensive',
+          status: 'running',
+          started_at: new Date().toISOString(),
+          total_sources: 100
+        });
+
+      if (scanError) {
+        console.error('Scan creation error:', scanError);
+      }
 
       // Update to protected status
       const finalFiles = files.map(file => ({ 
@@ -309,8 +346,8 @@ const Upload = () => {
         description: `${files.length} file(s) are now protected and being monitored 24/7`,
       });
 
-      // Log protection details
       console.log("Protection applied with:", {
+        artworkId: artwork.id,
         title: artworkTitle,
         category,
         description,
@@ -321,10 +358,11 @@ const Upload = () => {
         files: files.length
       });
 
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Protection error:', error);
       toast({
         title: "Protection Failed",
-        description: "There was an error protecting your artwork. Please try again.",
+        description: error.message || "There was an error protecting your artwork. Please try again.",
         variant: "destructive",
       });
     } finally {

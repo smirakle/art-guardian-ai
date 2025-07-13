@@ -62,6 +62,169 @@ export type Database = {
         }
         Relationships: []
       }
+      copyright_matches: {
+        Row: {
+          artwork_id: string
+          context: string | null
+          created_at: string
+          description: string | null
+          detected_at: string
+          id: string
+          image_url: string | null
+          is_authorized: boolean | null
+          is_reviewed: boolean | null
+          match_confidence: number
+          match_type: string
+          scan_id: string
+          source_domain: string | null
+          source_title: string | null
+          source_url: string
+          threat_level: string | null
+          thumbnail_url: string | null
+        }
+        Insert: {
+          artwork_id: string
+          context?: string | null
+          created_at?: string
+          description?: string | null
+          detected_at?: string
+          id?: string
+          image_url?: string | null
+          is_authorized?: boolean | null
+          is_reviewed?: boolean | null
+          match_confidence: number
+          match_type: string
+          scan_id: string
+          source_domain?: string | null
+          source_title?: string | null
+          source_url: string
+          threat_level?: string | null
+          thumbnail_url?: string | null
+        }
+        Update: {
+          artwork_id?: string
+          context?: string | null
+          created_at?: string
+          description?: string | null
+          detected_at?: string
+          id?: string
+          image_url?: string | null
+          is_authorized?: boolean | null
+          is_reviewed?: boolean | null
+          match_confidence?: number
+          match_type?: string
+          scan_id?: string
+          source_domain?: string | null
+          source_title?: string | null
+          source_url?: string
+          threat_level?: string | null
+          thumbnail_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "copyright_matches_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artwork"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "copyright_matches_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "monitoring_scans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      monitoring_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          id: string
+          is_read: boolean | null
+          match_id: string
+          message: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          match_id: string
+          message: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          match_id?: string
+          message?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monitoring_alerts_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "copyright_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      monitoring_scans: {
+        Row: {
+          artwork_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          matches_found: number | null
+          scan_type: string
+          scanned_sources: number | null
+          started_at: string | null
+          status: string
+          total_sources: number | null
+        }
+        Insert: {
+          artwork_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          matches_found?: number | null
+          scan_type: string
+          scanned_sources?: number | null
+          started_at?: string | null
+          status?: string
+          total_sources?: number | null
+        }
+        Update: {
+          artwork_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          matches_found?: number | null
+          scan_type?: string
+          scanned_sources?: number | null
+          started_at?: string | null
+          status?: string
+          total_sources?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monitoring_scans_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artwork"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
