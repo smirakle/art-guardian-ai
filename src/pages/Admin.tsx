@@ -40,7 +40,8 @@ import {
   Timer,
   Target,
   Radar,
-  Save
+  Save,
+  Download
 } from "lucide-react";
 
 interface AdminStats {
@@ -62,6 +63,27 @@ interface ThreatAlert {
   timestamp: string;
   source: string;
   status: 'active' | 'investigating' | 'resolved';
+}
+
+interface UserAccount {
+  id: string;
+  name: string;
+  email: string;
+  plan: 'Student' | 'Starter' | 'Professional' | 'Enterprise';
+  status: 'active' | 'suspended' | 'pending';
+  joinDate: string;
+  lastActive: string;
+  artworksProtected: number;
+  threatsBlocked: number;
+}
+
+interface AuditLog {
+  id: string;
+  action: string;
+  user: string;
+  timestamp: string;
+  details: string;
+  severity: 'info' | 'warning' | 'error';
 }
 
 interface SweepConfig {
@@ -115,9 +137,93 @@ const mockThreatAlerts: ThreatAlert[] = [
   }
 ];
 
+const mockUsers: UserAccount[] = [
+  {
+    id: '1',
+    name: 'Sarah Chen',
+    email: 'sarah.chen@email.com',
+    plan: 'Professional',
+    status: 'active',
+    joinDate: '2023-11-15',
+    lastActive: '2024-01-08T16:30:00Z',
+    artworksProtected: 247,
+    threatsBlocked: 12
+  },
+  {
+    id: '2',
+    name: 'Marcus Rivera',
+    email: 'marcus.r@designstudio.co',
+    plan: 'Enterprise',
+    status: 'active',
+    joinDate: '2023-08-22',
+    lastActive: '2024-01-08T14:15:00Z',
+    artworksProtected: 1834,
+    threatsBlocked: 89
+  },
+  {
+    id: '3',
+    name: 'Emma Thompson',
+    email: 'emma.t@student.edu',
+    plan: 'Student',
+    status: 'active',
+    joinDate: '2024-01-05',
+    lastActive: '2024-01-08T12:45:00Z',
+    artworksProtected: 23,
+    threatsBlocked: 3
+  },
+  {
+    id: '4',
+    name: 'Alex Johnson',
+    email: 'alex.johnson@suspicious.net',
+    plan: 'Starter',
+    status: 'suspended',
+    joinDate: '2023-12-20',
+    lastActive: '2024-01-07T09:22:00Z',
+    artworksProtected: 56,
+    threatsBlocked: 0
+  }
+];
+
+const mockAuditLogs: AuditLog[] = [
+  {
+    id: '1',
+    action: 'User Account Suspended',
+    user: 'admin@tsmo.com',
+    timestamp: '2024-01-08T16:45:00Z',
+    details: 'Suspended user alex.johnson@suspicious.net for suspicious activity',
+    severity: 'warning'
+  },
+  {
+    id: '2',
+    action: 'System Configuration Changed',
+    user: 'admin@tsmo.com',
+    timestamp: '2024-01-08T15:20:00Z',
+    details: 'Updated deep scan frequency from 6h to 4h',
+    severity: 'info'
+  },
+  {
+    id: '3',
+    action: 'Emergency Shutdown Initiated',
+    user: 'system',
+    timestamp: '2024-01-08T14:10:00Z',
+    details: 'Automatic shutdown triggered due to high system load (95%)',
+    severity: 'error'
+  },
+  {
+    id: '4',
+    action: 'Bulk User Export',
+    user: 'admin@tsmo.com',
+    timestamp: '2024-01-08T13:35:00Z',
+    details: 'Exported user data for 1,247 accounts for compliance audit',
+    severity: 'info'
+  }
+];
+
 const Admin = () => {
   const [stats, setStats] = useState<AdminStats>(mockAdminStats);
   const [alerts, setAlerts] = useState<ThreatAlert[]>(mockThreatAlerts);
+  const [users, setUsers] = useState<UserAccount[]>(mockUsers);
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>(mockAuditLogs);
   const [activeTab, setActiveTab] = useState("dashboard");
   const { isMaintenanceMode, toggleMaintenanceMode } = useMaintenanceMode();
   const [autoScaling, setAutoScaling] = useState(true);
@@ -217,11 +323,13 @@ const Admin = () => {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+              <TabsTrigger value="users">User Management</TabsTrigger>
               <TabsTrigger value="monitoring">Advanced Monitoring</TabsTrigger>
               <TabsTrigger value="deep-scan">Deep Scan Control</TabsTrigger>
               <TabsTrigger value="blockchain">Blockchain Analytics</TabsTrigger>
+              <TabsTrigger value="security">Security & Audit</TabsTrigger>
             </TabsList>
 
             <TabsContent value="dashboard" className="space-y-6">
@@ -348,6 +456,112 @@ const Admin = () => {
                   </CardContent>
                 </Card>
               </div>
+            </TabsContent>
+
+            <TabsContent value="users" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-2xl font-bold">User Management</h3>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Export Users
+                  </Button>
+                  <Button size="sm">
+                    <Users className="w-4 h-4 mr-2" />
+                    Add User
+                  </Button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center">
+                      <Users className="h-4 w-4 text-blue-500" />
+                      <div className="ml-4">
+                        <div className="text-2xl font-bold">{users.filter(u => u.status === 'active').length}</div>
+                        <div className="text-sm text-muted-foreground">Active Users</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center">
+                      <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                      <div className="ml-4">
+                        <div className="text-2xl font-bold">{users.filter(u => u.status === 'suspended').length}</div>
+                        <div className="text-sm text-muted-foreground">Suspended</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center">
+                      <Clock className="h-4 w-4 text-orange-500" />
+                      <div className="ml-4">
+                        <div className="text-2xl font-bold">{users.filter(u => u.status === 'pending').length}</div>
+                        <div className="text-sm text-muted-foreground">Pending</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center">
+                      <Shield className="h-4 w-4 text-green-500" />
+                      <div className="ml-4">
+                        <div className="text-2xl font-bold">{users.reduce((sum, u) => sum + u.artworksProtected, 0)}</div>
+                        <div className="text-sm text-muted-foreground">Total Protected</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>All Users</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {users.map((user) => (
+                      <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex items-center space-x-4">
+                          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                            <Users className="w-5 h-5 text-primary" />
+                          </div>
+                          <div>
+                            <div className="font-medium">{user.name}</div>
+                            <div className="text-sm text-muted-foreground">{user.email}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-4 text-sm">
+                          <Badge variant={user.status === 'active' ? 'default' : user.status === 'suspended' ? 'destructive' : 'secondary'}>
+                            {user.plan}
+                          </Badge>
+                          <Badge variant={user.status === 'active' ? 'default' : user.status === 'suspended' ? 'destructive' : 'secondary'}>
+                            {user.status}
+                          </Badge>
+                          <div className="text-right">
+                            <div>{user.artworksProtected} protected</div>
+                            <div className="text-muted-foreground">
+                              Last: {new Date(user.lastActive).toLocaleDateString()}
+                            </div>
+                          </div>
+                          <div className="flex space-x-1">
+                            <Button variant="outline" size="sm">Edit</Button>
+                            <Button variant="outline" size="sm" className={user.status === 'suspended' ? 'text-green-600' : 'text-red-600'}>
+                              {user.status === 'suspended' ? 'Restore' : 'Suspend'}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             <TabsContent value="monitoring" className="space-y-6">
@@ -924,6 +1138,138 @@ const Admin = () => {
                   </CardContent>
                 </Card>
               </div>
+            </TabsContent>
+
+            <TabsContent value="security" className="space-y-6">
+              <Alert>
+                <Lock className="h-4 w-4" />
+                <AlertDescription>
+                  Security and audit management for comprehensive system oversight and compliance.
+                </AlertDescription>
+              </Alert>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="w-5 h-5" />
+                      System Audit Logs
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3 max-h-96 overflow-y-auto">
+                      {auditLogs.map((log) => (
+                        <div key={log.id} className="p-3 border rounded-lg">
+                          <div className="flex items-center justify-between mb-2">
+                            <Badge variant={log.severity === 'error' ? 'destructive' : log.severity === 'warning' ? 'secondary' : 'default'}>
+                              {log.severity}
+                            </Badge>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(log.timestamp).toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="font-medium text-sm mb-1">{log.action}</div>
+                          <div className="text-xs text-muted-foreground mb-1">User: {log.user}</div>
+                          <div className="text-xs">{log.details}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Settings className="w-5 h-5" />
+                      Security Settings
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium">Two-Factor Authentication</div>
+                        <div className="text-sm text-muted-foreground">Require 2FA for all admin accounts</div>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
+                    <Separator />
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium">IP Whitelist</div>
+                        <div className="text-sm text-muted-foreground">Restrict admin access to specific IPs</div>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
+                    <Separator />
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium">Auto-Lockout</div>
+                        <div className="text-sm text-muted-foreground">Lock accounts after failed attempts</div>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
+                    <Separator />
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium">Session Timeout</div>
+                        <div className="text-sm text-muted-foreground">Auto-logout after inactivity</div>
+                      </div>
+                      <Select defaultValue="30">
+                        <SelectTrigger className="w-24">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="15">15m</SelectItem>
+                          <SelectItem value="30">30m</SelectItem>
+                          <SelectItem value="60">1h</SelectItem>
+                          <SelectItem value="120">2h</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Separator />
+                    <div className="space-y-3">
+                      <Button className="w-full" variant="outline">
+                        <Download className="w-4 h-4 mr-2" />
+                        Export Audit Logs
+                      </Button>
+                      <Button className="w-full" variant="outline">
+                        <Save className="w-4 h-4 mr-2" />
+                        Backup Configuration
+                      </Button>
+                      <Button className="w-full" variant="destructive">
+                        <AlertTriangle className="w-4 h-4 mr-2" />
+                        Emergency Shutdown
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Security Events</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-2 bg-green-50 rounded">
+                      <span className="text-sm">✅ System backup completed successfully</span>
+                      <span className="text-xs text-muted-foreground">2 minutes ago</span>
+                    </div>
+                    <div className="flex items-center justify-between p-2 bg-yellow-50 rounded">
+                      <span className="text-sm">⚠️ Failed login attempt from 192.168.1.100</span>
+                      <span className="text-xs text-muted-foreground">15 minutes ago</span>
+                    </div>
+                    <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
+                      <span className="text-sm">ℹ️ Admin session started from 10.0.0.50</span>
+                      <span className="text-xs text-muted-foreground">1 hour ago</span>
+                    </div>
+                    <div className="flex items-center justify-between p-2 bg-red-50 rounded">
+                      <span className="text-sm">🚨 Suspicious API activity detected</span>
+                      <span className="text-xs text-muted-foreground">3 hours ago</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>
