@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navigation from "@/components/Navigation";
+import MaintenanceMode from "@/components/MaintenanceMode";
+import { useMaintenanceMode } from "@/lib/maintenance";
 import Index from "./pages/Index";
 import Upload from "./pages/Upload";
 import Monitoring from "./pages/Monitoring";
@@ -16,30 +18,49 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Navigation />
-        <div className="pt-16">
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/upload" element={<Upload />} />
-            <Route path="/monitoring" element={<Monitoring />} />
-            <Route path="/demo" element={<Demo />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/deep-scan" element={<DeepWebScan />} />
-            <Route path="/blockchain" element={<BlockchainVerification />} />
-            <Route path="/community" element={<Community />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  // Use shared maintenance mode state
+  const { isMaintenanceMode } = useMaintenanceMode();
+
+  // If maintenance mode is enabled, show only the maintenance page
+  if (isMaintenanceMode) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <MaintenanceMode />
+        </TooltipProvider>
+      </QueryClientProvider>
+    );
+  }
+
+  // Normal app when maintenance mode is disabled
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Navigation />
+          <div className="pt-16">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/upload" element={<Upload />} />
+              <Route path="/monitoring" element={<Monitoring />} />
+              <Route path="/demo" element={<Demo />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/deep-scan" element={<DeepWebScan />} />
+              <Route path="/blockchain" element={<BlockchainVerification />} />
+              <Route path="/community" element={<Community />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

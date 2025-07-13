@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
+import { useMaintenanceMode } from "@/lib/maintenance";
 import { 
   Shield, 
   AlertTriangle, 
@@ -118,7 +119,7 @@ const Admin = () => {
   const [stats, setStats] = useState<AdminStats>(mockAdminStats);
   const [alerts, setAlerts] = useState<ThreatAlert[]>(mockThreatAlerts);
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
+  const { isMaintenanceMode, toggleMaintenanceMode } = useMaintenanceMode();
   const [autoScaling, setAutoScaling] = useState(true);
   const [sweepConfig, setSweepConfig] = useState<SweepConfig>({
     frequency: "hourly",
@@ -203,7 +204,7 @@ const Admin = () => {
                 <div className="flex items-center gap-2">
                   <Switch 
                     checked={isMaintenanceMode} 
-                    onCheckedChange={setIsMaintenanceMode}
+                    onCheckedChange={toggleMaintenanceMode}
                   />
                   <span className="text-sm">Maintenance Mode</span>
                 </div>
