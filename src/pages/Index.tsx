@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -35,9 +35,13 @@ import {
 } from 'lucide-react';
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import MonitoringFlow from "@/components/MonitoringFlow";
+import OnboardingTour from "@/components/OnboardingTour";
+import UserGuidance from "@/components/UserGuidance";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const Index = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const { user, profile } = useAuth();
   const [demoStep, setDemoStep] = useState(0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -87,9 +91,9 @@ const Index = () => {
       title: `${plan} Plan Selected`,
       description: "Redirecting to checkout...",
     });
-    // In a real app, this would redirect to a payment processor
+    // Navigate to checkout
     setTimeout(() => {
-      window.location.href = `/checkout?plan=${plan.toLowerCase()}`;
+      navigate(`/checkout?plan=${plan.toLowerCase()}`);
     }, 1500);
   };
 
@@ -102,9 +106,14 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Onboarding Tour */}
+      <OnboardingTour />
+
       {/* Hero Section */}
       <section className="pt-24 sm:pt-32 pb-20 px-4">
         <div className="container mx-auto text-center max-w-6xl">
+          {/* User Guidance for logged in users */}
+          {user && <UserGuidance />}
           <Badge variant="secondary" className="mb-6 px-3 sm:px-4 py-2 text-xs sm:text-sm">
             🔒 Trusted by 10,000+ Artists Worldwide
           </Badge>
@@ -135,7 +144,7 @@ const Index = () => {
                 <Button 
                   size="lg" 
                   className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
-                  onClick={() => window.location.href = "/upload"}
+                  onClick={() => navigate("/upload")}
                 >
                   Upload & Protect Your Art
                   <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
@@ -144,7 +153,7 @@ const Index = () => {
                   variant="outline" 
                   size="lg" 
                   className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg"
-                  onClick={() => window.location.href = "/monitoring"}
+                  onClick={() => navigate("/monitoring")}
                 >
                   <Activity className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                   View Dashboard
@@ -156,7 +165,7 @@ const Index = () => {
                 <Button 
                   size="lg" 
                   className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
-                  onClick={() => window.location.href = "/auth"}
+                  onClick={() => navigate("/auth")}
                 >
                   Get Started Free
                   <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
@@ -165,7 +174,7 @@ const Index = () => {
                   variant="outline" 
                   size="lg" 
                   className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg"
-                  onClick={() => window.location.href = "/demo"}
+                  onClick={() => navigate("/demo")}
                 >
                   <Play className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                   Watch Demo
@@ -353,7 +362,7 @@ const Index = () => {
                 <Button 
                   className="w-full" 
                   variant="outline"
-                  onClick={() => window.location.href="/pricing"}
+                  onClick={() => navigate("/pricing")}
                 >
                   Choose This Plan
                 </Button>
@@ -391,7 +400,7 @@ const Index = () => {
                 <Button 
                   className="w-full" 
                   variant="outline"
-                  onClick={() => window.location.href="/pricing"}
+                  onClick={() => navigate("/pricing")}
                 >
                   Choose This Plan
                 </Button>

@@ -9,23 +9,31 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
-import { Shield, Upload, Activity, Home, Users, Link2, Settings, UserCog, LogIn, LogOut, User } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, Settings, UserCog, LogIn, LogOut, User, DollarSign } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
 
 const Navigation = () => {
-  const currentPath = window.location.pathname;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname;
   const { user, profile, role, signOut, loading } = useAuth();
 
   const navItems = [
     { path: "/", label: "Home", icon: Home },
-    { path: "/about-tsmo", label: "About TSMO", icon: User },
-    { path: "/upload", label: "Upload", icon: Upload },
-    { path: "/monitoring", label: "Monitoring", icon: Activity },
-    { path: "/deep-scan", label: "Deep Scan", icon: Shield },
-    { path: "/blockchain", label: "Blockchain", icon: Link2 },
-    { path: "/pricing", label: "Pricing", icon: Settings },
+    { path: "/about-tsmo", label: "About", icon: User },
+    { path: "/upload", label: "Upload", icon: Upload, needsAuth: true },
+    { path: "/monitoring", label: "Monitor", icon: Activity, needsAuth: true },
+    { path: "/deep-scan", label: "Deep Scan", icon: Shield, needsAuth: true },
+    { path: "/blockchain", label: "Blockchain", icon: Link2, needsAuth: true },
+    { path: "/pricing", label: "Pricing", icon: DollarSign },
     { path: "/community", label: "Community", icon: Users },
     { path: "/admin", label: "Admin", icon: UserCog, isAdmin: true }
   ];
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50">
@@ -42,29 +50,45 @@ const Navigation = () => {
             </div>
           </div>
 
-          {/* Mobile Navigation Links - Horizontal Scroll */}
+          {/* Navigation Links */}
           <div className="flex items-center gap-1 overflow-x-auto max-w-[50vw] md:max-w-none scrollbar-hide">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = currentPath === item.path;
+              const needsAuth = item.needsAuth && !user;
+              const canShow = !item.isAdmin || (item.isAdmin && role === 'admin');
+              
+              if (!canShow) return null;
               
               return (
-                <Button
-                  key={item.path}
-                  variant={isActive ? "default" : "ghost"}
-                  onClick={() => window.location.href = item.path}
-                  className={`flex items-center gap-1 md:gap-2 min-w-max px-2 md:px-3 text-xs md:text-sm ${
-                    isActive 
-                      ? "bg-primary text-primary-foreground" 
-                      : item.isAdmin
-                      ? "hover:bg-destructive/20 text-destructive hover:text-destructive"
-                      : "hover:bg-secondary/50"
-                  } ${item.isAdmin ? "border border-destructive/30" : ""}`}
-                  size="sm"
-                >
-                  <Icon className="w-3 h-3 md:w-4 md:h-4" />
-                  <span className="hidden sm:inline">{item.label}</span>
-                </Button>
+                <div key={item.path} className="relative">
+                  <Button
+                    variant={isActive ? "default" : "ghost"}
+                    onClick={() => {
+                      if (needsAuth) {
+                        navigate('/auth');
+                      } else {
+                        handleNavigation(item.path);
+                      }
+                    }}
+                    className={`flex items-center gap-1 md:gap-2 min-w-max px-2 md:px-3 text-xs md:text-sm ${
+                      isActive 
+                        ? "bg-primary text-primary-foreground" 
+                        : item.isAdmin
+                        ? "hover:bg-destructive/20 text-destructive hover:text-destructive"
+                        : "hover:bg-secondary/50"
+                    } ${item.isAdmin ? "border border-destructive/30" : ""}`}
+                    size="sm"
+                  >
+                    <Icon className="w-3 h-3 md:w-4 md:h-4" />
+                    <span className="hidden sm:inline">{item.label}</span>
+                  </Button>
+                  {needsAuth && (
+                    <Badge variant="secondary" className="absolute -top-2 -right-1 text-xs px-1 py-0">
+                      Login
+                    </Badge>
+                  )}
+                </div>
               );
             })}
           </div>
@@ -121,7 +145,7 @@ const Navigation = () => {
                   <>
                     <Button
                       variant="ghost"
-                      onClick={() => window.location.href = "/auth"}
+                      onClick={() => navigate('/auth')}
                       className="hidden sm:flex"
                       size="sm"
                     >
@@ -130,7 +154,7 @@ const Navigation = () => {
                     </Button>
                     <Button
                       className="hidden md:flex bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground text-sm"
-                      onClick={() => window.location.href = "/pricing"}
+                      onClick={() => navigate('/pricing')}
                       size="sm"
                     >
                       Get Protected
