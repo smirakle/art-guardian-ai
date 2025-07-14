@@ -7,7 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   CreditCard, 
   Lock, 
@@ -15,7 +17,8 @@ import {
   Check,
   ArrowRight,
   Zap,
-  Star
+  Star,
+  User
 } from "lucide-react";
 
 interface PlanDetails {
@@ -27,10 +30,20 @@ interface PlanDetails {
 
 const Checkout = () => {
   const { toast } = useToast();
+  const { user, signIn, signUp } = useAuth();
   const [selectedPlan, setSelectedPlan] = useState<string>("professional");
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
   const [paymentMethod, setPaymentMethod] = useState<"card" | "paypal">("card");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isAuthProcessing, setIsAuthProcessing] = useState(false);
+  
+  // Auth form states
+  const [authForm, setAuthForm] = useState({
+    email: '',
+    password: '',
+    fullName: '',
+    username: ''
+  });
 
   const plans: Record<string, PlanDetails> = {
     student: {
@@ -65,6 +78,57 @@ const Checkout = () => {
   const finalPrice = billingCycle === "yearly" 
     ? currentPlan.price * 12 * (1 - yearlyDiscount)
     : currentPlan.price;
+
+  const handleAuthFormChange = (field: string, value: string) => {
+    setAuthForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsAuthProcessing(true);
+
+    const { error } = await signIn(authForm.email, authForm.password);
+    
+    if (error) {
+      toast({
+        title: "Sign In Failed",
+        description: error.message || "Please check your credentials and try again.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Welcome Back!",
+        description: "You've been successfully signed in.",
+      });
+    }
+    
+    setIsAuthProcessing(false);
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsAuthProcessing(true);
+
+    const { error } = await signUp(authForm.email, authForm.password, {
+      full_name: authForm.fullName,
+      username: authForm.username,
+    });
+    
+    if (error) {
+      toast({
+        title: "Sign Up Failed",
+        description: error.message || "Please try again.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Account Created!",
+        description: "Please check your email to verify your account.",
+      });
+    }
+    
+    setIsAuthProcessing(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -158,6 +222,157 @@ const Checkout = () => {
 
           {/* Order Summary & Payment */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Authentication Section */}
+            {!user && (
+              <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <User className="w-5 h-5 text-primary" />
+                    Sign In or Create Account
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Tabs defaultValue="signin" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="signin">Sign In</TabsTrigger>
+                      <TabsTrigger value="signup">Create Account</TabsTrigger>
+                    </TabsList>
+                    
+                    <TabsContent value="signin" className="space-y-4">
+                      <form onSubmit={handleSignIn} className="space-y-4">
+                        <div>
+                          <Label htmlFor="signin-email">Email Address</Label>
+                          <Input 
+                            id="signin-email" 
+                            type="email" 
+                            placeholder="your@email.com"
+                            value={authForm.email}
+                            onChange={(e) => handleAuthFormChange('email', e.target.value)}
+                            required 
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="signin-password">Password</Label>
+                          <Input 
+                            id="signin-password" 
+                            type="password" 
+                            placeholder="Your password"
+                            value={authForm.password}
+                            onChange={(e) => handleAuthFormChange('password', e.target.value)}
+                            required 
+                          />
+                        </div>
+                        
+                        <Button 
+                          type="submit" 
+                          className="w-full"
+                          disabled={isAuthProcessing}
+                        >
+                          {isAuthProcessing ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                              Signing In...
+                            </>
+                          ) : (
+                            'Sign In'
+                          )}
+                        </Button>
+                      </form>
+                    </TabsContent>
+                    
+                    <TabsContent value="signup" className="space-y-4">
+                      <form onSubmit={handleSignUp} className="space-y-4">
+                        <div>
+                          <Label htmlFor="signup-name">Full Name</Label>
+                          <Input 
+                            id="signup-name" 
+                            placeholder="John Doe"
+                            value={authForm.fullName}
+                            onChange={(e) => handleAuthFormChange('fullName', e.target.value)}
+                            required 
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="signup-username">Username</Label>
+                          <Input 
+                            id="signup-username" 
+                            placeholder="johndoe"
+                            value={authForm.username}
+                            onChange={(e) => handleAuthFormChange('username', e.target.value)}
+                            required 
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="signup-email">Email Address</Label>
+                          <Input 
+                            id="signup-email" 
+                            type="email" 
+                            placeholder="your@email.com"
+                            value={authForm.email}
+                            onChange={(e) => handleAuthFormChange('email', e.target.value)}
+                            required 
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="signup-password">Password</Label>
+                          <Input 
+                            id="signup-password" 
+                            type="password" 
+                            placeholder="Create a password"
+                            value={authForm.password}
+                            onChange={(e) => handleAuthFormChange('password', e.target.value)}
+                            required 
+                          />
+                        </div>
+                        
+                        <Button 
+                          type="submit" 
+                          className="w-full"
+                          disabled={isAuthProcessing}
+                        >
+                          {isAuthProcessing ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                              Creating Account...
+                            </>
+                          ) : (
+                            'Create Account'
+                          )}
+                        </Button>
+                      </form>
+                    </TabsContent>
+                  </Tabs>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* User Info Display */}
+            {user && (
+              <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <User className="w-5 h-5 text-primary" />
+                    Account Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                      <User className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium">{user.email}</p>
+                      <p className="text-sm text-muted-foreground">Signed in successfully</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Order Summary */}
             <Card className="bg-card/50 backdrop-blur-sm border-border/50">
               <CardHeader>
