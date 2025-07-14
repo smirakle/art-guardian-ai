@@ -15,9 +15,13 @@ interface ScanSource {
 }
 
 serve(async (req) => {
+  console.log('=== EDGE FUNCTION INVOKED ===');
   console.log('Process monitoring scan function called:', new Date().toISOString());
+  console.log('Request method:', req.method);
+  console.log('Request headers:', Object.fromEntries(req.headers.entries()));
   
   if (req.method === 'OPTIONS') {
+    console.log('Handling OPTIONS request');
     return new Response(null, { headers: corsHeaders })
   }
 
@@ -29,7 +33,7 @@ serve(async (req) => {
     )
 
     const requestBody = await req.json()
-    console.log('Request body:', requestBody);
+    console.log('Request body received:', JSON.stringify(requestBody, null, 2));
     
     const { scanId, artworkId } = requestBody
 

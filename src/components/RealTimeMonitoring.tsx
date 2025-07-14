@@ -206,20 +206,17 @@ const RealTimeMonitoring = () => {
             const base64Data = reader.result as string;
             const base64Image = base64Data.split(',')[1]; // Remove data:image/...;base64, prefix
 
-            // Call the visual recognition edge function
+            // Call the monitoring scan edge function
             const { data: analysisData, error: analysisError } = await supabase.functions
-              .invoke('visual-recognition', {
+              .invoke('process-monitoring-scan', {
                 body: {
-                  image: base64Image,
-                  artworkId: artworkId,
                   scanId: scan.id,
-                  searchQuery: `${artwork.title} ${artwork.category}`,
-                  enableRealTimeMonitoring: true
+                  artworkId: artworkId
                 }
               });
 
             if (analysisError) {
-              console.error('Analysis error:', analysisError);
+              console.error('Monitoring scan error:', analysisError);
               
               // Update scan status to failed
               await supabase
