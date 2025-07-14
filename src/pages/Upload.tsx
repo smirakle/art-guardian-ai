@@ -403,6 +403,7 @@ const Upload = () => {
           // Start the monitoring scan in the background
           console.log('Starting monitoring scan for:', scan.id, artwork.id);
           try {
+            console.log('Invoking edge function process-monitoring-scan...');
             const { data, error } = await supabase.functions.invoke('process-monitoring-scan', {
               body: {
                 scanId: scan.id,
@@ -411,12 +412,14 @@ const Upload = () => {
             });
             
             if (error) {
-              console.error('Scan process error:', error);
+              console.error('Edge function invocation error:', error);
+              console.error('Error details:', JSON.stringify(error, null, 2));
             } else {
-              console.log('Scan process started successfully:', data);
+              console.log('Edge function invoked successfully:', data);
             }
           } catch (scanProcessError) {
-            console.error('Error starting scan process:', scanProcessError);
+            console.error('Exception during edge function call:', scanProcessError);
+            console.error('Exception details:', JSON.stringify(scanProcessError, null, 2));
           }
         }
 

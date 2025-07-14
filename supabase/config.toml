@@ -1,1 +1,4 @@
 project_id = "utneaqmbyjwxaqrrarpc"
+
+[functions.process-monitoring-scan]
+verify_jwt = false
