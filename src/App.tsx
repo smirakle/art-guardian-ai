@@ -85,11 +85,7 @@ const App = () => {
                     <BlockchainVerification />
                   </ProtectedRoute>
                 } />
-                <Route path="/community" element={
-                  <ProtectedRoute>
-                    <Community />
-                  </ProtectedRoute>
-                } />
+                <Route path="/community" element={<Community />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
