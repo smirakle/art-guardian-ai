@@ -93,8 +93,8 @@ serve(async (req) => {
 
       sourcesScanned += Math.floor(Math.random() * 5000) + 5000
       
-      // Simulate finding matches (20% chance per batch)
-      if (Math.random() < 0.2) {
+      // Simulate finding matches (80% chance per batch for testing)
+      if (Math.random() < 0.8) {
         const platform = platforms[Math.floor(Math.random() * platforms.length)]
         const confidence = 60 + Math.random() * 40
         const matchType = Math.random() < 0.5 ? 'exact' : 'similar'
