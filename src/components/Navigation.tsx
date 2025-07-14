@@ -58,7 +58,8 @@ const Navigation = () => {
               const needsAuth = item.needsAuth && !user;
               const canShow = !item.isAdmin || (item.isAdmin && role === 'admin');
               
-              if (!canShow) return null;
+              // Hide items that need auth when user is not logged in
+              if (!canShow || (item.needsAuth && !user)) return null;
               
               return (
                 <div key={item.path} className="relative">
