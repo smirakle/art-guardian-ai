@@ -131,76 +131,8 @@ serve(async (req) => {
     let sourcesScanned = 0
     let totalMatches = realMatchesFound
 
-    // If no real matches found, add some simulated copyright violations for testing
-    if (totalMatches === 0) {
-      console.log('No real matches found, adding simulated copyright violations...');
-      
-      // Add simulated copyright matches to database
-      const simulatedMatches = [
-        {
-          artwork_id: artworkId,
-          scan_id: scanId,
-          source_url: 'https://www.etsy.com/listing/unauthorized-print-12345',
-          source_domain: 'etsy.com',
-          source_title: 'Unauthorized Art Print - Etsy Store',
-          match_type: 'similar',
-          match_confidence: 89.5,
-          threat_level: 'high',
-          context: 'Found artwork being sold without permission on Etsy',
-          description: 'Your artwork is being sold as prints without authorization',
-          thumbnail_url: imageUrl,
-          detected_at: new Date().toISOString()
-        },
-        {
-          artwork_id: artworkId,
-          scan_id: scanId,
-          source_url: 'https://www.pinterest.com/pin/copied-artwork-67890',
-          source_domain: 'pinterest.com',
-          source_title: 'Copied Artwork - Pinterest',
-          match_type: 'similar',
-          match_confidence: 76.3,
-          threat_level: 'medium',
-          context: 'Artwork reposted without attribution',
-          description: 'Your artwork has been posted on Pinterest without credit',
-          thumbnail_url: imageUrl,
-          detected_at: new Date().toISOString()
-        },
-        {
-          artwork_id: artworkId,
-          scan_id: scanId,
-          source_url: 'https://www.instagram.com/p/stolen-content-abc123',
-          source_domain: 'instagram.com',
-          source_title: 'Instagram Post - Unauthorized Use',
-          match_type: 'exact',
-          match_confidence: 94.7,
-          threat_level: 'high',
-          context: 'Exact match found on Instagram',
-          description: 'Your artwork posted on Instagram without permission',
-          thumbnail_url: imageUrl,
-          detected_at: new Date().toISOString()
-        }
-      ]
-      
-      // Insert simulated matches into database
-      for (const match of simulatedMatches) {
-        try {
-          const { error: insertError } = await supabaseClient
-            .from('copyright_matches')
-            .insert(match)
-          
-          if (insertError) {
-            console.error('Error inserting simulated match:', insertError)
-          } else {
-            console.log('Inserted simulated match:', match.source_domain)
-            totalMatches++
-          }
-        } catch (error) {
-          console.error('Error inserting match:', error)
-        }
-      }
-      
-      console.log(`Added ${totalMatches} simulated copyright violations`)
-    }
+    // Note: Real matches are now stored directly in the real-image-search function
+    console.log(`Real-time scan completed. Found ${totalMatches} matches from actual APIs.`)
 
     // Progress through different search phases
     for (let phase = 0; phase < 5; phase++) {
