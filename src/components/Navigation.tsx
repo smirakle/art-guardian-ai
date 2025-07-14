@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
-import { Shield, Upload, Activity, Home, Users, Link2, Settings, UserCog, LogIn, LogOut, User, DollarSign } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, Settings, UserCog, LogIn, LogOut, User } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 
@@ -26,7 +26,6 @@ const Navigation = () => {
     { path: "/monitoring", label: "Monitor", icon: Activity, needsAuth: true },
     { path: "/deep-scan", label: "Deep Scan", icon: Shield, needsAuth: true },
     { path: "/blockchain", label: "Blockchain", icon: Link2, needsAuth: true },
-    { path: "/pricing", label: "Pricing", icon: DollarSign },
     { path: "/community", label: "Community", icon: Users },
     { path: "/admin", label: "Admin", icon: UserCog, isAdmin: true }
   ];
@@ -155,7 +154,16 @@ const Navigation = () => {
                     </Button>
                     <Button
                       className="hidden md:flex bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground text-sm"
-                      onClick={() => navigate('/pricing')}
+                      onClick={() => {
+                        navigate('/');
+                        // Scroll to pricing section after navigation
+                        setTimeout(() => {
+                          const pricingSection = document.getElementById('pricing');
+                          if (pricingSection) {
+                            pricingSection.scrollIntoView({ behavior: 'smooth' });
+                          }
+                        }, 100);
+                      }}
                       size="sm"
                     >
                       Get Protected

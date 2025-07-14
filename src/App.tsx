@@ -15,7 +15,6 @@ import Monitoring from "./pages/Monitoring";
 import Demo from "./pages/Demo";
 import Admin from "./pages/Admin";
 import Checkout from "./pages/Checkout";
-import Pricing from "./pages/Pricing";
 import Success from "./pages/Success";
 import Auth from "./pages/Auth";
 import DeepWebScan from "./components/DeepWebScan";
@@ -73,7 +72,6 @@ const App = () => {
                   </ProtectedRoute>
                 } />
                 <Route path="/checkout" element={<Checkout />} />
-                <Route path="/pricing" element={<Pricing />} />
                 <Route path="/success" element={<Success />} />
                 <Route path="/deep-scan" element={
                   <ProtectedRoute>

@@ -318,7 +318,7 @@ const Index = () => {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 px-4">
+      <section id="pricing" className="py-20 px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
@@ -362,7 +362,7 @@ const Index = () => {
                 <Button 
                   className="w-full" 
                   variant="outline"
-                  onClick={() => navigate("/pricing")}
+                  onClick={() => handlePricingPlan("Student")}
                 >
                   Choose This Plan
                 </Button>
@@ -400,7 +400,7 @@ const Index = () => {
                 <Button 
                   className="w-full" 
                   variant="outline"
-                  onClick={() => navigate("/pricing")}
+                  onClick={() => handlePricingPlan("Starter")}
                 >
                   Choose This Plan
                 </Button>
@@ -446,7 +446,7 @@ const Index = () => {
                 </div>
                 <Button 
                   className="w-full bg-gradient-to-r from-primary to-accent"
-                  onClick={() => window.location.href="/pricing"}
+                  onClick={() => handlePricingPlan("Professional")}
                 >
                   Choose This Plan
                 </Button>
@@ -492,9 +492,14 @@ const Index = () => {
                 <Button 
                   className="w-full" 
                   variant="outline"
-                  onClick={() => window.location.href="/pricing"}
+                  onClick={() => {
+                    const contactSection = document.getElementById('contact');
+                    if (contactSection) {
+                      contactSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
                 >
-                  View Plans
+                  Contact Sales
                 </Button>
               </CardContent>
             </Card>
@@ -711,7 +716,7 @@ const Index = () => {
       </section>
 
       {/* Contact Section */}
-      <section className="py-20 px-4">
+      <section id="contact" className="py-20 px-4">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
