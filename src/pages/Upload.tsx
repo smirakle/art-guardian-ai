@@ -386,18 +386,35 @@ const Upload = () => {
       }
 
       // Start monitoring scan for the artwork
-      const { error: scanError } = await supabase
+      const { data: scan, error: scanError } = await supabase
         .from('monitoring_scans')
         .insert({
           artwork_id: artwork.id,
           scan_type: 'comprehensive',
-          status: 'running',
-          started_at: new Date().toISOString(),
-          total_sources: 100
-        });
+          status: 'pending',
+          total_sources: 52000
+        })
+        .select()
+        .single();
 
       if (scanError) {
         console.error('Scan creation error:', scanError);
+      } else if (scan) {
+        // Start the monitoring scan in the background
+        try {
+          const { data, error } = await supabase.functions.invoke('process-monitoring-scan', {
+            body: {
+              scanId: scan.id,
+              artworkId: artwork.id
+            }
+          });
+          
+          if (error) {
+            console.error('Scan process error:', error);
+          }
+        } catch (scanProcessError) {
+          console.error('Error starting scan process:', scanProcessError);
+        }
       }
 
       // Update to protected status
