@@ -24,7 +24,7 @@ interface MonitoringStats {
 const Monitoring = () => {
   const { toast } = useToast();
   const [stats, setStats] = useState<MonitoringStats>({
-    totalScans: 1247,
+    totalScans: 52000,
     activeAlerts: 3,
     protectedAssets: 156,
     systemUptime: 99.8,
@@ -40,12 +40,12 @@ const Monitoring = () => {
     const interval = setInterval(() => {
       setStats(prev => ({
         ...prev,
-        totalScans: prev.totalScans + Math.floor(Math.random() * 5) + 1,
+        totalScans: prev.totalScans + Math.floor(Math.random() * 50) + 25,
         activeAlerts: Math.max(0, prev.activeAlerts + (Math.random() > 0.8 ? 1 : -1)),
         lastScanTime: new Date().toISOString(),
         systemUptime: Math.max(95, prev.systemUptime + (Math.random() - 0.5) * 0.1)
       }));
-    }, 3000);
+    }, 2000);
 
     return () => clearInterval(interval);
   }, [isMonitoring]);
