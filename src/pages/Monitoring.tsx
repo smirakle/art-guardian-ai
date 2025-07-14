@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import MonitoringChart from "@/components/MonitoringChart";
 import AlertsPanel from "@/components/AlertsPanel";
 import LiveFeed from "@/components/LiveFeed";
@@ -24,10 +26,11 @@ interface MonitoringStats {
 
 const Monitoring = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [stats, setStats] = useState<MonitoringStats>({
-    totalScans: 52000,
-    activeAlerts: 3,
-    protectedAssets: 156,
+    totalScans: 0,
+    activeAlerts: 0,
+    protectedAssets: 0,
     systemUptime: 99.8,
     lastScanTime: new Date().toISOString(),
     threatLevel: 'low'
@@ -36,20 +39,60 @@ const Monitoring = () => {
   const [isMonitoring, setIsMonitoring] = useState(true);
 
   useEffect(() => {
-    if (!isMonitoring) return;
+    if (!user) return;
 
-    const interval = setInterval(() => {
-      setStats(prev => ({
-        ...prev,
-        totalScans: prev.totalScans + Math.floor(Math.random() * 50) + 25,
-        activeAlerts: Math.max(0, prev.activeAlerts + (Math.random() > 0.8 ? 1 : -1)),
-        lastScanTime: new Date().toISOString(),
-        systemUptime: Math.max(95, prev.systemUptime + (Math.random() - 0.5) * 0.1)
-      }));
-    }, 2000);
+    const fetchRealStats = async () => {
+      try {
+        // Get user's artwork count
+        const { data: artworks } = await supabase
+          .from('artwork')
+          .select('id')
+          .eq('user_id', user.id);
 
+        const artworkIds = artworks?.map(a => a.id) || [];
+        
+        // Get total scans
+        const { data: scans } = await supabase
+          .from('monitoring_scans')
+          .select('*')
+          .in('artwork_id', artworkIds);
+
+        // Get active alerts
+        const { data: alerts } = await supabase
+          .from('monitoring_alerts')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('is_read', false);
+
+        // Get copyright matches for threat level
+        const { data: matches } = await supabase
+          .from('copyright_matches')
+          .select('threat_level')
+          .in('artwork_id', artworkIds);
+
+        const totalScannedSources = scans?.reduce((sum, scan) => sum + (scan.scanned_sources || 0), 0) || 0;
+        const highThreatMatches = matches?.filter(m => m.threat_level === 'high' || m.threat_level === 'critical').length || 0;
+        const latestScan = scans?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
+
+        setStats({
+          totalScans: totalScannedSources,
+          activeAlerts: alerts?.length || 0,
+          protectedAssets: artworks?.length || 0,
+          systemUptime: 99.8,
+          lastScanTime: latestScan?.created_at || new Date().toISOString(),
+          threatLevel: highThreatMatches > 3 ? 'high' : highThreatMatches > 0 ? 'medium' : 'low'
+        });
+      } catch (error) {
+        console.error('Error fetching real stats:', error);
+      }
+    };
+
+    fetchRealStats();
+    
+    // Update every 30 seconds
+    const interval = setInterval(fetchRealStats, 30000);
     return () => clearInterval(interval);
-  }, [isMonitoring]);
+  }, [user]);
 
   const toggleMonitoring = () => {
     setIsMonitoring(!isMonitoring);

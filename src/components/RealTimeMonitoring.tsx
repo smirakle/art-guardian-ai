@@ -185,68 +185,39 @@ const RealTimeMonitoring = () => {
         description: "Real-time monitoring scan initiated for your artwork",
       });
 
-      // Get the first image file from storage to analyze
-      if (artwork.file_paths.length > 0) {
-        const firstImagePath = artwork.file_paths[0];
-        
-        // Get the image from storage
-        const { data: imageData, error: imageError } = await supabase.storage
-          .from('artwork')
-          .download(firstImagePath);
-
-        if (imageError) {
-          console.error('Error downloading image:', imageError);
-          return;
-        }
-
-        // Convert blob to base64 for analysis
-        const reader = new FileReader();
-        reader.onload = async () => {
-          try {
-            const base64Data = reader.result as string;
-            const base64Image = base64Data.split(',')[1]; // Remove data:image/...;base64, prefix
-
-            // Call the monitoring scan edge function
-            const { data: analysisData, error: analysisError } = await supabase.functions
-              .invoke('process-monitoring-scan', {
-                body: {
-                  scanId: scan.id,
-                  artworkId: artworkId
-                }
-              });
-
-            if (analysisError) {
-              console.error('Monitoring scan error:', analysisError);
-              
-              // Update scan status to failed
-              await supabase
-                .from('monitoring_scans')
-                .update({ status: 'failed' })
-                .eq('id', scan.id);
-              
-              toast({
-                title: "Analysis Failed",
-                description: "Failed to analyze artwork for monitoring",
-                variant: "destructive",
-              });
-            } else {
-              toast({
-                title: "Analysis Complete",
-                description: "Artwork is now being monitored across web and dark web",
-              });
-            }
-          } catch (error: any) {
-            console.error('Processing error:', error);
-            
-            // Update scan status to failed
-            await supabase
-              .from('monitoring_scans')
-              .update({ status: 'failed' })
-              .eq('id', scan.id);
+      // Start monitoring scan directly with the edge function
+      console.log('Starting monitoring scan for:', scan.id, artworkId);
+      console.log('Invoking edge function process-monitoring-scan...');
+      
+      const { data: analysisData, error: analysisError } = await supabase.functions
+        .invoke('process-monitoring-scan', {
+          body: {
+            scanId: scan.id,
+            artworkId: artworkId
           }
-        };
+        });
 
-        reader.readAsDataURL(imageData);
+      if (analysisError) {
+        console.error('Monitoring scan error:', analysisError);
+        
+        // Update scan status to failed
+        await supabase
+          .from('monitoring_scans')
+          .update({ status: 'failed' })
+          .eq('id', scan.id);
+        
+        toast({
+          title: "Analysis Failed",
+          description: "Failed to analyze artwork for monitoring",
+          variant: "destructive",
+        });
+      } else {
+        console.log('Edge function invoked successfully:', analysisData);
+        
+        toast({
+          title: "Analysis Complete",
+          description: "Artwork is now being monitored across web and dark web",
+        });
       }
 
     } catch (error: any) {

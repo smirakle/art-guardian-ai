@@ -16,6 +16,8 @@ import {
   Zap
 } from "lucide-react";
 import DailyReport from "@/components/DailyReport";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ScanResult {
   id: string;
@@ -29,104 +31,116 @@ interface ScanResult {
   status: 'active' | 'removed' | 'investigating';
 }
 
-const mockResults: ScanResult[] = [
-  {
-    id: '1',
-    marketplace: 'Dark Auction House',
-    title: 'Digital Art Collection #1',
-    similarity: 94,
-    riskLevel: 'critical',
-    dateFound: '2024-01-08',
-    price: '0.5 BTC',
-    url: 'onion://darkauction.v3/item/12345',
-    status: 'active'
-  },
-  {
-    id: '2',
-    marketplace: 'Instagram Art Reseller',
-    title: 'Premium Art Bundle',
-    similarity: 87,
-    riskLevel: 'high',
-    dateFound: '2024-01-07',
-    price: '$150',
-    url: 'https://instagram.com/user/post/67890',
-    status: 'investigating'
-  },
-  {
-    id: '3',
-    marketplace: 'Etsy Shop',
-    title: 'Stolen Digital Assets',
-    similarity: 76,
-    riskLevel: 'medium',
-    dateFound: '2024-01-06',
-    url: 'https://etsy.com/listing/abc123',
-    status: 'removed'
-  },
-  {
-    id: '4',
-    marketplace: 'Pinterest Pin',
-    title: 'Unauthorized Art Sharing',
-    similarity: 89,
-    riskLevel: 'high',
-    dateFound: '2024-01-05',
-    url: 'https://pinterest.com/pin/def456',
-    status: 'active'
-  },
-  {
-    id: '5',
-    marketplace: 'Shadow Market',
-    title: 'Art Collection Bundle',
-    similarity: 92,
-    riskLevel: 'critical',
-    dateFound: '2024-01-04',
-    price: '300 XMR',
-    url: 'onion://shadowmkt.v3/listing/xyz789',
-    status: 'active'
-  }
-];
 
 const DeepWebScan = () => {
-  const [isScanning, setIsScanning] = useState(true);
-  const [scanProgress, setScanProgress] = useState(78);
-  const [results, setResults] = useState<ScanResult[]>(mockResults);
+  const { user } = useAuth();
+  const [results, setResults] = useState<ScanResult[]>([]);
   const [activeTab, setActiveTab] = useState("overview");
-  const [sourcesScanned, setSourcesScanned] = useState(42847);
-  const [totalSources] = useState(52000);
-  const [activeScanners, setActiveScanners] = useState(12);
+  const [scans, setScans] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Real-time scanning simulation
+  // Load real data from database
   useEffect(() => {
-    if (!isScanning) return;
+    if (!user) return;
 
-    const interval = setInterval(() => {
-      setSourcesScanned(prev => {
-        const increment = Math.floor(Math.random() * 25) + 15;
-        return Math.min(prev + increment, totalSources);
-      });
-      
-      setScanProgress(prev => {
-        const newProgress = (sourcesScanned / totalSources) * 100;
-        return Math.min(newProgress, 100);
-      });
+    const fetchRealData = async () => {
+      try {
+        // Get user's artwork
+        const { data: artworks } = await supabase
+          .from('artwork')
+          .select('id, title')
+          .eq('user_id', user.id);
 
-      setActiveScanners(prev => {
-        const change = Math.random() > 0.5 ? 1 : -1;
-        return Math.max(8, Math.min(16, prev + change));
-      });
-    }, 2000);
+        if (artworks && artworks.length > 0) {
+          const artworkIds = artworks.map(a => a.id);
 
+          // Get monitoring scans
+          const { data: scanData } = await supabase
+            .from('monitoring_scans')
+            .select('*')
+            .in('artwork_id', artworkIds)
+            .order('created_at', { ascending: false });
+
+          // Get copyright matches
+          const { data: matchData } = await supabase
+            .from('copyright_matches')
+            .select('*')
+            .in('artwork_id', artworkIds)
+            .order('detected_at', { ascending: false });
+
+          if (scanData) {
+            setScans(scanData);
+          }
+
+          if (matchData) {
+            // Convert database matches to ScanResult format
+            const formattedResults: ScanResult[] = matchData.map(match => ({
+              id: match.id,
+              marketplace: match.source_domain || 'Unknown Platform',
+              title: match.source_title || 'Untitled Match',
+              similarity: match.match_confidence,
+              riskLevel: match.threat_level as 'low' | 'medium' | 'high' | 'critical',
+              dateFound: new Date(match.detected_at).toISOString().split('T')[0],
+              url: match.source_url,
+              status: match.is_authorized ? 'removed' : 'active'
+            }));
+            setResults(formattedResults);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching real-time data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRealData();
+    
+    // Update every 30 seconds
+    const interval = setInterval(fetchRealData, 30000);
     return () => clearInterval(interval);
-  }, [isScanning, sourcesScanned, totalSources]);
+  }, [user]);
 
-  const startScan = async () => {
-    setIsScanning(true);
-    setScanProgress(0);
-    setSourcesScanned(0);
-    setResults([]);
-  };
+  const startNewScan = async () => {
+    if (!user) return;
+    
+    try {
+      // Get user's first artwork for scanning
+      const { data: artworks } = await supabase
+        .from('artwork')
+        .select('id, title')
+        .eq('user_id', user.id)
+        .limit(1);
 
-  const pauseScan = () => {
-    setIsScanning(false);
+      if (artworks && artworks.length > 0) {
+        const artwork = artworks[0];
+        
+        // Create new scan
+        const { data: newScan } = await supabase
+          .from('monitoring_scans')
+          .insert({
+            artwork_id: artwork.id,
+            scan_type: 'deep',
+            status: 'running',
+            started_at: new Date().toISOString(),
+            total_sources: 52000
+          })
+          .select()
+          .single();
+
+        if (newScan) {
+          // Invoke monitoring scan
+          await supabase.functions.invoke('process-monitoring-scan', {
+            body: {
+              scanId: newScan.id,
+              artworkId: artwork.id
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error starting scan:', error);
+    }
   };
 
   const getRiskBadgeVariant = (risk: string) => {
@@ -168,7 +182,7 @@ const DeepWebScan = () => {
                 <Search className="w-5 h-5" />
                 Active Monitoring System
                 <Badge variant="secondary" className="ml-2">
-                  {isScanning ? 'LIVE' : 'PAUSED'}
+                  {scans.filter(scan => scan.status === 'running').length > 0 ? 'LIVE' : 'IDLE'}
                 </Badge>
               </CardTitle>
             </CardHeader>
@@ -176,49 +190,56 @@ const DeepWebScan = () => {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                   <div className="text-center p-3 bg-muted/50 rounded-lg">
-                    <div className="font-semibold text-lg">{sourcesScanned.toLocaleString()}</div>
+                    <div className="font-semibold text-lg">
+                      {scans.reduce((sum, scan) => sum + (scan.scanned_sources || 0), 0).toLocaleString()}
+                    </div>
                     <div className="text-muted-foreground">Sources Scanned</div>
                   </div>
                   <div className="text-center p-3 bg-muted/50 rounded-lg">
-                    <div className="font-semibold text-lg">{totalSources.toLocaleString()}</div>
+                    <div className="font-semibold text-lg">
+                      {scans.reduce((sum, scan) => sum + (scan.total_sources || 0), 0).toLocaleString()}
+                    </div>
                     <div className="text-muted-foreground">Total Sources</div>
                   </div>
                   <div className="text-center p-3 bg-muted/50 rounded-lg">
-                    <div className="font-semibold text-lg">{activeScanners}</div>
+                    <div className="font-semibold text-lg">
+                      {scans.filter(scan => scan.status === 'running').length}
+                    </div>
                     <div className="text-muted-foreground">Active Scanners</div>
                   </div>
                 </div>
                 
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">Real-time monitoring progress</span>
-                    <span className="text-sm font-medium">{Math.round(scanProgress)}%</span>
+                    <span className="text-sm">Real-time monitoring status</span>
+                    <span className="text-sm font-medium">
+                      {scans.filter(scan => scan.status === 'running').length > 0 ? 'Active' : 'Idle'}
+                    </span>
                   </div>
-                  <Progress value={scanProgress} className="w-full" />
+                  <Progress 
+                    value={scans.length > 0 ? 
+                      (scans.reduce((sum, scan) => sum + (scan.scanned_sources || 0), 0) / 
+                       Math.max(1, scans.reduce((sum, scan) => sum + (scan.total_sources || 0), 0))) * 100 : 0
+                    } 
+                    className="w-full" 
+                  />
                   <div className="text-xs text-muted-foreground">
-                    Scanning white web, dark web marketplaces, forums, and social platforms
+                    Real-time scanning across web, dark web marketplaces, forums, and social platforms
                   </div>
                 </div>
 
                 <div className="flex gap-2">
-                  {!isScanning ? (
-                    <Button onClick={startScan} className="flex items-center gap-2">
-                      <Zap className="w-4 h-4" />
-                      Resume Monitoring
-                    </Button>
-                  ) : (
-                    <Button onClick={pauseScan} variant="outline" className="flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
-                      Pause Monitoring
-                    </Button>
-                  )}
+                  <Button onClick={startNewScan} className="flex items-center gap-2">
+                    <Zap className="w-4 h-4" />
+                    Start New Scan
+                  </Button>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Results */}
-          {(results.length > 0 || isScanning) && (
+          {!loading && (
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -229,36 +250,40 @@ const DeepWebScan = () => {
               <TabsContent value="overview" className="space-y-6">
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                        <Card>
-                          <CardContent className="p-4">
-                            <div className="flex items-center gap-2">
-                              <AlertTriangle className="w-5 h-5 text-destructive" />
-                              <div>
-                                <div className="text-2xl font-bold">5</div>
-                                <div className="text-xs text-muted-foreground">Critical Threats</div>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="w-5 h-5 text-destructive" />
+                        <div>
+                          <div className="text-2xl font-bold">
+                            {results.filter(r => r.riskLevel === 'critical').length}
+                          </div>
+                          <div className="text-xs text-muted-foreground">Critical Threats</div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                   
-                        <Card>
-                          <CardContent className="p-4">
-                            <div className="flex items-center gap-2">
-                              <Eye className="w-5 h-5 text-primary" />
-                              <div>
-                                <div className="text-2xl font-bold">24</div>
-                                <div className="text-xs text-muted-foreground">Monitored Items</div>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-2">
+                        <Eye className="w-5 h-5 text-primary" />
+                        <div>
+                          <div className="text-2xl font-bold">{results.length}</div>
+                          <div className="text-xs text-muted-foreground">Monitored Items</div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                   
                   <Card>
                     <CardContent className="p-4">
                       <div className="flex items-center gap-2">
                         <Globe className="w-5 h-5 text-accent" />
                         <div>
-                          <div className="text-2xl font-bold">52,000+</div>
+                          <div className="text-2xl font-bold">
+                            {scans.reduce((sum, scan) => sum + (scan.total_sources || 0), 0).toLocaleString()}+
+                          </div>
                           <div className="text-xs text-muted-foreground">Sources</div>
                         </div>
                       </div>
@@ -284,7 +309,14 @@ const DeepWebScan = () => {
                     <CardTitle>Recent Findings</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {results.map((result) => (
+                    {results.length === 0 ? (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <Shield className="w-12 h-12 mx-auto mb-4 text-green-500" />
+                        <h3 className="font-medium mb-2">No Threats Detected</h3>
+                        <p className="text-sm">Your artwork is protected - no unauthorized usage found</p>
+                      </div>
+                    ) : (
+                      results.map((result) => (
                       <div key={result.id} className="border rounded-lg p-4 space-y-3">
                         <div className="flex items-start justify-between">
                           <div className="space-y-1">
@@ -315,7 +347,7 @@ const DeepWebScan = () => {
                           </Button>
                         </div>
                       </div>
-                    ))}
+                    )))}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -388,29 +420,32 @@ const DeepWebScan = () => {
                       <CardTitle>Scan History</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between p-3 border rounded">
-                          <div>
-                            <div className="font-medium">Full Deep Web Scan</div>
-                            <div className="text-sm text-muted-foreground">January 8, 2024 - 14:32</div>
-                          </div>
-                          <div className="text-right">
-                            <div className="font-medium">5 threats found</div>
-                            <div className="text-sm text-muted-foreground">52,000 sources scanned</div>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center justify-between p-3 border rounded">
-                          <div>
-                            <div className="font-medium">Targeted Scan</div>
-                            <div className="text-sm text-muted-foreground">January 7, 2024 - 09:15</div>
-                          </div>
-                          <div className="text-right">
-                            <div className="font-medium">1 threat found</div>
-                            <div className="text-sm text-muted-foreground">48,500 sources scanned</div>
-                          </div>
-                        </div>
-                      </div>
+                       <div className="space-y-3">
+                         {scans.length === 0 ? (
+                           <div className="text-center py-8 text-muted-foreground">
+                             <Search className="w-12 h-12 mx-auto mb-4" />
+                             <h3 className="font-medium mb-2">No Scan History</h3>
+                             <p className="text-sm">Start your first scan to see monitoring history</p>
+                           </div>
+                         ) : (
+                           scans.map((scan) => (
+                             <div key={scan.id} className="flex items-center justify-between p-3 border rounded">
+                               <div>
+                                 <div className="font-medium">{scan.scan_type} scan</div>
+                                 <div className="text-sm text-muted-foreground">
+                                   {new Date(scan.created_at).toLocaleDateString()} - {new Date(scan.created_at).toLocaleTimeString()}
+                                 </div>
+                               </div>
+                               <div className="text-right">
+                                 <div className="font-medium">{scan.matches_found || 0} threats found</div>
+                                 <div className="text-sm text-muted-foreground">
+                                   {(scan.scanned_sources || 0).toLocaleString()} sources scanned
+                                 </div>
+                               </div>
+                             </div>
+                           ))
+                         )}
+                       </div>
                     </CardContent>
                   </Card>
                   
@@ -429,7 +464,7 @@ const DeepWebScan = () => {
                 <p className="text-muted-foreground mb-6">
                   Start a deep web scan to monitor for unauthorized use of your artwork
                 </p>
-                <Button onClick={startScan} className="flex items-center gap-2 mx-auto">
+                <Button onClick={startNewScan} className="flex items-center gap-2 mx-auto">
                   <Zap className="w-4 h-4" />
                   Begin Monitoring
                 </Button>
