@@ -386,11 +386,11 @@ const Upload = () => {
       }
 
       // Start monitoring scan for the artwork
-      const { data: scan, error: scanError } = await supabase
+        const { data: scan, error: scanError } = await supabase
         .from('monitoring_scans')
         .insert({
           artwork_id: artwork.id,
-          scan_type: 'comprehensive',
+          scan_type: 'deep',
           status: 'pending',
           total_sources: 52000
         })
