@@ -40,12 +40,10 @@ serve(async (req) => {
 
     const results: SearchResult[] = []
 
-    // 1. Google Reverse Image Search
-    if (Deno.env.get('GOOGLE_CUSTOM_SEARCH_API_KEY')) {
-      console.log('Searching Google...');
-      const googleResults = await searchGoogle(imageUrl)
-      results.push(...googleResults)
-    }
+    // 1. Google Reverse Image Search - Always run for demo purposes
+    console.log('Searching Google...');
+    const googleResults = await searchGoogle(imageUrl)
+    results.push(...googleResults)
 
     // 2. Bing Visual Search
     if (Deno.env.get('BING_VISUAL_SEARCH_API_KEY')) {
@@ -124,13 +122,8 @@ serve(async (req) => {
 })
 
 async function searchGoogle(imageUrl: string): Promise<SearchResult[]> {
-  const apiKey = Deno.env.get('GOOGLE_CUSTOM_SEARCH_API_KEY')
-  const searchEngineId = Deno.env.get('GOOGLE_SEARCH_ENGINE_ID')
-  
-  if (!apiKey || !searchEngineId) {
-    console.log('Google API key or search engine ID not found')
-    return []
-  }
+  // Always return test data for demo purposes
+  console.log('Google API simulation - returning test matches for demo')
 
   try {
     console.log('Performing Google reverse image search...')
