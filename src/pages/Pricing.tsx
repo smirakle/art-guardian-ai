@@ -668,7 +668,7 @@ const Pricing = () => {
 
                   {plan.id !== 'enterprise' && (
                     <p className="text-xs text-center text-muted-foreground">
-                      14-day free trial • Cancel anytime
+                      5-day free trial • Cancel anytime
                     </p>
                   )}
                 </CardContent>
@@ -721,7 +721,7 @@ const Pricing = () => {
               <CardContent className="p-6">
                 <h4 className="font-semibold mb-2">Is there a free trial?</h4>
                 <p className="text-sm text-muted-foreground">
-                  Yes, all paid plans include a 14-day free trial with full access to features.
+                  Yes, all paid plans include a 5-day free trial with full access to features.
                 </p>
               </CardContent>
             </Card>

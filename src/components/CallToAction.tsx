@@ -5,7 +5,7 @@ import { ArrowRight, Shield, CheckCircle } from "lucide-react";
 
 const CallToAction = () => {
   const benefits = [
-    "Free 30-day trial with full features",
+    "Free 5-day trial with full features",
     "No setup fees or hidden costs", 
     "Cancel anytime with one click",
     "24/7 priority support included"

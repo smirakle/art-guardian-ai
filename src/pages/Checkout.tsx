@@ -414,10 +414,10 @@ const Checkout = () => {
                 <div className="bg-muted/50 p-4 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
                     <Zap className="w-4 h-4 text-primary" />
-                    <span className="font-medium">14-Day Free Trial</span>
+                    <span className="font-medium">5-Day Free Trial</span>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Try TSMO risk-free for 14 days. Cancel anytime during your trial period.
+                    Try TSMO risk-free for 5 days. Cancel anytime during your trial period.
                   </p>
                 </div>
               </CardContent>
@@ -564,7 +564,7 @@ const Checkout = () => {
                   </Button>
 
                   <div className="text-center text-sm text-muted-foreground">
-                    You won't be charged until your 14-day free trial ends
+                    You won't be charged until your 5-day free trial ends
                   </div>
                 </form>
               </CardContent>

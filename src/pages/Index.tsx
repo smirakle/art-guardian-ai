@@ -100,7 +100,7 @@ const Index = () => {
   const handleFreeTrial = (plan: string) => {
     toast({
       title: "Free Trial Started!",
-      description: `Your 14-day ${plan} trial is now active. Check your email for setup instructions.`,
+      description: `Your 5-day ${plan} trial is now active. Check your email for setup instructions.`,
     });
   };
 
