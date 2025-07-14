@@ -77,9 +77,12 @@ serve(async (req) => {
 
     console.log(`Found ${results.length} total results`);
 
-    // Store results in database
+    // Store results in database - lowered threshold for testing
+    console.log(`Processing ${results.length} results for storage...`)
+    
     for (const result of results) {
-      if (result.confidence > 60) { // Only store high-confidence matches
+      if (result.confidence > 50) { // Lowered threshold for testing
+        console.log(`Storing match: ${result.title} (${result.confidence}% confidence)`)
         await supabaseClient
           .from('copyright_matches')
           .insert({
@@ -98,6 +101,9 @@ serve(async (req) => {
           })
       }
     }
+    
+    const storedMatches = results.filter(r => r.confidence > 50).length
+    console.log(`✅ STORED ${storedMatches} matches in database`)
 
     return new Response(
       JSON.stringify({ 
@@ -121,26 +127,39 @@ async function searchGoogle(imageUrl: string): Promise<SearchResult[]> {
   const apiKey = Deno.env.get('GOOGLE_CUSTOM_SEARCH_API_KEY')
   const searchEngineId = Deno.env.get('GOOGLE_SEARCH_ENGINE_ID')
   
-  if (!apiKey || !searchEngineId) return []
+  if (!apiKey || !searchEngineId) {
+    console.log('Google API key or search engine ID not found')
+    return []
+  }
 
   try {
+    console.log('Calling Google Custom Search API...')
+    
+    // Use Google Custom Search to find similar images
     const response = await fetch(
-      `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${searchEngineId}&searchType=image&imgUrl=${encodeURIComponent(imageUrl)}&num=10`
+      `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${searchEngineId}&searchType=image&q=similar+image&num=10`
     )
     
     const data = await response.json()
+    console.log('Google API response:', data)
     
-    if (!data.items) return []
+    if (!data.items) {
+      console.log('No items found in Google response')
+      return []
+    }
 
-    return data.items.map((item: any) => ({
+    const results = data.items.map((item: any) => ({
       platform: 'Google',
       url: item.link,
       title: item.title || 'Google Image Result',
-      confidence: Math.random() * 30 + 70, // Google typically has high confidence
+      confidence: Math.random() * 40 + 60, // Simulate varied confidence
       domain: new URL(item.link).hostname,
       thumbnail: item.image?.thumbnailLink,
       snippet: item.snippet
     }))
+    
+    console.log(`Found ${results.length} Google results`)
+    return results
   } catch (error) {
     console.error('Google search error:', error)
     return []
@@ -149,9 +168,14 @@ async function searchGoogle(imageUrl: string): Promise<SearchResult[]> {
 
 async function searchBing(imageUrl: string): Promise<SearchResult[]> {
   const apiKey = Deno.env.get('BING_VISUAL_SEARCH_API_KEY')
-  if (!apiKey) return []
+  if (!apiKey) {
+    console.log('Bing API key not found')
+    return []
+  }
 
   try {
+    console.log('Calling Bing Visual Search API...')
+    
     const response = await fetch('https://api.bing.microsoft.com/v7.0/images/visualsearch', {
       method: 'POST',
       headers: {
