@@ -15,25 +15,33 @@ interface ScanSource {
 }
 
 serve(async (req) => {
+  console.log('Process monitoring scan function called:', new Date().toISOString());
+  
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
   try {
+    console.log('Creating supabase client...');
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const { scanId, artworkId } = await req.json()
+    const requestBody = await req.json()
+    console.log('Request body:', requestBody);
+    
+    const { scanId, artworkId } = requestBody
 
     if (!scanId || !artworkId) {
+      console.error('Missing required parameters:', { scanId, artworkId });
       return new Response(
         JSON.stringify({ error: 'Missing scanId or artworkId' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       )
     }
 
+    console.log('Getting artwork details for:', artworkId);
     // Get the artwork details
     const { data: artwork, error: artworkError } = await supabaseClient
       .from('artwork')
@@ -42,11 +50,15 @@ serve(async (req) => {
       .single()
 
     if (artworkError || !artwork) {
+      console.error('Artwork error:', artworkError);
       throw new Error('Artwork not found')
     }
 
+    console.log('Found artwork:', artwork.title);
+
     // Update scan status to running
-    await supabaseClient
+    console.log('Updating scan status to running...');
+    const { error: updateError } = await supabaseClient
       .from('monitoring_scans')
       .update({ 
         status: 'running',
@@ -54,6 +66,10 @@ serve(async (req) => {
         total_sources: 52000
       })
       .eq('id', scanId)
+
+    if (updateError) {
+      console.error('Error updating scan status:', updateError);
+    }
 
     // Simulate scanning across multiple platforms
     const platforms = [

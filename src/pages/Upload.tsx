@@ -397,25 +397,28 @@ const Upload = () => {
         .select()
         .single();
 
-      if (scanError) {
-        console.error('Scan creation error:', scanError);
-      } else if (scan) {
-        // Start the monitoring scan in the background
-        try {
-          const { data, error } = await supabase.functions.invoke('process-monitoring-scan', {
-            body: {
-              scanId: scan.id,
-              artworkId: artwork.id
+        if (scanError) {
+          console.error('Scan creation error:', scanError);
+        } else if (scan) {
+          // Start the monitoring scan in the background
+          console.log('Starting monitoring scan for:', scan.id, artwork.id);
+          try {
+            const { data, error } = await supabase.functions.invoke('process-monitoring-scan', {
+              body: {
+                scanId: scan.id,
+                artworkId: artwork.id
+              }
+            });
+            
+            if (error) {
+              console.error('Scan process error:', error);
+            } else {
+              console.log('Scan process started successfully:', data);
             }
-          });
-          
-          if (error) {
-            console.error('Scan process error:', error);
+          } catch (scanProcessError) {
+            console.error('Error starting scan process:', scanProcessError);
           }
-        } catch (scanProcessError) {
-          console.error('Error starting scan process:', scanProcessError);
         }
-      }
 
       // Update to protected status
       const finalFiles = files.map(file => ({ 
