@@ -97,35 +97,6 @@ const Contact = () => {
             
             {/* Contact Info */}
             <div className="space-y-8">
-              <div>
-                <h4 className="font-semibold mb-4">Quick Start</h4>
-                <div className="space-y-3">
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start"
-                    onClick={() => window.open('/upload', '_blank')}
-                  >
-                    <Eye className="h-4 w-4 mr-2" />
-                    Try Visual Recognition Demo
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start"
-                    onClick={() => window.open('/upload', '_blank')}
-                  >
-                    <Link2 className="h-4 w-4 mr-2" />
-                    Get Blockchain Certificate
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start"
-                    onClick={() => window.open('/monitoring', '_blank')}
-                  >
-                    <Activity className="h-4 w-4 mr-2" />
-                    Start Monitoring Trial
-                  </Button>
-                </div>
-              </div>
             </div>
           </div>
         </div>

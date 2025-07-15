@@ -1047,6 +1047,79 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Quick Start Section */}
+      <section className="py-20 px-4 bg-muted/30">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Quick Start
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Get started with TSMO's powerful art protection tools in minutes
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardContent className="p-6 text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Eye className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="font-semibold mb-2">Visual Recognition Demo</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Test our AI-powered image recognition technology
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => window.open('/upload', '_blank')}
+                >
+                  Try Demo
+                </Button>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardContent className="p-6 text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Link2 className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="font-semibold mb-2">Blockchain Certificate</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Create an immutable proof of ownership
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => window.open('/upload', '_blank')}
+                >
+                  Get Certificate
+                </Button>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardContent className="p-6 text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Activity className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="font-semibold mb-2">Monitoring Trial</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Start protecting your art with real-time monitoring
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => window.open('/monitoring', '_blank')}
+                >
+                  Start Trial
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 };
