@@ -647,7 +647,11 @@ const Index = () => {
                     <span className="text-sm">Follow-up procedures</span>
                   </div>
                 </div>
-                <Button className="w-full mt-4" variant="outline">
+                <Button 
+                  className="w-full mt-4" 
+                  variant="outline"
+                  onClick={() => window.open('https://www.copyright.gov/dmca/', '_blank')}
+                >
                   <Link2 className="h-4 w-4 mr-2" />
                   Access DMCA Guide
                 </Button>
@@ -684,7 +688,11 @@ const Index = () => {
                     <span className="text-sm">International copyright law</span>
                   </div>
                 </div>
-                <Button className="w-full mt-4" variant="outline">
+                <Button 
+                  className="w-full mt-4" 
+                  variant="outline"
+                  onClick={() => window.open('https://www.copyright.gov/help/faq/', '_blank')}
+                >
                   <FileImage className="h-4 w-4 mr-2" />
                   Learn Copyright Law
                 </Button>
@@ -721,7 +729,22 @@ const Index = () => {
                     <span className="text-sm">Copyright registration forms</span>
                   </div>
                 </div>
-                <Button className="w-full mt-4" variant="outline">
+                <Button 
+                  className="w-full mt-4" 
+                  variant="outline"
+                  onClick={() => {
+                    const templates = [
+                      'dmca-takedown-template.pdf',
+                      'cease-desist-template.pdf',
+                      'licensing-agreement-template.pdf',
+                      'copyright-registration-form.pdf'
+                    ];
+                    toast({
+                      title: "Templates Download Ready",
+                      description: "Legal templates package will be sent to your email.",
+                    });
+                  }}
+                >
                   <Upload className="h-4 w-4 mr-2" />
                   Download Templates
                 </Button>
@@ -748,7 +771,11 @@ const Index = () => {
                       <div className="font-medium">US Copyright Office</div>
                       <div className="text-sm text-muted-foreground">Official copyright registration</div>
                     </div>
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => window.open('https://www.copyright.gov/', '_blank')}
+                    >
                       <Link2 className="h-4 w-4 mr-1" />
                       Visit
                     </Button>
@@ -758,7 +785,11 @@ const Index = () => {
                       <div className="font-medium">WIPO</div>
                       <div className="text-sm text-muted-foreground">World Intellectual Property Organization</div>
                     </div>
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => window.open('https://www.wipo.int/', '_blank')}
+                    >
                       <Link2 className="h-4 w-4 mr-1" />
                       Visit
                     </Button>
@@ -768,7 +799,11 @@ const Index = () => {
                       <div className="font-medium">EU Copyright</div>
                       <div className="text-sm text-muted-foreground">European Union copyright resources</div>
                     </div>
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => window.open('https://euipo.europa.eu/ohimportal/en/web/observatory/faqs-on-copyright', '_blank')}
+                    >
                       <Link2 className="h-4 w-4 mr-1" />
                       Visit
                     </Button>
@@ -794,7 +829,11 @@ const Index = () => {
                       <div className="font-medium">IP Lawyers Directory</div>
                       <div className="text-sm text-muted-foreground">Find IP attorneys near you</div>
                     </div>
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => window.open('https://www.americanbar.org/groups/intellectual_property_law/resources/lawyer_referral/', '_blank')}
+                    >
                       <Search className="h-4 w-4 mr-1" />
                       Search
                     </Button>
@@ -804,7 +843,11 @@ const Index = () => {
                       <div className="font-medium">Legal Aid Organizations</div>
                       <div className="text-sm text-muted-foreground">Free legal assistance programs</div>
                     </div>
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => window.open('https://www.vlany.org/programs/arts-and-entertainment-law/', '_blank')}
+                    >
                       <Link2 className="h-4 w-4 mr-1" />
                       Find Help
                     </Button>
@@ -814,7 +857,11 @@ const Index = () => {
                       <div className="font-medium">Artist Legal Groups</div>
                       <div className="text-sm text-muted-foreground">Professional artist associations</div>
                     </div>
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => window.open('https://www.artistsrights.org/', '_blank')}
+                    >
                       <Link2 className="h-4 w-4 mr-1" />
                       Join
                     </Button>
@@ -835,15 +882,43 @@ const Index = () => {
               </div>
               
               <div className="grid md:grid-cols-3 gap-4 mb-6">
-                <Button className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700">
+                <Button 
+                  className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
+                  onClick={() => {
+                    if (user) {
+                      navigate('/monitoring');
+                    } else {
+                      toast({
+                        title: "Sign in required",
+                        description: "Please sign in to file a DMCA takedown notice.",
+                      });
+                      navigate('/auth');
+                    }
+                  }}
+                >
                   <Zap className="h-4 w-4 mr-2" />
                   File DMCA Now
                 </Button>
-                <Button variant="outline" className="flex-1">
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={() => {
+                    window.open('https://calendly.com/tsmo-legal/consultation', '_blank');
+                  }}
+                >
                   <Phone className="h-4 w-4 mr-2" />
                   Legal Consultation
                 </Button>
-                <Button variant="outline" className="flex-1">
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={() => {
+                    const email = 'legal@tsmo.ai';
+                    const subject = 'Copyright Infringement Report';
+                    const body = 'I need to report copyright infringement of my artwork. Please provide guidance on next steps.';
+                    window.open(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+                  }}
+                >
                   <Mail className="h-4 w-4 mr-2" />
                   Report Infringement
                 </Button>
