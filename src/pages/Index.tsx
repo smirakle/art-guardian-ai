@@ -827,12 +827,22 @@ const Index = () => {
                   <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                     <div>
                       <div className="font-medium">IP Lawyers Directory</div>
-                      <div className="text-sm text-muted-foreground">Find IP attorneys near you</div>
+                      <div className="text-sm text-muted-foreground">Find specialized IP attorneys nationwide</div>
                     </div>
                     <Button 
                       size="sm" 
                       variant="outline"
-                      onClick={() => window.open('https://www.americanbar.org/groups/intellectual_property_law/resources/lawyer_referral/', '_blank')}
+                      onClick={() => {
+                        toast({
+                          title: "Opening IP Lawyer Directories",
+                          description: "Multiple lawyer directories are being opened for comprehensive search.",
+                        });
+                        // Open multiple IP lawyer directories
+                        window.open('https://www.martindale.com/intellectual-property-law/', '_blank');
+                        setTimeout(() => {
+                          window.open('https://www.findlaw.com/lawyer/practice/intellectual-property', '_blank');
+                        }, 500);
+                      }}
                     >
                       <Search className="h-4 w-4 mr-1" />
                       Search
@@ -841,12 +851,27 @@ const Index = () => {
                   <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                     <div>
                       <div className="font-medium">Legal Aid Organizations</div>
-                      <div className="text-sm text-muted-foreground">Free legal assistance programs</div>
+                      <div className="text-sm text-muted-foreground">Free legal assistance for artists nationwide</div>
                     </div>
                     <Button 
                       size="sm" 
                       variant="outline"
-                      onClick={() => window.open('https://www.vlany.org/programs/arts-and-entertainment-law/', '_blank')}
+                      onClick={() => {
+                        toast({
+                          title: "Opening Legal Aid Resources",
+                          description: "Multiple legal aid organizations are being opened to help you find free assistance.",
+                        });
+                        // Open comprehensive legal aid directory
+                        window.open('https://www.lsc.gov/find-legal-aid', '_blank');
+                        setTimeout(() => {
+                          // Also open volunteer lawyers for the arts
+                          window.open('https://www.vlany.org/programs/arts-and-entertainment-law/', '_blank');
+                        }, 500);
+                        setTimeout(() => {
+                          // California lawyers for the arts
+                          window.open('https://calawyersforthearts.org/', '_blank');
+                        }, 1000);
+                      }}
                     >
                       <Link2 className="h-4 w-4 mr-1" />
                       Find Help
