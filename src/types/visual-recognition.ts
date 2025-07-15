@@ -18,4 +18,6 @@ export interface ImageAnalysis {
   results: AnalysisResult[];
   isAnalyzing: boolean;
   progress: number;
+  watermarkId?: string;
+  isWatermarked?: boolean;
 }

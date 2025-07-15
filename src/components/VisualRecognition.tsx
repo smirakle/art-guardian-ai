@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import UploadArea from "./visual-recognition/UploadArea";
 import ImageAnalysisCard from "./visual-recognition/ImageAnalysisCard";
 import RealTimeMonitoring from "./RealTimeMonitoring";
+import { watermarkService, InvisibleWatermark } from "@/lib/watermark";
 import { Eye, Camera, Shield } from "lucide-react";
 
 const VisualRecognition = () => {
@@ -148,44 +149,85 @@ const VisualRecognition = () => {
     // Start analyzing each image and create monitoring scan
     const startIndex = images.length;
     newImages.forEach(async (image, index) => {
-      // Start visual analysis
-      analyzeImage(image.file, startIndex + index, setImages);
-      
-      // Also create a monitoring scan for continuous protection
       try {
         const { data: user } = await supabase.auth.getUser();
-        if (user.user) {
-          // Create temporary artwork record for quick analysis
-          const tempArtwork = {
-            title: `Quick Analysis - ${image.file.name}`,
-            description: 'Temporary artwork for visual recognition analysis',
-            category: 'digital',
-            user_id: user.user.id,
-            file_paths: [], // Will be empty for quick analysis
-            status: 'analyzing'
-          };
+        if (!user.user) return;
 
-          const { data: artwork } = await supabase
-            .from('artwork')
-            .insert(tempArtwork)
-            .select()
-            .single();
+        // Apply invisible watermarking for enhanced detection
+        const watermarkId = InvisibleWatermark.generateWatermarkId(user.user.id);
+        const watermarkedBlob = await watermarkService.applyWatermark(image.file, {
+          text: watermarkId,
+          opacity: 0.02,
+          frequency: 'medium',
+          position: 'center'
+        });
 
-          if (artwork) {
-            // Create monitoring scan
-              await supabase
-                .from('monitoring_scans')
-                .insert({
-                  artwork_id: artwork.id,
-                  scan_type: 'visual-recognition',
-                  status: 'running',
-                  started_at: new Date().toISOString(),
-                  total_sources: 1500
-                });
-          }
+        // Convert watermarked blob back to file for analysis
+        const watermarkedFile = new File([watermarkedBlob], image.file.name, {
+          type: image.file.type,
+          lastModified: Date.now()
+        });
+
+        // Update the image with watermarked version
+        setImages(prev => prev.map((img, idx) => 
+          idx === startIndex + index 
+            ? { 
+                ...img, 
+                file: watermarkedFile,
+                watermarkId,
+                isWatermarked: true
+              }
+            : img
+        ));
+
+        // Start visual analysis with watermarked image
+        analyzeImage(watermarkedFile, startIndex + index, setImages);
+        
+        // Create temporary artwork record for quick analysis
+        const tempArtwork = {
+          title: `Quick Analysis - ${image.file.name} (Enhanced)`,
+          description: 'Temporary artwork with invisible watermark for enhanced detection',
+          category: 'digital',
+          user_id: user.user.id,
+          file_paths: [], // Will be empty for quick analysis
+          status: 'analyzing'
+        };
+
+        const { data: artwork } = await supabase
+          .from('artwork')
+          .insert(tempArtwork)
+          .select()
+          .single();
+
+        if (artwork) {
+          // Create monitoring scan with enhanced detection
+          await supabase
+            .from('monitoring_scans')
+            .insert({
+              artwork_id: artwork.id,
+              scan_type: 'visual-recognition-enhanced',
+              status: 'running',
+              started_at: new Date().toISOString(),
+              total_sources: 2500 // Increased sources for enhanced detection
+            });
         }
+
+        toast({
+          title: "Enhanced Protection Applied",
+          description: `Invisible watermark applied to ${image.file.name} for better detection`,
+        });
+
       } catch (error) {
-        console.log('Could not create monitoring scan:', error);
+        console.log('Could not create monitoring scan or apply watermark:', error);
+        
+        // Fallback to regular analysis without watermark
+        analyzeImage(image.file, startIndex + index, setImages);
+        
+        toast({
+          title: "Standard Analysis Applied",
+          description: "Continuing with standard protection (watermarking failed)",
+          variant: "destructive",
+        });
       }
     });
   }, [images.length, analyzeImage, toast]);

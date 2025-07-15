@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { FileImage, Scan } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { FileImage, Scan, Shield } from "lucide-react";
 import { ImageAnalysis } from "@/types/visual-recognition";
 import AnalysisResults from "./AnalysisResults";
 
@@ -13,10 +14,23 @@ const ImageAnalysisCard = ({ image, index }: ImageAnalysisCardProps) => {
   return (
     <Card key={index} className="bg-card/50 backdrop-blur-sm border-border/50">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-sm">
-          <FileImage className="w-4 h-4" />
-          {image.file.name}
+        <CardTitle className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-2">
+            <FileImage className="w-4 h-4" />
+            {image.file.name}
+          </div>
+          {image.isWatermarked && (
+            <Badge variant="secondary" className="flex items-center gap-1 text-xs">
+              <Shield className="w-3 h-3" />
+              Enhanced Protection
+            </Badge>
+          )}
         </CardTitle>
+        {image.isWatermarked && (
+          <p className="text-xs text-muted-foreground">
+            Invisible watermark applied for enhanced real-time detection
+          </p>
+        )}
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Image Preview */}
