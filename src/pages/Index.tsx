@@ -38,6 +38,8 @@ import MonitoringFlow from "@/components/MonitoringFlow";
 import OnboardingTour from "@/components/OnboardingTour";
 import UserGuidance from "@/components/UserGuidance";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import IPLawyersDirectory from "@/components/IPLawyersDirectory";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const Index = () => {
   const { toast } = useToast();
@@ -829,24 +831,23 @@ const Index = () => {
                       <div className="font-medium">IP Lawyers Directory</div>
                       <div className="text-sm text-muted-foreground">Find specialized IP attorneys nationwide</div>
                     </div>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => {
-                        toast({
-                          title: "Opening IP Lawyer Directories",
-                          description: "Multiple lawyer directories are being opened for comprehensive search.",
-                        });
-                        // Open multiple IP lawyer directories
-                        window.open('https://www.martindale.com/intellectual-property-law/', '_blank');
-                        setTimeout(() => {
-                          window.open('https://www.findlaw.com/lawyer/practice/intellectual-property', '_blank');
-                        }, 500);
-                      }}
-                    >
-                      <Search className="h-4 w-4 mr-1" />
-                      Search
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                        >
+                          <Search className="h-4 w-4 mr-1" />
+                          Browse
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle>IP Lawyers Directory</DialogTitle>
+                        </DialogHeader>
+                        <IPLawyersDirectory />
+                      </DialogContent>
+                    </Dialog>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                     <div>

@@ -333,6 +333,72 @@ export type Database = {
         }
         Relationships: []
       }
+      ip_lawyers: {
+        Row: {
+          accepts_new_clients: boolean | null
+          bar_admissions: string[] | null
+          city: string
+          created_at: string
+          description: string | null
+          email: string
+          hourly_rate_range: string | null
+          id: string
+          is_verified: boolean | null
+          languages: string[] | null
+          law_firm: string
+          location: string
+          name: string
+          phone: string | null
+          specialties: string[]
+          state: string
+          updated_at: string
+          website: string | null
+          years_experience: number | null
+        }
+        Insert: {
+          accepts_new_clients?: boolean | null
+          bar_admissions?: string[] | null
+          city: string
+          created_at?: string
+          description?: string | null
+          email: string
+          hourly_rate_range?: string | null
+          id?: string
+          is_verified?: boolean | null
+          languages?: string[] | null
+          law_firm: string
+          location: string
+          name: string
+          phone?: string | null
+          specialties?: string[]
+          state: string
+          updated_at?: string
+          website?: string | null
+          years_experience?: number | null
+        }
+        Update: {
+          accepts_new_clients?: boolean | null
+          bar_admissions?: string[] | null
+          city?: string
+          created_at?: string
+          description?: string | null
+          email?: string
+          hourly_rate_range?: string | null
+          id?: string
+          is_verified?: boolean | null
+          languages?: string[] | null
+          law_firm?: string
+          location?: string
+          name?: string
+          phone?: string | null
+          specialties?: string[]
+          state?: string
+          updated_at?: string
+          website?: string | null
+          years_experience?: number | null
+        }
+        Relationships: []
+      }
       monitoring_alerts: {
         Row: {
           alert_type: string
