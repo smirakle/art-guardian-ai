@@ -41,8 +41,8 @@ const IPLawyersDirectory = () => {
   const [lawyers, setLawyers] = useState<IPLawyer[]>([]);
   const [filteredLawyers, setFilteredLawyers] = useState<IPLawyer[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedState, setSelectedState] = useState<string>('');
-  const [selectedSpecialty, setSelectedSpecialty] = useState<string>('');
+  const [selectedState, setSelectedState] = useState<string>('all');
+  const [selectedSpecialty, setSelectedSpecialty] = useState<string>('all');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -80,11 +80,11 @@ const IPLawyersDirectory = () => {
       );
     }
 
-    if (selectedState) {
+    if (selectedState && selectedState !== 'all') {
       filtered = filtered.filter(lawyer => lawyer.state === selectedState);
     }
 
-    if (selectedSpecialty) {
+    if (selectedSpecialty && selectedSpecialty !== 'all') {
       filtered = filtered.filter(lawyer => 
         lawyer.specialties.includes(selectedSpecialty)
       );
@@ -139,7 +139,7 @@ const IPLawyersDirectory = () => {
               <SelectValue placeholder="Select state" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All States</SelectItem>
+              <SelectItem value="all">All States</SelectItem>
               {uniqueStates.map(state => (
                 <SelectItem key={state} value={state}>{state}</SelectItem>
               ))}
@@ -151,7 +151,7 @@ const IPLawyersDirectory = () => {
               <SelectValue placeholder="Select specialty" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Specialties</SelectItem>
+              <SelectItem value="all">All Specialties</SelectItem>
               {uniqueSpecialties.map(specialty => (
                 <SelectItem key={specialty} value={specialty}>{specialty}</SelectItem>
               ))}
@@ -162,8 +162,8 @@ const IPLawyersDirectory = () => {
             variant="outline" 
             onClick={() => {
               setSearchTerm('');
-              setSelectedState('');
-              setSelectedSpecialty('');
+              setSelectedState('all');
+              setSelectedSpecialty('all');
             }}
           >
             Clear Filters
