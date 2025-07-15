@@ -807,15 +807,20 @@ const Upload = () => {
               </Label>
             </div>
             
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="blockchain"
-                checked={enableBlockchain}
-                onCheckedChange={(checked) => setEnableBlockchain(checked === true)}
-              />
-              <Label htmlFor="blockchain" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Register on blockchain for immutable proof of ownership
-              </Label>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="blockchain"
+                  checked={enableBlockchain}
+                  onCheckedChange={(checked) => setEnableBlockchain(checked === true)}
+                />
+                <Label htmlFor="blockchain" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  Register on blockchain for immutable proof of ownership
+                </Label>
+              </div>
+              <p className="text-sm text-muted-foreground ml-6">
+                Blockchain technology creates an unalterable, timestamped record of your artwork's ownership and creation date. This provides the strongest possible legal proof and prevents any disputes about authenticity or ownership rights.
+              </p>
             </div>
           </CardContent>
         </Card>
