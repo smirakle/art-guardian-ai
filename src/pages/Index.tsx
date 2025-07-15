@@ -603,6 +603,262 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Legal Sources Section */}
+      <section className="py-20 px-4 bg-gradient-to-br from-muted/10 to-background">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Legal Resources & Support
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Access comprehensive legal resources to protect your creative work. 
+              From DMCA guides to copyright law, we've got you covered.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {/* DMCA Resources */}
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-red-500/10 rounded-lg flex items-center justify-center mb-4">
+                  <Shield className="h-6 w-6 text-red-500" />
+                </div>
+                <CardTitle>DMCA Takedown Guide</CardTitle>
+                <CardDescription>
+                  Step-by-step instructions for filing DMCA takedown requests
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span className="text-sm">How to identify copyright infringement</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span className="text-sm">Proper DMCA notice formatting</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span className="text-sm">Platform-specific submission guides</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span className="text-sm">Follow-up procedures</span>
+                  </div>
+                </div>
+                <Button className="w-full mt-4" variant="outline">
+                  <Link2 className="h-4 w-4 mr-2" />
+                  Access DMCA Guide
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Copyright Law Resources */}
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4">
+                  <FileImage className="h-6 w-6 text-blue-500" />
+                </div>
+                <CardTitle>Copyright Law Basics</CardTitle>
+                <CardDescription>
+                  Understanding your rights as a creative professional
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span className="text-sm">What copyright protects</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span className="text-sm">Duration of copyright protection</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span className="text-sm">Fair use guidelines</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span className="text-sm">International copyright law</span>
+                  </div>
+                </div>
+                <Button className="w-full mt-4" variant="outline">
+                  <FileImage className="h-4 w-4 mr-2" />
+                  Learn Copyright Law
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Legal Templates */}
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center mb-4">
+                  <Upload className="h-6 w-6 text-green-500" />
+                </div>
+                <CardTitle>Legal Templates</CardTitle>
+                <CardDescription>
+                  Download ready-to-use legal documents and templates
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span className="text-sm">DMCA takedown notice template</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span className="text-sm">Cease and desist letter template</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span className="text-sm">Licensing agreement template</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    <span className="text-sm">Copyright registration forms</span>
+                  </div>
+                </div>
+                <Button className="w-full mt-4" variant="outline">
+                  <Upload className="h-4 w-4 mr-2" />
+                  Download Templates
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Legal Authorities & Resources */}
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="h-5 w-5 text-primary" />
+                  Official Legal Authorities
+                </CardTitle>
+                <CardDescription>
+                  Direct links to government and official legal resources
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                    <div>
+                      <div className="font-medium">US Copyright Office</div>
+                      <div className="text-sm text-muted-foreground">Official copyright registration</div>
+                    </div>
+                    <Button size="sm" variant="outline">
+                      <Link2 className="h-4 w-4 mr-1" />
+                      Visit
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                    <div>
+                      <div className="font-medium">WIPO</div>
+                      <div className="text-sm text-muted-foreground">World Intellectual Property Organization</div>
+                    </div>
+                    <Button size="sm" variant="outline">
+                      <Link2 className="h-4 w-4 mr-1" />
+                      Visit
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                    <div>
+                      <div className="font-medium">EU Copyright</div>
+                      <div className="text-sm text-muted-foreground">European Union copyright resources</div>
+                    </div>
+                    <Button size="sm" variant="outline">
+                      <Link2 className="h-4 w-4 mr-1" />
+                      Visit
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-primary" />
+                  Legal Support Network
+                </CardTitle>
+                <CardDescription>
+                  Connect with legal professionals and support organizations
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                    <div>
+                      <div className="font-medium">IP Lawyers Directory</div>
+                      <div className="text-sm text-muted-foreground">Find IP attorneys near you</div>
+                    </div>
+                    <Button size="sm" variant="outline">
+                      <Search className="h-4 w-4 mr-1" />
+                      Search
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                    <div>
+                      <div className="font-medium">Legal Aid Organizations</div>
+                      <div className="text-sm text-muted-foreground">Free legal assistance programs</div>
+                    </div>
+                    <Button size="sm" variant="outline">
+                      <Link2 className="h-4 w-4 mr-1" />
+                      Find Help
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                    <div>
+                      <div className="font-medium">Artist Legal Groups</div>
+                      <div className="text-sm text-muted-foreground">Professional artist associations</div>
+                    </div>
+                    <Button size="sm" variant="outline">
+                      <Link2 className="h-4 w-4 mr-1" />
+                      Join
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Quick Legal Action */}
+          <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
+            <CardContent className="pt-6">
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold mb-2">Need Immediate Legal Action?</h3>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  If you've discovered copyright infringement, don't wait. Take action now with our automated legal tools.
+                </p>
+              </div>
+              
+              <div className="grid md:grid-cols-3 gap-4 mb-6">
+                <Button className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700">
+                  <Zap className="h-4 w-4 mr-2" />
+                  File DMCA Now
+                </Button>
+                <Button variant="outline" className="flex-1">
+                  <Phone className="h-4 w-4 mr-2" />
+                  Legal Consultation
+                </Button>
+                <Button variant="outline" className="flex-1">
+                  <Mail className="h-4 w-4 mr-2" />
+                  Report Infringement
+                </Button>
+              </div>
+
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">
+                  <strong>24/7 Legal Support:</strong> Our legal team is available around the clock to help protect your creative work.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
       {/* Submit Testimonial Section */}
       <section className="py-20 px-4 bg-gradient-to-r from-muted/20 to-background">
         <div className="container mx-auto max-w-4xl">
