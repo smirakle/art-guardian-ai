@@ -21,6 +21,7 @@ import Contact from "./pages/Contact";
 import DeepWebScan from "./components/DeepWebScan";
 import BlockchainVerification from "./components/BlockchainVerification";
 import Community from "./pages/Community";
+import Certificate from "./pages/Certificate";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -86,6 +87,7 @@ const App = () => {
                   </ProtectedRoute>
                 } />
                 <Route path="/community" element={<Community />} />
+                <Route path="/certificate/:certificateId" element={<Certificate />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

@@ -16,6 +16,9 @@ export type Database = {
     Tables: {
       artwork: {
         Row: {
+          blockchain_certificate_id: string | null
+          blockchain_hash: string | null
+          blockchain_registered_at: string | null
           category: string
           created_at: string
           description: string | null
@@ -31,6 +34,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          blockchain_certificate_id?: string | null
+          blockchain_hash?: string | null
+          blockchain_registered_at?: string | null
           category: string
           created_at?: string
           description?: string | null
@@ -46,6 +52,9 @@ export type Database = {
           user_id: string
         }
         Update: {
+          blockchain_certificate_id?: string | null
+          blockchain_hash?: string | null
+          blockchain_registered_at?: string | null
           category?: string
           created_at?: string
           description?: string | null
@@ -57,6 +66,51 @@ export type Database = {
           status?: string | null
           tags?: string[] | null
           title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      blockchain_certificates: {
+        Row: {
+          artwork_fingerprint: string
+          artwork_id: string
+          blockchain_hash: string
+          certificate_data: Json
+          certificate_id: string
+          created_at: string
+          id: string
+          ownership_proof: string
+          registration_timestamp: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          artwork_fingerprint: string
+          artwork_id: string
+          blockchain_hash: string
+          certificate_data: Json
+          certificate_id: string
+          created_at?: string
+          id?: string
+          ownership_proof: string
+          registration_timestamp: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          artwork_fingerprint?: string
+          artwork_id?: string
+          blockchain_hash?: string
+          certificate_data?: Json
+          certificate_id?: string
+          created_at?: string
+          id?: string
+          ownership_proof?: string
+          registration_timestamp?: string
+          status?: string
           updated_at?: string
           user_id?: string
         }

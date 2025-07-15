@@ -431,11 +431,57 @@ const Upload = () => {
       }));
       setFiles(finalFiles);
 
+      // Handle blockchain registration if enabled
+      if (enableBlockchain) {
+        try {
+          toast({
+            title: "Blockchain Registration Started",
+            description: "Creating immutable proof of ownership...",
+          });
+
+          const { data: certificateData, error: blockchainError } = await supabase.functions.invoke('blockchain-registration', {
+            body: {
+              artworkId: artwork.id,
+              title: artworkTitle,
+              description: description || null,
+              category,
+              filePaths: allPaths,
+              userEmail: user!.email || '',
+              userId: user!.id
+            }
+          });
+
+          if (blockchainError) {
+            console.error('Blockchain registration error:', blockchainError);
+            toast({
+              title: "Blockchain Registration Failed",
+              description: "Artwork is protected but blockchain registration failed. You can retry later.",
+              variant: "destructive",
+            });
+          } else if (certificateData?.certificate) {
+            toast({
+              title: "Blockchain Certificate Created!",
+              description: `Certificate ID: ${certificateData.certificate.certificateId}`,
+            });
+            
+            console.log("Blockchain certificate created:", certificateData.certificate);
+          }
+        } catch (blockchainError: any) {
+          console.error('Blockchain registration exception:', blockchainError);
+          toast({
+            title: "Blockchain Registration Error",
+            description: "Continuing with standard protection. Blockchain registration can be retried.",
+            variant: "destructive",
+          });
+        }
+      }
+
       // Success notification
       const totalItems = files.length + urls.length;
+      const blockchainMessage = enableBlockchain ? " with blockchain certificate" : "";
       toast({
         title: "Protection Complete!",
-        description: `${totalItems} item(s) are now protected and being monitored 24/7`,
+        description: `${totalItems} item(s) are now protected and being monitored 24/7${blockchainMessage}`,
       });
 
       console.log("Protection applied with:", {
