@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
-import { Shield, Upload, Activity, Home, Users, Link2, Settings, UserCog, LogIn, LogOut, User } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, Settings, UserCog, LogIn, LogOut, User, Mail } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 
@@ -22,6 +22,7 @@ const Navigation = () => {
   const navItems = [
     { path: "/", label: "Home", icon: Home },
     { path: "/about-tsmo", label: "About", icon: User },
+    { path: "/contact", label: "Contact", icon: Mail },
     { path: "/upload", label: "Upload", icon: Upload, needsAuth: true },
     { path: "/monitoring", label: "Monitor", icon: Activity, needsAuth: true },
     { path: "/deep-scan", label: "Deep Scan", icon: Shield, needsAuth: true },
@@ -57,7 +58,7 @@ const Navigation = () => {
               const needsAuth = item.needsAuth && !user;
               const canShow = !item.isAdmin || (item.isAdmin && role === 'admin');
               
-              // Hide items that need auth when user is not logged in
+              // Hide items that need auth when user is not logged in, but show contact to everyone
               if (!canShow || (item.needsAuth && !user)) return null;
               
               return (

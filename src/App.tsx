@@ -17,6 +17,7 @@ import Admin from "./pages/Admin";
 import Checkout from "./pages/Checkout";
 import Success from "./pages/Success";
 import Auth from "./pages/Auth";
+import Contact from "./pages/Contact";
 import DeepWebScan from "./components/DeepWebScan";
 import BlockchainVerification from "./components/BlockchainVerification";
 import Community from "./pages/Community";
@@ -55,6 +56,7 @@ const App = () => {
                 <Route path="/" element={<Index />} />
                 <Route path="/about-tsmo" element={<AboutTsmo />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/contact" element={<Contact />} />
                 <Route path="/upload" element={
                   <ProtectedRoute>
                     <Upload />
