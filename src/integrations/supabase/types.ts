@@ -62,6 +62,122 @@ export type Database = {
         }
         Relationships: []
       }
+      community_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          post_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          post_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_comments_post_id"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_posts: {
+        Row: {
+          category: string
+          comments_count: number
+          content: string
+          created_at: string
+          id: string
+          is_featured: boolean
+          likes_count: number
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          comments_count?: number
+          content: string
+          created_at?: string
+          id?: string
+          is_featured?: boolean
+          likes_count?: number
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          comments_count?: number
+          content?: string
+          created_at?: string
+          id?: string
+          is_featured?: boolean
+          likes_count?: number
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      community_votes: {
+        Row: {
+          comment_id: string | null
+          created_at: string
+          id: string
+          post_id: string | null
+          user_id: string
+          vote_type: string
+        }
+        Insert: {
+          comment_id?: string | null
+          created_at?: string
+          id?: string
+          post_id?: string | null
+          user_id: string
+          vote_type: string
+        }
+        Update: {
+          comment_id?: string | null
+          created_at?: string
+          id?: string
+          post_id?: string | null
+          user_id?: string
+          vote_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_votes_comment_id"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "community_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_votes_post_id"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       copyright_matches: {
         Row: {
           artwork_id: string
@@ -136,6 +252,86 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      expert_advice: {
+        Row: {
+          advice: string
+          category: string
+          created_at: string
+          expert_id: string
+          id: string
+          is_featured: boolean
+          likes_count: number
+          updated_at: string
+        }
+        Insert: {
+          advice: string
+          category: string
+          created_at?: string
+          expert_id: string
+          id?: string
+          is_featured?: boolean
+          likes_count?: number
+          updated_at?: string
+        }
+        Update: {
+          advice?: string
+          category?: string
+          created_at?: string
+          expert_id?: string
+          id?: string
+          is_featured?: boolean
+          likes_count?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_advice_expert_id"
+            columns: ["expert_id"]
+            isOneToOne: false
+            referencedRelation: "expert_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expert_profiles: {
+        Row: {
+          bio: string | null
+          created_at: string
+          expert_name: string
+          id: string
+          is_verified: boolean
+          role: string
+          specialties: string[] | null
+          total_likes: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          expert_name: string
+          id?: string
+          is_verified?: boolean
+          role: string
+          specialties?: string[] | null
+          total_likes?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          expert_name?: string
+          id?: string
+          is_verified?: boolean
+          role?: string
+          specialties?: string[] | null
+          total_likes?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       monitoring_alerts: {
         Row: {

@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   Users, 
   MessageSquare, 
@@ -19,77 +20,29 @@ import {
   ExternalLink,
   Scale,
   FileText,
-  Gavel
+  Gavel,
+  Heart,
+  Clock
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useCommunity } from "@/hooks/useCommunity";
+import { useAuth } from "@/contexts/AuthContext";
+import { formatDistanceToNow } from "date-fns";
 
 const Community = () => {
-  const { toast } = useToast();
+  const { user } = useAuth();
+  const { posts, expertAdvice, loading, createPost, toggleLike, getStats } = useCommunity();
   const [newPost, setNewPost] = useState({ title: "", content: "", category: "strategy" });
-  const [activeTab, setActiveTab] = useState("share");
+  const [activeTab, setActiveTab] = useState("community");
 
-  const handleSubmitPost = (e: React.FormEvent) => {
+  const stats = getStats();
+
+  const handleSubmitPost = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Post Shared Successfully!",
-      description: "Your protection strategy has been shared with the community.",
-    });
-    setNewPost({ title: "", content: "", category: "strategy" });
+    const success = await createPost(newPost.title, newPost.content, newPost.category);
+    if (success) {
+      setNewPost({ title: "", content: "", category: "strategy" });
+    }
   };
-
-  const expertAdvice = [
-    {
-      expert: "Sarah Chen",
-      role: "IP Attorney",
-      advice: "Always register your copyrights before sharing work online. It strengthens your legal position significantly.",
-      likes: 124,
-      category: "Legal"
-    },
-    {
-      expert: "Marcus Rodriguez",
-      role: "Digital Artist",
-      advice: "Use watermarks strategically - visible enough to deter theft but subtle enough not to ruin the aesthetic.",
-      likes: 89,
-      category: "Technical"
-    },
-    {
-      expert: "Dr. Emily Watson",
-      role: "Art Technology Expert",
-      advice: "Blockchain-based certificates are becoming the gold standard for proving authenticity and ownership.",
-      likes: 156,
-      category: "Innovation"
-    }
-  ];
-
-  const communityPosts = [
-    {
-      author: "Alex Kim",
-      title: "How I Caught Someone Selling My Art on Etsy",
-      content: "Used reverse image search and found my artwork being sold without permission. Here's the step-by-step process I used to get it taken down...",
-      category: "Success Story",
-      likes: 67,
-      comments: 23,
-      timeAgo: "2 hours ago"
-    },
-    {
-      author: "Maria Santos",
-      title: "Creating Effective Watermarks That Don't Ruin Your Art",
-      content: "After losing several commissions to theft, I developed a watermarking system that's both protective and aesthetically pleasing...",
-      category: "Strategy",
-      likes: 91,
-      comments: 34,
-      timeAgo: "5 hours ago"
-    },
-    {
-      author: "David Chen",
-      title: "Legal Resources for Artists - Free Consultation Services",
-      content: "Compiled a list of organizations offering free legal advice to artists dealing with IP theft. Updated for 2024...",
-      category: "Resources",
-      likes: 145,
-      comments: 56,
-      timeAgo: "1 day ago"
-    }
-  ];
 
   const legalResources = [
     {
@@ -135,83 +88,61 @@ const Community = () => {
       ]
     },
     {
-      category: "IP Law Resources",
-      icon: Gavel,
-      resources: [
-        {
-          title: "USPTO Trademark Search",
-          description: "Search existing trademarks and file applications",
-          url: "https://www.uspto.gov/trademarks"
-        },
-        {
-          title: "World Intellectual Property Organization",
-          description: "International IP protection and resources",
-          url: "https://www.wipo.int/"
-        },
-        {
-          title: "Electronic Frontier Foundation",
-          description: "Digital rights and fair use guidance",
-          url: "https://www.eff.org/"
-        }
-      ]
-    },
-    {
       category: "Templates & Forms",
       icon: BookOpen,
       resources: [
         {
           title: "Artist Commission Contract Template",
-          description: "Comprehensive contract template for commissioned artwork with payment terms and usage rights",
+          description: "Comprehensive contract template for commissioned artwork",
           url: "https://www.lawdepot.com/contracts/commission-agreement/"
         },
         {
-          title: "Licensing Agreement Templates",
-          description: "Templates for licensing your artwork for commercial use, merchandise, and reproduction",
-          url: "https://www.nolo.com/legal-encyclopedia/licensing-artwork.html"
-        },
-        {
-          title: "Copyright Assignment Forms",
-          description: "Legal forms for transferring or retaining copyright ownership",
-          url: "https://www.copyright.gov/forms/"
-        },
-        {
-          title: "Cease and Desist Letter Generator",
-          description: "Step-by-step tool to create professional cease and desist letters for IP infringement",
-          url: "https://www.lawdepot.com/contracts/cease-and-desist-letter/"
-        },
-        {
           title: "DMCA Takedown Notice Template",
-          description: "Official DMCA takedown request template for removing stolen content from websites",
+          description: "Official DMCA takedown request template",
           url: "https://www.copyright.gov/legislation/dmca.pdf"
         },
         {
-          title: "Artist Invoice Templates",
-          description: "Professional invoice templates specifically designed for artists and creative services",
-          url: "https://www.thebalancesmb.com/free-invoice-templates-for-artists-1794421"
-        },
-        {
-          title: "Model Release Forms",
-          description: "Legal forms for obtaining permission to use someone's likeness in your artwork",
-          url: "https://asmp.org/articles/model-release-forms/"
-        },
-        {
-          title: "Gallery Representation Agreement",
-          description: "Template contracts for artists entering into representation agreements with galleries",
-          url: "https://www.artbusiness.com/gallerycontract.html"
+          title: "Cease and Desist Letter Generator",
+          description: "Step-by-step tool to create professional letters",
+          url: "https://www.lawdepot.com/contracts/cease-and-desist-letter/"
         }
       ]
     }
   ];
 
-  const stats = [
-    { label: "Active Members", value: "12,450", icon: Users },
-    { label: "Protection Strategies", value: "3,240", icon: Shield },
-    { label: "Cases Resolved", value: "1,890", icon: TrendingUp },
-    { label: "Expert Advisors", value: "89", icon: Star }
+  const displayStats = [
+    { label: "Community Posts", value: stats.posts.toString(), icon: MessageSquare },
+    { label: "Total Likes", value: stats.likes.toString(), icon: Heart },
+    { label: "Comments", value: stats.comments.toString(), icon: MessageSquare },
+    { label: "Expert Advisors", value: stats.experts.toString(), icon: Star }
   ];
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background py-8">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <Skeleton className="h-12 w-96 mx-auto mb-4" />
+            <Skeleton className="h-6 w-[500px] mx-auto" />
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            {[1, 2, 3, 4].map((i) => (
+              <Card key={i}>
+                <CardContent className="pt-6">
+                  <Skeleton className="h-8 w-8 mx-auto mb-2" />
+                  <Skeleton className="h-8 w-16 mx-auto mb-2" />
+                  <Skeleton className="h-4 w-20 mx-auto" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-white py-8">
+    <div className="min-h-screen bg-background py-8">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
@@ -225,7 +156,7 @@ const Community = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {stats.map((stat, index) => {
+          {displayStats.map((stat, index) => {
             const Icon = stat.icon;
             return (
               <Card key={index} className="text-center">
@@ -244,11 +175,78 @@ const Community = () => {
           <div className="lg:col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
               <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="share">Share Strategy</TabsTrigger>
                 <TabsTrigger value="community">Community Posts</TabsTrigger>
+                <TabsTrigger value="share">Share Strategy</TabsTrigger>
                 <TabsTrigger value="experts">Expert Advice</TabsTrigger>
                 <TabsTrigger value="legal">Legal Resources</TabsTrigger>
               </TabsList>
+
+              <TabsContent value="community" className="space-y-6">
+                {posts.length === 0 ? (
+                  <Card>
+                    <CardContent className="pt-6 text-center">
+                      <MessageSquare className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                      <h3 className="text-lg font-semibold mb-2">No posts yet</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Be the first to share your protection strategy with the community!
+                      </p>
+                      <Button onClick={() => setActiveTab("share")}>
+                        Create First Post
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  posts.map((post) => (
+                    <Card key={post.id}>
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-3">
+                            <Avatar>
+                              <AvatarFallback>
+                                {post.profiles?.full_name?.[0] || post.profiles?.username?.[0] || 'U'}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <h3 className="font-semibold">{post.title}</h3>
+                              <p className="text-sm text-muted-foreground">
+                                by {post.profiles?.full_name || post.profiles?.username || 'Anonymous'} • {' '}
+                                <span className="flex items-center gap-1">
+                                  <Clock className="w-3 h-3" />
+                                  {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+                                </span>
+                              </p>
+                            </div>
+                          </div>
+                          <Badge variant="outline">{post.category}</Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-muted-foreground mb-4 whitespace-pre-wrap">{post.content}</p>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <button 
+                            className={`flex items-center gap-1 hover:text-primary transition-colors ${
+                              post.user_liked ? 'text-red-500' : ''
+                            }`}
+                            onClick={() => toggleLike(post.id)}
+                            disabled={!user}
+                          >
+                            <ThumbsUp className={`w-4 h-4 ${post.user_liked ? 'fill-current' : ''}`} />
+                            {post.likes_count}
+                          </button>
+                          <span className="flex items-center gap-1">
+                            <MessageSquare className="w-4 h-4" />
+                            {post.comments_count} comments
+                          </span>
+                          <button className="flex items-center gap-1 hover:text-primary">
+                            <Share className="w-4 h-4" />
+                            Share
+                          </button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </TabsContent>
 
               <TabsContent value="share" className="space-y-6">
                 <Card>
@@ -257,6 +255,11 @@ const Community = () => {
                       <MessageSquare className="w-5 h-5" />
                       Share Your Protection Strategy
                     </CardTitle>
+                    {!user && (
+                      <p className="text-sm text-muted-foreground">
+                        You need to be logged in to share posts with the community.
+                      </p>
+                    )}
                   </CardHeader>
                   <CardContent>
                     <form onSubmit={handleSubmitPost} className="space-y-4">
@@ -265,6 +268,7 @@ const Community = () => {
                         value={newPost.title}
                         onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
                         required
+                        disabled={!user}
                       />
                       <Textarea
                         placeholder="Share your protection strategy, success story, or ask for advice..."
@@ -272,19 +276,21 @@ const Community = () => {
                         onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
                         rows={6}
                         required
+                        disabled={!user}
                       />
                       <div className="flex gap-2">
                         <select
-                          className="px-3 py-2 border border-input rounded-md bg-background text-sm"
+                          className="px-3 py-2 border border-input rounded-md bg-background text-sm disabled:opacity-50"
                           value={newPost.category}
                           onChange={(e) => setNewPost({ ...newPost, category: e.target.value })}
+                          disabled={!user}
                         >
                           <option value="strategy">Protection Strategy</option>
                           <option value="success">Success Story</option>
                           <option value="question">Ask for Help</option>
                           <option value="resources">Resources</option>
                         </select>
-                        <Button type="submit" className="ml-auto">
+                        <Button type="submit" className="ml-auto" disabled={!user}>
                           Share with Community
                         </Button>
                       </div>
@@ -293,72 +299,53 @@ const Community = () => {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="community" className="space-y-6">
-                {communityPosts.map((post, index) => (
-                  <Card key={index}>
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
+              <TabsContent value="experts" className="space-y-6">
+                {expertAdvice.length === 0 ? (
+                  <Card>
+                    <CardContent className="pt-6 text-center">
+                      <Star className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                      <h3 className="text-lg font-semibold mb-2">No expert advice yet</h3>
+                      <p className="text-muted-foreground">
+                        Expert advice will appear here as our community grows.
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  expertAdvice.map((advice) => (
+                    <Card key={advice.id}>
+                      <CardHeader>
                         <div className="flex items-center gap-3">
                           <Avatar>
-                            <AvatarFallback>{post.author.charAt(0)}</AvatarFallback>
+                            <AvatarFallback>
+                              {advice.expert_profiles?.expert_name?.[0] || 'E'}
+                            </AvatarFallback>
                           </Avatar>
                           <div>
-                            <h3 className="font-semibold">{post.title}</h3>
+                            <h3 className="font-semibold">
+                              {advice.expert_profiles?.expert_name || 'Expert'}
+                              {advice.expert_profiles?.is_verified && (
+                                <Star className="w-4 h-4 inline ml-1 text-yellow-500" />
+                              )}
+                            </h3>
                             <p className="text-sm text-muted-foreground">
-                              by {post.author} • {post.timeAgo}
+                              {advice.expert_profiles?.role || 'Expert'}
                             </p>
                           </div>
+                          <Badge className="ml-auto">{advice.category}</Badge>
                         </div>
-                        <Badge variant="outline">{post.category}</Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground mb-4">{post.content}</p>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <button className="flex items-center gap-1 hover:text-primary">
+                      </CardHeader>
+                      <CardContent>
+                        <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground mb-4">
+                          "{advice.advice}"
+                        </blockquote>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <ThumbsUp className="w-4 h-4" />
-                          {post.likes}
-                        </button>
-                        <button className="flex items-center gap-1 hover:text-primary">
-                          <MessageSquare className="w-4 h-4" />
-                          {post.comments} comments
-                        </button>
-                        <button className="flex items-center gap-1 hover:text-primary">
-                          <Share className="w-4 h-4" />
-                          Share
-                        </button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </TabsContent>
-
-              <TabsContent value="experts" className="space-y-6">
-                {expertAdvice.map((expert, index) => (
-                  <Card key={index}>
-                    <CardHeader>
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarFallback>{expert.expert.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <h3 className="font-semibold">{expert.expert}</h3>
-                          <p className="text-sm text-muted-foreground">{expert.role}</p>
+                          {advice.likes_count} found this helpful
                         </div>
-                        <Badge className="ml-auto">{expert.category}</Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground mb-4">
-                        "{expert.advice}"
-                      </blockquote>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <ThumbsUp className="w-4 h-4" />
-                        {expert.likes} found this helpful
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
               </TabsContent>
 
               <TabsContent value="legal" className="space-y-6">
@@ -418,9 +405,13 @@ const Community = () => {
                   <BookOpen className="w-4 h-4 mr-2" />
                   Legal Resources
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline"
+                  onClick={() => setActiveTab("share")}
+                >
                   <Users className="w-4 h-4 mr-2" />
-                  Find Mentor
+                  Share Strategy
                 </Button>
               </CardContent>
             </Card>
@@ -438,59 +429,47 @@ const Community = () => {
                     <ExternalLink className="w-3 h-3 text-muted-foreground" />
                   </h4>
                   <p className="text-sm text-muted-foreground">
-                    Essential steps every artist should take from the U.S. Copyright Office
+                    Essential steps every artist should take
                   </p>
                 </div>
                 <div className="border border-border rounded-lg p-3 hover:bg-secondary/50 transition-colors cursor-pointer"
                      onClick={() => window.open('https://www.copyright.gov/registration/', '_blank')}>
                   <h4 className="font-medium mb-1 flex items-center gap-2">
-                    Copyright Registration Guide
+                    Copyright Registration
                     <ExternalLink className="w-3 h-3 text-muted-foreground" />
                   </h4>
                   <p className="text-sm text-muted-foreground">
-                    Step-by-step legal protection process and online registration
-                  </p>
-                </div>
-                <div className="border border-border rounded-lg p-3 hover:bg-secondary/50 transition-colors cursor-pointer"
-                     onClick={() => window.open('https://www.adobe.com/creativecloud/photography/discover/how-to-watermark-photos.html', '_blank')}>
-                  <h4 className="font-medium mb-1 flex items-center gap-2">
-                    Watermarking Best Practices
-                    <ExternalLink className="w-3 h-3 text-muted-foreground" />
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    Protect without compromising aesthetics - Adobe's complete guide
-                  </p>
-                </div>
-                <div className="border border-border rounded-lg p-3 hover:bg-secondary/50 transition-colors cursor-pointer"
-                     onClick={() => window.open('https://www.artbusiness.com/protect.html', '_blank')}>
-                  <h4 className="font-medium mb-1 flex items-center gap-2">
-                    Artist Rights Protection
-                    <ExternalLink className="w-3 h-3 text-muted-foreground" />
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    Comprehensive guide to protecting your artwork and business
+                    Step-by-step legal protection process
                   </p>
                 </div>
               </CardContent>
             </Card>
 
             {/* Top Contributors */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Top Contributors</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {["Sarah Chen", "Marcus Rodriguez", "Dr. Emily Watson"].map((name, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="text-xs">{name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm font-medium">{name}</span>
-                    <Star className="w-4 h-4 text-yellow-500 ml-auto" />
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+            {posts.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Top Contributors</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {posts
+                    .slice(0, 3)
+                    .map((post, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <Avatar className="h-8 w-8">
+                          <AvatarFallback className="text-xs">
+                            {post.profiles?.full_name?.[0] || post.profiles?.username?.[0] || 'U'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm font-medium">
+                          {post.profiles?.full_name || post.profiles?.username || 'Anonymous'}
+                        </span>
+                        <Star className="w-4 h-4 text-yellow-500 ml-auto" />
+                      </div>
+                    ))}
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
