@@ -77,13 +77,21 @@ serve(async (req) => {
 
     console.log(`Found ${results.length} total results`);
 
-    // Store results in database - lowered threshold for testing
+    // Store results in database and create alerts
     console.log(`Processing ${results.length} results for storage...`)
+    
+    // Get artwork details to get user_id for alerts
+    const { data: artwork } = await supabaseClient
+      .from('artwork')
+      .select('user_id, title')
+      .eq('id', artworkId)
+      .single()
     
     for (const result of results) {
       if (result.confidence > 50) { // Lowered threshold for testing
         console.log(`Storing match: ${result.title} (${result.confidence}% confidence)`)
-        await supabaseClient
+        
+        const { data: matchData } = await supabaseClient
           .from('copyright_matches')
           .insert({
             artwork_id: artworkId,
@@ -99,6 +107,24 @@ serve(async (req) => {
             thumbnail_url: result.thumbnail,
             detected_at: new Date().toISOString()
           })
+          .select()
+          .single()
+
+        // Create alert for this match if it's significant enough
+        if (matchData && artwork && result.confidence > 60) {
+          console.log(`Creating alert for match with ${result.confidence}% confidence`)
+          
+          try {
+            await supabaseClient.functions.invoke('create-monitoring-alert', {
+              body: {
+                matchId: matchData.id,
+                userId: artwork.user_id
+              }
+            })
+          } catch (alertError) {
+            console.error('Error creating alert:', alertError)
+          }
+        }
       }
     }
     
