@@ -1135,7 +1135,14 @@ const Index = () => {
                     </div>
                     <div>
                       <div className="font-medium">Email</div>
-                      <div className="text-muted-foreground">hello@tsmo.ai</div>
+                      <a 
+                        href="mailto:hello@tsmo.ai" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        hello@tsmo.ai
+                      </a>
                     </div>
                   </div>
                   
@@ -1145,7 +1152,14 @@ const Index = () => {
                     </div>
                     <div>
                       <div className="font-medium">Phone</div>
-                      <div className="text-muted-foreground">+1 (555) 123-4567</div>
+                      <a 
+                        href="tel:+15551234567" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        +1 (555) 123-4567
+                      </a>
                     </div>
                   </div>
                   
@@ -1166,15 +1180,27 @@ const Index = () => {
               <div>
                 <h4 className="font-semibold mb-4">Quick Start</h4>
                 <div className="space-y-3">
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={() => window.open('/upload', '_blank')}
+                  >
                     <Eye className="h-4 w-4 mr-2" />
                     Try Visual Recognition Demo
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={() => window.open('/upload', '_blank')}
+                  >
                     <Link2 className="h-4 w-4 mr-2" />
                     Get Blockchain Certificate
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={() => window.open('/monitoring', '_blank')}
+                  >
                     <Activity className="h-4 w-4 mr-2" />
                     Start Monitoring Trial
                   </Button>
@@ -1196,11 +1222,21 @@ const Index = () => {
             Start your free trial today and see the difference.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="px-8 py-3 text-lg">
+            <Button 
+              size="lg" 
+              variant="secondary" 
+              className="px-8 py-3 text-lg"
+              onClick={() => window.open('/auth', '_blank')}
+            >
               Start Free Trial
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline" className="px-8 py-3 text-lg border-white text-white hover:bg-white hover:text-primary">
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="px-8 py-3 text-lg border-white text-white hover:bg-white hover:text-primary"
+              onClick={() => window.open('https://calendly.com/tsmo-legal/consultation', '_blank')}
+            >
               Schedule Demo
             </Button>
           </div>
