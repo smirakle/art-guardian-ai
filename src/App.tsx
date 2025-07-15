@@ -58,34 +58,14 @@ const App = () => {
                 <Route path="/about-tsmo" element={<AboutTsmo />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/upload" element={
-                  <ProtectedRoute>
-                    <Upload />
-                  </ProtectedRoute>
-                } />
-                <Route path="/monitoring" element={
-                  <ProtectedRoute>
-                    <Monitoring />
-                  </ProtectedRoute>
-                } />
+                <Route path="/upload" element={<Upload />} />
+                <Route path="/monitoring" element={<Monitoring />} />
                 <Route path="/demo" element={<Demo />} />
-                <Route path="/admin" element={
-                  <ProtectedRoute requiredRole="admin">
-                    <Admin />
-                  </ProtectedRoute>
-                } />
+                <Route path="/admin" element={<Admin />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/success" element={<Success />} />
-                <Route path="/deep-scan" element={
-                  <ProtectedRoute>
-                    <DeepWebScan />
-                  </ProtectedRoute>
-                } />
-                <Route path="/blockchain" element={
-                  <ProtectedRoute>
-                    <BlockchainVerification />
-                  </ProtectedRoute>
-                } />
+                <Route path="/deep-scan" element={<DeepWebScan />} />
+                <Route path="/blockchain" element={<BlockchainVerification />} />
                 <Route path="/community" element={<Community />} />
                 <Route path="/certificate/:certificateId" element={<Certificate />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
