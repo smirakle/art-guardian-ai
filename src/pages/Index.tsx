@@ -901,7 +901,7 @@ const Index = () => {
           <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
             <CardContent className="pt-6">
               <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold mb-2">Need Immediate Legal Action?</h3>
+                <h3 className="text-2xl font-bold mb-2">Quick Legal Action</h3>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
                   If you've discovered copyright infringement, don't wait. Take action now with our automated legal tools.
                 </p>
