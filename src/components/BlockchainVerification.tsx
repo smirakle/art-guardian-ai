@@ -283,9 +283,22 @@ const BlockchainVerification = () => {
       logoImg.crossOrigin = 'anonymous';
       
       logoImg.onload = async () => {
-        // Draw TSMO logo at the top center
-        const logoWidth = 200;
-        const logoHeight = 100;
+        // Calculate proportional logo dimensions
+        const maxLogoWidth = 250;
+        const maxLogoHeight = 120;
+        const aspectRatio = logoImg.naturalWidth / logoImg.naturalHeight;
+        
+        let logoWidth, logoHeight;
+        if (aspectRatio > maxLogoWidth / maxLogoHeight) {
+          // Width is the limiting factor
+          logoWidth = maxLogoWidth;
+          logoHeight = maxLogoWidth / aspectRatio;
+        } else {
+          // Height is the limiting factor
+          logoHeight = maxLogoHeight;
+          logoWidth = maxLogoHeight * aspectRatio;
+        }
+        
         const logoX = (canvas.width - logoWidth) / 2;
         const logoY = margin + 20;
         ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
