@@ -9,21 +9,38 @@ import {
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
-export const TestPhasePopup = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface TestPhasePopupProps {
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  autoShow?: boolean;
+}
+
+export const TestPhasePopup = ({ 
+  isOpen: externalIsOpen, 
+  onOpenChange, 
+  autoShow = true 
+}: TestPhasePopupProps = {}) => {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
+  const setIsOpen = onOpenChange || setInternalIsOpen;
 
   useEffect(() => {
-    // Check if user has seen the popup before
-    const hasSeenPopup = localStorage.getItem("tsmo-test-popup-seen");
-    
-    if (!hasSeenPopup) {
-      setIsOpen(true);
+    if (autoShow) {
+      // Check if user has seen the popup before
+      const hasSeenPopup = localStorage.getItem("tsmo-test-popup-seen");
+      
+      if (!hasSeenPopup) {
+        setIsOpen(true);
+      }
     }
-  }, []);
+  }, [autoShow, setIsOpen]);
 
   const handleClose = () => {
     setIsOpen(false);
-    localStorage.setItem("tsmo-test-popup-seen", "true");
+    if (autoShow) {
+      localStorage.setItem("tsmo-test-popup-seen", "true");
+    }
   };
 
   return (
