@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
@@ -22,6 +22,7 @@ const Navigation = () => {
     { path: "/upload", label: "Protect Art", icon: Upload },
     { path: "/monitoring", label: "Monitor", icon: Activity },
     { path: "/community", label: "Community", icon: Users },
+    { path: "/lawyers", label: "Legal Help", icon: Scale },
     { path: "/contact", label: "Contact", icon: Mail }
   ];
 

@@ -38,8 +38,6 @@ import MonitoringFlow from "@/components/MonitoringFlow";
 import OnboardingTour from "@/components/OnboardingTour";
 import UserGuidance from "@/components/UserGuidance";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import IPLawyersDirectory from "@/components/IPLawyersDirectory";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 
 const Index = () => {
@@ -779,23 +777,14 @@ const Index = () => {
                       <div className="font-medium">IP Lawyers Directory</div>
                       <div className="text-sm text-muted-foreground">Find specialized IP attorneys nationwide</div>
                     </div>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                        >
-                          <Search className="h-4 w-4 mr-1" />
-                          Browse
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
-                        <DialogHeader>
-                          <DialogTitle>IP Lawyers Directory</DialogTitle>
-                        </DialogHeader>
-                        <IPLawyersDirectory />
-                      </DialogContent>
-                    </Dialog>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => navigate('/lawyers')}
+                    >
+                      <Search className="h-4 w-4 mr-1" />
+                      Browse
+                    </Button>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                     <div>
