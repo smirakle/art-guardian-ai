@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
 import VisualRecognition from "@/components/VisualRecognition";
@@ -41,6 +42,13 @@ interface UploadedFile {
 const Upload = () => {
   const { toast } = useToast();
   const { user } = useAuth();
+  
+  // Redirect to auth if not authenticated
+  useEffect(() => {
+    if (!user) {
+      window.location.href = '/auth';
+    }
+  }, [user]);
   
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);

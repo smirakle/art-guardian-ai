@@ -1,14 +1,21 @@
 import { Button } from "@/components/ui/button";
-import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   const navItems = [
     { path: "/", label: "Home", icon: Home },
@@ -79,6 +86,28 @@ const Navigation = () => {
               <MessageSquare className="w-3 h-3 md:w-4 md:h-4" />
               <span className="hidden sm:inline">Feedback</span>
             </Button>
+            
+            {user ? (
+              <Button
+                variant="outline"
+                onClick={handleSignOut}
+                className="flex items-center gap-2 text-xs md:text-sm"
+                size="sm"
+              >
+                <LogOut className="w-3 h-3 md:w-4 md:h-4" />
+                <span className="hidden sm:inline">Sign Out</span>
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                onClick={() => navigate('/auth')}
+                className="flex items-center gap-2 text-xs md:text-sm"
+                size="sm"
+              >
+                <LogIn className="w-3 h-3 md:w-4 md:h-4" />
+                <span className="hidden sm:inline">Sign In</span>
+              </Button>
+            )}
             
             <Button
               className="hidden md:flex bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground text-sm"
