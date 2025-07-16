@@ -272,36 +272,99 @@ const BlockchainVerification = () => {
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Add border
+      // Add border with margin
+      const margin = 30;
       ctx.strokeStyle = '#000000';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+      ctx.lineWidth = 3;
+      ctx.strokeRect(margin, margin, canvas.width - (margin * 2), canvas.height - (margin * 2));
 
       // Load and draw TSMO logo
       const logoImg = new Image();
       logoImg.crossOrigin = 'anonymous';
       
       logoImg.onload = async () => {
-        // Draw TSMO logo
-        ctx.drawImage(logoImg, 50, 50, 200, 100);
+        // Draw TSMO logo at the top center
+        const logoWidth = 200;
+        const logoHeight = 100;
+        const logoX = (canvas.width - logoWidth) / 2;
+        const logoY = margin + 20;
+        ctx.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
 
-        // Add title
+        // Add title below logo
         ctx.fillStyle = '#000000';
-        ctx.font = 'bold 32px Arial';
+        ctx.font = 'bold 28px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText('BLOCKCHAIN CERTIFICATE', canvas.width / 2, 200);
+        ctx.fillText('BLOCKCHAIN CERTIFICATE', canvas.width / 2, logoY + logoHeight + 50);
 
-        // Add certificate details
-        ctx.font = '20px Arial';
+        // Add certificate details with proper spacing
+        ctx.font = '18px Arial';
         ctx.textAlign = 'left';
-        ctx.fillText(`Certificate ID: ${cert.certificate_id}`, 80, 280);
-        ctx.fillText(`Artwork Title: ${artwork.title}`, 80, 320);
-        ctx.fillText(`Category: ${artwork.category}`, 80, 360);
+        const leftMargin = margin + 20;
+        const rightMargin = canvas.width - margin - 20;
+        let currentY = logoY + logoHeight + 100;
+
+        // Helper function to wrap text
+        const wrapText = (text: string, maxWidth: number) => {
+          const words = text.split(' ');
+          const lines = [];
+          let currentLine = words[0];
+
+          for (let i = 1; i < words.length; i++) {
+            const word = words[i];
+            const width = ctx.measureText(currentLine + " " + word).width;
+            if (width < maxWidth) {
+              currentLine += " " + word;
+            } else {
+              lines.push(currentLine);
+              currentLine = word;
+            }
+          }
+          lines.push(currentLine);
+          return lines;
+        };
+
+        const availableWidth = rightMargin - leftMargin;
+
+        // Certificate ID
+        ctx.fillText(`Certificate ID: ${cert.certificate_id}`, leftMargin, currentY);
+        currentY += 30;
+
+        // Artwork Title (wrapped if needed)
+        const titleLines = wrapText(`Artwork Title: ${artwork.title}`, availableWidth);
+        titleLines.forEach(line => {
+          ctx.fillText(line, leftMargin, currentY);
+          currentY += 25;
+        });
+        currentY += 5;
+
+        // Category
+        ctx.fillText(`Category: ${artwork.category}`, leftMargin, currentY);
+        currentY += 30;
+
+        // Description (wrapped and truncated if needed)
         if (artwork.description) {
-          ctx.fillText(`Description: ${artwork.description.substring(0, 60)}...`, 80, 400);
+          const descriptionText = artwork.description.length > 120 
+            ? artwork.description.substring(0, 120) + "..." 
+            : artwork.description;
+          const descLines = wrapText(`Description: ${descriptionText}`, availableWidth);
+          descLines.forEach(line => {
+            ctx.fillText(line, leftMargin, currentY);
+            currentY += 25;
+          });
+          currentY += 5;
         }
-        ctx.fillText(`Blockchain Hash: ${cert.blockchain_hash}`, 80, 440);
-        ctx.fillText(`Registration Date: ${new Date(cert.registration_timestamp).toLocaleDateString()}`, 80, 480);
+
+        // Blockchain Hash (wrapped)
+        const hashLines = wrapText(`Blockchain Hash: ${cert.blockchain_hash}`, availableWidth);
+        hashLines.forEach(line => {
+          ctx.fillText(line, leftMargin, currentY);
+          currentY += 25;
+        });
+        currentY += 5;
+
+        // Registration Date
+        ctx.fillText(`Registration Date: ${new Date(cert.registration_timestamp).toLocaleDateString()}`, leftMargin, currentY);
+        currentY += 40;
 
         // Try to load artwork thumbnail
         if (artwork.file_paths && artwork.file_paths.length > 0) {
@@ -314,17 +377,20 @@ const BlockchainVerification = () => {
             const thumbnailImg = new Image();
             thumbnailImg.crossOrigin = 'anonymous';
             thumbnailImg.onload = () => {
-              // Draw thumbnail
-              ctx.drawImage(thumbnailImg, 80, 520, 200, 200);
+              // Draw thumbnail centered
+              const thumbnailSize = 180;
+              const thumbnailX = (canvas.width - thumbnailSize) / 2;
+              ctx.drawImage(thumbnailImg, thumbnailX, currentY, thumbnailSize, thumbnailSize);
               
-              // Add verification text
+              // Add verification text below thumbnail
+              const verificationY = currentY + thumbnailSize + 40;
               ctx.font = '16px Arial';
               ctx.textAlign = 'center';
-              ctx.fillText('This certificate verifies the ownership and authenticity', canvas.width / 2, 800);
-              ctx.fillText('of the above artwork on the blockchain.', canvas.width / 2, 830);
+              ctx.fillText('This certificate verifies the ownership and authenticity', canvas.width / 2, verificationY);
+              ctx.fillText('of the above artwork on the blockchain.', canvas.width / 2, verificationY + 25);
               
-              // Add timestamp
-              ctx.fillText(`Generated on: ${new Date().toLocaleDateString()}`, canvas.width / 2, 900);
+              // Add timestamp at bottom
+              ctx.fillText(`Generated on: ${new Date().toLocaleDateString()}`, canvas.width / 2, canvas.height - margin - 40);
               
               // Convert canvas to blob and download
               canvas.toBlob((blob) => {
@@ -360,11 +426,11 @@ const BlockchainVerification = () => {
           // Add verification text
           ctx.font = '16px Arial';
           ctx.textAlign = 'center';
-          ctx.fillText('This certificate verifies the ownership and authenticity', canvas.width / 2, 600);
-          ctx.fillText('of the above artwork on the blockchain.', canvas.width / 2, 630);
+          ctx.fillText('This certificate verifies the ownership and authenticity', canvas.width / 2, currentY + 40);
+          ctx.fillText('of the above artwork on the blockchain.', canvas.width / 2, currentY + 70);
           
-          // Add timestamp
-          ctx.fillText(`Generated on: ${new Date().toLocaleDateString()}`, canvas.width / 2, 700);
+          // Add timestamp at bottom
+          ctx.fillText(`Generated on: ${new Date().toLocaleDateString()}`, canvas.width / 2, canvas.height - margin - 40);
           
           // Convert canvas to blob and download
           canvas.toBlob((blob) => {
