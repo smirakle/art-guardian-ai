@@ -18,6 +18,7 @@ import {
   Zap,
   Download
 } from "lucide-react";
+import tsmoLogo from "@/assets/tsmo-logo.png";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -239,6 +240,164 @@ const BlockchainVerification = () => {
     });
   };
 
+  const downloadCertificate = async (cert: BlockchainCertificate) => {
+    try {
+      // Fetch artwork details with file paths
+      const { data: artwork } = await supabase
+        .from('artwork')
+        .select('title, description, category, file_paths')
+        .eq('id', cert.artwork_id)
+        .single();
+
+      if (!artwork) {
+        toast({
+          title: "Error",
+          description: "Artwork not found",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Create a canvas for the certificate
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // Set canvas size (A4 proportions)
+      canvas.width = 800;
+      canvas.height = 1130;
+
+      // Fill white background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Add border
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+
+      // Load and draw TSMO logo
+      const logoImg = new Image();
+      logoImg.crossOrigin = 'anonymous';
+      
+      logoImg.onload = async () => {
+        // Draw TSMO logo
+        ctx.drawImage(logoImg, 50, 50, 200, 100);
+
+        // Add title
+        ctx.fillStyle = '#000000';
+        ctx.font = 'bold 32px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('BLOCKCHAIN CERTIFICATE', canvas.width / 2, 200);
+
+        // Add certificate details
+        ctx.font = '20px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Certificate ID: ${cert.certificate_id}`, 80, 280);
+        ctx.fillText(`Artwork Title: ${artwork.title}`, 80, 320);
+        ctx.fillText(`Category: ${artwork.category}`, 80, 360);
+        if (artwork.description) {
+          ctx.fillText(`Description: ${artwork.description.substring(0, 60)}...`, 80, 400);
+        }
+        ctx.fillText(`Blockchain Hash: ${cert.blockchain_hash}`, 80, 440);
+        ctx.fillText(`Registration Date: ${new Date(cert.registration_timestamp).toLocaleDateString()}`, 80, 480);
+
+        // Try to load artwork thumbnail
+        if (artwork.file_paths && artwork.file_paths.length > 0) {
+          const firstFilePath = artwork.file_paths[0];
+          const { data: fileData } = await supabase.storage
+            .from('artwork')
+            .download(firstFilePath);
+
+          if (fileData) {
+            const thumbnailImg = new Image();
+            thumbnailImg.crossOrigin = 'anonymous';
+            thumbnailImg.onload = () => {
+              // Draw thumbnail
+              ctx.drawImage(thumbnailImg, 80, 520, 200, 200);
+              
+              // Add verification text
+              ctx.font = '16px Arial';
+              ctx.textAlign = 'center';
+              ctx.fillText('This certificate verifies the ownership and authenticity', canvas.width / 2, 800);
+              ctx.fillText('of the above artwork on the blockchain.', canvas.width / 2, 830);
+              
+              // Add timestamp
+              ctx.fillText(`Generated on: ${new Date().toLocaleDateString()}`, canvas.width / 2, 900);
+              
+              // Convert canvas to blob and download
+              canvas.toBlob((blob) => {
+                if (blob) {
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `TSMO_Certificate_${cert.certificate_id}.png`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  URL.revokeObjectURL(url);
+                  
+                  toast({
+                    title: "Certificate Downloaded",
+                    description: "Your blockchain certificate has been downloaded successfully",
+                  });
+                }
+              }, 'image/png');
+            };
+            
+            thumbnailImg.src = URL.createObjectURL(fileData);
+          } else {
+            // Generate certificate without thumbnail
+            generateCertificateWithoutThumbnail();
+          }
+        } else {
+          // Generate certificate without thumbnail
+          generateCertificateWithoutThumbnail();
+        }
+
+        function generateCertificateWithoutThumbnail() {
+          // Add verification text
+          ctx.font = '16px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText('This certificate verifies the ownership and authenticity', canvas.width / 2, 600);
+          ctx.fillText('of the above artwork on the blockchain.', canvas.width / 2, 630);
+          
+          // Add timestamp
+          ctx.fillText(`Generated on: ${new Date().toLocaleDateString()}`, canvas.width / 2, 700);
+          
+          // Convert canvas to blob and download
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `TSMO_Certificate_${cert.certificate_id}.png`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+              
+              toast({
+                title: "Certificate Downloaded",
+                description: "Your blockchain certificate has been downloaded successfully",
+              });
+            }
+          }, 'image/png');
+        }
+      };
+
+      logoImg.src = tsmoLogo;
+      
+    } catch (error: any) {
+      console.error('Certificate download error:', error);
+      toast({
+        title: "Download Failed",
+        description: error.message || "Failed to download certificate",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (!user) {
     return (
       <Alert>
@@ -332,9 +491,20 @@ const BlockchainVerification = () => {
                               </div>
                             </div>
                           </div>
-                          <div className="text-right text-xs text-muted-foreground">
-                            <p>Registered</p>
-                            <p>{new Date(cert.registration_timestamp).toLocaleDateString()}</p>
+                          <div className="flex flex-col items-end gap-2">
+                            <div className="text-right text-xs text-muted-foreground">
+                              <p>Registered</p>
+                              <p>{new Date(cert.registration_timestamp).toLocaleDateString()}</p>
+                            </div>
+                            <Button
+                              onClick={() => downloadCertificate(cert)}
+                              variant="outline"
+                              size="sm"
+                              className="flex items-center gap-2"
+                            >
+                              <Download className="w-4 h-4" />
+                              Download
+                            </Button>
                           </div>
                         </div>
                       </CardContent>
