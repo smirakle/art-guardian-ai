@@ -453,7 +453,7 @@ const BlockchainVerification = () => {
         }
       };
 
-      logoImg.src = tsmoLogo;
+      logoImg.src = '/lovable-uploads/c04d75be-cf19-457a-9ef7-589cfc019d15.png';
       
     } catch (error: any) {
       console.error('Certificate download error:', error);
