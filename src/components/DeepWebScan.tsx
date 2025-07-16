@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import DailyReport from "@/components/DailyReport";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
+
 
 interface ScanResult {
   id: string;
@@ -33,23 +33,20 @@ interface ScanResult {
 
 
 const DeepWebScan = () => {
-  const { user } = useAuth();
   const [results, setResults] = useState<ScanResult[]>([]);
   const [activeTab, setActiveTab] = useState("overview");
   const [scans, setScans] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Load real data from database
+  // Load demo data (no authentication required)
   useEffect(() => {
-    if (!user) return;
-
-    const fetchRealData = async () => {
+    const fetchDemoData = async () => {
       try {
-        // Get user's artwork
+        // Get some demo artwork data
         const { data: artworks } = await supabase
           .from('artwork')
           .select('id, title')
-          .eq('user_id', user.id);
+          .limit(3); // Demo mode - show limited data
 
         if (artworks && artworks.length > 0) {
           const artworkIds = artworks.map(a => a.id);
@@ -88,34 +85,31 @@ const DeepWebScan = () => {
           }
         }
       } catch (error) {
-        console.error('Error fetching real-time data:', error);
+        console.error('Error fetching demo data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRealData();
+    fetchDemoData();
     
     // Update every 30 seconds
-    const interval = setInterval(fetchRealData, 30000);
+    const interval = setInterval(fetchDemoData, 30000);
     return () => clearInterval(interval);
-  }, [user]);
+  }, []);
 
   const startNewScan = async () => {
-    if (!user) return;
-    
     try {
-      // Get user's first artwork for scanning
+      // Get demo artwork for scanning
       const { data: artworks } = await supabase
         .from('artwork')
         .select('id, title')
-        .eq('user_id', user.id)
         .limit(1);
 
       if (artworks && artworks.length > 0) {
         const artwork = artworks[0];
         
-        // Create new scan
+        // Create new scan (demo mode)
         const { data: newScan } = await supabase
           .from('monitoring_scans')
           .insert({
@@ -129,17 +123,12 @@ const DeepWebScan = () => {
           .single();
 
         if (newScan) {
-          // Invoke monitoring scan
-          await supabase.functions.invoke('process-monitoring-scan', {
-            body: {
-              scanId: newScan.id,
-              artworkId: artwork.id
-            }
-          });
+          // Demo mode - show notification instead of actual scan
+          alert('Demo mode: Scan simulation started. In production, this would trigger a real deep web scan.');
         }
       }
     } catch (error) {
-      console.error('Error starting scan:', error);
+      console.error('Error starting demo scan:', error);
     }
   };
 
