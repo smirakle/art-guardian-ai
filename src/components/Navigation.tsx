@@ -22,7 +22,6 @@ const Navigation = () => {
     { path: "/upload", label: "Protect Art", icon: Upload },
     { path: "/monitoring", label: "Monitor", icon: Activity },
     { path: "/community", label: "Community", icon: Users },
-    { path: "/lawyers", label: "Legal Help", icon: Scale },
     { path: "/contact", label: "Contact", icon: Mail }
   ];
 
