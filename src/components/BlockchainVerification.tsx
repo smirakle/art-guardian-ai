@@ -440,13 +440,6 @@ const BlockchainVerification = () => {
 
         <TabsContent value="certificates" className="space-y-4">
           <Card>
-            <div className="flex justify-center pt-6">
-              <img 
-                src={tsmoArtistLogo} 
-                alt="TSMO - Your Art Our Watch" 
-                className="h-20 w-auto animate-fade-in"
-              />
-            </div>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="w-5 h-5" />
