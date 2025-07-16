@@ -1,34 +1,22 @@
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useAuth } from "@/contexts/AuthContext";
-import { Shield, Upload, Activity, Home, Users, Link2, Settings, UserCog, LogIn, LogOut, User, Mail } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
 
 const Navigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
-  const { user, profile, role, signOut, loading } = useAuth();
 
   const navItems = [
     { path: "/", label: "Home", icon: Home },
-    { path: "/about-tsmo", label: "About", icon: User },
+    { path: "/about-tsmo", label: "About", icon: Mail },
     { path: "/contact", label: "Contact", icon: Mail },
-    { path: "/upload", label: "Upload", icon: Upload, needsAuth: true },
-    { path: "/monitoring", label: "Monitor", icon: Activity, needsAuth: true },
-    { path: "/deep-scan", label: "Deep Scan", icon: Shield, needsAuth: true },
-    { path: "/blockchain", label: "Blockchain", icon: Link2, needsAuth: true },
+    { path: "/upload", label: "Upload", icon: Upload },
+    { path: "/monitoring", label: "Monitor", icon: Activity },
+    { path: "/deep-scan", label: "Deep Scan", icon: Shield },
+    { path: "/blockchain", label: "Blockchain", icon: Link2 },
     { path: "/community", label: "Community", icon: Users },
-    { path: "/admin", label: "Admin", icon: UserCog, isAdmin: true }
+    { path: "/admin", label: "Admin", icon: UserCog }
   ];
 
   const handleNavigation = (path: string) => {
@@ -46,7 +34,6 @@ const Navigation = () => {
               <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 TSMO
               </span>
-              
             </div>
           </div>
 
@@ -55,124 +42,47 @@ const Navigation = () => {
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = currentPath === item.path;
-              const needsAuth = item.needsAuth && !user;
-              const canShow = !item.isAdmin || (item.isAdmin && role === 'admin');
-              
-              // Hide items that need auth when user is not logged in, but show contact to everyone
-              if (!canShow || (item.needsAuth && !user)) return null;
               
               return (
                 <div key={item.path} className="relative">
                   <Button
                     variant={isActive ? "default" : "ghost"}
-                    onClick={() => {
-                      if (needsAuth) {
-                        navigate('/auth');
-                      } else {
-                        handleNavigation(item.path);
-                      }
-                    }}
+                    onClick={() => handleNavigation(item.path)}
                     className={`flex items-center gap-1 md:gap-2 min-w-max px-2 md:px-3 text-xs md:text-sm ${
                       isActive 
                         ? "bg-primary text-primary-foreground" 
-                        : item.isAdmin
+                        : item.label === "Admin"
                         ? "hover:bg-destructive/20 text-destructive hover:text-destructive"
                         : "hover:bg-secondary/50"
-                    } ${item.isAdmin ? "border border-destructive/30" : ""}`}
+                    } ${item.label === "Admin" ? "border border-destructive/30" : ""}`}
                     size="sm"
                   >
                     <Icon className="w-3 h-3 md:w-4 md:h-4" />
                     <span className="hidden sm:inline">{item.label}</span>
                   </Button>
-                  {needsAuth && (
-                    <Badge variant="secondary" className="absolute -top-2 -right-1 text-xs px-1 py-0">
-                      Login
-                    </Badge>
-                  )}
                 </div>
               );
             })}
           </div>
 
-          {/* Auth Section */}
+          {/* Right Section */}
           <div className="flex items-center gap-2">
-            {!loading && (
-              <>
-                {user ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.username || 'User'} />
-                          <AvatarFallback>
-                            {profile?.full_name?.charAt(0) || profile?.username?.charAt(0) || 'U'}
-                          </AvatarFallback>
-                        </Avatar>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56" align="end" forceMount>
-                      <DropdownMenuLabel className="font-normal">
-                        <div className="flex flex-col space-y-1">
-                          <p className="text-sm font-medium leading-none">
-                            {profile?.full_name || profile?.username || 'User'}
-                          </p>
-                          <p className="text-xs leading-none text-muted-foreground">
-                            {user.email}
-                          </p>
-                          {role && (
-                            <p className="text-xs leading-none text-muted-foreground capitalize">
-                              Role: {role}
-                            </p>
-                          )}
-                        </div>
-                      </DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem>
-                        <User className="mr-2 h-4 w-4" />
-                        <span>Profile</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Settings className="mr-2 h-4 w-4" />
-                        <span>Settings</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => signOut()}>
-                        <LogOut className="mr-2 h-4 w-4" />
-                        <span>Log out</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                ) : (
-                  <>
-                    <Button
-                      variant="ghost"
-                      onClick={() => navigate('/auth')}
-                      className="hidden sm:flex"
-                      size="sm"
-                    >
-                      <LogIn className="mr-2 h-4 w-4" />
-                      Sign In
-                    </Button>
-                    <Button
-                      className="hidden md:flex bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground text-sm"
-                      onClick={() => {
-                        navigate('/');
-                        // Scroll to pricing section after navigation
-                        setTimeout(() => {
-                          const pricingSection = document.getElementById('pricing');
-                          if (pricingSection) {
-                            pricingSection.scrollIntoView({ behavior: 'smooth' });
-                          }
-                        }, 100);
-                      }}
-                      size="sm"
-                    >
-                      Get Protected
-                    </Button>
-                  </>
-                )}
-              </>
-            )}
+            <Button
+              className="hidden md:flex bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground text-sm"
+              onClick={() => {
+                navigate('/');
+                // Scroll to pricing section after navigation
+                setTimeout(() => {
+                  const pricingSection = document.getElementById('pricing');
+                  if (pricingSection) {
+                    pricingSection.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }, 100);
+              }}
+              size="sm"
+            >
+              Get Protected
+            </Button>
           </div>
         </div>
       </div>

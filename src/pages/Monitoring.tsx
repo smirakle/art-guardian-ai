@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
+
 import MonitoringChart from "@/components/MonitoringChart";
 import AlertsPanel from "@/components/AlertsPanel";
 import LiveFeed from "@/components/LiveFeed";
@@ -26,7 +26,7 @@ interface MonitoringStats {
 
 const Monitoring = () => {
   const { toast } = useToast();
-  const { user } = useAuth();
+  
   const [stats, setStats] = useState<MonitoringStats>({
     totalScans: 0,
     activeAlerts: 0,
@@ -39,15 +39,13 @@ const Monitoring = () => {
   const [isMonitoring, setIsMonitoring] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
-
     const fetchRealStats = async () => {
       try {
-        // Get user's artwork count
+        // Get all artwork count (demo mode)
         const { data: artworks } = await supabase
           .from('artwork')
           .select('id')
-          .eq('user_id', user.id);
+          .limit(10); // Show demo data
 
         const artworkIds = artworks?.map(a => a.id) || [];
         
@@ -57,12 +55,12 @@ const Monitoring = () => {
           .select('*')
           .in('artwork_id', artworkIds);
 
-        // Get active alerts
+        // Get active alerts (demo mode)
         const { data: alerts } = await supabase
           .from('monitoring_alerts')
           .select('*')
-          .eq('user_id', user.id)
-          .eq('is_read', false);
+          .eq('is_read', false)
+          .limit(5); // Show demo data
 
         // Get copyright matches for threat level
         const { data: matches } = await supabase
@@ -92,7 +90,7 @@ const Monitoring = () => {
     // Update every 30 seconds
     const interval = setInterval(fetchRealStats, 30000);
     return () => clearInterval(interval);
-  }, [user]);
+  }, []);
 
   const toggleMonitoring = () => {
     setIsMonitoring(!isMonitoring);

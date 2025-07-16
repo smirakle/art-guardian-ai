@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/contexts/AuthContext';
+
 import { 
   Shield, 
   Eye, 
@@ -44,7 +44,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 const Index = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
+  
   const [demoStep, setDemoStep] = useState(0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
@@ -94,8 +94,8 @@ const Index = () => {
       {/* Hero Section */}
       <section className="pt-24 sm:pt-32 pb-20 px-4">
         <div className="container mx-auto text-center max-w-6xl">
-          {/* User Guidance for logged in users */}
-          {user && <UserGuidance />}
+          {/* User Guidance */}
+          <UserGuidance />
           <Badge variant="secondary" className="mb-6 px-3 sm:px-4 py-2 text-xs sm:text-sm">
             🔒 Trusted by 10,000+ Artists Worldwide
           </Badge>
@@ -120,59 +120,28 @@ const Index = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12 px-4">
-            {user ? (
-              // Authenticated user - show dashboard/upload options
-              <>
-                <Button 
-                  size="lg" 
-                  className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
-                  onClick={() => navigate("/upload")}
-                >
-                  Upload & Protect Your Art
-                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="lg" 
-                  className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg"
-                  onClick={() => navigate("/monitoring")}
-                >
-                  <Activity className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  View Dashboard
-                </Button>
-              </>
-            ) : (
-              // Unauthenticated user - show sign up and demo
-              <>
-                <Button 
-                  size="lg" 
-                  className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
-                  onClick={() => navigate("/auth")}
-                >
-                  Get Started Free
-                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="lg" 
-                  className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg"
-                  onClick={() => navigate("/demo")}
-                >
-                  <Play className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  Watch Demo
-                </Button>
-              </>
-            )}
+            {/* Main action buttons */}
+            <>
+              <Button 
+                size="lg" 
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+                onClick={() => navigate("/upload")}
+              >
+                Upload & Protect Your Art
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg"
+                onClick={() => navigate("/monitoring")}
+              >
+                <Activity className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                View Dashboard
+              </Button>
+            </>
           </div>
           
-          {user && profile && (
-            <div className="text-center mb-8">
-              <p className="text-lg text-muted-foreground">
-                Welcome back, <span className="font-semibold text-foreground">{profile.full_name || profile.username || 'Artist'}</span>! 
-                Ready to protect your creative work?
-              </p>
-            </div>
-          )}
         </div>
       </section>
       
@@ -885,17 +854,7 @@ const Index = () => {
               <div className="grid md:grid-cols-3 gap-4 mb-6">
                 <Button 
                   className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
-                  onClick={() => {
-                    if (user) {
-                      navigate('/monitoring');
-                    } else {
-                      toast({
-                        title: "Sign in required",
-                        description: "Please sign in to file a DMCA takedown notice.",
-                      });
-                      navigate('/auth');
-                    }
-                  }}
+                  onClick={() => navigate('/monitoring')}
                 >
                   <Zap className="h-4 w-4 mr-2" />
                   File DMCA Now
