@@ -45,12 +45,7 @@ const Upload = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   
-  // Redirect to auth if not authenticated
-  useEffect(() => {
-    if (!user) {
-      window.location.href = '/auth';
-    }
-  }, [user]);
+  // Authentication is optional for viewing, required for protecting
   
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
