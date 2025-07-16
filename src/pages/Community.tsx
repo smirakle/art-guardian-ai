@@ -25,11 +25,9 @@ import {
   Clock
 } from "lucide-react";
 import { useCommunity } from "@/hooks/useCommunity";
-import { useAuth } from "@/contexts/AuthContext";
 import { formatDistanceToNow } from "date-fns";
 
 const Community = () => {
-  const { user } = useAuth();
   const { posts, expertAdvice, loading, createPost, toggleLike, getStats } = useCommunity();
   const [newPost, setNewPost] = useState({ title: "", content: "", category: "strategy" });
   const [activeTab, setActiveTab] = useState("community");
@@ -228,7 +226,6 @@ const Community = () => {
                               post.user_liked ? 'text-red-500' : ''
                             }`}
                             onClick={() => toggleLike(post.id)}
-                            disabled={!user}
                           >
                             <ThumbsUp className={`w-4 h-4 ${post.user_liked ? 'fill-current' : ''}`} />
                             {post.likes_count}
@@ -255,11 +252,9 @@ const Community = () => {
                       <MessageSquare className="w-5 h-5" />
                       Share Your Protection Strategy
                     </CardTitle>
-                    {!user && (
-                      <p className="text-sm text-muted-foreground">
-                        You need to be logged in to share posts with the community.
-                      </p>
-                    )}
+                    <p className="text-sm text-muted-foreground">
+                      Demo mode - Authentication required for posting in production.
+                    </p>
                   </CardHeader>
                   <CardContent>
                     <form onSubmit={handleSubmitPost} className="space-y-4">
@@ -268,7 +263,7 @@ const Community = () => {
                         value={newPost.title}
                         onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
                         required
-                        disabled={!user}
+                        disabled={true}
                       />
                       <Textarea
                         placeholder="Share your protection strategy, success story, or ask for advice..."
@@ -276,21 +271,21 @@ const Community = () => {
                         onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
                         rows={6}
                         required
-                        disabled={!user}
+                          disabled={true}
                       />
                       <div className="flex gap-2">
                         <select
                           className="px-3 py-2 border border-input rounded-md bg-background text-sm disabled:opacity-50"
                           value={newPost.category}
                           onChange={(e) => setNewPost({ ...newPost, category: e.target.value })}
-                          disabled={!user}
+                          disabled={true}
                         >
                           <option value="strategy">Protection Strategy</option>
                           <option value="success">Success Story</option>
                           <option value="question">Ask for Help</option>
                           <option value="resources">Resources</option>
                         </select>
-                        <Button type="submit" className="ml-auto" disabled={!user}>
+                        <Button type="submit" className="ml-auto" disabled={true}>
                           Share with Community
                         </Button>
                       </div>

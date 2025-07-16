@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/contexts/AuthContext";
-
 export interface CommunityPost {
   id: string;
   user_id: string;
@@ -57,7 +55,6 @@ export interface ExpertAdvice {
 
 export const useCommunity = () => {
   const { toast } = useToast();
-  const { user } = useAuth();
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [expertAdvice, setExpertAdvice] = useState<ExpertAdvice[]>([]);
   const [loading, setLoading] = useState(true);
@@ -78,17 +75,8 @@ export const useCommunity = () => {
         .select('user_id, full_name, username')
         .in('user_id', userIds);
 
-      // Get user's likes separately if user is logged in
+      // No user likes in demo mode
       let userLikes: string[] = [];
-      if (user) {
-        const { data: likesData } = await supabase
-          .from('community_votes')
-          .select('post_id')
-          .eq('user_id', user.id)
-          .eq('vote_type', 'like');
-        
-        userLikes = likesData?.map(like => like.post_id) || [];
-      }
 
       const postsWithData = data?.map(post => {
         const profile = profilesData?.find(p => p.user_id === post.user_id);
@@ -136,95 +124,21 @@ export const useCommunity = () => {
   };
 
   const createPost = async (title: string, content: string, category: string) => {
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "You must be logged in to create posts",
-        variant: "destructive"
-      });
-      return false;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('community_posts')
-        .insert({
-          user_id: user.id,
-          title,
-          content,
-          category
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Post Created!",
-        description: "Your post has been shared with the community"
-      });
-
-      await fetchPosts();
-      return true;
-    } catch (error) {
-      console.error('Error creating post:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create post",
-        variant: "destructive"
-      });
-      return false;
-    }
+    // Demo mode - show message that this is a demo
+    toast({
+      title: "Demo Mode",
+      description: "This is a demo. Authentication required for posting in production.",
+      variant: "destructive"
+    });
+    return false;
   };
 
   const toggleLike = async (postId: string) => {
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "You must be logged in to like posts",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    try {
-      // Check if user already liked this post
-      const { data: existingVote } = await supabase
-        .from('community_votes')
-        .select('id')
-        .eq('post_id', postId)
-        .eq('user_id', user.id)
-        .eq('vote_type', 'like')
-        .single();
-
-      if (existingVote) {
-        // Remove like
-        const { error } = await supabase
-          .from('community_votes')
-          .delete()
-          .eq('id', existingVote.id);
-
-        if (error) throw error;
-      } else {
-        // Add like
-        const { error } = await supabase
-          .from('community_votes')
-          .insert({
-            post_id: postId,
-            user_id: user.id,
-            vote_type: 'like'
-          });
-
-        if (error) throw error;
-      }
-
-      await fetchPosts();
-    } catch (error) {
-      console.error('Error toggling like:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update like",
-        variant: "destructive"
-      });
-    }
+    // Demo mode - show message that this is a demo
+    toast({
+      title: "Demo Mode",
+      description: "This is a demo. Authentication required for liking in production.",
+    });
   };
 
   const getStats = () => {
@@ -271,7 +185,7 @@ export const useCommunity = () => {
       supabase.removeChannel(postsSubscription);
       supabase.removeChannel(votesSubscription);
     };
-  }, [user]);
+  }, []);
 
   return {
     posts,

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,42 +17,12 @@ const Auth: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // Redirect authenticated users
-  React.useEffect(() => {
-    if (user) {
-      const from = location.state?.from?.pathname || '/';
-      navigate(from, { replace: true });
-    }
-  }, [user, navigate, location]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
-    try {
-      if (isLogin) {
-        const { error } = await signIn(email, password);
-        if (!error) {
-          const from = location.state?.from?.pathname || '/';
-          navigate(from, { replace: true });
-        }
-      } else {
-        const { error } = await signUp(email, password, {
-          full_name: fullName,
-          username: username,
-        });
-        if (!error) {
-          // Show success message, user will need to verify email
-          setIsLogin(true);
-        }
-      }
-    } finally {
-      setLoading(false);
-    }
+    // Demo mode - redirect to home page
+    navigate('/');
   };
 
   return (
