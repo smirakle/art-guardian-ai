@@ -40,6 +40,7 @@ import UserGuidance from "@/components/UserGuidance";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import IPLawyersDirectory from "@/components/IPLawyersDirectory";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { TestPhasePopup } from "@/components/TestPhasePopup";
 
 const Index = () => {
   const { toast } = useToast();
@@ -88,6 +89,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Test Phase Popup */}
+      <TestPhasePopup />
+      
       {/* Onboarding Tour */}
       <OnboardingTour />
 
