@@ -28,7 +28,13 @@ interface GuidanceStep {
   status: 'pending' | 'in-progress' | 'completed';
 }
 
-const UserGuidance = () => {
+interface UserGuidanceProps {
+  currentStep?: 'upload' | 'analyze' | 'monitor';
+  onDismiss?: () => void;
+  showWelcome?: boolean;
+}
+
+const UserGuidance = ({ currentStep = 'upload', onDismiss, showWelcome = false }: UserGuidanceProps) => {
   const [isVisible, setIsVisible] = useState(true);
   
   const navigate = useNavigate();
@@ -101,7 +107,10 @@ const UserGuidance = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setIsVisible(false)}
+            onClick={() => {
+              setIsVisible(false);
+              onDismiss?.();
+            }}
             className="h-8 w-8 p-0"
           >
             <X className="h-4 w-4" />

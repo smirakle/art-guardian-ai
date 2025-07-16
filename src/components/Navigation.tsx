@@ -19,15 +19,18 @@ const Navigation = () => {
 
   const navItems = [
     { path: "/", label: "Home", icon: Home },
-    { path: "/about-tsmo", label: "About", icon: Mail },
-    { path: "/contact", label: "Contact", icon: Mail },
-    { path: "/upload", label: "Upload", icon: Upload },
+    { path: "/upload", label: "Protect Art", icon: Upload },
     { path: "/monitoring", label: "Monitor", icon: Activity },
-    { path: "/deep-scan", label: "Deep Scan", icon: Shield },
-    { path: "/blockchain", label: "Blockchain", icon: Link2 },
     { path: "/community", label: "Community", icon: Users },
-    { path: "/admin", label: "Admin", icon: UserCog }
+    { path: "/contact", label: "Contact", icon: Mail }
   ];
+
+  // Only show admin for authenticated admin users
+  const adminItems = user && user.user_metadata?.role === 'admin' ? [
+    { path: "/admin", label: "Admin", icon: UserCog }
+  ] : [];
+
+  const allNavItems = [...navItems, ...adminItems];
 
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -48,8 +51,8 @@ const Navigation = () => {
           </div>
 
           {/* Navigation Links */}
-          <div className="flex items-center gap-1 overflow-x-auto max-w-[50vw] md:max-w-none scrollbar-hide">
-            {navItems.map((item) => {
+          <div className="flex items-center gap-2 overflow-x-auto max-w-[50vw] md:max-w-none scrollbar-hide">
+            {allNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = currentPath === item.path;
               

@@ -1,20 +1,27 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useImageAnalysis } from "@/hooks/useImageAnalysis";
 import { ImageAnalysis } from "@/types/visual-recognition";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import UploadArea from "./visual-recognition/UploadArea";
 import ImageAnalysisCard from "./visual-recognition/ImageAnalysisCard";
 import RealTimeMonitoring from "./RealTimeMonitoring";
+import UserGuidance from "./UserGuidance";
 import { watermarkService, InvisibleWatermark } from "@/lib/watermark";
-import { Eye, Camera, Shield } from "lucide-react";
+import { Eye, Camera, Shield, HelpCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const VisualRecognition = () => {
   const { toast } = useToast();
   const { analyzeImage } = useImageAnalysis();
+  const { user } = useAuth();
   const [images, setImages] = useState<ImageAnalysis[]>([]);
   const [isInitializing, setIsInitializing] = useState(false);
+  const [currentStep, setCurrentStep] = useState<'upload' | 'analyze' | 'monitor'>('upload');
+  const [showGuidance, setShowGuidance] = useState(true);
 
   const handleUrlUpload = async (url: string) => {
     const supportedDomains = [
@@ -307,24 +314,60 @@ const VisualRecognition = () => {
   }, [images.length, analyzeImage, toast]);
 
   return (
-    <div className="space-y-6">
-      <Tabs defaultValue="quick-analysis" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="quick-analysis" className="flex items-center gap-2">
-            <Camera className="w-4 h-4" />
-            Quick Analysis
-          </TabsTrigger>
-          <TabsTrigger value="monitoring" className="flex items-center gap-2">
-            <Eye className="w-4 h-4" />
-            Real-Time Monitoring
-          </TabsTrigger>
-          <TabsTrigger value="existing" className="flex items-center gap-2">
-            <Shield className="w-4 h-4" />
-            Monitor Existing Art
-          </TabsTrigger>
-        </TabsList>
+    <TooltipProvider>
+      <div className="space-y-6">
+        {showGuidance && (
+          <UserGuidance 
+            currentStep={currentStep} 
+            onDismiss={() => setShowGuidance(false)}
+            showWelcome={images.length === 0}
+          />
+        )}
 
-        <TabsContent value="quick-analysis" className="space-y-6">
+        <Tabs defaultValue="quick-analysis" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="quick-analysis" className="flex items-center gap-2">
+              <Camera className="w-4 h-4" />
+              <span className="hidden sm:inline">Quick Analysis</span>
+              <span className="sm:hidden">Analyze</span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="w-3 h-3 ml-1 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Upload and analyze your content for protection</p>
+                </TooltipContent>
+              </Tooltip>
+            </TabsTrigger>
+            <TabsTrigger value="monitoring" className="flex items-center gap-2">
+              <Eye className="w-4 h-4" />
+              <span className="hidden sm:inline">Real-Time Monitoring</span>
+              <span className="sm:hidden">Monitor</span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="w-3 h-3 ml-1 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>View live monitoring of your protected content</p>
+                </TooltipContent>
+              </Tooltip>
+            </TabsTrigger>
+            <TabsTrigger value="existing" className="flex items-center gap-2">
+              <Shield className="w-4 h-4" />
+              <span className="hidden sm:inline">Protected Content</span>
+              <span className="sm:hidden">Protected</span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="w-3 h-3 ml-1 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Manage your existing protected artwork</p>
+                </TooltipContent>
+              </Tooltip>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="quick-analysis" className="space-y-6">
             <UploadArea 
               onFileUpload={handleFileUpload}
               onUrlUpload={handleUrlUpload}
@@ -332,28 +375,43 @@ const VisualRecognition = () => {
               isEmpty={images.length === 0}
             />
 
-          {images.length > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {images.map((image, index) => (
-                <ImageAnalysisCard 
-                  key={index} 
-                  image={image} 
-                  index={index} 
-                />
-              ))}
-            </div>
-          )}
-        </TabsContent>
+            {images.length > 0 && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {images.map((image, index) => (
+                  <ImageAnalysisCard 
+                    key={index} 
+                    image={image} 
+                    index={index} 
+                  />
+                ))}
+              </div>
+            )}
+          </TabsContent>
 
-        <TabsContent value="monitoring" className="space-y-6">
-          <RealTimeMonitoring />
-        </TabsContent>
+          <TabsContent value="monitoring" className="space-y-6">
+            <RealTimeMonitoring />
+          </TabsContent>
 
-        <TabsContent value="existing" className="space-y-6">
-          <RealTimeMonitoring />
-        </TabsContent>
-      </Tabs>
-    </div>
+          <TabsContent value="existing" className="space-y-6">
+            <RealTimeMonitoring />
+          </TabsContent>
+        </Tabs>
+
+        {!showGuidance && (
+          <div className="text-center">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setShowGuidance(true)}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <HelpCircle className="w-4 h-4 mr-2" />
+              Show Help
+            </Button>
+          </div>
+        )}
+      </div>
+    </TooltipProvider>
   );
 };
 

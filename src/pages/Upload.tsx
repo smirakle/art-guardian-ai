@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
   Upload as UploadIcon, 
   Image, 
@@ -20,14 +21,15 @@ import {
   X,
   Camera,
   FolderOpen,
-  Link
+  Link,
+  Info
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { useEffect } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
 import VisualRecognition from "@/components/VisualRecognition";
+import QuickStartGuide from "@/components/QuickStartGuide";
 
 interface UploadedFile {
   id: string;
@@ -525,340 +527,78 @@ const Upload = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="container mx-auto max-w-4xl space-y-6">
-        {/* Header */}
-        <div className="text-center">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">
-            Upload & Analyze Your Artwork
-          </h1>
-          <p className="text-muted-foreground text-lg">
-            Secure your creative work with AI-powered protection and visual recognition
-          </p>
-        </div>
-
-        {/* Main Tabs */}
-        <Tabs defaultValue="upload" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="upload" className="flex items-center gap-2">
-              <UploadIcon className="w-4 h-4" />
-              Upload & Protect
-            </TabsTrigger>
-            <TabsTrigger value="analyze" className="flex items-center gap-2">
-              <Camera className="w-4 h-4" />
-              Visual Recognition
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="upload" className="space-y-6">
-
-        {/* Upload Area */}
-        <Card className="bg-card/50 backdrop-blur-sm border-border/50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <UploadIcon className="w-5 h-5 text-primary" />
-              Upload Files
-            </CardTitle>
-            <CardDescription>
-              Drag and drop your artwork or click to browse files
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div
-              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                isDragging 
-                  ? 'border-primary bg-primary/5' 
-                  : 'border-border hover:border-primary/50'
-              }`}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-            >
-              <Image className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-semibold mb-2">Drop your files here</h3>
-              <p className="text-muted-foreground mb-4">
-                Support for files up to 50MB each and video links from YouTube, TikTok, Instagram, Facebook, and X
-              </p>
-              <div className="flex gap-2 mb-4">
-                <Input
-                  placeholder="Paste YouTube, TikTok, Instagram, Facebook, or X video link..."
-                  value={urlInput}
-                  onChange={(e) => setUrlInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && addUrl()}
-                />
-                <Button onClick={addUrl} variant="outline">
-                  <Link className="w-4 h-4 mr-2" />
-                  Add Link
-                </Button>
-              </div>
-              <input
-                type="file"
-                multiple
-                accept="image/*,video/*,audio/*,.pdf"
-                onChange={handleFileSelect}
-                style={{ display: 'none' }}
-                id="file-upload"
-              />
-              <input
-                type="file"
-                multiple
-                {...({ webkitdirectory: "true" } as any)}
-                onChange={handleFileSelect}
-                style={{ display: 'none' }}
-                id="folder-upload"
-              />
-              <div className="flex gap-3">
-                <Button 
-                  variant="outline" 
-                  onClick={() => document.getElementById('file-upload')?.click()}
-                  className="cursor-pointer"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Choose Files
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => document.getElementById('folder-upload')?.click()}
-                  className="cursor-pointer"
-                >
-                  <FolderOpen className="w-4 h-4 mr-2" />
-                  Upload Folder
-                </Button>
-              </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border-b">
+        <div className="container mx-auto px-4 py-12">
+          <div className="text-center max-w-3xl mx-auto">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <Shield className="w-10 h-10 text-primary" />
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Protect Your Art
+              </h1>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* URLs List */}
-        {urls.length > 0 && (
-          <Card className="bg-card/50 backdrop-blur-sm border-border/50">
-            <CardHeader>
-              <CardTitle>Added Video Links</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {urls.map((url, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border border-border/30 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <Link className="w-5 h-5 text-primary" />
-                    <div>
-                      <p className="font-medium truncate max-w-[400px]">{url}</p>
-                      <Badge variant="secondary" className="text-xs">Video Link</Badge>
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeUrl(url)}
-                    className="text-destructive hover:text-destructive"
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* File List */}
-        {files.length > 0 && (
-          <Card className="bg-card/50 backdrop-blur-sm border-border/50">
-            <CardHeader>
-              <CardTitle>Uploaded Files</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {files.map((file) => (
-                <div key={file.id} className="flex items-center gap-4 p-4 border border-border/30 rounded-lg">
-                  {file.preview ? (
-                    file.type.startsWith('video/') ? (
-                      <video src={file.preview} className="w-12 h-12 object-cover rounded" muted />
-                    ) : (
-                      <img src={file.preview} alt={file.name} className="w-12 h-12 object-cover rounded" />
-                    )
-                  ) : (
-                    <FileText className="w-12 h-12 text-muted-foreground" />
-                  )}
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium">{file.name}</h4>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeFile(file.id)}
-                        className="text-muted-foreground hover:text-destructive transition-colors"
-                        title="Remove file"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      {formatFileSize(file.size)} • {file.type}
-                    </p>
-                    <div className="flex items-center gap-2 mt-2">
-                      {getStatusIcon(file.status)}
-                      <span className="text-sm">{getStatusText(file.status)}</span>
-                    </div>
-                    {file.status !== 'protected' && (
-                      <Progress value={file.progress} className="mt-2" />
-                    )}
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Artwork Details */}
-        <Card className="bg-card/50 backdrop-blur-sm border-border/50">
-          <CardHeader>
-            <CardTitle>Artwork Details</CardTitle>
-            <CardDescription>
-              Add metadata to help our AI better protect your work
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Artwork Title</Label>
-                <Input
-                  id="title"
-                  value={artworkTitle}
-                  onChange={(e) => setArtworkTitle(e.target.value)}
-                  placeholder="My Amazing Artwork"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="digital-art">Digital Art</SelectItem>
-                    <SelectItem value="photography">Photography</SelectItem>
-                    <SelectItem value="illustration">Illustration</SelectItem>
-                    <SelectItem value="graphic-design">Graphic Design</SelectItem>
-                    <SelectItem value="painting">Painting</SelectItem>
-                    <SelectItem value="video">Video Content</SelectItem>
-                    <SelectItem value="audio">Audio Content</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe your artwork, inspiration, techniques used..."
-                rows={3}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Tags</Label>
-              <div className="flex gap-2">
-                <Input
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  placeholder="Add tags..."
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-                />
-                <Button onClick={addTag} variant="outline">
-                  <Plus className="w-4 h-4" />
-                </Button>
-              </div>
-              {tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {tags.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="cursor-pointer" onClick={() => removeTag(tag)}>
-                      {tag}
-                      <X className="w-3 h-3 ml-1" />
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="license">License Type</Label>
-              <Select value={licenseType} onValueChange={setLicenseType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select license" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all-rights-reserved">All Rights Reserved</SelectItem>
-                  <SelectItem value="cc-by">Creative Commons Attribution</SelectItem>
-                  <SelectItem value="cc-by-sa">Creative Commons Attribution-ShareAlike</SelectItem>
-                  <SelectItem value="cc-by-nc">Creative Commons Attribution-NonCommercial</SelectItem>
-                  <SelectItem value="custom">Custom License</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Protection Options */}
-        <Card className="bg-card/50 backdrop-blur-sm border-border/50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-primary" />
-              Protection Options
-            </CardTitle>
-            <CardDescription>
-              Configure how your artwork will be protected
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="watermark"
-                checked={enableWatermark}
-                onCheckedChange={(checked) => setEnableWatermark(checked === true)}
-              />
-              <Label htmlFor="watermark" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Enable invisible watermarking for enhanced detection
-              </Label>
-            </div>
+            <p className="text-lg md:text-xl text-muted-foreground mb-6">
+              Upload your creative work and get AI-powered protection with 24/7 monitoring
+            </p>
             
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="blockchain"
-                  checked={enableBlockchain}
-                  onCheckedChange={(checked) => setEnableBlockchain(checked === true)}
-                />
-                <Label htmlFor="blockchain" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                  Register on blockchain for immutable proof of ownership
-                </Label>
-              </div>
-              <p className="text-sm text-muted-foreground ml-6">
-                Blockchain technology creates an unalterable, timestamped record of your artwork's ownership and creation date. This provides the strongest possible legal proof and prevents any disputes about authenticity or ownership rights.
+            {!user && (
+              <Alert className="mb-6 border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800">
+                <Info className="w-4 h-4" />
+                <AlertDescription className="text-amber-800 dark:text-amber-200">
+                  <strong>Sign in required:</strong> Please sign in to upload and protect your artwork.
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8">
+        {user ? (
+          <>
+            <QuickStartGuide 
+              onUploadClick={() => {
+                // Scroll to upload area
+                const uploadArea = document.querySelector('[data-upload-area]');
+                if (uploadArea) {
+                  uploadArea.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+            />
+            
+            <div data-upload-area>
+              <VisualRecognition />
+            </div>
+          </>
+        ) : (
+          <Card className="max-w-2xl mx-auto">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl flex items-center justify-center gap-2">
+                <Shield className="w-6 h-6 text-primary" />
+                Authentication Required
+              </CardTitle>
+              <CardDescription>
+                Sign in to start protecting your creative work
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center space-y-4">
+              <p className="text-muted-foreground">
+                To upload and protect your artwork, you'll need to create an account or sign in to your existing account.
               </p>
-            </div>
-          </CardContent>
-        </Card>
-
-            {/* Submit Button */}
-            <div className="text-center">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground px-8 py-6 text-lg"
-                disabled={files.length === 0 || isProtecting}
-                onClick={handleStartProtection}
-              >
-                <Shield className="w-5 h-5 mr-2" />
-                {isProtecting ? "Processing..." : "Start Protection"}
-              </Button>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="analyze">
-            <VisualRecognition />
-          </TabsContent>
-        </Tabs>
+              <div className="space-y-2">
+                <p className="text-sm font-medium">With TSMO Protection, you get:</p>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• AI-powered content analysis and watermarking</li>
+                  <li>• 24/7 monitoring across 50,000+ sources</li>
+                  <li>• Instant alerts when matches are detected</li>
+                  <li>• Blockchain verification options</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
