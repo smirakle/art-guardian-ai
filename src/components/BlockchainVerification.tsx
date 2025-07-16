@@ -548,6 +548,46 @@ const BlockchainVerification = () => {
           </div>
         </CardContent>
       </Card>
+
+      <Card className="border-orange-200 bg-gradient-to-r from-orange-50 to-yellow-50">
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-orange-700 flex items-center gap-2">
+              <FileText className="w-5 h-5" />
+              Blockchain vs Traditional Copyright
+            </h3>
+            <div className="grid md:grid-cols-2 gap-6 text-sm">
+              <div className="space-y-3">
+                <h4 className="font-semibold text-orange-700">Blockchain Registration</h4>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li>• <strong>Instant global verification</strong> - Immediate proof of creation</li>
+                  <li>• <strong>Immutable record</strong> - Cannot be altered or lost</li>
+                  <li>• <strong>Transparent ownership</strong> - Publicly verifiable</li>
+                  <li>• <strong>Digital-first</strong> - Perfect for online artwork</li>
+                  <li>• <strong>Automated enforcement</strong> - Smart contracts can manage rights</li>
+                </ul>
+              </div>
+              <div className="space-y-3">
+                <h4 className="font-semibold text-orange-700">Traditional Copyright</h4>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li>• <strong>Legal framework</strong> - Established court recognition</li>
+                  <li>• <strong>Automatic protection</strong> - Exists upon creation</li>
+                  <li>• <strong>Geographic coverage</strong> - Varies by jurisdiction</li>
+                  <li>• <strong>Formal registration</strong> - Optional but strengthens claims</li>
+                  <li>• <strong>Legal remedies</strong> - Court-enforced damages and injunctions</li>
+                </ul>
+              </div>
+            </div>
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-400">
+              <p className="text-sm text-blue-800">
+                <strong>Best Practice:</strong> Use both together! Blockchain provides immediate, verifiable proof while copyright gives you legal protection. 
+                Together, they create the strongest possible protection for your creative work.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Tabs defaultValue="certificates" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="certificates">
