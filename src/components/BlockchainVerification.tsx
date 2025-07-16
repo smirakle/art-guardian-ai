@@ -19,6 +19,7 @@ import {
   Download
 } from "lucide-react";
 import tsmoLogo from "@/assets/tsmo-logo.png";
+import tsmoArtistLogo from "@/assets/tsmo-artist-logo.png";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -439,6 +440,13 @@ const BlockchainVerification = () => {
 
         <TabsContent value="certificates" className="space-y-4">
           <Card>
+            <div className="flex justify-center pt-6">
+              <img 
+                src={tsmoArtistLogo} 
+                alt="TSMO - Your Art Our Watch" 
+                className="h-20 w-auto animate-fade-in"
+              />
+            </div>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="w-5 h-5" />
