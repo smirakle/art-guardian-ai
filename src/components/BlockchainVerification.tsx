@@ -283,9 +283,9 @@ const BlockchainVerification = () => {
       logoImg.crossOrigin = 'anonymous';
       
       logoImg.onload = async () => {
-        // Calculate proportional logo dimensions
-        const maxLogoWidth = 250;
-        const maxLogoHeight = 120;
+        // Calculate proportional logo dimensions (100% bigger)
+        const maxLogoWidth = 500;
+        const maxLogoHeight = 240;
         const aspectRatio = logoImg.naturalWidth / logoImg.naturalHeight;
         
         let logoWidth, logoHeight;
