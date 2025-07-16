@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { useMaintenanceMode } from "@/lib/maintenance";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
+
 import { 
   Shield, 
   AlertTriangle, 
@@ -59,7 +59,6 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const { isMaintenanceMode, toggleMaintenanceMode } = useMaintenanceMode();
   const [autoScaling, setAutoScaling] = useState(true);
-  const { user } = useAuth();
 
   const fetchRealTimeStats = async () => {
     try {
