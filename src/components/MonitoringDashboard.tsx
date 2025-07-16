@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Activity, Eye, Search, Shield, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
+
 
 interface MonitoringScan {
   id: string;
@@ -30,21 +30,18 @@ interface CopyrightMatch {
 }
 
 const MonitoringDashboard = () => {
-  const { user } = useAuth();
   const [scans, setScans] = useState<MonitoringScan[]>([]);
   const [matches, setMatches] = useState<CopyrightMatch[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
-
     const fetchData = async () => {
       try {
-        // Get user's artwork and their scans
+        // Get demo artwork and their scans
         const { data: artworks } = await supabase
           .from('artwork')
           .select('id, title')
-          .eq('user_id', user.id);
+          .limit(5); // Demo mode - limited data
 
         if (artworks && artworks.length > 0) {
           const artworkIds = artworks.map(a => a.id);
@@ -78,7 +75,7 @@ const MonitoringDashboard = () => {
           if (scanData) {
             const formattedScans = scanData.map(scan => ({
               ...scan,
-              artwork_title: (scan.artwork as any)?.title || 'Unknown Artwork'
+              artwork_title: (scan.artwork as any)?.title || 'Demo Artwork'
             }));
             setScans(formattedScans);
           }
@@ -86,6 +83,47 @@ const MonitoringDashboard = () => {
           if (matchData) {
             setMatches(matchData);
           }
+        } else {
+          // Create some demo data if database is empty
+          const demoScans: MonitoringScan[] = [
+            {
+              id: 'demo-1',
+              artwork_title: 'Demo Artwork 1',
+              status: 'running',
+              scan_type: 'comprehensive',
+              scanned_sources: 1250,
+              total_sources: 52000,
+              matches_found: 2,
+              started_at: new Date().toISOString(),
+              completed_at: null
+            },
+            {
+              id: 'demo-2',
+              artwork_title: 'Demo Artwork 2',
+              status: 'completed',
+              scan_type: 'quick',
+              scanned_sources: 5000,
+              total_sources: 5000,
+              matches_found: 0,
+              started_at: new Date(Date.now() - 3600000).toISOString(),
+              completed_at: new Date(Date.now() - 1800000).toISOString()
+            }
+          ];
+          
+          const demoMatches: CopyrightMatch[] = [
+            {
+              id: 'match-1',
+              source_domain: 'example-marketplace.com',
+              source_title: 'Unauthorized Copy Detected',
+              match_confidence: 94.5,
+              match_type: 'exact',
+              threat_level: 'high',
+              detected_at: new Date().toISOString()
+            }
+          ];
+          
+          setScans(demoScans);
+          setMatches(demoMatches);
         }
       } catch (error) {
         console.error('Error fetching monitoring data:', error);
@@ -98,7 +136,7 @@ const MonitoringDashboard = () => {
     const interval = setInterval(fetchData, 15000); // Refresh every 15 seconds
 
     return () => clearInterval(interval);
-  }, [user]);
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
