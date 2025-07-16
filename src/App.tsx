@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import MaintenanceMode from "@/components/MaintenanceMode";
 import { useMaintenanceMode } from "@/lib/maintenance";
+import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import AboutTsmo from "./pages/AboutTsmo";
 import Upload from "./pages/Upload";
@@ -33,9 +34,11 @@ const App = () => {
     return (
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <MaintenanceMode />
+          <AuthProvider>
+            <Toaster />
+            <Sonner />
+            <MaintenanceMode />
+          </AuthProvider>
         </TooltipProvider>
       </QueryClientProvider>
     );
@@ -45,31 +48,33 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Navigation />
-          <div className="pt-16">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/about-tsmo" element={<AboutTsmo />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/upload" element={<Upload />} />
-              <Route path="/monitoring" element={<Monitoring />} />
-              <Route path="/demo" element={<Demo />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/success" element={<Success />} />
-              <Route path="/deep-scan" element={<DeepWebScan />} />
-              <Route path="/blockchain" element={<BlockchainVerification />} />
-              <Route path="/community" element={<Community />} />
-              <Route path="/certificate/:certificateId" element={<Certificate />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </div>
-        </BrowserRouter>
+        <AuthProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Navigation />
+            <div className="pt-16">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/about-tsmo" element={<AboutTsmo />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/upload" element={<Upload />} />
+                <Route path="/monitoring" element={<Monitoring />} />
+                <Route path="/demo" element={<Demo />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/success" element={<Success />} />
+                <Route path="/deep-scan" element={<DeepWebScan />} />
+                <Route path="/blockchain" element={<BlockchainVerification />} />
+                <Route path="/community" element={<Community />} />
+                <Route path="/certificate/:certificateId" element={<Certificate />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+          </BrowserRouter>
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
