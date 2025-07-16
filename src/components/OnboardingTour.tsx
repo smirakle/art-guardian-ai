@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { useAuth } from '@/contexts/AuthContext';
+
 import { useNavigate } from 'react-router-dom';
 import { 
   ChevronRight, 
@@ -69,18 +69,16 @@ const onboardingSteps: OnboardingStep[] = [
 const OnboardingTour = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const { user } = useAuth();
+  
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Show onboarding for new users
-    if (user) {
-      const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
-      if (!hasSeenOnboarding) {
-        setIsVisible(true);
-      }
+    // Show onboarding for demo users
+    const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
+    if (!hasSeenOnboarding) {
+      setIsVisible(true);
     }
-  }, [user]);
+  }, []);
 
   const nextStep = () => {
     if (currentStep < onboardingSteps.length - 1) {
@@ -110,7 +108,7 @@ const OnboardingTour = () => {
     setIsVisible(false);
   };
 
-  if (!isVisible || !user) return null;
+  if (!isVisible) return null;
 
   const step = onboardingSteps[currentStep];
   const Icon = step.icon;

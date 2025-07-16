@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { useAuth } from '@/contexts/AuthContext';
+
 import { useNavigate } from 'react-router-dom';
 import { 
   HelpCircle, 
@@ -30,7 +30,7 @@ interface GuidanceStep {
 
 const UserGuidance = () => {
   const [isVisible, setIsVisible] = useState(true);
-  const { user } = useAuth();
+  
   const navigate = useNavigate();
 
   // Mock user progress - in real app, this would come from user data
@@ -81,7 +81,7 @@ const UserGuidance = () => {
     }
   };
 
-  if (!isVisible || !user) return null;
+  if (!isVisible) return null;
 
   return (
     <Card className="mb-6 border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
