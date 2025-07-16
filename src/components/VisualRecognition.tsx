@@ -8,9 +8,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import UploadArea from "./visual-recognition/UploadArea";
 import ImageAnalysisCard from "./visual-recognition/ImageAnalysisCard";
 import RealTimeMonitoring from "./RealTimeMonitoring";
+import BlockchainVerification from "./BlockchainVerification";
 import UserGuidance from "./UserGuidance";
 import { watermarkService, InvisibleWatermark } from "@/lib/watermark";
-import { Eye, Camera, Shield, HelpCircle } from "lucide-react";
+import { Eye, Camera, Shield, HelpCircle, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -325,7 +326,7 @@ const VisualRecognition = () => {
         )}
 
         <Tabs defaultValue="quick-analysis" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="quick-analysis" className="flex items-center gap-2">
               <Camera className="w-4 h-4" />
               <span className="hidden sm:inline">Quick Analysis</span>
@@ -349,6 +350,19 @@ const VisualRecognition = () => {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>View live monitoring of your protected content</p>
+                </TooltipContent>
+              </Tooltip>
+            </TabsTrigger>
+            <TabsTrigger value="blockchain" className="flex items-center gap-2">
+              <Key className="w-4 h-4" />
+              <span className="hidden sm:inline">Blockchain Verification</span>
+              <span className="sm:hidden">Blockchain</span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="w-3 h-3 ml-1 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Create immutable blockchain certificates for your artwork</p>
                 </TooltipContent>
               </Tooltip>
             </TabsTrigger>
@@ -390,6 +404,10 @@ const VisualRecognition = () => {
 
           <TabsContent value="monitoring" className="space-y-6">
             <RealTimeMonitoring />
+          </TabsContent>
+
+          <TabsContent value="blockchain" className="space-y-6">
+            <BlockchainVerification />
           </TabsContent>
 
           <TabsContent value="existing" className="space-y-6">

@@ -1,687 +1,473 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { 
   Shield, 
-  Upload, 
-  Hash, 
-  Link2, 
   CheckCircle, 
   Clock, 
-  FileImage,
-  Download,
-  Copy,
-  Fingerprint
-} from 'lucide-react';
-import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
+  AlertCircle, 
+  Copy, 
+  Search,
+  FileText,
+  Key,
+  Zap,
+  Download
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
-interface VerificationRecord {
+interface BlockchainCertificate {
   id: string;
-  fileName: string;
-  hash: string;
-  blockchainId: string;
-  timestamp: string;
-  status: 'pending' | 'verified' | 'failed';
-  transactionHash: string;
-  preview?: string;
+  artwork_id: string;
+  certificate_id: string;
+  blockchain_hash: string;
+  artwork_fingerprint: string;
+  ownership_proof: string;
+  registration_timestamp: string;
+  status: string;
+  certificate_data: any;
+  created_at: string;
+  artwork?: {
+    title: string;
+    description: string;
+    category: string;
+  };
+}
+
+interface ArtworkItem {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  status: string;
+  blockchain_hash: string | null;
+  blockchain_certificate_id: string | null;
+  blockchain_registered_at: string | null;
+  created_at: string;
 }
 
 const BlockchainVerification = () => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [verificationProgress, setVerificationProgress] = useState(0);
-  const [verificationRecord, setVerificationRecord] = useState<VerificationRecord | null>(null);
-  const [verificationHistory, setVerificationHistory] = useState<VerificationRecord[]>([
-    {
-      id: '1',
-      fileName: 'artwork_masterpiece.jpg',
-      hash: '0xa7b3c9d2e5f8a1b4c7d0e3f6a9b2c5d8e1f4a7b0c3d6e9f2a5b8c1d4e7f0a3b6',
-      blockchainId: 'ETH-001234',
-      timestamp: '2024-01-15 14:30:25',
-      status: 'verified',
-      transactionHash: '0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b'
-    },
-    {
-      id: '2',
-      fileName: 'digital_creation.png',
-      hash: '0xf2e9c6b3a0d7e4f1a8b5c2d9e6f3a0b7c4d1e8f5a2b9c6d3e0f7a4b1c8d5e2f9',
-      blockchainId: 'ETH-001235',
-      timestamp: '2024-01-14 09:15:42',
-      status: 'verified',
-      transactionHash: '0x9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e'
-    }
-  ]);
   const { toast } = useToast();
+  const { user } = useAuth();
+  const [certificates, setCertificates] = useState<BlockchainCertificate[]>([]);
+  const [unregisteredArtwork, setUnregisteredArtwork] = useState<ArtworkItem[]>([]);
+  const [registering, setRegistering] = useState<string | null>(null);
+  const [verificationQuery, setVerificationQuery] = useState('');
+  const [verificationResult, setVerificationResult] = useState<any>(null);
+  const [verifying, setVerifying] = useState(false);
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      setVerificationRecord(null);
+  useEffect(() => {
+    if (user) {
+      fetchCertificates();
+      fetchUnregisteredArtwork();
+    }
+  }, [user]);
+
+  const fetchCertificates = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('blockchain_certificates')
+        .select(`
+          *,
+          artwork:artwork_id(title, description, category)
+        `)
+        .eq('user_id', user!.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setCertificates(data || []);
+    } catch (error) {
+      console.error('Error fetching certificates:', error);
     }
   };
 
-  const generateHash = (file: File): Promise<string> => {
-    return new Promise((resolve) => {
-      // Simulate hash generation
-      setTimeout(() => {
-        const hash = `0x${Math.random().toString(16).substr(2, 64)}`;
-        resolve(hash);
-      }, 1000);
-    });
+  const fetchUnregisteredArtwork = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('artwork')
+        .select('*')
+        .eq('user_id', user!.id)
+        .is('blockchain_certificate_id', null)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setUnregisteredArtwork(data || []);
+    } catch (error) {
+      console.error('Error fetching unregistered artwork:', error);
+    }
   };
 
-  const verifyOnBlockchain = async () => {
-    if (!selectedFile) return;
+  const registerArtwork = async (artworkId: string) => {
+    if (!user) return;
 
-    setIsVerifying(true);
-    setVerificationProgress(0);
-
+    setRegistering(artworkId);
     try {
-      // Step 1: Generate hash
-      setVerificationProgress(25);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const hash = await generateHash(selectedFile);
+      const artwork = unregisteredArtwork.find(a => a.id === artworkId);
+      if (!artwork) return;
 
-      // Step 2: Submit to blockchain
-      setVerificationProgress(50);
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Step 3: Await confirmation
-      setVerificationProgress(75);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Step 4: Generate certificate
-      setVerificationProgress(100);
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // Create preview for images
-      let preview = '';
-      if (selectedFile.type.startsWith('image/')) {
-        const reader = new FileReader();
-        preview = await new Promise((resolve) => {
-          reader.onload = (e) => resolve(e.target?.result as string);
-          reader.readAsDataURL(selectedFile);
-        });
-      }
-
-      const newRecord: VerificationRecord = {
-        id: Date.now().toString(),
-        fileName: selectedFile.name,
-        hash,
-        blockchainId: `ETH-${String(Math.floor(Math.random() * 999999)).padStart(6, '0')}`,
-        timestamp: new Date().toLocaleString(),
-        status: 'verified',
-        transactionHash: `0x${Math.random().toString(16).substr(2, 64)}`,
-        preview // Add preview to the record
-      };
-
-      setVerificationRecord(newRecord);
-      setVerificationHistory(prev => [newRecord, ...prev]);
-
-      toast({
-        title: "Blockchain Verification Complete",
-        description: "Your artwork has been successfully registered on the blockchain.",
+      const { data, error } = await supabase.functions.invoke('blockchain-registration', {
+        body: {
+          artworkId: artwork.id,
+          title: artwork.title,
+          description: artwork.description,
+          category: artwork.category,
+          filePaths: [],
+          userEmail: user.email || 'unknown@example.com',
+          userId: user.id
+        }
       });
 
-    } catch (error) {
+      if (error) throw error;
+
+      if (data?.certificate) {
+        toast({
+          title: "Blockchain Registration Successful!",
+          description: `Certificate ID: ${data.certificate.certificateId}`,
+        });
+        
+        await fetchCertificates();
+        await fetchUnregisteredArtwork();
+      }
+    } catch (error: any) {
+      console.error('Blockchain registration error:', error);
       toast({
-        title: "Verification Failed",
-        description: "There was an error during blockchain verification.",
+        title: "Registration Failed",
+        description: error.message || "Failed to register artwork on blockchain",
         variant: "destructive",
       });
     } finally {
-      setIsVerifying(false);
-      setVerificationProgress(0);
+      setRegistering(null);
+    }
+  };
+
+  const verifyArtwork = async () => {
+    if (!verificationQuery.trim()) {
+      toast({
+        title: "Invalid Query",
+        description: "Please enter a certificate ID or blockchain hash to verify",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setVerifying(true);
+    setVerificationResult(null);
+
+    try {
+      let { data, error } = await supabase
+        .from('blockchain_certificates')
+        .select(`
+          *,
+          artwork:artwork_id(title, description, category)
+        `)
+        .eq('certificate_id', verificationQuery)
+        .single();
+
+      if (error && error.code === 'PGRST116') {
+        const { data: hashData, error: hashError } = await supabase
+          .from('blockchain_certificates')
+          .select(`
+            *,
+            artwork:artwork_id(title, description, category)
+          `)
+          .eq('blockchain_hash', verificationQuery)
+          .single();
+
+        data = hashData;
+        error = hashError;
+      }
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          setVerificationResult({
+            found: false,
+            message: "No blockchain certificate found for this query"
+          });
+        } else {
+          throw error;
+        }
+      } else {
+        setVerificationResult({
+          found: true,
+          certificate: data,
+          message: "Artwork verified on blockchain"
+        });
+      }
+    } catch (error: any) {
+      console.error('Verification error:', error);
+      toast({
+        title: "Verification Failed",
+        description: error.message || "Failed to verify artwork",
+        variant: "destructive",
+      });
+    } finally {
+      setVerifying(false);
     }
   };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast({
-      title: "Copied to clipboard",
-      description: "Hash has been copied to your clipboard.",
+      title: "Copied!",
+      description: "Text copied to clipboard",
     });
   };
 
-  const downloadCertificate = async (record: VerificationRecord) => {
-    // Convert logo to base64 for embedding
-    const logoResponse = await fetch(tsmoLogo);
-    const logoBlob = await logoResponse.blob();
-    const logoBase64 = await new Promise<string>((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.readAsDataURL(logoBlob);
-    });
-    // Create certificate HTML for 8x10 inch format (768x960px at 96 DPI)
-    const certificateHTML = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="UTF-8">
-        <title>TSMO Blockchain Certificate</title>
-        <style>
-          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-          
-          * { margin: 0; padding: 0; box-sizing: border-box; }
-          
-           .certificate {
-             width: 768px;
-             height: 960px;
-             background: white;
-             color: #1e293b;
-             font-family: 'Inter', sans-serif;
-             position: relative;
-             padding: 40px;
-             display: flex;
-             flex-direction: column;
-           }
-          
-           .header {
-             text-align: center;
-             margin-bottom: 20px;
-           }
-          
-           .logo {
-             width: 200px;
-             height: 200px;
-             margin: 0 auto 15px;
-             display: flex;
-             align-items: center;
-             justify-content: center;
-             border-radius: 12px;
-             overflow: hidden;
-             background: transparent;
-           }
-           
-           .logo img {
-             width: 100%;
-             height: 100%;
-             object-fit: contain;
-             background: transparent;
-           }
-          
-           .company-name {
-             font-size: 28px;
-             font-weight: 700;
-             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-             -webkit-background-clip: text;
-             -webkit-text-fill-color: transparent;
-             margin-bottom: 6px;
-           }
-          
-           .slogan {
-             font-size: 16px;
-             color: #94a3b8;
-             font-weight: 400;
-             margin-bottom: 20px;
-           }
-          
-            .certificate-title {
-              font-size: 24px;
-              font-weight: 600;
-              text-align: center;
-              margin-bottom: 25px;
-              color: #1e293b;
-            }
-           
-            .content {
-              flex: 1;
-              display: grid;
-              grid-template-columns: 180px 1fr;
-              gap: 20px;
-              margin-bottom: 20px;
-            }
-           
-           .artwork-preview {
-             display: flex;
-             flex-direction: column;
-             align-items: center;
-           }
-           
-            .artwork-image {
-              width: 160px;
-              height: 160px;
-              object-fit: cover;
-              border-radius: 12px;
-              border: 2px solid rgba(59, 130, 246, 0.3);
-              margin-bottom: 12px;
-              background: #f8fafc;
-            }
-           
-            .artwork-placeholder {
-              width: 160px;
-              height: 160px;
-              border-radius: 12px;
-              border: 2px dashed rgba(59, 130, 246, 0.3);
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-size: 40px;
-              color: rgba(59, 130, 246, 0.5);
-              margin-bottom: 12px;
-              background: #f8fafc;
-            }
-           
-           .artwork-info {
-             text-align: center;
-             font-size: 12px;
-             color: #64748b;
-           }
-          
-           .verification-fields {
-             display: grid;
-             grid-template-columns: 1fr 1fr;
-             gap: 15px;
-           }
-          
-            .field {
-              background: #f8fafc;
-              padding: 15px;
-              border-radius: 12px;
-              border: 1px solid rgba(59, 130, 246, 0.2);
-            }
-           
-           .field-label {
-             font-size: 12px;
-             color: #64748b;
-             text-transform: uppercase;
-             letter-spacing: 1px;
-             margin-bottom: 8px;
-             font-weight: 600;
-           }
-           
-           .field-value {
-             font-size: 14px;
-             color: #1e293b;
-             word-break: break-all;
-             line-height: 1.4;
-             font-family: 'Monaco', 'Menlo', monospace;
-           }
-           
-           .hash-field {
-             grid-column: 1 / -1;
-           }
-           
-            .footer {
-              text-align: center;
-              border-top: 1px solid rgba(59, 130, 246, 0.2);
-              padding-top: 20px;
-              color: #64748b;
-              font-size: 11px;
-            }
-          
-          .verification-badge {
-            display: inline-flex;
-            align-items: center;
-            background: #10b981;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 20px;
-          }
-          
-          .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 80px;
-            color: rgba(59, 130, 246, 0.05);
-            font-weight: 700;
-            z-index: 0;
-            pointer-events: none;
-          }
-          
-          .content-wrapper {
-            position: relative;
-            z-index: 1;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="certificate">
-          <div class="watermark">VERIFIED</div>
-          <div class="content-wrapper">
-            <div class="header">
-              <div class="logo"><img src="${logoBase64}" alt="TSMO Logo"></div>
-              <div class="company-name">TSMO</div>
-              <div class="slogan">Your Art. Our Watch.</div>
-              <div class="verification-badge">✓ BLOCKCHAIN VERIFIED</div>
-            </div>
-            
-            <h2 class="certificate-title">Certificate of Blockchain Verification</h2>
-            
-            <div class="content">
-              <div class="artwork-preview">
-                ${record.preview ? 
-                  `<img src="${record.preview}" alt="Artwork Preview" class="artwork-image">` :
-                  `<div class="artwork-placeholder">🎨</div>`
-                }
-                <div class="artwork-info">
-                  <div style="font-weight: 600; color: #1e293b; margin-bottom: 4px;">Protected Artwork</div>
-                  <div>${record.fileName}</div>
-                </div>
-              </div>
-              
-              <div class="verification-fields">
-                <div class="field">
-                  <div class="field-label">Blockchain ID</div>
-                  <div class="field-value">${record.blockchainId}</div>
-                </div>
-                
-                <div class="field">
-                  <div class="field-label">Verification Date</div>
-                  <div class="field-value">${record.timestamp}</div>
-                </div>
-                
-                <div class="field">
-                  <div class="field-label">Certificate ID</div>
-                  <div class="field-value">TSMO-CERT-${record.id}</div>
-                </div>
-                
-                <div class="field">
-                  <div class="field-label">File Type</div>
-                  <div class="field-value">${record.fileName.split('.').pop()?.toUpperCase() || 'UNKNOWN'}</div>
-                </div>
-                
-                <div class="field hash-field">
-                  <div class="field-label">Cryptographic Hash</div>
-                  <div class="field-value">${record.hash}</div>
-                </div>
-                
-                <div class="field hash-field">
-                  <div class="field-label">Transaction Hash</div>
-                  <div class="field-value">${record.transactionHash}</div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="footer">
-              <p><strong>This certificate serves as immutable proof of creation and ownership</strong></p>
-              <p>Issued by TSMO Blockchain Verification System</p>
-              <p>Certificate ID: TSMO-CERT-${record.id} | Generated: ${new Date().toLocaleString()}</p>
-              <p style="margin-top: 10px; font-size: 10px;">
-                This certificate is cryptographically secured and can be verified on the blockchain.
-                Any unauthorized reproduction or modification will be detectable.
-              </p>
-            </div>
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
-
-    // Create and download the certificate as HTML
-    const blob = new Blob([certificateHTML], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `TSMO_Certificate_${record.fileName.replace(/\.[^/.]+$/, "")}.html`;
-    a.click();
-    URL.revokeObjectURL(url);
-
-    // Also create a print-ready version notification
-    setTimeout(() => {
-      toast({
-        title: "Certificate Downloaded",
-        description: "Open the HTML file in your browser and print to save as PDF for 8x10 format.",
-      });
-    }, 1000);
-  };
+  if (!user) {
+    return (
+      <Alert>
+        <AlertCircle className="w-4 h-4" />
+        <AlertDescription>
+          Please sign in to access blockchain verification features.
+        </AlertDescription>
+      </Alert>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-white py-12">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center mb-4">
-            <Shield className="h-12 w-12 text-primary mr-3" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Blockchain Verification
-            </h1>
-          </div>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Create immutable proof of creation and ownership through blockchain technology. 
-            Secure your intellectual property with cryptographic verification.
-          </p>
-        </div>
+    <div className="space-y-6">
+      <div className="text-center space-y-2">
+        <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
+          <Shield className="w-6 h-6 text-primary" />
+          Blockchain Verification
+        </h2>
+        <p className="text-muted-foreground">
+          Create immutable proof of ownership and verify artwork authenticity
+        </p>
+      </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 mb-12">
-          {/* Upload & Verification Section */}
+      <Tabs defaultValue="certificates" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="certificates">
+            <FileText className="w-4 h-4 mr-2" />
+            My Certificates
+          </TabsTrigger>
+          <TabsTrigger value="register">
+            <Key className="w-4 h-4 mr-2" />
+            Register Artwork
+          </TabsTrigger>
+          <TabsTrigger value="verify">
+            <Search className="w-4 h-4 mr-2" />
+            Verify Artwork
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="certificates" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Upload className="h-5 w-5 mr-2" />
-                Upload Artwork for Verification
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="w-5 h-5" />
+                My Blockchain Certificates
               </CardTitle>
               <CardDescription>
-                Upload your digital artwork to create a blockchain-verified certificate of authenticity
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="border-2 border-dashed border-muted-foreground/20 rounded-lg p-8 text-center">
-                <input
-                  type="file"
-                  id="artwork-upload"
-                  className="hidden"
-                  accept="image/*,video/*,audio/*,.pdf"
-                  onChange={handleFileSelect}
-                />
-                <label htmlFor="artwork-upload" className="cursor-pointer">
-                  <FileImage className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Click to select your artwork file
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Supports images, videos, audio, and PDFs
-                  </p>
-                </label>
-              </div>
-
-              {selectedFile && (
-                <div className="bg-secondary/20 rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">{selectedFile.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                      </p>
-                    </div>
-                    <Badge variant="outline">Ready</Badge>
-                  </div>
-                </div>
-              )}
-
-              {isVerifying && (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span>Verification Progress</span>
-                    <span>{verificationProgress}%</span>
-                  </div>
-                  <Progress value={verificationProgress} className="w-full" />
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Clock className="h-4 w-4 mr-2" />
-                    {verificationProgress < 25 && "Generating cryptographic hash..."}
-                    {verificationProgress >= 25 && verificationProgress < 50 && "Submitting to blockchain..."}
-                    {verificationProgress >= 50 && verificationProgress < 75 && "Awaiting blockchain confirmation..."}
-                    {verificationProgress >= 75 && "Generating certificate..."}
-                  </div>
-                </div>
-              )}
-
-              <Button 
-                onClick={verifyOnBlockchain} 
-                disabled={!selectedFile || isVerifying}
-                className="w-full"
-                size="lg"
-              >
-                {isVerifying ? "Verifying..." : "Verify on Blockchain"}
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Verification Result */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <CheckCircle className="h-5 w-5 mr-2" />
-                Verification Result
-              </CardTitle>
-              <CardDescription>
-                Your blockchain verification certificate and proof of ownership
+                View all your blockchain-verified artwork certificates
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {verificationRecord ? (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Badge variant="default" className="bg-green-500">
-                      <CheckCircle className="h-3 w-3 mr-1" />
-                      Verified
-                    </Badge>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => downloadCertificate(verificationRecord)}
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Download Certificate
-                    </Button>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-3">
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">File Name</label>
-                      <p className="font-mono text-sm">{verificationRecord.fileName}</p>
-                    </div>
-                    
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Blockchain ID</label>
-                      <p className="font-mono text-sm">{verificationRecord.blockchainId}</p>
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Cryptographic Hash</label>
-                      <div className="flex items-center space-x-2">
-                        <p className="font-mono text-xs break-all bg-secondary p-2 rounded flex-1">
-                          {verificationRecord.hash}
-                        </p>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => copyToClipboard(verificationRecord.hash)}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Transaction Hash</label>
-                      <div className="flex items-center space-x-2">
-                        <p className="font-mono text-xs break-all bg-secondary p-2 rounded flex-1">
-                          {verificationRecord.transactionHash}
-                        </p>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => copyToClipboard(verificationRecord.transactionHash)}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Timestamp</label>
-                      <p className="font-mono text-sm">{verificationRecord.timestamp}</p>
-                    </div>
-                  </div>
+              {certificates.length === 0 ? (
+                <div className="text-center py-8">
+                  <Shield className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">No blockchain certificates yet</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Register your artwork to create blockchain certificates
+                  </p>
                 </div>
               ) : (
-                <div className="text-center py-12">
-                  <Fingerprint className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                  <p className="text-muted-foreground">
-                    Upload and verify your artwork to see the blockchain certificate
-                  </p>
+                <div className="space-y-4">
+                  {certificates.map((cert) => (
+                    <Card key={cert.id} className="border-l-4 border-l-primary">
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <h3 className="font-medium">
+                                {cert.artwork?.title || 'Untitled Artwork'}
+                              </h3>
+                              <Badge className="bg-green-100 text-green-800 border-green-200">
+                                <CheckCircle className="w-4 h-4" />
+                                {cert.status}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              {cert.artwork?.description || 'No description'}
+                            </p>
+                            <div className="space-y-1 text-xs">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">Certificate ID:</span>
+                                <code className="bg-muted px-2 py-1 rounded">{cert.certificate_id}</code>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => copyToClipboard(cert.certificate_id)}
+                                  className="h-6 w-6 p-0"
+                                >
+                                  <Copy className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right text-xs text-muted-foreground">
+                            <p>Registered</p>
+                            <p>{new Date(cert.registration_timestamp).toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               )}
             </CardContent>
           </Card>
-        </div>
+        </TabsContent>
 
-        {/* Verification History */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Hash className="h-5 w-5 mr-2" />
-              Verification History
-            </CardTitle>
-            <CardDescription>
-              Your previous blockchain verifications and certificates
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {verificationHistory.map((record) => (
-                <div key={record.id} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center space-x-3">
-                      <Badge variant="default" className="bg-green-500">
-                        <CheckCircle className="h-3 w-3 mr-1" />
-                        Verified
-                      </Badge>
-                      <span className="font-medium">{record.fileName}</span>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => downloadCertificate(record)}
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Certificate
-                    </Button>
+        <TabsContent value="register" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Key className="w-5 h-5" />
+                Register Artwork on Blockchain
+              </CardTitle>
+              <CardDescription>
+                Create immutable proof of ownership for your artwork
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {unregisteredArtwork.length === 0 ? (
+                <div className="text-center py-8">
+                  <Zap className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">All your artwork is already registered!</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Upload new artwork to register it on the blockchain
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {unregisteredArtwork.map((artwork) => (
+                    <Card key={artwork.id} className="border-l-4 border-l-yellow-500">
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <h3 className="font-medium">{artwork.title}</h3>
+                              <Badge variant="outline" className="text-yellow-600 border-yellow-600">
+                                <Clock className="w-3 h-3 mr-1" />
+                                Not Registered
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              {artwork.description || 'No description'}
+                            </p>
+                          </div>
+                          <Button
+                            onClick={() => registerArtwork(artwork.id)}
+                            disabled={registering === artwork.id}
+                            className="flex items-center gap-2"
+                          >
+                            {registering === artwork.id ? (
+                              <>
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                Registering...
+                              </>
+                            ) : (
+                              <>
+                                <Shield className="w-4 h-4" />
+                                Register
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="verify" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Search className="w-5 h-5" />
+                Verify Artwork Authenticity
+              </CardTitle>
+              <CardDescription>
+                Verify any artwork using its certificate ID or blockchain hash
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="verification-query">Certificate ID or Blockchain Hash</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="verification-query"
+                    placeholder="Enter certificate ID or blockchain hash..."
+                    value={verificationQuery}
+                    onChange={(e) => setVerificationQuery(e.target.value)}
+                  />
+                  <Button 
+                    onClick={verifyArtwork}
+                    disabled={verifying}
+                    className="flex items-center gap-2"
+                  >
+                    {verifying ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Search className="w-4 h-4" />
+                    )}
+                    Verify
+                  </Button>
+                </div>
+              </div>
+
+              {verificationResult && (
+                <Alert className={verificationResult.found ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}>
+                  <div className="flex items-center gap-2">
+                    {verificationResult.found ? (
+                      <CheckCircle className="w-4 h-4 text-green-600" />
+                    ) : (
+                      <AlertCircle className="w-4 h-4 text-red-600" />
+                    )}
+                    <AlertDescription className={verificationResult.found ? 'text-green-800' : 'text-red-800'}>
+                      {verificationResult.message}
+                    </AlertDescription>
                   </div>
-                  
-                  <div className="grid md:grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Blockchain ID:</span>
-                      <p className="font-mono">{record.blockchainId}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Verified:</span>
-                      <p>{record.timestamp}</p>
-                    </div>
-                    <div className="md:col-span-2">
-                      <span className="text-muted-foreground">Hash:</span>
-                      <div className="flex items-center space-x-2">
-                        <p className="font-mono text-xs break-all bg-secondary p-2 rounded flex-1">
-                          {record.hash}
-                        </p>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => copyToClipboard(record.hash)}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
+
+                  {verificationResult.found && verificationResult.certificate && (
+                    <div className="mt-4 p-4 bg-white rounded-lg border space-y-2">
+                      <h4 className="font-medium">{verificationResult.certificate.artwork?.title}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {verificationResult.certificate.artwork?.description}
+                      </p>
+                      <div className="grid grid-cols-2 gap-4 text-xs">
+                        <div>
+                          <span className="font-medium">Certificate ID:</span>
+                          <br />
+                          <code className="bg-muted px-2 py-1 rounded">
+                            {verificationResult.certificate.certificate_id}
+                          </code>
+                        </div>
+                        <div>
+                          <span className="font-medium">Registration Date:</span>
+                          <br />
+                          <span>{new Date(verificationResult.certificate.registration_timestamp).toLocaleDateString()}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                  )}
+                </Alert>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
