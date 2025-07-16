@@ -23,6 +23,7 @@ import {
   Link
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 import { supabase } from "@/integrations/supabase/client";
 import VisualRecognition from "@/components/VisualRecognition";
@@ -39,6 +40,7 @@ interface UploadedFile {
 
 const Upload = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -151,8 +153,12 @@ const Upload = () => {
 
   const uploadFile = async (file: File, fileId: string) => {
     try {
+      if (!user) {
+        throw new Error('Authentication required to upload files');
+      }
+      
       // Create file path
-      const fileName = `demo/${Date.now()}-${file.name}`;
+      const fileName = `${user.id}/${Date.now()}-${file.name}`;
       
       // Upload to Supabase storage
       const { data, error } = await supabase.storage
@@ -239,9 +245,9 @@ const Upload = () => {
     setFiles(prev => prev.filter(f => f.id !== fileId));
     
     // If file was uploaded to storage, delete it
-    if (fileToRemove && fileToRemove.status === 'protected') {
+    if (fileToRemove && fileToRemove.status === 'protected' && user) {
       try {
-        const fileName = `demo/${Date.now()}-${fileToRemove.name}`;
+        const fileName = `${user.id}/${Date.now()}-${fileToRemove.name}`;
         const { error } = await supabase.storage
           .from('artwork')
           .remove([fileName]);
@@ -306,6 +312,16 @@ const Upload = () => {
   };
 
   const handleStartProtection = async () => {
+    // Check authentication first
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to protect your artwork",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Validation
     if (files.length === 0 && urls.length === 0) {
       toast({
@@ -352,14 +368,14 @@ const Upload = () => {
       setFiles(protectedFiles);
 
       // Get file paths from uploaded files and URLs
-      const filePaths = files.map(file => `demo/${Date.now()}-${file.name}`);
+      const filePaths = files.map(file => `${user.id}/${Date.now()}-${file.name}`);
       const allPaths = [...filePaths, ...urls];
 
       // Create artwork record in database
       const { data: artwork, error: artworkError } = await supabase
         .from('artwork')
         .insert({
-          user_id: 'demo-user',
+          user_id: user.id,
           title: artworkTitle,
           description: description || null,
           category,
@@ -438,8 +454,8 @@ const Upload = () => {
               description: description || null,
               category,
               filePaths: allPaths,
-              userEmail: 'demo@example.com',
-              userId: 'demo-user'
+              userEmail: user.email || 'unknown@example.com',
+              userId: user.id
             }
           });
 
