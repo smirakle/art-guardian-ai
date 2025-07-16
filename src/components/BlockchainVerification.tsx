@@ -16,7 +16,10 @@ import {
   FileText,
   Key,
   Zap,
-  Download
+  Download,
+  Lock,
+  Eye,
+  TrendingUp
 } from "lucide-react";
 import tsmoLogo from "@/assets/tsmo-logo.png";
 import tsmoArtistLogo from "@/assets/tsmo-artist-logo.png";
@@ -501,6 +504,50 @@ const BlockchainVerification = () => {
         </p>
       </div>
 
+      <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-primary flex items-center gap-2">
+              <Shield className="w-5 h-5" />
+              Why Blockchain Verification Matters
+            </h3>
+            <div className="grid md:grid-cols-2 gap-6 text-sm">
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <Lock className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-medium">Immutable Proof of Ownership</h4>
+                    <p className="text-muted-foreground">Once registered on the blockchain, your artwork ownership is permanently recorded and cannot be altered or disputed.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Eye className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-medium">Global Transparency</h4>
+                    <p className="text-muted-foreground">Anyone can verify the authenticity and ownership of your artwork using the blockchain certificate, providing universal trust.</p>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <Clock className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-medium">Timestamped Creation</h4>
+                    <p className="text-muted-foreground">Blockchain registration establishes a precise creation date, crucial for copyright protection and legal disputes.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <TrendingUp className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-medium">Enhanced Market Value</h4>
+                    <p className="text-muted-foreground">Blockchain-verified artwork commands higher prices and greater collector confidence in digital marketplaces.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
       <Tabs defaultValue="certificates" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="certificates">
