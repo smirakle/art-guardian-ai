@@ -67,9 +67,7 @@ const RealTimeMonitoring = () => {
 
   useEffect(() => {
     if (user) {
-      loadArtworks();
-      loadScans();
-      loadMatches();
+      loadAllData();
       
       // Set up real-time subscriptions
       const artworkChannel = supabase
@@ -150,9 +148,22 @@ const RealTimeMonitoring = () => {
 
       if (error) throw error;
       setMatches(data || []);
-      setLoading(false);
     } catch (error: any) {
       console.error('Error loading matches:', error);
+    }
+  };
+
+  const loadAllData = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        loadArtworks(),
+        loadScans(),
+        loadMatches()
+      ]);
+    } catch (error) {
+      console.error('Error loading monitoring data:', error);
+    } finally {
       setLoading(false);
     }
   };
