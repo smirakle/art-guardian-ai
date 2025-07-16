@@ -45,7 +45,34 @@ const VisualRecognition = () => {
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please sign in to upload content",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Create artwork record for URL
+      const urlArtwork = {
+        title: `Video Link - ${new URL(url).hostname}`,
+        description: `Video content from ${url}`,
+        category: 'video',
+        user_id: user.id,
+        file_paths: [url], // Store the URL as a file path
+        status: 'monitoring'
+      };
+
+      const { data: artwork, error: artworkError } = await supabase
+        .from('artwork')
+        .insert(urlArtwork)
+        .select()
+        .single();
+
+      if (artworkError) {
+        throw artworkError;
+      }
 
       // Create a URL-based analysis entry using a dummy file
       const dummyFile = new File([url], 'video-link.url', {
@@ -93,9 +120,9 @@ const VisualRecognition = () => {
         ));
       }, 2000);
 
-      // Create monitoring scan for the URL
+      // Create monitoring scan for the URL with proper artwork ID
       await supabase.from('monitoring_scans').insert({
-        artwork_id: crypto.randomUUID(),
+        artwork_id: artwork.id,
         scan_type: 'url',
         status: 'running',
         started_at: new Date().toISOString(),
@@ -119,6 +146,16 @@ const VisualRecognition = () => {
 
   const handleFileUpload = useCallback(async (files: FileList | null) => {
     if (!files || files.length === 0) return;
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to upload files",
+        variant: "destructive",
+      });
+      return;
+    }
 
     const newImages: ImageAnalysis[] = [];
     
@@ -150,11 +187,8 @@ const VisualRecognition = () => {
     const startIndex = images.length;
     newImages.forEach(async (image, index) => {
       try {
-        const { data: user } = await supabase.auth.getUser();
-        if (!user.user) return;
-
         // Apply invisible watermarking for enhanced detection
-        const watermarkId = InvisibleWatermark.generateWatermarkId(user.user.id);
+        const watermarkId = InvisibleWatermark.generateWatermarkId(user.id);
         const watermarkedBlob = await watermarkService.applyWatermark(image.file, {
           text: watermarkId,
           opacity: 0.02,
@@ -183,28 +217,34 @@ const VisualRecognition = () => {
         // Start visual analysis with watermarked image
         analyzeImage(watermarkedFile, startIndex + index, setImages);
         
-        // Create temporary artwork record for quick analysis
-        const tempArtwork = {
-          title: `Quick Analysis - ${image.file.name} (Enhanced)`,
-          description: 'Temporary artwork with invisible watermark for enhanced detection',
+        // Create proper artwork record for monitoring
+        const artwork = {
+          title: `${image.file.name} (Enhanced)`,
+          description: 'Artwork with invisible watermark for enhanced detection',
           category: 'digital',
-          user_id: user.user.id,
-          file_paths: [], // Will be empty for quick analysis
-          status: 'analyzing'
+          user_id: user.id,
+          file_paths: [], // Will be populated if uploaded to storage
+          status: 'monitoring',
+          enable_watermark: true,
+          enable_blockchain: false
         };
 
-        const { data: artwork } = await supabase
+        const { data: artworkData, error: artworkError } = await supabase
           .from('artwork')
-          .insert(tempArtwork)
+          .insert(artwork)
           .select()
           .single();
 
-        if (artwork) {
+        if (artworkError) {
+          throw artworkError;
+        }
+
+        if (artworkData) {
           // Create monitoring scan with enhanced detection
           await supabase
             .from('monitoring_scans')
             .insert({
-              artwork_id: artwork.id,
+              artwork_id: artworkData.id,
               scan_type: 'visual-recognition-enhanced',
               status: 'running',
               started_at: new Date().toISOString(),
@@ -222,6 +262,40 @@ const VisualRecognition = () => {
         
         // Fallback to regular analysis without watermark
         analyzeImage(image.file, startIndex + index, setImages);
+        
+        // Create basic artwork record even if watermarking fails
+        try {
+          const basicArtwork = {
+            title: image.file.name,
+            description: 'Standard artwork protection',
+            category: 'digital',
+            user_id: user.id,
+            file_paths: [],
+            status: 'monitoring',
+            enable_watermark: false,
+            enable_blockchain: false
+          };
+
+          const { data: artworkData } = await supabase
+            .from('artwork')
+            .insert(basicArtwork)
+            .select()
+            .single();
+
+          if (artworkData) {
+            await supabase
+              .from('monitoring_scans')
+              .insert({
+                artwork_id: artworkData.id,
+                scan_type: 'visual-recognition',
+                status: 'running',
+                started_at: new Date().toISOString(),
+                total_sources: 1000
+              });
+          }
+        } catch (fallbackError) {
+          console.error('Fallback artwork creation failed:', fallbackError);
+        }
         
         toast({
           title: "Standard Analysis Applied",
