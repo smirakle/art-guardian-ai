@@ -73,15 +73,29 @@ const BlockchainVerification = () => {
     try {
       const { data, error } = await supabase
         .from('blockchain_certificates')
-        .select(`
-          *,
-          artwork:artwork_id(title, description, category)
-        `)
+        .select('*')
         .eq('user_id', user!.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setCertificates(data || []);
+
+      // Fetch artwork details separately to avoid join issues
+      const certificatesWithArtwork = await Promise.all(
+        (data || []).map(async (cert) => {
+          const { data: artwork } = await supabase
+            .from('artwork')
+            .select('title, description, category')
+            .eq('id', cert.artwork_id)
+            .single();
+          
+          return {
+            ...cert,
+            artwork: artwork || undefined
+          };
+        })
+      );
+
+      setCertificates(certificatesWithArtwork);
     } catch (error) {
       console.error('Error fetching certificates:', error);
     }
@@ -160,22 +174,18 @@ const BlockchainVerification = () => {
     setVerificationResult(null);
 
     try {
+      // First try to find by certificate ID
       let { data, error } = await supabase
         .from('blockchain_certificates')
-        .select(`
-          *,
-          artwork:artwork_id(title, description, category)
-        `)
+        .select('*')
         .eq('certificate_id', verificationQuery)
         .single();
 
+      // If not found by certificate ID, try by blockchain hash
       if (error && error.code === 'PGRST116') {
         const { data: hashData, error: hashError } = await supabase
           .from('blockchain_certificates')
-          .select(`
-            *,
-            artwork:artwork_id(title, description, category)
-          `)
+          .select('*')
           .eq('blockchain_hash', verificationQuery)
           .single();
 
@@ -193,9 +203,19 @@ const BlockchainVerification = () => {
           throw error;
         }
       } else {
+        // Fetch artwork details separately
+        const { data: artwork } = await supabase
+          .from('artwork')
+          .select('title, description, category')
+          .eq('id', data.artwork_id)
+          .single();
+
         setVerificationResult({
           found: true,
-          certificate: data,
+          certificate: {
+            ...data,
+            artwork: artwork || undefined
+          },
           message: "Artwork verified on blockchain"
         });
       }
