@@ -11,8 +11,9 @@ import RealTimeMonitoring from "./RealTimeMonitoring";
 import BlockchainVerification from "./BlockchainVerification";
 import UserGuidance from "./UserGuidance";
 import EnhancedMonitoringOverview from "./monitoring/EnhancedMonitoringOverview";
+import MonitoringTestPanel from "./MonitoringTestPanel";
 import { watermarkService, InvisibleWatermark } from "@/lib/watermark";
-import { Eye, Camera, Shield, HelpCircle, Key, Brain } from "lucide-react";
+import { Eye, Camera, Shield, HelpCircle, Key, Brain, TestTube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -454,7 +455,7 @@ const VisualRecognition = () => {
         )}
 
         <Tabs defaultValue="quick-analysis" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="quick-analysis" className="flex items-center gap-2">
               <Camera className="w-4 h-4" />
               <span className="hidden sm:inline">Quick Analysis</span>
@@ -520,6 +521,19 @@ const VisualRecognition = () => {
                 </TooltipContent>
               </Tooltip>
             </TabsTrigger>
+            <TabsTrigger value="test" className="flex items-center gap-2">
+              <TestTube className="w-4 h-4" />
+              <span className="hidden sm:inline">Test System</span>
+              <span className="sm:hidden">Test</span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="w-3 h-3 ml-1 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Test and diagnose the monitoring system</p>
+                </TooltipContent>
+              </Tooltip>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="quick-analysis" className="space-y-6">
@@ -558,6 +572,10 @@ const VisualRecognition = () => {
 
           <TabsContent value="existing" className="space-y-6">
             <RealTimeMonitoring />
+          </TabsContent>
+          
+          <TabsContent value="test" className="space-y-6">
+            <MonitoringTestPanel />
           </TabsContent>
         </Tabs>
 
