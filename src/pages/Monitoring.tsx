@@ -145,7 +145,7 @@ const Monitoring = () => {
               <DetectionTrends />
               <ResponseTimes />
               <div className="lg:col-span-2">
-                <DailyReport type="monitoring" />
+                <DailyReport type="monitoring" realTimeStats={stats} />
               </div>
             </div>
           </TabsContent>
