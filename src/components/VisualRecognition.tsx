@@ -328,13 +328,27 @@ const VisualRecognition = () => {
         // Start visual analysis with watermarked image
         analyzeImage(watermarkedFile, startIndex + index, setImages);
         
-        // Create proper artwork record for monitoring
+        // Upload watermarked image to storage for monitoring
+        const fileName = `${user.id}/${Date.now()}_${image.file.name}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('artwork')
+          .upload(fileName, watermarkedFile, {
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (uploadError) {
+          console.error('Error uploading image:', uploadError);
+          throw uploadError;
+        }
+
+        // Create proper artwork record for monitoring with file path
         const artwork = {
           title: `${image.file.name} (Enhanced)`,
           description: 'Artwork with invisible watermark for enhanced detection',
           category: 'digital',
           user_id: user.id,
-          file_paths: [], // Will be populated if uploaded to storage
+          file_paths: [fileName], // Store the uploaded file path
           status: 'monitoring',
           enable_watermark: true,
           enable_blockchain: false
@@ -376,12 +390,21 @@ const VisualRecognition = () => {
         
         // Create basic artwork record even if watermarking fails
         try {
+          // Upload original image to storage for monitoring
+          const fileName = `${user.id}/${Date.now()}_${image.file.name}`;
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('artwork')
+            .upload(fileName, image.file, {
+              cacheControl: '3600',
+              upsert: false
+            });
+
           const basicArtwork = {
             title: image.file.name,
             description: 'Standard artwork protection',
             category: 'digital',
             user_id: user.id,
-            file_paths: [],
+            file_paths: uploadError ? [] : [fileName], // Store file path if upload succeeded
             status: 'monitoring',
             enable_watermark: false,
             enable_blockchain: false
