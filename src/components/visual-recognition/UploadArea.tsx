@@ -2,23 +2,33 @@ import { useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Camera, Upload, Loader, ImageIcon, Link } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Camera, Upload, Loader, ImageIcon, Link, FileText } from "lucide-react";
 
 interface UploadAreaProps {
   onFileUpload: (files: FileList | null) => void;
   onUrlUpload: (url: string) => void;
+  onTextUpload: (text: string) => void;
   isInitializing: boolean;
   isEmpty: boolean;
 }
 
-const UploadArea = ({ onFileUpload, onUrlUpload, isInitializing, isEmpty }: UploadAreaProps) => {
+const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, isEmpty }: UploadAreaProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [urlInput, setUrlInput] = useState("");
+  const [textInput, setTextInput] = useState("");
 
   const handleUrlSubmit = () => {
     if (urlInput.trim()) {
       onUrlUpload(urlInput.trim());
       setUrlInput("");
+    }
+  };
+
+  const handleTextSubmit = () => {
+    if (textInput.trim()) {
+      onTextUpload(textInput.trim());
+      setTextInput("");
     }
   };
 
@@ -31,9 +41,9 @@ const UploadArea = ({ onFileUpload, onUrlUpload, isInitializing, isEmpty }: Uplo
               <ImageIcon className="w-8 h-8 text-primary" />
             </div>
             <div>
-              <h3 className="text-lg font-medium">No Images Uploaded</h3>
+              <h3 className="text-lg font-medium">No Content Uploaded</h3>
             <p className="text-sm text-muted-foreground">
-              Upload images, videos, or audio files to start AI-powered copyright analysis and visual recognition
+              Upload files, add links, or paste text content to start AI-powered copyright analysis and monitoring
             </p>
             </div>
             <div className="space-y-3">
@@ -47,6 +57,18 @@ const UploadArea = ({ onFileUpload, onUrlUpload, isInitializing, isEmpty }: Uplo
                 <Button onClick={handleUrlSubmit} variant="outline">
                   <Link className="w-4 h-4 mr-2" />
                   Add Link
+                </Button>
+              </div>
+              <div className="space-y-2">
+                <Textarea
+                  placeholder="Paste your text content here for copyright analysis and monitoring..."
+                  value={textInput}
+                  onChange={(e) => setTextInput(e.target.value)}
+                  className="min-h-[100px]"
+                />
+                <Button onClick={handleTextSubmit} variant="outline" className="w-full">
+                  <FileText className="w-4 h-4 mr-2" />
+                  Analyze Text
                 </Button>
               </div>
               <div className="flex gap-2">
@@ -78,14 +100,14 @@ const UploadArea = ({ onFileUpload, onUrlUpload, isInitializing, isEmpty }: Uplo
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Camera className="w-5 h-5 text-primary" />
-          Visual Recognition & Copyright Analysis
+          Content Analysis & Copyright Protection
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex items-center justify-between">
           <div className="flex-1">
             <p className="text-sm text-muted-foreground mb-2">
-              Upload images, videos, or audio files for AI-powered copyright detection, similarity analysis, and content classification
+              Upload files, add links, or paste text for AI-powered copyright detection, similarity analysis, and content classification
             </p>
             {isInitializing && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -108,9 +130,21 @@ const UploadArea = ({ onFileUpload, onUrlUpload, isInitializing, isEmpty }: Uplo
                 Add Link
               </Button>
             </div>
+            <div className="space-y-2">
+              <Textarea
+                placeholder="Paste your text content here for copyright analysis and monitoring..."
+                value={textInput}
+                onChange={(e) => setTextInput(e.target.value)}
+                className="min-h-[80px] min-w-[300px]"
+              />
+              <Button onClick={handleTextSubmit} variant="outline" className="w-full">
+                <FileText className="w-4 h-4 mr-2" />
+                Analyze Text
+              </Button>
+            </div>
             <Button 
               onClick={() => fileInputRef.current?.click()}
-              className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+              className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 w-full"
             >
               <Upload className="w-4 h-4 mr-2" />
               Upload Files

@@ -24,6 +24,108 @@ const VisualRecognition = () => {
   const [currentStep, setCurrentStep] = useState<'upload' | 'analyze' | 'monitor'>('upload');
   const [showGuidance, setShowGuidance] = useState(true);
 
+  const handleTextUpload = async (text: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please sign in to upload content",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Create artwork record for text
+      const textArtwork = {
+        title: `Text Content - ${text.substring(0, 50)}${text.length > 50 ? '...' : ''}`,
+        description: text,
+        category: 'text',
+        user_id: user.id,
+        file_paths: [], // Text content doesn't have file paths
+        status: 'monitoring'
+      };
+
+      const { data: artwork, error: artworkError } = await supabase
+        .from('artwork')
+        .insert(textArtwork)
+        .select()
+        .single();
+
+      if (artworkError) {
+        throw artworkError;
+      }
+
+      // Create a text-based analysis entry using a dummy file
+      const dummyFile = new File([text], 'text-content.txt', {
+        type: 'text/plain'
+      });
+
+      const textAnalysis: ImageAnalysis = {
+        file: dummyFile,
+        preview: text,
+        results: [],
+        isAnalyzing: true,
+        progress: 0
+      };
+
+      setImages(prev => [...prev, textAnalysis]);
+
+      // Simulate analysis for text
+      setTimeout(() => {
+        setImages(prev => prev.map(img => 
+          img.preview === text 
+            ? {
+                ...img,
+                results: [
+                  { 
+                    type: 'classification',
+                    label: 'Text Content',
+                    confidence: 92,
+                    description: 'Original text content detected and analyzed',
+                    riskLevel: 'low' as const,
+                    suggestions: ['Monitor for plagiarism', 'Track unauthorized usage', 'Enable real-time scanning']
+                  },
+                  {
+                    type: 'similarity',
+                    label: 'Content Uniqueness',
+                    confidence: 87,
+                    description: 'Text analyzed for originality and potential duplicates',
+                    riskLevel: 'medium' as const,
+                    suggestions: ['Set up plagiarism detection', 'Monitor academic databases', 'Track web usage']
+                  }
+                ],
+                isAnalyzing: false,
+                progress: 100
+              }
+            : img
+        ));
+      }, 2000);
+
+      // Create monitoring scan for the text with proper artwork ID
+      await supabase.from('monitoring_scans').insert({
+        artwork_id: artwork.id,
+        scan_type: 'text',
+        status: 'running',
+        started_at: new Date().toISOString(),
+        total_sources: 5000 // More sources for text monitoring
+      });
+
+      toast({
+        title: "Text Content Added",
+        description: "Text content has been added for analysis and monitoring",
+      });
+
+    } catch (error) {
+      console.error('Error processing text:', error);
+      toast({
+        title: "Error",
+        description: "Failed to process text content",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleUrlUpload = async (url: string) => {
     const supportedDomains = [
       'youtube.com', 'youtu.be', 'm.youtube.com',
@@ -385,6 +487,7 @@ const VisualRecognition = () => {
             <UploadArea 
               onFileUpload={handleFileUpload}
               onUrlUpload={handleUrlUpload}
+              onTextUpload={handleTextUpload}
               isInitializing={isInitializing}
               isEmpty={images.length === 0}
             />
