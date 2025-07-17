@@ -85,7 +85,7 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
               ref={fileInputRef}
               type="file"
               multiple
-              accept="image/*,video/*,audio/*"
+              accept="image/*,video/*,audio/*,application/pdf"
               onChange={(e) => onFileUpload(e.target.files)}
               className="hidden"
             />
@@ -153,7 +153,7 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
               ref={fileInputRef}
               type="file"
               multiple
-              accept="image/*,video/*,audio/*"
+              accept="image/*,video/*,audio/*,application/pdf"
               onChange={(e) => onFileUpload(e.target.files)}
               className="hidden"
             />
