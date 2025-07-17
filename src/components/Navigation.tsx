@@ -29,7 +29,7 @@ const Navigation = () => {
     { path: "/admin", label: "Admin Panel", icon: UserCog }
   ] : [];
 
-  const allNavItems = [...navItems, ...adminItems];
+  const allNavItems = [...adminItems, ...navItems];
 
   const handleNavigation = (path: string) => {
     navigate(path);
