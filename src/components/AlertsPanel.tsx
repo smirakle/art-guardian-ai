@@ -34,90 +34,88 @@ const AlertsPanel = () => {
 
   const loadAlerts = async () => {
     try {
-      // Demo mode - show sample alerts
-      const demoAlerts: AlertItem[] = [
-        {
-          id: 'demo-alert-1',
-          user_id: 'demo-user',
-          match_id: 'demo-match-1',
-          alert_type: 'high',
-          title: 'High-Risk Copyright Match Detected',
-          message: 'Your artwork has been found on an unauthorized marketplace with 94% similarity',
-          created_at: new Date().toISOString(),
-          is_read: false,
-          copyright_matches: {
-            id: 'demo-match-1',
-            artwork_id: 'demo-artwork-1',
-            scan_id: 'demo-scan-1',
-            source_url: 'https://example-marketplace.com/unauthorized-copy',
-            source_domain: 'example-marketplace.com',
-            source_title: 'Unauthorized Copy of Your Art',
-            match_confidence: 94.5,
-            match_type: 'exact',
-            threat_level: 'high',
-            detected_at: new Date().toISOString(),
-            created_at: new Date().toISOString(),
-            is_authorized: false,
-            is_reviewed: false,
-            description: 'Exact copy found on marketplace',
-            context: 'Commercial marketplace',
-            image_url: null,
-            thumbnail_url: null,
-            artwork: {
-              id: 'demo-artwork-1',
-              user_id: 'demo-user',
-              title: 'Demo Artwork',
-              description: 'This is a demo artwork',
-              category: 'digital',
-              file_paths: [],
-              tags: [],
-              status: 'active',
-              license_type: 'all-rights-reserved',
-              enable_watermark: true,
-              enable_blockchain: false,
-              blockchain_hash: null,
-              blockchain_certificate_id: null,
-              blockchain_registered_at: null,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            }
-          }
-        }
-      ];
+      const { data, error } = await supabase
+        .from('monitoring_alerts')
+        .select(`
+          *,
+          copyright_matches (
+            *,
+            artwork (*)
+          )
+        `)
+        .order('created_at', { ascending: false });
 
-      setAlerts(demoAlerts);
+      if (error) throw error;
+      setAlerts(data || []);
     } catch (error) {
-      console.error('Error loading demo alerts:', error);
+      console.error('Error loading alerts:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const setupRealTimeSubscription = async () => {
-    // Demo mode - no real-time subscription needed
-    return () => {};
+    const subscription = supabase
+      .channel('monitoring_alerts_changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'monitoring_alerts' }, 
+        () => loadAlerts()
+      )
+      .subscribe();
+
+    return () => supabase.removeChannel(subscription);
   };
 
   const markAsRead = async (alertId: string) => {
-    // Demo mode - just update local state
-    setAlerts(prev => prev.map(alert => 
-      alert.id === alertId ? { ...alert, is_read: true } : alert
-    ));
-    
-    toast({
-      title: "Alert Marked as Read",
-      description: "Demo mode - alert marked as read locally",
-    });
+    try {
+      const { error } = await supabase
+        .from('monitoring_alerts')
+        .update({ is_read: true })
+        .eq('id', alertId);
+
+      if (error) throw error;
+
+      setAlerts(prev => prev.map(alert => 
+        alert.id === alertId ? { ...alert, is_read: true } : alert
+      ));
+      
+      toast({
+        title: "Alert Marked as Read",
+        description: "Alert has been marked as read",
+      });
+    } catch (error) {
+      console.error('Error marking alert as read:', error);
+      toast({
+        title: "Error",
+        description: "Failed to mark alert as read",
+        variant: "destructive",
+      });
+    }
   };
 
   const deleteAlert = async (alertId: string) => {
-    // Demo mode - just remove from local state
-    setAlerts(prev => prev.filter(alert => alert.id !== alertId));
-    
-    toast({
-      title: "Alert Deleted",
-      description: "Demo mode - alert removed locally",
-    });
+    try {
+      const { error } = await supabase
+        .from('monitoring_alerts')
+        .delete()
+        .eq('id', alertId);
+
+      if (error) throw error;
+
+      setAlerts(prev => prev.filter(alert => alert.id !== alertId));
+      
+      toast({
+        title: "Alert Deleted",
+        description: "Alert has been removed",
+      });
+    } catch (error) {
+      console.error('Error deleting alert:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete alert",
+        variant: "destructive",
+      });
+    }
   };
 
   const getAlertIcon = (type: string) => {

@@ -37,8 +37,8 @@ const Hero = () => {
               Start Protecting Now
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
-            <Button variant="outline" size="lg" className="px-8 py-6 text-lg">
-              Watch Demo
+            <Button onClick={() => window.open('/upload', '_blank')} variant="outline" size="lg" className="px-8 py-6 text-lg">
+              Start Protecting
             </Button>
           </div>
           

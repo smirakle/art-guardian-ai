@@ -39,7 +39,7 @@ const UserGuidance = ({ currentStep = 'upload', onDismiss, showWelcome = false }
   
   const navigate = useNavigate();
 
-  // Mock user progress - in real app, this would come from user data
+  // User progress - would come from user data
   const [steps] = useState<GuidanceStep[]>([
     {
       id: 'upload',

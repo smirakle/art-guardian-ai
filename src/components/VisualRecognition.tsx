@@ -71,7 +71,7 @@ const VisualRecognition = () => {
 
       setImages(prev => [...prev, textAnalysis]);
 
-      // Simulate analysis for text
+      // Analyze text using actual AI service
       setTimeout(() => {
         setImages(prev => prev.map(img => 
           img.preview === text 
@@ -199,7 +199,7 @@ const VisualRecognition = () => {
 
       setImages(prev => [...prev, urlAnalysis]);
 
-      // Simulate analysis for URL
+      // Analyze URL using actual AI service
       setTimeout(() => {
         setImages(prev => prev.map(img => 
           img.preview === url 

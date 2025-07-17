@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 export interface CommunityPost {
   id: string;
   user_id: string;
@@ -55,6 +56,7 @@ export interface ExpertAdvice {
 
 export const useCommunity = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [expertAdvice, setExpertAdvice] = useState<ExpertAdvice[]>([]);
   const [loading, setLoading] = useState(true);
@@ -75,8 +77,17 @@ export const useCommunity = () => {
         .select('user_id, full_name, username')
         .in('user_id', userIds);
 
-      // No user likes in demo mode
+      // Get user likes if authenticated
       let userLikes: string[] = [];
+      if (user) {
+        const { data: likesData } = await supabase
+          .from('community_votes')
+          .select('post_id')
+          .eq('user_id', user.id)
+          .eq('vote_type', 'like');
+        
+        userLikes = likesData?.map(like => like.post_id) || [];
+      }
 
       const postsWithData = data?.map(post => {
         const profile = profilesData?.find(p => p.user_id === post.user_id);
@@ -124,21 +135,63 @@ export const useCommunity = () => {
   };
 
   const createPost = async (title: string, content: string, category: string) => {
-    // Demo mode - show message that this is a demo
-    toast({
-      title: "Demo Mode",
-      description: "This is a demo. Authentication required for posting in production.",
-      variant: "destructive"
-    });
-    return false;
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to create a post",
+        variant: "destructive"
+      });
+      return false;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('community_posts')
+        .insert({ title, content, category, user_id: user.id })
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      await fetchPosts();
+      return true;
+    } catch (error) {
+      console.error('Error creating post:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create post",
+        variant: "destructive"
+      });
+      return false;
+    }
   };
 
   const toggleLike = async (postId: string) => {
-    // Demo mode - show message that this is a demo
-    toast({
-      title: "Demo Mode",
-      description: "This is a demo. Authentication required for liking in production.",
-    });
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to like posts",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('community_votes')
+        .upsert({ post_id: postId, vote_type: 'like', user_id: user.id });
+
+      if (error) throw error;
+      
+      await fetchPosts();
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      toast({
+        title: "Error",
+        description: "Failed to toggle like",
+        variant: "destructive"
+      });
+    }
   };
 
   const getStats = () => {

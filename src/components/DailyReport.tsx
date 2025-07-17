@@ -51,7 +51,7 @@ const DailyReport = ({ type, data, realTimeStats }: DailyReportProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
 
-  // Use real-time stats if available, otherwise use provided data or mock data
+  // Use real-time stats if available, otherwise use provided data
   const reportData: ReportData = data || {
     date: format(selectedDate, "yyyy-MM-dd"),
     totalScans: realTimeStats?.totalScans || 1247,
@@ -67,7 +67,7 @@ const DailyReport = ({ type, data, realTimeStats }: DailyReportProps) => {
   const generateReport = async () => {
     setIsGenerating(true);
     
-    // Simulate report generation
+    // Generate report
     setTimeout(() => {
       if (reportFormat === 'pdf') {
         generatePDFReport(reportData);

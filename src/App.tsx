@@ -11,7 +11,7 @@ import Index from "./pages/Index";
 import AboutTsmo from "./pages/AboutTsmo";
 import Upload from "./pages/Upload";
 import Monitoring from "./pages/Monitoring";
-import Demo from "./pages/Demo";
+
 import Admin from "./pages/Admin";
 import Checkout from "./pages/Checkout";
 import Success from "./pages/Success";
@@ -62,7 +62,7 @@ const App = () => {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/upload" element={<Upload />} />
                 <Route path="/monitoring" element={<Monitoring />} />
-                <Route path="/demo" element={<Demo />} />
+                
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/success" element={<Success />} />

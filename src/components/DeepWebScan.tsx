@@ -38,15 +38,14 @@ const DeepWebScan = () => {
   const [scans, setScans] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Load demo data (no authentication required)
+  // Load real data
   useEffect(() => {
-    const fetchDemoData = async () => {
+    const fetchData = async () => {
       try {
-        // Get some demo artwork data
+        // Get artwork data
         const { data: artworks } = await supabase
           .from('artwork')
-          .select('id, title')
-          .limit(3); // Demo mode - show limited data
+          .select('id, title');
 
         if (artworks && artworks.length > 0) {
           const artworkIds = artworks.map(a => a.id);
@@ -85,22 +84,22 @@ const DeepWebScan = () => {
           }
         }
       } catch (error) {
-        console.error('Error fetching demo data:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDemoData();
+    fetchData();
     
     // Update every 30 seconds
-    const interval = setInterval(fetchDemoData, 30000);
+    const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
   }, []);
 
   const startNewScan = async () => {
     try {
-      // Get demo artwork for scanning
+      // Get artwork for scanning
       const { data: artworks } = await supabase
         .from('artwork')
         .select('id, title')
@@ -109,7 +108,7 @@ const DeepWebScan = () => {
       if (artworks && artworks.length > 0) {
         const artwork = artworks[0];
         
-        // Create new scan (demo mode)
+        // Create new scan
         const { data: newScan } = await supabase
           .from('monitoring_scans')
           .insert({
@@ -123,12 +122,21 @@ const DeepWebScan = () => {
           .single();
 
         if (newScan) {
-          // Demo mode - show notification instead of actual scan
-          alert('Demo mode: Scan simulation started. In production, this would trigger a real deep web scan.');
+          // Start the actual scan process
+          const { error } = await supabase.functions.invoke('process-monitoring-scan', {
+            body: {
+              scanId: newScan.id,
+              artworkId: artwork.id
+            }
+          });
+
+          if (error) {
+            console.error('Error starting scan:', error);
+          }
         }
       }
     } catch (error) {
-      console.error('Error starting demo scan:', error);
+      console.error('Error starting scan:', error);
     }
   };
 

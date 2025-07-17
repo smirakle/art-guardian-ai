@@ -73,7 +73,7 @@ const OnboardingTour = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Show onboarding for demo users
+    // Show onboarding for new users
     const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
     if (!hasSeenOnboarding) {
       setIsVisible(true);
