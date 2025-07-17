@@ -10,6 +10,7 @@ import { CheckCircle2, Info, AlertTriangle, Terminal, Gauge, Server, Activity, I
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import testCopyrightedImage from '@/assets/test-copyrighted-image.png';
+import CopyrightMatches from '@/components/monitoring/CopyrightMatches';
 
 const MonitoringTestPanel = () => {
   const { toast } = useToast();
@@ -398,9 +399,10 @@ const MonitoringTestPanel = () => {
         </div>
         
         <Tabs defaultValue="full" className="mt-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="full">Full Monitoring Test</TabsTrigger>
             <TabsTrigger value="image-search">Image Search Test</TabsTrigger>
+            <TabsTrigger value="results">Results</TabsTrigger>
           </TabsList>
           
           <TabsContent value="full" className="space-y-4 mt-4">
@@ -439,6 +441,13 @@ const MonitoringTestPanel = () => {
               )}
               Test Reverse Image Search
             </Button>
+          </TabsContent>
+
+          <TabsContent value="results" className="space-y-4 mt-4">
+            <h3 className="text-lg font-medium mb-4">
+              Found Copyright Matches
+            </h3>
+            <CopyrightMatches />
           </TabsContent>
         </Tabs>
         
