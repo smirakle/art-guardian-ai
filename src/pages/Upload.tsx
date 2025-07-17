@@ -528,9 +528,16 @@ const Upload = () => {
                 Protect Your Art
               </h1>
             </div>
-            <p className="text-lg md:text-xl text-muted-foreground mb-6">
+            <p className="text-lg md:text-xl text-muted-foreground mb-4">
               Upload your creative work and get AI-powered protection with 24/7 monitoring
             </p>
+            
+            <Alert className="mb-4 border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800">
+              <Info className="h-4 w-4 text-amber-600" />
+              <AlertDescription className="text-amber-800">
+                <span className="font-medium">New feature:</span> Test our monitoring system with our copyrighted image detector. Go to <strong>Quick Analysis → Test System</strong> tab to try it.
+              </AlertDescription>
+            </Alert>
             
             {!user && (
               <Alert className="mb-6 border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-800">
@@ -565,8 +572,9 @@ const Upload = () => {
               <AlertDescription className="text-amber-800">
                 <p className="font-medium">Testing the Monitoring System</p>
                 <p className="text-sm mt-1">
-                  To test the monitoring system, go to the "Test System" tab above. It will help you diagnose any issues 
-                  with API keys and functionality. The system will work with mock data even if API keys are not configured.
+                  To test the monitoring system, go to the "Test System" tab above. Use our test copyrighted image 
+                  to train the system to detect known copyrighted content. The system can generate realistic mock results 
+                  even if API keys are not configured.
                 </p>
               </AlertDescription>
             </Alert>

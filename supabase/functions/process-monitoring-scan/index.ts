@@ -35,7 +35,7 @@ serve(async (req) => {
     const requestBody = await req.json()
     console.log('Request body received:', JSON.stringify(requestBody, null, 2));
     
-    const { scanId, artworkId } = requestBody
+    const { scanId, artworkId, testCopyrightedImage, forceMockResults } = requestBody
 
     if (!scanId || !artworkId) {
       console.error('Missing required parameters:', { scanId, artworkId });
@@ -100,7 +100,9 @@ serve(async (req) => {
             body: {
               imageUrl: imageUrl,
               artworkId: artworkId,
-              scanId: scanId
+              scanId: scanId,
+              testCopyrightedImage: testCopyrightedImage,
+              forceMockResults: forceMockResults
             }
           })
 

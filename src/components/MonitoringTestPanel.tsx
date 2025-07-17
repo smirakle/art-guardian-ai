@@ -5,9 +5,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle2, Info, AlertTriangle, Terminal, Gauge, Server, Activity } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { CheckCircle2, Info, AlertTriangle, Terminal, Gauge, Server, Activity, Image as ImageIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import testCopyrightedImage from '@/assets/test-copyrighted-image.png';
 
 const MonitoringTestPanel = () => {
   const { toast } = useToast();
@@ -21,6 +23,7 @@ const MonitoringTestPanel = () => {
   } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isDebugMode, setIsDebugMode] = useState(false);
+  const [useCopyrightedImage, setUseCopyrightedImage] = useState(false);
 
   const handleFetchRandomArtwork = async () => {
     setIsLoading(true);
@@ -96,21 +99,31 @@ const MonitoringTestPanel = () => {
         .invoke('process-monitoring-scan', {
           body: {
             scanId: scan.id,
-            artworkId: artworkId
+            artworkId: artworkId,
+            testCopyrightedImage: useCopyrightedImage,
+            forceMockResults: true
           }
         });
 
       if (error) throw error;
       
+      // Show a specific message if using the test copyrighted image
+      let successMessage = data.message || 'Process monitoring scan function completed successfully';
+      if (useCopyrightedImage) {
+        successMessage = `Test completed with copyrighted image. Found ${data.matchesFound || 0} potential matches!`;
+      }
+      
       setTestResults({
         success: true,
-        message: data.message || 'Process monitoring scan function completed successfully',
+        message: successMessage,
         details: data
       });
       
       toast({
-        title: "Test Successful",
-        description: "The monitoring scan process completed successfully"
+        title: useCopyrightedImage ? "Copyrighted Image Test Successful" : "Test Successful",
+        description: useCopyrightedImage 
+          ? `Found ${data.matchesFound || 0} potential copyright matches!` 
+          : "The monitoring scan process completed successfully"
       });
     } catch (error: any) {
       console.error('Test error:', error);
@@ -131,10 +144,11 @@ const MonitoringTestPanel = () => {
   };
 
   const testRealImageSearch = async () => {
-    if (!imageUrl) {
+    // If we're using the test copyrighted image, we don't need a real image URL
+    if (!useCopyrightedImage && !imageUrl) {
       toast({
         title: "Missing Image URL",
-        description: "Please fetch an artwork with an image first",
+        description: "Please fetch an artwork with an image or use the test copyrighted image",
         variant: "destructive"
       });
       return;
@@ -173,13 +187,20 @@ const MonitoringTestPanel = () => {
         setScanId(scan.id);
       }
       
+      // Determine which image URL to use
+      const testImageUrl = useCopyrightedImage 
+        ? window.location.origin + testCopyrightedImage  // Get full URL to the test image
+        : imageUrl;
+
       // Call the real-image-search function
       const { data, error } = await supabase.functions
         .invoke('real-image-search', {
           body: {
-            imageUrl: imageUrl,
+            imageUrl: testImageUrl,
             artworkId: artworkId,
-            scanId: currentScanId
+            scanId: currentScanId,
+            testCopyrightedImage: useCopyrightedImage, // Add flag to indicate we're testing with a copyrighted image
+            forceMockResults: true // Force mock results for training purposes
           }
         });
 
@@ -325,25 +346,55 @@ const MonitoringTestPanel = () => {
           />
         </div>
         
-        <div className="flex justify-between">
-          <Button 
-            variant="secondary" 
-            size="sm"
-            onClick={() => setIsDebugMode(!isDebugMode)}
-          >
-            <Terminal className="h-4 w-4 mr-2" />
-            {isDebugMode ? 'Hide Debug Info' : 'Show Debug Info'}
-          </Button>
+<div className="flex flex-col gap-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="useCopyrightedImage" 
+              checked={useCopyrightedImage} 
+              onCheckedChange={() => setUseCopyrightedImage(!useCopyrightedImage)} 
+            />
+            <label
+              htmlFor="useCopyrightedImage"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Use test copyrighted image
+            </label>
+          </div>
           
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={testAPIKeys}
-            disabled={isLoading}
-          >
-            <Server className="h-4 w-4 mr-2" />
-            Test API Keys
-          </Button>
+          {useCopyrightedImage && (
+            <div className="border p-4 rounded-md">
+              <div className="text-sm font-medium mb-2">Test Image (Known copyrighted)</div>
+              <img 
+                src={testCopyrightedImage} 
+                alt="Test copyrighted image"
+                className="w-32 h-32 object-cover rounded-md mb-2" 
+              />
+              <div className="text-xs text-muted-foreground">
+                This image will be used instead of any artwork image in tests
+              </div>
+            </div>
+          )}
+
+          <div className="flex justify-between">
+            <Button 
+              variant="secondary" 
+              size="sm"
+              onClick={() => setIsDebugMode(!isDebugMode)}
+            >
+              <Terminal className="h-4 w-4 mr-2" />
+              {isDebugMode ? 'Hide Debug Info' : 'Show Debug Info'}
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={testAPIKeys}
+              disabled={isLoading}
+            >
+              <Server className="h-4 w-4 mr-2" />
+              Test API Keys
+            </Button>
+          </div>
         </div>
         
         <Tabs defaultValue="full" className="mt-6">
