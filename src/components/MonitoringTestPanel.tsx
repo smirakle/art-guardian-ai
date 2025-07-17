@@ -444,10 +444,20 @@ const MonitoringTestPanel = () => {
           </TabsContent>
 
           <TabsContent value="results" className="space-y-4 mt-4">
-            <h3 className="text-lg font-medium mb-4">
-              Found Copyright Matches
-            </h3>
-            <CopyrightMatches />
+            <div className="flex items-center gap-2 mb-4">
+              <ImageIcon className="h-5 w-5 text-muted-foreground" />
+              <h3 className="text-lg font-medium">Found Copyright Matches</h3>
+            </div>
+            {!scanId ? (
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertDescription>
+                  Run a monitoring test first to see potential copyright matches here.
+                </AlertDescription>
+              </Alert>
+            ) : (
+              <CopyrightMatches />
+            )}
           </TabsContent>
         </Tabs>
         
