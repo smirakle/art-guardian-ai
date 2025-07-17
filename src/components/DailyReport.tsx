@@ -15,7 +15,7 @@ import {
   Clock
 } from "lucide-react";
 import { format } from "date-fns";
-import tsmoLogo from "@/assets/tsmo-logo.png";
+
 
 interface ReportData {
   date: string;
