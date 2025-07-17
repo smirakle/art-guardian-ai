@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   ArrowRight,
   Eye, 
@@ -19,26 +20,52 @@ import {
 const Contact = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+
     const formData = new FormData(e.target as HTMLFormElement);
     const data = {
-      firstName: formData.get('firstName'),
-      lastName: formData.get('lastName'),
-      email: formData.get('email'),
-      subject: formData.get('subject'),
-      message: formData.get('message')
+      firstName: formData.get('firstName') as string,
+      lastName: formData.get('lastName') as string,
+      email: formData.get('email') as string,
+      subject: formData.get('subject') as string,
+      message: formData.get('message') as string
     };
-    
-    // Simulate form submission
-    setTimeout(() => {
+
+    try {
+      console.log("Sending contact form data:", data);
+
+      const { data: result, error } = await supabase.functions.invoke('send-contact-email', {
+        body: data
+      });
+
+      if (error) {
+        console.error("Error sending email:", error);
+        throw error;
+      }
+
+      console.log("Email sent successfully:", result);
+
       toast({
         title: "Message Sent Successfully!",
         description: `Thank you ${data.firstName}! We'll get back to you within 24 hours.`,
       });
+
       (e.target as HTMLFormElement).reset();
-    }, 1000);
+
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Error Sending Message",
+        description: "Sorry, there was an error sending your message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -88,8 +115,12 @@ const Contact = () => {
                     <label className="text-sm font-medium mb-2 block">Message</label>
                     <Textarea name="message" placeholder="Tell us about your art protection needs..." rows={4} required />
                   </div>
-                  <Button type="submit" className="w-full bg-gradient-to-r from-primary to-accent">
-                    Send Message
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-gradient-to-r from-primary to-accent"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Sending..." : "Send Message"}
                   </Button>
                 </form>
               </CardContent>
