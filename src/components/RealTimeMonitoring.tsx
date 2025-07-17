@@ -46,6 +46,8 @@ interface ScanData {
 
 interface MatchData {
   id: string;
+  artwork_id: string;
+  scan_id: string;
   source_url: string;
   source_domain: string;
   source_title: string;
@@ -54,6 +56,11 @@ interface MatchData {
   threat_level: string;
   detected_at: string;
   is_authorized: boolean;
+  thumbnail_url: string | null;
+  image_url: string | null;
+  description: string | null;
+  context: string | null;
+  is_reviewed: boolean | null;
 }
 
 const RealTimeMonitoring = () => {
@@ -475,9 +482,57 @@ const RealTimeMonitoring = () => {
                       </div>
 
                       {scan.matches_found > 0 && (
-                        <div className="flex items-center gap-2 text-sm">
-                          <AlertTriangle className="w-4 h-4 text-orange-500" />
-                          <span>{scan.matches_found} potential matches found</span>
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2 text-sm">
+                            <AlertTriangle className="w-4 h-4 text-orange-500" />
+                            <span>{scan.matches_found} potential matches found</span>
+                          </div>
+                          <div className="border rounded-md p-3 bg-muted/30">
+                            <h5 className="text-sm font-medium mb-2">Potential Matches</h5>
+                            <div className="space-y-3">
+                              {matches
+                                .filter(match => match.scan_id === scan.id)
+                                .slice(0, 3)
+                                .map(match => (
+                                  <div key={match.id} className="flex items-start gap-3 text-sm">
+                                    {match.thumbnail_url && (
+                                      <div className="flex-shrink-0">
+                                        <img 
+                                          src={match.thumbnail_url} 
+                                          alt={match.source_title || 'Image match'} 
+                                          className="w-16 h-16 object-cover rounded-md"
+                                        />
+                                      </div>
+                                    )}
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex justify-between items-start">
+                                        <p className="font-medium truncate">{match.source_title || 'Untitled'}</p>
+                                        <Badge variant={getThreatColor(match.threat_level)} className="ml-2">
+                                          {Math.round(match.match_confidence * 100)}%
+                                        </Badge>
+                                      </div>
+                                      <p className="text-muted-foreground text-xs truncate">{match.source_domain}</p>
+                                      <div className="flex justify-between items-center mt-1">
+                                        <Badge variant="outline" className="text-xs">
+                                          {match.match_type}
+                                        </Badge>
+                                        <Button variant="ghost" size="sm" className="h-6 px-2" asChild>
+                                          <a href={match.source_url} target="_blank" rel="noopener noreferrer">
+                                            <ExternalLink className="w-3 h-3 mr-1" />
+                                            View
+                                          </a>
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              {matches.filter(match => match.scan_id === scan.id).length > 3 && (
+                                <Button variant="link" size="sm" className="w-full mt-1 h-6">
+                                  View all matches
+                                </Button>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -504,30 +559,49 @@ const RealTimeMonitoring = () => {
               ) : (
                 matches.map((match) => (
                   <div key={match.id} className="p-4 border rounded-lg space-y-3">
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-1">
-                        <h4 className="font-medium">{match.source_title || 'Untitled'}</h4>
-                        <p className="text-sm text-muted-foreground">{match.source_domain}</p>
-                        <div className="flex items-center gap-2">
-                          <Badge variant={getThreatColor(match.threat_level)}>
-                            {match.threat_level} threat
-                          </Badge>
-                          <Badge variant="outline">
-                            {Math.round(match.match_confidence * 100)}% match
-                          </Badge>
+                    <div className="flex gap-4">
+                      {match.thumbnail_url && (
+                        <div className="flex-shrink-0">
+                          <img 
+                            src={match.thumbnail_url} 
+                            alt={match.source_title || "Image match"} 
+                            className="w-24 h-24 object-cover rounded-md border"
+                          />
                         </div>
+                      )}
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-1">
+                            <h4 className="font-medium">{match.source_title || 'Untitled'}</h4>
+                            <p className="text-sm text-muted-foreground">{match.source_domain || 'Unknown domain'}</p>
+                            <div className="flex items-center gap-2">
+                              <Badge variant={getThreatColor(match.threat_level)}>
+                                {match.threat_level} threat
+                              </Badge>
+                              <Badge variant="outline">
+                                {Math.round(match.match_confidence * 100)}% match
+                              </Badge>
+                            </div>
+                          </div>
+                          <Button variant="outline" size="sm" asChild>
+                            <a href={match.source_url} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="w-4 h-4 mr-2" />
+                              View
+                            </a>
+                          </Button>
+                        </div>
+                        
+                        <p className="text-sm text-muted-foreground mt-2">
+                          Detected on {new Date(match.detected_at).toLocaleDateString()}
+                        </p>
+                        
+                        {match.description && (
+                          <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
+                            {match.description}
+                          </p>
+                        )}
                       </div>
-                      <Button variant="outline" size="sm" asChild>
-                        <a href={match.source_url} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          View
-                        </a>
-                      </Button>
                     </div>
-                    
-                    <p className="text-sm text-muted-foreground">
-                      Detected on {new Date(match.detected_at).toLocaleDateString()}
-                    </p>
                   </div>
                 ))
               )}

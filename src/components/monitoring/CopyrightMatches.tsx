@@ -75,36 +75,49 @@ export default function CopyrightMatches() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {match.description && (
-              <p className="text-sm text-muted-foreground">{match.description}</p>
-            )}
-            <div className="flex flex-wrap gap-4">
-              <div>
-                <p className="text-sm font-medium">Found on:</p>
-                <p className="text-sm text-muted-foreground">
-                  {match.source_domain || "Unknown domain"}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm font-medium">Detected:</p>
-                <p className="text-sm text-muted-foreground">
-                  {new Date(match.detected_at).toLocaleString()}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm font-medium">Type:</p>
-                <p className="text-sm text-muted-foreground capitalize">
-                  {match.match_type}
-                </p>
-              </div>
-              {match.threat_level && (
-                <div>
-                  <p className="text-sm font-medium">Threat Level:</p>
-                  <Badge variant={match.threat_level === "high" ? "destructive" : "secondary"}>
-                    {match.threat_level}
-                  </Badge>
+            <div className="flex gap-4">
+              {match.thumbnail_url && (
+                <div className="flex-shrink-0">
+                  <img 
+                    src={match.thumbnail_url} 
+                    alt={match.source_title || "Image match"} 
+                    className="w-24 h-24 object-cover rounded-md border"
+                  />
                 </div>
               )}
+              <div className="flex-1">
+                {match.description && (
+                  <p className="text-sm text-muted-foreground mb-3">{match.description}</p>
+                )}
+                <div className="flex flex-wrap gap-4">
+                  <div>
+                    <p className="text-sm font-medium">Found on:</p>
+                    <p className="text-sm text-muted-foreground">
+                      {match.source_domain || "Unknown domain"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Detected:</p>
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(match.detected_at).toLocaleString()}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Type:</p>
+                    <p className="text-sm text-muted-foreground capitalize">
+                      {match.match_type}
+                    </p>
+                  </div>
+                  {match.threat_level && (
+                    <div>
+                      <p className="text-sm font-medium">Threat Level:</p>
+                      <Badge variant={match.threat_level === "high" ? "destructive" : "secondary"}>
+                        {match.threat_level}
+                      </Badge>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
             <div className="flex justify-end gap-2">
               {match.source_url && (
