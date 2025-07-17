@@ -179,10 +179,32 @@ const AlertsPanel = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           {alerts.length === 0 ? (
-            <div className="text-center py-8">
-              <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">All Clear!</h3>
-              <p className="text-muted-foreground">No active alerts at this time</p>
+            <div className="space-y-6">
+              <div className="text-center py-8">
+                <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">All Clear!</h3>
+                <p className="text-muted-foreground">No active alerts at this time</p>
+              </div>
+              
+              {/* API Status Warning */}
+              <Alert className="border-amber-200 bg-amber-50">
+                <AlertTriangle className="w-4 h-4 text-amber-600" />
+                <AlertDescription className="text-amber-800">
+                  <div className="font-medium mb-2">Monitoring API Status Issue</div>
+                  <div className="text-sm text-amber-700">
+                    Some external API services are returning authentication errors (401). This means:
+                    <ul className="mt-2 space-y-1 text-xs list-disc list-inside">
+                      <li>Google Custom Search API key needs updating</li>
+                      <li>Bing Visual Search API key needs updating</li>
+                      <li>SerpAPI key needs updating</li>
+                      <li>OpenAI API key needs updating</li>
+                    </ul>
+                    <p className="mt-3 text-xs font-medium">
+                      Contact your administrator to update API credentials for full monitoring coverage across 1M+ sources.
+                    </p>
+                  </div>
+                </AlertDescription>
+              </Alert>
             </div>
           ) : (
             alerts.map((alert) => {
