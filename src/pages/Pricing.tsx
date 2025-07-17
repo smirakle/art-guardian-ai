@@ -72,7 +72,7 @@ const Pricing = () => {
         
         toast({
           title: "Redirecting to Checkout",
-          description: promoCode && promoCode.toLowerCase() === 'freemonth' 
+          description: promoCode && promoCode.toLowerCase() === 'feedback' 
             ? "Your promotional code has been applied! One month free." 
             : "Opening secure payment page...",
         });
@@ -419,12 +419,12 @@ const Pricing = () => {
                 id="promoCode"
                 value={promoCode}
                 onChange={(e) => setPromoCode(e.target.value)}
-                placeholder="Enter promo code (e.g., FREEMONTH)"
+                placeholder="Enter promo code (e.g., FEEDBACK)"
                 className="pl-10"
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              Enter "FREEMONTH" for one month free on your subscription!
+              Enter "FEEDBACK" for one month free on your subscription!
             </p>
           </div>
         </div>
