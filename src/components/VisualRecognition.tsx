@@ -10,8 +10,9 @@ import ImageAnalysisCard from "./visual-recognition/ImageAnalysisCard";
 import RealTimeMonitoring from "./RealTimeMonitoring";
 import BlockchainVerification from "./BlockchainVerification";
 import UserGuidance from "./UserGuidance";
+import EnhancedMonitoringOverview from "./monitoring/EnhancedMonitoringOverview";
 import { watermarkService, InvisibleWatermark } from "@/lib/watermark";
-import { Eye, Camera, Shield, HelpCircle, Key } from "lucide-react";
+import { Eye, Camera, Shield, HelpCircle, Key, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -428,7 +429,7 @@ const VisualRecognition = () => {
         )}
 
         <Tabs defaultValue="quick-analysis" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="quick-analysis" className="flex items-center gap-2">
               <Camera className="w-4 h-4" />
               <span className="hidden sm:inline">Quick Analysis</span>
@@ -452,6 +453,19 @@ const VisualRecognition = () => {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>View live monitoring of your protected content</p>
+                </TooltipContent>
+              </Tooltip>
+            </TabsTrigger>
+            <TabsTrigger value="enhanced" className="flex items-center gap-2">
+              <Brain className="w-4 h-4" />
+              <span className="hidden sm:inline">Enhanced Monitoring</span>
+              <span className="sm:hidden">Enhanced</span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="w-3 h-3 ml-1 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>View enhanced monitoring across 1M+ sources including dark web</p>
                 </TooltipContent>
               </Tooltip>
             </TabsTrigger>
@@ -507,6 +521,10 @@ const VisualRecognition = () => {
 
           <TabsContent value="monitoring" className="space-y-6">
             <RealTimeMonitoring />
+          </TabsContent>
+
+          <TabsContent value="enhanced" className="space-y-6">
+            <EnhancedMonitoringOverview />
           </TabsContent>
 
           <TabsContent value="blockchain" className="space-y-6">

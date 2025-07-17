@@ -184,7 +184,7 @@ const RealTimeMonitoring = () => {
           scan_type: 'deep',
           status: 'running',
           started_at: new Date().toISOString(),
-          total_sources: 52000
+          total_sources: 1000000
         })
         .select()
         .single();
@@ -227,7 +227,7 @@ const RealTimeMonitoring = () => {
         
         toast({
           title: "Analysis Complete",
-          description: "Artwork is now being monitored across web and dark web",
+          description: "Artwork is now being monitored across 1M+ sources including dark web",
         });
       }
 
@@ -437,7 +437,7 @@ const RealTimeMonitoring = () => {
           <Card>
             <CardHeader>
               <CardTitle>Active Monitoring Scans</CardTitle>
-              <CardDescription>Real-time scanning across web and dark web sources</CardDescription>
+              <CardDescription>Real-time scanning across 1M+ sources including dark web platforms</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {scans.length === 0 ? (
