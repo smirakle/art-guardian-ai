@@ -10,7 +10,7 @@ const Navigation = () => {
   const location = useLocation();
   const currentPath = location.pathname;
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, role, signOut } = useAuth();
 
   const handleSignOut = async () => {
     await signOut();
@@ -20,14 +20,13 @@ const Navigation = () => {
   const navItems = [
     { path: "/", label: "Home", icon: Home },
     { path: "/upload", label: "Protect Art", icon: Upload },
-    { path: "/monitoring", label: "Monitor", icon: Activity },
     { path: "/community", label: "Community", icon: Users },
     { path: "/contact", label: "Contact", icon: Mail }
   ];
 
   // Only show admin for authenticated admin users
-  const adminItems = user && user.user_metadata?.role === 'admin' ? [
-    { path: "/admin", label: "Admin", icon: UserCog }
+  const adminItems = user && role === 'admin' ? [
+    { path: "/admin", label: "Admin Panel", icon: UserCog }
   ] : [];
 
   const allNavItems = [...navItems, ...adminItems];
@@ -64,10 +63,10 @@ const Navigation = () => {
                     className={`flex items-center gap-1 md:gap-2 min-w-max px-2 md:px-3 text-xs md:text-sm ${
                       isActive 
                         ? "bg-primary text-primary-foreground" 
-                        : item.label === "Admin"
+                        : item.label === "Admin Panel"
                         ? "hover:bg-destructive/20 text-destructive hover:text-destructive"
                         : "hover:bg-secondary/50"
-                    } ${item.label === "Admin" ? "border border-destructive/30" : ""}`}
+                    } ${item.label === "Admin Panel" ? "border border-destructive/30" : ""}`}
                     size="sm"
                   >
                     <Icon className="w-3 h-3 md:w-4 md:h-4" />

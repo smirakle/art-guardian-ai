@@ -10,8 +10,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import AboutTsmo from "./pages/AboutTsmo";
 import Upload from "./pages/Upload";
-import Monitoring from "./pages/Monitoring";
-
+import ProtectedRoute from "./components/ProtectedRoute";
 import Admin from "./pages/Admin";
 import Checkout from "./pages/Checkout";
 import Success from "./pages/Success";
@@ -61,9 +60,11 @@ const App = () => {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/upload" element={<Upload />} />
-                <Route path="/monitoring" element={<Monitoring />} />
-                
-                <Route path="/admin" element={<Admin />} />
+                <Route path="/admin" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <Admin />
+                  </ProtectedRoute>
+                } />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/success" element={<Success />} />
                 <Route path="/deep-scan" element={<DeepWebScan />} />
