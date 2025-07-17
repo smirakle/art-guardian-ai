@@ -342,6 +342,8 @@ const VisualRecognition = () => {
           throw uploadError;
         }
 
+        console.log('Image uploaded successfully:', fileName);
+
         // Create proper artwork record for monitoring with file path
         const artwork = {
           title: `${image.file.name} (Enhanced)`,
