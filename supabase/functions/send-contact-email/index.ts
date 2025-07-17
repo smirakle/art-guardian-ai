@@ -1,8 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
-
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -17,7 +15,7 @@ interface ContactFormData {
   message: string;
 }
 
-const handler = async (req: Request): Promise<Response> => {
+serve(async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -31,9 +29,18 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    console.log("Processing contact form request...");
+    
+    const apiKey = Deno.env.get("RESEND_API_KEY");
+    if (!apiKey) {
+      throw new Error("RESEND_API_KEY is not configured");
+    }
+
+    const resend = new Resend(apiKey);
+    
     const { firstName, lastName, email, subject, message }: ContactFormData = await req.json();
 
-    console.log("Sending contact email:", { firstName, lastName, email, subject });
+    console.log("Contact form data received:", { firstName, lastName, email, subject });
 
     // Send email to shirleena.cunningham@tsmowatch.com
     const emailResponse = await resend.emails.send({
@@ -67,7 +74,7 @@ const handler = async (req: Request): Promise<Response> => {
       `,
     });
 
-    console.log("Email sent successfully:", emailResponse);
+    console.log("Email sent successfully to shirleena.cunningham@tsmowatch.com:", emailResponse);
 
     // Send confirmation email to the user
     const confirmationResponse = await resend.emails.send({
@@ -102,7 +109,7 @@ const handler = async (req: Request): Promise<Response> => {
       `,
     });
 
-    console.log("Confirmation email sent:", confirmationResponse);
+    console.log("Confirmation email sent to user:", confirmationResponse);
 
     return new Response(JSON.stringify({ 
       success: true, 
@@ -122,7 +129,8 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error.message 
+        error: error.message,
+        details: error.toString()
       }),
       {
         status: 500,
@@ -133,6 +141,4 @@ const handler = async (req: Request): Promise<Response> => {
       }
     );
   }
-};
-
-serve(handler);
+});
