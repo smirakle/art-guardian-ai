@@ -41,26 +41,33 @@ const Monitoring = () => {
   useEffect(() => {
     const simulateRealTimeStats = () => {
       const baseTime = Date.now();
-      const baseScans = 5247891;
-      const baseAlerts = 127;
-      const baseAssets = 2847593;
       
       // Simulate real-time increments
       const increment = Math.floor(Math.random() * 50) + 25; // 25-75 scans per second
-      const alertChange = Math.random() > 0.95 ? (Math.random() > 0.5 ? 1 : -1) : 0;
+      
+      // Keep alerts realistic for a 24/7 system monitoring millions of sources
+      const alertChange = Math.random() > 0.92 ? (Math.random() > 0.6 ? 1 : -1) : 0;
+      
       const assetChange = Math.random() > 0.98 ? Math.floor(Math.random() * 5) + 1 : 0;
       
-      const threatLevels = ['low', 'medium', 'high'] as const;
-      const currentThreatLevel = threatLevels[Math.floor(Math.random() * threatLevels.length)];
+      // Threat level based on current alert count
+      const getCurrentThreatLevel = (alertCount: number) => {
+        if (alertCount > 200) return 'high';
+        if (alertCount > 100) return 'medium';
+        return 'low';
+      };
       
-      setStats(prev => ({
-        totalScans: prev.totalScans + increment,
-        activeAlerts: Math.max(0, prev.activeAlerts + alertChange),
-        protectedAssets: prev.protectedAssets + assetChange,
-        systemUptime: Math.min(99.99, 99.95 + Math.random() * 0.04),
-        lastScanTime: new Date().toISOString(),
-        threatLevel: currentThreatLevel
-      }));
+      setStats(prev => {
+        const newAlertCount = Math.max(45, Math.min(350, prev.activeAlerts + alertChange)); // Keep between 45-350
+        return {
+          totalScans: prev.totalScans + increment,
+          activeAlerts: newAlertCount,
+          protectedAssets: prev.protectedAssets + assetChange,
+          systemUptime: Math.min(99.99, 99.95 + Math.random() * 0.04),
+          lastScanTime: new Date().toISOString(),
+          threatLevel: getCurrentThreatLevel(newAlertCount)
+        };
+      });
     };
 
     // Initial load with real data if available
@@ -77,11 +84,13 @@ const Monitoring = () => {
           .eq('is_read', false)
           .limit(5);
 
-        // Start with enterprise-scale base numbers
+        // Start with enterprise-scale base numbers, ensure minimum threat level
+        const baseAlerts = Math.max(127, alerts?.length || 0);
         setStats(prev => ({
           ...prev,
-          activeAlerts: Math.max(prev.activeAlerts, alerts?.length || 0),
-          protectedAssets: Math.max(prev.protectedAssets, 2847593 + (artworks?.length || 0))
+          activeAlerts: baseAlerts,
+          protectedAssets: Math.max(prev.protectedAssets, 2847593 + (artworks?.length || 0)),
+          threatLevel: baseAlerts > 200 ? 'high' : baseAlerts > 100 ? 'medium' : 'low'
         }));
       } catch (error) {
         console.error('Error fetching real stats:', error);
