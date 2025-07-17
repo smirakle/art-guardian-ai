@@ -158,12 +158,9 @@ const Upload = () => {
 
   const uploadFile = async (file: File, fileId: string) => {
     try {
-      if (!user) {
-        throw new Error('Authentication required to upload files');
-      }
-      
-      // Create file path
-      const fileName = `${user.id}/${Date.now()}-${file.name}`;
+      // Create file path - use anonymous user ID if no user logged in
+      const userId = user?.id || 'anonymous';
+      const fileName = `${userId}/${Date.now()}-${file.name}`;
       
       // Upload to Supabase storage
       const { data, error } = await supabase.storage
@@ -250,9 +247,10 @@ const Upload = () => {
     setFiles(prev => prev.filter(f => f.id !== fileId));
     
     // If file was uploaded to storage, delete it
-    if (fileToRemove && fileToRemove.status === 'protected' && user) {
+    if (fileToRemove && fileToRemove.status === 'protected') {
       try {
-        const fileName = `${user.id}/${Date.now()}-${fileToRemove.name}`;
+        const userId = user?.id || 'anonymous';
+        const fileName = `${userId}/${Date.now()}-${fileToRemove.name}`;
         const { error } = await supabase.storage
           .from('artwork')
           .remove([fileName]);
@@ -317,16 +315,6 @@ const Upload = () => {
   };
 
   const handleStartProtection = async () => {
-    // Check authentication first
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to protect your artwork",
-        variant: "destructive",
-      });
-      return;
-    }
-
     // Validation
     if (files.length === 0 && urls.length === 0) {
       toast({
@@ -373,32 +361,38 @@ const Upload = () => {
       setFiles(protectedFiles);
 
       // Get file paths from uploaded files and URLs
-      const filePaths = files.map(file => `${user.id}/${Date.now()}-${file.name}`);
+      const userId = user?.id || 'anonymous';
+      const filePaths = files.map(file => `${userId}/${Date.now()}-${file.name}`);
       const allPaths = [...filePaths, ...urls];
 
-      // Create artwork record in database
-      const { data: artwork, error: artworkError } = await supabase
-        .from('artwork')
-        .insert({
-          user_id: user.id,
-          title: artworkTitle,
-          description: description || null,
-          category,
-          tags: tags.length > 0 ? tags : null,
-          license_type: licenseType || null,
-          file_paths: allPaths,
-          enable_watermark: enableWatermark,
-          enable_blockchain: enableBlockchain,
-          status: 'protected'
-        })
-        .select()
-        .single();
+      // Create artwork record in database (only if user is authenticated)
+      let artwork = null;
+      if (user) {
+        const { data: artworkData, error: artworkError } = await supabase
+          .from('artwork')
+          .insert({
+            user_id: user.id,
+            title: artworkTitle,
+            description: description || null,
+            category,
+            tags: tags.length > 0 ? tags : null,
+            license_type: licenseType || null,
+            file_paths: allPaths,
+            enable_watermark: enableWatermark,
+            enable_blockchain: enableBlockchain,
+            status: 'protected'
+          })
+          .select()
+          .single();
 
-      if (artworkError) {
-        throw artworkError;
+        if (artworkError) {
+          throw artworkError;
+        }
+        artwork = artworkData;
       }
 
-      // Start monitoring scan for the artwork
+      // Start monitoring scan for the artwork (only if user is authenticated)
+      if (user && artwork) {
         const { data: scan, error: scanError } = await supabase
         .from('monitoring_scans')
         .insert({
@@ -435,6 +429,7 @@ const Upload = () => {
             console.error('Exception details:', JSON.stringify(scanProcessError, null, 2));
           }
         }
+      }
 
       // Update to protected status
       const finalFiles = files.map(file => ({ 
@@ -444,8 +439,8 @@ const Upload = () => {
       }));
       setFiles(finalFiles);
 
-      // Handle blockchain registration if enabled
-      if (enableBlockchain) {
+      // Handle blockchain registration if enabled (only if user is authenticated)
+      if (enableBlockchain && user && artwork) {
         try {
           toast({
             title: "Blockchain Registration Started",
@@ -538,10 +533,10 @@ const Upload = () => {
             </p>
             
             {!user && (
-              <Alert className="mb-6 border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800">
+              <Alert className="mb-6 border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-800">
                 <Info className="w-4 h-4" />
-                <AlertDescription className="text-amber-800 dark:text-amber-200">
-                  <strong>Sign in required:</strong> Please sign in to upload and protect your artwork.
+                <AlertDescription className="text-blue-800 dark:text-blue-200">
+                  <strong>Free Access:</strong> You can upload and protect artwork without signing in. Sign in for full features like monitoring and blockchain verification.
                 </AlertDescription>
               </Alert>
             )}
@@ -551,49 +546,19 @@ const Upload = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        {user ? (
-          <>
-            <QuickStartGuide 
-              onUploadClick={() => {
-                // Scroll to upload area
-                const uploadArea = document.querySelector('[data-upload-area]');
-                if (uploadArea) {
-                  uploadArea.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-            />
-            
-            <div data-upload-area>
-              <VisualRecognition />
-            </div>
-          </>
-        ) : (
-          <Card className="max-w-2xl mx-auto">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl flex items-center justify-center gap-2">
-                <Shield className="w-6 h-6 text-primary" />
-                Authentication Required
-              </CardTitle>
-              <CardDescription>
-                Sign in to start protecting your creative work
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-center space-y-4">
-              <p className="text-muted-foreground">
-                To upload and protect your artwork, you'll need to create an account or sign in to your existing account.
-              </p>
-              <div className="space-y-2">
-                <p className="text-sm font-medium">With TSMO Protection, you get:</p>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• AI-powered content analysis and watermarking</li>
-                  <li>• 24/7 monitoring across 50,000+ sources</li>
-                  <li>• Instant alerts when matches are detected</li>
-                  <li>• Blockchain verification options</li>
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        <QuickStartGuide 
+          onUploadClick={() => {
+            // Scroll to upload area
+            const uploadArea = document.querySelector('[data-upload-area]');
+            if (uploadArea) {
+              uploadArea.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+        />
+        
+        <div data-upload-area>
+          <VisualRecognition />
+        </div>
       </div>
     </div>
   );
