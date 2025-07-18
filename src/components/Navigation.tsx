@@ -4,6 +4,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const Navigation = () => {
   const navigate = useNavigate();
@@ -11,6 +13,7 @@ const Navigation = () => {
   const currentPath = location.pathname;
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const { user, role, signOut } = useAuth();
+  const { t } = useTranslation();
 
   const handleSignOut = async () => {
     await signOut();
@@ -18,11 +21,11 @@ const Navigation = () => {
   };
 
   const navItems = [
-    { path: "/", label: "Home", icon: Home },
+    { path: "/", label: t('nav.home'), icon: Home },
     { path: "/upload", label: "Protect Art", icon: Upload },
-    { path: "/community", label: "Community", icon: Users },
-    { path: "/about-tsmo", label: "About TSMO", icon: Info },
-    { path: "/contact", label: "Contact", icon: Mail }
+    { path: "/community", label: t('nav.community'), icon: Users },
+    { path: "/about-tsmo", label: t('nav.about'), icon: Info },
+    { path: "/contact", label: t('nav.contact'), icon: Mail }
   ];
 
   // Only show admin for authenticated admin users
@@ -80,6 +83,8 @@ const Navigation = () => {
 
           {/* Right Section */}
           <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            
             <Button
               variant="outline"
               onClick={() => setShowFeedbackPopup(true)}
@@ -108,7 +113,7 @@ const Navigation = () => {
                 size="sm"
               >
                 <LogIn className="w-3 h-3 md:w-4 md:h-4" />
-                <span className="hidden sm:inline">Sign In</span>
+                <span className="hidden sm:inline">{t('nav.login')}</span>
               </Button>
             )}
             

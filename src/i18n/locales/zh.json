@@ -1,0 +1,78 @@
+{
+  "nav": {
+    "home": "首页",
+    "about": "关于TSMO",
+    "upload": "上传",
+    "monitoring": "监控",
+    "community": "社区",
+    "lawyers": "律师",
+    "pricing": "定价",
+    "contact": "联系",
+    "login": "登录",
+    "signUp": "注册"
+  },
+  "hero": {
+    "title": "使用AI驱动的版权监控保护您的创意作品",
+    "subtitle": "先进的视觉识别技术24/7监控网络，保护您的艺术创作免受未经授权的使用。",
+    "getStarted": "开始使用",
+    "learnMore": "了解更多"
+  },
+  "features": {
+    "title": "完整保护的强大功能",
+    "subtitle": "我们的综合工具套件确保您的创意作品在所有数字平台上得到保护。",
+    "visualRecognition": {
+      "title": "视觉识别",
+      "description": "先进的AI分析您的艺术作品，以99.2%的准确率检测网络上的未经授权使用。"
+    },
+    "realTimeMonitoring": {
+      "title": "实时监控",
+      "description": "24/7扫描社交媒体、市场和网站，在侵权发生时立即捕获。"
+    },
+    "blockchainCertification": {
+      "title": "区块链认证",
+      "description": "带时间戳的区块链证书提供不可变的所有权证明，用于法律保护。"
+    },
+    "automatedDMCA": {
+      "title": "自动化DMCA",
+      "description": "一键式DMCA撤下通知直接发送给侵权网站和平台。"
+    },
+    "communitySupport": {
+      "title": "社区支持",
+      "description": "在我们的支持社区平台上与其他艺术家和法律专家联系。"
+    },
+    "expertAdvice": {
+      "title": "专家法律建议",
+      "description": "获得专门从事版权法的合格知识产权律师和法律专业人士的服务。"
+    }
+  },
+  "cta": {
+    "title": "准备保护您的创意作品了吗？",
+    "subtitle": "加入数千名信任TSMO保护其知识产权的艺术家。",
+    "getStarted": "开始使用",
+    "benefits": {
+      "freeUploads": "免费上传和监控",
+      "support": "24/7专家支持",
+      "protection": "法律保护保证"
+    }
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "cancel": "取消",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑",
+    "view": "查看",
+    "download": "下载",
+    "upload": "上传",
+    "search": "搜索",
+    "filter": "筛选",
+    "sort": "排序",
+    "next": "下一个",
+    "previous": "上一个",
+    "close": "关闭",
+    "open": "打开",
+    "language": "语言"
+  }
+}

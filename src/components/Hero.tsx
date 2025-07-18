@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Shield, Bot, Palette } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Hero = () => {
+  const { t } = useTranslation();
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background with gradient */}
@@ -21,11 +23,11 @@ const Hero = () => {
       <div className="container mx-auto px-4 text-center relative z-10">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent leading-tight">
-            Protect Your Art with AI
+            {t('hero.title')}
           </h1>
           
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-            Advanced AI-powered protection for artists' intellectual property. Monitor, detect, and defend your creative work automatically.
+            {t('hero.subtitle')}
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
@@ -34,11 +36,11 @@ const Hero = () => {
               className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground px-8 py-6 text-lg"
               onClick={() => window.location.href = '/monitoring'}
             >
-              Start Protecting Now
+              {t('hero.getStarted')}
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
             <Button onClick={() => window.open('/upload', '_blank')} variant="outline" size="lg" className="px-8 py-6 text-lg">
-              Start Protecting
+              {t('hero.learnMore')}
             </Button>
           </div>
           

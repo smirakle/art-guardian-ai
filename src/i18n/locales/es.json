@@ -1,0 +1,78 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "about": "Acerca de TSMO",
+    "upload": "Subir",
+    "monitoring": "Monitoreo",
+    "community": "Comunidad",
+    "lawyers": "Abogados",
+    "pricing": "Precios",
+    "contact": "Contacto",
+    "login": "Iniciar Sesión",
+    "signUp": "Registrarse"
+  },
+  "hero": {
+    "title": "Protege Tu Trabajo Creativo con Monitoreo de Derechos de Autor Impulsado por IA",
+    "subtitle": "Tecnología avanzada de reconocimiento visual que monitorea la web 24/7 para proteger tus creaciones artísticas del uso no autorizado.",
+    "getStarted": "Comenzar",
+    "learnMore": "Aprender Más"
+  },
+  "features": {
+    "title": "Características Potentes para Protección Completa",
+    "subtitle": "Nuestro conjunto integral de herramientas asegura que tu trabajo creativo esté protegido en todas las plataformas digitales.",
+    "visualRecognition": {
+      "title": "Reconocimiento Visual",
+      "description": "IA avanzada analiza tu obra de arte para detectar uso no autorizado en la web con 99.2% de precisión."
+    },
+    "realTimeMonitoring": {
+      "title": "Monitoreo en Tiempo Real",
+      "description": "Escaneo 24/7 de redes sociales, mercados y sitios web para detectar infracciones cuando ocurren."
+    },
+    "blockchainCertification": {
+      "title": "Certificación Blockchain",
+      "description": "Prueba inmutable de propiedad con certificados blockchain con marca de tiempo para protección legal."
+    },
+    "automatedDMCA": {
+      "title": "DMCA Automatizado",
+      "description": "Avisos de eliminación DMCA de un clic enviados directamente a sitios web y plataformas infractoras."
+    },
+    "communitySupport": {
+      "title": "Apoyo Comunitario",
+      "description": "Conéctate con otros artistas y expertos legales en nuestra plataforma comunitaria de apoyo."
+    },
+    "expertAdvice": {
+      "title": "Asesoramiento Legal Experto",
+      "description": "Acceso a abogados de PI calificados y profesionales legales especializados en ley de derechos de autor."
+    }
+  },
+  "cta": {
+    "title": "¿Listo para Proteger Tu Trabajo Creativo?",
+    "subtitle": "Únete a miles de artistas que confían en TSMO para salvaguardar su propiedad intelectual.",
+    "getStarted": "Comenzar",
+    "benefits": {
+      "freeUploads": "Subidas y monitoreo gratuitos",
+      "support": "Soporte experto 24/7",
+      "protection": "Garantía de protección legal"
+    }
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "view": "Ver",
+    "download": "Descargar",
+    "upload": "Subir",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "close": "Cerrar",
+    "open": "Abrir",
+    "language": "Idioma"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About TSMO",
+    "upload": "Upload",
+    "monitoring": "Monitoring",
+    "community": "Community",
+    "lawyers": "Lawyers",
+    "pricing": "Pricing",
+    "contact": "Contact",
+    "login": "Login",
+    "signUp": "Sign Up"
+  },
+  "hero": {
+    "title": "Protect Your Creative Work with AI-Powered Copyright Monitoring",
+    "subtitle": "Advanced visual recognition technology that monitors the web 24/7 to protect your artistic creations from unauthorized use.",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More"
+  },
+  "features": {
+    "title": "Powerful Features for Complete Protection",
+    "subtitle": "Our comprehensive suite of tools ensures your creative work is protected across all digital platforms.",
+    "visualRecognition": {
+      "title": "Visual Recognition",
+      "description": "Advanced AI scans images and artwork across millions of websites and social platforms"
+    },
+    "deepWebScanning": {
+      "title": "Deep Web Scanning",
+      "description": "Comprehensive search through marketplaces, social media, and content platforms"
+    },
+    "instantAlerts": {
+      "title": "Instant Alerts",
+      "description": "Real-time notifications when unauthorized use of your work is detected"
+    },
+    "autoDocumentation": {
+      "title": "Auto-Documentation",
+      "description": "Automatic evidence collection and timestamping for legal proceedings"
+    },
+    "legalSupport": {
+      "title": "Legal Support",
+      "description": "Direct connection to IP lawyers and automated cease & desist generation"
+    },
+    "analyticsDashboard": {
+      "title": "Analytics Dashboard",
+      "description": "Track your work's reach, unauthorized usage patterns, and protection metrics"
+    },
+    "blockchainVerification": {
+      "title": "Blockchain Verification",
+      "description": "Immutable proof of creation and ownership through blockchain technology"
+    },
+    "artistCommunity": {
+      "title": "Artist Community",
+      "description": "Connect with other artists, share protection strategies, and learn from experts"
+    },
+    "apiIntegration": {
+      "title": "API Integration",
+      "description": "Seamlessly integrate with your existing workflow and portfolio platforms"
+    }
+  },
+  "cta": {
+    "title": "Ready to Protect Your Creative Work?",
+    "subtitle": "Join thousands of artists who trust TSMO to safeguard their intellectual property.",
+    "getStarted": "Get Started",
+    "benefits": {
+      "freeUploads": "Free uploads & monitoring",
+      "support": "24/7 expert support",
+      "protection": "Legal protection guarantee"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "download": "Download",
+    "upload": "Upload",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "open": "Open",
+    "language": "Language"
+  }
+}

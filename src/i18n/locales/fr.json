@@ -1,0 +1,78 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "about": "À propos de TSMO",
+    "upload": "Télécharger",
+    "monitoring": "Surveillance",
+    "community": "Communauté",
+    "lawyers": "Avocats",
+    "pricing": "Tarifs",
+    "contact": "Contact",
+    "login": "Se connecter",
+    "signUp": "S'inscrire"
+  },
+  "hero": {
+    "title": "Protégez Votre Travail Créatif avec la Surveillance de Droits d'Auteur Alimentée par l'IA",
+    "subtitle": "Technologie avancée de reconnaissance visuelle qui surveille le web 24h/24 et 7j/7 pour protéger vos créations artistiques contre l'utilisation non autorisée.",
+    "getStarted": "Commencer",
+    "learnMore": "En savoir plus"
+  },
+  "features": {
+    "title": "Fonctionnalités Puissantes pour une Protection Complète",
+    "subtitle": "Notre suite complète d'outils garantit que votre travail créatif est protégé sur toutes les plateformes numériques.",
+    "visualRecognition": {
+      "title": "Reconnaissance Visuelle",
+      "description": "L'IA avancée analyse votre œuvre d'art pour détecter l'utilisation non autorisée sur le web avec 99,2% de précision."
+    },
+    "realTimeMonitoring": {
+      "title": "Surveillance en Temps Réel",
+      "description": "Balayage 24h/24 et 7j/7 des médias sociaux, marchés et sites web pour détecter les infractions dès qu'elles se produisent."
+    },
+    "blockchainCertification": {
+      "title": "Certification Blockchain",
+      "description": "Preuve immuable de propriété avec des certificats blockchain horodatés pour la protection juridique."
+    },
+    "automatedDMCA": {
+      "title": "DMCA Automatisé",
+      "description": "Avis de retrait DMCA en un clic envoyés directement aux sites web et plateformes contrevenants."
+    },
+    "communitySupport": {
+      "title": "Soutien Communautaire",
+      "description": "Connectez-vous avec d'autres artistes et experts juridiques dans notre plateforme communautaire de soutien."
+    },
+    "expertAdvice": {
+      "title": "Conseils Juridiques d'Experts",
+      "description": "Accès à des avocats PI qualifiés et des professionnels juridiques spécialisés en droit d'auteur."
+    }
+  },
+  "cta": {
+    "title": "Prêt à Protéger Votre Travail Créatif ?",
+    "subtitle": "Rejoignez des milliers d'artistes qui font confiance à TSMO pour protéger leur propriété intellectuelle.",
+    "getStarted": "Commencer",
+    "benefits": {
+      "freeUploads": "Téléchargements et surveillance gratuits",
+      "support": "Support expert 24h/24 et 7j/7",
+      "protection": "Garantie de protection juridique"
+    }
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "view": "Voir",
+    "download": "Télécharger",
+    "upload": "Télécharger",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "close": "Fermer",
+    "open": "Ouvrir",
+    "language": "Langue"
+  }
+}

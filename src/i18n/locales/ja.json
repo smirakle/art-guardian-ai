@@ -1,0 +1,78 @@
+{
+  "nav": {
+    "home": "ホーム",
+    "about": "TSMOについて",
+    "upload": "アップロード",
+    "monitoring": "監視",
+    "community": "コミュニティ",
+    "lawyers": "弁護士",
+    "pricing": "料金",
+    "contact": "お問い合わせ",
+    "login": "ログイン",
+    "signUp": "サインアップ"
+  },
+  "hero": {
+    "title": "AI搭載著作権監視であなたのクリエイティブな作品を保護",
+    "subtitle": "高度な視覚認識技術により、Web上で24時間365日監視し、あなたの芸術作品を無断使用から保護します。",
+    "getStarted": "始める",
+    "learnMore": "詳しく学ぶ"
+  },
+  "features": {
+    "title": "完全な保護のための強力な機能",
+    "subtitle": "包括的なツールスイートにより、あなたのクリエイティブな作品がすべてのデジタルプラットフォームで保護されることを保証します。",
+    "visualRecognition": {
+      "title": "視覚認識",
+      "description": "高度なAIがあなたのアートワークを分析し、Web上での無断使用を99.2%の精度で検出します。"
+    },
+    "realTimeMonitoring": {
+      "title": "リアルタイム監視",
+      "description": "ソーシャルメディア、マーケットプレイス、ウェブサイトの24時間365日スキャンで、侵害が発生した瞬間をキャッチします。"
+    },
+    "blockchainCertification": {
+      "title": "ブロックチェーン認証",
+      "description": "法的保護のためのタイムスタンプ付きブロックチェーン証明書による不変の所有権証明。"
+    },
+    "automatedDMCA": {
+      "title": "自動DMCA",
+      "description": "ワンクリックDMCA削除通知を侵害ウェブサイトやプラットフォームに直接送信。"
+    },
+    "communitySupport": {
+      "title": "コミュニティサポート",
+      "description": "サポートコミュニティプラットフォームで仲間のアーティストや法律専門家とつながる。"
+    },
+    "expertAdvice": {
+      "title": "専門家による法的アドバイス",
+      "description": "著作権法を専門とする有資格IP弁護士や法律専門家へのアクセス。"
+    }
+  },
+  "cta": {
+    "title": "あなたのクリエイティブな作品を保護する準備はできましたか？",
+    "subtitle": "知的財産を保護するためにTSMOを信頼する何千人ものアーティストに参加してください。",
+    "getStarted": "始める",
+    "benefits": {
+      "freeUploads": "無料のアップロードと監視",
+      "support": "24時間365日の専門家サポート",
+      "protection": "法的保護保証"
+    }
+  },
+  "common": {
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "success": "成功",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "delete": "削除",
+    "edit": "編集",
+    "view": "表示",
+    "download": "ダウンロード",
+    "upload": "アップロード",
+    "search": "検索",
+    "filter": "フィルター",
+    "sort": "並び替え",
+    "next": "次",
+    "previous": "前",
+    "close": "閉じる",
+    "open": "開く",
+    "language": "言語"
+  }
+}

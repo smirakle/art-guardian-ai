@@ -2,13 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Shield, CheckCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const CallToAction = () => {
+  const { t } = useTranslation();
   const benefits = [
-    "Free 5-day trial with full features",
-    "No setup fees or hidden costs", 
-    "Cancel anytime with one click",
-    "24/7 priority support included"
+    t('cta.benefits.freeUploads'),
+    t('cta.benefits.support'),
+    t('cta.benefits.protection')
   ];
 
   return (
@@ -18,11 +19,11 @@ const CallToAction = () => {
           <Shield className="w-16 h-16 text-primary mx-auto mb-6 animate-pulse" />
           
           <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-            Start Protecting Your Art Today
+            {t('cta.title')}
           </h2>
           
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-            Join thousands of artists who have secured their creative future. Get started in less than 2 minutes.
+            {t('cta.subtitle')}
           </p>
 
           <Card className="max-w-md mx-auto mb-8 bg-card/80 backdrop-blur-sm border-border/50">
@@ -38,7 +39,7 @@ const CallToAction = () => {
                     className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground"
                     onClick={() => window.location.href = '/monitoring'}
                   >
-                    Get Started
+                    {t('cta.getStarted')}
                     <ArrowRight className="ml-2 w-4 h-4" />
                   </Button>
                 </div>

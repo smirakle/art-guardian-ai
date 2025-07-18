@@ -11,69 +11,71 @@ import {
   AlertTriangle,
   Scale
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Features = () => {
+  const { t } = useTranslation();
   const features = [
     {
       icon: Eye,
-      title: "Visual Recognition",
-      description: "Advanced AI scans images and artwork across millions of websites and social platforms",
+      titleKey: "features.visualRecognition.title",
+      descriptionKey: "features.visualRecognition.description",
       badge: "Core Feature",
       variant: "default" as const
     },
     {
       icon: Search,
-      title: "Deep Web Scanning",
-      description: "Comprehensive search through marketplaces, social media, and content platforms",
+      titleKey: "features.deepWebScanning.title",
+      descriptionKey: "features.deepWebScanning.description",
       badge: "Pro",
       variant: "secondary" as const
     },
     {
       icon: AlertTriangle,
-      title: "Instant Alerts",
-      description: "Real-time notifications when unauthorized use of your work is detected",
+      titleKey: "features.instantAlerts.title",
+      descriptionKey: "features.instantAlerts.description",
       badge: "Premium",
       variant: "destructive" as const
     },
     {
       icon: FileText,
-      title: "Auto-Documentation",
-      description: "Automatic evidence collection and timestamping for legal proceedings",
+      titleKey: "features.autoDocumentation.title",
+      descriptionKey: "features.autoDocumentation.description",
       badge: "Legal",
       variant: "outline" as const
     },
     {
       icon: Scale,
-      title: "Legal Support",
-      description: "Direct connection to IP lawyers and automated cease & desist generation",
+      titleKey: "features.legalSupport.title",
+      descriptionKey: "features.legalSupport.description",
       badge: "Pro",
       variant: "secondary" as const
     },
     {
       icon: TrendingUp,
-      title: "Analytics Dashboard",
-      description: "Track your work's reach, unauthorized usage patterns, and protection metrics",
+      titleKey: "features.analyticsDashboard.title",
+      descriptionKey: "features.analyticsDashboard.description",
       badge: "Insights",
       variant: "default" as const
     },
     {
       icon: Lock,
-      title: "Blockchain Verification",
-      description: "Immutable proof of creation and ownership through blockchain technology",
+      titleKey: "features.blockchainVerification.title",
+      descriptionKey: "features.blockchainVerification.description",
       badge: "Security",
       variant: "destructive" as const
     },
     {
       icon: Users,
-      title: "Artist Community",
-      description: "Connect with other artists, share protection strategies, and learn from experts",
+      titleKey: "features.artistCommunity.title",
+      descriptionKey: "features.artistCommunity.description",
       badge: "Community",
       variant: "outline" as const
     },
     {
       icon: Zap,
-      title: "API Integration",
-      description: "Seamlessly integrate with your existing workflow and portfolio platforms",
+      titleKey: "features.apiIntegration.title",
+      descriptionKey: "features.apiIntegration.description",
       badge: "Developer",
       variant: "secondary" as const
     }
@@ -84,10 +86,10 @@ const Features = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Comprehensive Protection Suite
+            {t('features.title')}
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Every tool you need to safeguard your creative work, powered by cutting-edge AI technology
+            {t('features.subtitle')}
           </p>
         </div>
 
@@ -102,12 +104,12 @@ const Features = () => {
                   </Badge>
                 </div>
                 <CardTitle className="text-lg group-hover:text-primary transition-colors duration-300">
-                  {feature.title}
+                  {t(feature.titleKey)}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-sm leading-relaxed">
-                  {feature.description}
+                  {t(feature.descriptionKey)}
                 </CardDescription>
               </CardContent>
             </Card>
