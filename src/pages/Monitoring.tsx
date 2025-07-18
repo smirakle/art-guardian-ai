@@ -6,6 +6,7 @@ import CopyrightMatches from "@/components/monitoring/CopyrightMatches";
 import MonitoringDashboard from "@/components/MonitoringDashboard";
 import MonitoringChart from "@/components/MonitoringChart";
 import AlertsPanel from "@/components/AlertsPanel";
+import RealTimeMonitoring from "@/components/RealTimeMonitoring";
 
 export default function Monitoring() {
   return (
@@ -41,15 +42,7 @@ export default function Monitoring() {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <MonitoringDashboard />
-            <Card>
-              <CardHeader>
-                <CardTitle>Monitoring Activity</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <MonitoringChart />
-              </CardContent>
-            </Card>
+            <RealTimeMonitoring />
           </TabsContent>
 
           <TabsContent value="matches" className="space-y-6">
