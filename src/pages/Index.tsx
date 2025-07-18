@@ -834,56 +834,6 @@ const Index = () => {
             </Card>
           </div>
 
-          {/* Quick Legal Action */}
-          <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
-            <CardContent className="pt-6">
-              <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold mb-2">Quick Legal Action</h3>
-                <p className="text-muted-foreground max-w-2xl mx-auto">
-                  If you've discovered copyright infringement, don't wait. Take action now with our automated legal tools.
-                </p>
-              </div>
-              
-              <div className="grid md:grid-cols-3 gap-4 mb-6">
-                <Button 
-                  className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
-                  onClick={() => navigate('/monitoring')}
-                >
-                  <Zap className="h-4 w-4 mr-2" />
-                  File DMCA Now
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="flex-1"
-                  onClick={() => {
-                    window.open('https://calendly.com/tsmo-legal/consultation', '_blank');
-                  }}
-                >
-                  <Phone className="h-4 w-4 mr-2" />
-                  Legal Consultation
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="flex-1"
-                  onClick={() => {
-                    const email = 'legal@tsmo.ai';
-                    const subject = 'Copyright Infringement Report';
-                    const body = 'I need to report copyright infringement of my artwork. Please provide guidance on next steps.';
-                    window.open(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
-                  }}
-                >
-                  <Mail className="h-4 w-4 mr-2" />
-                  Report Infringement
-                </Button>
-              </div>
-
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground">
-                  <strong>24/7 Legal Support:</strong> Our legal team is available around the clock to help protect your creative work.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </section>
 
