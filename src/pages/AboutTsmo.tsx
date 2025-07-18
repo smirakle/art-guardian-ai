@@ -1,7 +1,9 @@
 import React from 'react';
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
+import { useTranslation } from 'react-i18next';
 
 const AboutTsmo = () => {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-background">
       {/* About TSMO Section */}
@@ -16,7 +18,7 @@ const AboutTsmo = () => {
               />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              About TSMO
+              {t('nav.about')}
             </h1>
             <p className="text-xl text-muted-foreground">
               Born from an artist's frustration, built for every creator's protection
