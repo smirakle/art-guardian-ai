@@ -22,27 +22,39 @@
     "subtitle": "包括的なツールスイートにより、あなたのクリエイティブな作品がすべてのデジタルプラットフォームで保護されることを保証します。",
     "visualRecognition": {
       "title": "視覚認識",
-      "description": "高度なAIがあなたのアートワークを分析し、Web上での無断使用を99.2%の精度で検出します。"
+      "description": "高度なAIが何百万ものウェブサイトやソーシャルプラットフォームで画像やアートワークをスキャンします"
     },
-    "realTimeMonitoring": {
-      "title": "リアルタイム監視",
-      "description": "ソーシャルメディア、マーケットプレイス、ウェブサイトの24時間365日スキャンで、侵害が発生した瞬間をキャッチします。"
+    "deepWebScanning": {
+      "title": "ディープWebスキャン",
+      "description": "マーケットプレイス、ソーシャルメディア、コンテンツプラットフォームでの包括的な検索"
     },
-    "blockchainCertification": {
-      "title": "ブロックチェーン認証",
-      "description": "法的保護のためのタイムスタンプ付きブロックチェーン証明書による不変の所有権証明。"
+    "instantAlerts": {
+      "title": "即座のアラート",
+      "description": "あなたの作品の無断使用が検出されたときのリアルタイム通知"
     },
-    "automatedDMCA": {
-      "title": "自動DMCA",
-      "description": "ワンクリックDMCA削除通知を侵害ウェブサイトやプラットフォームに直接送信。"
+    "autoDocumentation": {
+      "title": "自動文書化",
+      "description": "法的手続きのための自動証拠収集とタイムスタンプ"
     },
-    "communitySupport": {
-      "title": "コミュニティサポート",
-      "description": "サポートコミュニティプラットフォームで仲間のアーティストや法律専門家とつながる。"
+    "legalSupport": {
+      "title": "法的サポート",
+      "description": "IP弁護士への直接接続と自動停止通告生成"
     },
-    "expertAdvice": {
-      "title": "専門家による法的アドバイス",
-      "description": "著作権法を専門とする有資格IP弁護士や法律専門家へのアクセス。"
+    "analyticsDashboard": {
+      "title": "分析ダッシュボード",
+      "description": "あなたの作品のリーチ、無断使用パターン、保護メトリクスを追跡"
+    },
+    "blockchainVerification": {
+      "title": "ブロックチェーン検証",
+      "description": "ブロックチェーン技術による創作と所有権の不変証明"
+    },
+    "artistCommunity": {
+      "title": "アーティストコミュニティ",
+      "description": "他のアーティストとつながり、保護戦略を共有し、専門家から学ぶ"
+    },
+    "apiIntegration": {
+      "title": "API統合",
+      "description": "既存のワークフローとポートフォリオプラットフォームとシームレスに統合"
     }
   },
   "cta": {

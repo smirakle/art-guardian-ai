@@ -22,27 +22,39 @@
     "subtitle": "我们的综合工具套件确保您的创意作品在所有数字平台上得到保护。",
     "visualRecognition": {
       "title": "视觉识别",
-      "description": "先进的AI分析您的艺术作品，以99.2%的准确率检测网络上的未经授权使用。"
+      "description": "先进的AI扫描数百万网站和社交平台上的图像和艺术作品"
     },
-    "realTimeMonitoring": {
-      "title": "实时监控",
-      "description": "24/7扫描社交媒体、市场和网站，在侵权发生时立即捕获。"
+    "deepWebScanning": {
+      "title": "深度网络扫描",
+      "description": "通过市场、社交媒体和内容平台进行全面搜索"
     },
-    "blockchainCertification": {
-      "title": "区块链认证",
-      "description": "带时间戳的区块链证书提供不可变的所有权证明，用于法律保护。"
+    "instantAlerts": {
+      "title": "即时警报",
+      "description": "检测到您的作品被未经授权使用时的实时通知"
     },
-    "automatedDMCA": {
-      "title": "自动化DMCA",
-      "description": "一键式DMCA撤下通知直接发送给侵权网站和平台。"
+    "autoDocumentation": {
+      "title": "自动文档化",
+      "description": "法律程序的自动证据收集和时间戳"
     },
-    "communitySupport": {
-      "title": "社区支持",
-      "description": "在我们的支持社区平台上与其他艺术家和法律专家联系。"
+    "legalSupport": {
+      "title": "法律支持",
+      "description": "直接连接知识产权律师和自动停止令生成"
     },
-    "expertAdvice": {
-      "title": "专家法律建议",
-      "description": "获得专门从事版权法的合格知识产权律师和法律专业人士的服务。"
+    "analyticsDashboard": {
+      "title": "分析仪表板",
+      "description": "跟踪您作品的覆盖范围、未经授权的使用模式和保护指标"
+    },
+    "blockchainVerification": {
+      "title": "区块链验证",
+      "description": "通过区块链技术提供创作和所有权的不可变证明"
+    },
+    "artistCommunity": {
+      "title": "艺术家社区",
+      "description": "与其他艺术家联系，分享保护策略，向专家学习"
+    },
+    "apiIntegration": {
+      "title": "API集成",
+      "description": "与您现有的工作流程和作品集平台无缝集成"
     }
   },
   "cta": {

@@ -22,27 +22,39 @@
     "subtitle": "Notre suite complète d'outils garantit que votre travail créatif est protégé sur toutes les plateformes numériques.",
     "visualRecognition": {
       "title": "Reconnaissance Visuelle",
-      "description": "L'IA avancée analyse votre œuvre d'art pour détecter l'utilisation non autorisée sur le web avec 99,2% de précision."
+      "description": "L'IA avancée scanne images et œuvres d'art sur des millions de sites web et plateformes sociales"
     },
-    "realTimeMonitoring": {
-      "title": "Surveillance en Temps Réel",
-      "description": "Balayage 24h/24 et 7j/7 des médias sociaux, marchés et sites web pour détecter les infractions dès qu'elles se produisent."
+    "deepWebScanning": {
+      "title": "Balayage Web Profond",
+      "description": "Recherche complète à travers les marchés, médias sociaux et plateformes de contenu"
     },
-    "blockchainCertification": {
-      "title": "Certification Blockchain",
-      "description": "Preuve immuable de propriété avec des certificats blockchain horodatés pour la protection juridique."
+    "instantAlerts": {
+      "title": "Alertes Instantanées",
+      "description": "Notifications en temps réel lorsque l'utilisation non autorisée de votre travail est détectée"
     },
-    "automatedDMCA": {
-      "title": "DMCA Automatisé",
-      "description": "Avis de retrait DMCA en un clic envoyés directement aux sites web et plateformes contrevenants."
+    "autoDocumentation": {
+      "title": "Auto-Documentation",
+      "description": "Collecte automatique de preuves et horodatage pour les procédures judiciaires"
     },
-    "communitySupport": {
-      "title": "Soutien Communautaire",
-      "description": "Connectez-vous avec d'autres artistes et experts juridiques dans notre plateforme communautaire de soutien."
+    "legalSupport": {
+      "title": "Support Juridique",
+      "description": "Connexion directe aux avocats PI et génération automatique de cessez et abstenez-vous"
     },
-    "expertAdvice": {
-      "title": "Conseils Juridiques d'Experts",
-      "description": "Accès à des avocats PI qualifiés et des professionnels juridiques spécialisés en droit d'auteur."
+    "analyticsDashboard": {
+      "title": "Tableau de Bord Analytique",
+      "description": "Suivez la portée de votre travail, les modèles d'utilisation non autorisée et les métriques de protection"
+    },
+    "blockchainVerification": {
+      "title": "Vérification Blockchain",
+      "description": "Preuve immuable de création et de propriété grâce à la technologie blockchain"
+    },
+    "artistCommunity": {
+      "title": "Communauté d'Artistes",
+      "description": "Connectez-vous avec d'autres artistes, partagez des stratégies de protection et apprenez des experts"
+    },
+    "apiIntegration": {
+      "title": "Intégration API",
+      "description": "Intégrez en toute transparence avec votre flux de travail existant et vos plateformes de portfolio"
     }
   },
   "cta": {

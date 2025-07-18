@@ -22,27 +22,39 @@
     "subtitle": "Nuestro conjunto integral de herramientas asegura que tu trabajo creativo esté protegido en todas las plataformas digitales.",
     "visualRecognition": {
       "title": "Reconocimiento Visual",
-      "description": "IA avanzada analiza tu obra de arte para detectar uso no autorizado en la web con 99.2% de precisión."
+      "description": "IA avanzada escanea imágenes y obras de arte en millones de sitios web y plataformas sociales"
     },
-    "realTimeMonitoring": {
-      "title": "Monitoreo en Tiempo Real",
-      "description": "Escaneo 24/7 de redes sociales, mercados y sitios web para detectar infracciones cuando ocurren."
+    "deepWebScanning": {
+      "title": "Escaneo Web Profundo",
+      "description": "Búsqueda integral a través de mercados, redes sociales y plataformas de contenido"
     },
-    "blockchainCertification": {
-      "title": "Certificación Blockchain",
-      "description": "Prueba inmutable de propiedad con certificados blockchain con marca de tiempo para protección legal."
+    "instantAlerts": {
+      "title": "Alertas Instantáneas",
+      "description": "Notificaciones en tiempo real cuando se detecta uso no autorizado de tu trabajo"
     },
-    "automatedDMCA": {
-      "title": "DMCA Automatizado",
-      "description": "Avisos de eliminación DMCA de un clic enviados directamente a sitios web y plataformas infractoras."
+    "autoDocumentation": {
+      "title": "Auto-Documentación",
+      "description": "Recopilación automática de evidencia y marcado temporal para procedimientos legales"
     },
-    "communitySupport": {
-      "title": "Apoyo Comunitario",
-      "description": "Conéctate con otros artistas y expertos legales en nuestra plataforma comunitaria de apoyo."
+    "legalSupport": {
+      "title": "Soporte Legal",
+      "description": "Conexión directa con abogados de PI y generación automática de cese y desistimiento"
     },
-    "expertAdvice": {
-      "title": "Asesoramiento Legal Experto",
-      "description": "Acceso a abogados de PI calificados y profesionales legales especializados en ley de derechos de autor."
+    "analyticsDashboard": {
+      "title": "Panel de Análisis",
+      "description": "Rastrea el alcance de tu trabajo, patrones de uso no autorizado y métricas de protección"
+    },
+    "blockchainVerification": {
+      "title": "Verificación Blockchain",
+      "description": "Prueba inmutable de creación y propiedad a través de tecnología blockchain"
+    },
+    "artistCommunity": {
+      "title": "Comunidad de Artistas",
+      "description": "Conéctate con otros artistas, comparte estrategias de protección y aprende de expertos"
+    },
+    "apiIntegration": {
+      "title": "Integración API",
+      "description": "Integra sin problemas con tu flujo de trabajo existente y plataformas de portafolio"
     }
   },
   "cta": {
