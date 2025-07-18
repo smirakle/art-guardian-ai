@@ -239,6 +239,8 @@ export type Database = {
           created_at: string
           description: string | null
           detected_at: string
+          dmca_filed: boolean | null
+          dmca_filed_at: string | null
           id: string
           image_url: string | null
           is_authorized: boolean | null
@@ -258,6 +260,8 @@ export type Database = {
           created_at?: string
           description?: string | null
           detected_at?: string
+          dmca_filed?: boolean | null
+          dmca_filed_at?: string | null
           id?: string
           image_url?: string | null
           is_authorized?: boolean | null
@@ -277,6 +281,8 @@ export type Database = {
           created_at?: string
           description?: string | null
           detected_at?: string
+          dmca_filed?: boolean | null
+          dmca_filed_at?: string | null
           id?: string
           image_url?: string | null
           is_authorized?: boolean | null
@@ -306,6 +312,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      dmca_notices: {
+        Row: {
+          artwork_id: string
+          copyright_owner_address: string
+          copyright_owner_email: string
+          copyright_owner_name: string
+          copyright_work_description: string
+          created_at: string
+          electronic_signature: string
+          filed_at: string
+          id: string
+          infringing_description: string
+          infringing_url: string
+          match_id: string
+          response_received_at: string | null
+          response_status: string | null
+          status: string
+          target_domain: string
+          updated_at: string
+        }
+        Insert: {
+          artwork_id: string
+          copyright_owner_address: string
+          copyright_owner_email: string
+          copyright_owner_name: string
+          copyright_work_description: string
+          created_at?: string
+          electronic_signature: string
+          filed_at?: string
+          id?: string
+          infringing_description: string
+          infringing_url: string
+          match_id: string
+          response_received_at?: string | null
+          response_status?: string | null
+          status?: string
+          target_domain: string
+          updated_at?: string
+        }
+        Update: {
+          artwork_id?: string
+          copyright_owner_address?: string
+          copyright_owner_email?: string
+          copyright_owner_name?: string
+          copyright_work_description?: string
+          created_at?: string
+          electronic_signature?: string
+          filed_at?: string
+          id?: string
+          infringing_description?: string
+          infringing_url?: string
+          match_id?: string
+          response_received_at?: string | null
+          response_status?: string | null
+          status?: string
+          target_domain?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       expert_advice: {
         Row: {

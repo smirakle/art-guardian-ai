@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { AlertCircle, ArrowRight, Globe, Link2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
+import { DMCAFormDialog } from "@/components/dmca/DMCAFormDialog";
 
 export default function CopyrightMatches() {
   const [matches, setMatches] = useState<Tables<"copyright_matches">[]>([]);
@@ -120,6 +121,11 @@ export default function CopyrightMatches() {
               </div>
             </div>
             <div className="flex justify-end gap-2">
+              <DMCAFormDialog 
+                matchId={match.id}
+                sourceUrl={match.source_url}
+                sourceTitle={match.source_title || "Untitled Source"}
+              />
               {match.source_url && (
                 <Button variant="outline" size="sm" asChild>
                   <a 
