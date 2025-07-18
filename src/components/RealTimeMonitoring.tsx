@@ -73,7 +73,9 @@ const RealTimeMonitoring = () => {
   const [selectedArtwork, setSelectedArtwork] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('RealTimeMonitoring: useEffect triggered, user:', user);
     if (user) {
+      console.log('RealTimeMonitoring: User authenticated, loading data...');
       loadAllData();
       
       // Set up real-time subscriptions
@@ -110,6 +112,7 @@ const RealTimeMonitoring = () => {
   }, [user]);
 
   const loadArtworks = async () => {
+    console.log('RealTimeMonitoring: loadArtworks called');
     try {
       const { data, error } = await supabase
         .from('artwork')
@@ -118,9 +121,10 @@ const RealTimeMonitoring = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
+      console.log('RealTimeMonitoring: Artworks loaded:', data?.length || 0);
       setArtworks(data || []);
     } catch (error: any) {
-      console.error('Error loading artworks:', error);
+      console.error('RealTimeMonitoring: Error loading artworks:', error);
     }
   };
 
@@ -161,17 +165,21 @@ const RealTimeMonitoring = () => {
   };
 
   const loadAllData = async () => {
+    console.log('RealTimeMonitoring: loadAllData called');
     setLoading(true);
     try {
+      console.log('RealTimeMonitoring: Starting data load...');
       await Promise.all([
         loadArtworks(),
         loadScans(),
         loadMatches()
       ]);
+      console.log('RealTimeMonitoring: Data loaded successfully');
     } catch (error) {
-      console.error('Error loading monitoring data:', error);
+      console.error('RealTimeMonitoring: Error loading monitoring data:', error);
     } finally {
       setLoading(false);
+      console.log('RealTimeMonitoring: Loading completed');
     }
   };
 
