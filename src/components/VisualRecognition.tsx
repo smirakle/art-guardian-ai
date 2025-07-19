@@ -13,6 +13,7 @@ import UserGuidance from "./UserGuidance";
 import EnhancedMonitoringOverview from "./monitoring/EnhancedMonitoringOverview";
 import MonitoringTestPanel from "./MonitoringTestPanel";
 import { watermarkService, InvisibleWatermark } from "@/lib/watermark";
+import { enhancedWatermarkService, EnhancedWatermarkOptions, EnhancedWatermarkSystem } from "@/lib/enhancedWatermark";
 import { Eye, Camera, Shield, HelpCircle, Key, Brain, TestTube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -300,13 +301,16 @@ const VisualRecognition = () => {
     newImages.forEach(async (image, index) => {
       try {
         // Apply enhanced watermarking for superior detection
-        const watermarkId = enhancedWatermarkService.generateWatermarkId(user.id);
+        const watermarkId = EnhancedWatermarkSystem.generateWatermarkId(user.id);
         
-        // Use enhanced watermarking system
-        const watermarkedBlob = await enhancedWatermarkService.applyWatermark(image.file, {
-          ...watermarkOptions,
+        // Use enhanced watermarking system with default options
+        const defaultWatermarkOptions: EnhancedWatermarkOptions = {
+          type: 'invisible',
+          protectionLevel: 'standard',
           text: watermarkId
-        });
+        };
+        
+        const watermarkedBlob = await enhancedWatermarkService.applyWatermark(image.file, defaultWatermarkOptions);
 
         // Convert watermarked blob back to file for analysis
         const watermarkedFile = new File([watermarkedBlob], image.file.name, {
