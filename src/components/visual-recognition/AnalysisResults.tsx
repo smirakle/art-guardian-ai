@@ -1,14 +1,19 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertTriangle, CheckCircle, Eye, Shield } from "lucide-react";
+import { AlertTriangle, CheckCircle, Eye, Shield, Download } from "lucide-react";
 import { AnalysisResult } from "@/types/visual-recognition";
+import { WatermarkProofGenerator, WatermarkProofData } from "@/lib/watermarkProof";
+import { toast } from "sonner";
 
 interface AnalysisResultsProps {
   results: AnalysisResult[];
+  fileName?: string;
+  artworkId?: string;
+  userId?: string;
 }
 
-const AnalysisResults = ({ results }: AnalysisResultsProps) => {
+const AnalysisResults = ({ results, fileName, artworkId, userId }: AnalysisResultsProps) => {
   const getRiskColor = (riskLevel: string) => {
     switch (riskLevel) {
       case 'high': return 'destructive';
@@ -23,6 +28,27 @@ const AnalysisResults = ({ results }: AnalysisResultsProps) => {
       case 'medium': return Eye;
       default: return CheckCircle;
     }
+  };
+
+  const downloadWatermarkProof = (result: AnalysisResult, format: 'pdf' | 'txt' = 'pdf') => {
+    if (!result.watermarkDetected) return;
+    
+    const proofData: WatermarkProofData = {
+      fileName: fileName || 'unknown_file',
+      watermarkId: result.watermarkId || 'DETECTED-PATTERN',
+      detectionTimestamp: new Date(),
+      confidence: result.confidence,
+      userId,
+      artworkId,
+      scanType: result.type
+    };
+
+    const blob = format === 'pdf' 
+      ? WatermarkProofGenerator.generateProofCertificate(proofData)
+      : WatermarkProofGenerator.generateTextProof(proofData);
+    
+    WatermarkProofGenerator.downloadProof(blob, fileName || 'watermark_detection', format);
+    toast.success(`Watermark proof ${format.toUpperCase()} downloaded successfully!`);
   };
 
   if (results.length === 0) return null;
@@ -88,6 +114,35 @@ const AnalysisResults = ({ results }: AnalysisResultsProps) => {
                     <span className="font-medium">{result.dateFound}</span>
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* Watermark proof download buttons */}
+          {result.watermarkDetected && (
+            <div className="space-y-2 pt-2 border-t border-border/30">
+              <div className="text-xs font-medium text-muted-foreground mb-2">
+                Watermark Detected - Download Proof:
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  onClick={() => downloadWatermarkProof(result, 'pdf')}
+                  className="flex-1"
+                >
+                  <Download className="w-3 h-3 mr-1" />
+                  PDF Certificate
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  onClick={() => downloadWatermarkProof(result, 'txt')}
+                  className="flex-1"
+                >
+                  <Download className="w-3 h-3 mr-1" />
+                  Text Proof
+                </Button>
               </div>
             </div>
           )}

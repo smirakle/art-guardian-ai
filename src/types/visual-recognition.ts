@@ -10,6 +10,8 @@ export interface AnalysisResult {
   dateFound?: string;
   poisonType?: 'adversarial' | 'backdoor' | 'data-poisoning' | 'trigger-based';
   detectionMethod?: string;
+  watermarkDetected?: boolean;
+  watermarkId?: string;
 }
 
 export interface ImageAnalysis {
@@ -20,4 +22,5 @@ export interface ImageAnalysis {
   progress: number;
   watermarkId?: string;
   isWatermarked?: boolean;
+  artworkId?: string;
 }

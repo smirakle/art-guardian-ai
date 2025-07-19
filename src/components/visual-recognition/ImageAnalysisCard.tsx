@@ -61,7 +61,11 @@ const ImageAnalysisCard = ({ image, index }: ImageAnalysisCardProps) => {
         )}
 
         {/* Results */}
-        <AnalysisResults results={image.results} />
+            <AnalysisResults 
+              results={image.results} 
+              fileName={image.file.name}
+              artworkId={image.artworkId}
+            />
       </CardContent>
     </Card>
   );
