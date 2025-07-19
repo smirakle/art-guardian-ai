@@ -299,13 +299,13 @@ const VisualRecognition = () => {
     const startIndex = images.length;
     newImages.forEach(async (image, index) => {
       try {
-        // Apply invisible watermarking for enhanced detection
-        const watermarkId = InvisibleWatermark.generateWatermarkId(user.id);
-        const watermarkedBlob = await watermarkService.applyWatermark(image.file, {
-          text: watermarkId,
-          opacity: 0.02,
-          frequency: 'medium',
-          position: 'center'
+        // Apply enhanced watermarking for superior detection
+        const watermarkId = enhancedWatermarkService.generateWatermarkId(user.id);
+        
+        // Use enhanced watermarking system
+        const watermarkedBlob = await enhancedWatermarkService.applyWatermark(image.file, {
+          ...watermarkOptions,
+          text: watermarkId
         });
 
         // Convert watermarked blob back to file for analysis
@@ -314,14 +314,16 @@ const VisualRecognition = () => {
           lastModified: Date.now()
         });
 
-        // Update the image with watermarked version
+        // Update the image with watermarked version and artwork ID
+        const artworkId = `temp-${Date.now()}-${index}`;
         setImages(prev => prev.map((img, idx) => 
           idx === startIndex + index 
             ? { 
                 ...img, 
                 file: watermarkedFile,
+                isWatermarked: true,
                 watermarkId,
-                isWatermarked: true
+                artworkId
               }
             : img
         ));
