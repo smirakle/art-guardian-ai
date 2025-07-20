@@ -565,20 +565,6 @@ const Upload = () => {
         
         <div data-upload-area>
           <VisualRecognition />
-          
-          <div className="mt-8">
-            <Alert className="bg-amber-50 border-amber-200">
-              <Info className="h-5 w-5 text-amber-600" />
-              <AlertDescription className="text-amber-800">
-                <p className="font-medium">Testing the Monitoring System</p>
-                <p className="text-sm mt-1">
-                  To test the monitoring system, go to the "Test System" tab above. Use our test copyrighted image 
-                  to train the system to detect known copyrighted content. The system can generate realistic mock results 
-                  even if API keys are not configured.
-                </p>
-              </AlertDescription>
-            </Alert>
-          </div>
         </div>
       </div>
     </div>
