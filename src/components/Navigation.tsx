@@ -28,10 +28,10 @@ const Navigation = () => {
     { path: "/contact", label: t('nav.contact'), icon: Mail }
   ];
 
-  // Only show admin for authenticated admin users
-  const adminItems = user && role === 'admin' ? [
+  // Show admin panel for everyone now
+  const adminItems = [
     { path: "/admin", label: "Admin Panel", icon: UserCog }
-  ] : [];
+  ];
 
   const allNavItems = [...adminItems, ...navItems];
 
