@@ -36,7 +36,6 @@ import {
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import MonitoringFlow from "@/components/MonitoringFlow";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import Testimonials from "@/components/Testimonials";
 
 const Index = () => {
   const { toast } = useToast();
@@ -1011,9 +1010,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-
-      {/* Trusted by Leading Artists Section */}
-      <Testimonials />
 
     </div>
   );
