@@ -75,7 +75,7 @@ const RealTimeMonitoring = () => {
   useEffect(() => {
     console.log('RealTimeMonitoring: useEffect triggered, user:', user);
     if (user) {
-      console.log('RealTimeMonitoring: User authenticated, loading data...');
+      console.log('RealTimeMonitoring: User authenticated, loading real data...');
       loadAllData();
       
       // Set up real-time subscriptions
@@ -108,6 +108,9 @@ const RealTimeMonitoring = () => {
         supabase.removeChannel(scansChannel);
         supabase.removeChannel(matchesChannel);
       };
+    } else {
+      console.log('RealTimeMonitoring: No user, loading demo data...');
+      loadDemoData();
     }
   }, [user]);
 
@@ -183,7 +186,149 @@ const RealTimeMonitoring = () => {
     }
   };
 
+  const loadDemoData = () => {
+    console.log('RealTimeMonitoring: Loading demo data...');
+    setLoading(true);
+    
+    // Demo artwork data
+    const demoArtworks: ArtworkData[] = [
+      {
+        id: 'demo-1',
+        title: 'Digital Portrait Collection',
+        category: 'Digital Art',
+        status: 'protected',
+        created_at: new Date().toISOString(),
+        file_paths: ['demo/portrait1.jpg', 'demo/portrait2.jpg']
+      },
+      {
+        id: 'demo-2', 
+        title: 'Abstract Landscape Series',
+        category: 'Photography',
+        status: 'scanning',
+        created_at: new Date(Date.now() - 86400000).toISOString(),
+        file_paths: ['demo/landscape1.jpg']
+      },
+      {
+        id: 'demo-3',
+        title: 'Cyberpunk Character Design',
+        category: 'Concept Art',
+        status: 'protected',
+        created_at: new Date(Date.now() - 172800000).toISOString(),
+        file_paths: ['demo/character1.png', 'demo/character2.png', 'demo/character3.png']
+      }
+    ];
+
+    // Demo scan data
+    const demoScans: ScanData[] = [
+      {
+        id: 'scan-1',
+        artwork_id: 'demo-1',
+        scan_type: 'deep',
+        status: 'running',
+        started_at: new Date(Date.now() - 3600000).toISOString(),
+        completed_at: null,
+        matches_found: 2,
+        scanned_sources: 750000,
+        total_sources: 1000000
+      },
+      {
+        id: 'scan-2',
+        artwork_id: 'demo-2',
+        scan_type: 'standard',
+        status: 'completed',
+        started_at: new Date(Date.now() - 86400000).toISOString(),
+        completed_at: new Date(Date.now() - 82800000).toISOString(),
+        matches_found: 0,
+        scanned_sources: 500000,
+        total_sources: 500000
+      },
+      {
+        id: 'scan-3',
+        artwork_id: 'demo-3',
+        scan_type: 'deep',
+        status: 'completed',
+        started_at: new Date(Date.now() - 172800000).toISOString(),
+        completed_at: new Date(Date.now() - 169200000).toISOString(),
+        matches_found: 3,
+        scanned_sources: 1000000,
+        total_sources: 1000000
+      }
+    ];
+
+    // Demo match data
+    const demoMatches: MatchData[] = [
+      {
+        id: 'match-1',
+        artwork_id: 'demo-1',
+        scan_id: 'scan-1',
+        source_url: 'https://example-marketplace.com/artwork/stolen-portrait',
+        source_domain: 'example-marketplace.com',
+        source_title: 'Digital Portrait for Sale',
+        match_confidence: 95.5,
+        match_type: 'exact',
+        threat_level: 'high',
+        detected_at: new Date(Date.now() - 1800000).toISOString(),
+        is_authorized: false,
+        thumbnail_url: null,
+        image_url: null,
+        description: 'Exact copy found on digital marketplace',
+        context: 'Listed for commercial sale without permission',
+        is_reviewed: false
+      },
+      {
+        id: 'match-2',
+        artwork_id: 'demo-1',
+        scan_id: 'scan-1',
+        source_url: 'https://social-platform.com/user123/post456',
+        source_domain: 'social-platform.com',
+        source_title: 'Amazing digital art I found!',
+        match_confidence: 88.2,
+        match_type: 'similar',
+        threat_level: 'medium',
+        detected_at: new Date(Date.now() - 3600000).toISOString(),
+        is_authorized: false,
+        thumbnail_url: null,
+        image_url: null,
+        description: 'Modified version shared on social media',
+        context: 'User claiming as their own work',
+        is_reviewed: false
+      },
+      {
+        id: 'match-3',
+        artwork_id: 'demo-3',
+        scan_id: 'scan-3',
+        source_url: 'https://design-blog.net/cyberpunk-inspiration',
+        source_domain: 'design-blog.net',
+        source_title: 'Cyberpunk Character Inspiration',
+        match_confidence: 92.1,
+        match_type: 'exact',
+        threat_level: 'high',
+        detected_at: new Date(Date.now() - 172800000).toISOString(),
+        is_authorized: false,
+        thumbnail_url: null,
+        image_url: null,
+        description: 'Used in blog post without attribution',
+        context: 'Commercial blog using artwork without permission',
+        is_reviewed: true
+      }
+    ];
+
+    setArtworks(demoArtworks);
+    setScans(demoScans);
+    setMatches(demoMatches);
+    setLoading(false);
+    console.log('RealTimeMonitoring: Demo data loaded successfully');
+  };
+
   const startNewScan = async (artworkId: string) => {
+    if (!user) {
+      toast({
+        title: "Demo Mode",
+        description: "Sign in to access real scanning functionality",
+      });
+      return;
+    }
+    
     try {
       // Find the artwork
       const artwork = artworks.find(a => a.id === artworkId);
@@ -257,6 +402,14 @@ const RealTimeMonitoring = () => {
   };
 
   const deleteArtwork = async (artworkId: string) => {
+    if (!user) {
+      toast({
+        title: "Demo Mode",
+        description: "Sign in to access real management functionality",
+      });
+      return;
+    }
+    
     try {
       const artwork = artworks.find(a => a.id === artworkId);
       if (!artwork) {

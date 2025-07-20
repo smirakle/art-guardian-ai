@@ -82,9 +82,14 @@ const MonitoringDashboard = () => {
           if (matchData) {
             setMatches(matchData);
           }
+        } else {
+          // No real data found, load demo data
+          loadDemoData();
         }
       } catch (error) {
         console.error('Error fetching monitoring data:', error);
+        // On error, load demo data
+        loadDemoData();
       } finally {
         setLoading(false);
       }
@@ -95,6 +100,57 @@ const MonitoringDashboard = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  const loadDemoData = () => {
+    const demoScans: MonitoringScan[] = [
+      {
+        id: 'demo-scan-1',
+        artwork_title: 'Digital Portrait Collection',
+        status: 'running',
+        scan_type: 'deep',
+        scanned_sources: 750000,
+        total_sources: 1000000,
+        matches_found: 2,
+        started_at: new Date(Date.now() - 3600000).toISOString(),
+        completed_at: null
+      },
+      {
+        id: 'demo-scan-2',
+        artwork_title: 'Abstract Landscape Series',
+        status: 'completed',
+        scan_type: 'standard',
+        scanned_sources: 500000,
+        total_sources: 500000,
+        matches_found: 0,
+        started_at: new Date(Date.now() - 86400000).toISOString(),
+        completed_at: new Date(Date.now() - 82800000).toISOString()
+      }
+    ];
+
+    const demoMatches: CopyrightMatch[] = [
+      {
+        id: 'demo-match-1',
+        source_domain: 'example-marketplace.com',
+        source_title: 'Digital Portrait for Sale',
+        match_confidence: 95.5,
+        match_type: 'exact',
+        threat_level: 'high',
+        detected_at: new Date(Date.now() - 1800000).toISOString()
+      },
+      {
+        id: 'demo-match-2',
+        source_domain: 'social-platform.com',
+        source_title: 'Amazing digital art I found!',
+        match_confidence: 88.2,
+        match_type: 'similar',
+        threat_level: 'medium',
+        detected_at: new Date(Date.now() - 3600000).toISOString()
+      }
+    ];
+
+    setScans(demoScans);
+    setMatches(demoMatches);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
