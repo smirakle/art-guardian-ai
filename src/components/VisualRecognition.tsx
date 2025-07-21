@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useImageAnalysis } from "@/hooks/useImageAnalysis";
-import { ImageAnalysis } from "@/types/visual-recognition";
+import { ImageAnalysis, AnalysisResult } from "@/types/visual-recognition";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import UploadArea from "./visual-recognition/UploadArea";
@@ -198,35 +198,85 @@ const VisualRecognition = () => {
 
       setImages(prev => [...prev, urlAnalysis]);
 
-      // Analyze URL using actual AI service
-      setTimeout(() => {
-        setImages(prev => prev.map(img => 
-          img.preview === url 
-            ? {
-                ...img,
-                results: [
-                  { 
-                    type: 'classification',
-                    label: isVideoContent ? 'Video Link' : 'Article Content',
-                    confidence: 95,
-                    description: isVideoContent ? 'Social media video link detected' : 'Online article or web content detected',
-                    riskLevel: 'low' as const,
-                    suggestions: ['Monitor for unauthorized use', 'Enable notifications for matches', 'Track content plagiarism']
-                  },
-                  {
-                    type: 'similarity',
-                    label: isVideoContent ? 'Social Media Content' : 'Web Article Content',
-                    confidence: 88,
-                    description: 'Content suitable for monitoring across platforms and websites',
-                    riskLevel: 'medium' as const,
-                    suggestions: ['Set up comprehensive monitoring', 'Check usage rights', 'Monitor for content scraping']
-                  }
-                ],
-                isAnalyzing: false,
-                progress: 100
-              }
-            : img
-        ));
+      // Analyze URL using enhanced article analysis
+      setTimeout(async () => {
+        try {
+          // Call the article analysis edge function
+          const { data: analysisResult, error: analysisError } = await supabase.functions.invoke('analyze-article-content', {
+            body: {
+              url: url,
+              artworkId: artwork.id
+            }
+          });
+
+          if (analysisError) {
+            console.error('Article analysis error:', analysisError);
+          }
+
+          const analysis = analysisResult?.analysis;
+          const results: AnalysisResult[] = analysis ? [
+            { 
+              type: 'classification' as const,
+              label: analysis.contentType || (isVideoContent ? 'Video Link' : 'Article Content'),
+              confidence: analysis.confidence || 95,
+              description: analysis.title || (isVideoContent ? 'Social media video link detected' : 'Online article or web content detected'),
+              riskLevel: (analysis.copyrightRisk || 'low') as 'low' | 'medium' | 'high',
+              suggestions: analysis.suggestions || ['Monitor for unauthorized use', 'Enable notifications for matches', 'Track content plagiarism']
+            },
+            {
+              type: 'similarity' as const,
+              label: `Content Analysis (${analysis.wordCount || 0} words)`,
+              confidence: Math.min(analysis.confidence || 88, 95),
+              description: `${analysis.quality || 'medium'} quality content with ${analysis.readingTime || 1} min reading time`,
+              riskLevel: (analysis.copyrightRisk || 'medium') as 'low' | 'medium' | 'high',
+              suggestions: analysis.suggestions?.slice(0, 3) || ['Set up comprehensive monitoring', 'Check usage rights', 'Monitor for content scraping']
+            }
+          ] : [
+            { 
+              type: 'classification' as const,
+              label: isVideoContent ? 'Video Link' : 'Article Content',
+              confidence: 95,
+              description: isVideoContent ? 'Social media video link detected' : 'Online article or web content detected',
+              riskLevel: 'low' as const,
+              suggestions: ['Monitor for unauthorized use', 'Enable notifications for matches', 'Track content plagiarism']
+            }
+          ];
+
+          setImages(prev => prev.map(img => 
+            img.preview === url 
+              ? {
+                  ...img,
+                  results,
+                  isAnalyzing: false,
+                  progress: 100
+                }
+              : img
+          ));
+        } catch (error) {
+          console.error('Error during article analysis:', error);
+          // Fallback to basic analysis
+          const fallbackResults: AnalysisResult[] = [
+            { 
+              type: 'classification' as const,
+              label: isVideoContent ? 'Video Link' : 'Article Content',
+              confidence: 95,
+              description: isVideoContent ? 'Social media video link detected' : 'Online article or web content detected',
+              riskLevel: 'low' as const,
+              suggestions: ['Monitor for unauthorized use', 'Enable notifications for matches', 'Track content plagiarism']
+            }
+          ];
+
+          setImages(prev => prev.map(img => 
+            img.preview === url 
+              ? {
+                  ...img,
+                  results: fallbackResults,
+                  isAnalyzing: false,
+                  progress: 100
+                }
+              : img
+          ));
+        }
       }, 2000);
 
       // Create monitoring scan for the URL with proper artwork ID
