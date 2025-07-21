@@ -14,8 +14,8 @@ import {
   FileImage
 } from "lucide-react";
 import DeepfakeReporter from "@/components/DeepfakeReporter";
-import CopyrightMatches from "@/components/monitoring/CopyrightMatches";
 import RealTimeDeepfakeMonitor from "@/components/RealTimeDeepfakeMonitor";
+import RecentDeepfakeDetections from "@/components/RecentDeepfakeDetections";
 
 const DeepfakeDetection = () => {
   const [activeTab, setActiveTab] = useState("detector");
@@ -135,7 +135,7 @@ const DeepfakeDetection = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <CopyrightMatches />
+                <RecentDeepfakeDetections />
               </CardContent>
             </Card>
           </TabsContent>
