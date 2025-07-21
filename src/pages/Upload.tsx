@@ -86,17 +86,10 @@ const Upload = () => {
   };
 
   const validateUrl = (url: string): boolean => {
-    const supportedDomains = [
-      'youtube.com', 'youtu.be', 'm.youtube.com',
-      'tiktok.com', 'vm.tiktok.com', 'vt.tiktok.com',
-      'instagram.com', 'instagr.am',
-      'facebook.com', 'fb.watch', 'm.facebook.com',
-      'twitter.com', 'x.com', 't.co'
-    ];
-    
     try {
       const urlObj = new URL(url);
-      return supportedDomains.some(domain => urlObj.hostname.includes(domain));
+      // Allow all valid HTTP/HTTPS URLs for articles and other content
+      return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
     } catch {
       return false;
     }
@@ -108,13 +101,13 @@ const Upload = () => {
         setUrls([...urls, urlInput.trim()]);
         setUrlInput("");
         toast({
-          title: "URL Added",
-          description: "Video link has been added for protection",
+          title: "URL Added", 
+          description: "Article or content link has been added for protection",
         });
       } else {
         toast({
           title: "Invalid URL",
-          description: "Please enter a valid YouTube, TikTok, Instagram, Facebook, or X video link",
+          description: "Please enter a valid HTTP or HTTPS URL",
           variant: "destructive",
         });
       }

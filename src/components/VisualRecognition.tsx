@@ -130,18 +130,10 @@ const VisualRecognition = () => {
   };
 
   const handleUrlUpload = async (url: string) => {
-    const supportedDomains = [
-      'youtube.com', 'youtu.be', 'm.youtube.com',
-      'tiktok.com', 'vm.tiktok.com', 'vt.tiktok.com',
-      'instagram.com', 'instagr.am',
-      'facebook.com', 'fb.watch', 'm.facebook.com',
-      'twitter.com', 'x.com', 't.co'
-    ];
-    
     const validateUrl = (url: string): boolean => {
       try {
         const urlObj = new URL(url);
-        return supportedDomains.some(domain => urlObj.hostname.includes(domain));
+        return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
       } catch {
         return false;
       }
@@ -150,7 +142,7 @@ const VisualRecognition = () => {
     if (!validateUrl(url)) {
       toast({
         title: "Invalid URL",
-        description: "Please enter a valid YouTube, TikTok, Instagram, Facebook, or X video link",
+        description: "Please enter a valid HTTP or HTTPS URL",
         variant: "destructive",
       });
       return;
@@ -167,11 +159,15 @@ const VisualRecognition = () => {
         return;
       }
 
+      // Determine content type based on URL
+      const hostname = new URL(url).hostname;
+      const isVideoContent = ['youtube.com', 'youtu.be', 'tiktok.com', 'instagram.com', 'facebook.com', 'twitter.com', 'x.com'].some(domain => hostname.includes(domain));
+      
       // Create artwork record for URL
       const urlArtwork = {
-        title: `Video Link - ${new URL(url).hostname}`,
-        description: `Video content from ${url}`,
-        category: 'video',
+        title: `${isVideoContent ? 'Video' : 'Article'} - ${hostname}`,
+        description: `${isVideoContent ? 'Video' : 'Article'} content from ${url}`,
+        category: isVideoContent ? 'video' : 'article',
         user_id: user.id,
         file_paths: [url], // Store the URL as a file path
         status: 'monitoring'
@@ -211,19 +207,19 @@ const VisualRecognition = () => {
                 results: [
                   { 
                     type: 'classification',
-                    label: 'Video Link',
+                    label: isVideoContent ? 'Video Link' : 'Article Content',
                     confidence: 95,
-                    description: 'Social media video link detected',
+                    description: isVideoContent ? 'Social media video link detected' : 'Online article or web content detected',
                     riskLevel: 'low' as const,
-                    suggestions: ['Monitor for unauthorized use', 'Enable notifications for matches']
+                    suggestions: ['Monitor for unauthorized use', 'Enable notifications for matches', 'Track content plagiarism']
                   },
                   {
                     type: 'similarity',
-                    label: 'Social Media Content',
+                    label: isVideoContent ? 'Social Media Content' : 'Web Article Content',
                     confidence: 88,
-                    description: 'Content suitable for monitoring across platforms',
+                    description: 'Content suitable for monitoring across platforms and websites',
                     riskLevel: 'medium' as const,
-                    suggestions: ['Set up comprehensive monitoring', 'Check usage rights']
+                    suggestions: ['Set up comprehensive monitoring', 'Check usage rights', 'Monitor for content scraping']
                   }
                 ],
                 isAnalyzing: false,
@@ -243,8 +239,8 @@ const VisualRecognition = () => {
       });
 
       toast({
-        title: "Video Link Added",
-        description: "Video link has been added for analysis and monitoring",
+        title: `${isVideoContent ? 'Video' : 'Article'} Link Added`,
+        description: `${isVideoContent ? 'Video' : 'Article'} content has been added for analysis and monitoring`,
       });
 
     } catch (error) {

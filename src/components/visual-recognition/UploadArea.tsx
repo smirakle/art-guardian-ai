@@ -49,7 +49,7 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
             <div className="space-y-3">
               <div className="flex gap-2">
                 <Input
-                  placeholder="Paste YouTube, TikTok, Instagram, Facebook, or X video link..."
+                  placeholder="Paste article URL, blog post, or any web content link..."
                   value={urlInput}
                   onChange={(e) => setUrlInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleUrlSubmit()}
@@ -119,7 +119,7 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
           <div className="space-y-2">
             <div className="flex gap-2">
               <Input
-                placeholder="Paste video link from YouTube, TikTok, Instagram, Facebook, or X..."
+                placeholder="Paste article URL, blog post, or any web content link..."
                 value={urlInput}
                 onChange={(e) => setUrlInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleUrlSubmit()}
