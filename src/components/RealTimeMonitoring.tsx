@@ -209,7 +209,7 @@ const RealTimeMonitoring = () => {
         .from('monitoring_scans')
         .insert({
           artwork_id: artworkId,
-          scan_type: 'comprehensive',
+          scan_type: 'deep',
           status: 'running',
           started_at: new Date().toISOString(),
           total_sources: 2500000 // Increased for dark web + surface web coverage
