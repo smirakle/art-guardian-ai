@@ -292,8 +292,8 @@ const DeepfakeReporter = () => {
                 
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Threat Level:</span>
-                  <Badge variant={getThreatColor(analysis.threat_level)}>
-                    {analysis.threat_level.toUpperCase()}
+                  <Badge variant={getThreatColor(analysis.threat_level || 'low')}>
+                    {(analysis.threat_level || 'low').toUpperCase()}
                   </Badge>
                 </div>
 
