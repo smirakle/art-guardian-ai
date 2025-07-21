@@ -313,6 +313,75 @@ export type Database = {
           },
         ]
       }
+      deepfake_matches: {
+        Row: {
+          claimed_location: string | null
+          claimed_time: string | null
+          context: Json | null
+          created_at: string
+          detected_at: string
+          detection_confidence: number
+          facial_artifacts: string[] | null
+          id: string
+          image_url: string
+          is_reviewed: boolean | null
+          manipulation_type: string
+          metadata_suspicious: boolean | null
+          scan_type: string
+          source_domain: string | null
+          source_title: string | null
+          source_type: string
+          source_url: string
+          temporal_inconsistency: boolean | null
+          threat_level: string
+          thumbnail_url: string | null
+        }
+        Insert: {
+          claimed_location?: string | null
+          claimed_time?: string | null
+          context?: Json | null
+          created_at?: string
+          detected_at?: string
+          detection_confidence: number
+          facial_artifacts?: string[] | null
+          id?: string
+          image_url: string
+          is_reviewed?: boolean | null
+          manipulation_type: string
+          metadata_suspicious?: boolean | null
+          scan_type?: string
+          source_domain?: string | null
+          source_title?: string | null
+          source_type?: string
+          source_url: string
+          temporal_inconsistency?: boolean | null
+          threat_level?: string
+          thumbnail_url?: string | null
+        }
+        Update: {
+          claimed_location?: string | null
+          claimed_time?: string | null
+          context?: Json | null
+          created_at?: string
+          detected_at?: string
+          detection_confidence?: number
+          facial_artifacts?: string[] | null
+          id?: string
+          image_url?: string
+          is_reviewed?: boolean | null
+          manipulation_type?: string
+          metadata_suspicious?: boolean | null
+          scan_type?: string
+          source_domain?: string | null
+          source_title?: string | null
+          source_type?: string
+          source_url?: string
+          temporal_inconsistency?: boolean | null
+          threat_level?: string
+          thumbnail_url?: string | null
+        }
+        Relationships: []
+      }
       dmca_notices: {
         Row: {
           artwork_id: string
@@ -634,6 +703,45 @@ export type Database = {
           updated_at?: string
           user_id?: string
           username?: string | null
+        }
+        Relationships: []
+      }
+      realtime_monitoring_stats: {
+        Row: {
+          dark_web_scans: number
+          deepfakes_detected: number
+          high_threat_count: number
+          id: string
+          low_threat_count: number
+          medium_threat_count: number
+          scan_type: string
+          sources_scanned: number
+          surface_web_scans: number
+          timestamp: string
+        }
+        Insert: {
+          dark_web_scans?: number
+          deepfakes_detected?: number
+          high_threat_count?: number
+          id?: string
+          low_threat_count?: number
+          medium_threat_count?: number
+          scan_type?: string
+          sources_scanned?: number
+          surface_web_scans?: number
+          timestamp?: string
+        }
+        Update: {
+          dark_web_scans?: number
+          deepfakes_detected?: number
+          high_threat_count?: number
+          id?: string
+          low_threat_count?: number
+          medium_threat_count?: number
+          scan_type?: string
+          sources_scanned?: number
+          surface_web_scans?: number
+          timestamp?: string
         }
         Relationships: []
       }

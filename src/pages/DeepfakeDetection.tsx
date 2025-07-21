@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import DeepfakeReporter from "@/components/DeepfakeReporter";
 import CopyrightMatches from "@/components/monitoring/CopyrightMatches";
+import RealTimeDeepfakeMonitor from "@/components/RealTimeDeepfakeMonitor";
 
 const DeepfakeDetection = () => {
   const [activeTab, setActiveTab] = useState("detector");
@@ -86,11 +87,16 @@ const DeepfakeDetection = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 h-auto">
             <TabsTrigger value="detector" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm p-2 sm:p-3">
               <Brain className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Deepfake Detector</span>
-              <span className="sm:hidden">Detect</span>
+              <span className="hidden sm:inline">Single Analysis</span>
+              <span className="sm:hidden">Analyze</span>
+            </TabsTrigger>
+            <TabsTrigger value="realtime" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm p-2 sm:p-3">
+              <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Real-Time Monitor</span>
+              <span className="sm:hidden">Live</span>
             </TabsTrigger>
             <TabsTrigger value="matches" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm p-2 sm:p-3">
               <AlertTriangle className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -99,18 +105,22 @@ const DeepfakeDetection = () => {
             </TabsTrigger>
             <TabsTrigger value="intelligence" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm p-2 sm:p-3">
               <Search className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Threat Intelligence</span>
+              <span className="hidden sm:inline">Threat Intel</span>
               <span className="sm:hidden">Intel</span>
             </TabsTrigger>
             <TabsTrigger value="education" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm p-2 sm:p-3">
               <Shield className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Prevention Guide</span>
+              <span className="hidden sm:inline">Protection</span>
               <span className="sm:hidden">Guide</span>
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="detector" className="space-y-6">
             <DeepfakeReporter />
+          </TabsContent>
+
+          <TabsContent value="realtime" className="space-y-6">
+            <RealTimeDeepfakeMonitor />
           </TabsContent>
 
           <TabsContent value="matches" className="space-y-6">
