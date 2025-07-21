@@ -34,100 +34,198 @@ const LiveFeed = ({ isActive }: LiveFeedProps) => {
   const [feed, setFeed] = useState<FeedItem[]>([]);
 
   useEffect(() => {
-    if (!isActive || !user) return;
+    if (!isActive) return;
 
-    const fetchRealTimeData = async () => {
+    const loadInitialData = async () => {
       try {
-        // Generate realistic high-volume monitoring activity
-        const platforms = ['Instagram', 'TikTok', 'Pinterest', 'DeviantArt', 'Behance', 'Dribbble', 'ArtStation', 'Etsy', 'Amazon', 'eBay', 'Alibaba', 'Facebook', 'Twitter', 'YouTube', 'Discord', 'Reddit', 'Dark Web Markets', 'Telegram', 'WeChat', 'VK'];
-        const scanTypes = ['Deep Web Scan', 'Surface Web Crawl', 'Social Media Sweep', 'Marketplace Monitor', 'Image Recognition', 'Blockchain Verification', 'Reverse Image Search', 'AI Content Detection'];
-        const locations = ['New York', 'London', 'Tokyo', 'Sydney', 'Mumbai', 'São Paulo', 'Moscow', 'Berlin', 'Paris', 'Seoul', 'Shanghai', 'Singapore', 'Dubai', 'Los Angeles', 'Toronto'];
-        
         const items: FeedItem[] = [];
-        const now = new Date();
-        
-        // Generate real-time activity (simulated high-volume)
-        for (let i = 0; i < 25; i++) {
-          const timestamp = new Date(now.getTime() - (i * 2000) - Math.random() * 3000);
-          const platform = platforms[Math.floor(Math.random() * platforms.length)];
-          const scanType = scanTypes[Math.floor(Math.random() * scanTypes.length)];
-          const location = locations[Math.floor(Math.random() * locations.length)];
-          const sources = Math.floor(Math.random() * 50000) + 10000;
-          const matches = Math.floor(Math.random() * 20);
-          
-          if (Math.random() > 0.6) {
-            items.push({
-              id: `scan-${i}-${timestamp.getTime()}`,
-              timestamp,
-              type: 'scan',
-              message: `${scanType} completed across ${sources.toLocaleString()} sources`,
-              details: `${matches} potential matches detected • ${location} datacenter`,
-              platform
-            });
-          } else if (Math.random() > 0.7) {
-            items.push({
-              id: `match-${i}-${timestamp.getTime()}`,
-              timestamp,
-              type: 'match',
-              message: `High-confidence match detected on ${platform}`,
-              details: `${Math.floor(Math.random() * 30 + 70)}% similarity • Unauthorized use suspected`,
-              platform
-            });
-          } else if (Math.random() > 0.85) {
-            items.push({
-              id: `alert-${i}-${timestamp.getTime()}`,
-              timestamp,
-              type: 'alert',
-              message: `Copyright violation alert triggered`,
-              details: `Automated takedown request initiated • ${platform}`,
-              platform
-            });
-          } else {
-            items.push({
-              id: `upload-${i}-${timestamp.getTime()}`,
-              timestamp,
-              type: 'upload',
-              message: `New artwork registered for protection`,
-              details: `Blockchain certificate generated • 24/7 monitoring activated`,
-            });
-          }
-        }
 
-        // Fetch real user data and integrate
+        // Load recent artwork uploads
         const { data: artworks } = await supabase
           .from('artwork')
-          .select('id, title, created_at')
-          .eq('user_id', user.id)
+          .select('id, title, created_at, user_id')
           .order('created_at', { ascending: false })
-          .limit(3);
+          .limit(10);
 
-        if (artworks && artworks.length > 0) {
+        if (artworks) {
           artworks.forEach(artwork => {
             items.push({
-              id: `user-upload-${artwork.id}`,
+              id: `artwork-${artwork.id}`,
               timestamp: new Date(artwork.created_at),
               type: 'upload',
-              message: `Your artwork "${artwork.title}" is actively protected`,
-              details: `Currently monitoring 2,000,000+ sources worldwide`,
+              message: `Artwork "${artwork.title}" uploaded for protection`,
+              details: 'Blockchain registration and monitoring activated',
+            });
+          });
+        }
+
+        // Load recent monitoring scans
+        const { data: scans } = await supabase
+          .from('monitoring_scans')
+          .select(`
+            id, 
+            status, 
+            scan_type, 
+            created_at, 
+            total_sources,
+            scanned_sources,
+            matches_found,
+            artwork:artwork_id (title)
+          `)
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        if (scans) {
+          scans.forEach(scan => {
+            const progress = scan.total_sources ? Math.round((scan.scanned_sources / scan.total_sources) * 100) : 0;
+            items.push({
+              id: `scan-${scan.id}`,
+              timestamp: new Date(scan.created_at),
+              type: 'scan',
+              message: `${scan.scan_type || 'Monitoring scan'} ${scan.status}`,
+              details: `Artwork: "${scan.artwork?.title || 'Unknown'}" • Progress: ${progress}% • ${scan.matches_found || 0} matches found`,
+            });
+          });
+        }
+
+        // Load recent copyright matches
+        const { data: matches } = await supabase
+          .from('copyright_matches')
+          .select('id, source_domain, source_title, match_confidence, threat_level, detected_at')
+          .order('detected_at', { ascending: false })
+          .limit(10);
+
+        if (matches) {
+          matches.forEach(match => {
+            items.push({
+              id: `match-${match.id}`,
+              timestamp: new Date(match.detected_at),
+              type: 'match',
+              message: `Copyright match detected on ${match.source_domain}`,
+              details: `${match.match_confidence}% confidence • ${match.threat_level} threat`,
+              platform: match.source_domain,
+            });
+          });
+        }
+
+        // Load recent alerts
+        const { data: alerts } = await supabase
+          .from('monitoring_alerts')
+          .select('id, alert_type, title, message, created_at')
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        if (alerts) {
+          alerts.forEach(alert => {
+            items.push({
+              id: `alert-${alert.id}`,
+              timestamp: new Date(alert.created_at),
+              type: 'alert',
+              message: alert.title || `${alert.alert_type} alert`,
+              details: alert.message || 'Copyright protection alert',
             });
           });
         }
 
         // Sort by timestamp and keep most recent
         items.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
-        setFeed(items.slice(0, 30));
+        setFeed(items.slice(0, 50));
 
       } catch (error) {
-        console.error('Error fetching real-time data:', error);
+        console.error('Error loading initial data:', error);
       }
     };
 
-    fetchRealTimeData();
-    // Update every 2 seconds for real-time feel
-    const interval = setInterval(fetchRealTimeData, 2000);
+    loadInitialData();
 
-    return () => clearInterval(interval);
-  }, [isActive, user]);
+    // Set up real-time subscriptions
+    const artworkChannel = supabase
+      .channel('artwork-changes')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'artwork'
+      }, (payload) => {
+        const artwork = payload.new as any;
+        const newItem: FeedItem = {
+          id: `artwork-${artwork.id}`,
+          timestamp: new Date(artwork.created_at),
+          type: 'upload',
+          message: `Artwork "${artwork.title}" uploaded for protection`,
+          details: 'Blockchain registration and monitoring activated',
+        };
+        setFeed(prev => [newItem, ...prev.slice(0, 49)]);
+      })
+      .subscribe();
+
+    const scanChannel = supabase
+      .channel('scan-changes')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'monitoring_scans'
+      }, (payload) => {
+        const scan = (payload.new || payload.old) as any;
+        if (!scan) return;
+        
+        const progress = scan.total_sources ? Math.round((scan.scanned_sources / scan.total_sources) * 100) : 0;
+        const newItem: FeedItem = {
+          id: `scan-${scan.id}-${Date.now()}`,
+          timestamp: new Date(),
+          type: 'scan',
+          message: `${scan.scan_type || 'Monitoring scan'} ${scan.status}`,
+          details: `Progress: ${progress}% • ${scan.matches_found || 0} matches found`,
+        };
+        setFeed(prev => [newItem, ...prev.slice(0, 49)]);
+      })
+      .subscribe();
+
+    const matchChannel = supabase
+      .channel('match-changes')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'copyright_matches'
+      }, (payload) => {
+        const match = payload.new as any;
+        const newItem: FeedItem = {
+          id: `match-${match.id}`,
+          timestamp: new Date(match.detected_at),
+          type: 'match',
+          message: `Copyright match detected on ${match.source_domain}`,
+          details: `${match.match_confidence}% confidence • ${match.threat_level} threat`,
+          platform: match.source_domain,
+        };
+        setFeed(prev => [newItem, ...prev.slice(0, 49)]);
+      })
+      .subscribe();
+
+    const alertChannel = supabase
+      .channel('alert-changes')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'monitoring_alerts'
+      }, (payload) => {
+        const alert = payload.new as any;
+        const newItem: FeedItem = {
+          id: `alert-${alert.id}`,
+          timestamp: new Date(alert.created_at),
+          type: 'alert',
+          message: alert.title || `${alert.alert_type} alert`,
+          details: alert.message || 'Copyright protection alert',
+        };
+        setFeed(prev => [newItem, ...prev.slice(0, 49)]);
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(artworkChannel);
+      supabase.removeChannel(scanChannel);
+      supabase.removeChannel(matchChannel);
+      supabase.removeChannel(alertChannel);
+    };
+  }, [isActive]);
 
   const getIcon = (type: FeedItem['type']) => {
     switch (type) {
@@ -177,6 +275,14 @@ const LiveFeed = ({ isActive }: LiveFeedProps) => {
                 <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
                 <p>Monitoring is paused</p>
                 <p className="text-sm">Resume monitoring to see live activity</p>
+              </div>
+            )}
+            
+            {feed.length === 0 && isActive && (
+              <div className="text-center py-8 text-muted-foreground">
+                <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p>No recent activity</p>
+                <p className="text-sm">Upload artwork or start monitoring to see live events</p>
               </div>
             )}
             
