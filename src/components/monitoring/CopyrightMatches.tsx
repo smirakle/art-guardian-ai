@@ -63,56 +63,56 @@ export default function CopyrightMatches() {
       {matches.map((match) => (
         <Card key={match.id}>
           <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Globe className="w-5 h-5 text-muted-foreground" />
-                <span className="text-lg">
+            <CardTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground flex-shrink-0" />
+                <span className="text-base sm:text-lg truncate">
                   {match.source_title || "Untitled Source"}
                 </span>
               </div>
-              <Badge variant={match.match_confidence > 90 ? "destructive" : "secondary"}>
+              <Badge variant={match.match_confidence > 90 ? "destructive" : "secondary"} className="text-xs self-start sm:self-center">
                 {Math.round(match.match_confidence)}% match
               </Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               {match.thumbnail_url && (
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 mx-auto sm:mx-0">
                   <img 
                     src={match.thumbnail_url} 
                     alt={match.source_title || "Image match"} 
-                    className="w-24 h-24 object-cover rounded-md border"
+                    className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-md border"
                   />
                 </div>
               )}
               <div className="flex-1">
                 {match.description && (
-                  <p className="text-sm text-muted-foreground mb-3">{match.description}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-3">{match.description}</p>
                 )}
-                <div className="flex flex-wrap gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <p className="text-sm font-medium">Found on:</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs sm:text-sm font-medium">Found on:</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground break-words">
                       {match.source_domain || "Unknown domain"}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm font-medium">Detected:</p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(match.detected_at).toLocaleString()}
+                    <p className="text-xs sm:text-sm font-medium">Detected:</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {new Date(match.detected_at).toLocaleDateString()} {new Date(match.detected_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm font-medium">Type:</p>
-                    <p className="text-sm text-muted-foreground capitalize">
+                    <p className="text-xs sm:text-sm font-medium">Type:</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground capitalize">
                       {match.match_type}
                     </p>
                   </div>
                   {match.threat_level && (
                     <div>
-                      <p className="text-sm font-medium">Threat Level:</p>
-                      <Badge variant={match.threat_level === "high" ? "destructive" : "secondary"}>
+                      <p className="text-xs sm:text-sm font-medium">Threat Level:</p>
+                      <Badge variant={match.threat_level === "high" ? "destructive" : "secondary"} className="text-xs">
                         {match.threat_level}
                       </Badge>
                     </div>
@@ -120,23 +120,23 @@ export default function CopyrightMatches() {
                 </div>
               </div>
             </div>
-            <div className="flex justify-end gap-2">
+            <div className="flex flex-col sm:flex-row justify-end gap-2">
               <DMCAFormDialog 
                 matchId={match.id}
                 sourceUrl={match.source_url}
                 sourceTitle={match.source_title || "Untitled Source"}
               />
               {match.source_url && (
-                <Button variant="outline" size="sm" asChild>
+                <Button variant="outline" size="sm" asChild className="w-full sm:w-auto">
                   <a 
                     href={match.source_url} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2"
+                    className="flex items-center justify-center gap-2"
                   >
-                    <Link2 className="w-4 h-4" />
-                    View Source
-                    <ArrowRight className="w-4 h-4" />
+                    <Link2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="text-xs sm:text-sm">View Source</span>
+                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
                   </a>
                 </Button>
               )}

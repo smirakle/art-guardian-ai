@@ -409,29 +409,31 @@ const RealTimeMonitoring = () => {
                 </div>
               ) : (
                 artworks.map((artwork) => (
-                  <div key={artwork.id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div>
-                      <h4 className="font-medium">{artwork.title}</h4>
-                      <p className="text-sm text-muted-foreground">
+                  <div key={artwork.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 border rounded-lg">
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-sm sm:text-base truncate">{artwork.title}</h4>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         {artwork.category} • {artwork.file_paths.length} file(s)
                       </p>
-                      <Badge variant="outline" className="mt-1">
+                      <Badge variant="outline" className="mt-1 text-xs">
                         {artwork.status}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-shrink-0">
                       <Button 
                         variant="outline" 
                         size="sm"
                         onClick={() => startNewScan(artwork.id)}
+                        className="text-xs sm:text-sm"
                       >
-                        <Scan className="w-4 h-4 mr-2" />
-                        New Scan
+                        <Scan className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                        <span className="hidden sm:inline">New Scan</span>
+                        <span className="sm:hidden">Scan</span>
                       </Button>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm">
-                            <MoreVertical className="w-4 h-4" />
+                            <MoreVertical className="w-3 h-3 sm:w-4 sm:h-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
@@ -490,11 +492,11 @@ const RealTimeMonitoring = () => {
                     : 0;
 
                   return (
-                    <div key={scan.id} className="p-4 border rounded-lg space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-medium">{artwork?.title || 'Unknown Artwork'}</h4>
-                          <p className="text-sm text-muted-foreground">
+                    <div key={scan.id} className="p-3 sm:p-4 border rounded-lg space-y-3">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-sm sm:text-base truncate">{artwork?.title || 'Unknown Artwork'}</h4>
+                          <p className="text-xs sm:text-sm text-muted-foreground">
                             {scan.scan_type} scan • Started {new Date(scan.started_at).toLocaleDateString()}
                           </p>
                         </div>

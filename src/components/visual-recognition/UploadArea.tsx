@@ -46,16 +46,17 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
               Upload files, add links, or paste text content to start AI-powered copyright analysis and monitoring
             </p>
             </div>
-            <div className="space-y-3">
-              <div className="flex gap-2">
+            <div className="space-y-3 w-full">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Input
                   placeholder="Paste article URL, blog post, or any web content link..."
                   value={urlInput}
                   onChange={(e) => setUrlInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleUrlSubmit()}
+                  className="flex-1"
                 />
-                <Button onClick={handleUrlSubmit} variant="outline">
-                  <Link className="w-4 h-4 mr-2" />
+                <Button onClick={handleUrlSubmit} variant="outline" className="w-full sm:w-auto whitespace-nowrap">
+                  <Link className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                   Add Link
                 </Button>
               </div>
@@ -64,10 +65,10 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
                   placeholder="Paste your text content here for copyright analysis and monitoring..."
                   value={textInput}
                   onChange={(e) => setTextInput(e.target.value)}
-                  className="min-h-[100px]"
+                  className="min-h-[80px] sm:min-h-[100px] w-full"
                 />
                 <Button onClick={handleTextSubmit} variant="outline" className="w-full">
-                  <FileText className="w-4 h-4 mr-2" />
+                  <FileText className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                   Analyze Text
                 </Button>
               </div>
@@ -76,7 +77,7 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
                   onClick={() => fileInputRef.current?.click()}
                   className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 flex-1"
                 >
-                  <Upload className="w-4 h-4 mr-2" />
+                  <Upload className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                   Upload Files
                 </Button>
               </div>
@@ -104,29 +105,29 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:justify-between">
           <div className="flex-1">
-            <p className="text-sm text-muted-foreground mb-2">
+            <p className="text-xs sm:text-sm text-muted-foreground mb-2">
               Upload files, add links, or paste text for AI-powered copyright detection, similarity analysis, and content classification
             </p>
             {isInitializing && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Loader className="w-4 h-4 animate-spin" />
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                <Loader className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
                 Initializing AI models...
               </div>
             )}
           </div>
-          <div className="space-y-2">
-            <div className="flex gap-2">
+          <div className="w-full lg:w-auto lg:min-w-[300px] space-y-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Input
                 placeholder="Paste article URL, blog post, or any web content link..."
                 value={urlInput}
                 onChange={(e) => setUrlInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleUrlSubmit()}
-                className="min-w-[300px]"
+                className="flex-1"
               />
-              <Button onClick={handleUrlSubmit} variant="outline">
-                <Link className="w-4 h-4 mr-2" />
+              <Button onClick={handleUrlSubmit} variant="outline" className="w-full sm:w-auto whitespace-nowrap">
+                <Link className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                 Add Link
               </Button>
             </div>
@@ -135,10 +136,10 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
                 placeholder="Paste your text content here for copyright analysis and monitoring..."
                 value={textInput}
                 onChange={(e) => setTextInput(e.target.value)}
-                className="min-h-[80px] min-w-[300px]"
+                className="min-h-[60px] sm:min-h-[80px] w-full"
               />
               <Button onClick={handleTextSubmit} variant="outline" className="w-full">
-                <FileText className="w-4 h-4 mr-2" />
+                <FileText className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                 Analyze Text
               </Button>
             </div>
@@ -146,7 +147,7 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
               onClick={() => fileInputRef.current?.click()}
               className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 w-full"
             >
-              <Upload className="w-4 h-4 mr-2" />
+              <Upload className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
               Upload Files
             </Button>
             <input
