@@ -24,6 +24,9 @@ interface ImageSearchRequest {
   checkApiKeys?: boolean;
   testCopyrightedImage?: boolean;
   forceMockResults?: boolean;
+  enableDeepfakeDetection?: boolean;
+  claimedLocation?: string;
+  claimedTime?: string;
 }
 
 serve(async (req) => {
@@ -46,7 +49,10 @@ serve(async (req) => {
       testMode, 
       checkApiKeys,
       testCopyrightedImage,
-      forceMockResults
+      forceMockResults,
+      enableDeepfakeDetection,
+      claimedLocation,
+      claimedTime
     }: ImageSearchRequest = await req.json()
     
     console.log('Search request:', { 
@@ -255,6 +261,39 @@ serve(async (req) => {
     } else {
       console.log('Skipping OpenAI Vision analysis - API key not found');
     }
+
+    // 6. Deepfake Detection & Verification (if enabled)
+    if (enableDeepfakeDetection) {
+      console.log('Running deepfake detection analysis...');
+      try {
+        const { data: deepfakeResult } = await supabaseClient.functions.invoke('deepfake-detector', {
+          body: {
+            imageUrl,
+            artworkId,
+            scanId,
+            claimedLocation,
+            claimedTime
+          }
+        });
+
+        if (deepfakeResult?.analysis?.isDeepfake) {
+          console.log(`Deepfake detected with ${deepfakeResult.analysis.confidence * 100}% confidence`);
+          
+          // Add deepfake detection as a special result
+          results.push({
+            platform: 'AI Deepfake Detection',
+            url: imageUrl,
+            title: `${deepfakeResult.analysis.manipulation_type} Detected`,
+            confidence: Math.round(deepfakeResult.analysis.confidence * 100),
+            domain: 'deepfake-analysis',
+            thumbnail: imageUrl,
+            snippet: `Detected ${deepfakeResult.analysis.manipulation_type}. Artifacts: ${deepfakeResult.analysis.facial_artifacts.join(', ')}`
+          });
+        }
+      } catch (error) {
+        console.error('Deepfake detection failed:', error);
+      }
+    }
     
     // If using the test copyrighted image or if we need to force mock results, generate realistic matches
     if (testCopyrightedImage || forceMockResults || results.length === 0) {
@@ -265,7 +304,7 @@ serve(async (req) => {
         results.length = 0;
       }
       
-      // Generate realistic mock results for the copyrighted image
+      // Generate realistic mock results including potential deepfakes
       results.push(
         {
           platform: 'Getty Images',
@@ -286,6 +325,15 @@ serve(async (req) => {
           snippet: 'Official coverage of the Emmy Awards ceremony featuring award recipients'
         },
         {
+          platform: 'AI Deepfake Detection',
+          url: 'https://suspicious-social-media.com/fake-posts',
+          title: 'Face Swap Deepfake Detected',
+          confidence: 89,
+          domain: 'deepfake-analysis',
+          thumbnail: imageUrl,
+          snippet: 'AI analysis detected potential face swap manipulation claiming to be from different time/location'
+        },
+        {
           platform: 'Instagram',
           url: 'https://www.instagram.com/theemmys',
           title: 'The Emmy Awards (@theemmys) Official Account',
@@ -295,13 +343,13 @@ serve(async (req) => {
           snippet: 'Official photos from the Emmy Awards ceremony'
         },
         {
-          platform: 'Variety',
-          url: 'https://variety.com/awards/emmys',
-          title: 'Emmy Winners Celebrate Their Victories - Variety',
-          confidence: 87,
-          domain: 'variety.com',
+          platform: 'Dark Web Monitor',
+          url: 'https://anonymous-forum.onion/manipulated-media',
+          title: 'Manipulated Celebrity Content Detected',
+          confidence: 85,
+          domain: 'dark-web-analysis',
           thumbnail: imageUrl,
-          snippet: 'Exclusive coverage of the Emmy Awards ceremony and winners'
+          snippet: 'Found on dark web forums with claims of different origin - potential deepfake or manipulation'
         }
       );
       
@@ -324,6 +372,12 @@ serve(async (req) => {
       if (result.confidence > 50) { // Lowered threshold for testing
         console.log(`Storing match: ${result.title} (${result.confidence}% confidence)`)
         
+        // Determine match type based on platform and confidence
+        let matchType = result.confidence > 90 ? 'exact' : 'similar';
+        if (result.platform.includes('Deepfake') || result.platform.includes('Dark Web')) {
+          matchType = result.platform.includes('Deepfake') ? 'deepfake_manipulation' : 'dark_web_infringement';
+        }
+        
         const { data: matchData } = await supabaseClient
           .from('copyright_matches')
           .insert({
@@ -332,10 +386,11 @@ serve(async (req) => {
             source_url: result.url,
             source_domain: result.domain,
             source_title: result.title,
-            match_type: result.confidence > 90 ? 'exact' : 'similar',
+            match_type: matchType,
             match_confidence: result.confidence,
-            threat_level: result.confidence > 90 ? 'high' : result.confidence > 75 ? 'medium' : 'low',
-            context: `Found via ${result.platform} reverse image search`,
+            threat_level: result.confidence > 90 || result.platform.includes('Deepfake') ? 'high' : 
+                         result.confidence > 75 ? 'medium' : 'low',
+            context: `Found via ${result.platform} ${result.platform.includes('Deepfake') ? 'deepfake detection' : 'reverse image search'}`,
             description: result.snippet || `Match found on ${result.platform}`,
             thumbnail_url: result.thumbnail,
             detected_at: new Date().toISOString()
