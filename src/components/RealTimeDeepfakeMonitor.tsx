@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +15,8 @@ import {
   Zap,
   Clock,
   TrendingUp,
-  ExternalLink
+  ExternalLink,
+  Info
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -47,6 +49,7 @@ interface DeepfakeMatch {
 
 const RealTimeDeepfakeMonitor = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isMonitoring, setIsMonitoring] = useState(false);
   const [stats, setStats] = useState<MonitoringStats | null>(null);
   const [recentMatches, setRecentMatches] = useState<DeepfakeMatch[]>([]);
@@ -383,12 +386,13 @@ const RealTimeDeepfakeMonitor = () => {
                         )}
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
-                        <Clock className="w-3 h-3 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">
-                          {formatTimeAgo(match.detected_at)}
-                        </span>
-                        <Button variant="ghost" size="sm" className="p-1">
-                          <ExternalLink className="w-3 h-3" />
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="p-1"
+                          onClick={() => navigate(`/deepfake-match/${match.id}`)}
+                        >
+                          <Info className="w-3 h-3" />
                         </Button>
                       </div>
                     </div>

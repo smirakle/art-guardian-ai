@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,12 +11,14 @@ import {
   Eye, 
   Shield,
   Clock,
-  ExternalLink 
+  ExternalLink,
+  Info
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 
 export default function RecentDeepfakeDetections() {
+  const navigate = useNavigate();
   const [detections, setDetections] = useState<Tables<"deepfake_matches">[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -205,6 +208,16 @@ export default function RecentDeepfakeDetections() {
               </div>
               
               <div className="flex flex-col sm:flex-row justify-end gap-2">
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  className="w-full sm:w-auto"
+                  onClick={() => navigate(`/deepfake-match/${detection.id}`)}
+                >
+                  <Info className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+                  <span className="text-xs sm:text-sm">View Details</span>
+                </Button>
+                
                 {detection.image_url && (
                   <Button variant="outline" size="sm" asChild className="w-full sm:w-auto">
                     <a 

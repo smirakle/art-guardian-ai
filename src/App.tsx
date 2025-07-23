@@ -22,6 +22,7 @@ import Community from "./pages/Community";
 import Certificate from "./pages/Certificate";
 import Lawyers from "./pages/Lawyers";
 import DeepfakeDetection from "./pages/DeepfakeDetection";
+import DeepfakeMatchDetails from "./pages/DeepfakeMatchDetails";
 import Monitoring from "./pages/Monitoring";
 import NotFound from "./pages/NotFound";
 
@@ -70,6 +71,7 @@ const App = () => {
                 <Route path="/community" element={<Community />} />
                 <Route path="/monitoring" element={<Monitoring />} />
               <Route path="/deepfake-detection" element={<DeepfakeDetection />} />
+              <Route path="/deepfake-match/:matchId" element={<DeepfakeMatchDetails />} />
               <Route path="/lawyers" element={<Lawyers />} />
                 <Route path="/certificate/:certificateId" element={<Certificate />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
