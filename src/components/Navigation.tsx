@@ -20,30 +20,18 @@ const Navigation = () => {
     navigate('/');
   };
 
-  // Navigation items for non-authenticated users (public)
-  const publicNavItems = [
+  // All navigation items - available to everyone
+  const allNavItems = [
     { path: "/", label: t('nav.home'), icon: Home },
-    { path: "/about-tsmo", label: t('nav.about'), icon: Info },
-    { path: "/contact", label: t('nav.contact'), icon: Mail }
-  ];
-
-  // Navigation items for authenticated users (logged in)
-  const authenticatedNavItems = [
     { path: "/dashboard", label: "Dashboard", icon: Home },
     { path: "/upload", label: "Protect Art", icon: Upload },
     { path: "/monitoring", label: "Monitoring", icon: Activity },
     { path: "/community", label: t('nav.community'), icon: Users },
-    { path: "/legal-templates", label: "Legal Templates", icon: FileText }
+    { path: "/legal-templates", label: "Legal Templates", icon: FileText },
+    { path: "/admin", label: "Admin Panel", icon: UserCog },
+    { path: "/about-tsmo", label: t('nav.about'), icon: Info },
+    { path: "/contact", label: t('nav.contact'), icon: Mail }
   ];
-
-  // Show admin panel for everyone now
-  const adminItems = [
-    { path: "/admin", label: "Admin Panel", icon: UserCog }
-  ];
-
-  // Choose navigation items based on authentication status
-  const navItems = user ? authenticatedNavItems : publicNavItems;
-  const allNavItems = role === 'admin' ? [...adminItems, ...navItems] : navItems;
 
   const handleNavigation = (path: string) => {
     navigate(path);
