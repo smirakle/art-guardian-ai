@@ -23,7 +23,8 @@ import {
   FolderOpen,
   Link,
   Info,
-  Brain
+  Brain,
+  Activity
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -31,7 +32,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import VisualRecognition from "@/components/VisualRecognition";
 import QuickStartGuide from "@/components/QuickStartGuide";
-import DeepfakeReporter from "@/components/DeepfakeReporter";
 import RealTimeDeepfakeMonitor from "@/components/RealTimeDeepfakeMonitor";
 import RecentDeepfakeDetections from "@/components/RecentDeepfakeDetections";
 
@@ -585,40 +585,32 @@ const Upload = () => {
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold text-foreground">
-                      Advanced Deepfake Detection
+                      Real-Time Deepfake Monitoring
                     </h2>
                     <p className="text-muted-foreground">
-                      AI-powered detection of deepfakes, face swaps, and media manipulation
+                      Continuous AI-powered scanning across 2.5M+ surface and dark web sources
                     </p>
                   </div>
                 </div>
               </div>
 
-              <Tabs defaultValue="detector" className="space-y-6">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="detector" className="flex items-center gap-2">
-                    <Brain className="w-4 h-4" />
-                    Analysis
+              <Tabs defaultValue="monitor" className="space-y-6">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="monitor" className="flex items-center gap-2">
+                    <Activity className="w-4 h-4" />
+                    Live Monitoring
                   </TabsTrigger>
-                  <TabsTrigger value="realtime" className="flex items-center gap-2">
-                    <Shield className="w-4 h-4" />
-                    Live Monitor
-                  </TabsTrigger>
-                  <TabsTrigger value="matches" className="flex items-center gap-2">
+                  <TabsTrigger value="detected" className="flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4" />
-                    Detected
+                    Detection Feed
                   </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="detector">
-                  <DeepfakeReporter />
-                </TabsContent>
-
-                <TabsContent value="realtime">
+                <TabsContent value="monitor">
                   <RealTimeDeepfakeMonitor />
                 </TabsContent>
 
-                <TabsContent value="matches">
+                <TabsContent value="detected">
                   <RecentDeepfakeDetections />
                 </TabsContent>
               </Tabs>
