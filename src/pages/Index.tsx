@@ -703,51 +703,307 @@ const Index = () => {
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader>
                 <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center mb-4">
-                  <Upload className="h-6 w-6 text-green-500" />
+                  <FileText className="h-6 w-6 text-green-500" />
                 </div>
                 <CardTitle>Legal Templates</CardTitle>
                 <CardDescription>
-                  Download ready-to-use legal documents and templates
+                  Download professional legal documents and templates as PDFs
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span className="text-sm">DMCA takedown notice template</span>
+                <div className="space-y-4">
+                  {/* DMCA Template */}
+                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                    <div>
+                      <div className="font-medium text-sm">DMCA Takedown Notice</div>
+                      <div className="text-xs text-muted-foreground">Professional copyright infringement template</div>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        const content = `DMCA TAKEDOWN NOTICE
+
+To: [Service Provider/Website Owner]
+Date: [Date]
+
+RE: Notice of Infringement under Digital Millennium Copyright Act (DMCA)
+
+Dear Sir/Madam,
+
+I am writing to notify you of copyright infringement occurring on your platform.
+
+COPYRIGHT OWNER INFORMATION:
+Name: [Your Full Name]
+Title: [Your Title]
+Company: [Company Name (if applicable)]
+Address: [Your Full Address]
+Phone: [Your Phone Number]
+Email: [Your Email Address]
+
+COPYRIGHTED WORK:
+I am the owner of the following copyrighted work:
+- Title: [Title of Your Work]
+- Description: [Detailed description of your copyrighted work]
+- Date of Creation: [Date]
+- Registration Number: [Copyright registration number if applicable]
+
+INFRINGING MATERIAL:
+The following material on your website infringes my copyright:
+- URL: [Full URL of infringing content]
+- Description of Infringement: [How your work is being used without permission]
+
+GOOD FAITH STATEMENT:
+I have a good faith belief that use of the copyrighted material described above is not authorized by the copyright owner, its agent, or the law.
+
+ACCURACY STATEMENT:
+I swear, under penalty of perjury, that the information in this notification is accurate and that I am the copyright owner or am authorized to act on behalf of the owner of an exclusive right that is allegedly infringed.
+
+ELECTRONIC SIGNATURE:
+[Your Full Legal Name]
+[Date]
+
+Please remove or disable access to the infringing material immediately.
+
+Thank you for your prompt attention to this matter.
+
+Sincerely,
+[Your Signature]
+[Your Printed Name]`;
+
+                        downloadPDF('DMCA Takedown Notice', content);
+                      }}
+                    >
+                      <Download className="h-3 w-3 mr-1" />
+                      PDF
+                    </Button>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span className="text-sm">Cease and desist letter template</span>
+
+                  {/* Cease & Desist Template */}
+                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                    <div>
+                      <div className="font-medium text-sm">Cease & Desist Letter</div>
+                      <div className="text-xs text-muted-foreground">Professional legal notice template</div>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        const content = `CEASE AND DESIST LETTER
+
+[Date]
+
+[Infringer's Name]
+[Infringer's Address]
+
+RE: CEASE AND DESIST - COPYRIGHT INFRINGEMENT
+
+Dear [Infringer's Name],
+
+I am writing to demand that you immediately cease and desist from the unauthorized use of my copyrighted material.
+
+BACKGROUND:
+I am the owner of the copyright in the following work(s):
+[Description of copyrighted work]
+
+INFRINGEMENT:
+You are currently using my copyrighted material without authorization at:
+[URL or location of infringement]
+
+This unauthorized use constitutes copyright infringement under federal law.
+
+DEMAND:
+I hereby demand that you:
+1. Immediately cease all use of my copyrighted material
+2. Remove all infringing content from your website/platform
+3. Provide written confirmation of compliance within 10 days
+4. Refrain from any future use of my copyrighted works
+
+CONSEQUENCES:
+Failure to comply with this demand may result in:
+- Federal court action for copyright infringement
+- Monetary damages and attorney's fees
+- Injunctive relief
+
+This letter serves as formal notice of your infringement and my intent to pursue all available legal remedies.
+
+Please confirm your compliance in writing within 10 days.
+
+Sincerely,
+[Your Name]
+[Your Title]
+[Your Contact Information]`;
+
+                        downloadPDF('Cease and Desist Letter', content);
+                      }}
+                    >
+                      <Download className="h-3 w-3 mr-1" />
+                      PDF
+                    </Button>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span className="text-sm">Licensing agreement template</span>
+
+                  {/* Licensing Agreement Template */}
+                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                    <div>
+                      <div className="font-medium text-sm">Art Licensing Agreement</div>
+                      <div className="text-xs text-muted-foreground">Standard artwork licensing contract</div>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        const content = `ARTWORK LICENSING AGREEMENT
+
+This Licensing Agreement ("Agreement") is entered into on [Date] between:
+
+LICENSOR:
+[Your Name/Company]
+[Address]
+[Contact Information]
+
+LICENSEE:
+[Licensee Name/Company]
+[Address]
+[Contact Information]
+
+1. LICENSED ARTWORK
+The artwork being licensed includes:
+- Title: [Artwork Title]
+- Description: [Detailed description]
+- Medium: [Digital/Physical/etc.]
+
+2. GRANT OF LICENSE
+Licensor grants Licensee a [exclusive/non-exclusive] license to use the artwork for:
+[Specific uses allowed]
+
+3. TERM
+This license is effective from [Start Date] to [End Date].
+
+4. TERRITORY
+This license applies to: [Geographic limitations]
+
+5. ROYALTIES AND PAYMENT
+Licensee agrees to pay:
+- License Fee: $[Amount]
+- Royalty Rate: [Percentage]% of net sales
+- Payment Schedule: [Payment terms]
+
+6. QUALITY CONTROL
+Licensee must maintain quality standards and submit samples for approval.
+
+7. COPYRIGHT NOTICE
+All uses must include: "© [Year] [Your Name]. All rights reserved."
+
+8. TERMINATION
+This agreement may be terminated by either party with [Notice Period] written notice.
+
+9. GOVERNING LAW
+This agreement is governed by the laws of [State/Country].
+
+SIGNATURES:
+Licensor: _________________ Date: _______
+Licensee: _________________ Date: _______`;
+
+                        downloadPDF('Art Licensing Agreement', content);
+                      }}
+                    >
+                      <Download className="h-3 w-3 mr-1" />
+                      PDF
+                    </Button>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span className="text-sm">Copyright registration forms</span>
+
+                  {/* Copyright Registration Guide */}
+                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                    <div>
+                      <div className="font-medium text-sm">Copyright Registration Guide</div>
+                      <div className="text-xs text-muted-foreground">Step-by-step registration instructions</div>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        const content = `COPYRIGHT REGISTRATION GUIDE
+
+WHY REGISTER YOUR COPYRIGHT?
+- Legal presumption of ownership
+- Ability to sue for infringement
+- Eligibility for statutory damages
+- Public record of your claim
+
+WHAT CAN BE REGISTERED?
+- Original artistic works
+- Digital artwork
+- Photographs
+- Graphic designs
+- Sculptures and installations
+
+REGISTRATION PROCESS:
+
+STEP 1: GATHER MATERIALS
+- Completed application (Form CO or Form VA)
+- Non-refundable filing fee ($45-$125)
+- Copy of your work (deposit copy)
+
+STEP 2: COMPLETE APPLICATION
+Online at www.copyright.gov:
+- Title of work
+- Author information
+- Creation date
+- Publication date (if applicable)
+- Rights and permissions
+
+STEP 3: SUBMIT DEPOSIT
+For artwork, submit:
+- High-resolution digital files
+- Physical copies (if required)
+- Identifying material
+
+STEP 4: PAY FEES
+- Standard application: $125
+- Online filing: $45-$65
+- Group registration: varies
+
+STEP 5: WAIT FOR PROCESSING
+- Processing time: 3-12 months
+- Certificate mailed upon approval
+- Registration effective from submission date
+
+TIPS FOR SUCCESS:
+- Use consistent naming
+- Keep detailed records
+- Register promptly after creation
+- Consider group registrations for multiple works
+
+INTERNATIONAL PROTECTION:
+- File in target countries
+- Use Madrid Protocol for trademarks
+- Consider international copyright treaties
+
+For questions, contact:
+U.S. Copyright Office
+Library of Congress
+Washington, DC 20559
+(877) 476-0778`;
+
+                        downloadPDF('Copyright Registration Guide', content);
+                      }}
+                    >
+                      <Download className="h-3 w-3 mr-1" />
+                      PDF
+                    </Button>
                   </div>
                 </div>
-                <Button 
-                  className="w-full mt-4" 
-                  variant="outline"
-                  onClick={() => {
-                    const templates = [
-                      'dmca-takedown-template.pdf',
-                      'cease-desist-template.pdf',
-                      'licensing-agreement-template.pdf',
-                      'copyright-registration-form.pdf'
-                    ];
-                    toast({
-                      title: "Templates Download Ready",
-                      description: "Legal templates package will be sent to your email.",
-                    });
-                  }}
-                >
-                  <Upload className="h-4 w-4 mr-2" />
-                  Download Templates
-                </Button>
+
+                <div className="mt-4 pt-4 border-t">
+                  <Button 
+                    className="w-full" 
+                    variant="outline"
+                    onClick={() => navigate('/legal-templates')}
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    View All Legal Templates
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
