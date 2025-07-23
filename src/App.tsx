@@ -23,6 +23,7 @@ import Certificate from "./pages/Certificate";
 import Lawyers from "./pages/Lawyers";
 import DeepfakeDetection from "./pages/DeepfakeDetection";
 import DeepfakeMatchDetails from "./pages/DeepfakeMatchDetails";
+import LegalTemplatesPage from "./pages/LegalTemplates";
 import Monitoring from "./pages/Monitoring";
 import NotFound from "./pages/NotFound";
 
@@ -70,9 +71,10 @@ const App = () => {
                 <Route path="/blockchain" element={<BlockchainVerification />} />
                 <Route path="/community" element={<Community />} />
                 <Route path="/monitoring" element={<Monitoring />} />
-              <Route path="/deepfake-detection" element={<DeepfakeDetection />} />
-              <Route path="/deepfake-match/:matchId" element={<DeepfakeMatchDetails />} />
-              <Route path="/lawyers" element={<Lawyers />} />
+               <Route path="/deepfake-detection" element={<DeepfakeDetection />} />
+               <Route path="/deepfake-match/:matchId" element={<DeepfakeMatchDetails />} />
+               <Route path="/lawyers" element={<Lawyers />} />
+               <Route path="/legal-templates" element={<LegalTemplatesPage />} />
                 <Route path="/certificate/:certificateId" element={<Certificate />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
