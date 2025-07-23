@@ -24,6 +24,7 @@ export default function RecentDeepfakeDetections() {
 
   useEffect(() => {
     const fetchDetections = async () => {
+      console.log('RecentDeepfakeDetections: Fetching detections...');
       const { data, error } = await supabase
         .from("deepfake_matches")
         .select("*")
@@ -31,7 +32,10 @@ export default function RecentDeepfakeDetections() {
         .limit(20);
 
       if (!error && data) {
+        console.log('RecentDeepfakeDetections: Data loaded:', data.length, 'detections');
         setDetections(data);
+      } else {
+        console.error('RecentDeepfakeDetections: Error loading data:', error);
       }
       setLoading(false);
     };
