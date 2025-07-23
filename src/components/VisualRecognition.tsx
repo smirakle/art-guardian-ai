@@ -420,22 +420,48 @@ const VisualRecognition = () => {
         }
 
         if (artworkData) {
-          // Create monitoring scan with enhanced detection
-          await supabase
-            .from('monitoring_scans')
-            .insert({
-              artwork_id: artworkData.id,
-              scan_type: 'visual-recognition-enhanced',
-              status: 'running',
-              started_at: new Date().toISOString(),
-              total_sources: 2500 // Increased sources for enhanced detection
-            });
-        }
+        // Create monitoring scan with enhanced detection
+        await supabase
+          .from('monitoring_scans')
+          .insert({
+            artwork_id: artworkData.id,
+            scan_type: 'visual-recognition-enhanced',
+            status: 'running',
+            started_at: new Date().toISOString(),
+            total_sources: 2500 // Increased sources for enhanced detection
+          });
 
-        toast({
-          title: "Enhanced Protection Applied",
-          description: `Invisible watermark applied to ${image.file.name} for better detection`,
-        });
+        // Run deepfake detection on uploaded file
+        try {
+          console.log('Starting deepfake scan for uploaded file:', fileName);
+          const { data: deepfakeResult, error: deepfakeError } = await supabase.functions.invoke('deepfake-scan-upload', {
+            body: {
+              filePath: fileName,
+              fileName: image.file.name,
+              artworkId: artworkData.id
+            }
+          });
+
+          if (deepfakeError) {
+            console.error('Deepfake detection error:', deepfakeError);
+          } else if (deepfakeResult?.isDeepfake) {
+            toast({
+              title: "⚠️ Deepfake Detected",
+              description: `Potential manipulation detected in ${image.file.name} (${deepfakeResult.confidence}% confidence)`,
+              variant: "destructive",
+            });
+          } else {
+            console.log('No deepfake detected in uploaded file');
+          }
+        } catch (deepfakeError) {
+          console.error('Exception during deepfake detection:', deepfakeError);
+        }
+      }
+
+      toast({
+        title: "Enhanced Protection Applied",
+        description: `Invisible watermark applied to ${image.file.name} for better detection`,
+      });
 
       } catch (error) {
         console.log('Could not create monitoring scan or apply watermark:', error);
@@ -481,6 +507,32 @@ const VisualRecognition = () => {
                 started_at: new Date().toISOString(),
                 total_sources: 1000
               });
+
+            // Run deepfake detection on fallback upload as well
+            if (!uploadError) {
+              try {
+                console.log('Starting deepfake scan for fallback uploaded file:', fileName);
+                const { data: deepfakeResult, error: deepfakeError } = await supabase.functions.invoke('deepfake-scan-upload', {
+                  body: {
+                    filePath: fileName,
+                    fileName: image.file.name,
+                    artworkId: artworkData.id
+                  }
+                });
+
+                if (deepfakeError) {
+                  console.error('Deepfake detection error (fallback):', deepfakeError);
+                } else if (deepfakeResult?.isDeepfake) {
+                  toast({
+                    title: "⚠️ Deepfake Detected",
+                    description: `Potential manipulation detected in ${image.file.name} (${deepfakeResult.confidence}% confidence)`,
+                    variant: "destructive",
+                  });
+                }
+              } catch (deepfakeError) {
+                console.error('Exception during fallback deepfake detection:', deepfakeError);
+              }
+            }
           }
         } catch (fallbackError) {
           console.error('Fallback artwork creation failed:', fallbackError);
