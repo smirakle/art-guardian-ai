@@ -1,10 +1,102 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Shield, Globe, Eye, Search, AlertTriangle, Zap, Brain, Network, Activity } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Shield, Globe, Eye, Search, AlertTriangle, Zap, Brain, Network, Activity, Play, Pause } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+
+interface MonitoringStats {
+  sources_scanned: number;
+  deepfakes_detected: number;
+  surface_web_scans: number;
+  dark_web_scans: number;
+  high_threat_count: number;
+  medium_threat_count: number;
+  low_threat_count: number;
+  timestamp: string;
+}
 
 const EnhancedMonitoringOverview = () => {
-  const monitoringStats = [
+  const { toast } = useToast();
+  const [realtimeData, setRealtimeData] = useState<MonitoringStats | null>(null);
+  const [isGeneratingData, setIsGeneratingData] = useState(false);
+
+  useEffect(() => {
+    // Load latest stats
+    loadLatestStats();
+
+    // Set up real-time subscription
+    const statsChannel = supabase
+      .channel('monitoring-overview-stats')
+      .on('postgres_changes', 
+        { event: 'INSERT', schema: 'public', table: 'realtime_monitoring_stats' },
+        (payload) => {
+          setRealtimeData(payload.new as MonitoringStats);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(statsChannel);
+    };
+  }, []);
+
+  const loadLatestStats = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('realtime_monitoring_stats')
+        .select('*')
+        .order('timestamp', { ascending: false })
+        .limit(1);
+
+      if (error) throw error;
+      if (data && data.length > 0) {
+        setRealtimeData(data[0]);
+      }
+    } catch (error: any) {
+      console.error('Error loading stats:', error);
+    }
+  };
+
+  const startRealtimeDataGeneration = async () => {
+    setIsGeneratingData(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-realtime-data', {
+        body: {
+          action: 'start',
+          duration: 300 // 5 minutes
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Real-time Data Generation Started",
+        description: "Live monitoring data will update automatically for the next 5 minutes",
+      });
+
+    } catch (error) {
+      console.error('Error starting data generation:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start real-time data generation",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingData(false);
+    }
+  };
+
+  // Dynamic stats based on real-time data
+  const monitoringStats = realtimeData ? [
+    { label: "Total Sources", value: realtimeData.sources_scanned.toLocaleString(), icon: Globe, color: "text-primary" },
+    { label: "Dark Web Scans", value: realtimeData.dark_web_scans.toLocaleString(), icon: Network, color: "text-purple-500" },
+    { label: "Deepfakes Found", value: realtimeData.deepfakes_detected.toString(), icon: Brain, color: "text-red-500" },
+    { label: "Surface Web Scans", value: realtimeData.surface_web_scans.toLocaleString(), icon: Zap, color: "text-blue-500" }
+  ] : [
     { label: "Total Sources", value: "1,000,000+", icon: Globe, color: "text-primary" },
     { label: "Dark Web Coverage", value: "98%", icon: Network, color: "text-purple-500" },
     { label: "AI Detection Rate", value: "99.7%", icon: Brain, color: "text-green-500" },
@@ -59,6 +151,48 @@ const EnhancedMonitoringOverview = () => {
 
   return (
     <div className="space-y-6">
+      {/* Real-time Control Panel */}
+      <Card className="border-2 border-primary/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Activity className="w-5 h-5 text-primary" />
+            Real-time Monitoring Control
+          </CardTitle>
+          <CardDescription>
+            Start live data generation to see real-time monitoring statistics
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-4">
+            <Button 
+              onClick={startRealtimeDataGeneration}
+              disabled={isGeneratingData}
+              className="flex items-center gap-2"
+            >
+              {isGeneratingData ? (
+                <>
+                  <Activity className="w-4 h-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Play className="w-4 h-4" />
+                  Start Live Data
+                </>
+              )}
+            </Button>
+            {realtimeData && (
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm text-green-600 font-medium">
+                  Last updated: {new Date(realtimeData.timestamp).toLocaleTimeString()}
+                </span>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Header with Stats */}
       <Card className="bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
         <CardHeader>
