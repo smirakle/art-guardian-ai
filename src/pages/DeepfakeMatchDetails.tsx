@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +21,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { useToast } from "@/hooks/use-toast";
+import type { RealtimeChannel } from "@supabase/supabase-js";
 
 type DeepfakeMatch = Tables<"deepfake_matches">;
 
@@ -32,11 +33,19 @@ const DeepfakeMatchDetails = () => {
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
+  const channelRef = useRef<RealtimeChannel | null>(null);
 
   useEffect(() => {
     if (matchId) {
       fetchMatchDetails();
+      setupRealtimeSubscription();
     }
+
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+      }
+    };
   }, [matchId]);
 
   const fetchMatchDetails = async () => {
@@ -59,6 +68,31 @@ const DeepfakeMatchDetails = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const setupRealtimeSubscription = () => {
+    if (!matchId) return;
+
+    channelRef.current = supabase
+      .channel(`deepfake-match-${matchId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'deepfake_matches',
+          filter: `id=eq.${matchId}`
+        },
+        (payload) => {
+          console.log('Match updated:', payload.new);
+          setMatch(payload.new as DeepfakeMatch);
+          toast({
+            title: "Match Updated",
+            description: "This deepfake match has been updated with new information.",
+          });
+        }
+      )
+      .subscribe();
   };
 
   const handleSourceClick = (sourceUrl: string, sourceType: string) => {
