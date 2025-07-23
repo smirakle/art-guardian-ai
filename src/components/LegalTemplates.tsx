@@ -432,20 +432,32 @@ Legal Department
   ];
 
   const downloadTemplate = (template: LegalTemplate) => {
-    const blob = new Blob([template.content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${template.title.replace(/\s+/g, '_')}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    try {
+      // Create a more formatted document
+      const formattedContent = `${template.title.toUpperCase()}\n${'='.repeat(template.title.length)}\n\n${template.content.trim()}`;
+      
+      const blob = new Blob([formattedContent], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${template.title.replace(/[^a-zA-Z0-9]/g, '_')}.txt`;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
 
-    toast({
-      title: "Template Downloaded",
-      description: `${template.title} has been downloaded successfully.`,
-    });
+      toast({
+        title: "Template Downloaded",
+        description: `${template.title} has been downloaded to your device.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Download Failed",
+        description: "There was an error downloading the template. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const categoryLabels = {

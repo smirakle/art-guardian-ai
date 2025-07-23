@@ -31,7 +31,10 @@ import {
   Scan,
   Bot,
   Play,
-  ChevronRight
+  ChevronRight,
+  Download,
+  FileText,
+  Scale
 } from 'lucide-react';
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import MonitoringFlow from "@/components/MonitoringFlow";
@@ -934,6 +937,306 @@ const Index = () => {
             <p className="text-sm text-muted-foreground">
               All testimonials are reviewed before publication. Thank you for helping other artists discover TSMO!
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Legal Templates Section */}
+      <section className="py-20 px-4 bg-muted/20">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Free Legal Templates
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Download professional legal templates to protect your creative work
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardContent className="p-6">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                  <Shield className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="font-semibold mb-2">DMCA Takedown Notice</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Complete template for copyright infringement claims
+                </p>
+                <Button 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => {
+                    const content = `DMCA TAKEDOWN NOTICE
+
+To: [Service Provider/Website Owner]
+Date: [Date]
+
+RE: Notice of Infringement under Digital Millennium Copyright Act (DMCA)
+
+Dear Sir/Madam,
+
+I am writing to notify you of copyright infringement occurring on your platform.
+
+COPYRIGHT OWNER INFORMATION:
+Name: [Your Full Name]
+Title: [Your Title]
+Company: [Company Name (if applicable)]
+Address: [Your Full Address]
+Phone: [Your Phone Number]
+Email: [Your Email Address]
+
+COPYRIGHTED WORK:
+I am the owner of the following copyrighted work:
+- Title: [Title of Your Work]
+- Description: [Detailed description of your copyrighted work]
+- Date of Creation: [Date]
+- Registration Number: [Copyright registration number if applicable]
+
+INFRINGING MATERIAL:
+The following material on your website infringes my copyright:
+- URL: [Full URL of infringing content]
+- Description of Infringement: [How your work is being used without permission]
+
+GOOD FAITH STATEMENT:
+I have a good faith belief that use of the copyrighted material described above is not authorized by the copyright owner, its agent, or the law.
+
+ACCURACY STATEMENT:
+I swear, under penalty of perjury, that the information in this notification is accurate and that I am the copyright owner or am authorized to act on behalf of the owner of an exclusive right that is allegedly infringed.
+
+ELECTRONIC SIGNATURE:
+[Your Full Legal Name]
+[Date]
+
+Please remove or disable access to the infringing material immediately.
+
+Thank you for your prompt attention to this matter.
+
+Sincerely,
+[Your Signature]
+[Your Printed Name]`;
+
+                    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'DMCA_Takedown_Notice.txt';
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    toast({
+                      title: "Template Downloaded",
+                      description: "DMCA Takedown Notice has been downloaded to your device.",
+                    });
+                  }}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardContent className="p-6">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                  <FileText className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="font-semibold mb-2">Art Licensing Agreement</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Standard licensing template for artwork usage
+                </p>
+                <Button 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => {
+                    const content = `ARTWORK LICENSING AGREEMENT
+
+This Licensing Agreement ("Agreement") is entered into on [Date] between:
+
+LICENSOR:
+[Your Name/Company]
+[Address]
+[Contact Information]
+
+LICENSEE:
+[Licensee Name/Company]
+[Address]
+[Contact Information]
+
+1. LICENSED ARTWORK
+The artwork being licensed includes:
+- Title: [Artwork Title]
+- Description: [Detailed description]
+- Medium: [Digital/Physical/etc.]
+
+2. GRANT OF LICENSE
+Licensor grants Licensee a [exclusive/non-exclusive] license to use the artwork for:
+[Specific uses allowed]
+
+3. TERM
+This license is effective from [Start Date] to [End Date].
+
+4. TERRITORY
+This license applies to: [Geographic limitations]
+
+5. ROYALTIES AND PAYMENT
+Licensee agrees to pay:
+- License Fee: $[Amount]
+- Royalty Rate: [Percentage]% of net sales
+- Payment Schedule: [Payment terms]
+
+6. QUALITY CONTROL
+Licensee must maintain quality standards and submit samples for approval.
+
+7. COPYRIGHT NOTICE
+All uses must include: "© [Year] [Your Name]. All rights reserved."
+
+8. TERMINATION
+This agreement may be terminated by either party with [Notice Period] written notice.
+
+9. GOVERNING LAW
+This agreement is governed by the laws of [State/Country].
+
+SIGNATURES:
+Licensor: _________________ Date: _______
+Licensee: _________________ Date: _______`;
+
+                    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'Art_Licensing_Agreement.txt';
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    toast({
+                      title: "Template Downloaded",
+                      description: "Art Licensing Agreement has been downloaded to your device.",
+                    });
+                  }}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardContent className="p-6">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                  <Scale className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="font-semibold mb-2">Copyright Registration Guide</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Step-by-step guide for copyright registration
+                </p>
+                <Button 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => {
+                    const content = `COPYRIGHT REGISTRATION GUIDE
+
+WHY REGISTER YOUR COPYRIGHT?
+- Legal presumption of ownership
+- Ability to sue for infringement
+- Eligibility for statutory damages
+- Public record of your claim
+
+WHAT CAN BE REGISTERED?
+- Original artistic works
+- Digital artwork
+- Photographs
+- Graphic designs
+- Sculptures and installations
+
+REGISTRATION PROCESS:
+
+STEP 1: GATHER MATERIALS
+- Completed application (Form CO or Form VA)
+- Non-refundable filing fee ($45-$125)
+- Copy of your work (deposit copy)
+
+STEP 2: COMPLETE APPLICATION
+Online at www.copyright.gov:
+- Title of work
+- Author information
+- Creation date
+- Publication date (if applicable)
+- Rights and permissions
+
+STEP 3: SUBMIT DEPOSIT
+For artwork, submit:
+- High-resolution digital files
+- Physical copies (if required)
+- Identifying material
+
+STEP 4: PAY FEES
+- Standard application: $125
+- Online filing: $45-$65
+- Group registration: varies
+
+STEP 5: WAIT FOR PROCESSING
+- Processing time: 3-12 months
+- Certificate mailed upon approval
+- Registration effective from submission date
+
+TIPS FOR SUCCESS:
+- Use consistent naming
+- Keep detailed records
+- Register promptly after creation
+- Consider group registrations for multiple works
+
+INTERNATIONAL PROTECTION:
+- File in target countries
+- Use Madrid Protocol for trademarks
+- Consider international copyright treaties
+
+For questions, contact:
+U.S. Copyright Office
+Library of Congress
+Washington, DC 20559
+(877) 476-0778`;
+
+                    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'Copyright_Registration_Guide.txt';
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    toast({
+                      title: "Template Downloaded",
+                      description: "Copyright Registration Guide has been downloaded to your device.",
+                    });
+                  }}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center">
+            <Button 
+              variant="outline" 
+              size="lg"
+              onClick={() => navigate('/legal-templates')}
+              className="flex items-center gap-2"
+            >
+              View All Templates
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </section>
