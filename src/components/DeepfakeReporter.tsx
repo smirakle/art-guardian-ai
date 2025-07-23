@@ -108,8 +108,6 @@ const DeepfakeReporter = () => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // For demo purposes, we'll use a placeholder URL
-    // In a real implementation, you'd upload the file to storage first
     toast({
       title: "File Upload",
       description: "File upload feature coming soon. Please use image URL for now.",
@@ -151,7 +149,7 @@ const DeepfakeReporter = () => {
                 <div className="flex gap-2 mt-1">
                   <Input
                     id="imageUrl"
-                    placeholder="https://example.com/suspicious-image.jpg"
+                    placeholder="Enter image URL to analyze"
                     value={imageUrl}
                     onChange={(e) => setImageUrl(e.target.value)}
                     disabled={isAnalyzing}
@@ -192,7 +190,7 @@ const DeepfakeReporter = () => {
                 </Label>
                 <Input
                   id="claimedLocation"
-                  placeholder="e.g., New York, 2023 Emmy Awards"
+                  placeholder="Enter claimed location"
                   value={claimedLocation}
                   onChange={(e) => setClaimedLocation(e.target.value)}
                   disabled={isAnalyzing}
@@ -206,7 +204,7 @@ const DeepfakeReporter = () => {
                 </Label>
                 <Input
                   id="claimedTime"
-                  placeholder="e.g., January 15, 2023 at 8:00 PM"
+                  placeholder="Enter claimed time/date"
                   value={claimedTime}
                   onChange={(e) => setClaimedTime(e.target.value)}
                   disabled={isAnalyzing}

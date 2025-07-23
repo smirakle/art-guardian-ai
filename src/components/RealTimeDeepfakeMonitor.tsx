@@ -162,13 +162,7 @@ const RealTimeDeepfakeMonitor = () => {
         description: `Scanned ${result.monitoring_summary.total_sources_scanned} sources, detected ${result.monitoring_summary.deepfakes_detected} potential deepfakes`,
       });
 
-      // Auto-restart monitoring after a brief pause
-      setTimeout(() => {
-        setProgress(0);
-        if (isMonitoring) {
-          startRealtimeMonitoring();
-        }
-      }, 60000); // 1 minute pause between cycles
+      setIsMonitoring(false);
 
     } catch (error) {
       console.error('Monitoring error:', error);
