@@ -12,6 +12,7 @@ import AboutTsmo from "./pages/AboutTsmo";
 import Upload from "./pages/Upload";
 
 import Admin from "./pages/Admin";
+import Dashboard from "./pages/Dashboard";
 import Checkout from "./pages/Checkout";
 import Success from "./pages/Success";
 import Auth from "./pages/Auth";
@@ -26,6 +27,7 @@ import DeepfakeMatchDetails from "./pages/DeepfakeMatchDetails";
 import LegalTemplatesPage from "./pages/LegalTemplates";
 import Monitoring from "./pages/Monitoring";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -60,17 +62,34 @@ const App = () => {
             <div className="pt-16">
               <Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
                 <Route path="/about-tsmo" element={<AboutTsmo />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/upload" element={<Upload />} />
-                <Route path="/admin" element={<Admin />} />
+                <Route path="/upload" element={
+                  <ProtectedRoute>
+                    <Upload />
+                  </ProtectedRoute>
+                } />
+                <Route path="/monitoring" element={
+                  <ProtectedRoute>
+                    <Monitoring />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <Admin />
+                  </ProtectedRoute>
+                } />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/success" element={<Success />} />
                 <Route path="/deep-scan" element={<DeepWebScan />} />
                 <Route path="/blockchain" element={<BlockchainVerification />} />
                 <Route path="/community" element={<Community />} />
-                <Route path="/monitoring" element={<Monitoring />} />
                <Route path="/deepfake-detection" element={<DeepfakeDetection />} />
                <Route path="/deepfake-match/:matchId" element={<DeepfakeMatchDetails />} />
                <Route path="/lawyers" element={<Lawyers />} />
