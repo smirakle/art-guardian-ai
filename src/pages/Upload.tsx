@@ -22,7 +22,8 @@ import {
   Camera,
   FolderOpen,
   Link,
-  Info
+  Info,
+  Brain
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -30,6 +31,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import VisualRecognition from "@/components/VisualRecognition";
 import QuickStartGuide from "@/components/QuickStartGuide";
+import DeepfakeReporter from "@/components/DeepfakeReporter";
+import RealTimeDeepfakeMonitor from "@/components/RealTimeDeepfakeMonitor";
+import RecentDeepfakeDetections from "@/components/RecentDeepfakeDetections";
 
 interface UploadedFile {
   id: string;
@@ -557,7 +561,69 @@ const Upload = () => {
         />
         
         <div data-upload-area>
-          <VisualRecognition />
+          <Tabs defaultValue="protect" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="protect" className="flex items-center gap-2">
+                <UploadIcon className="w-4 h-4" />
+                Protect Art
+              </TabsTrigger>
+              <TabsTrigger value="deepfake" className="flex items-center gap-2">
+                <Brain className="w-4 h-4" />
+                Deepfake Detection
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="protect" className="space-y-6">
+              <VisualRecognition />
+            </TabsContent>
+
+            <TabsContent value="deepfake" className="space-y-6">
+              <div className="mb-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 bg-primary/10 rounded-lg">
+                    <Brain className="w-8 h-8 text-primary" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-foreground">
+                      Advanced Deepfake Detection
+                    </h2>
+                    <p className="text-muted-foreground">
+                      AI-powered detection of deepfakes, face swaps, and media manipulation
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <Tabs defaultValue="detector" className="space-y-6">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="detector" className="flex items-center gap-2">
+                    <Brain className="w-4 h-4" />
+                    Analysis
+                  </TabsTrigger>
+                  <TabsTrigger value="realtime" className="flex items-center gap-2">
+                    <Shield className="w-4 h-4" />
+                    Live Monitor
+                  </TabsTrigger>
+                  <TabsTrigger value="matches" className="flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4" />
+                    Detected
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="detector">
+                  <DeepfakeReporter />
+                </TabsContent>
+
+                <TabsContent value="realtime">
+                  <RealTimeDeepfakeMonitor />
+                </TabsContent>
+
+                <TabsContent value="matches">
+                  <RecentDeepfakeDetections />
+                </TabsContent>
+              </Tabs>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>

@@ -23,7 +23,6 @@ const Navigation = () => {
   const navItems = [
     { path: "/", label: t('nav.home'), icon: Home },
     { path: "/upload", label: "Protect Art", icon: Upload },
-    { path: "/deepfake-detection", label: "Deepfake Detection", icon: Shield },
     { path: "/community", label: t('nav.community'), icon: Users },
     { path: "/about-tsmo", label: t('nav.about'), icon: Info },
     { path: "/contact", label: t('nav.contact'), icon: Mail }
