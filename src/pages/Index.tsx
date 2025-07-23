@@ -144,6 +144,8 @@ const Index = () => {
       });
     }
   };
+  
+  return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="pt-24 sm:pt-32 pb-20 px-4">
