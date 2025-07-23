@@ -32,16 +32,10 @@ serve(async (req) => {
       throw new Error('Failed to download file for analysis');
     }
 
-    // Convert blob to base64 for analysis
-    const arrayBuffer = await fileData.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
-    const base64String = btoa(String.fromCharCode(...uint8Array));
-
-    console.log('File converted to base64, starting AI analysis...');
+    console.log('File downloaded successfully, starting analysis...');
 
     // Simulate deepfake detection analysis
-    // In a real implementation, this would call an actual AI service
-    const analysisResults = await performDeepfakeAnalysis(base64String, fileName);
+    const analysisResults = await performDeepfakeAnalysis(fileName);
 
     console.log('Analysis completed:', analysisResults);
 
@@ -116,7 +110,7 @@ serve(async (req) => {
   }
 });
 
-async function performDeepfakeAnalysis(base64Image: string, fileName: string) {
+async function performDeepfakeAnalysis(fileName: string) {
   // Simulate AI deepfake detection analysis
   // In a real implementation, this would use an actual deepfake detection model
   
