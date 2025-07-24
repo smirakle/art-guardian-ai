@@ -216,71 +216,41 @@ function generateArtifacts(detectionType: string): string[] {
 }
 
 function generateContentUrl(account: any, contentType: string, index: number): string {
-  // Generate realistic URLs based on actual account URLs and content types
-  const accountUrl = account.account_url;
-  
-  if (account.platform === 'youtube') {
-    // For YouTube, create realistic video URLs
-    return `${accountUrl.replace('/videos', '')}/watch?v=${generateRandomId()}`;
-  } else if (account.platform === 'facebook') {
-    // For Facebook, create realistic post URLs
-    return `${accountUrl}/posts/${Date.now() + index}`;
-  } else if (account.platform === 'instagram') {
-    // For Instagram, create realistic post URLs
-    return `https://www.instagram.com/p/${generateRandomId()}/`;
-  } else if (account.platform === 'tiktok') {
-    // For TikTok, create realistic video URLs
-    return `https://www.tiktok.com/@${account.account_handle}/video/${Date.now() + index}`;
-  }
-  
-  // Fallback to account URL with content identifier
-  return `${accountUrl}#content-${Date.now() + index}`;
+  // Since these are simulated detections, link to the actual account page that exists
+  // This ensures all links are working and clickable
+  return account.account_url;
 }
 
 function generateContentTitle(platform: string, contentType: string, index: number): string {
-  // Generate more realistic titles based on platform and content type
+  // Generate more realistic titles for simulated content
   const timeStamp = new Date().toLocaleDateString();
   
   const contentTitles = {
-    youtube: {
-      video: [`Video from ${timeStamp}`, `Latest Upload`, `New Content`, `Recent Video`],
-      live: [`Live Stream - ${timeStamp}`, `Live Video`, `Broadcasting Now`]
-    },
-    facebook: {
-      post: [`Post from ${timeStamp}`, `Status Update`, `Shared Content`, `New Post`],
-      photo: [`Photo Album`, `Image Post`, `Photo Update`],
-      video: [`Shared Video`, `Video Post`, `Video Content`]
-    },
-    instagram: {
-      post: [`Instagram Post`, `Photo Update`, `New Image`],
-      story: [`Story Highlight`, `Recent Story`, `Story Update`],
-      reel: [`Instagram Reel`, `Video Reel`, `Short Video`]
-    },
-    tiktok: {
-      video: [`TikTok Video`, `Short Video`, `Creative Content`, `Video Post`]
-    }
+    youtube: [`Video Content (Demo Detection)`, `Content Analysis Result`, `Monitored Content`],
+    facebook: [`Post Content (Demo Detection)`, `Monitored Post`, `Content Analysis Result`],
+    instagram: [`Instagram Content (Demo Detection)`, `Monitored Post`, `Content Analysis Result`],
+    tiktok: [`TikTok Content (Demo Detection)`, `Monitored Video`, `Content Analysis Result`]
   };
 
   const platformContent = contentTitles[platform as keyof typeof contentTitles];
   if (platformContent) {
-    const typeContent = platformContent[contentType as keyof typeof platformContent] || platformContent['post'] || ['Content'];
-    return typeContent[index % typeContent.length];
+    return platformContent[index % platformContent.length];
   }
 
-  return `${platform} content from ${timeStamp}`;
+  return `${platform} Content (Demo Detection)`;
 }
 
 function generateContentDescription(detectionType: string, confidence: number, account: any): string {
-  const accountInfo = `Content from @${account.account_handle} on ${account.platform}`;
-  const timeInfo = `Detected on ${new Date().toLocaleString()}`;
+  const accountInfo = `Simulated detection from @${account.account_handle} on ${account.platform}`;
+  const timeInfo = `Demo scan performed on ${new Date().toLocaleString()}`;
   
   const descriptions = {
-    deepfake: `${accountInfo} - AI-generated face replacement detected with ${Math.round(confidence * 100)}% confidence. Advanced neural analysis identified synthetic facial features and temporal inconsistencies. ${timeInfo}`,
-    copyright: `${accountInfo} - Potential copyright infringement detected with ${Math.round(confidence * 100)}% confidence. Content analysis suggests unauthorized use of protected material. ${timeInfo}`,
-    impersonation: `${accountInfo} - Account impersonation detected with ${Math.round(confidence * 100)}% confidence. Profile analysis indicates potential identity theft or unauthorized representation. ${timeInfo}`
+    deepfake: `${accountInfo} - AI-generated content simulation with ${Math.round(confidence * 100)}% confidence score. This is a demonstration of deepfake detection capabilities. ${timeInfo}`,
+    copyright: `${accountInfo} - Copyright analysis simulation with ${Math.round(confidence * 100)}% confidence score. This demonstrates content protection monitoring. ${timeInfo}`,
+    impersonation: `${accountInfo} - Identity verification simulation with ${Math.round(confidence * 100)}% confidence score. This shows account impersonation detection. ${timeInfo}`
   };
 
-  return descriptions[detectionType as keyof typeof descriptions] || `Suspicious content detected from ${accountInfo}. ${timeInfo}`;
+  return descriptions[detectionType as keyof typeof descriptions] || `Demo detection from ${accountInfo}. ${timeInfo}`;
 }
 
 function generateThumbnailUrl(platform: string, account: any): string {
