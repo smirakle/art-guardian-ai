@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, Activity, AlertTriangle, FileText } from "lucide-react";
+import { Shield, Activity, AlertTriangle, FileText, Users, Brain } from "lucide-react";
 import CopyrightMatches from "@/components/monitoring/CopyrightMatches";
 import MonitoringDashboard from "@/components/MonitoringDashboard";
 import MonitoringChart from "@/components/MonitoringChart";
 import AlertsPanel from "@/components/AlertsPanel";
 import RealTimeMonitoring from "@/components/RealTimeMonitoring";
+import SocialMediaMonitoringResults from "@/components/monitoring/SocialMediaMonitoringResults";
+import FakeAccountDetector from "@/components/FakeAccountDetector";
+import SocialMediaAccountManager from "@/components/SocialMediaAccountManager";
 
 export default function Monitoring() {
   return (
@@ -22,7 +25,7 @@ export default function Monitoring() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto">
+          <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 h-auto">
             <TabsTrigger value="overview" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm py-2 px-2 md:px-3">
               <Activity className="w-3 h-3 md:w-4 md:h-4" />
               <span className="hidden sm:inline">Overview</span>
@@ -30,8 +33,18 @@ export default function Monitoring() {
             </TabsTrigger>
             <TabsTrigger value="matches" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm py-2 px-2 md:px-3">
               <Shield className="w-3 h-3 md:w-4 md:h-4" />
-              <span className="hidden sm:inline">Copyright Matches</span>
-              <span className="sm:hidden">Matches</span>
+              <span className="hidden sm:inline">Copyright</span>
+              <span className="sm:hidden">Copyright</span>
+            </TabsTrigger>
+            <TabsTrigger value="social" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm py-2 px-2 md:px-3">
+              <Users className="w-3 h-3 md:w-4 md:h-4" />
+              <span className="hidden sm:inline">Social Media</span>
+              <span className="sm:hidden">Social</span>
+            </TabsTrigger>
+            <TabsTrigger value="deepfakes" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm py-2 px-2 md:px-3">
+              <Brain className="w-3 h-3 md:w-4 md:h-4" />
+              <span className="hidden sm:inline">Deepfakes</span>
+              <span className="sm:hidden">AI</span>
             </TabsTrigger>
             <TabsTrigger value="alerts" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm py-2 px-2 md:px-3">
               <AlertTriangle className="w-3 h-3 md:w-4 md:h-4" />
@@ -40,7 +53,7 @@ export default function Monitoring() {
             </TabsTrigger>
             <TabsTrigger value="dmca" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm py-2 px-2 md:px-3">
               <FileText className="w-3 h-3 md:w-4 md:h-4" />
-              <span className="hidden sm:inline">DMCA History</span>
+              <span className="hidden sm:inline">DMCA</span>
               <span className="sm:hidden">DMCA</span>
             </TabsTrigger>
           </TabsList>
@@ -75,6 +88,15 @@ export default function Monitoring() {
                 <AlertsPanel />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="social" className="space-y-6">
+            <SocialMediaAccountManager />
+            <SocialMediaMonitoringResults />
+          </TabsContent>
+
+          <TabsContent value="deepfakes" className="space-y-6">
+            <FakeAccountDetector />
           </TabsContent>
 
           <TabsContent value="dmca" className="space-y-6">
