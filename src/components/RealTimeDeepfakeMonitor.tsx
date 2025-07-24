@@ -131,47 +131,37 @@ const RealTimeDeepfakeMonitor = () => {
     setProgress(0);
 
     try {
-      // Simulate progress
-      const progressInterval = setInterval(() => {
-        setProgress(prev => {
-          if (prev >= 95) {
-            clearInterval(progressInterval);
-            return 100;
-          }
-          return prev + Math.random() * 5;
-        });
-      }, 1000);
-
-      console.log('Starting real-time deepfake monitoring...');
+      console.log('Starting real web deepfake scan...');
       
-      const { data: result, error } = await supabase.functions.invoke('realtime-deepfake-monitor', {
-        body: {
-          scanType: 'realtime',
-          duration: 300 // 5 minutes
-        }
+      toast({
+        title: "Real Deepfake Scan Started",
+        description: "Scanning web sources and analyzing with AI detection",
       });
 
-      clearInterval(progressInterval);
-      setProgress(100);
+      // Use the new real web scan function
+      const { data: result, error } = await supabase.functions.invoke('real-web-deepfake-scan', {
+        body: {}
+      });
 
       if (error) {
         throw error;
       }
 
-      console.log('Monitoring cycle complete:', result);
+      setProgress(100);
+      setIsMonitoring(false);
+
+      console.log('Real scan complete:', result);
       
       toast({
-        title: "Monitoring Cycle Complete",
-        description: `Scanned ${result.monitoring_summary.total_sources_scanned} sources, detected ${result.monitoring_summary.deepfakes_detected} potential deepfakes`,
+        title: "Real Scan Complete",
+        description: `Analyzed ${result.monitoring_summary.total_sources_scanned} real images, detected ${result.monitoring_summary.deepfakes_detected} potential deepfakes`,
       });
-
-      setIsMonitoring(false);
 
     } catch (error) {
       console.error('Monitoring error:', error);
       toast({
-        title: "Monitoring Failed",
-        description: error instanceof Error ? error.message : "Failed to start monitoring",
+        title: "Scan Failed",
+        description: error instanceof Error ? error.message : "Failed to start real scan",
         variant: "destructive",
       });
       setIsMonitoring(false);
