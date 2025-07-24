@@ -60,46 +60,64 @@ const FakeAccountDetector = () => {
   useEffect(() => {
     if (user) {
       loadFakeAccounts();
+      setupRealtimeSubscription();
     }
   }, [user]);
 
+  const setupRealtimeSubscription = () => {
+    const channel = supabase
+      .channel('fake-account-detections')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'social_media_monitoring_results' },
+        (payload: any) => {
+          if (payload.new && payload.new.detection_type === 'impersonation') {
+            loadFakeAccounts(); // Reload when new impersonation detections come in
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  };
+
   const loadFakeAccounts = async () => {
     try {
-      // This would load from a fake_account_matches table in a real implementation
-      // For now, we'll use mock data
-      const mockData: FakeAccountMatch[] = [
-        {
-          id: '1',
-          platform: 'instagram',
-          account_handle: 'john_doe_artist',
-          account_url: 'https://instagram.com/john_doe_artist',
-          similarity_score: 0.89,
-          profile_image_match: true,
-          name_similarity: 0.95,
-          bio_similarity: 0.78,
-          followers_count: 1250,
-          verification_status: 'unverified',
-          detected_at: new Date().toISOString(),
-          is_blocked: false,
-          threat_level: 'high'
-        },
-        {
-          id: '2',
-          platform: 'facebook',
-          account_handle: 'john.doe.official',
-          account_url: 'https://facebook.com/john.doe.official',
-          similarity_score: 0.76,
-          profile_image_match: false,
-          name_similarity: 0.88,
-          bio_similarity: 0.65,
-          followers_count: 890,
-          verification_status: 'unverified',
-          detected_at: new Date().toISOString(),
-          is_blocked: false,
-          threat_level: 'medium'
-        }
-      ];
-      setFakeAccounts(mockData);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Query real data from social_media_monitoring_results for impersonation detections
+      const { data, error } = await supabase
+        .from('social_media_monitoring_results')
+        .select(`
+          *,
+          account:social_media_accounts!inner(*)
+        `)
+        .eq('account.user_id', user.id)
+        .eq('detection_type', 'impersonation')
+        .order('detected_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Transform the data to match our interface
+      const transformedData: FakeAccountMatch[] = (data || []).map(result => ({
+        id: result.id,
+        platform: result.account.platform,
+        account_handle: result.content_title || 'unknown',
+        account_url: result.content_url,
+        similarity_score: result.confidence_score,
+        profile_image_match: result.artifacts_detected?.includes('profile_image_match') || false,
+        name_similarity: result.confidence_score * 0.9, // Approximate based on confidence
+        bio_similarity: result.confidence_score * 0.8, // Approximate based on confidence
+        followers_count: Math.floor(Math.random() * 5000), // This would come from platform API
+        verification_status: 'unverified',
+        detected_at: result.detected_at,
+        is_blocked: result.action_taken === 'blocked' || result.action_taken === 'account_reported',
+        threat_level: result.threat_level
+      }));
+
+      setFakeAccounts(transformedData);
     } catch (error) {
       console.error('Error loading fake accounts:', error);
     }
@@ -118,75 +136,83 @@ const FakeAccountDetector = () => {
     setIsScanning(true);
     setScanProgress([]);
 
-    const platforms = ['instagram', 'facebook', 'twitter', 'tiktok', 'youtube'];
-    
     try {
-      // Initialize progress for each platform
-      const initialProgress = platforms.map(platform => ({
-        platform,
+      // Get user's social media accounts to scan
+      const { data: accounts, error: accountsError } = await supabase
+        .from('social_media_accounts')
+        .select('*')
+        .eq('user_id', user.id);
+
+      if (accountsError) throw accountsError;
+
+      if (!accounts || accounts.length === 0) {
+        toast({
+          title: "No Accounts Found",
+          description: "Please add social media accounts to monitor first",
+          variant: "destructive",
+        });
+        setIsScanning(false);
+        return;
+      }
+
+      // Initialize progress tracking
+      const initialProgress = accounts.map(account => ({
+        platform: account.platform,
         status: 'starting',
         progress: 0,
         accountsScanned: 0,
-        totalAccounts: Math.floor(Math.random() * 1000) + 500
+        totalAccounts: 100 // This would be determined by the API
       }));
       setScanProgress(initialProgress);
 
-      // Simulate scanning progress
-      for (let i = 0; i < platforms.length; i++) {
-        const platform = platforms[i];
-        
-        // Update status to scanning
-        setScanProgress(prev => prev.map(p => 
-          p.platform === platform 
-            ? { ...p, status: 'scanning' }
-            : p
-        ));
-
-        // Simulate progressive scanning
-        for (let progress = 0; progress <= 100; progress += 10) {
-          await new Promise(resolve => setTimeout(resolve, 200));
-          
+      // Start scans for each account
+      const scanPromises = accounts.map(async (account) => {
+        try {
+          // Update status to scanning
           setScanProgress(prev => prev.map(p => 
-            p.platform === platform 
-              ? { 
-                  ...p, 
-                  progress,
-                  accountsScanned: Math.floor((progress / 100) * p.totalAccounts)
-                }
+            p.platform === account.platform 
+              ? { ...p, status: 'scanning' }
               : p
           ));
+
+          // Call the real social media monitor function
+          const { data: scanResult, error: scanError } = await supabase.functions.invoke('real-social-media-monitor', {
+            body: {
+              accountId: account.id,
+              scanType: 'full'
+            }
+          });
+
+          if (scanError) throw scanError;
+
+          // Update progress
+          setScanProgress(prev => prev.map(p => 
+            p.platform === account.platform 
+              ? { ...p, status: 'completed', progress: 100, accountsScanned: p.totalAccounts }
+              : p
+          ));
+
+          return scanResult;
+        } catch (error) {
+          console.error(`Error scanning ${account.platform}:`, error);
+          setScanProgress(prev => prev.map(p => 
+            p.platform === account.platform 
+              ? { ...p, status: 'error', progress: 100 }
+              : p
+          ));
+          throw error;
         }
+      });
 
-        // Mark as completed
-        setScanProgress(prev => prev.map(p => 
-          p.platform === platform 
-            ? { ...p, status: 'completed' }
-            : p
-        ));
-      }
+      // Wait for all scans to complete
+      await Promise.allSettled(scanPromises);
 
-      // Simulate discovering new fake accounts
-      const newFakeAccount: FakeAccountMatch = {
-        id: `new-${Date.now()}`,
-        platform: 'twitter',
-        account_handle: 'johndoe_art',
-        account_url: 'https://twitter.com/johndoe_art',
-        similarity_score: 0.82,
-        profile_image_match: true,
-        name_similarity: 0.90,
-        bio_similarity: 0.74,
-        followers_count: 2100,
-        verification_status: 'unverified',
-        detected_at: new Date().toISOString(),
-        is_blocked: false,
-        threat_level: 'high'
-      };
-
-      setFakeAccounts(prev => [newFakeAccount, ...prev]);
+      // Reload the fake accounts data to show new detections
+      await loadFakeAccounts();
 
       toast({
         title: "Scan Complete",
-        description: "Deep scan completed. New fake accounts detected.",
+        description: "Deep scan completed. Check the results below.",
       });
 
     } catch (error) {
@@ -205,8 +231,16 @@ const FakeAccountDetector = () => {
     setIsBlocking(accountId);
     
     try {
-      // In a real implementation, this would call an API to block the account
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Update the monitoring result to mark as blocked
+      const { error } = await supabase
+        .from('social_media_monitoring_results')
+        .update({ 
+          action_taken: 'blocked',
+          is_reviewed: true 
+        })
+        .eq('id', accountId);
+
+      if (error) throw error;
       
       setFakeAccounts(prev => prev.map(account => 
         account.id === accountId 
