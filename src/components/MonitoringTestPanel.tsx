@@ -100,9 +100,7 @@ const MonitoringTestPanel = () => {
         .invoke('process-monitoring-scan', {
           body: {
             scanId: scan.id,
-            artworkId: artworkId,
-            testCopyrightedImage: useCopyrightedImage,
-            forceMockResults: true
+            artworkId: artworkId
           }
         });
 
@@ -199,9 +197,7 @@ const MonitoringTestPanel = () => {
           body: {
             imageUrl: testImageUrl,
             artworkId: artworkId,
-            scanId: currentScanId,
-            testCopyrightedImage: useCopyrightedImage, // Add flag to indicate we're testing with a copyrighted image
-            forceMockResults: true // Force mock results for training purposes
+            scanId: currentScanId
           }
         });
 

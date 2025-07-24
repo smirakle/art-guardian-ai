@@ -265,25 +265,7 @@ serve(async (req) => {
       }
     }
     
-    // Only use mock results if we're explicitly testing or if all APIs failed
-    if (testCopyrightedImage && results.length === 0) {
-      console.log('No real results found, generating test results for copyrighted image');
-      
-      // Generate realistic mock results only when no real results are found
-      results.push(
-        {
-          platform: 'Getty Images',
-          url: `https://www.gettyimages.com/detail/news-photo/${Date.now()}`,
-          title: 'Professional Portrait - Licensed Image',
-          confidence: 98,
-          domain: 'gettyimages.com',
-          thumbnail: imageUrl,
-          snippet: 'This image appears in our professional photography collection.'
-        }
-      );
-      
-      console.log(`Added ${results.length} test results for copyrighted image testing`);
-    }
+    // Mock results removed - using only real search results
 
     console.log(`Found ${results.length} total results`);
 

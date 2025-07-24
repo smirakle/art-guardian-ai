@@ -35,7 +35,7 @@ serve(async (req) => {
     const requestBody = await req.json()
     console.log('Request body received:', JSON.stringify(requestBody, null, 2));
     
-    const { scanId, artworkId, testCopyrightedImage, forceMockResults } = requestBody
+    const { scanId, artworkId } = requestBody
 
     if (!artworkId) {
       console.error('Missing required parameters:', { scanId, artworkId });
@@ -128,8 +128,6 @@ serve(async (req) => {
               imageUrl: imageUrl,
               artworkId: artworkId,
               scanId: actualScanId,
-              testCopyrightedImage: testCopyrightedImage,
-              forceMockResults: forceMockResults,
               enableDeepfakeDetection: true
             }
           })
