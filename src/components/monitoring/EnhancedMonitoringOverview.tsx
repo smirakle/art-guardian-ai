@@ -3,9 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Shield, Globe, Eye, Search, AlertTriangle, Zap, Brain, Network, Activity, Play, Pause } from "lucide-react";
+import { Shield, Globe, Eye, Search, AlertTriangle, Zap, Brain, Network, Activity, Play, Pause, Youtube, Facebook, Instagram } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import SocialMediaMonitoringResults from "@/components/SocialMediaMonitoringResults";
 
 interface MonitoringStats {
   sources_scanned: number;
@@ -18,14 +19,23 @@ interface MonitoringStats {
   timestamp: string;
 }
 
+interface SocialMediaStats {
+  platform: string;
+  accounts_monitored: number;
+  content_scanned: number;
+  detections: number;
+}
+
 const EnhancedMonitoringOverview = () => {
   const { toast } = useToast();
   const [realtimeData, setRealtimeData] = useState<MonitoringStats | null>(null);
+  const [socialMediaStats, setSocialMediaStats] = useState<SocialMediaStats[]>([]);
   const [isGeneratingData, setIsGeneratingData] = useState(false);
 
   useEffect(() => {
     // Load latest stats
     loadLatestStats();
+    loadSocialMediaStats();
 
     // Set up real-time subscription
     const statsChannel = supabase
@@ -38,8 +48,19 @@ const EnhancedMonitoringOverview = () => {
       )
       .subscribe();
 
+    const socialChannel = supabase
+      .channel('social-media-changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'social_media_monitoring_results' },
+        () => {
+          loadSocialMediaStats();
+        }
+      )
+      .subscribe();
+
     return () => {
       supabase.removeChannel(statsChannel);
+      supabase.removeChannel(socialChannel);
     };
   }, []);
 
@@ -57,6 +78,46 @@ const EnhancedMonitoringOverview = () => {
       }
     } catch (error: any) {
       console.error('Error loading stats:', error);
+    }
+  };
+
+  const loadSocialMediaStats = async () => {
+    try {
+      const { data: accounts, error: accountsError } = await supabase
+        .from('social_media_accounts')
+        .select('platform');
+
+      const { data: results, error: resultsError } = await supabase
+        .from('social_media_monitoring_results')
+        .select('account_id, detection_type, social_media_accounts!inner(platform)');
+
+      const { data: scans, error: scansError } = await supabase
+        .from('social_media_scans')
+        .select('content_scanned, social_media_accounts!inner(platform)');
+
+      if (accountsError || resultsError || scansError) {
+        console.error('Error loading social media stats');
+        return;
+      }
+
+      // Aggregate stats by platform
+      const platformStats = ['youtube', 'facebook', 'instagram', 'tiktok'].map(platform => {
+        const accountCount = accounts?.filter(a => a.platform === platform).length || 0;
+        const contentScanned = scans?.filter(s => s.social_media_accounts.platform === platform)
+          .reduce((sum, scan) => sum + (scan.content_scanned || 0), 0) || 0;
+        const detections = results?.filter(r => r.social_media_accounts.platform === platform).length || 0;
+
+        return {
+          platform,
+          accounts_monitored: accountCount,
+          content_scanned: contentScanned,
+          detections
+        };
+      });
+
+      setSocialMediaStats(platformStats);
+    } catch (error) {
+      console.error('Error loading social media stats:', error);
     }
   };
 
@@ -330,6 +391,60 @@ const EnhancedMonitoringOverview = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Social Media Monitoring Stats */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Network className="w-5 h-5" />
+            Social Media Platform Coverage
+          </CardTitle>
+          <CardDescription>
+            Real-time monitoring across major social media platforms
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {socialMediaStats.map((stat) => {
+              const getPlatformIcon = (platform: string) => {
+                switch (platform) {
+                  case 'youtube': return <Youtube className="w-6 h-6 text-red-500" />;
+                  case 'facebook': return <Facebook className="w-6 h-6 text-blue-500" />;
+                  case 'instagram': return <Instagram className="w-6 h-6 text-pink-500" />;
+                  case 'tiktok': return <div className="w-6 h-6 bg-black rounded text-white text-xs flex items-center justify-center font-bold">T</div>;
+                  default: return <Shield className="w-6 h-6" />;
+                }
+              };
+
+              return (
+                <div key={stat.platform} className="p-4 bg-background/50 rounded-lg border">
+                  <div className="flex items-center gap-3 mb-3">
+                    {getPlatformIcon(stat.platform)}
+                    <span className="font-medium capitalize">{stat.platform}</span>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Accounts</span>
+                      <span className="font-medium">{stat.accounts_monitored}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Content Scanned</span>
+                      <span className="font-medium">{stat.content_scanned.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Detections</span>
+                      <span className="font-medium text-red-600">{stat.detections}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Social Media Results */}
+      <SocialMediaMonitoringResults />
     </div>
   );
 };

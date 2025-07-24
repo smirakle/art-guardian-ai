@@ -34,6 +34,7 @@ import VisualRecognition from "@/components/VisualRecognition";
 import QuickStartGuide from "@/components/QuickStartGuide";
 import RealTimeDeepfakeMonitor from "@/components/RealTimeDeepfakeMonitor";
 import RecentDeepfakeDetections from "@/components/RecentDeepfakeDetections";
+import SocialMediaAccountManager from "@/components/SocialMediaAccountManager";
 
 interface UploadedFile {
   id: string;
@@ -562,10 +563,14 @@ const Upload = () => {
         
         <div data-upload-area>
           <Tabs defaultValue="protect" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="protect" className="flex items-center gap-2">
                 <UploadIcon className="w-4 h-4" />
                 Protect Art
+              </TabsTrigger>
+              <TabsTrigger value="social" className="flex items-center gap-2">
+                <Shield className="w-4 h-4" />
+                Social Media
               </TabsTrigger>
               <TabsTrigger value="deepfake" className="flex items-center gap-2">
                 <Brain className="w-4 h-4" />
@@ -575,6 +580,10 @@ const Upload = () => {
 
             <TabsContent value="protect" className="space-y-6">
               <VisualRecognition />
+            </TabsContent>
+
+            <TabsContent value="social" className="space-y-6">
+              <SocialMediaAccountManager />
             </TabsContent>
 
             <TabsContent value="deepfake" className="space-y-6">

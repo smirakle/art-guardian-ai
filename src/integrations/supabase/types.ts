@@ -781,6 +781,163 @@ export type Database = {
         }
         Relationships: []
       }
+      social_media_accounts: {
+        Row: {
+          account_handle: string
+          account_name: string | null
+          account_url: string
+          created_at: string
+          follower_count: number | null
+          id: string
+          last_scan_at: string | null
+          monitoring_enabled: boolean | null
+          platform: string
+          updated_at: string
+          user_id: string
+          verification_status: string | null
+        }
+        Insert: {
+          account_handle: string
+          account_name?: string | null
+          account_url: string
+          created_at?: string
+          follower_count?: number | null
+          id?: string
+          last_scan_at?: string | null
+          monitoring_enabled?: boolean | null
+          platform: string
+          updated_at?: string
+          user_id: string
+          verification_status?: string | null
+        }
+        Update: {
+          account_handle?: string
+          account_name?: string | null
+          account_url?: string
+          created_at?: string
+          follower_count?: number | null
+          id?: string
+          last_scan_at?: string | null
+          monitoring_enabled?: boolean | null
+          platform?: string
+          updated_at?: string
+          user_id?: string
+          verification_status?: string | null
+        }
+        Relationships: []
+      }
+      social_media_monitoring_results: {
+        Row: {
+          account_id: string
+          action_taken: string | null
+          artifacts_detected: string[] | null
+          confidence_score: number
+          content_description: string | null
+          content_title: string | null
+          content_type: string
+          content_url: string
+          created_at: string
+          detected_at: string
+          detection_type: string
+          id: string
+          is_reviewed: boolean | null
+          scan_id: string
+          threat_level: string
+          thumbnail_url: string | null
+        }
+        Insert: {
+          account_id: string
+          action_taken?: string | null
+          artifacts_detected?: string[] | null
+          confidence_score: number
+          content_description?: string | null
+          content_title?: string | null
+          content_type: string
+          content_url: string
+          created_at?: string
+          detected_at?: string
+          detection_type: string
+          id?: string
+          is_reviewed?: boolean | null
+          scan_id: string
+          threat_level?: string
+          thumbnail_url?: string | null
+        }
+        Update: {
+          account_id?: string
+          action_taken?: string | null
+          artifacts_detected?: string[] | null
+          confidence_score?: number
+          content_description?: string | null
+          content_title?: string | null
+          content_type?: string
+          content_url?: string
+          created_at?: string
+          detected_at?: string
+          detection_type?: string
+          id?: string
+          is_reviewed?: boolean | null
+          scan_id?: string
+          threat_level?: string
+          thumbnail_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_media_monitoring_results_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "social_media_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_media_scans: {
+        Row: {
+          account_id: string
+          completed_at: string | null
+          content_scanned: number | null
+          created_at: string
+          detections_found: number | null
+          error_message: string | null
+          id: string
+          scan_type: string
+          started_at: string | null
+          status: string
+        }
+        Insert: {
+          account_id: string
+          completed_at?: string | null
+          content_scanned?: number | null
+          created_at?: string
+          detections_found?: number | null
+          error_message?: string | null
+          id?: string
+          scan_type: string
+          started_at?: string | null
+          status?: string
+        }
+        Update: {
+          account_id?: string
+          completed_at?: string | null
+          content_scanned?: number | null
+          created_at?: string
+          detections_found?: number | null
+          error_message?: string | null
+          id?: string
+          scan_type?: string
+          started_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_media_scans_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "social_media_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
