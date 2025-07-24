@@ -266,7 +266,7 @@ serve(async (req) => {
     if (enableDeepfakeDetection) {
       console.log('Running deepfake detection analysis...');
       try {
-        const { data: deepfakeResult } = await supabaseClient.functions.invoke('deepfake-detector', {
+        const { data: deepfakeResult } = await supabaseClient.functions.invoke('real-deepfake-detector', {
           body: {
             imageUrl,
             artworkId,
@@ -463,7 +463,7 @@ async function searchGoogle(imageUrl: string): Promise<SearchResult[]> {
     
     if (data.items) {
       for (const item of data.items) {
-        const domain = new URL(item.link).hostname
+        const domain = item.link ? new URL(item.link).hostname : 'unknown'
         results.push({
           platform: 'Google',
           url: item.link,
@@ -521,7 +521,7 @@ async function searchBing(imageUrl: string): Promise<SearchResult[]> {
       for (const action of data.tags[0].actions) {
         if (action.actionType === 'VisualSearch' && action.data?.value) {
           for (const item of action.data.value.slice(0, 10)) {
-            const domain = new URL(item.hostPageUrl).hostname
+            const domain = item.hostPageUrl ? new URL(item.hostPageUrl).hostname : 'unknown'
             results.push({
               platform: 'Bing',
               url: item.hostPageUrl,
@@ -595,7 +595,7 @@ async function searchYahoo(imageUrl: string): Promise<SearchResult[]> {
     
     if (data.image_results) {
       for (const item of data.image_results.slice(0, 10)) {
-        const domain = new URL(item.link).hostname
+        const domain = item.link ? new URL(item.link).hostname : 'unknown'
         results.push({
           platform: 'SerpAPI',
           url: item.link,
