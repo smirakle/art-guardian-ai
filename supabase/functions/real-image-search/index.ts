@@ -178,16 +178,6 @@ serve(async (req) => {
       }
     } else {
       console.log('Skipping Google search - API key not found');
-      // Add fallback mock results for testing
-      results.push({
-        platform: 'Google (Mock)',
-        url: 'https://example.com/similar-image',
-        title: 'Similar artwork found',
-        confidence: 85,
-        domain: 'example.com',
-        thumbnail: imageUrl,
-        snippet: 'Mock result for testing without API key'
-      });
     }
 
     // 2. Bing Visual Search
@@ -201,16 +191,6 @@ serve(async (req) => {
       }
     } else {
       console.log('Skipping Bing search - API key not found');
-      // Add fallback mock results for testing
-      results.push({
-        platform: 'Bing (Mock)',
-        url: 'https://example.com/similar-image-bing',
-        title: 'Potential match found',
-        confidence: 78,
-        domain: 'example.com',
-        thumbnail: imageUrl,
-        snippet: 'Mock result for testing without API key'
-      });
     }
 
     // 3. TinEye Search
@@ -237,16 +217,6 @@ serve(async (req) => {
       }
     } else {
       console.log('Skipping SerpAPI search - API key not found');
-      // Add fallback mock results for testing
-      results.push({
-        platform: 'SerpAPI (Mock)',
-        url: 'https://somesite.com/artwork-match',
-        title: 'Similar artwork detected',
-        confidence: 92,
-        domain: 'somesite.com',
-        thumbnail: imageUrl,
-        snippet: 'Mock result for testing without API key'
-      });
     }
 
     // 5. Computer Vision Analysis
