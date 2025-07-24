@@ -35,6 +35,7 @@ import QuickStartGuide from "@/components/QuickStartGuide";
 import RealTimeDeepfakeMonitor from "@/components/RealTimeDeepfakeMonitor";
 import RecentDeepfakeDetections from "@/components/RecentDeepfakeDetections";
 import SocialMediaAccountManager from "@/components/SocialMediaAccountManager";
+import SocialMediaMonitoringResults from "@/components/SocialMediaMonitoringResults";
 
 interface UploadedFile {
   id: string;
@@ -584,6 +585,7 @@ const Upload = () => {
 
             <TabsContent value="social" className="space-y-6">
               <SocialMediaAccountManager />
+              <SocialMediaMonitoringResults />
             </TabsContent>
 
             <TabsContent value="deepfake" className="space-y-6">
