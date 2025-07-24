@@ -295,65 +295,24 @@ serve(async (req) => {
       }
     }
     
-    // If using the test copyrighted image or if we need to force mock results, generate realistic matches
-    if (testCopyrightedImage || forceMockResults || results.length === 0) {
-      console.log('Using test copyrighted image or forcing mock results');
+    // Only use mock results if we're explicitly testing or if all APIs failed
+    if (testCopyrightedImage && results.length === 0) {
+      console.log('No real results found, generating test results for copyrighted image');
       
-      // Clear any existing results if we're specifically testing with copyrighted image
-      if (testCopyrightedImage) {
-        results.length = 0;
-      }
-      
-      // Generate realistic mock results including potential deepfakes
+      // Generate realistic mock results only when no real results are found
       results.push(
         {
           platform: 'Getty Images',
-          url: 'https://www.gettyimages.com/celebrity-portraits',
-          title: 'Emmy Award Winner Portrait - Celebrity Photo',
+          url: `https://www.gettyimages.com/detail/news-photo/${Date.now()}`,
+          title: 'Professional Portrait - Licensed Image',
           confidence: 98,
           domain: 'gettyimages.com',
           thumbnail: imageUrl,
-          snippet: 'Official Emmy Awards portrait session. This image is copyrighted and appears in our licensed collection.'
-        },
-        {
-          platform: 'CBS',
-          url: 'https://www.cbs.com/shows/emmys',
-          title: 'Emmy Winners 2023 - Official CBS Coverage',
-          confidence: 95,
-          domain: 'cbs.com',
-          thumbnail: imageUrl,
-          snippet: 'Official coverage of the Emmy Awards ceremony featuring award recipients'
-        },
-        {
-          platform: 'AI Deepfake Detection',
-          url: 'https://suspicious-social-media.com/fake-posts',
-          title: 'Face Swap Deepfake Detected',
-          confidence: 89,
-          domain: 'deepfake-analysis',
-          thumbnail: imageUrl,
-          snippet: 'AI analysis detected potential face swap manipulation claiming to be from different time/location'
-        },
-        {
-          platform: 'Instagram',
-          url: 'https://www.instagram.com/theemmys',
-          title: 'The Emmy Awards (@theemmys) Official Account',
-          confidence: 92,
-          domain: 'instagram.com',
-          thumbnail: imageUrl,
-          snippet: 'Official photos from the Emmy Awards ceremony'
-        },
-        {
-          platform: 'Dark Web Monitor',
-          url: 'https://anonymous-forum.onion/manipulated-media',
-          title: 'Manipulated Celebrity Content Detected',
-          confidence: 85,
-          domain: 'dark-web-analysis',
-          thumbnail: imageUrl,
-          snippet: 'Found on dark web forums with claims of different origin - potential deepfake or manipulation'
+          snippet: 'This image appears in our professional photography collection.'
         }
       );
       
-      console.log(`Added ${results.length} mock results for testing with copyrighted image`);
+      console.log(`Added ${results.length} test results for copyrighted image testing`);
     }
 
     console.log(`Found ${results.length} total results`);

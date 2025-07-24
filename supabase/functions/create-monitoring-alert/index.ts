@@ -44,17 +44,21 @@ serve(async (req) => {
       )
     }
 
-    // Determine alert type based on threat level and confidence
-    let alertType = 'low'
-    if (match.threat_level === 'high' || match.match_confidence > 0.9) {
-      alertType = 'high'
-    } else if (match.threat_level === 'medium' || match.match_confidence > 0.7) {
-      alertType = 'medium'
+    // Determine alert type based on match type and threat level
+    let alertType = 'copyright_match'
+    if (match.match_type.includes('deepfake')) {
+      alertType = 'deepfake_detected'
+    } else if (match.source_domain && match.source_domain.includes('dark')) {
+      alertType = 'dark_web_match'
+    } else if (match.threat_level === 'high' || match.match_confidence > 90) {
+      alertType = 'high_confidence_match'
+    } else if (match.threat_level === 'high') {
+      alertType = 'high_threat'
     }
 
     // Create alert title and message
-    const alertTitle = `Copyright Match Detected: ${match.match_type}`
-    const alertMessage = `Your artwork "${match.artwork?.title}" was found on ${match.source_domain || 'an external site'} with ${Math.round(match.match_confidence * 100)}% confidence.`
+    const alertTitle = `${match.match_type.charAt(0).toUpperCase() + match.match_type.slice(1)} Match Found`
+    const alertMessage = `Your artwork "${match.artwork?.title}" was found on ${match.source_domain || 'an external site'} with ${Math.round(match.match_confidence)}% confidence.`
 
     // Create the alert
     const { data: alert, error: alertError } = await supabase
