@@ -6,6 +6,61 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+interface MonitoringRequest {
+  accountId: string;
+  scanType: 'quick' | 'full';
+}
+
+function validateInput(data: any): MonitoringRequest {
+  if (!data.accountId || typeof data.accountId !== 'string') {
+    throw new Error('Invalid accountId provided');
+  }
+  
+  const scanType = data.scanType || 'full';
+  if (!['quick', 'full'].includes(scanType)) {
+    throw new Error('Invalid scanType. Must be "quick" or "full"');
+  }
+  
+  // Validate UUID format
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(data.accountId)) {
+    throw new Error('Invalid accountId format');
+  }
+  
+  return {
+    accountId: data.accountId,
+    scanType: scanType
+  };
+}
+
+async function logSecurityEvent(
+  supabase: any,
+  userId: string | null,
+  action: string,
+  details: any,
+  req: Request
+) {
+  try {
+    const userAgent = req.headers.get('user-agent') || '';
+    const forwarded = req.headers.get('x-forwarded-for');
+    const realIp = req.headers.get('x-real-ip');
+    const ipAddress = forwarded || realIp || 'unknown';
+    
+    await supabase
+      .from('security_audit_log')
+      .insert({
+        user_id: userId,
+        action,
+        resource_type: 'social_media_monitoring',
+        details,
+        ip_address: ipAddress,
+        user_agent: userAgent
+      });
+  } catch (error) {
+    console.error('Failed to log security event:', error);
+  }
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -17,15 +72,26 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { accountId, scanType = 'full' } = await req.json();
-
-    if (!accountId) {
-      throw new Error('Account ID is required');
+    if (req.method !== 'POST') {
+      await logSecurityEvent(supabase, null, 'invalid_method_attempt', 
+        { method: req.method }, req);
+      
+      return new Response(
+        JSON.stringify({ error: 'Method not allowed' }),
+        { 
+          status: 405, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
     }
+
+    // Parse and validate request body
+    const requestData = await req.json();
+    const { accountId, scanType } = validateInput(requestData);
 
     console.log(`Starting social media monitoring for account: ${accountId}, type: ${scanType}`);
 
-    // Get account details
+    // Get account details and verify ownership
     const { data: account, error: accountError } = await supabase
       .from('social_media_accounts')
       .select('*')
@@ -33,8 +99,14 @@ serve(async (req) => {
       .single();
 
     if (accountError) {
+      await logSecurityEvent(supabase, null, 'monitoring_account_not_found', 
+        { accountId, error: accountError.message }, req);
       throw new Error(`Failed to fetch account: ${accountError.message}`);
     }
+
+    // Log successful monitoring start
+    await logSecurityEvent(supabase, account.user_id, 'monitoring_scan_started', 
+      { accountId, scanType, platform: account.platform }, req);
 
     console.log(`Monitoring account: @${account.account_handle} on ${account.platform}`);
 
@@ -98,8 +170,21 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Social media monitoring error:', error);
+    
+    // Log the error for security audit
+    try {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+      
+      await logSecurityEvent(supabase, null, 'monitoring_scan_error', 
+        { error: error.message }, req);
+    } catch (logError) {
+      console.error('Failed to log error event:', logError);
+    }
+    
     return new Response(JSON.stringify({ 
-      error: error.message,
+      error: 'Monitoring scan failed',
       success: false 
     }), {
       status: 500,

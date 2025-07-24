@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.analyze-article-content]
 verify_jwt = false
+
+[functions.admin-maintenance-auth]
+verify_jwt = false

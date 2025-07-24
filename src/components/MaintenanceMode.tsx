@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useMaintenanceMode } from '@/lib/maintenance';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   Wrench, 
   Clock, 
@@ -22,16 +23,70 @@ const MaintenanceMode = () => {
   const [adminDialogOpen, setAdminDialogOpen] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [sessionToken, setSessionToken] = useState<string | null>(null);
 
-  const handleAdminAccess = () => {
-    // Simple password check - in production, this should be more secure
-    if (adminPassword === 'Mirakle23!') {
-      toggleMaintenanceMode(false);
-      setAdminDialogOpen(false);
-      setAdminPassword('');
-      setPasswordError('');
-    } else {
-      setPasswordError('Invalid admin password');
+  const handleAdminAccess = async () => {
+    if (!adminPassword.trim()) {
+      setPasswordError('Password is required');
+      return;
+    }
+
+    setIsAuthenticating(true);
+    setPasswordError('');
+
+    try {
+      const { data, error } = await supabase.functions.invoke('admin-maintenance-auth', {
+        body: {
+          action: 'authenticate',
+          password: adminPassword
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data.success) {
+        setSessionToken(data.sessionToken);
+        // Now disable maintenance mode
+        await handleDisableMaintenanceMode(data.sessionToken);
+      } else {
+        setPasswordError(data.error || 'Authentication failed');
+      }
+    } catch (error) {
+      console.error('Admin authentication error:', error);
+      setPasswordError('Authentication failed. Please try again.');
+    } finally {
+      setIsAuthenticating(false);
+    }
+  };
+
+  const handleDisableMaintenanceMode = async (token: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('admin-maintenance-auth', {
+        body: {
+          action: 'disable_maintenance',
+          sessionToken: token
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data.success) {
+        toggleMaintenanceMode(false);
+        setAdminDialogOpen(false);
+        setAdminPassword('');
+        setPasswordError('');
+        setSessionToken(null);
+      } else {
+        setPasswordError(data.error || 'Failed to disable maintenance mode');
+      }
+    } catch (error) {
+      console.error('Disable maintenance mode error:', error);
+      setPasswordError('Failed to disable maintenance mode. Please try again.');
     }
   };
 
@@ -151,10 +206,10 @@ const MaintenanceMode = () => {
                       <Button 
                         onClick={handleAdminAccess}
                         className="flex-1"
-                        disabled={!adminPassword}
+                        disabled={!adminPassword || isAuthenticating}
                       >
                         <Power className="w-4 h-4 mr-2" />
-                        Disable Maintenance Mode
+                        {isAuthenticating ? 'Authenticating...' : 'Disable Maintenance Mode'}
                       </Button>
                       <Button 
                         variant="outline" 
