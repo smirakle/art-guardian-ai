@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { 
   Eye, 
   ExternalLink, 
@@ -16,7 +17,13 @@ import {
   Image,
   FileText,
   Star,
-  TrendingUp
+  TrendingUp,
+  ChevronDown,
+  ChevronRight,
+  Info,
+  Calendar,
+  Gauge,
+  Target
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -48,6 +55,7 @@ const SocialMediaMonitoringResults = () => {
   const [results, setResults] = useState<MonitoringResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
+  const [expandedResults, setExpandedResults] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (user) {
@@ -117,6 +125,18 @@ const SocialMediaMonitoringResults = () => {
     }
   };
 
+  const toggleExpanded = (resultId: string) => {
+    setExpandedResults(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(resultId)) {
+        newSet.delete(resultId);
+      } else {
+        newSet.add(resultId);
+      }
+      return newSet;
+    });
+  };
+
   const getPlatformIcon = (platform: string) => {
     switch (platform) {
       case 'youtube': return <Youtube className="w-4 h-4 text-red-500" />;
@@ -167,6 +187,15 @@ const SocialMediaMonitoringResults = () => {
     if (diffHours < 24) return `${diffHours}h ago`;
     const diffDays = Math.floor(diffHours / 24);
     return `${diffDays}d ago`;
+  };
+
+  const getDetectionDescription = (type: string) => {
+    switch (type) {
+      case 'deepfake': return 'AI-generated or manipulated content detected using facial inconsistencies, temporal artifacts, and metadata analysis.';
+      case 'copyright': return 'Potential unauthorized use of copyrighted content detected through visual similarity matching.';
+      case 'impersonation': return 'Account impersonation detected through profile analysis and content comparison.';
+      default: return 'Suspicious activity detected requiring further review.';
+    }
   };
 
   if (!user) {
@@ -248,105 +277,216 @@ const SocialMediaMonitoringResults = () => {
             </div>
           ) : (
             <div className="divide-y">
-              {results.map((result) => (
-                <div key={result.id} className={`p-6 hover:bg-muted/30 transition-colors ${!result.is_reviewed ? 'bg-blue-50/30 dark:bg-blue-950/20' : ''}`}>
-                  <div className="flex items-start gap-4">
-                    {/* Thumbnail */}
-                    <div className="flex-shrink-0">
-                      <img
-                        src={result.thumbnail_url}
-                        alt="Content thumbnail"
-                        className="w-20 h-20 object-cover rounded-lg"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    </div>
-
-                    {/* Content Details */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        {getPlatformIcon(result.account.platform)}
-                        <span className="font-medium">@{result.account.account_handle}</span>
-                        <span className="text-muted-foreground">•</span>
-                        {getContentIcon(result.content_type)}
-                        <span className="text-sm text-muted-foreground capitalize">{result.content_type}</span>
-                        <span className="text-muted-foreground">•</span>
-                        <span className="text-sm text-muted-foreground">{formatTimeAgo(result.detected_at)}</span>
+              {results.map((result) => {
+                const isExpanded = expandedResults.has(result.id);
+                return (
+                  <div key={result.id} className={`p-6 hover:bg-muted/30 transition-colors ${!result.is_reviewed ? 'bg-blue-50/30 dark:bg-blue-950/20' : ''}`}>
+                    <div className="flex items-start gap-4">
+                      {/* Thumbnail */}
+                      <div className="flex-shrink-0">
+                        <img
+                          src={result.thumbnail_url}
+                          alt="Content thumbnail"
+                          className="w-20 h-20 object-cover rounded-lg"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
                       </div>
 
-                      <h3 className="font-medium text-lg mb-1">{result.content_title}</h3>
-                      <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                        {result.content_description}
-                      </p>
+                      {/* Content Details */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          {getPlatformIcon(result.account.platform)}
+                          <span className="font-medium">@{result.account.account_handle}</span>
+                          <span className="text-muted-foreground">•</span>
+                          {getContentIcon(result.content_type)}
+                          <span className="text-sm text-muted-foreground capitalize">{result.content_type}</span>
+                          <span className="text-muted-foreground">•</span>
+                          <span className="text-sm text-muted-foreground">{formatTimeAgo(result.detected_at)}</span>
+                        </div>
 
-                      {/* Detection Details */}
-                      <div className="flex flex-wrap items-center gap-2 mb-3">
-                        <Badge className={getDetectionTypeColor(result.detection_type)}>
-                          {result.detection_type}
-                        </Badge>
-                        <Badge variant={getThreatColor(result.threat_level)}>
-                          {result.threat_level} threat
-                        </Badge>
-                        <span className="text-sm text-muted-foreground">
-                          {Math.round(result.confidence_score * 100)}% confidence
-                        </span>
-                      </div>
+                        <h3 className="font-medium text-lg mb-1">{result.content_title}</h3>
+                        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                          {result.content_description}
+                        </p>
 
-                      {/* Artifacts */}
-                      {result.artifacts_detected.length > 0 && (
-                        <div className="mb-3">
-                          <p className="text-sm font-medium mb-1">Detected Artifacts:</p>
-                          <div className="flex flex-wrap gap-1">
-                            {result.artifacts_detected.slice(0, 3).map((artifact, index) => (
-                              <Badge key={index} variant="outline" className="text-xs">
-                                {artifact}
-                              </Badge>
-                            ))}
-                            {result.artifacts_detected.length > 3 && (
-                              <Badge variant="outline" className="text-xs">
-                                +{result.artifacts_detected.length - 3} more
-                              </Badge>
-                            )}
+                        {/* Detection Summary */}
+                        <div className="flex flex-wrap items-center gap-2 mb-3">
+                          <Badge className={getDetectionTypeColor(result.detection_type)}>
+                            {result.detection_type}
+                          </Badge>
+                          <Badge variant={getThreatColor(result.threat_level)}>
+                            {result.threat_level} threat
+                          </Badge>
+                          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                            <Gauge className="w-4 h-4" />
+                            {Math.round(result.confidence_score * 100)}% confidence
                           </div>
                         </div>
-                      )}
-                    </div>
 
-                    {/* Actions */}
-                    <div className="flex-shrink-0 flex items-center gap-2">
-                      {!result.is_reviewed && (
+                        {/* Quick Artifacts Preview */}
+                        {result.artifacts_detected.length > 0 && (
+                          <div className="mb-3">
+                            <div className="flex flex-wrap gap-1">
+                              {result.artifacts_detected.slice(0, 3).map((artifact, index) => (
+                                <Badge key={index} variant="outline" className="text-xs">
+                                  {artifact}
+                                </Badge>
+                              ))}
+                              {result.artifacts_detected.length > 3 && (
+                                <Badge variant="outline" className="text-xs">
+                                  +{result.artifacts_detected.length - 3} more
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex-shrink-0 flex items-center gap-2">
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
-                          onClick={() => markAsReviewed(result.id)}
+                          onClick={() => toggleExpanded(result.id)}
+                          className="flex items-center gap-1"
                         >
-                          Mark Reviewed
+                          {isExpanded ? (
+                            <ChevronDown className="w-4 h-4" />
+                          ) : (
+                            <ChevronRight className="w-4 h-4" />
+                          )}
+                          Details
                         </Button>
-                      )}
-                      
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => window.open(result.content_url, '_blank')}
-                        className="flex items-center gap-1"
-                      >
-                        <ExternalLink className="w-3 h-3" />
-                        View
-                      </Button>
+                        
+                        {!result.is_reviewed && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => markAsReviewed(result.id)}
+                          >
+                            Mark Reviewed
+                          </Button>
+                        )}
+                        
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => window.open(result.content_url, '_blank')}
+                          className="flex items-center gap-1"
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                          View
+                        </Button>
+                      </div>
                     </div>
-                  </div>
 
-                  {!result.is_reviewed && (
-                    <Alert className="mt-4 border-blue-200 bg-blue-50/50 dark:border-blue-800 dark:bg-blue-950/20">
-                      <AlertTriangle className="w-4 h-4" />
-                      <AlertDescription>
-                        New detection requires review. Consider taking appropriate action if this is unauthorized use.
-                      </AlertDescription>
-                    </Alert>
-                  )}
-                </div>
-              ))}
+                    {/* Expanded Details */}
+                    <Collapsible open={isExpanded}>
+                      <CollapsibleContent className="mt-4 pt-4 border-t space-y-4">
+                        {/* Detection Analysis */}
+                        <div className="bg-muted/30 rounded-lg p-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Info className="w-4 h-4 text-blue-500" />
+                            <h4 className="font-medium">Detection Analysis</h4>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            {getDetectionDescription(result.detection_type)}  
+                          </p>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div>
+                              <div className="flex items-center gap-1 mb-1">
+                                <Target className="w-3 h-3" />
+                                <span className="font-medium">Detection Type</span>
+                              </div>
+                              <p className="text-muted-foreground capitalize">{result.detection_type}</p>
+                            </div>
+                            
+                            <div>
+                              <div className="flex items-center gap-1 mb-1">
+                                <Gauge className="w-3 h-3" />
+                                <span className="font-medium">Confidence Score</span>
+                              </div>
+                              <p className="text-muted-foreground">
+                                {Math.round(result.confidence_score * 100)}% ({result.confidence_score.toFixed(4)})
+                              </p>
+                            </div>
+                            
+                            <div>
+                              <div className="flex items-center gap-1 mb-1">
+                                <Calendar className="w-3 h-3" />
+                                <span className="font-medium">Detected At</span>
+                              </div>
+                              <p className="text-muted-foreground">
+                                {new Date(result.detected_at).toLocaleString()}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* All Artifacts */}
+                        {result.artifacts_detected.length > 0 && (
+                          <div className="bg-muted/30 rounded-lg p-4">
+                            <h4 className="font-medium mb-2">All Detected Artifacts ({result.artifacts_detected.length})</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                              {result.artifacts_detected.map((artifact, index) => (
+                                <div key={index} className="flex items-center gap-2 text-sm">
+                                  <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0" />
+                                  <span>{artifact}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Content Metadata */}
+                        <div className="bg-muted/30 rounded-lg p-4">
+                          <h4 className="font-medium mb-2">Content Information</h4>
+                          <div className="space-y-2 text-sm">
+                            <div>
+                              <span className="font-medium">URL: </span>
+                              <a 
+                                href={result.content_url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-blue-500 hover:underline break-all"
+                              >
+                                {result.content_url}
+                              </a>
+                            </div>
+                            <div>
+                              <span className="font-medium">Platform: </span>
+                              <span className="capitalize">{result.account.platform}</span>
+                            </div>
+                            <div>
+                              <span className="font-medium">Account: </span>
+                              <span>@{result.account.account_handle}</span>
+                              {result.account.account_name && (
+                                <span className="text-muted-foreground"> ({result.account.account_name})</span>
+                              )}
+                            </div>
+                            <div>
+                              <span className="font-medium">Content Type: </span>
+                              <span className="capitalize">{result.content_type}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
+
+                    {!result.is_reviewed && (
+                      <Alert className="mt-4 border-blue-200 bg-blue-50/50 dark:border-blue-800 dark:bg-blue-950/20">
+                        <AlertTriangle className="w-4 h-4" />
+                        <AlertDescription>
+                          New detection requires review. Consider taking appropriate action if this is unauthorized use.
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </CardContent>
