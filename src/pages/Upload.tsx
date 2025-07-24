@@ -317,7 +317,7 @@ const Upload = () => {
     if (files.length === 0 && urls.length === 0) {
       toast({
         title: "No Content Selected",
-        description: "Please upload at least one file or add a video link to protect",
+        description: "Please upload at least one file or add a social media account to protect",
         variant: "destructive",
       });
       return;
