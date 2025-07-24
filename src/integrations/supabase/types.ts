@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_sessions: {
+        Row: {
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          session_token: string
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          session_token: string
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          session_token?: string
+        }
+        Relationships: []
+      }
       artwork: {
         Row: {
           blockchain_certificate_id: string | null
@@ -973,6 +997,14 @@ export type Database = {
           _user_id: string
           _role: Database["public"]["Enums"]["app_role"]
         }
+        Returns: boolean
+      }
+      is_valid_admin_session: {
+        Args: { session_token: string }
+        Returns: boolean
+      }
+      validate_admin_token: {
+        Args: { token_hash: string }
         Returns: boolean
       }
     }
