@@ -2,14 +2,16 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, ArrowRight, Globe, Link2 } from "lucide-react";
+import { AlertCircle, ArrowRight, Globe, Link2, Trash2, Flag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { DMCAFormDialog } from "@/components/dmca/DMCAFormDialog";
+import { useToast } from "@/hooks/use-toast";
 
 export default function CopyrightMatches() {
   const [matches, setMatches] = useState<Tables<"copyright_matches">[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchMatches = async () => {
@@ -27,6 +29,57 @@ export default function CopyrightMatches() {
 
     fetchMatches();
   }, []);
+
+  const handleDeleteMatch = async (matchId: string) => {
+    try {
+      const { error } = await supabase
+        .from("copyright_matches")
+        .delete()
+        .eq("id", matchId);
+
+      if (error) throw error;
+
+      setMatches(matches.filter(match => match.id !== matchId));
+      toast({
+        title: "Match deleted",
+        description: "The copyright match has been removed.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete the copyright match.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleReportFalsePositive = async (matchId: string) => {
+    try {
+      const { error } = await supabase
+        .from("copyright_matches")
+        .update({ is_reviewed: true, is_authorized: true })
+        .eq("id", matchId);
+
+      if (error) throw error;
+
+      setMatches(matches.map(match => 
+        match.id === matchId 
+          ? { ...match, is_reviewed: true, is_authorized: true }
+          : match
+      ));
+      
+      toast({
+        title: "Reported as false positive",
+        description: "This match has been marked as authorized content.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to report false positive.",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -121,6 +174,27 @@ export default function CopyrightMatches() {
               </div>
             </div>
             <div className="flex flex-col sm:flex-row justify-end gap-2">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => handleReportFalsePositive(match.id)}
+                className="w-full sm:w-auto text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                disabled={match.is_authorized}
+              >
+                <Flag className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                <span className="text-xs sm:text-sm">
+                  {match.is_authorized ? "False Positive" : "Report False"}
+                </span>
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => handleDeleteMatch(match.id)}
+                className="w-full sm:w-auto text-red-600 hover:text-red-700 hover:bg-red-50"
+              >
+                <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                <span className="text-xs sm:text-sm">Delete</span>
+              </Button>
               <DMCAFormDialog 
                 matchId={match.id}
                 sourceUrl={match.source_url}
