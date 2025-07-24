@@ -113,9 +113,13 @@ const SocialMediaAccountManager = () => {
 
   const loadAccounts = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
       const { data, error } = await supabase
         .from('social_media_accounts')
         .select('*')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -127,9 +131,13 @@ const SocialMediaAccountManager = () => {
 
   const loadScans = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
       const { data, error } = await supabase
         .from('social_media_scans')
-        .select('*')
+        .select('*, account:social_media_accounts!inner(user_id)')
+        .eq('account.user_id', user.id)
         .order('started_at', { ascending: false })
         .limit(10);
 
