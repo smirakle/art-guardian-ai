@@ -146,8 +146,8 @@ async function performContentAnalysis(account: any, scanId: string, supabase: an
       content_type: contentType,
       content_url: generateContentUrl(account, contentType, i),
       content_title: generateContentTitle(account.platform, contentType, i),
-      content_description: generateContentDescription(detectionType, confidence),
-      thumbnail_url: generateThumbnailUrl(account.platform, i),
+      content_description: generateContentDescription(detectionType, confidence, account),
+      thumbnail_url: generateThumbnailUrl(account.platform, account),
       detection_type: detectionType,
       confidence_score: confidence,
       threat_level: threatLevel,
@@ -216,73 +216,87 @@ function generateArtifacts(detectionType: string): string[] {
 }
 
 function generateContentUrl(account: any, contentType: string, index: number): string {
-  const baseUrls = {
-    youtube: `https://www.youtube.com/watch?v=${generateRandomId()}`,
-    facebook: `https://www.facebook.com/${account.account_handle}/posts/${generateRandomId()}`,
-    instagram: `https://www.instagram.com/p/${generateRandomId()}/`,
-    tiktok: `https://www.tiktok.com/@${account.account_handle}/video/${generateRandomId()}`
-  };
-
-  return baseUrls[account.platform as keyof typeof baseUrls] || `${account.account_url}/content/${index}`;
+  // Generate realistic URLs based on actual account URLs and content types
+  const accountUrl = account.account_url;
+  
+  if (account.platform === 'youtube') {
+    // For YouTube, create realistic video URLs
+    return `${accountUrl.replace('/videos', '')}/watch?v=${generateRandomId()}`;
+  } else if (account.platform === 'facebook') {
+    // For Facebook, create realistic post URLs
+    return `${accountUrl}/posts/${Date.now() + index}`;
+  } else if (account.platform === 'instagram') {
+    // For Instagram, create realistic post URLs
+    return `https://www.instagram.com/p/${generateRandomId()}/`;
+  } else if (account.platform === 'tiktok') {
+    // For TikTok, create realistic video URLs
+    return `https://www.tiktok.com/@${account.account_handle}/video/${Date.now() + index}`;
+  }
+  
+  // Fallback to account URL with content identifier
+  return `${accountUrl}#content-${Date.now() + index}`;
 }
 
 function generateContentTitle(platform: string, contentType: string, index: number): string {
-  const titles = {
-    youtube: [
-      'Latest Music Video Release',
-      'Behind the Scenes Content',
-      'Live Performance Highlights',
-      'Interview Segment',
-      'Music Production Process'
-    ],
-    facebook: [
-      'New Photo Album',
-      'Live Video Update',
-      'Event Announcement',
-      'Personal Update',
-      'Shared Content'
-    ],
-    instagram: [
-      'Instagram Story Highlight',
-      'Photo Post',
-      'Reel Content',
-      'IGTV Video',
-      'Live Stream Archive'
-    ],
-    tiktok: [
-      'Trending Challenge Video',
-      'Original Content',
-      'Duet Response',
-      'Music Performance',
-      'Creative Short'
-    ]
+  // Generate more realistic titles based on platform and content type
+  const timeStamp = new Date().toLocaleDateString();
+  
+  const contentTitles = {
+    youtube: {
+      video: [`Video from ${timeStamp}`, `Latest Upload`, `New Content`, `Recent Video`],
+      live: [`Live Stream - ${timeStamp}`, `Live Video`, `Broadcasting Now`]
+    },
+    facebook: {
+      post: [`Post from ${timeStamp}`, `Status Update`, `Shared Content`, `New Post`],
+      photo: [`Photo Album`, `Image Post`, `Photo Update`],
+      video: [`Shared Video`, `Video Post`, `Video Content`]
+    },
+    instagram: {
+      post: [`Instagram Post`, `Photo Update`, `New Image`],
+      story: [`Story Highlight`, `Recent Story`, `Story Update`],
+      reel: [`Instagram Reel`, `Video Reel`, `Short Video`]
+    },
+    tiktok: {
+      video: [`TikTok Video`, `Short Video`, `Creative Content`, `Video Post`]
+    }
   };
 
-  const platformTitles = titles[platform as keyof typeof titles] || ['Content Post'];
-  return platformTitles[index % platformTitles.length];
+  const platformContent = contentTitles[platform as keyof typeof contentTitles];
+  if (platformContent) {
+    const typeContent = platformContent[contentType as keyof typeof platformContent] || platformContent['post'] || ['Content'];
+    return typeContent[index % typeContent.length];
+  }
+
+  return `${platform} content from ${timeStamp}`;
 }
 
-function generateContentDescription(detectionType: string, confidence: number): string {
+function generateContentDescription(detectionType: string, confidence: number, account: any): string {
+  const accountInfo = `Content from @${account.account_handle} on ${account.platform}`;
+  const timeInfo = `Detected on ${new Date().toLocaleString()}`;
+  
   const descriptions = {
-    deepfake: `AI-generated face replacement detected with ${Math.round(confidence * 100)}% confidence. Advanced neural analysis identified synthetic facial features and temporal inconsistencies.`,
-    copyright: `Potential copyright infringement detected with ${Math.round(confidence * 100)}% confidence. Content analysis suggests unauthorized use of protected material.`,
-    impersonation: `Account impersonation detected with ${Math.round(confidence * 100)}% confidence. Profile analysis indicates potential identity theft or unauthorized representation.`
+    deepfake: `${accountInfo} - AI-generated face replacement detected with ${Math.round(confidence * 100)}% confidence. Advanced neural analysis identified synthetic facial features and temporal inconsistencies. ${timeInfo}`,
+    copyright: `${accountInfo} - Potential copyright infringement detected with ${Math.round(confidence * 100)}% confidence. Content analysis suggests unauthorized use of protected material. ${timeInfo}`,
+    impersonation: `${accountInfo} - Account impersonation detected with ${Math.round(confidence * 100)}% confidence. Profile analysis indicates potential identity theft or unauthorized representation. ${timeInfo}`
   };
 
-  return descriptions[detectionType as keyof typeof descriptions] || 'Suspicious content detected';
+  return descriptions[detectionType as keyof typeof descriptions] || `Suspicious content detected from ${accountInfo}. ${timeInfo}`;
 }
 
-function generateThumbnailUrl(platform: string, index: number): string {
-  // Generate placeholder thumbnail URLs
-  const thumbnails = [
-    'https://picsum.photos/320/180?random=1',
-    'https://picsum.photos/320/180?random=2',
-    'https://picsum.photos/320/180?random=3',
-    'https://picsum.photos/320/180?random=4',
-    'https://picsum.photos/320/180?random=5'
-  ];
-
-  return thumbnails[index % thumbnails.length];
+function generateThumbnailUrl(platform: string, account: any): string {
+  // Generate more realistic thumbnails based on platform
+  const platformColors = {
+    youtube: 'ff0000', // YouTube red
+    facebook: '1877f2', // Facebook blue  
+    instagram: 'e4405f', // Instagram pink
+    tiktok: '000000'   // TikTok black
+  };
+  
+  const color = platformColors[platform as keyof typeof platformColors] || '666666';
+  const size = '320x180';
+  
+  // Use a service that generates thumbnails with platform branding
+  return `https://via.placeholder.com/${size}/${color}/ffffff?text=${platform.toUpperCase()}+@${account.account_handle}`;
 }
 
 function generateRandomId(): string {
