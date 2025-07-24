@@ -90,64 +90,53 @@ const EnhancedMonitoringOverview = () => {
     }
   };
 
-  // Dynamic stats based on real-time data
+  // Only show stats when real data is available
   const monitoringStats = realtimeData ? [
     { label: "Total Sources", value: realtimeData.sources_scanned.toLocaleString(), icon: Globe, color: "text-primary" },
     { label: "Dark Web Scans", value: realtimeData.dark_web_scans.toLocaleString(), icon: Network, color: "text-purple-500" },
     { label: "Deepfakes Found", value: realtimeData.deepfakes_detected.toString(), icon: Brain, color: "text-red-500" },
     { label: "Surface Web Scans", value: realtimeData.surface_web_scans.toLocaleString(), icon: Zap, color: "text-blue-500" }
-  ] : [
-    { label: "Total Sources", value: "1,000,000+", icon: Globe, color: "text-primary" },
-    { label: "Dark Web Coverage", value: "98%", icon: Network, color: "text-purple-500" },
-    { label: "AI Detection Rate", value: "99.7%", icon: Brain, color: "text-green-500" },
-    { label: "Response Time", value: "< 2s", icon: Zap, color: "text-yellow-500" }
-  ];
+  ] : null;
 
-  const platformCategories = [
+  // Platform coverage will be derived from real monitoring data
+  const platformCategories = realtimeData ? [
     { 
-      name: "Social Media", 
-      count: 250000, 
-      platforms: ["Instagram", "Pinterest", "TikTok", "YouTube", "Facebook", "Twitter/X", "Reddit", "Tumblr"],
-      coverage: 99
-    },
-    { 
-      name: "E-commerce", 
-      count: 180000, 
-      platforms: ["Amazon", "eBay", "Etsy", "Alibaba", "Shopify", "Redbubble", "Society6"],
-      coverage: 97
-    },
-    { 
-      name: "Stock Photos", 
-      count: 120000, 
-      platforms: ["Getty Images", "Shutterstock", "Unsplash", "Pixabay", "Adobe Stock"],
-      coverage: 95
+      name: "Surface Web", 
+      count: realtimeData.surface_web_scans, 
+      platforms: ["Social Media", "E-commerce", "Stock Photos", "News Sites"],
+      coverage: realtimeData.surface_web_scans > 0 ? 100 : 0
     },
     { 
       name: "Dark Web", 
-      count: 80000, 
-      platforms: ["Tor Markets", "Anonymous Forums", "P2P Networks", "Crypto Exchanges"],
-      coverage: 85
-    },
-    { 
-      name: "International", 
-      count: 200000, 
-      platforms: ["WeChat", "Weibo", "Baidu", "Yandex", "VK", "Douyin", "LINE"],
-      coverage: 92
-    },
-    { 
-      name: "Art & Design", 
-      count: 170000, 
-      platforms: ["ArtStation", "Behance", "DeviantArt", "Dribbble", "Figma Community"],
-      coverage: 98
+      count: realtimeData.dark_web_scans, 
+      platforms: ["Tor Markets", "Anonymous Forums", "P2P Networks"],
+      coverage: realtimeData.dark_web_scans > 0 ? 100 : 0
     }
-  ];
+  ] : [];
 
-  const detectionFeatures = [
-    { title: "AI-Powered Analysis", description: "Advanced neural networks detect even modified versions", active: true },
-    { title: "Dark Web Monitoring", description: "Comprehensive coverage of hidden marketplaces", active: true },
-    { title: "Real-time Alerts", description: "Instant notifications when infringement is detected", active: true },
-    { title: "Blockchain Verification", description: "Immutable proof of ownership and timestamps", active: true }
-  ];
+  // Detection features based on actual system capabilities
+  const detectionFeatures = realtimeData ? [
+    { 
+      title: "AI-Powered Analysis", 
+      description: `${realtimeData.deepfakes_detected} deepfakes detected with advanced neural networks`, 
+      active: realtimeData.deepfakes_detected > 0 
+    },
+    { 
+      title: "Dark Web Monitoring", 
+      description: `${realtimeData.dark_web_scans} dark web sources actively monitored`, 
+      active: realtimeData.dark_web_scans > 0 
+    },
+    { 
+      title: "Surface Web Scanning", 
+      description: `${realtimeData.surface_web_scans} surface web sources scanned`, 
+      active: realtimeData.surface_web_scans > 0 
+    },
+    { 
+      title: "Real-time Detection", 
+      description: `Last updated: ${new Date(realtimeData.timestamp).toLocaleTimeString()}`, 
+      active: true 
+    }
+  ] : [];
 
   return (
     <div className="space-y-6">
@@ -207,15 +196,23 @@ const EnhancedMonitoringOverview = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {monitoringStats.map((stat, index) => (
-              <div key={index} className="text-center p-3 bg-background/50 rounded-lg">
-                <stat.icon className={`w-6 h-6 mx-auto mb-2 ${stat.color}`} />
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
-              </div>
-            ))}
-          </div>
+          {monitoringStats ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {monitoringStats.map((stat, index) => (
+                <div key={index} className="text-center p-3 bg-background/50 rounded-lg">
+                  <stat.icon className={`w-6 h-6 mx-auto mb-2 ${stat.color}`} />
+                  <div className="text-2xl font-bold">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <Activity className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+              <p className="text-muted-foreground">No monitoring data available</p>
+              <p className="text-sm text-muted-foreground">Start live data generation to see real-time statistics</p>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -231,32 +228,35 @@ const EnhancedMonitoringOverview = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {platformCategories.map((category, index) => (
-            <div key={index} className="space-y-2">
-              <div className="flex justify-between items-center">
-                <div>
-                  <span className="font-medium">{category.name}</span>
-                  <span className="text-sm text-muted-foreground ml-2">
-                    {category.count.toLocaleString()} sources
-                  </span>
+          {platformCategories.length > 0 ? (
+            platformCategories.map((category, index) => (
+              <div key={index} className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <span className="font-medium">{category.name}</span>
+                    <span className="text-sm text-muted-foreground ml-2">
+                      {category.count.toLocaleString()} sources scanned
+                    </span>
+                  </div>
+                  <Badge variant="outline">{category.coverage}% active</Badge>
                 </div>
-                <Badge variant="outline">{category.coverage}% covered</Badge>
+                <Progress value={category.coverage} className="h-2" />
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {category.platforms.map((platform, i) => (
+                    <Badge key={i} variant="secondary" className="text-xs">
+                      {platform}
+                    </Badge>
+                  ))}
+                </div>
               </div>
-              <Progress value={category.coverage} className="h-2" />
-              <div className="flex flex-wrap gap-1 mt-2">
-                {category.platforms.slice(0, 5).map((platform, i) => (
-                  <Badge key={i} variant="secondary" className="text-xs">
-                    {platform}
-                  </Badge>
-                ))}
-                {category.platforms.length > 5 && (
-                  <Badge variant="outline" className="text-xs">
-                    +{category.platforms.length - 5} more
-                  </Badge>
-                )}
-              </div>
+            ))
+          ) : (
+            <div className="text-center py-8">
+              <Globe className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+              <p className="text-muted-foreground">No platform data available</p>
+              <p className="text-sm text-muted-foreground">Real platform coverage will appear after monitoring starts</p>
             </div>
-          ))}
+          )}
         </CardContent>
       </Card>
 
@@ -272,17 +272,25 @@ const EnhancedMonitoringOverview = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {detectionFeatures.map((feature, index) => (
-              <div key={index} className="flex items-start gap-3 p-3 bg-background/50 rounded-lg">
-                <div className={`w-2 h-2 rounded-full mt-2 ${feature.active ? 'bg-green-500' : 'bg-gray-400'}`} />
-                <div>
-                  <h4 className="font-medium">{feature.title}</h4>
-                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+          {detectionFeatures.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {detectionFeatures.map((feature, index) => (
+                <div key={index} className="flex items-start gap-3 p-3 bg-background/50 rounded-lg">
+                  <div className={`w-2 h-2 rounded-full mt-2 ${feature.active ? 'bg-green-500' : 'bg-gray-400'}`} />
+                  <div>
+                    <h4 className="font-medium">{feature.title}</h4>
+                    <p className="text-sm text-muted-foreground">{feature.description}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <Brain className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+              <p className="text-muted-foreground">No detection data available</p>
+              <p className="text-sm text-muted-foreground">Start monitoring to see detection capabilities</p>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -298,18 +306,26 @@ const EnhancedMonitoringOverview = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
               <div className="w-3 h-3 bg-green-500 rounded-full mx-auto mb-2"></div>
-              <div className="font-medium text-green-700 dark:text-green-400">All Systems Operational</div>
-              <div className="text-sm text-green-600 dark:text-green-500">99.9% uptime</div>
+              <div className="font-medium text-green-700 dark:text-green-400">
+                {realtimeData ? 'Live Data Active' : 'Awaiting Data'}
+              </div>
+              <div className="text-sm text-green-600 dark:text-green-500">
+                {realtimeData ? `Updated: ${new Date(realtimeData.timestamp).toLocaleTimeString()}` : 'Start monitoring'}
+              </div>
             </div>
             <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
               <Search className="w-5 h-5 mx-auto mb-2 text-blue-500" />
-              <div className="font-medium text-blue-700 dark:text-blue-400">Active Scans</div>
-              <div className="text-sm text-blue-600 dark:text-blue-500">24/7 monitoring</div>
+              <div className="font-medium text-blue-700 dark:text-blue-400">Sources Scanned</div>
+              <div className="text-sm text-blue-600 dark:text-blue-500">
+                {realtimeData ? realtimeData.sources_scanned.toLocaleString() : '0'}
+              </div>
             </div>
             <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
               <Network className="w-5 h-5 mx-auto mb-2 text-purple-500" />
-              <div className="font-medium text-purple-700 dark:text-purple-400">Dark Web Active</div>
-              <div className="text-sm text-purple-600 dark:text-purple-500">Deep monitoring</div>
+              <div className="font-medium text-purple-700 dark:text-purple-400">Deepfakes Found</div>
+              <div className="text-sm text-purple-600 dark:text-purple-500">
+                {realtimeData ? realtimeData.deepfakes_detected : '0'}
+              </div>
             </div>
           </div>
         </CardContent>
