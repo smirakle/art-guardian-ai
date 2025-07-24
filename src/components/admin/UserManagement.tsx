@@ -145,24 +145,30 @@ const UserManagement = () => {
 
   const updateUserRole = async (userId: string, newRole: 'admin' | 'user') => {
     try {
-      // Update or insert user role
-      const { error } = await supabase
-        .from('user_roles')
-        .upsert({ 
-          user_id: userId, 
-          role: newRole 
-        }, { 
-          onConflict: 'user_id' 
-        });
+      // Use the secure role management function instead of direct database update
+      const { data, error } = await supabase.functions.invoke('secure-role-management', {
+        body: {
+          userId,
+          newRole,
+          reason: `Role change initiated by admin via user management interface`
+        }
+      });
 
       if (error) throw error;
 
-      toast.success(`User role updated to ${newRole}`);
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to update user role');
+      }
+
+      toast.success(data.message || `User role updated to ${newRole}`);
+
+      // Refresh the users list
       fetchUsers();
+      setSelectedUser(null);
       setDialogOpen(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating user role:', error);
-      toast.error('Failed to update user role');
+      toast.error(error.message || "Failed to update user role");
     }
   };
 

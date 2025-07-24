@@ -20,6 +20,93 @@ interface DMCARequest {
   timestamp: string;
 }
 
+// Input validation and sanitization
+function validateDMCARequest(data: any): DMCARequest {
+  const errors: string[] = [];
+  
+  // Validate matchId (UUID format)
+  if (!data.matchId || typeof data.matchId !== 'string') {
+    errors.push('Match ID is required');
+  } else {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(data.matchId)) {
+      errors.push('Invalid match ID format');
+    }
+  }
+  
+  // Validate required string fields
+  const stringFields = [
+    'copyrightOwnerName', 'copyrightOwnerEmail', 'copyrightOwnerAddress',
+    'copyrightWorkDescription', 'infringingUrl', 'infringingDescription',
+    'electronicSignature'
+  ];
+  
+  for (const field of stringFields) {
+    if (!data[field] || typeof data[field] !== 'string' || data[field].trim().length === 0) {
+      errors.push(`${field} is required`);
+    } else if (data[field].length > 2000) {
+      errors.push(`${field} must be less than 2000 characters`);
+    }
+  }
+  
+  // Validate email format
+  if (data.copyrightOwnerEmail) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.copyrightOwnerEmail)) {
+      errors.push('Valid email address is required');
+    }
+  }
+  
+  // Validate URL format
+  if (data.infringingUrl) {
+    try {
+      new URL(data.infringingUrl);
+    } catch {
+      errors.push('Valid infringing URL is required');
+    }
+  }
+  
+  // Validate timestamp
+  if (!data.timestamp || typeof data.timestamp !== 'string') {
+    errors.push('Timestamp is required');
+  } else {
+    const timestamp = new Date(data.timestamp);
+    if (isNaN(timestamp.getTime())) {
+      errors.push('Valid timestamp is required');
+    }
+  }
+  
+  // Validate boolean statements
+  if (data.goodFaithStatement !== true) {
+    errors.push('Good faith statement must be acknowledged');
+  }
+  
+  if (data.accuracyStatement !== true) {
+    errors.push('Accuracy statement must be acknowledged');
+  }
+  
+  if (errors.length > 0) {
+    throw new Error(`Validation errors: ${errors.join(', ')}`);
+  }
+  
+  // Sanitize strings
+  const sanitize = (str: string) => str.trim().substring(0, 2000);
+  
+  return {
+    matchId: data.matchId,
+    copyrightOwnerName: sanitize(data.copyrightOwnerName),
+    copyrightOwnerEmail: data.copyrightOwnerEmail.trim().toLowerCase(),
+    copyrightOwnerAddress: sanitize(data.copyrightOwnerAddress),
+    copyrightWorkDescription: sanitize(data.copyrightWorkDescription),
+    infringingUrl: data.infringingUrl.trim(),
+    infringingDescription: sanitize(data.infringingDescription),
+    electronicSignature: sanitize(data.electronicSignature),
+    goodFaithStatement: data.goodFaithStatement,
+    accuracyStatement: data.accuracyStatement,
+    timestamp: data.timestamp
+  };
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -32,7 +119,9 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const dmcaData: DMCARequest = await req.json();
+    // Parse and validate request body
+    const rawData = await req.json();
+    const dmcaData: DMCARequest = validateDMCARequest(rawData);
     console.log('Processing DMCA notice for match:', dmcaData.matchId);
 
     // Get match details

@@ -15,6 +15,66 @@ interface ContactFormData {
   message: string;
 }
 
+// HTML sanitization function
+function sanitizeHTML(input: string): string {
+  return input
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g, '&#x2F;');
+}
+
+// Input validation function
+function validateContactForm(data: any): ContactFormData {
+  const errors: string[] = [];
+  
+  if (!data.firstName || typeof data.firstName !== 'string' || data.firstName.trim().length === 0) {
+    errors.push('First name is required');
+  } else if (data.firstName.length > 100) {
+    errors.push('First name must be less than 100 characters');
+  }
+  
+  if (!data.lastName || typeof data.lastName !== 'string' || data.lastName.trim().length === 0) {
+    errors.push('Last name is required');
+  } else if (data.lastName.length > 100) {
+    errors.push('Last name must be less than 100 characters');
+  }
+  
+  if (!data.email || typeof data.email !== 'string') {
+    errors.push('Email is required');
+  } else {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.email)) {
+      errors.push('Valid email address is required');
+    }
+  }
+  
+  if (!data.subject || typeof data.subject !== 'string' || data.subject.trim().length === 0) {
+    errors.push('Subject is required');
+  } else if (data.subject.length > 200) {
+    errors.push('Subject must be less than 200 characters');
+  }
+  
+  if (!data.message || typeof data.message !== 'string' || data.message.trim().length === 0) {
+    errors.push('Message is required');
+  } else if (data.message.length > 5000) {
+    errors.push('Message must be less than 5000 characters');
+  }
+  
+  if (errors.length > 0) {
+    throw new Error(`Validation errors: ${errors.join(', ')}`);
+  }
+  
+  return {
+    firstName: sanitizeHTML(data.firstName.trim()),
+    lastName: sanitizeHTML(data.lastName.trim()),
+    email: data.email.trim().toLowerCase(),
+    subject: sanitizeHTML(data.subject.trim()),
+    message: sanitizeHTML(data.message.trim())
+  };
+}
+
 serve(async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
