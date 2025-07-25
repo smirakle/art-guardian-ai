@@ -730,6 +730,42 @@ export type Database = {
         }
         Relationships: []
       }
+      realtime_analysis_results: {
+        Row: {
+          analysis_type: string
+          confidence_score: number
+          created_at: string
+          id: string
+          image_url: string
+          processing_time_ms: number | null
+          results: Json
+          service_name: string
+          user_id: string
+        }
+        Insert: {
+          analysis_type: string
+          confidence_score: number
+          created_at?: string
+          id?: string
+          image_url: string
+          processing_time_ms?: number | null
+          results?: Json
+          service_name: string
+          user_id: string
+        }
+        Update: {
+          analysis_type?: string
+          confidence_score?: number
+          created_at?: string
+          id?: string
+          image_url?: string
+          processing_time_ms?: number | null
+          results?: Json
+          service_name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       realtime_monitoring_stats: {
         Row: {
           dark_web_scans: number

@@ -38,6 +38,7 @@ import RecentDeepfakeDetections from "@/components/RecentDeepfakeDetections";
 import SocialMediaAccountManager from "@/components/SocialMediaAccountManager";
 import SocialMediaMonitoringResults from "@/components/SocialMediaMonitoringResults";
 import { ComprehensiveWebScanner } from "@/components/ComprehensiveWebScanner";
+import RealTimeImageAnalysis from "@/components/RealTimeImageAnalysis";
 
 interface UploadedFile {
   id: string;
@@ -566,10 +567,14 @@ const Upload = () => {
         
         <div data-upload-area>
           <Tabs defaultValue="protect" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="protect" className="flex items-center gap-2">
                 <UploadIcon className="w-4 h-4" />
                 Protect Art
+              </TabsTrigger>
+              <TabsTrigger value="realtime" className="flex items-center gap-2">
+                <Globe className="w-4 h-4" />
+                Real-Time AI
               </TabsTrigger>
               <TabsTrigger value="social" className="flex items-center gap-2">
                 <Shield className="w-4 h-4" />
@@ -592,6 +597,10 @@ const Upload = () => {
             <TabsContent value="social" className="space-y-6">
               <SocialMediaAccountManager />
               <SocialMediaMonitoringResults />
+            </TabsContent>
+
+            <TabsContent value="realtime" className="space-y-6">
+              <RealTimeImageAnalysis />
             </TabsContent>
 
             <TabsContent value="deepfake" className="space-y-6">
