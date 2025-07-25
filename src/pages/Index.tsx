@@ -36,7 +36,8 @@ import {
   Scale,
   Building,
   Heart,
-  ExternalLink
+  ExternalLink,
+  UserX
 } from 'lucide-react';
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import MonitoringFlow from "@/components/MonitoringFlow";
@@ -548,6 +549,10 @@ const Index = () => {
                     <Check className="h-4 w-4 text-green-500" />
                     <span className="text-sm">Blockchain verification</span>
                   </div>
+                  <div className="flex items-center space-x-3">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Deepfake detection & monitoring</span>
+                  </div>
                 </div>
                 <Separator className="my-4" />
                 <div className="space-y-2">
@@ -558,8 +563,15 @@ const Index = () => {
                     </span>
                     <span className="text-muted-foreground">+$99/mo</span>
                   </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2">
+                      <UserX className="h-4 w-4 text-primary" />
+                      Advanced Deepfake Scanner
+                    </span>
+                    <span className="text-green-600 font-medium">Included</span>
+                  </div>
                   <p className="text-xs text-muted-foreground">
-                    $199 setup fee
+                    $199 setup fee for social media monitoring
                   </p>
                 </div>
                 <Button 
