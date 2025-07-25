@@ -983,6 +983,125 @@ export type Database = {
         }
         Relationships: []
       }
+      web_scan_results: {
+        Row: {
+          action_taken: string | null
+          artifacts_detected: string[] | null
+          confidence_score: number
+          content_description: string | null
+          content_title: string | null
+          content_type: string
+          created_at: string
+          detected_at: string
+          detection_type: string
+          id: string
+          is_reviewed: boolean
+          scan_id: string
+          source_domain: string
+          source_url: string
+          threat_level: string
+          thumbnail_url: string | null
+        }
+        Insert: {
+          action_taken?: string | null
+          artifacts_detected?: string[] | null
+          confidence_score: number
+          content_description?: string | null
+          content_title?: string | null
+          content_type: string
+          created_at?: string
+          detected_at?: string
+          detection_type: string
+          id?: string
+          is_reviewed?: boolean
+          scan_id: string
+          source_domain: string
+          source_url: string
+          threat_level: string
+          thumbnail_url?: string | null
+        }
+        Update: {
+          action_taken?: string | null
+          artifacts_detected?: string[] | null
+          confidence_score?: number
+          content_description?: string | null
+          content_title?: string | null
+          content_type?: string
+          created_at?: string
+          detected_at?: string
+          detection_type?: string
+          id?: string
+          is_reviewed?: boolean
+          scan_id?: string
+          source_domain?: string
+          source_url?: string
+          threat_level?: string
+          thumbnail_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "web_scan_results_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "web_scans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      web_scans: {
+        Row: {
+          completed_at: string | null
+          content_text: string | null
+          content_type: string
+          content_url: string | null
+          created_at: string
+          error_message: string | null
+          id: string
+          include_deep_web: boolean
+          matches_found: number | null
+          search_terms: string[]
+          sources_scanned: number | null
+          started_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          content_text?: string | null
+          content_type: string
+          content_url?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          include_deep_web?: boolean
+          matches_found?: number | null
+          search_terms: string[]
+          sources_scanned?: number | null
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          content_text?: string | null
+          content_type?: string
+          content_url?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          include_deep_web?: boolean
+          matches_found?: number | null
+          search_terms?: string[]
+          sources_scanned?: number | null
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
