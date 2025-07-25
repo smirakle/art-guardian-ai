@@ -32,7 +32,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 import { supabase } from "@/integrations/supabase/client";
 import VisualRecognition from "@/components/VisualRecognition";
-import QuickStartGuide from "@/components/QuickStartGuide";
+
 import RealTimeDeepfakeMonitor from "@/components/RealTimeDeepfakeMonitor";
 import RecentDeepfakeDetections from "@/components/RecentDeepfakeDetections";
 import SocialMediaAccountManager from "@/components/SocialMediaAccountManager";
@@ -555,15 +555,6 @@ const Upload = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
-        <QuickStartGuide 
-          onUploadClick={() => {
-            // Scroll to upload area
-            const uploadArea = document.querySelector('[data-upload-area]');
-            if (uploadArea) {
-              uploadArea.scrollIntoView({ behavior: 'smooth' });
-            }
-          }}
-        />
         
         <div data-upload-area>
           <Tabs defaultValue="protect" className="space-y-6">
