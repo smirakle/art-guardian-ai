@@ -62,24 +62,12 @@ const App = () => {
             <div className="pt-16">
               <Routes>
                 <Route path="/" element={<Index />} />
-                <Route path="/dashboard" element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                } />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/about-tsmo" element={<AboutTsmo />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/upload" element={
-                  <ProtectedRoute>
-                    <Upload />
-                  </ProtectedRoute>
-                } />
-                <Route path="/admin" element={
-                  <ProtectedRoute requiredRole="admin">
-                    <Admin />
-                  </ProtectedRoute>
-                } />
+                <Route path="/upload" element={<Upload />} />
+                <Route path="/admin" element={<Admin />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/success" element={<Success />} />
                 <Route path="/deep-scan" element={<DeepWebScan />} />
