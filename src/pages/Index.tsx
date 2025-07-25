@@ -364,6 +364,19 @@ const Index = () => {
                     <span className="text-sm">Email support</span>
                   </div>
                 </div>
+                <Separator className="my-4" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-primary" />
+                      Social Media Monitoring
+                    </span>
+                    <span className="text-muted-foreground">+$100/mo</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Monitor unlimited social profiles for impersonation
+                  </p>
+                </div>
                 <Button 
                   className="w-full" 
                   variant="outline"
@@ -401,6 +414,19 @@ const Index = () => {
                     <Check className="h-4 w-4 text-green-500" />
                     <span className="text-sm">Email support</span>
                   </div>
+                </div>
+                <Separator className="my-4" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-primary" />
+                      Social Media Monitoring
+                    </span>
+                    <span className="text-muted-foreground">+$100/mo</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Monitor unlimited social profiles for impersonation
+                  </p>
                 </div>
                 <Button 
                   className="w-full" 
@@ -449,6 +475,19 @@ const Index = () => {
                     <span className="text-sm">Priority support</span>
                   </div>
                 </div>
+                <Separator className="my-4" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-primary" />
+                      Social Media Monitoring
+                    </span>
+                    <span className="text-muted-foreground">+$100/mo</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Monitor unlimited social profiles for impersonation
+                  </p>
+                </div>
                 <Button 
                   className="w-full bg-gradient-to-r from-primary to-accent"
                   onClick={() => handlePricingPlan("Professional")}
@@ -493,6 +532,19 @@ const Index = () => {
                     <Check className="h-4 w-4 text-green-500" />
                     <span className="text-sm">Legal assistance</span>
                   </div>
+                </div>
+                <Separator className="my-4" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-primary" />
+                      Social Media Monitoring
+                    </span>
+                    <span className="text-muted-foreground">Included</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Monitor unlimited social profiles for impersonation
+                  </p>
                 </div>
                 <Button 
                   className="w-full" 
