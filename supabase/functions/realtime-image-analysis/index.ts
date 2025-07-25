@@ -125,10 +125,18 @@ async function performImageClassification(imageUrl: string): Promise<AnalysisRes
   
   const openaiKey = Deno.env.get('OPENAI_API_KEY');
   if (!openaiKey) {
-    throw new Error('OpenAI API key not configured');
+    console.error('OpenAI API key not configured');
+    return {
+      type: 'classification',
+      service: 'error',
+      results: [{ error: 'OpenAI API key not configured' }],
+      confidence: 0,
+      timestamp: new Date().toISOString()
+    };
   }
 
   try {
+    console.log('Making request to OpenAI API...');
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -136,13 +144,13 @@ async function performImageClassification(imageUrl: string): Promise<AnalysisRes
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4.1-2025-04-14',
         messages: [{
           role: 'user',
           content: [
             {
               type: 'text',
-              text: 'Analyze this image and provide detailed classification including: objects, style, medium, subject matter, artistic elements, and technical details. Return as structured JSON.'
+              text: 'Analyze this image and provide detailed classification including: 1) Main objects/subjects, 2) Artistic style and medium, 3) Color palette and composition, 4) Technical quality, 5) Content category, 6) Potential copyright or licensing considerations. Be specific and detailed.'
             },
             {
               type: 'image_url',
@@ -150,38 +158,59 @@ async function performImageClassification(imageUrl: string): Promise<AnalysisRes
             }
           ]
         }],
-        max_tokens: 1000
+        max_tokens: 1500
       })
     });
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error(`OpenAI API error: ${response.status} - ${errorText}`);
+      
+      return {
+        type: 'classification',
+        service: 'openai_error',
+        results: [{ 
+          error: `API Error ${response.status}`,
+          details: errorText,
+          suggestion: response.status === 429 ? 'Rate limit exceeded, try again later' : 'Check API key and quota'
+        }],
+        confidence: 0,
+        timestamp: new Date().toISOString()
+      };
     }
 
     const data = await response.json();
     const classification = data.choices[0].message.content;
 
-    // Try to parse as JSON, fallback to text analysis
-    let parsedClassification;
-    try {
-      parsedClassification = JSON.parse(classification);
-    } catch {
-      parsedClassification = { description: classification, confidence: 0.8 };
-    }
-
-    console.log('Image classification completed');
+    console.log('Image classification completed successfully');
 
     return {
       type: 'classification',
-      service: 'openai_gpt4o',
-      results: [parsedClassification],
-      confidence: 0.9,
+      service: 'OpenAI GPT-4.1',
+      results: [{
+        analysis: classification,
+        confidence: 0.95,
+        model: 'gpt-4.1-2025-04-14',
+        categories: ['AI Analysis', 'Content Classification', 'Technical Assessment'],
+        timestamp: new Date().toISOString()
+      }],
+      confidence: 0.95,
       timestamp: new Date().toISOString()
     };
 
   } catch (error) {
     console.error('Image classification error:', error);
-    throw error;
+    return {
+      type: 'classification',
+      service: 'error',
+      results: [{ 
+        error: 'Network or processing error',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      }],
+      confidence: 0,
+      timestamp: new Date().toISOString()
+    };
   }
 }
 
@@ -292,7 +321,7 @@ async function performSimilarityAnalysis(imageUrl: string): Promise<AnalysisResu
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4o',
+          model: 'gpt-4.1-2025-04-14',
           messages: [{
             role: 'user',
             content: [
