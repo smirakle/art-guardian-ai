@@ -59,14 +59,19 @@ const Index = () => {
             />
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
             Protect Your Art.<br />
-            <span className="text-foreground">Own Your Future.</span>
+            <span className="text-slate-900">Own Your Future.</span>
           </h1>
           
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            AI-powered protection for digital artists. Monitor, verify, and secure your creative work 
-            with real-time threat detection.
+          <p className="text-lg md:text-xl text-slate-600 mb-4 max-w-2xl mx-auto">
+            Complete Art Protection Suite with AI-powered monitoring, blockchain verification, 
+            and legal support for digital creators.
+          </p>
+          
+          <p className="text-base text-slate-500 mb-8 max-w-2xl mx-auto">
+            Monitor 20M+ sources including social media, marketplaces, and the dark web. 
+            Get instant alerts, automated DMCA filing, and comprehensive legal protection.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
@@ -119,11 +124,14 @@ const Index = () => {
       <section className="py-20 px-6">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              How We Protect Your Art
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">
+              Complete Art Protection Suite
             </h2>
-            <p className="text-lg text-muted-foreground">
-              Three simple steps to complete protection
+            <p className="text-lg text-slate-600 mb-4">
+              Everything you need to protect your creative work
+            </p>
+            <p className="text-slate-500">
+              Advanced AI monitoring across 20+ million sources worldwide
             </p>
           </div>
           
@@ -175,25 +183,43 @@ const Index = () => {
           
           <div className="grid md:grid-cols-3 gap-8 max-w-3xl mx-auto">
             {/* Starter Plan */}
-            <Card className="border-2 border-border hover:border-primary/50 transition-colors">
+            <Card className="border-2 border-slate-200 hover:border-slate-400 transition-colors">
               <CardHeader className="text-center">
-                <CardTitle>Starter</CardTitle>
-                <div className="text-3xl font-bold">$29</div>
-                <div className="text-muted-foreground">/month</div>
+                <CardTitle className="text-slate-900">Starter</CardTitle>
+                <div className="text-3xl font-bold text-slate-900">$29</div>
+                <div className="text-slate-500">/month</div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">50 artworks</span>
+                    <Check className="h-4 w-4 text-green-600" />
+                    <span className="text-sm text-slate-700">50 artworks</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Basic monitoring</span>
+                    <Check className="h-4 w-4 text-green-600" />
+                    <span className="text-sm text-slate-700">Basic monitoring</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Email alerts</span>
+                    <Check className="h-4 w-4 text-green-600" />
+                    <span className="text-sm text-slate-700">Email alerts</span>
+                  </div>
+                </div>
+                
+                {/* Social Media Add-on */}
+                <div className="pt-4 border-t border-slate-200">
+                  <div className="bg-blue-50 p-3 rounded-lg">
+                    <h4 className="font-semibold text-slate-900 mb-2">Social Media Monitoring Add-on</h4>
+                    <div className="text-sm text-slate-600 mb-2">
+                      <div className="flex justify-between">
+                        <span>Monthly:</span>
+                        <span className="font-semibold">+$99/mo</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Setup Fee:</span>
+                        <span className="font-semibold">$199</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-500">Monitor unlimited social profiles for impersonation and unauthorized content</p>
                   </div>
                 </div>
                 <Button className="w-full" onClick={() => handlePricingPlan("Starter")}>
@@ -203,30 +229,48 @@ const Index = () => {
             </Card>
 
             {/* Pro Plan */}
-            <Card className="border-2 border-primary shadow-lg scale-105">
+            <Card className="border-2 border-slate-900 shadow-lg scale-105">
               <CardHeader className="text-center">
-                <Badge className="mx-auto mb-2 bg-primary">Most Popular</Badge>
-                <CardTitle>Pro</CardTitle>
-                <div className="text-3xl font-bold">$99</div>
-                <div className="text-muted-foreground">/month</div>
+                <Badge className="mx-auto mb-2 bg-slate-900 text-white">Most Popular</Badge>
+                <CardTitle className="text-slate-900">Pro</CardTitle>
+                <div className="text-3xl font-bold text-slate-900">$99</div>
+                <div className="text-slate-500">/month</div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">500 artworks</span>
+                    <Check className="h-4 w-4 text-green-600" />
+                    <span className="text-sm text-slate-700">500 artworks</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Advanced monitoring</span>
+                    <Check className="h-4 w-4 text-green-600" />
+                    <span className="text-sm text-slate-700">Advanced monitoring</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Priority support</span>
+                    <Check className="h-4 w-4 text-green-600" />
+                    <span className="text-sm text-slate-700">Priority support</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Legal assistance</span>
+                    <Check className="h-4 w-4 text-green-600" />
+                    <span className="text-sm text-slate-700">Legal assistance</span>
+                  </div>
+                </div>
+                
+                {/* Social Media Add-on */}
+                <div className="pt-4 border-t border-slate-200">
+                  <div className="bg-blue-50 p-3 rounded-lg">
+                    <h4 className="font-semibold text-slate-900 mb-2">Social Media Monitoring Add-on</h4>
+                    <div className="text-sm text-slate-600 mb-2">
+                      <div className="flex justify-between">
+                        <span>Monthly:</span>
+                        <span className="font-semibold">+$99/mo</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Setup Fee:</span>
+                        <span className="font-semibold">$199</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-500">Monitor unlimited social profiles for impersonation and unauthorized content</p>
                   </div>
                 </div>
                 <Button className="w-full" onClick={() => handlePricingPlan("Pro")}>
@@ -236,25 +280,29 @@ const Index = () => {
             </Card>
 
             {/* Enterprise Plan */}
-            <Card className="border-2 border-border hover:border-primary/50 transition-colors">
+            <Card className="border-2 border-slate-200 hover:border-slate-400 transition-colors">
               <CardHeader className="text-center">
-                <CardTitle>Enterprise</CardTitle>
-                <div className="text-3xl font-bold">$299</div>
-                <div className="text-muted-foreground">/month</div>
+                <CardTitle className="text-slate-900">Enterprise</CardTitle>
+                <div className="text-3xl font-bold text-slate-900">$299</div>
+                <div className="text-slate-500">/month</div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Unlimited artworks</span>
+                    <Check className="h-4 w-4 text-green-600" />
+                    <span className="text-sm text-slate-700">Unlimited artworks</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Custom features</span>
+                    <Check className="h-4 w-4 text-green-600" />
+                    <span className="text-sm text-slate-700">Custom features</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Dedicated support</span>
+                    <Check className="h-4 w-4 text-green-600" />
+                    <span className="text-sm text-slate-700">Dedicated support</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-600" />
+                    <span className="text-sm text-slate-700">Social Media Monitoring Included</span>
                   </div>
                 </div>
                 <Button className="w-full" onClick={() => handlePricingPlan("Enterprise")}>

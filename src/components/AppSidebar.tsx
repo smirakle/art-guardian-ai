@@ -63,7 +63,7 @@ export function AppSidebar() {
   
   const renderMenuSection = (items: any[], label: string) => (
     <SidebarGroup className="mb-6">
-      <SidebarGroupLabel className="px-3 py-2 text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">
+      <SidebarGroupLabel className="px-3 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
         {!collapsed && label}
       </SidebarGroupLabel>
       <SidebarGroupContent>
@@ -76,8 +76,8 @@ export function AppSidebar() {
                   className={({ isActive }) => 
                     `flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
                       isActive 
-                        ? "bg-primary text-primary-foreground shadow-sm" 
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        ? "bg-slate-900 text-white shadow-sm" 
+                        : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                     }`
                   }
                 >
@@ -95,18 +95,18 @@ export function AppSidebar() {
   )
 
   return (
-    <Sidebar className="border-r border-border bg-background" collapsible="icon">
+    <Sidebar className="border-r border-slate-200 bg-white" collapsible="icon">
       <SidebarContent className="py-4">
         {/* Logo */}
         <div className="px-4 mb-8">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Shield className="w-5 h-5 text-primary-foreground" />
+            <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+              <Shield className="w-5 h-5 text-white" />
             </div>
             {!collapsed && (
               <div className="flex flex-col">
-                <span className="text-lg font-bold text-foreground">TSMO</span>
-                <span className="text-xs text-muted-foreground">Art Protection</span>
+                <span className="text-lg font-bold text-slate-900">TSMO</span>
+                <span className="text-xs text-slate-600">Art Protection</span>
               </div>
             )}
           </div>
@@ -131,8 +131,8 @@ export function AppSidebar() {
                       className={({ isActive }) => 
                         `flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
                           isActive 
-                            ? "bg-destructive text-destructive-foreground shadow-sm" 
-                            : "text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                            ? "bg-red-600 text-white shadow-sm" 
+                            : "text-slate-700 hover:bg-red-50 hover:text-red-600"
                         }`
                       }
                     >
