@@ -29,8 +29,8 @@ serve(async (req) => {
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
     logStep("Stripe key verified");
 
-    const { planId, billingCycle, email, promoCode, socialMediaAddon } = await req.json();
-    logStep("Request data received", { planId, billingCycle, email, promoCode, socialMediaAddon });
+    const { planId, billingCycle, email, promoCode, socialMediaAddon, deepfakeAddon } = await req.json();
+    logStep("Request data received", { planId, billingCycle, email, promoCode, socialMediaAddon, deepfakeAddon });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
@@ -38,7 +38,7 @@ serve(async (req) => {
     const planPricing = {
       student: { monthly: 1900, yearly: 19000 }, // $19/month, $190/year
       starter: { monthly: 2900, yearly: 29000 }, // $29/month, $290/year  
-      professional: { monthly: 7900, yearly: 79000 }, // $79/month, $790/year
+      professional: { monthly: 9900, yearly: 99000 }, // $99/month, $990/year
     };
 
     if (!planPricing[planId as keyof typeof planPricing]) {
@@ -48,12 +48,17 @@ serve(async (req) => {
     const pricing = planPricing[planId as keyof typeof planPricing];
     let amount = pricing[billingCycle as keyof typeof pricing];
     
-    // Add social media addon if selected
-    if (socialMediaAddon) {
-      amount += billingCycle === 'monthly' ? 10000 : 120000; // $100/month or $1200/year
+    // Add social media addon if selected (not available for professional plan)
+    if (socialMediaAddon && planId !== 'professional') {
+      amount += billingCycle === 'monthly' ? 9900 : 118800; // $99/month or $1188/year
     }
     
-    logStep("Plan pricing determined", { planId, billingCycle, amount, socialMediaAddon });
+    // Add deepfake addon if selected (not available for professional plan as it's included)
+    if (deepfakeAddon && planId !== 'professional') {
+      amount += billingCycle === 'monthly' ? 4900 : 58800; // $49/month or $588/year
+    }
+    
+    logStep("Plan pricing determined", { planId, billingCycle, amount, socialMediaAddon, deepfakeAddon });
 
     // Check if customer already exists
     const customers = await stripe.customers.list({ email, limit: 1 });
@@ -83,8 +88,8 @@ serve(async (req) => {
       },
     ];
 
-    // Add social media addon as separate line item if selected
-    if (socialMediaAddon) {
+    // Add social media addon as separate line item if selected (not for professional plan)
+    if (socialMediaAddon && planId !== 'professional') {
       lineItems.push({
         price_data: {
           currency: "usd",
@@ -92,7 +97,25 @@ serve(async (req) => {
             name: "Social Media Profile Monitoring",
             description: "Monitor unlimited social media profiles for impersonation and unauthorized use"
           },
-          unit_amount: billingCycle === 'monthly' ? 10000 : 120000, // $100/month or $1200/year
+          unit_amount: billingCycle === 'monthly' ? 9900 : 118800, // $99/month or $1188/year
+          recurring: { 
+            interval: billingCycle === 'monthly' ? 'month' : 'year' 
+          },
+        },
+        quantity: 1,
+      });
+    }
+
+    // Add deepfake addon as separate line item if selected (not for professional plan)
+    if (deepfakeAddon && planId !== 'professional') {
+      lineItems.push({
+        price_data: {
+          currency: "usd",
+          product_data: { 
+            name: "Deepfake Monitoring",
+            description: "Advanced AI-powered deepfake detection and monitoring across the web"
+          },
+          unit_amount: billingCycle === 'monthly' ? 4900 : 58800, // $49/month or $588/year
           recurring: { 
             interval: billingCycle === 'monthly' ? 'month' : 'year' 
           },
@@ -112,6 +135,7 @@ serve(async (req) => {
         planId,
         billingCycle,
         socialMediaAddon: socialMediaAddon ? 'true' : 'false',
+        deepfakeAddon: deepfakeAddon ? 'true' : 'false',
       },
     };
 
