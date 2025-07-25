@@ -31,7 +31,9 @@ import {
   Scan,
   Bot,
   Play,
-  ChevronRight
+  ChevronRight,
+  FileText,
+  Scale
 } from 'lucide-react';
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import MonitoringFlow from "@/components/MonitoringFlow";
@@ -252,6 +254,72 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground">Automated DMCA filing and legal assistance when needed</p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Legal Resources Section */}
+      <section className="py-20 px-4 bg-gray-50">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Legal Resources & Support
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Access professional legal templates and connect with IP specialists to protect your creative work.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-12">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow p-8">
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <FileText className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4">Legal Templates</h3>
+                <p className="text-muted-foreground mb-6">
+                  Professional legal documents ready to download and customize. DMCA notices, 
+                  licensing agreements, and more.
+                </p>
+                <div className="text-sm text-muted-foreground mb-6">
+                  <div>• $2.99 with membership</div>
+                  <div>• $9.99 without membership</div>
+                </div>
+                <Button 
+                  className="w-full" 
+                  onClick={() => navigate("/legal-templates")}
+                >
+                  Browse Templates
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow p-8">
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Scale className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4">IP Lawyers Directory</h3>
+                <p className="text-muted-foreground mb-6">
+                  Connect with verified intellectual property attorneys who specialize in 
+                  digital art and copyright protection.
+                </p>
+                <div className="text-sm text-muted-foreground mb-6">
+                  <div>• Verified specialists</div>
+                  <div>• Digital art expertise</div>
+                  <div>• Free consultations available</div>
+                </div>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => navigate("/lawyers")}
+                >
+                  Find a Lawyer
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </Card>
           </div>
         </div>
       </section>
