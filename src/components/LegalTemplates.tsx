@@ -102,8 +102,12 @@ const LegalTemplates = () => {
   const checkMembershipStatus = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        console.log('No user found for membership check');
+        return;
+      }
 
+      console.log('Checking membership for user:', user.id);
       const { data: hasMembership, error } = await supabase
         .rpc('user_has_membership', { _user_id: user.id });
 
@@ -112,6 +116,7 @@ const LegalTemplates = () => {
         return;
       }
 
+      console.log('Membership check result:', hasMembership);
       setUserHasMembership(hasMembership || false);
     } catch (error) {
       console.error('Error checking membership status:', error);
