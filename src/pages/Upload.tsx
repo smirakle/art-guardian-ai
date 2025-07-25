@@ -570,7 +570,7 @@ const Upload = () => {
             <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="protect" className="flex items-center gap-2">
                 <UploadIcon className="w-4 h-4" />
-                Protect Art
+                Real-time Image Analysis
               </TabsTrigger>
               <TabsTrigger value="realtime" className="flex items-center gap-2">
                 <Globe className="w-4 h-4" />
