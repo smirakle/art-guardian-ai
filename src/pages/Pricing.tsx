@@ -177,7 +177,7 @@ const Pricing = () => {
         '24/7 monitoring & support',
         'Advanced deepfake detection & prevention',
         'Advanced blockchain integration',
-        'Custom legal team',
+        
         'Enterprise SSO',
         'Custom integrations',
         'On-premise deployment options',
