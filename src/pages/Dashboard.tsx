@@ -21,9 +21,11 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { RealTimeMonitoringWidget } from '@/components/dashboard/RealTimeMonitoringWidget';
 import { RecentDetectionsWidget } from '@/components/dashboard/RecentDetectionsWidget';
 import { MonitoringWidget } from '@/components/dashboard/MonitoringWidget';
+import { UploadWidget } from '@/components/dashboard/UploadWidget';
 
 interface DashboardStats {
   protectedArtworks: number;
@@ -37,6 +39,7 @@ interface DashboardStats {
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
+  const { toast } = useToast();
   const [stats, setStats] = useState<DashboardStats>({
     protectedArtworks: 0,
     totalScans: 0,
@@ -122,7 +125,11 @@ const Dashboard = () => {
       title: 'Real Time AI Upload', 
       description: 'Protect artwork with AI monitoring',
       icon: Brain,
-      action: () => navigate('/upload'),
+      action: () => {
+        // Switch to the Upload tab
+        const uploadTab = document.querySelector('[value="upload"]') as HTMLElement;
+        if (uploadTab) uploadTab.click();
+      },
       color: 'bg-blue-500'
     },
     { 
@@ -238,10 +245,14 @@ const Dashboard = () => {
 
         {/* Main Dashboard Content */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Activity className="w-4 h-4" />
               Overview
+            </TabsTrigger>
+            <TabsTrigger value="upload" className="flex items-center gap-2">
+              <Upload className="w-4 h-4" />
+              Upload
             </TabsTrigger>
             <TabsTrigger value="monitoring" className="flex items-center gap-2">
               <Brain className="w-4 h-4" />
@@ -354,6 +365,18 @@ const Dashboard = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Upload Tab */}
+          <TabsContent value="upload" className="space-y-6">
+            <UploadWidget onUploadComplete={(artworkId) => {
+              toast({
+                title: "Upload Complete",
+                description: "Your content is now protected with AI monitoring",
+              });
+              // Optionally refresh dashboard stats
+              loadDashboardStats();
+            }} />
           </TabsContent>
 
           {/* Real-Time Monitoring Tab */}
