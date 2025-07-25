@@ -7,8 +7,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AlertCircle, Search, Globe, Shield, Eye, ImageIcon, FileText, Video, ExternalLink } from 'lucide-react'
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/contexts/AuthContext"
@@ -43,21 +42,22 @@ interface WebScanResult {
 
 export const ComprehensiveWebScanner = () => {
   const { user } = useAuth()
-  const [contentType, setContentType] = useState<'photo' | 'article' | 'video'>('photo')
+  const [scans, setScans] = useState<WebScan[]>([])
+  const [results, setResults] = useState<WebScanResult[]>([])
+  const [selectedScanId, setSelectedScanId] = useState<string>('')
+  const [filterType, setFilterType] = useState<'all' | 'running' | 'completed'>('all')
+  const [isScanning, setIsScanning] = useState(false)
+  const [contentType, setContentType] = useState<'photo' | 'video' | 'article' | 'text'>('photo')
   const [contentUrl, setContentUrl] = useState('')
   const [contentText, setContentText] = useState('')
   const [searchTerms, setSearchTerms] = useState('')
   const [includeDeepWeb, setIncludeDeepWeb] = useState(false)
-  const [isScanning, setIsScanning] = useState(false)
-  const [scans, setScans] = useState<WebScan[]>([])
-  const [results, setResults] = useState<WebScanResult[]>([])
-  const [selectedScanId, setSelectedScanId] = useState<string | null>(null)
 
   useEffect(() => {
     if (user) {
       loadScans()
     }
-  }, [user])
+  }, [user, filterType])
 
   useEffect(() => {
     if (selectedScanId) {
@@ -67,17 +67,26 @@ export const ComprehensiveWebScanner = () => {
 
   const loadScans = async () => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('web_scans')
         .select('*')
         .eq('user_id', user?.id)
-        .order('created_at', { ascending: false })
+
+      // Apply filter based on filterType
+      if (filterType === 'running') {
+        query = query.in('status', ['pending', 'running'])
+      } else if (filterType === 'completed') {
+        query = query.eq('status', 'completed')
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: false })
 
       if (error) throw error
       setScans(data || [])
       
       if (data && data.length > 0 && !selectedScanId) {
         setSelectedScanId(data[0].id)
+        loadResults(data[0].id)
       }
     } catch (error) {
       console.error('Error loading scans:', error)
@@ -86,6 +95,12 @@ export const ComprehensiveWebScanner = () => {
   }
 
   const loadResults = async (scanId: string) => {
+    // Don't try to load results for filter values
+    if (scanId === 'all' || scanId === 'running' || scanId === 'completed' || !scanId) {
+      setResults([])
+      return
+    }
+
     try {
       const { data, error } = await supabase
         .from('web_scan_results')
@@ -292,24 +307,31 @@ export const ComprehensiveWebScanner = () => {
       </Card>
 
       {/* Scan Results */}
-      <Tabs value={selectedScanId || ''} onValueChange={setSelectedScanId}>
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">Scan History & Results</h3>
-          <TabsList className="grid w-full max-w-md grid-cols-3">
-            <TabsTrigger value="all">All Scans</TabsTrigger>
-            <TabsTrigger value="running">Active</TabsTrigger>
-            <TabsTrigger value="completed">Completed</TabsTrigger>
-          </TabsList>
+          <Tabs value={filterType} onValueChange={(value) => setFilterType(value as 'all' | 'running' | 'completed')}>
+            <TabsList className="grid w-full max-w-md grid-cols-3">
+              <TabsTrigger value="all">All Scans</TabsTrigger>
+              <TabsTrigger value="running">Active</TabsTrigger>
+              <TabsTrigger value="completed">Completed</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
 
-        <div className="space-y-4 mt-4">
+        <div className="space-y-4">
           {scans.map((scan) => (
             <Card
               key={scan.id}
               className={`cursor-pointer transition-colors ${
-                selectedScanId === scan.id ? 'ring-2 ring-primary' : ''
+                selectedScanId === scan.id
+                  ? 'ring-2 ring-primary'
+                  : 'hover:bg-muted/50'
               }`}
-              onClick={() => setSelectedScanId(scan.id)}
+              onClick={() => {
+                setSelectedScanId(scan.id)
+                loadResults(scan.id)
+              }}
             >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
@@ -324,7 +346,7 @@ export const ComprehensiveWebScanner = () => {
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      {scan.search_terms.join(', ')}
+                      {Array.isArray(scan.search_terms) ? scan.search_terms.join(', ') : scan.search_terms}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       Started: {formatDate(scan.started_at)}
@@ -345,11 +367,9 @@ export const ComprehensiveWebScanner = () => {
 
           {scans.length === 0 && (
             <Card>
-              <CardContent className="p-8 text-center">
-                <Globe className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">No scans yet</h3>
+              <CardContent className="text-center py-8">
                 <p className="text-muted-foreground">
-                  Start your first comprehensive web scan to monitor for unauthorized use of your content.
+                  No {filterType === 'all' ? '' : filterType + ' '}scans found. Start a new scan to begin monitoring.
                 </p>
               </CardContent>
             </Card>
@@ -393,7 +413,7 @@ export const ComprehensiveWebScanner = () => {
                           <span>•</span>
                           <span>{formatDate(result.detected_at)}</span>
                         </div>
-                        {result.artifacts_detected.length > 0 && (
+                        {result.artifacts_detected && result.artifacts_detected.length > 0 && (
                           <div className="flex gap-1 flex-wrap">
                             {result.artifacts_detected.map((artifact, index) => (
                               <Badge key={index} variant="outline" className="text-xs">
@@ -426,7 +446,7 @@ export const ComprehensiveWebScanner = () => {
             </CardContent>
           </Card>
         )}
-      </Tabs>
+      </div>
     </div>
   )
 }
