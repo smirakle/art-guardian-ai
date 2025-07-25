@@ -452,8 +452,15 @@ const Index = () => {
                     </span>
                     <span className="text-muted-foreground">+$99/mo</span>
                   </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2">
+                      <UserX className="h-4 w-4 text-primary" />
+                      Deepfake Monitoring
+                    </span>
+                    <span className="text-muted-foreground">+$49/mo</span>
+                  </div>
                   <p className="text-xs text-muted-foreground">
-                    $199 setup fee
+                    $199 setup fee for social media monitoring
                   </p>
                 </div>
                 <Button 
@@ -503,8 +510,15 @@ const Index = () => {
                     </span>
                     <span className="text-muted-foreground">+$99/mo</span>
                   </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2">
+                      <UserX className="h-4 w-4 text-primary" />
+                      Deepfake Monitoring
+                    </span>
+                    <span className="text-muted-foreground">+$49/mo</span>
+                  </div>
                   <p className="text-xs text-muted-foreground">
-                    $199 setup fee
+                    $199 setup fee for social media monitoring
                   </p>
                 </div>
                 <Button 
