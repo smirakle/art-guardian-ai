@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Maintenance mode utilities
 export const MAINTENANCE_MODE_KEY = 'tsmo_maintenance_mode';
