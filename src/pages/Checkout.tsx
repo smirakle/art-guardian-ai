@@ -10,6 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   CreditCard, 
   Lock, 
@@ -147,19 +148,52 @@ const Checkout = () => {
     e.preventDefault();
     setIsProcessing(true);
 
-    // Simulate payment processing
-    setTimeout(() => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in or create an account first.",
+        variant: "destructive",
+      });
+      setIsProcessing(false);
+      return;
+    }
+
+    try {
+      // Create subscription after successful payment
+      const { data, error } = await supabase.functions.invoke('create-subscription', {
+        body: {
+          userId: user.id,
+          planId: selectedPlan,
+          billingCycle,
+          socialMediaAddon,
+          deepfakeAddon,
+          stripeCustomerId: 'demo_customer_' + Date.now(), // Demo mode
+          stripeSubscriptionId: 'demo_sub_' + Date.now() // Demo mode
+        }
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
       toast({
         title: "Payment Successful!",
         description: `Welcome to TSMO ${currentPlan.name}! Your account is now active.`,
       });
-      setIsProcessing(false);
       
-      // Redirect to onboarding or dashboard
+      // Redirect to monitoring dashboard
       setTimeout(() => {
         window.location.href = "/monitoring";
       }, 2000);
-    }, 2000);
+    } catch (error) {
+      toast({
+        title: "Payment Failed",
+        description: error instanceof Error ? error.message : "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (

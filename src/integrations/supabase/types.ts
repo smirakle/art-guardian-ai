@@ -998,6 +998,54 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          billing_cycle: string
+          created_at: string
+          current_period_end: string
+          current_period_start: string
+          deepfake_addon: boolean
+          id: string
+          plan_id: string
+          social_media_addon: boolean
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          billing_cycle?: string
+          created_at?: string
+          current_period_end: string
+          current_period_start?: string
+          deepfake_addon?: boolean
+          id?: string
+          plan_id: string
+          social_media_addon?: boolean
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          billing_cycle?: string
+          created_at?: string
+          current_period_end?: string
+          current_period_start?: string
+          deepfake_addon?: boolean
+          id?: string
+          plan_id?: string
+          social_media_addon?: boolean
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       template_purchases: {
         Row: {
           amount_paid: number
@@ -1185,9 +1233,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_artwork_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["app_role"]
+      }
+      get_user_subscription: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          plan_id: string
+          status: string
+          social_media_addon: boolean
+          deepfake_addon: boolean
+          is_active: boolean
+        }[]
       }
       has_role: {
         Args: {
@@ -1198,6 +1260,10 @@ export type Database = {
       }
       is_valid_admin_session: {
         Args: { session_token: string }
+        Returns: boolean
+      }
+      user_has_feature: {
+        Args: { feature_name: string }
         Returns: boolean
       }
       user_has_membership: {

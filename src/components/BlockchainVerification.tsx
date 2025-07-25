@@ -25,6 +25,7 @@ import tsmoLogo from "@/assets/tsmo-logo.png";
 import tsmoArtistLogo from "@/assets/tsmo-artist-logo.png";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import FeatureGuard from "@/components/FeatureGuard";
 import { supabase } from "@/integrations/supabase/client";
 
 interface BlockchainCertificate {
@@ -504,6 +505,12 @@ const BlockchainVerification = () => {
         </p>
       </div>
 
+      <FeatureGuard 
+        feature="blockchain_verification"
+        fallbackTitle="Blockchain Verification"
+        fallbackDescription="Secure your artwork with immutable blockchain technology for ultimate copyright protection"
+      >
+
       <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
         <CardContent className="p-6">
           <div className="space-y-4">
@@ -825,6 +832,7 @@ const BlockchainVerification = () => {
           </Card>
         </TabsContent>
       </Tabs>
+      </FeatureGuard>
     </div>
   );
 };

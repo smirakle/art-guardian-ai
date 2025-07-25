@@ -10,6 +10,7 @@ import RealTimeMonitoring from "@/components/RealTimeMonitoring";
 import SocialMediaMonitoringResults from "@/components/monitoring/SocialMediaMonitoringResults";
 import FakeAccountDetector from "@/components/FakeAccountDetector";
 import SocialMediaAccountManager from "@/components/SocialMediaAccountManager";
+import FeatureGuard from "@/components/FeatureGuard";
 
 export default function Monitoring() {
   return (
@@ -91,28 +92,47 @@ export default function Monitoring() {
           </TabsContent>
 
           <TabsContent value="social" className="space-y-6">
-            <SocialMediaAccountManager />
-            <SocialMediaMonitoringResults />
+            <FeatureGuard 
+              feature="social_media_monitoring" 
+              plan="addon"
+              fallbackTitle="Social Media Monitoring"
+              fallbackDescription="Monitor social media platforms for unauthorized use of your content"
+            >
+              <SocialMediaAccountManager />
+              <SocialMediaMonitoringResults />
+            </FeatureGuard>
           </TabsContent>
 
           <TabsContent value="deepfakes" className="space-y-6">
-            <FakeAccountDetector />
+            <FeatureGuard 
+              feature="deepfake_detection"
+              fallbackTitle="Deepfake Detection"
+              fallbackDescription="AI-powered deepfake detection and monitoring across the web"
+            >
+              <FakeAccountDetector />
+            </FeatureGuard>
           </TabsContent>
 
           <TabsContent value="dmca" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="w-5 h-5" />
-                  DMCA Takedown History
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Your DMCA takedown notices and their status will appear here.
-                </p>
-              </CardContent>
-            </Card>
+            <FeatureGuard 
+              feature="automated_dmca"
+              fallbackTitle="Automated DMCA"
+              fallbackDescription="Automatically file DMCA takedown notices for copyright infringement"
+            >
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    DMCA Takedown History
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Your DMCA takedown notices and their status will appear here.
+                  </p>
+                </CardContent>
+              </Card>
+            </FeatureGuard>
           </TabsContent>
         </Tabs>
       </div>
