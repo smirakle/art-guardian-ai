@@ -245,7 +245,7 @@ const Dashboard = () => {
 
         {/* Main Dashboard Content */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Activity className="w-4 h-4" />
               Overview
@@ -253,10 +253,6 @@ const Dashboard = () => {
             <TabsTrigger value="upload" className="flex items-center gap-2">
               <Upload className="w-4 h-4" />
               Upload
-            </TabsTrigger>
-            <TabsTrigger value="monitoring" className="flex items-center gap-2">
-              <Brain className="w-4 h-4" />
-              Real-Time AI
             </TabsTrigger>
             <TabsTrigger value="detections" className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4" />
@@ -365,6 +361,9 @@ const Dashboard = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Real-time AI Monitoring integrated into Overview */}
+            <RealTimeMonitoringWidget />
           </TabsContent>
 
           {/* Upload Tab */}
@@ -377,11 +376,6 @@ const Dashboard = () => {
               // Optionally refresh dashboard stats
               loadDashboardStats();
             }} />
-          </TabsContent>
-
-          {/* Real-Time Monitoring Tab */}
-          <TabsContent value="monitoring" className="space-y-6">
-            <RealTimeMonitoringWidget />
           </TabsContent>
 
           {/* Detections Tab */}
