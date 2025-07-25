@@ -14,7 +14,8 @@ import {
   ExternalLink,
   Brain,
   Users,
-  Flag
+  Flag,
+  Trash2
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -146,6 +147,36 @@ const SocialMediaMonitoringResults = () => {
       toast({
         title: "Action Failed",
         description: "Failed to record the action",
+        variant: "destructive",
+      });
+    } finally {
+      setIsActioning(null);
+    }
+  };
+
+  const deleteResult = async (resultId: string) => {
+    setIsActioning(resultId);
+    
+    try {
+      const { error } = await supabase
+        .from('social_media_monitoring_results')
+        .delete()
+        .eq('id', resultId);
+
+      if (error) throw error;
+
+      setResults(prev => prev.filter(result => result.id !== resultId));
+      
+      toast({
+        title: "Result Deleted",
+        description: "The monitoring result has been removed.",
+      });
+
+    } catch (error) {
+      console.error('Error deleting result:', error);
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete the monitoring result",
         variant: "destructive",
       });
     } finally {
@@ -331,7 +362,7 @@ const SocialMediaMonitoringResults = () => {
                             )}
                           </div>
 
-                          {/* Action Buttons */}
+                           {/* Action Buttons */}
                           <div className="flex items-center gap-2 mt-4 pt-4 border-t">
                             <Button
                               variant="outline"
@@ -379,6 +410,17 @@ const SocialMediaMonitoringResults = () => {
                                 </Button>
                               </>
                             )}
+                            
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => deleteResult(result.id)}
+                              disabled={isActioning === result.id}
+                              className="flex items-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                              Delete
+                            </Button>
                           </div>
                         </CardContent>
                       </Card>
