@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, FileText, Scale, Shield, Eye, AlertTriangle } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Download, FileText, Scale, Shield, Eye, AlertTriangle, DollarSign } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import jsPDF from 'jspdf';
 
 interface LegalTemplate {
@@ -19,6 +21,146 @@ interface LegalTemplate {
 
 const LegalTemplates = () => {
   const { toast } = useToast();
+  const [purchasedTemplates, setPurchasedTemplates] = useState<Set<string>>(new Set());
+  const [isLoading, setIsLoading] = useState<string | null>(null);
+  const [userHasMembership, setUserHasMembership] = useState<boolean>(false);
+
+  useEffect(() => {
+    loadPurchasedTemplates();
+    checkMembershipStatus();
+    handleReturnFromStripe();
+  }, []);
+
+  const handleReturnFromStripe = async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const purchase = urlParams.get('purchase');
+    const templateId = urlParams.get('template');
+    const sessionId = urlParams.get('session_id');
+
+    if (purchase === 'success' && sessionId) {
+      try {
+        // Update the purchase status
+        const { data, error } = await supabase.functions.invoke('update-template-purchase', {
+          body: { sessionId }
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Purchase Successful!",
+          description: "Your template has been purchased successfully. You can now download it.",
+        });
+
+        // Reload purchased templates
+        loadPurchasedTemplates();
+        
+        // Clean up URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } catch (error) {
+        console.error('Error updating purchase:', error);
+        toast({
+          title: "Purchase Status Update Failed",
+          description: "There was an issue updating your purchase status. Please contact support.",
+          variant: "destructive",
+        });
+      }
+    } else if (purchase === 'cancelled') {
+      toast({
+        title: "Purchase Cancelled",
+        description: "Your payment was cancelled. No charges were made.",
+        variant: "destructive",
+      });
+      
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  };
+
+  const loadPurchasedTemplates = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: purchases, error } = await supabase
+        .from('template_purchases')
+        .select('template_id')
+        .eq('user_id', user.id)
+        .eq('status', 'completed');
+
+      if (error) {
+        console.error('Error loading purchases:', error);
+        return;
+      }
+
+      const purchasedIds = new Set(purchases?.map(p => p.template_id) || []);
+      setPurchasedTemplates(purchasedIds);
+    } catch (error) {
+      console.error('Error loading purchased templates:', error);
+    }
+  };
+
+  const checkMembershipStatus = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: hasMembership, error } = await supabase
+        .rpc('user_has_membership', { _user_id: user.id });
+
+      if (error) {
+        console.error('Error checking membership:', error);
+        return;
+      }
+
+      setUserHasMembership(hasMembership || false);
+    } catch (error) {
+      console.error('Error checking membership status:', error);
+    }
+  };
+
+  const handlePurchaseTemplate = async (template: LegalTemplate) => {
+    try {
+      setIsLoading(template.id);
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please sign in to purchase templates.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('purchase-template', {
+        body: {
+          templateId: template.id,
+          templateTitle: template.title
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        // Open Stripe checkout in a new tab
+        window.open(data.url, '_blank');
+        
+        toast({
+          title: "Redirecting to Payment",
+          description: `Processing payment for ${template.title} - ${data.priceLabel}`,
+        });
+      }
+    } catch (error) {
+      console.error('Purchase error:', error);
+      toast({
+        title: "Purchase Failed",
+        description: "Failed to initiate payment. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(null);
+    }
+  };
 
   const templates: LegalTemplate[] = [
     {
@@ -547,20 +689,120 @@ Legal Department
                   </CardHeader>
                   
                   <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <FileText className="h-4 w-4" />
-                        {template.format.toUpperCase()}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <FileText className="h-4 w-4" />
+                          {template.format.toUpperCase()}
+                        </div>
+                        
+                        {purchasedTemplates.has(template.id) && (
+                          <Badge className="bg-green-100 text-green-800">
+                            Purchased
+                          </Badge>
+                        )}
                       </div>
                       
-                      <Button
-                        onClick={() => downloadTemplate(template)}
-                        size="sm"
-                        className="flex items-center gap-2"
-                      >
-                        <Download className="h-4 w-4" />
-                        Download
-                      </Button>
+                      <div className="flex items-center justify-between">
+                        <div className="flex flex-col text-sm">
+                          <span className="font-medium">
+                            {userHasMembership ? '$2.99' : '$9.99'}
+                          </span>
+                          {userHasMembership && (
+                            <span className="text-xs text-green-600">Member Price</span>
+                          )}
+                          {!userHasMembership && (
+                            <span className="text-xs text-muted-foreground">Non-member Price</span>
+                          )}
+                        </div>
+                        
+                        {purchasedTemplates.has(template.id) ? (
+                          <Button
+                            onClick={() => downloadTemplate(template)}
+                            size="sm"
+                            className="flex items-center gap-2"
+                          >
+                            <Download className="h-4 w-4" />
+                            Download
+                          </Button>
+                        ) : (
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                size="sm"
+                                className="flex items-center gap-2"
+                                disabled={isLoading === template.id}
+                              >
+                                <DollarSign className="h-4 w-4" />
+                                Purchase
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Purchase Template</DialogTitle>
+                                <DialogDescription>
+                                  Purchase "{template.title}" to download and customize this legal template.
+                                </DialogDescription>
+                              </DialogHeader>
+                              
+                              <div className="space-y-4">
+                                <div className="bg-muted/50 p-4 rounded-lg">
+                                  <div className="flex justify-between items-center mb-2">
+                                    <span className="font-medium">{template.title}</span>
+                                    <Badge className={difficultyColors[template.difficulty]}>
+                                      {template.difficulty}
+                                    </Badge>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground mb-3">
+                                    {template.description}
+                                  </p>
+                                  
+                                  <div className="flex justify-between items-center">
+                                    <div>
+                                      <div className="text-lg font-bold">
+                                        {userHasMembership ? '$2.99' : '$9.99'}
+                                      </div>
+                                      <div className="text-xs text-muted-foreground">
+                                        {userHasMembership ? 'Member Price' : 'Non-member Price'}
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="text-right text-sm">
+                                      <div className="text-muted-foreground">
+                                        Format: {template.format.toUpperCase()}
+                                      </div>
+                                      <div className="text-muted-foreground">
+                                        Category: {categoryLabels[template.category]}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                {!userHasMembership && (
+                                  <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg">
+                                    <p className="text-sm text-blue-800">
+                                      💡 <strong>Tip:</strong> Members get templates for just $2.99! 
+                                      Consider upgrading to save on all template purchases.
+                                    </p>
+                                  </div>
+                                )}
+                                
+                                <Button
+                                  onClick={() => handlePurchaseTemplate(template)}
+                                  className="w-full"
+                                  disabled={isLoading === template.id}
+                                >
+                                  {isLoading === template.id ? (
+                                    "Processing..."
+                                  ) : (
+                                    `Purchase for ${userHasMembership ? '$2.99' : '$9.99'}`
+                                  )}
+                                </Button>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        )}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

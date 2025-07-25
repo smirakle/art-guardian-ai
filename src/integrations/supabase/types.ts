@@ -998,6 +998,48 @@ export type Database = {
           },
         ]
       }
+      template_purchases: {
+        Row: {
+          amount_paid: number
+          created_at: string | null
+          currency: string | null
+          id: string
+          purchased_at: string | null
+          status: string | null
+          stripe_session_id: string | null
+          template_id: string
+          template_title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount_paid: number
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          purchased_at?: string | null
+          status?: string | null
+          stripe_session_id?: string | null
+          template_id: string
+          template_title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount_paid?: number
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          purchased_at?: string | null
+          status?: string | null
+          stripe_session_id?: string | null
+          template_id?: string
+          template_title?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -1156,6 +1198,10 @@ export type Database = {
       }
       is_valid_admin_session: {
         Args: { session_token: string }
+        Returns: boolean
+      }
+      user_has_membership: {
+        Args: { _user_id: string }
         Returns: boolean
       }
       validate_admin_token: {
