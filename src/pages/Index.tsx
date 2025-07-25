@@ -537,7 +537,7 @@ const Index = () => {
                 <Badge className="mx-auto mb-4 bg-primary">Most Popular</Badge>
                 <CardTitle className="text-center">Professional</CardTitle>
                 <div className="text-center">
-                  <div className="text-4xl font-bold">$79</div>
+                  <div className="text-4xl font-bold">$99</div>
                   <div className="text-muted-foreground">/month</div>
                 </div>
               </CardHeader>
