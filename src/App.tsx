@@ -23,7 +23,7 @@ import DeepWebScan from "./components/DeepWebScan";
 import VisualRecognition from "./components/VisualRecognition";
 import MonitoringDashboard from "./components/MonitoringDashboard";
 import RealTimeDeepfakeMonitor from "./components/RealTimeDeepfakeMonitor";
-import ComprehensiveWebScanner from "./components/ComprehensiveWebScanner";
+import { ComprehensiveWebScanner } from "./components/ComprehensiveWebScanner";
 import BlockchainVerification from "./components/BlockchainVerification";
 import Community from "./pages/Community";
 import Certificate from "./pages/Certificate";
