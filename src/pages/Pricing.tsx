@@ -738,7 +738,7 @@ const Pricing = () => {
             <h3 className="text-2xl font-bold mb-4">Need a Custom Solution?</h3>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
               Our Enterprise Custom plan offers tailored solutions for large organizations, 
-              including custom AI model training, dedicated legal teams, and on-premise deployment options.
+              including custom AI model training, advanced security features, and on-premise deployment options.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600">
