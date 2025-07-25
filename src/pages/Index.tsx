@@ -33,7 +33,10 @@ import {
   Play,
   ChevronRight,
   FileText,
-  Scale
+  Scale,
+  Building,
+  Heart,
+  ExternalLink
 } from 'lucide-react';
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import MonitoringFlow from "@/components/MonitoringFlow";
@@ -270,54 +273,127 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-12">
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow p-8">
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <FileText className="h-8 w-8 text-primary" />
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow p-6">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <FileText className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Legal Templates</h3>
-                <p className="text-muted-foreground mb-6">
-                  Professional legal documents ready to download and customize. DMCA notices, 
-                  licensing agreements, and more.
+                <h3 className="text-lg font-bold mb-3">Legal Templates</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Professional legal documents ready to download and customize.
                 </p>
-                <div className="text-sm text-muted-foreground mb-6">
-                  <div>• $2.99 with membership</div>
-                  <div>• $9.99 without membership</div>
+                <div className="text-xs text-muted-foreground mb-4">
+                  <div>$2.99 with membership</div>
+                  <div>$9.99 without membership</div>
                 </div>
                 <Button 
+                  size="sm"
                   className="w-full" 
                   onClick={() => navigate("/legal-templates")}
                 >
                   Browse Templates
-                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
             </Card>
 
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow p-8">
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Scale className="h-8 w-8 text-primary" />
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow p-6">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Scale className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">IP Lawyers Directory</h3>
-                <p className="text-muted-foreground mb-6">
-                  Connect with verified intellectual property attorneys who specialize in 
-                  digital art and copyright protection.
+                <h3 className="text-lg font-bold mb-3">IP Lawyers Directory</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Connect with verified intellectual property attorneys.
                 </p>
-                <div className="text-sm text-muted-foreground mb-6">
-                  <div>• Verified specialists</div>
-                  <div>• Digital art expertise</div>
-                  <div>• Free consultations available</div>
+                <div className="text-xs text-muted-foreground mb-4">
+                  <div>Verified specialists</div>
+                  <div>Free consultations available</div>
                 </div>
                 <Button 
                   variant="outline" 
+                  size="sm"
                   className="w-full"
                   onClick={() => navigate("/lawyers")}
                 >
                   Find a Lawyer
-                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
+              </div>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow p-6">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Building className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-lg font-bold mb-3">Official Authorities</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Government copyright offices and intellectual property organizations.
+                </p>
+                <div className="space-y-2">
+                  <a 
+                    href="https://www.copyright.gov" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
+                  >
+                    US Copyright Office <ExternalLink className="ml-1 h-3 w-3" />
+                  </a>
+                  <a 
+                    href="https://www.wipo.int" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
+                  >
+                    WIPO <ExternalLink className="ml-1 h-3 w-3" />
+                  </a>
+                  <a 
+                    href="https://euipo.europa.eu" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
+                  >
+                    EU Copyright <ExternalLink className="ml-1 h-3 w-3" />
+                  </a>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow p-6">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Heart className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-lg font-bold mb-3">Legal Support Network</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Organizations providing legal aid and support for artists.
+                </p>
+                <div className="space-y-2">
+                  <a 
+                    href="https://www.vlaa.org" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
+                  >
+                    Volunteer Lawyers for the Arts <ExternalLink className="ml-1 h-3 w-3" />
+                  </a>
+                  <a 
+                    href="https://www.cala.org" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
+                  >
+                    California Lawyers for the Arts <ExternalLink className="ml-1 h-3 w-3" />
+                  </a>
+                  <a 
+                    href="https://www.legalaidnyc.org" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
+                  >
+                    Legal Aid Society <ExternalLink className="ml-1 h-3 w-3" />
+                  </a>
+                </div>
               </div>
             </Card>
           </div>
