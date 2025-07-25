@@ -18,7 +18,8 @@ import {
   ArrowRight,
   Zap,
   Star,
-  User
+  User,
+  Users
 } from "lucide-react";
 
 interface PlanDetails {
@@ -34,6 +35,7 @@ const Checkout = () => {
   const [selectedPlan, setSelectedPlan] = useState<string>("professional");
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
   const [paymentMethod, setPaymentMethod] = useState<"card" | "paypal">("card");
+  const [socialMediaAddon, setSocialMediaAddon] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAuthProcessing, setIsAuthProcessing] = useState(false);
   
@@ -75,9 +77,13 @@ const Checkout = () => {
 
   const currentPlan = plans[selectedPlan];
   const yearlyDiscount = 0.2;
-  const finalPrice = billingCycle === "yearly" 
+  let basePrice = billingCycle === "yearly" 
     ? currentPlan.price * 12 * (1 - yearlyDiscount)
     : currentPlan.price;
+  
+  // Add social media addon cost
+  const addonCost = socialMediaAddon ? (billingCycle === "yearly" ? 1200 : 100) : 0;
+  const finalPrice = basePrice + addonCost;
 
   const handleAuthFormChange = (field: string, value: string) => {
     setAuthForm(prev => ({ ...prev, [field]: value }));
@@ -215,6 +221,36 @@ const Checkout = () => {
                       </Label>
                     </div>
                   </RadioGroup>
+                </div>
+
+                <Separator />
+
+                {/* Social Media Monitoring Add-on */}
+                <div className="space-y-3">
+                  <Label className="text-sm font-medium">Add-ons</Label>
+                  <div className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors">
+                    <div className="flex items-center space-x-3">
+                      <Checkbox 
+                        id="social-addon" 
+                        checked={socialMediaAddon}
+                        onCheckedChange={(checked) => setSocialMediaAddon(!!checked)}
+                      />
+                      <Label htmlFor="social-addon" className="cursor-pointer">
+                        <div className="flex items-center gap-2">
+                          <Users className="w-4 h-4 text-primary" />
+                          <div>
+                            <div className="font-medium">Social Media Monitoring</div>
+                            <div className="text-xs text-muted-foreground">
+                              Monitor unlimited social profiles for impersonation
+                            </div>
+                          </div>
+                        </div>
+                      </Label>
+                    </div>
+                    <div className="text-sm font-medium">
+                      +${billingCycle === "yearly" ? "1,200" : "100"}/{billingCycle === "yearly" ? "year" : "month"}
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -388,15 +424,49 @@ const Checkout = () => {
                   </div>
                   <div className="text-right">
                     <div className="font-medium">
-                      ${billingCycle === "yearly" ? Math.round(finalPrice) : currentPlan.price}
+                      ${billingCycle === "yearly" ? Math.round(basePrice) : currentPlan.price}
                       {billingCycle === "yearly" ? "/year" : "/month"}
                     </div>
                     {billingCycle === "yearly" && (
                       <div className="text-sm text-green-600">
-                        Save ${Math.round(currentPlan.price * 12 - finalPrice)}
+                        Save ${Math.round(currentPlan.price * 12 - basePrice)}
                       </div>
                     )}
                   </div>
+                </div>
+
+                {/* Social Media Add-on Line Item */}
+                {socialMediaAddon && (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium flex items-center gap-2">
+                          <Users className="w-4 h-4 text-primary" />
+                          Social Media Monitoring
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          Add-on service
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-medium">
+                          +${billingCycle === "yearly" ? "1,200" : "100"}
+                          {billingCycle === "yearly" ? "/year" : "/month"}
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                <Separator />
+
+                {/* Total */}
+                <div className="flex items-center justify-between text-lg font-bold">
+                  <span>Total</span>
+                  <span>
+                    ${billingCycle === "yearly" ? Math.round(finalPrice) : finalPrice}
+                    {billingCycle === "yearly" ? "/year" : "/month"}
+                  </span>
                 </div>
 
                 <Separator />
