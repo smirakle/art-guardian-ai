@@ -23,6 +23,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from "@/integrations/supabase/client";
 import { RealTimeMonitoringWidget } from '@/components/dashboard/RealTimeMonitoringWidget';
 import { RecentDetectionsWidget } from '@/components/dashboard/RecentDetectionsWidget';
+import { MonitoringWidget } from '@/components/dashboard/MonitoringWidget';
 
 interface DashboardStats {
   protectedArtworks: number;
@@ -125,17 +126,25 @@ const Dashboard = () => {
       color: 'bg-blue-500'
     },
     { 
-      title: 'View All Monitoring', 
+      title: 'View Protection Status', 
       description: 'Check real-time protection status',
       icon: Activity,
-      action: () => navigate('/monitoring'),
+      action: () => {
+        // Switch to the Protection tab
+        const protectionTab = document.querySelector('[value="protection"]') as HTMLElement;
+        if (protectionTab) protectionTab.click();
+      },
       color: 'bg-green-500'
     },
     { 
       title: 'AI Detection Reports', 
       description: 'Review AI-powered detections',
       icon: Eye,
-      action: () => navigate('/monitoring'),
+      action: () => {
+        // Switch to the Detections tab
+        const detectionsTab = document.querySelector('[value="detections"]') as HTMLElement;
+        if (detectionsTab) detectionsTab.click();
+      },
       color: 'bg-purple-500'
     }
   ];
@@ -229,7 +238,7 @@ const Dashboard = () => {
 
         {/* Main Dashboard Content */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Activity className="w-4 h-4" />
               Overview
@@ -241,6 +250,10 @@ const Dashboard = () => {
             <TabsTrigger value="detections" className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4" />
               Detections
+            </TabsTrigger>
+            <TabsTrigger value="protection" className="flex items-center gap-2">
+              <Shield className="w-4 h-4" />
+              Protection
             </TabsTrigger>
           </TabsList>
 
@@ -351,6 +364,11 @@ const Dashboard = () => {
           {/* Detections Tab */}
           <TabsContent value="detections" className="space-y-6">
             <RecentDetectionsWidget />
+          </TabsContent>
+
+          {/* Protection Tab */}
+          <TabsContent value="protection" className="space-y-6">
+            <MonitoringWidget />
           </TabsContent>
         </Tabs>
       </div>

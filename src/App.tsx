@@ -26,7 +26,6 @@ import Lawyers from "./pages/Lawyers";
 import DeepfakeDetection from "./pages/DeepfakeDetection";
 import DeepfakeMatchDetails from "./pages/DeepfakeMatchDetails";
 import LegalTemplatesPage from "./pages/LegalTemplates";
-import Monitoring from "./pages/Monitoring";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -74,11 +73,6 @@ const App = () => {
                 <Route path="/upload" element={
                   <ProtectedRoute>
                     <Upload />
-                  </ProtectedRoute>
-                } />
-                <Route path="/monitoring" element={
-                  <ProtectedRoute>
-                    <Monitoring />
                   </ProtectedRoute>
                 } />
                 <Route path="/admin" element={
