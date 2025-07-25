@@ -291,7 +291,20 @@ async function searchTinEye(imageUrl: string): Promise<ScanResult[]> {
   const apiSecret = Deno.env.get('TINEYE_API_SECRET');
   
   if (!apiKey || !apiSecret) {
-    console.log('TinEye API credentials not configured');
+    console.log('TinEye API credentials not configured, using fallback results');
+    // Return some mock results for testing
+    results.push({
+      id: `tineye_mock_${Date.now()}`,
+      source: 'TinEye (Demo)',
+      url: 'https://example.com/tineye-result',
+      title: 'Similar image found (Demo)',
+      description: 'This is a demo result - configure TinEye API for real results',
+      confidence: 0.7,
+      threatLevel: 'medium' as const,
+      contentType: 'photo',
+      detectionType: 'exact_match',
+      artifacts: ['demo_result']
+    });
     return results;
   }
 
@@ -333,7 +346,22 @@ async function searchGoogleImages(imageUrl: string): Promise<ScanResult[]> {
   const searchEngineId = Deno.env.get('GOOGLE_SEARCH_ENGINE_ID');
   
   if (!apiKey || !searchEngineId) {
-    console.log('Google Custom Search API credentials not configured');
+    console.log('Google Custom Search API credentials not configured, using fallback results');
+    // Return some mock results for testing
+    for (let i = 0; i < 3; i++) {
+      results.push({
+        id: `google_mock_${Date.now()}_${i}`,
+        source: 'Google Images (Demo)',
+        url: `https://example.com/google-result-${i}`,
+        title: `Similar image found ${i + 1} (Demo)`,
+        description: 'This is a demo result - configure Google API for real results',
+        confidence: 0.6 + (i * 0.1),
+        threatLevel: 'medium' as const,
+        contentType: 'photo',
+        detectionType: 'visual_similarity',
+        artifacts: ['demo_result']
+      });
+    }
     return results;
   }
 
@@ -374,7 +402,20 @@ async function searchBingImages(imageUrl: string): Promise<ScanResult[]> {
   const apiKey = Deno.env.get('BING_VISUAL_SEARCH_API_KEY');
   
   if (!apiKey) {
-    console.log('Bing Visual Search API key not configured');
+    console.log('Bing Visual Search API key not configured, using fallback results');
+    // Return some mock results for testing
+    results.push({
+      id: `bing_mock_${Date.now()}`,
+      source: 'Bing Visual Search (Demo)',
+      url: 'https://example.com/bing-result',
+      title: 'Visual match found (Demo)',
+      description: 'This is a demo result - configure Bing API for real results',
+      confidence: 0.7,
+      threatLevel: 'medium' as const,
+      contentType: 'photo',
+      detectionType: 'visual_similarity',
+      artifacts: ['demo_result']
+    });
     return results;
   }
 
@@ -430,7 +471,22 @@ async function searchSerpAPI(imageUrl: string): Promise<ScanResult[]> {
   const apiKey = Deno.env.get('SERPAPI_KEY');
   
   if (!apiKey) {
-    console.log('SerpAPI key not configured');
+    console.log('SerpAPI key not configured, using fallback results');
+    // Return some mock results for testing
+    for (let i = 0; i < 2; i++) {
+      results.push({
+        id: `serp_mock_${Date.now()}_${i}`,
+        source: 'SerpAPI (Demo)',
+        url: `https://example.com/serp-result-${i}`,
+        title: `Search result ${i + 1} (Demo)`,
+        description: 'This is a demo result - configure SerpAPI for real results',
+        confidence: 0.8,
+        threatLevel: 'medium' as const,
+        contentType: 'photo',
+        detectionType: 'reverse_search',
+        artifacts: ['demo_result']
+      });
+    }
     return results;
   }
 
@@ -500,6 +556,22 @@ async function searchGoogleContent(searchTerm: string, contentType: string): Pro
   const searchEngineId = Deno.env.get('GOOGLE_SEARCH_ENGINE_ID');
   
   if (!apiKey || !searchEngineId) {
+    console.log('Google Custom Search API credentials not configured, using fallback content results');
+    // Return some mock content results for testing
+    for (let i = 0; i < 5; i++) {
+      results.push({
+        id: `google_content_mock_${Date.now()}_${i}`,
+        source: 'Google Search (Demo)',
+        url: `https://example.com/content-result-${i}`,
+        title: `${contentType} content match ${i + 1} (Demo)`,
+        description: `Found ${contentType} content matching "${searchTerm}" - configure Google API for real results`,
+        confidence: 0.5 + (i * 0.1),
+        threatLevel: 'low' as const,
+        contentType: contentType,
+        detectionType: 'text_similarity',
+        artifacts: ['demo_result']
+      });
+    }
     return results;
   }
 
@@ -548,6 +620,22 @@ async function searchVideoPlatforms(searchTerm: string): Promise<ScanResult[]> {
   const youtubeApiKey = Deno.env.get('YOUTUBE_API_KEY');
   
   if (!youtubeApiKey) {
+    console.log('YouTube API key not configured, using fallback video results');
+    // Return some mock video results for testing
+    for (let i = 0; i < 3; i++) {
+      results.push({
+        id: `youtube_mock_${Date.now()}_${i}`,
+        source: 'YouTube (Demo)',
+        url: `https://youtube.com/watch?v=demo${i}`,
+        title: `Video match ${i + 1} for "${searchTerm}" (Demo)`,
+        description: `Found video content matching "${searchTerm}" - configure YouTube API for real results`,
+        confidence: 0.5,
+        threatLevel: 'low' as const,
+        contentType: 'video',
+        detectionType: 'keyword_match',
+        artifacts: ['demo_result']
+      });
+    }
     return results;
   }
 
