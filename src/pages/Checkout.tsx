@@ -83,6 +83,7 @@ const Checkout = () => {
   
   // Add social media addon cost
   const addonCost = socialMediaAddon ? (billingCycle === "yearly" ? 1200 : 100) : 0;
+  const startupFee = socialMediaAddon ? 200 : 0;
   const finalPrice = basePrice + addonCost;
 
   const handleAuthFormChange = (field: string, value: string) => {
@@ -242,6 +243,9 @@ const Checkout = () => {
                             <div className="font-medium">Social Media Monitoring</div>
                             <div className="text-xs text-muted-foreground">
                               Monitor unlimited social profiles for impersonation
+                            </div>
+                            <div className="text-xs text-orange-600 font-medium">
+                              Includes $200 one-time setup fee
                             </div>
                           </div>
                         </div>
@@ -445,13 +449,27 @@ const Checkout = () => {
                           Social Media Monitoring
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          Add-on service
+                          Monthly/Annual subscription
                         </div>
                       </div>
                       <div className="text-right">
                         <div className="font-medium">
                           +${billingCycle === "yearly" ? "1,200" : "100"}
                           {billingCycle === "yearly" ? "/year" : "/month"}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium text-orange-600">Setup Fee</div>
+                        <div className="text-sm text-muted-foreground">
+                          One-time social media monitoring setup
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-medium text-orange-600">
+                          +$200 (one-time)
                         </div>
                       </div>
                     </div>
@@ -462,12 +480,18 @@ const Checkout = () => {
 
                 {/* Total */}
                 <div className="flex items-center justify-between text-lg font-bold">
-                  <span>Total</span>
+                  <span>Total {socialMediaAddon ? "(First Payment)" : ""}</span>
                   <span>
-                    ${billingCycle === "yearly" ? Math.round(finalPrice) : finalPrice}
+                    ${billingCycle === "yearly" ? Math.round(finalPrice + startupFee) : (finalPrice + startupFee)}
                     {billingCycle === "yearly" ? "/year" : "/month"}
                   </span>
                 </div>
+
+                {socialMediaAddon && (
+                  <div className="text-sm text-muted-foreground">
+                    * Future payments will be ${billingCycle === "yearly" ? Math.round(finalPrice) : finalPrice}{billingCycle === "yearly" ? "/year" : "/month"} (without setup fee)
+                  </div>
+                )}
 
                 <Separator />
 
