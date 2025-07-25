@@ -450,3 +450,5 @@ export const ComprehensiveWebScanner = () => {
     </div>
   )
 }
+
+export default ComprehensiveWebScanner;
