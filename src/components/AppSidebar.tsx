@@ -12,9 +12,7 @@ import {
   Mail,
   Search,
   Bot,
-  Scale,
-  Eye,
-  BarChart3
+  Scale
 } from "lucide-react"
 
 import {
@@ -31,21 +29,20 @@ import {
 
 const mainItems = [
   { title: "Home", url: "/", icon: Home },
-  { title: "Dashboard", url: "/dashboard", icon: BarChart3 },
+  { title: "Dashboard", url: "/dashboard", icon: Activity },
 ]
 
 const protectionItems = [
   { title: "Upload & Protect", url: "/upload", icon: Upload },
-  { title: "Live Monitoring", url: "/monitoring", icon: Activity },
-  { title: "Visual Recognition", url: "/visual-recognition", icon: Eye },
+  { title: "Live Monitoring", url: "/monitoring", icon: Search },
+  { title: "Visual Scan", url: "/visual-recognition", icon: Bot },
   { title: "Deep Web Scan", url: "/deep-scan", icon: Shield },
-  { title: "Web Scanner", url: "/web-scanner", icon: Search },
 ]
 
 const resourcesItems = [
   { title: "Community", url: "/community", icon: Users },
   { title: "Legal Templates", url: "/legal-templates", icon: FileText },
-  { title: "IP Lawyers", url: "/lawyers", icon: Scale },
+  { title: "Lawyers Directory", url: "/lawyers", icon: Scale },
 ]
 
 const aboutItems = [
@@ -60,31 +57,24 @@ export function AppSidebar() {
   const currentPath = location.pathname
 
   const isActive = (path: string) => currentPath === path
-  
+  const getNavClasses = (path: string) => 
+    isActive(path) 
+      ? "bg-primary text-primary-foreground font-medium" 
+      : "hover:bg-muted/50"
+
   const renderMenuSection = (items: any[], label: string) => (
-    <SidebarGroup className="mb-6">
-      <SidebarGroupLabel className="px-3 py-2 text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">
-        {!collapsed && label}
+    <SidebarGroup>
+      <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+        {label}
       </SidebarGroupLabel>
       <SidebarGroupContent>
-        <SidebarMenu className="space-y-1">
+        <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild className="h-10">
-                <NavLink 
-                  to={item.url} 
-                  className={({ isActive }) => 
-                    `flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
-                      isActive 
-                        ? "bg-primary text-primary-foreground shadow-sm" 
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    }`
-                  }
-                >
-                  <item.icon className="h-5 w-5 flex-shrink-0" />
-                  {!collapsed && (
-                    <span className="font-medium truncate">{item.title}</span>
-                  )}
+              <SidebarMenuButton asChild>
+                <NavLink to={item.url} className={getNavClasses(item.url)}>
+                  <item.icon className="h-4 w-4" />
+                  {!collapsed && <span>{item.title}</span>}
                 </NavLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -95,58 +85,24 @@ export function AppSidebar() {
   )
 
   return (
-    <Sidebar className="border-r border-border bg-background" collapsible="icon">
-      <SidebarContent className="py-4">
+    <Sidebar className={collapsed ? "w-16" : "w-64"} collapsible="icon">
+      <SidebarContent className="px-2 py-4">
         {/* Logo */}
-        <div className="px-4 mb-8">
+        <div className="mb-6 px-3">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Shield className="w-5 h-5 text-primary-foreground" />
-            </div>
+            <Shield className="w-8 h-8 text-primary" />
             {!collapsed && (
-              <div className="flex flex-col">
-                <span className="text-lg font-bold text-foreground">TSMO</span>
-                <span className="text-xs text-muted-foreground">Art Protection</span>
-              </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                TSMO
+              </span>
             )}
           </div>
         </div>
 
-        <div className="px-2">
-          {renderMenuSection(mainItems, "Navigation")}
-          {renderMenuSection(protectionItems, "Protection Tools")}
-          {renderMenuSection(resourcesItems, "Resources")}
-          {renderMenuSection(aboutItems, "Support")}
-        </div>
-        
-        {/* Admin Section - if needed */}
-        <div className="mt-auto px-2 pb-4">
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild className="h-10">
-                    <NavLink 
-                      to="/admin" 
-                      className={({ isActive }) => 
-                        `flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
-                          isActive 
-                            ? "bg-destructive text-destructive-foreground shadow-sm" 
-                            : "text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                        }`
-                      }
-                    >
-                      <Settings className="h-5 w-5 flex-shrink-0" />
-                      {!collapsed && (
-                        <span className="font-medium truncate">Admin</span>
-                      )}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </div>
+        {renderMenuSection(mainItems, "Main")}
+        {renderMenuSection(protectionItems, "Protection")}
+        {renderMenuSection(resourcesItems, "Resources")}
+        {renderMenuSection(aboutItems, "About")}
       </SidebarContent>
     </Sidebar>
   )
