@@ -24,7 +24,8 @@ import {
   Link,
   Info,
   Brain,
-  Activity
+  Activity,
+  Globe
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -36,6 +37,7 @@ import RealTimeDeepfakeMonitor from "@/components/RealTimeDeepfakeMonitor";
 import RecentDeepfakeDetections from "@/components/RecentDeepfakeDetections";
 import SocialMediaAccountManager from "@/components/SocialMediaAccountManager";
 import SocialMediaMonitoringResults from "@/components/SocialMediaMonitoringResults";
+import { ComprehensiveWebScanner } from "@/components/ComprehensiveWebScanner";
 
 interface UploadedFile {
   id: string;
@@ -564,7 +566,7 @@ const Upload = () => {
         
         <div data-upload-area>
           <Tabs defaultValue="protect" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="protect" className="flex items-center gap-2">
                 <UploadIcon className="w-4 h-4" />
                 Protect Art
@@ -576,6 +578,10 @@ const Upload = () => {
               <TabsTrigger value="deepfake" className="flex items-center gap-2">
                 <Brain className="w-4 h-4" />
                 Deepfake Detection
+              </TabsTrigger>
+              <TabsTrigger value="webscanner" className="flex items-center gap-2">
+                <Globe className="w-4 h-4" />
+                Web Scanner
               </TabsTrigger>
             </TabsList>
 
@@ -625,6 +631,10 @@ const Upload = () => {
                   <RecentDeepfakeDetections />
                 </TabsContent>
               </Tabs>
+            </TabsContent>
+
+            <TabsContent value="webscanner" className="space-y-6">
+              <ComprehensiveWebScanner />
             </TabsContent>
           </Tabs>
         </div>
