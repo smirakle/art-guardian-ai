@@ -29,79 +29,17 @@ const LiveActivityFeed = () => {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const generateMockActivity = (): ActivityItem => {
-    const types: ActivityItem['type'][] = [
-      'user_registration', 'artwork_upload', 'scan_initiated', 'match_detected', 'alert_created', 'scan_completed'
-    ];
-    
-    const mockUsers = ['John D.', 'Sarah M.', 'Mike R.', 'Emma L.', 'David K.', 'Lisa P.'];
-    const type = types[Math.floor(Math.random() * types.length)];
-    const user = mockUsers[Math.floor(Math.random() * mockUsers.length)];
-    
-    const descriptions = {
-      user_registration: `${user} registered a new account`,
-      artwork_upload: `${user} uploaded new artwork "Digital Masterpiece"`,
-      scan_initiated: `Automated scan started for artwork by ${user}`,
-      match_detected: `Copyright match detected for ${user}'s artwork`,
-      alert_created: `High-priority alert created for potential infringement`,
-      scan_completed: `Monitoring scan completed for ${user} - 3 matches found`
-    };
-
-    const severities = {
-      user_registration: 'low',
-      artwork_upload: 'low',
-      scan_initiated: 'medium',
-      match_detected: 'high',
-      alert_created: 'high',
-      scan_completed: 'medium'
-    } as const;
-
-    return {
-      id: Math.random().toString(36).substr(2, 9),
-      type,
-      description: descriptions[type],
-      timestamp: new Date().toISOString(),
-      user,
-      severity: severities[type]
-    };
-  };
-
   const fetchRecentActivity = async () => {
     try {
-      // In a real app, we'd fetch from multiple tables and combine
-      // For now, we'll simulate real-time activity
-      
+      const realActivities: ActivityItem[] = [];
+
       // Fetch recent user registrations
       const { data: profiles } = await supabase
         .from('profiles')
         .select('created_at, full_name')
         .order('created_at', { ascending: false })
-        .limit(5);
+        .limit(10);
 
-      // Fetch recent artwork uploads
-      const { data: artworks } = await supabase
-        .from('artwork')
-        .select('created_at, title, user_id')
-        .order('created_at', { ascending: false })
-        .limit(5);
-
-      // Fetch recent scans
-      const { data: scans } = await supabase
-        .from('monitoring_scans')
-        .select('created_at, status, artwork_id')
-        .order('created_at', { ascending: false })
-        .limit(5);
-
-      // Fetch recent matches
-      const { data: matches } = await supabase
-        .from('copyright_matches')
-        .select('detected_at, threat_level, source_domain')
-        .order('detected_at', { ascending: false })
-        .limit(5);
-
-      const realActivities: ActivityItem[] = [];
-
-      // Convert profiles to activities
       profiles?.forEach(profile => {
         realActivities.push({
           id: `profile_${profile.created_at}`,
@@ -113,7 +51,13 @@ const LiveActivityFeed = () => {
         });
       });
 
-      // Convert artworks to activities
+      // Fetch recent artwork uploads
+      const { data: artworks } = await supabase
+        .from('artwork')
+        .select('created_at, title, user_id')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
       artworks?.forEach(artwork => {
         realActivities.push({
           id: `artwork_${artwork.created_at}`,
@@ -124,37 +68,65 @@ const LiveActivityFeed = () => {
         });
       });
 
-      // Convert scans to activities
+      // Fetch recent scans
+      const { data: scans } = await supabase
+        .from('monitoring_scans')
+        .select('created_at, status, artwork_id, scan_type, matches_found')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
       scans?.forEach(scan => {
         realActivities.push({
           id: `scan_${scan.created_at}`,
           type: scan.status === 'completed' ? 'scan_completed' : 'scan_initiated',
-          description: scan.status === 'completed' ? 'Monitoring scan completed' : 'New monitoring scan initiated',
+          description: scan.status === 'completed' 
+            ? `${scan.scan_type} scan completed - ${scan.matches_found} matches found`
+            : `New ${scan.scan_type} scan initiated`,
           timestamp: scan.created_at,
-          severity: 'medium'
+          severity: scan.matches_found > 0 ? 'high' : 'medium'
         });
       });
 
-      // Convert matches to activities
+      // Fetch recent copyright matches
+      const { data: matches } = await supabase
+        .from('copyright_matches')
+        .select('detected_at, threat_level, source_domain, match_confidence')
+        .order('detected_at', { ascending: false })
+        .limit(10);
+
       matches?.forEach(match => {
         realActivities.push({
           id: `match_${match.detected_at}`,
           type: 'match_detected',
-          description: `Copyright match detected on ${match.source_domain}`,
+          description: `Copyright match detected on ${match.source_domain} (${Math.round(match.match_confidence)}% confidence)`,
           timestamp: match.detected_at,
           severity: match.threat_level as 'low' | 'medium' | 'high'
+        });
+      });
+
+      // Fetch recent alerts
+      const { data: alerts } = await supabase
+        .from('monitoring_alerts')
+        .select('created_at, alert_type, title, message')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      alerts?.forEach(alert => {
+        realActivities.push({
+          id: `alert_${alert.created_at}`,
+          type: 'alert_created',
+          description: `Alert: ${alert.title}`,
+          timestamp: alert.created_at,
+          severity: alert.alert_type === 'copyright_match' ? 'high' : 'medium'
         });
       });
 
       // Sort by timestamp and take the most recent
       realActivities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
       
-      setActivities(realActivities.slice(0, 20));
+      setActivities(realActivities.slice(0, 25));
     } catch (error) {
       console.error('Error fetching activity:', error);
-      // Fallback to mock data
-      const mockActivities = Array.from({ length: 15 }, generateMockActivity);
-      setActivities(mockActivities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()));
     } finally {
       setLoading(false);
     }
@@ -163,18 +135,37 @@ const LiveActivityFeed = () => {
   useEffect(() => {
     fetchRecentActivity();
 
-    // Add a new activity every 10-30 seconds for demo
-    const activityInterval = setInterval(() => {
-      const newActivity = generateMockActivity();
-      setActivities(prev => [newActivity, ...prev.slice(0, 19)]);
-    }, Math.random() * 20000 + 10000);
+    // Set up real-time subscriptions for live updates
+    const channel = supabase
+      .channel('activity-feed')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'profiles' },
+        () => fetchRecentActivity()
+      )
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'artwork' },
+        () => fetchRecentActivity()
+      )
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'monitoring_scans' },
+        () => fetchRecentActivity()
+      )
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'copyright_matches' },
+        () => fetchRecentActivity()
+      )
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'monitoring_alerts' },
+        () => fetchRecentActivity()
+      )
+      .subscribe();
 
-    // Refresh real data every 2 minutes
+    // Refresh data every 2 minutes as backup
     const refreshInterval = setInterval(fetchRecentActivity, 120000);
 
     return () => {
-      clearInterval(activityInterval);
       clearInterval(refreshInterval);
+      supabase.removeChannel(channel);
     };
   }, []);
 
