@@ -102,26 +102,59 @@ All colors MUST be HSL.
     display: none;  /* Chrome, Safari and Opera */
   }
 
-  /* Mobile optimizations */
+  /* Mobile optimizations - iPhone specific */
   @media (max-width: 640px) {
     .container {
-      padding-left: 1rem;
-      padding-right: 1rem;
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
     }
     
-    /* Better touch targets */
+    /* Better touch targets for iPhone */
     button {
       min-height: 44px;
+      min-width: 44px;
     }
     
-    /* Prevent zoom on input focus */
+    /* Prevent zoom on input focus - critical for iPhone */
     input[type="text"],
     input[type="email"],
     input[type="password"],
     input[type="search"],
     input[type="url"],
-    textarea {
+    textarea,
+    select {
       font-size: 16px;
+      transform: scale(1);
+    }
+    
+    /* Safe area for iPhone notch/home indicator */
+    .safe-area-top {
+      padding-top: env(safe-area-inset-top);
+    }
+    
+    .safe-area-bottom {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  }
+  
+  /* iPhone specific optimizations */
+  @media (max-width: 430px) {
+    html {
+      font-size: 14px;
+    }
+    
+    .container {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+    
+    /* Reduce spacing on small screens */
+    .space-y-8 > * + * {
+      margin-top: 1.5rem;
+    }
+    
+    .space-y-6 > * + * {
+      margin-top: 1rem;
     }
   }
 }

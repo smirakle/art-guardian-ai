@@ -37,14 +37,14 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20 md:h-24">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50 safe-area-top">
+      <div className="container mx-auto px-2 sm:px-4">
+        <div className="flex items-center justify-between h-16 sm:h-20 md:h-24">
           {/* Logo */}
-          <div className="flex items-center gap-2">
-            <Shield className="w-8 h-8 md:w-10 md:h-10 text-primary" />
+          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+            <Shield className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-primary" />
             <div className="flex flex-col">
-              <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              <span className="text-sm sm:text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 TSMO
               </span>
             </div>
