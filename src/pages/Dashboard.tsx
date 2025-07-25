@@ -122,7 +122,7 @@ const Dashboard = () => {
 
   const quickActions = [
     { 
-      title: 'Real Time AI Upload', 
+      title: 'Upload Monitoring', 
       description: 'Protect artwork with AI monitoring',
       icon: Brain,
       action: () => {

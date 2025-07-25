@@ -24,7 +24,7 @@ const Navigation = () => {
   const allNavItems = [
     { path: "/", label: t('nav.home'), icon: Home },
     { path: "/dashboard", label: "Dashboard", icon: Home },
-    { path: "/upload", label: "Real Time AI", icon: Upload },
+    { path: "/upload", label: "Upload Monitoring", icon: Upload },
     { path: "/community", label: t('nav.community'), icon: Users },
     { path: "/legal-templates", label: "Legal Templates", icon: FileText },
     { path: "/admin", label: "Admin Panel", icon: UserCog },
