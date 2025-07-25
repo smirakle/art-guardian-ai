@@ -83,9 +83,9 @@ const Checkout = () => {
     ? currentPlan.price * 12 * (1 - yearlyDiscount)
     : currentPlan.price;
   
-  // Add social media addon cost (not available for professional plan)
-  const socialAddonCost = (socialMediaAddon && selectedPlan !== 'professional') ? (billingCycle === "yearly" ? 1188 : 99) : 0;
-  const startupFee = (socialMediaAddon && selectedPlan !== 'professional') ? 199 : 0;
+  // Add social media addon cost (available for all plans)
+  const socialAddonCost = socialMediaAddon ? (billingCycle === "yearly" ? 1188 : 99) : 0;
+  const startupFee = socialMediaAddon ? 199 : 0;
   
   // Add deepfake addon cost (not available for professional plan as it's included)
   const deepfakeAddonCost = (deepfakeAddon && selectedPlan !== 'professional') ? (billingCycle === "yearly" ? 588 : 49) : 0;
@@ -236,35 +236,33 @@ const Checkout = () => {
                 <div className="space-y-3">
                   <Label className="text-sm font-medium">Add-ons</Label>
                   
-                  {/* Social Media Monitoring Add-on */}
-                  {selectedPlan !== 'professional' && (
-                    <div className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors">
-                      <div className="flex items-center space-x-3">
-                        <Checkbox 
-                          id="social-addon" 
-                          checked={socialMediaAddon}
-                          onCheckedChange={(checked) => setSocialMediaAddon(!!checked)}
-                        />
-                        <Label htmlFor="social-addon" className="cursor-pointer">
-                          <div className="flex items-center gap-2">
-                            <Users className="w-4 h-4 text-primary" />
-                            <div>
-                              <div className="font-medium">Social Media Monitoring</div>
-                              <div className="text-xs text-muted-foreground">
-                                Monitor unlimited social profiles for impersonation
-                              </div>
-                              <div className="text-xs text-orange-600 font-medium">
-                                Includes $199 one-time setup fee
-                              </div>
+                  {/* Social Media Monitoring Add-on - Available for all plans */}
+                  <div className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors">
+                    <div className="flex items-center space-x-3">
+                      <Checkbox 
+                        id="social-addon" 
+                        checked={socialMediaAddon}
+                        onCheckedChange={(checked) => setSocialMediaAddon(!!checked)}
+                      />
+                      <Label htmlFor="social-addon" className="cursor-pointer">
+                        <div className="flex items-center gap-2">
+                          <Users className="w-4 h-4 text-primary" />
+                          <div>
+                            <div className="font-medium">Social Media Monitoring</div>
+                            <div className="text-xs text-muted-foreground">
+                              Monitor unlimited social profiles for impersonation
+                            </div>
+                            <div className="text-xs text-orange-600 font-medium">
+                              Includes $199 one-time setup fee
                             </div>
                           </div>
-                        </Label>
-                      </div>
-                      <div className="text-sm font-medium">
-                        +${billingCycle === "yearly" ? "1,188" : "99"}/{billingCycle === "yearly" ? "year" : "month"}
-                      </div>
+                        </div>
+                      </Label>
                     </div>
-                  )}
+                    <div className="text-sm font-medium">
+                      +${billingCycle === "yearly" ? "1,188" : "99"}/{billingCycle === "yearly" ? "year" : "month"}
+                    </div>
+                  </div>
 
                   {/* Deepfake Monitoring Add-on */}
                   {selectedPlan !== 'professional' && (
@@ -492,7 +490,7 @@ const Checkout = () => {
                 </div>
 
                 {/* Social Media Add-on Line Item */}
-                {socialMediaAddon && selectedPlan !== 'professional' && (
+                {socialMediaAddon && (
                   <>
                     <div className="flex items-center justify-between">
                       <div>
@@ -553,14 +551,14 @@ const Checkout = () => {
 
                 {/* Total */}
                 <div className="flex items-center justify-between text-lg font-bold">
-                  <span>Total {(socialMediaAddon && selectedPlan !== 'professional') ? "(First Payment)" : ""}</span>
+                  <span>Total {socialMediaAddon ? "(First Payment)" : ""}</span>
                   <span>
                     ${billingCycle === "yearly" ? Math.round(finalPrice + startupFee) : (finalPrice + startupFee)}
                     {billingCycle === "yearly" ? "/year" : "/month"}
                   </span>
                 </div>
 
-                {(socialMediaAddon && selectedPlan !== 'professional') && (
+                {socialMediaAddon && (
                   <div className="text-sm text-muted-foreground">
                     * Future payments will be ${billingCycle === "yearly" ? Math.round(finalPrice) : finalPrice}{billingCycle === "yearly" ? "/year" : "/month"} (without setup fee)
                   </div>

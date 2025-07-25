@@ -48,8 +48,8 @@ serve(async (req) => {
     const pricing = planPricing[planId as keyof typeof planPricing];
     let amount = pricing[billingCycle as keyof typeof pricing];
     
-    // Add social media addon if selected (not available for professional plan)
-    if (socialMediaAddon && planId !== 'professional') {
+    // Add social media addon if selected (available for all plans)
+    if (socialMediaAddon) {
       amount += billingCycle === 'monthly' ? 9900 : 118800; // $99/month or $1188/year
     }
     
@@ -88,8 +88,8 @@ serve(async (req) => {
       },
     ];
 
-    // Add social media addon as separate line item if selected (not for professional plan)
-    if (socialMediaAddon && planId !== 'professional') {
+    // Add social media addon as separate line item if selected (available for all plans)
+    if (socialMediaAddon) {
       lineItems.push({
         price_data: {
           currency: "usd",
