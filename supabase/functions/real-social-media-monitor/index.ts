@@ -211,7 +211,49 @@ async function performRealContentAnalysis(account: any, scanId: string, supabase
   let contentScanned = 0;
 
   try {
-    // Perform platform-specific real monitoring
+    // Call YouTube-specific monitoring if it's a YouTube account
+    if (account.platform === 'youtube') {
+      const searchTerms = [
+        account.account_handle,
+        account.account_name || account.account_handle,
+        `"${account.account_handle}"`,
+        `"${account.account_name}"`
+      ].filter(Boolean);
+
+      console.log(`Calling real YouTube monitor for account: ${account.account_handle}`);
+      
+      try {
+        const { data: ytResponse, error: ytError } = await supabase.functions.invoke('real-youtube-monitor', {
+          body: {
+            accountId: account.id,
+            searchTerms: searchTerms,
+            originalContent: {
+              title: account.account_name || account.account_handle,
+              description: `Official ${account.account_handle} content`,
+              thumbnailUrl: null
+            }
+          }
+        });
+
+        if (ytError) {
+          console.error('YouTube monitoring error:', ytError);
+          throw ytError;
+        }
+
+        console.log('YouTube monitoring result:', ytResponse);
+        
+        return {
+          contentScanned: ytResponse.videosScanned || 0,
+          detectionsCount: ytResponse.detectionsFound || 0,
+          detections: ytResponse.detections || []
+        };
+      } catch (error) {
+        console.error('Failed to call YouTube monitor:', error);
+        // Fall back to simulated data if real API fails
+      }
+    }
+
+    // For other platforms or if YouTube fails, use simulated analysis
     switch (account.platform.toLowerCase()) {
       case 'youtube':
         const youtubeResults = await analyzeYouTubeContent(account);

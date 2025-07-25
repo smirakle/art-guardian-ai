@@ -9,6 +9,9 @@ verify_jwt = false
 [functions.real-social-media-monitor]
 verify_jwt = false
 
+[functions.real-youtube-monitor]
+verify_jwt = false
+
 [functions.send-contact-email]
 verify_jwt = false
 

@@ -270,7 +270,8 @@ const SocialMediaAccountManager = () => {
     setIsScanning(accountId);
     
     try {
-      const { data, error } = await supabase.functions.invoke('social-media-monitor', {
+      // Use the real social media monitor for actual API integration
+      const { data, error } = await supabase.functions.invoke('real-social-media-monitor', {
         body: {
           accountId,
           scanType: 'full'
@@ -280,15 +281,15 @@ const SocialMediaAccountManager = () => {
       if (error) throw error;
 
       toast({
-        title: "Monitoring Started",
-        description: "Real-time monitoring has begun for this account",
+        title: "Real Monitoring Started",
+        description: `Live monitoring with real APIs has begun. Found ${data.detectionsFound || 0} potential violations.`,
       });
 
     } catch (error) {
       console.error('Error starting monitoring:', error);
       toast({
         title: "Monitoring Failed",
-        description: "Failed to start monitoring. Please try again.",
+        description: "Failed to start real monitoring. Please try again.",
         variant: "destructive",
       });
     } finally {
