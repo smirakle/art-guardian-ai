@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { CheckCircle, Star, Shield, Zap, Crown, Building2, CreditCard, User, Mail, Phone, MapPin, Lock, UserCheck, Tag } from "lucide-react";
+import { CheckCircle, Star, Shield, Zap, Crown, Building2, CreditCard, User, Mail, Phone, MapPin, Lock, UserCheck, Tag, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,6 +18,7 @@ const Pricing = () => {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [promoCode, setPromoCode] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [socialMediaAddon, setSocialMediaAddon] = useState<{[key: string]: boolean}>({});
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -60,7 +61,8 @@ const Pricing = () => {
           planId: planId.toLowerCase(),
           billingCycle,
           email: formData.email,
-          promoCode: promoCode.trim() || undefined
+          promoCode: promoCode.trim() || undefined,
+          socialMediaAddon: socialMediaAddon[planId] || false
         }
       });
 
@@ -500,10 +502,29 @@ const Pricing = () => {
               {formatPrice(plan.price[billingCycle])}{typeof plan.price[billingCycle] === 'number' ? `/${billingCycle === 'monthly' ? 'mo' : 'yr'}` : ''}
             </span>
           </div>
+          {socialMediaAddon[plan.name] && (
+            <div className="flex justify-between items-center mt-2">
+              <span className="text-sm">Social Media Monitoring</span>
+              <span className="font-semibold">+$100/mo</span>
+            </div>
+          )}
           {plan.discount && (
             <div className="text-sm text-green-600 mt-1">
               {plan.discount} - You save ${typeof plan.originalPrice?.[billingCycle] === 'number' && typeof plan.price[billingCycle] === 'number' ? 
                 plan.originalPrice[billingCycle] - plan.price[billingCycle] : 0}!
+            </div>
+          )}
+          {socialMediaAddon[plan.name] && (
+            <div className="border-t mt-2 pt-2">
+              <div className="flex justify-between items-center font-bold">
+                <span>Total</span>
+                <span>
+                  {typeof plan.price[billingCycle] === 'number' 
+                    ? `$${plan.price[billingCycle] + (billingCycle === 'monthly' ? 100 : 1200)}/${billingCycle === 'monthly' ? 'mo' : 'yr'}`
+                    : 'Custom'
+                  }
+                </span>
+              </div>
             </div>
           )}
         </div>
@@ -618,15 +639,46 @@ const Pricing = () => {
                     )}
                   </div>
 
-                  {/* Features */}
-                  <div className="space-y-3">
-                    {plan.features.map((feature, index) => (
-                      <div key={index} className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-sm">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
+                   {/* Features */}
+                   <div className="space-y-3">
+                     {plan.features.map((feature, index) => (
+                       <div key={index} className="flex items-start gap-3">
+                         <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                         <span className="text-sm">{feature}</span>
+                       </div>
+                     ))}
+                   </div>
+
+                   {/* Social Media Addon */}
+                   {plan.id !== 'enterprise' && (
+                     <div className="border-t pt-4 space-y-3">
+                       <div className="flex items-center justify-between">
+                         <div className="flex items-center gap-2">
+                           <Users className="w-4 h-4 text-primary" />
+                           <span className="text-sm font-medium">Social Media Profile Monitoring</span>
+                         </div>
+                         <label className="flex items-center cursor-pointer">
+                           <input
+                             type="checkbox"
+                             checked={socialMediaAddon[plan.id] || false}
+                             onChange={(e) => setSocialMediaAddon(prev => ({ ...prev, [plan.id]: e.target.checked }))}
+                             className="sr-only"
+                           />
+                           <div className={`w-11 h-6 bg-gray-200 rounded-full relative transition-colors ${socialMediaAddon[plan.id] ? 'bg-primary' : ''}`}>
+                             <div className={`absolute w-4 h-4 bg-white rounded-full top-1 transition-transform ${socialMediaAddon[plan.id] ? 'translate-x-6' : 'translate-x-1'}`} />
+                           </div>
+                         </label>
+                       </div>
+                       <div className="text-xs text-muted-foreground">
+                         Monitor unlimited social media profiles for impersonation and unauthorized use. +$100/month
+                       </div>
+                       {socialMediaAddon[plan.id] && (
+                         <div className="bg-primary/10 p-2 rounded text-xs text-primary">
+                           ✓ Social Media Monitoring: +$100/month
+                         </div>
+                       )}
+                     </div>
+                   )}
 
                   {/* Sign Up Button */}
                   {plan.id === 'enterprise' ? (

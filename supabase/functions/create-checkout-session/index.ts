@@ -29,8 +29,8 @@ serve(async (req) => {
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
     logStep("Stripe key verified");
 
-    const { planId, billingCycle, email, promoCode } = await req.json();
-    logStep("Request data received", { planId, billingCycle, email, promoCode });
+    const { planId, billingCycle, email, promoCode, socialMediaAddon } = await req.json();
+    logStep("Request data received", { planId, billingCycle, email, promoCode, socialMediaAddon });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
@@ -46,8 +46,14 @@ serve(async (req) => {
     }
 
     const pricing = planPricing[planId as keyof typeof planPricing];
-    const amount = pricing[billingCycle as keyof typeof pricing];
-    logStep("Plan pricing determined", { planId, billingCycle, amount });
+    let amount = pricing[billingCycle as keyof typeof pricing];
+    
+    // Add social media addon if selected
+    if (socialMediaAddon) {
+      amount += billingCycle === 'monthly' ? 10000 : 120000; // $100/month or $1200/year
+    }
+    
+    logStep("Plan pricing determined", { planId, billingCycle, amount, socialMediaAddon });
 
     // Check if customer already exists
     const customers = await stripe.customers.list({ email, limit: 1 });
@@ -60,31 +66,52 @@ serve(async (req) => {
     }
 
     // Prepare session configuration
+    const lineItems = [
+      {
+        price_data: {
+          currency: "usd",
+          product_data: { 
+            name: `TSMO ${planId.charAt(0).toUpperCase() + planId.slice(1)} Plan`,
+            description: `Copyright protection for artists - ${planId} tier`
+          },
+          unit_amount: pricing[billingCycle as keyof typeof pricing],
+          recurring: { 
+            interval: billingCycle === 'monthly' ? 'month' : 'year' 
+          },
+        },
+        quantity: 1,
+      },
+    ];
+
+    // Add social media addon as separate line item if selected
+    if (socialMediaAddon) {
+      lineItems.push({
+        price_data: {
+          currency: "usd",
+          product_data: { 
+            name: "Social Media Profile Monitoring",
+            description: "Monitor unlimited social media profiles for impersonation and unauthorized use"
+          },
+          unit_amount: billingCycle === 'monthly' ? 10000 : 120000, // $100/month or $1200/year
+          recurring: { 
+            interval: billingCycle === 'monthly' ? 'month' : 'year' 
+          },
+        },
+        quantity: 1,
+      });
+    }
+
     const sessionConfig: any = {
       customer: customerId,
       customer_email: customerId ? undefined : email,
-      line_items: [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: { 
-              name: `TSMO ${planId.charAt(0).toUpperCase() + planId.slice(1)} Plan`,
-              description: `Copyright protection for artists - ${planId} tier`
-            },
-            unit_amount: amount,
-            recurring: { 
-              interval: billingCycle === 'monthly' ? 'month' : 'year' 
-            },
-          },
-          quantity: 1,
-        },
-      ],
+      line_items: lineItems,
       mode: "subscription",
       success_url: `${req.headers.get("origin")}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get("origin")}/pricing`,
       metadata: {
         planId,
         billingCycle,
+        socialMediaAddon: socialMediaAddon ? 'true' : 'false',
       },
     };
 
