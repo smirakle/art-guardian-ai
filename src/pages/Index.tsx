@@ -140,6 +140,87 @@ const Index = () => {
           
         </div>
       </section>
+
+      {/* Art Theft Facts Section */}
+      <section className="bg-red-50 py-16 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-red-800">
+              The Reality of Art Theft
+            </h2>
+            <p className="text-lg text-red-700 max-w-2xl mx-auto">
+              Every day, artists lose control of their work. Here's what you need to know.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-6 text-center">
+                <div className="text-4xl font-bold text-red-600 mb-2">85%</div>
+                <p className="text-sm text-gray-700">
+                  Over 85% of artists have had their work stolen or reposted online without permission.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-6 text-center">
+                <div className="text-2xl font-bold text-red-600 mb-2">NFTs & Merch</div>
+                <p className="text-sm text-gray-700">
+                  Stolen digital art is frequently sold as NFTs or printed merchandise, often without the artist's knowledge.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-6 text-center">
+                <div className="text-2xl font-bold text-red-600 mb-2">AI Scraping</div>
+                <p className="text-sm text-gray-700">
+                  AI image generators scrape millions of artworks from the web without credit, royalties, or consent.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-6 text-center">
+                <div className="text-2xl font-bold text-red-600 mb-2">Hard to Track</div>
+                <p className="text-sm text-gray-700">
+                  Most stolen art is found on social media and e-commerce sites, where tracking violations is difficult.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-6 text-center">
+                <div className="text-2xl font-bold text-red-600 mb-2">$1000s Lost</div>
+                <p className="text-sm text-gray-700">
+                  Artists lose thousands in revenue annually because of unauthorized reproductions and sales.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-6 text-center">
+                <div className="text-2xl font-bold text-red-600 mb-2">Act Now</div>
+                <p className="text-sm text-gray-700">
+                  Protecting your work is essential—copyright alone isn't enough to stop theft online.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div className="text-center mt-8">
+            <Button 
+              size="lg" 
+              className="bg-red-600 hover:bg-red-700 text-white px-8 py-4"
+              onClick={() => navigate("/upload")}
+            >
+              Protect Your Art Now
+              <Shield className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      </section>
       
       {/* Stats Section */}
       <section className="bg-gray-50 py-16 px-4">
