@@ -27,7 +27,7 @@ const FAQ = () => {
         },
         {
           question: "Who is TSMO for?",
-          answer: "TSMO is built for independent artists, illustrators, designers, animators, creative agencies, and content studios who want to protect their work, reputation, and income from online theft or misuse."
+          answer: "TSMO is built for all creators: writers, filmmakers, social media influencers, photographers, painters, animators, independent artists, illustrators, designers, creative agencies, content studios, and anyone who has created and published online content. We protect your work, reputation, and income from online theft or misuse."
         },
         {
           question: "How does TSMO work?",
