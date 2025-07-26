@@ -62,8 +62,28 @@ export const RealTimeMonitoringWidget = () => {
     if (user) {
       loadData();
       setupRealTimeSubscriptions();
+      // Auto-start continuous monitoring if not active
+      autoStartMonitoring();
     }
   }, [user]);
+
+  const autoStartMonitoring = async () => {
+    try {
+      // Check if monitoring is already active
+      const { data: statusResponse } = await supabase.functions.invoke('generate-realtime-data', {
+        body: { action: 'status' }
+      });
+
+      if (statusResponse && !statusResponse.active) {
+        console.log('Auto-starting continuous monitoring...');
+        await supabase.functions.invoke('generate-realtime-data', {
+          body: { action: 'auto-start' }
+        });
+      }
+    } catch (error) {
+      console.error('Error auto-starting monitoring:', error);
+    }
+  };
 
   const loadData = async () => {
     try {

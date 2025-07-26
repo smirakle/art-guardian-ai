@@ -26,6 +26,7 @@ import { RealTimeMonitoringWidget } from '@/components/dashboard/RealTimeMonitor
 import { RecentDetectionsWidget } from '@/components/dashboard/RecentDetectionsWidget';
 import { MonitoringWidget } from '@/components/dashboard/MonitoringWidget';
 import { UploadWidget } from '@/components/dashboard/UploadWidget';
+import DailyReport from '@/components/DailyReport';
 
 interface DashboardStats {
   protectedArtworks: number;
@@ -245,7 +246,7 @@ const Dashboard = () => {
 
         {/* Main Dashboard Content */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Activity className="w-4 h-4" />
               Overview
@@ -261,6 +262,10 @@ const Dashboard = () => {
             <TabsTrigger value="protection" className="flex items-center gap-2">
               <Shield className="w-4 h-4" />
               Protection
+            </TabsTrigger>
+            <TabsTrigger value="reports" className="flex items-center gap-2">
+              <FileImage className="w-4 h-4" />
+              Reports
             </TabsTrigger>
           </TabsList>
 
@@ -386,6 +391,34 @@ const Dashboard = () => {
           {/* Protection Tab */}
           <TabsContent value="protection" className="space-y-6">
             <MonitoringWidget />
+          </TabsContent>
+
+          {/* Reports Tab */}
+          <TabsContent value="reports" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <DailyReport 
+                type="monitoring" 
+                realTimeStats={{
+                  totalScans: stats.totalScans,
+                  activeAlerts: stats.detectionsThisMonth,
+                  protectedAssets: stats.protectedArtworks,
+                  systemUptime: stats.protectionScore,
+                  lastScanTime: '2 hours ago',
+                  threatLevel: stats.recentThreatLevel
+                }}
+              />
+              <DailyReport 
+                type="deep-scan"
+                realTimeStats={{
+                  totalScans: Math.floor(stats.totalScans * 0.3),
+                  activeAlerts: Math.floor(stats.detectionsThisMonth * 1.5),
+                  protectedAssets: stats.protectedArtworks,
+                  systemUptime: Math.min(99.9, stats.protectionScore + 5),
+                  lastScanTime: '6 hours ago',
+                  threatLevel: stats.recentThreatLevel
+                }}
+              />
+            </div>
           </TabsContent>
         </Tabs>
       </div>

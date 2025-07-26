@@ -18,7 +18,9 @@ serve(async (req) => {
   }
 
   try {
-    const { action = 'start', duration = 300 } = await req.json();
+    // Support both GET and POST requests
+    const requestData = req.method === 'POST' ? await req.json() : {};
+    const { action = 'start', duration = 300 } = requestData;
 
     if (action === 'start') {
       console.log('Starting real-time monitoring simulation...');
@@ -26,20 +28,55 @@ serve(async (req) => {
       // Create initial monitoring stats
       await createMonitoringStats();
       
-      // Start background monitoring (simulate for the duration)
-      const monitoringPromise = simulateRealtimeMonitoring(duration);
+      // Start background monitoring using EdgeRuntime.waitUntil for proper handling
+      EdgeRuntime.waitUntil(simulateRealtimeMonitoring(duration));
       
       return new Response(JSON.stringify({
         success: true,
         message: 'Real-time monitoring started',
-        duration_seconds: duration
+        duration_seconds: duration,
+        started_at: new Date().toISOString()
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    
+    if (action === 'status') {
+      // Check if monitoring is active by looking at recent stats
+      const { data: recentStats } = await supabase
+        .from('realtime_monitoring_stats')
+        .select('*')
+        .order('timestamp', { ascending: false })
+        .limit(1);
+        
+      const isActive = recentStats && recentStats.length > 0 && 
+        new Date(recentStats[0].timestamp) > new Date(Date.now() - 5 * 60 * 1000); // Active if data from last 5 minutes
+        
+      return new Response(JSON.stringify({
+        active: isActive,
+        last_update: recentStats?.[0]?.timestamp || null,
+        stats: recentStats?.[0] || null
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (action === 'auto-start') {
+      // Auto-start monitoring if not active
+      console.log('Auto-starting continuous monitoring...');
+      await createMonitoringStats();
+      EdgeRuntime.waitUntil(continuousMonitoring());
+      
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Continuous monitoring auto-started'
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     return new Response(JSON.stringify({
-      error: 'Invalid action. Use "start" to begin monitoring.'
+      error: 'Invalid action. Use "start", "status", or "auto-start".'
     }), {
       status: 400,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -96,6 +133,38 @@ async function simulateRealtimeMonitoring(durationSeconds: number) {
   }
   
   console.log('Real-time monitoring simulation completed');
+}
+
+async function continuousMonitoring() {
+  console.log('Starting continuous monitoring...');
+  
+  const monitoringLoop = async () => {
+    try {
+      // Generate monitoring stats every 2 minutes
+      await createMonitoringStats();
+      
+      // 30% chance to generate a deepfake match
+      if (Math.random() < 0.3) {
+        await generateDeepfakeMatch();
+      }
+      
+      console.log('Generated monitoring data at:', new Date().toISOString());
+    } catch (error) {
+      console.error('Error in monitoring loop:', error);
+    }
+  };
+  
+  // Run initial scan
+  await monitoringLoop();
+  
+  // Set up interval for continuous monitoring (every 2 minutes)
+  const intervalId = setInterval(monitoringLoop, 120000);
+  
+  // Clean up after 1 hour
+  setTimeout(() => {
+    clearInterval(intervalId);
+    console.log('Continuous monitoring stopped after 1 hour');
+  }, 3600000);
 }
 
 async function generateDeepfakeMatch() {
