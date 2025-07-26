@@ -217,7 +217,7 @@ const DailyReport = ({ type, data, realTimeStats }: DailyReportProps) => {
     doc.setFontSize(9);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(25, 25, 112);
-    doc.text("TSMO PROTECT", pageWidth / 2, footerY, { align: "center" });
+    doc.text("TSMO WATCH", pageWidth / 2, footerY, { align: "center" });
     
     doc.setFontSize(7);
     doc.setFont("helvetica", "normal");
