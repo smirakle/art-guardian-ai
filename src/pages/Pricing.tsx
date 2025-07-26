@@ -131,7 +131,6 @@ const Pricing = () => {
         'Advanced AI monitoring',
         'Real-time alerts',
         'Watermark protection',
-        'Basic legal support',
         'API access',
         'Priority support'
       ],
@@ -157,7 +156,6 @@ const Pricing = () => {
         'Advanced watermarking',
         'Real-time deepfake detection',
         'Blockchain verification',
-        'Legal action support',
         'White-label options',
         'Dedicated account manager'
       ],
