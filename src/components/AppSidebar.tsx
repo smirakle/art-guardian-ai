@@ -27,8 +27,8 @@ export function AppSidebar() {
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const { user, role, signOut } = useAuth();
   const { t } = useTranslation();
-  const { state } = useSidebar();
-  const collapsed = state === "collapsed";
+  const { open, isMobile } = useSidebar();
+  const collapsed = !open && !isMobile;
 
   const handleSignOut = async () => {
     await signOut();
