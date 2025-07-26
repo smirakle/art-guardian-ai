@@ -51,8 +51,12 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('Dashboard useEffect - user:', user);
     if (user) {
+      console.log('Loading dashboard stats for user:', user.id);
       loadDashboardStats();
+    } else {
+      console.log('No user found, not loading dashboard stats');
     }
   }, [user]);
 
