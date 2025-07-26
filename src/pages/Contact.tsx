@@ -82,9 +82,8 @@ const Contact = () => {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-12">
-            {/* Contact Email */}
-            <Card className="border-0 shadow-lg">
+          <div className="flex justify-center">
+            <Card className="border-0 shadow-lg max-w-md w-full">
               <CardHeader>
                 <CardTitle>Get in Touch</CardTitle>
                 <CardDescription>
@@ -106,10 +105,6 @@ const Contact = () => {
                 </p>
               </CardContent>
             </Card>
-            
-            {/* Contact Info */}
-            <div className="space-y-8">
-            </div>
           </div>
         </div>
       </section>
