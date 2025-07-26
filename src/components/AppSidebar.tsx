@@ -57,7 +57,7 @@ export function AppSidebar() {
       <Sidebar className={collapsed ? "w-14" : "w-64"} collapsible="icon">
         <SidebarHeader className="p-4">
           <div className="flex items-center gap-2">
-            <Shield className="w-8 h-8 text-primary flex-shrink-0" />
+            <Shield className="w-12 h-12 text-primary flex-shrink-0" />
             {!collapsed && (
               <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 TSMO
