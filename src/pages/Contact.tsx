@@ -83,46 +83,27 @@ const Contact = () => {
           </div>
           
           <div className="grid md:grid-cols-2 gap-12">
-            {/* Contact Form */}
+            {/* Contact Email */}
             <Card className="border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>Send us a message</CardTitle>
+                <CardTitle>Get in Touch</CardTitle>
                 <CardDescription>
-                  We'll get back to you within 24 hours
+                  Send us an email directly
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <form onSubmit={handleContactSubmit} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">First Name</label>
-                      <Input name="firstName" placeholder="John" required />
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Last Name</label>
-                      <Input name="lastName" placeholder="Doe" required />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Email</label>
-                    <Input name="email" type="email" placeholder="john@example.com" required />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Subject</label>
-                    <Input name="subject" placeholder="I'm interested in..." required />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Message</label>
-                    <Textarea name="message" placeholder="Tell us about your art protection needs..." rows={4} required />
-                  </div>
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-gradient-to-r from-primary to-accent"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "Sending..." : "Send Message"}
-                  </Button>
-                </form>
+              <CardContent className="text-center">
+                <div className="flex items-center justify-center mb-6">
+                  <Mail className="h-12 w-12 text-primary" />
+                </div>
+                <a 
+                  href="mailto:shirleena.cunningham@tsmowatch.com"
+                  className="text-lg font-semibold text-primary hover:text-primary/80 transition-colors"
+                >
+                  shirleena.cunningham@tsmowatch.com
+                </a>
+                <p className="text-muted-foreground mt-4">
+                  Click to open your email client and send us a message
+                </p>
               </CardContent>
             </Card>
             
