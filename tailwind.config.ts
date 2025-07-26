@@ -67,6 +67,30 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				success: {
+					DEFAULT: 'hsl(var(--success))',
+					foreground: 'hsl(var(--success-foreground))'
+				},
+				forest: {
+					DEFAULT: 'hsl(var(--forest))',
+					foreground: 'hsl(var(--forest-foreground))'
+				},
+				lime: {
+					DEFAULT: 'hsl(var(--lime))',
+					foreground: 'hsl(var(--lime-foreground))'
+				},
+				'burnt-orange': {
+					DEFAULT: 'hsl(var(--burnt-orange))',
+					foreground: 'hsl(var(--burnt-orange-foreground))'
+				},
+				purple: {
+					DEFAULT: 'hsl(var(--purple))',
+					foreground: 'hsl(var(--purple-foreground))'
+				},
+				violet: {
+					DEFAULT: 'hsl(var(--violet))',
+					foreground: 'hsl(var(--violet-foreground))'
 				}
 			},
 			borderRadius: {
