@@ -94,10 +94,10 @@ const DailyReport = ({ type, data, realTimeStats }: DailyReportProps) => {
     // Load and add TSMO logo
     const img = new Image();
     img.onload = () => {
-      // Add logo to PDF
+      // Add logo to PDF (50% bigger)
       try {
-        doc.addImage(img, 'PNG', pageWidth / 2 - 15, yPosition, 30, 15);
-        yPosition += 25;
+        doc.addImage(img, 'PNG', pageWidth / 2 - 22.5, yPosition, 45, 23);
+        yPosition += 30;
         
         // Add TSMO Header
         doc.setFontSize(18);
@@ -109,8 +109,8 @@ const DailyReport = ({ type, data, realTimeStats }: DailyReportProps) => {
         doc.setFontSize(12);
         doc.setFont("helvetica", "italic");
         doc.setTextColor(105, 105, 105); // Gray
-        doc.text('"Your Art. Our Watch."', pageWidth / 2, yPosition, { align: "center" });
-        yPosition += 25;
+        doc.text("\"Your Art. Our Watch.\"", pageWidth / 2, yPosition, { align: "center" });
+        yPosition += 20;
 
         // Reset text color
         doc.setTextColor(0, 0, 0);
@@ -135,149 +135,117 @@ const DailyReport = ({ type, data, realTimeStats }: DailyReportProps) => {
   const finishPDFGeneration = (doc: jsPDF, data: ReportData, pageWidth: number, margin: number, yPosition: number) => {
 
     // Report Title with styling
-    doc.setFontSize(16);
+    doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(25, 25, 112); // Navy blue
     const reportTitle = type === 'monitoring' ? 'Daily Monitoring Report' : 'Deep Web Scan Report';
     doc.text(reportTitle, pageWidth / 2, yPosition, { align: "center" });
-    yPosition += 8;
+    yPosition += 6;
     
     // Add decorative line
     doc.setDrawColor(25, 25, 112);
     doc.setLineWidth(0.5);
     doc.line(margin, yPosition, pageWidth - margin, yPosition);
-    yPosition += 15;
+    yPosition += 10;
 
     // Reset text color
     doc.setTextColor(0, 0, 0);
 
-    // Report Info in a styled box
+    // Report Info in a styled box (smaller)
     doc.setFillColor(245, 245, 245); // Light gray background
-    doc.rect(margin, yPosition, pageWidth - 2 * margin, 25, 'F');
+    doc.rect(margin, yPosition, pageWidth - 2 * margin, 20, 'F');
     
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setFont("helvetica", "bold");
-    doc.text("REPORT INFORMATION", margin + 5, yPosition + 8);
+    doc.text("REPORT INFORMATION", margin + 3, yPosition + 6);
     
     doc.setFont("helvetica", "normal");
-    doc.text(`Generated: ${format(new Date(), "MMM dd, yyyy 'at' HH:mm")}`, margin + 5, yPosition + 15);
-    doc.text(`Report Date: ${format(selectedDate, "MMM dd, yyyy")}`, margin + 5, yPosition + 20);
+    doc.setFontSize(8);
+    doc.text(`Generated: ${format(new Date(), "MMM dd, yyyy 'at' HH:mm")}`, margin + 3, yPosition + 11);
+    doc.text(`Report Date: ${format(selectedDate, "MMM dd, yyyy")}`, margin + 3, yPosition + 16);
     
     // Status badge
-    const status = realTimeStats ? 'REAL-TIME DATA' : 'HISTORICAL DATA';
+    const status = realTimeStats ? 'REAL-TIME' : 'HISTORICAL';
     const statusColor = realTimeStats ? [34, 197, 94] : [156, 163, 175]; // Green for real-time, gray for historical
     doc.setFillColor(statusColor[0], statusColor[1], statusColor[2]);
     doc.setTextColor(255, 255, 255);
-    doc.rect(pageWidth - margin - 50, yPosition + 5, 45, 8, 'F');
-    doc.setFontSize(8);
+    doc.rect(pageWidth - margin - 40, yPosition + 6, 35, 6, 'F');
+    doc.setFontSize(7);
     doc.setFont("helvetica", "bold");
-    doc.text(status, pageWidth - margin - 47.5, yPosition + 10);
+    doc.text(status, pageWidth - margin - 37.5, yPosition + 10);
     
-    yPosition += 35;
+    yPosition += 25;
     doc.setTextColor(0, 0, 0);
 
     // Executive Summary
-    doc.setFontSize(12);
+    doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
     doc.text("EXECUTIVE SUMMARY", margin, yPosition);
-    yPosition += 15;
+    yPosition += 10;
 
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
-    doc.text(`Total Scans Performed: ${data.totalScans.toLocaleString()}`, margin, yPosition);
-    yPosition += 8;
-    doc.text(`Threats Detected: ${data.threatsDetected}`, margin, yPosition);
-    yPosition += 8;
-    doc.text(`Protected Assets: ${data.protectedAssets}`, margin, yPosition);
-    yPosition += 8;
-    doc.text(`System Uptime: ${data.systemUptime}%`, margin, yPosition);
-    yPosition += 20;
+    doc.text(`Total Scans: ${data.totalScans.toLocaleString()}  •  Threats: ${data.threatsDetected}  •  Assets: ${data.protectedAssets}  •  Uptime: ${data.systemUptime}%`, margin, yPosition);
+    yPosition += 15;
 
     // Security Metrics
-    doc.setFontSize(12);
+    doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
     doc.text("SECURITY METRICS", margin, yPosition);
-    yPosition += 15;
+    yPosition += 10;
 
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
-    doc.text(`Alerts Generated: ${data.alertsGenerated}`, margin, yPosition);
-    yPosition += 8;
-    doc.text(`Critical Findings: ${data.criticalFindings}`, margin, yPosition);
-    yPosition += 8;
-    doc.text(`Average Resolution Time: ${data.resolutionTime}`, margin, yPosition);
-    yPosition += 8;
-    if (type === 'deep-scan') {
-      doc.text(`Marketplaces Scanned: ${data.marketplacesScanned}`, margin, yPosition);
-      yPosition += 8;
-    }
+    const metricsText = `Alerts: ${data.alertsGenerated}  •  Critical: ${data.criticalFindings}  •  Avg Resolution: ${data.resolutionTime}`;
+    const deepScanText = type === 'deep-scan' ? `  •  Marketplaces: ${data.marketplacesScanned}` : '';
+    doc.text(metricsText + deepScanText, margin, yPosition);
     yPosition += 15;
 
     // Threat Analysis
-    doc.setFontSize(12);
+    doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
     doc.text("THREAT ANALYSIS", margin, yPosition);
-    yPosition += 15;
+    yPosition += 10;
 
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
     const riskLevel = data.threatsDetected === 0 ? 'LOW' : data.threatsDetected < 5 ? 'MEDIUM' : 'HIGH';
-    doc.text(`Risk Level: ${riskLevel}`, margin, yPosition);
-    yPosition += 8;
-    doc.text("Active Monitoring: ENABLED", margin, yPosition);
-    yPosition += 8;
-    doc.text("Blockchain Verification: ACTIVE", margin, yPosition);
-    yPosition += 20;
-
-    // Recommendations
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("RECOMMENDATIONS", margin, yPosition);
+    doc.text(`Risk Level: ${riskLevel}  •  Monitoring: ENABLED  •  Blockchain: ACTIVE`, margin, yPosition);
     yPosition += 15;
 
-    doc.setFontSize(10);
+    // Recommendations & Compliance in one section
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.text("RECOMMENDATIONS & COMPLIANCE", margin, yPosition);
+    yPosition += 10;
+
+    doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
-    doc.text("• Continue 24/7 monitoring protocols", margin, yPosition);
-    yPosition += 8;
-    doc.text("• Review critical findings within 2 hours", margin, yPosition);
-    yPosition += 8;
-    doc.text("• Maintain current security posture", margin, yPosition);
-    yPosition += 8;
+    doc.text("• Continue 24/7 monitoring • Review critical findings within 2h • Maintain security posture", margin, yPosition);
+    yPosition += 6;
     if (type === 'deep-scan') {
       doc.text("• Schedule next deep scan in 24 hours", margin, yPosition);
-      yPosition += 8;
+      yPosition += 6;
     }
+    doc.text("GDPR Compliant: YES  •  Data Retention: 90 days  •  Encryption: AES-256", margin, yPosition);
     yPosition += 15;
 
-    // Compliance
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("COMPLIANCE", margin, yPosition);
-    yPosition += 15;
-
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("GDPR Compliant: YES", margin, yPosition);
-    yPosition += 8;
-    doc.text("Data Retention: 90 days", margin, yPosition);
-    yPosition += 8;
-    doc.text("Encryption: AES-256", margin, yPosition);
-
-    // Enhanced Footer with TSMO branding
-    const footerY = doc.internal.pageSize.height - 20;
+    // Enhanced Footer with TSMO branding (positioned properly)
+    const footerY = doc.internal.pageSize.height - 25;
     doc.setDrawColor(25, 25, 112);
     doc.setLineWidth(0.3);
     doc.line(margin, footerY - 5, pageWidth - margin, footerY - 5);
     
-    doc.setFontSize(8);
+    doc.setFontSize(9);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(25, 25, 112);
     doc.text("TSMO PROTECT", pageWidth / 2, footerY, { align: "center" });
     
+    doc.setFontSize(7);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(105, 105, 105);
-    doc.text("Professional Art Protection & Monitoring Services", pageWidth / 2, footerY + 5, { align: "center" });
-    doc.text(`Report ID: TSMO-${Date.now().toString().slice(-8)} | Generated: ${format(new Date(), "yyyy-MM-dd HH:mm")}`, pageWidth / 2, footerY + 10, { align: "center" });
+    doc.text("Professional Art Protection & Monitoring Services", pageWidth / 2, footerY + 6, { align: "center" });
+    doc.text(`Report ID: TSMO-${Date.now().toString().slice(-8)} | Generated: ${format(new Date(), "yyyy-MM-dd HH:mm")}`, pageWidth / 2, footerY + 11, { align: "center" });
 
     // Save the PDF
     const fileName = `TSMO_${type === 'monitoring' ? 'Monitoring' : 'DeepScan'}_Report_${format(selectedDate, "yyyy-MM-dd")}.pdf`;
@@ -294,7 +262,7 @@ const DailyReport = ({ type, data, realTimeStats }: DailyReportProps) => {
     
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
-    doc.text('"Your Art. Our Watch."', pageWidth / 2, yPosition, { align: "center" });
+    doc.text("\"Your Art. Our Watch.\"", pageWidth / 2, yPosition, { align: "center" });
     yPosition += 20;
 
     finishPDFGeneration(doc, data, pageWidth, margin, yPosition);
