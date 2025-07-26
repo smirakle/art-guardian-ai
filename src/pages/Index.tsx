@@ -111,8 +111,7 @@ const Index = () => {
           </h1>
           
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-4">
-            Advanced AI-powered protection for digital artists. Monitor, verify, and secure your creative work 
-            with blockchain technology and real-time threat detection.
+            Advanced AI-powered protection for all creators: writers, filmmakers, social media influencers, photographers, painters, animators, and anyone who has created and published online content. We can protect it.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12 px-4">
