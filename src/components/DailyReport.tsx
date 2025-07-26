@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import jsPDF from 'jspdf';
-import tsmoLogo from '@/assets/tsmo-transparent-logo.png';
 
 
 interface ReportData {
@@ -91,45 +90,24 @@ const DailyReport = ({ type, data, realTimeStats }: DailyReportProps) => {
     const margin = 20;
     let yPosition = margin;
 
-    // Load and add TSMO logo
-    const img = new Image();
-    img.onload = () => {
-      // Add logo to PDF (50% bigger)
-      try {
-        doc.addImage(img, 'PNG', pageWidth / 2 - 22.5, yPosition, 45, 22.5);
-        yPosition += 30;
-        
-        // Add TSMO Header
-        doc.setFontSize(18);
-        doc.setFont("helvetica", "bold");
-        doc.setTextColor(25, 25, 112); // Navy blue
-        doc.text("TSMO PROTECT", pageWidth / 2, yPosition, { align: "center" });
-        yPosition += 8;
-        
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "italic");
-        doc.setTextColor(105, 105, 105); // Gray
-        doc.text("\"Your Art. Our Watch.\"", pageWidth / 2, yPosition, { align: "center" });
-        yPosition += 20;
+    // Add TSMO Header with text only
+    doc.setFontSize(20);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(25, 25, 112); // Navy blue
+    doc.text("TSMO", pageWidth / 2, yPosition, { align: "center" });
+    yPosition += 12;
+    
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "italic");
+    doc.setTextColor(105, 105, 105); // Gray
+    doc.text("Your Art Our Watch", pageWidth / 2, yPosition, { align: "center" });
+    yPosition += 20;
 
-        // Reset text color
-        doc.setTextColor(0, 0, 0);
-        
-        // Continue with the rest of the PDF content
-        finishPDFGeneration(doc, data, pageWidth, margin, yPosition);
-      } catch (error) {
-        console.error('Error adding logo to PDF:', error);
-        // Continue without logo
-        generateBasicPDFReport(doc, data, pageWidth, margin, yPosition);
-      }
-    };
+    // Reset text color
+    doc.setTextColor(0, 0, 0);
     
-    img.onerror = () => {
-      console.warn('Could not load TSMO logo, generating PDF without logo');
-      generateBasicPDFReport(doc, data, pageWidth, margin, yPosition);
-    };
-    
-    img.src = tsmoLogo;
+    // Continue with the rest of the PDF content
+    finishPDFGeneration(doc, data, pageWidth, margin, yPosition);
   };
 
   const finishPDFGeneration = (doc: jsPDF, data: ReportData, pageWidth: number, margin: number, yPosition: number) => {
@@ -252,21 +230,6 @@ const DailyReport = ({ type, data, realTimeStats }: DailyReportProps) => {
     doc.save(fileName);
   };
 
-  const generateBasicPDFReport = (doc: jsPDF, data: ReportData, pageWidth: number, margin: number, yPosition: number) => {
-    // Fallback PDF generation without logo
-    // Add TSMO Header
-    doc.setFontSize(16);
-    doc.setFont("helvetica", "bold");
-    doc.text("TSMO PROTECT", pageWidth / 2, yPosition, { align: "center" });
-    yPosition += 10;
-    
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "normal");
-    doc.text("\"Your Art. Our Watch.\"", pageWidth / 2, yPosition, { align: "center" });
-    yPosition += 20;
-
-    finishPDFGeneration(doc, data, pageWidth, margin, yPosition);
-  };
 
   const generateReportContent = (data: ReportData) => {
     const reportTitle = type === 'monitoring' ? 'TSMO Daily Monitoring Report' : 'TSMO Deep Web Scan Report';
