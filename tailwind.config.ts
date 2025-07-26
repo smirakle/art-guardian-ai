@@ -91,22 +91,6 @@ export default {
 				violet: {
 					DEFAULT: 'hsl(var(--violet))',
 					foreground: 'hsl(var(--violet-foreground))'
-				},
-				'neon-pink': {
-					DEFAULT: 'hsl(var(--neon-pink))',
-					foreground: 'hsl(var(--neon-pink-foreground))'
-				},
-				'electric-blue': {
-					DEFAULT: 'hsl(var(--electric-blue))',
-					foreground: 'hsl(var(--electric-blue-foreground))'
-				},
-				'graffiti-teal': {
-					DEFAULT: 'hsl(var(--graffiti-teal))',
-					foreground: 'hsl(var(--graffiti-teal-foreground))'
-				},
-				'street-purple': {
-					DEFAULT: 'hsl(var(--street-purple))',
-					foreground: 'hsl(var(--street-purple-foreground))'
 				}
 			},
 			borderRadius: {
