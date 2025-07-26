@@ -19,6 +19,7 @@ const Pricing = () => {
   const [promoCode, setPromoCode] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [socialMediaAddon, setSocialMediaAddon] = useState<{[key: string]: boolean}>({});
+  const [deepfakeAddon, setDeepfakeAddon] = useState<{[key: string]: boolean}>({});
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -62,7 +63,8 @@ const Pricing = () => {
           billingCycle,
           email: formData.email,
           promoCode: promoCode.trim() || undefined,
-          socialMediaAddon: socialMediaAddon[planId] || false
+          socialMediaAddon: socialMediaAddon[planId] || false,
+          deepfakeAddon: deepfakeAddon[planId] || false
         }
       });
 
@@ -502,10 +504,17 @@ const Pricing = () => {
               {formatPrice(plan.price[billingCycle])}{typeof plan.price[billingCycle] === 'number' ? `/${billingCycle === 'monthly' ? 'mo' : 'yr'}` : ''}
             </span>
           </div>
-          {socialMediaAddon[plan.name] && (
+          {/* Add-ons */}
+          {socialMediaAddon[plan.id] && (
             <div className="flex justify-between items-center mt-2">
               <span className="text-sm">Social Media Monitoring</span>
-              <span className="font-semibold">+$100/mo</span>
+              <span className="font-semibold">+$100/mo + $199 setup fee</span>
+            </div>
+          )}
+          {deepfakeAddon[plan.id] && (
+            <div className="flex justify-between items-center mt-2">
+              <span className="text-sm">Deepfake Scanning</span>
+              <span className="font-semibold">+$49/mo</span>
             </div>
           )}
           {plan.discount && (
@@ -514,17 +523,25 @@ const Pricing = () => {
                 plan.originalPrice[billingCycle] - plan.price[billingCycle] : 0}!
             </div>
           )}
-          {socialMediaAddon[plan.name] && (
+          {(socialMediaAddon[plan.id] || deepfakeAddon[plan.id]) && (
             <div className="border-t mt-2 pt-2">
               <div className="flex justify-between items-center font-bold">
                 <span>Total</span>
                 <span>
                   {typeof plan.price[billingCycle] === 'number' 
-                    ? `$${plan.price[billingCycle] + (billingCycle === 'monthly' ? 100 : 1200)}/${billingCycle === 'monthly' ? 'mo' : 'yr'}`
+                    ? `$${plan.price[billingCycle] + 
+                        (socialMediaAddon[plan.id] ? (billingCycle === 'monthly' ? 100 : 1200) : 0) +
+                        (deepfakeAddon[plan.id] ? (billingCycle === 'monthly' ? 49 : 588) : 0)
+                      }/${billingCycle === 'monthly' ? 'mo' : 'yr'}`
                     : 'Custom'
                   }
                 </span>
               </div>
+              {socialMediaAddon[plan.id] && (
+                <div className="text-xs text-muted-foreground mt-1">
+                  *Plus $199 one-time setup fee for social media monitoring
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -677,8 +694,39 @@ const Pricing = () => {
                            ✓ Social Media Monitoring: +$100/month
                          </div>
                        )}
+                      </div>
+                    )}
+
+                     {/* Deepfake Scanning Addon */}
+                     {plan.id !== 'enterprise' && (
+                    <div className="border-t pt-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Shield className="w-4 h-4 text-primary" />
+                          <span className="text-sm font-medium">Advanced Deepfake Scanning</span>
+                        </div>
+                        <label className="flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={deepfakeAddon[plan.id] || false}
+                            onChange={(e) => setDeepfakeAddon(prev => ({ ...prev, [plan.id]: e.target.checked }))}
+                            className="sr-only"
+                          />
+                          <div className={`w-11 h-6 bg-gray-200 rounded-full relative transition-colors ${deepfakeAddon[plan.id] ? 'bg-primary' : ''}`}>
+                            <div className={`absolute w-4 h-4 bg-white rounded-full top-1 transition-transform ${deepfakeAddon[plan.id] ? 'translate-x-6' : 'translate-x-1'}`} />
+                          </div>
+                        </label>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Enhanced AI-powered deepfake detection across social media and web platforms. +$49/month
+                      </div>
+                      {deepfakeAddon[plan.id] && (
+                        <div className="bg-primary/10 p-2 rounded text-xs text-primary">
+                          ✓ Deepfake Scanning: +$49/month
+                        </div>
+                      )}
                      </div>
-                   )}
+                     )}
 
                   {/* Sign Up Button */}
                   {plan.id === 'enterprise' ? (
