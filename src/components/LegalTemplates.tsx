@@ -104,22 +104,16 @@ const LegalTemplates = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         console.log('No user found for membership check');
+        setUserHasMembership(false);
         return;
       }
 
-      console.log('Checking membership for user:', user.id);
-      const { data: hasMembership, error } = await supabase
-        .rpc('user_has_membership', { _user_id: user.id });
-
-      if (error) {
-        console.error('Error checking membership:', error);
-        return;
-      }
-
-      console.log('Membership check result:', hasMembership);
-      setUserHasMembership(hasMembership || false);
+      // Logged-in users automatically get member pricing
+      console.log('User is authenticated, granting member pricing:', user.id);
+      setUserHasMembership(true);
     } catch (error) {
       console.error('Error checking membership status:', error);
+      setUserHasMembership(false);
     }
   };
 
