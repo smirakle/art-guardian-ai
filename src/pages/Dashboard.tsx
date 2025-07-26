@@ -38,7 +38,7 @@ interface DashboardStats {
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [stats, setStats] = useState<DashboardStats>({
     protectedArtworks: 0,
@@ -49,6 +49,14 @@ const Dashboard = () => {
     recentThreatLevel: 'low'
   });
   const [loading, setLoading] = useState(true);
+
+  // Redirect to auth if not logged in
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/auth');
+      return;
+    }
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
     console.log('Dashboard useEffect - user:', user);
