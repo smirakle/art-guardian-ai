@@ -96,7 +96,7 @@ const DailyReport = ({ type, data, realTimeStats }: DailyReportProps) => {
     img.onload = () => {
       // Add logo to PDF (50% bigger)
       try {
-        doc.addImage(img, 'PNG', pageWidth / 2 - 22.5, yPosition, 45, 23);
+        doc.addImage(img, 'PNG', pageWidth / 2 - 22.5, yPosition, 45, 22.5);
         yPosition += 30;
         
         // Add TSMO Header
