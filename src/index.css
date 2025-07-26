@@ -52,23 +52,6 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
-    /* TSMO Artistic Colors */
-    --tsmo-pink: 320 100% 60%;
-    --tsmo-orange: 30 100% 60%;
-    --tsmo-blue: 200 100% 60%;
-    --tsmo-purple: 270 100% 60%;
-    --tsmo-teal: 180 100% 40%;
-    --tsmo-yellow: 50 100% 60%;
-    --tsmo-red: 0 100% 60%;
-    
-    /* Gradients */
-    --gradient-rainbow: linear-gradient(135deg, hsl(var(--tsmo-pink)), hsl(var(--tsmo-orange)), hsl(var(--tsmo-yellow)), hsl(var(--tsmo-teal)), hsl(var(--tsmo-blue)), hsl(var(--tsmo-purple)));
-    --gradient-artistic: linear-gradient(45deg, hsl(var(--tsmo-orange)), hsl(var(--tsmo-pink)), hsl(var(--tsmo-purple)));
-    
-    /* Text Effects */
-    --text-shadow-bold: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    --text-shadow-artistic: 3px 3px 0px hsl(var(--tsmo-purple)), 6px 6px 0px hsl(var(--tsmo-pink));
-
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 0 0% 5%;
     --sidebar-primary: 220 95% 55%;

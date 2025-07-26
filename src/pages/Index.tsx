@@ -89,94 +89,55 @@ const Index = () => {
   
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section - TSMO Style */}
-      <section className="pt-24 sm:pt-32 pb-20 px-4 relative overflow-hidden">
-        {/* Artistic floating elements */}
-        <div className="absolute top-20 left-4 sm:left-10 opacity-30 hidden sm:block">
-          <FileImage className="w-12 h-12 sm:w-20 sm:h-20" style={{ color: 'hsl(var(--tsmo-pink))' }} />
-        </div>
-        <div className="absolute bottom-32 right-4 sm:right-16 opacity-30 hidden sm:block">
-          <Search className="w-10 h-10 sm:w-16 sm:h-16" style={{ color: 'hsl(var(--tsmo-blue))' }} />
-        </div>
-        <div className="absolute top-40 right-4 sm:right-20 opacity-30 hidden sm:block">
-          <Eye className="w-8 h-8 sm:w-14 sm:h-14" style={{ color: 'hsl(var(--tsmo-orange))' }} />
-        </div>
-        
-        {/* Colorful paint splash effects */}
-        <div className="absolute top-10 left-1/4 w-20 h-20 rounded-full opacity-20" 
-             style={{ background: 'hsl(var(--tsmo-pink))' }}></div>
-        <div className="absolute bottom-20 right-1/3 w-16 h-16 rounded-full opacity-15" 
-             style={{ background: 'hsl(var(--tsmo-teal))' }}></div>
-        <div className="absolute top-1/3 right-10 w-12 h-12 rounded-full opacity-25" 
-             style={{ background: 'hsl(var(--tsmo-yellow))' }}></div>
-        
-        <div className="container mx-auto text-center max-w-6xl relative z-10">
-          {/* TSMO Logo section */}
-          <div className="mb-8 sm:mb-12">
-            <div className="relative inline-block">
-              <div className="absolute inset-0 rounded-lg p-1" 
-                   style={{ background: 'var(--gradient-rainbow)' }}>
-                <div className="bg-white rounded-lg p-4 sm:p-6">
-                  <h1 className="text-4xl sm:text-6xl md:text-8xl font-black text-foreground mb-2"
-                      style={{ textShadow: 'var(--text-shadow-bold)' }}>
-                    TSMO
-                  </h1>
-                  <div className="flex justify-center items-center gap-2 mb-2">
-                    <Shield className="w-6 h-6 sm:w-8 sm:h-8" style={{ color: 'hsl(var(--tsmo-purple))' }} />
-                    <FileImage className="w-6 h-6 sm:w-8 sm:h-8" style={{ color: 'hsl(var(--tsmo-pink))' }} />
-                    <Search className="w-6 h-6 sm:w-8 sm:h-8" style={{ color: 'hsl(var(--tsmo-teal))' }} />
-                    <Eye className="w-6 h-6 sm:w-8 sm:h-8" style={{ color: 'hsl(var(--tsmo-orange))' }} />
-                  </div>
-                </div>
-              </div>
-            </div>
+      {/* Hero Section */}
+      <section className="pt-24 sm:pt-32 pb-20 px-4">
+        <div className="container mx-auto text-center max-w-6xl">
+          <Badge variant="secondary" className="mb-6 px-3 sm:px-4 py-2 text-xs sm:text-sm">
+            🔒 Trusted by 10,000+ Artists Worldwide
+          </Badge>
+          
+          {/* TSMO Logo */}
+          <div className="mb-6 sm:mb-8">
+            <img 
+              src={tsmoLogo} 
+              alt="TSMO Multimedia Creative Protection Logo" 
+              className="h-48 sm:h-64 md:h-96 lg:h-112 mx-auto object-contain"
+            />
           </div>
           
-          {/* Main messaging */}
-          <h2 className="text-3xl sm:text-5xl md:text-7xl font-black mb-4 sm:mb-6 text-foreground leading-tight"
-              style={{ textShadow: 'var(--text-shadow-bold)' }}>
-            PROTECT YOUR ART.
-          </h2>
-          <h3 className="text-2xl sm:text-4xl md:text-6xl font-black mb-6 sm:mb-8 text-foreground leading-tight"
-              style={{ textShadow: 'var(--text-shadow-bold)' }}>
-            OWN YOUR FUTURE.
-          </h3>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-burnt-orange to-purple bg-clip-text text-transparent leading-tight">
+            Protect Your Art.<br />
+            <span className="text-foreground">Own Your Future.</span>
+          </h1>
           
-          <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed px-2 font-semibold">
-            Revolutionary AI protection for artists. Stop theft, detect copies, claim your rights.
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-4">
+            Advanced AI-powered protection for digital artists. Monitor, verify, and secure your creative work 
+            with blockchain technology and real-time threat detection.
           </p>
           
-          <div className="flex flex-col gap-4 sm:gap-6 justify-center items-center mb-12 sm:mb-16">
-            <Button 
-              size="lg" 
-              className="w-full sm:w-auto text-white font-bold px-8 sm:px-12 py-6 sm:py-8 text-lg sm:text-xl rounded-xl transform hover:scale-105 transition-all duration-300"
-              style={{ 
-                background: 'var(--gradient-artistic)',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-                textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
-              }}
-              onClick={() => navigate("/upload")}
-            >
-              START PROTECTING NOW
-              <ArrowRight className="ml-3 w-5 h-5 sm:w-6 sm:h-6" />
-            </Button>
-            
-            <Button 
-              onClick={() => navigate("/monitoring")} 
-              variant="outline" 
-              size="lg" 
-              className="w-full sm:w-auto px-8 sm:px-12 py-6 sm:py-8 text-lg sm:text-xl font-bold border-2 rounded-xl hover:bg-gray-50 transition-all duration-300"
-              style={{ borderColor: 'hsl(var(--tsmo-purple))' }}
-            >
-              TEST YOUR ART
-            </Button>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12 px-4">
+            {/* Main action buttons */}
+            <>
+              <Button 
+                size="lg" 
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+                onClick={() => navigate("/upload")}
+              >
+                Upload & Protect Your Art
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg"
+                onClick={() => navigate("/monitoring")}
+              >
+                <Activity className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                View Dashboard
+              </Button>
+            </>
           </div>
           
-          <div className="text-center">
-            <p className="text-xl sm:text-2xl font-bold text-muted-foreground">
-              www.tsmowatch.com
-            </p>
-          </div>
         </div>
       </section>
 
