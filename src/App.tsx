@@ -4,7 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navigation from "@/components/Navigation";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 import MaintenanceMode from "@/components/MaintenanceMode";
 import { useMaintenanceMode } from "@/lib/maintenance";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -61,31 +62,40 @@ const App = () => {
             <Toaster />
             <Sonner />
             <BrowserRouter>
-            <Navigation />
-            <div className="pt-16">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/about-tsmo" element={<AboutTsmo />} />
-                <Route path="/faq" element={<FAQ />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/upload" element={<Upload />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/success" element={<Success />} />
-                <Route path="/deep-scan" element={<DeepWebScan />} />
-                <Route path="/blockchain" element={<BlockchainVerification />} />
-                <Route path="/community" element={<Community />} />
-               <Route path="/deepfake-detection" element={<DeepfakeDetection />} />
-               <Route path="/deepfake-match/:matchId" element={<DeepfakeMatchDetails />} />
-               <Route path="/lawyers" element={<Lawyers />} />
-               <Route path="/legal-templates" element={<LegalTemplatesPage />} />
-                <Route path="/certificate/:certificateId" element={<Certificate />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </div>
+              <SidebarProvider>
+                <div className="min-h-screen flex w-full">
+                  <AppSidebar />
+                  <main className="flex-1">
+                    <header className="h-12 flex items-center border-b bg-background/95 backdrop-blur-sm">
+                      <SidebarTrigger className="ml-4" />
+                    </header>
+                    <div className="p-4">
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/about-tsmo" element={<AboutTsmo />} />
+                        <Route path="/faq" element={<FAQ />} />
+                        <Route path="/auth" element={<Auth />} />
+                        <Route path="/contact" element={<Contact />} />
+                        <Route path="/upload" element={<Upload />} />
+                        <Route path="/admin" element={<Admin />} />
+                        <Route path="/checkout" element={<Checkout />} />
+                        <Route path="/success" element={<Success />} />
+                        <Route path="/deep-scan" element={<DeepWebScan />} />
+                        <Route path="/blockchain" element={<BlockchainVerification />} />
+                        <Route path="/community" element={<Community />} />
+                       <Route path="/deepfake-detection" element={<DeepfakeDetection />} />
+                       <Route path="/deepfake-match/:matchId" element={<DeepfakeMatchDetails />} />
+                       <Route path="/lawyers" element={<Lawyers />} />
+                       <Route path="/legal-templates" element={<LegalTemplatesPage />} />
+                        <Route path="/certificate/:certificateId" element={<Certificate />} />
+                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </div>
+                  </main>
+                </div>
+              </SidebarProvider>
             </BrowserRouter>
           </SubscriptionProvider>
         </AuthProvider>
