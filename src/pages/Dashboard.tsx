@@ -38,7 +38,7 @@ interface DashboardStats {
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { user, profile, loading: authLoading } = useAuth();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
   const [stats, setStats] = useState<DashboardStats>({
     protectedArtworks: 0,
@@ -50,21 +50,9 @@ const Dashboard = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  // Redirect to auth if not logged in
   useEffect(() => {
-    if (!authLoading && !user) {
-      navigate('/auth');
-      return;
-    }
-  }, [user, authLoading, navigate]);
-
-  useEffect(() => {
-    console.log('Dashboard useEffect - user:', user);
     if (user) {
-      console.log('Loading dashboard stats for user:', user.id);
       loadDashboardStats();
-    } else {
-      console.log('No user found, not loading dashboard stats');
     }
   }, [user]);
 

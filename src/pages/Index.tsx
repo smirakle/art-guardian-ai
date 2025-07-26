@@ -105,7 +105,7 @@ const Index = () => {
             />
           </div>
           
-          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-burnt-orange to-purple bg-clip-text text-transparent leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
             Protect Your Art.<br />
             <span className="text-foreground">Own Your Future.</span>
           </h1>
