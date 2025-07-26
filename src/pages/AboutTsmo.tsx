@@ -14,7 +14,7 @@ const AboutTsmo = () => {
               <img 
                 src={tsmoLogo} 
                 alt="TSMO Logo" 
-                className="h-36 md:h-48 mx-auto object-contain"
+                className="h-54 md:h-72 mx-auto object-contain"
               />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
