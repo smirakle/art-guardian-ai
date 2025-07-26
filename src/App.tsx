@@ -11,6 +11,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import Index from "./pages/Index";
 import AboutTsmo from "./pages/AboutTsmo";
+import FAQ from "./pages/FAQ";
 import Upload from "./pages/Upload";
 
 import Admin from "./pages/Admin";
@@ -66,6 +67,7 @@ const App = () => {
                 <Route path="/" element={<Index />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/about-tsmo" element={<AboutTsmo />} />
+                <Route path="/faq" element={<FAQ />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/upload" element={<Upload />} />
