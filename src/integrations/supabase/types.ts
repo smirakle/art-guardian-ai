@@ -700,6 +700,51 @@ export type Database = {
           },
         ]
       }
+      monitoring_schedules: {
+        Row: {
+          alert_settings: Json | null
+          artwork_ids: string[] | null
+          created_at: string
+          frequency_minutes: number
+          id: string
+          is_24_7_enabled: boolean
+          is_active: boolean
+          monitoring_hours: Json | null
+          scan_types: string[]
+          schedule_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alert_settings?: Json | null
+          artwork_ids?: string[] | null
+          created_at?: string
+          frequency_minutes?: number
+          id?: string
+          is_24_7_enabled?: boolean
+          is_active?: boolean
+          monitoring_hours?: Json | null
+          scan_types?: string[]
+          schedule_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alert_settings?: Json | null
+          artwork_ids?: string[] | null
+          created_at?: string
+          frequency_minutes?: number
+          id?: string
+          is_24_7_enabled?: boolean
+          is_active?: boolean
+          monitoring_hours?: Json | null
+          scan_types?: string[]
+          schedule_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -804,6 +849,113 @@ export type Database = {
           timestamp?: string
         }
         Relationships: []
+      }
+      scan_execution_log: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          error_message: string | null
+          execution_type: string
+          id: string
+          monitoring_schedule_id: string | null
+          results: Json | null
+          scheduled_scan_id: string | null
+          started_at: string | null
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          execution_type: string
+          id?: string
+          monitoring_schedule_id?: string | null
+          results?: Json | null
+          scheduled_scan_id?: string | null
+          started_at?: string | null
+          status?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          execution_type?: string
+          id?: string
+          monitoring_schedule_id?: string | null
+          results?: Json | null
+          scheduled_scan_id?: string | null
+          started_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scan_execution_log_monitoring_schedule_id_fkey"
+            columns: ["monitoring_schedule_id"]
+            isOneToOne: false
+            referencedRelation: "monitoring_schedules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scan_execution_log_scheduled_scan_id_fkey"
+            columns: ["scheduled_scan_id"]
+            isOneToOne: false
+            referencedRelation: "scheduled_scans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scheduled_scans: {
+        Row: {
+          artwork_id: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          last_executed: string | null
+          next_execution: string | null
+          recurrence_pattern: Json | null
+          scan_type: string
+          schedule_type: string
+          scheduled_time: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          artwork_id?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_executed?: string | null
+          next_execution?: string | null
+          recurrence_pattern?: Json | null
+          scan_type: string
+          schedule_type: string
+          scheduled_time: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          artwork_id?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_executed?: string | null
+          next_execution?: string | null
+          recurrence_pattern?: Json | null
+          scan_type?: string
+          schedule_type?: string
+          scheduled_time?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_scans_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artwork"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       security_audit_log: {
         Row: {
@@ -1233,6 +1385,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_next_execution: {
+        Args: {
+          schedule_type: string
+          execution_time: string
+          recurrence_pattern: Json
+        }
+        Returns: string
+      }
       get_artwork_limit: {
         Args: Record<PropertyKey, never>
         Returns: number

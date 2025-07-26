@@ -27,6 +27,7 @@ import { RecentDetectionsWidget } from '@/components/dashboard/RecentDetectionsW
 import { MonitoringWidget } from '@/components/dashboard/MonitoringWidget';
 import { UploadWidget } from '@/components/dashboard/UploadWidget';
 import DailyReport from '@/components/DailyReport';
+import ScheduledScansManager from '@/components/ScheduledScansManager';
 
 interface DashboardStats {
   protectedArtworks: number;
@@ -246,7 +247,7 @@ const Dashboard = () => {
 
         {/* Main Dashboard Content */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Activity className="w-4 h-4" />
               Overview
@@ -262,6 +263,10 @@ const Dashboard = () => {
             <TabsTrigger value="protection" className="flex items-center gap-2">
               <Shield className="w-4 h-4" />
               Protection
+            </TabsTrigger>
+            <TabsTrigger value="scheduling" className="flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              Scheduling
             </TabsTrigger>
             <TabsTrigger value="reports" className="flex items-center gap-2">
               <FileImage className="w-4 h-4" />
@@ -391,6 +396,11 @@ const Dashboard = () => {
           {/* Protection Tab */}
           <TabsContent value="protection" className="space-y-6">
             <MonitoringWidget />
+          </TabsContent>
+
+          {/* Scheduling Tab */}
+          <TabsContent value="scheduling" className="space-y-6">
+            <ScheduledScansManager />
           </TabsContent>
 
           {/* Reports Tab */}
