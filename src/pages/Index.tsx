@@ -142,58 +142,58 @@ const Index = () => {
       </section>
 
       {/* Art Theft Facts Section */}
-      <section className="bg-red-50 py-8 px-4">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-6">
-            <h2 className="text-xl md:text-2xl font-bold mb-2 text-red-800">
+      <section className="bg-red-50 py-10 px-4">
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold mb-3 text-red-800">
               The Reality of Art Theft
             </h2>
-            <p className="text-sm text-red-700 max-w-xl mx-auto">
+            <p className="text-base text-red-700 max-w-2xl mx-auto">
               Every day, artists lose control of their work. Here's what you need to know.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-3 text-center">
-                <div className="text-2xl font-bold text-red-600 mb-1">85%</div>
-                <p className="text-xs text-gray-700">
+              <CardContent className="p-4 text-center">
+                <div className="text-3xl font-bold text-red-600 mb-2">85%</div>
+                <p className="text-sm text-gray-700">
                   Over 85% of artists have had their work stolen or reposted online without permission.
                 </p>
               </CardContent>
             </Card>
             
             <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-3 text-center">
-                <div className="text-sm font-bold text-red-600 mb-1">NFTs & Merch</div>
-                <p className="text-xs text-gray-700">
+              <CardContent className="p-4 text-center">
+                <div className="text-base font-bold text-red-600 mb-2">NFTs & Merch</div>
+                <p className="text-sm text-gray-700">
                   Stolen digital art is frequently sold as NFTs or printed merchandise, often without the artist's knowledge.
                 </p>
               </CardContent>
             </Card>
             
             <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-3 text-center">
-                <div className="text-sm font-bold text-red-600 mb-1">AI Scraping</div>
-                <p className="text-xs text-gray-700">
+              <CardContent className="p-4 text-center">
+                <div className="text-base font-bold text-red-600 mb-2">AI Scraping</div>
+                <p className="text-sm text-gray-700">
                   AI image generators scrape millions of artworks from the web without credit, royalties, or consent.
                 </p>
               </CardContent>
             </Card>
             
             <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-3 text-center">
-                <div className="text-sm font-bold text-red-600 mb-1">Hard to Track</div>
-                <p className="text-xs text-gray-700">
+              <CardContent className="p-4 text-center">
+                <div className="text-base font-bold text-red-600 mb-2">Hard to Track</div>
+                <p className="text-sm text-gray-700">
                   Most stolen art is found on social media and e-commerce sites, where tracking violations is difficult.
                 </p>
               </CardContent>
             </Card>
             
             <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-3 text-center">
-                <div className="text-sm font-bold text-red-600 mb-1">$1000s Lost</div>
-                <p className="text-xs text-gray-700">
+              <CardContent className="p-4 text-center">
+                <div className="text-base font-bold text-red-600 mb-2">$1000s Lost</div>
+                <p className="text-sm text-gray-700">
                   Artists lose thousands in revenue annually because of unauthorized reproductions and sales.
                 </p>
               </CardContent>
