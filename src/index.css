@@ -36,6 +36,20 @@ All colors MUST be HSL.
     --input: 0 0% 90%;
     --ring: 220 95% 55%;
 
+    /* Extended color palette */
+    --success: 120 60% 50%;
+    --success-foreground: 0 0% 100%;
+    --forest: 150 80% 30%;
+    --forest-foreground: 0 0% 100%;
+    --lime: 80 70% 60%;
+    --lime-foreground: 0 0% 9%;
+    --burnt-orange: 25 85% 55%;
+    --burnt-orange-foreground: 0 0% 100%;
+    --purple: 270 70% 60%;
+    --purple-foreground: 0 0% 100%;
+    --violet: 260 80% 70%;
+    --violet-foreground: 0 0% 9%;
+
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
@@ -76,6 +90,20 @@ All colors MUST be HSL.
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 220 95% 65%;
+
+    /* Extended color palette - dark mode */
+    --success: 120 50% 45%;
+    --success-foreground: 0 0% 100%;
+    --forest: 150 70% 25%;
+    --forest-foreground: 0 0% 100%;
+    --lime: 80 60% 55%;
+    --lime-foreground: 0 0% 9%;
+    --burnt-orange: 25 80% 50%;
+    --burnt-orange-foreground: 0 0% 100%;
+    --purple: 270 60% 55%;
+    --purple-foreground: 0 0% 100%;
+    --violet: 260 70% 65%;
+    --violet-foreground: 0 0% 9%;
     
     --sidebar-background: 0 0% 2%;
     --sidebar-foreground: 0 0% 98%;
