@@ -88,10 +88,16 @@ const Index = () => {
   };
   
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-background via-card to-background">
       {/* Hero Section */}
-      <section className="pt-24 sm:pt-32 pb-20 px-4">
-        <div className="container mx-auto text-center max-w-6xl">
+      <section className="pt-24 sm:pt-32 pb-20 px-4 relative overflow-hidden">
+        {/* Background artistic elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-neon-pink rounded-full blur-xl"></div>
+          <div className="absolute top-1/2 right-1/4 w-40 h-40 bg-electric-blue rounded-full blur-xl"></div>
+          <div className="absolute bottom-1/4 left-1/3 w-36 h-36 bg-burnt-orange rounded-full blur-xl"></div>
+        </div>
+        <div className="container mx-auto text-center max-w-6xl relative z-10">
           <Badge variant="secondary" className="mb-6 px-3 sm:px-4 py-2 text-xs sm:text-sm">
             🔒 Trusted by 10,000+ Artists Worldwide
           </Badge>
@@ -105,10 +111,29 @@ const Index = () => {
             />
           </div>
           
-          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-burnt-orange to-purple bg-clip-text text-transparent leading-tight">
-            Protect Your Art.<br />
-            <span className="text-foreground">Own Your Future.</span>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight">
+            <span className="bg-gradient-to-r from-neon-pink via-electric-blue to-burnt-orange bg-clip-text text-transparent">
+              EVER HAD YOUR<br />
+              ART STOLEN?
+            </span>
           </h1>
+          
+          <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 space-y-2">
+            <div className="text-electric-blue">THEY COPY.</div>
+            <div className="text-graffiti-teal">THEY REPOST.</div>
+            <div className="text-burnt-orange">THEY PROFIT.</div>
+          </div>
+
+          <div className="flex items-center gap-3 mb-8 p-4 bg-gradient-to-r from-street-purple/20 to-electric-blue/20 rounded-lg border border-electric-blue/30">
+            <div className="bg-electric-blue text-background px-3 py-1 rounded font-bold text-sm">
+              ⚡ ARTWORK DETECTED!
+            </div>
+          </div>
+
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-6 text-foreground">
+            PROTECT YOUR ART.<br />
+            <span className="bg-gradient-to-r from-burnt-orange to-neon-pink bg-clip-text text-transparent">OWN YOUR FUTURE.</span>
+          </h2>
           
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-4">
             Advanced AI-powered protection for digital artists. Monitor, verify, and secure your creative work 
