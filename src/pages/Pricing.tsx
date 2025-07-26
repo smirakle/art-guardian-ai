@@ -741,9 +741,12 @@ const Pricing = () => {
               including custom AI model training, advanced security features, and on-premise deployment options.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600">
-                Schedule Consultation
-              </Button>
+              <a 
+                href="mailto:Shirleena.Cunningham@tsmowatch.com"
+                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground h-11 px-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90"
+              >
+                Email us
+              </a>
               <Button size="lg" variant="outline">
                 Request Demo
               </Button>
