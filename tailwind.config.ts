@@ -91,7 +91,14 @@ export default {
 				violet: {
 					DEFAULT: 'hsl(var(--violet))',
 					foreground: 'hsl(var(--violet-foreground))'
-				}
+				},
+				'tsmo-pink': 'hsl(var(--tsmo-pink))',
+				'tsmo-orange': 'hsl(var(--tsmo-orange))',
+				'tsmo-blue': 'hsl(var(--tsmo-blue))',
+				'tsmo-purple': 'hsl(var(--tsmo-purple))',
+				'tsmo-teal': 'hsl(var(--tsmo-teal))',
+				'tsmo-yellow': 'hsl(var(--tsmo-yellow))',
+				'tsmo-red': 'hsl(var(--tsmo-red))'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
