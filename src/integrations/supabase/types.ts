@@ -1422,6 +1422,10 @@ export type Database = {
         Args: { session_token: string }
         Returns: boolean
       }
+      trigger_scheduled_scans: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       user_has_feature: {
         Args: { feature_name: string }
         Returns: boolean
