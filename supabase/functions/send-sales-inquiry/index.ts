@@ -121,7 +121,7 @@ serve(async (req: Request): Promise<Response> => {
 
     // Send email to sales team
     const salesEmailResponse = await resend.emails.send({
-      from: "TSMO Sales <onboarding@resend.dev>",
+      from: "TSMO Sales <noreply@tsmowatch.com>", // Use your verified domain
       to: ["shirleena.cunningham@tsmowatch.com"],
       subject: `New Sales Inquiry - ${inquiryData.interestedPlan} Plan`,
       html: `
@@ -142,7 +142,7 @@ serve(async (req: Request): Promise<Response> => {
 
     // Send confirmation email to the inquirer
     const confirmationEmailResponse = await resend.emails.send({
-      from: "TSMO <onboarding@resend.dev>",
+      from: "TSMO <noreply@tsmowatch.com>", // Use your verified domain
       to: [inquiryData.email],
       subject: "Thank you for your sales inquiry",
       html: `
