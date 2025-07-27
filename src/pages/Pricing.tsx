@@ -145,8 +145,8 @@ const Pricing = () => {
       name: 'Professional',
       icon: Zap,
       description: 'Complete art protection suite for established artists and agencies',
-      price: { monthly: 79, yearly: 790 },
-      originalPrice: { monthly: 99, yearly: 990 },
+      price: { monthly: 199, yearly: 1990 },
+      originalPrice: { monthly: 249, yearly: 2490 },
       discount: '20% OFF',
       color: 'from-orange-500 to-red-600',
       features: [

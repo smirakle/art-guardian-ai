@@ -669,8 +669,8 @@ const Index = () => {
                   Complete art protection suite for established artists
                 </CardDescription>
                 <div className="text-center">
-                  <div className="text-sm text-muted-foreground line-through">$99</div>
-                  <div className="text-4xl font-bold">$79</div>
+                <div className="text-sm text-muted-foreground line-through">$249</div>
+                <div className="text-4xl font-bold">$199</div>
                   <div className="text-muted-foreground">/month</div>
                 </div>
               </CardHeader>
