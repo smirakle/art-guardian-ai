@@ -26,3 +26,18 @@ verify_jwt = false
 
 [functions.admin-maintenance-auth]
 verify_jwt = false
+
+[functions.admin-system-health]
+verify_jwt = false
+
+[functions.admin-user-details]
+verify_jwt = false
+
+[functions.admin-realtime-dashboard]
+verify_jwt = false
+
+[functions.admin-security-scan]
+verify_jwt = false
+
+[functions.admin-performance-metrics]
+verify_jwt = false
