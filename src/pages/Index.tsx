@@ -8,6 +8,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { supabase } from '@/integrations/supabase/client';
 
 import { 
   Shield, 
@@ -49,6 +52,15 @@ const Index = () => {
   
   const [demoStep, setDemoStep] = useState(0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showSalesDialog, setShowSalesDialog] = useState(false);
+  const [salesFormData, setSalesFormData] = useState({
+    name: "",
+    email: "",
+    company: "",
+    interestedPlan: "",
+    message: ""
+  });
+  const [isSendingSales, setIsSendingSales] = useState(false);
 
   const startDemo = () => {
     setIsAnalyzing(true);
@@ -70,14 +82,57 @@ const Index = () => {
   };
 
   const handlePricingPlan = (plan: string) => {
-    toast({
-      title: `${plan} Plan Selected`,
-      description: "Redirecting to checkout...",
-    });
-    // Navigate to checkout
-    setTimeout(() => {
-      navigate(`/checkout?plan=${plan.toLowerCase()}`);
-    }, 1500);
+    if (plan === "Contact Sales") {
+      setSalesFormData(prev => ({ ...prev, interestedPlan: "Enterprise" }));
+      setShowSalesDialog(true);
+    } else {
+      toast({
+        title: `${plan} Plan Selected`,
+        description: "Redirecting to checkout...",
+      });
+      // Navigate to checkout
+      setTimeout(() => {
+        navigate(`/checkout?plan=${plan.toLowerCase()}`);
+      }, 1500);
+    }
+  };
+
+  const handleSalesInquiry = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSendingSales(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('send-sales-inquiry', {
+        body: salesFormData
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "Sales Inquiry Sent!",
+        description: "Thank you for your interest. Our sales team will contact you within 24 hours.",
+      });
+
+      setShowSalesDialog(false);
+      setSalesFormData({
+        name: "",
+        email: "",
+        company: "",
+        interestedPlan: "",
+        message: ""
+      });
+    } catch (error) {
+      console.error('Error sending sales inquiry:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send sales inquiry. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSendingSales(false);
+    }
   };
 
   const handleFreeTrial = (plan: string) => {
@@ -714,12 +769,7 @@ const Index = () => {
                 <Button 
                   className="w-full" 
                   variant="outline"
-                  onClick={() => {
-                    toast({
-                      title: "Contact Sales",
-                      description: "Our enterprise team will contact you within 24 hours to discuss your custom solution.",
-                    });
-                  }}
+                  onClick={() => handlePricingPlan("Contact Sales")}
                 >
                   Contact Sales
                 </Button>
@@ -812,6 +862,76 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Sales Dialog */}
+      <Dialog open={showSalesDialog} onOpenChange={setShowSalesDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Contact Sales Team</DialogTitle>
+            <DialogDescription>
+              Tell us about your needs and our sales team will contact you within 24 hours.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSalesInquiry} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="name">Name *</Label>
+                <Input
+                  id="name"
+                  required
+                  value={salesFormData.name}
+                  onChange={(e) => setSalesFormData(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="Your full name"
+                />
+              </div>
+              <div>
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  required
+                  value={salesFormData.email}
+                  onChange={(e) => setSalesFormData(prev => ({ ...prev, email: e.target.value }))}
+                  placeholder="your@email.com"
+                />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="company">Company</Label>
+              <Input
+                id="company"
+                value={salesFormData.company}
+                onChange={(e) => setSalesFormData(prev => ({ ...prev, company: e.target.value }))}
+                placeholder="Your company name (optional)"
+              />
+            </div>
+            <div>
+              <Label htmlFor="message">Message *</Label>
+              <Textarea
+                id="message"
+                required
+                rows={4}
+                value={salesFormData.message}
+                onChange={(e) => setSalesFormData(prev => ({ ...prev, message: e.target.value }))}
+                placeholder="Tell us about your requirements and how many artworks you need to protect..."
+              />
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowSalesDialog(false)}
+                disabled={isSendingSales}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isSendingSales}>
+                {isSendingSales ? "Sending..." : "Send Inquiry"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );
