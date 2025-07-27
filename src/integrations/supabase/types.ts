@@ -1156,8 +1156,10 @@ export type Database = {
           created_at: string
           current_period_end: string
           current_period_start: string
+          custom_domain_enabled: boolean | null
           deepfake_addon: boolean
           id: string
+          max_white_label_users: number | null
           plan_id: string
           social_media_addon: boolean
           status: string
@@ -1165,14 +1167,17 @@ export type Database = {
           stripe_subscription_id: string | null
           updated_at: string
           user_id: string
+          white_label_enabled: boolean | null
         }
         Insert: {
           billing_cycle?: string
           created_at?: string
           current_period_end: string
           current_period_start?: string
+          custom_domain_enabled?: boolean | null
           deepfake_addon?: boolean
           id?: string
+          max_white_label_users?: number | null
           plan_id: string
           social_media_addon?: boolean
           status?: string
@@ -1180,14 +1185,17 @@ export type Database = {
           stripe_subscription_id?: string | null
           updated_at?: string
           user_id: string
+          white_label_enabled?: boolean | null
         }
         Update: {
           billing_cycle?: string
           created_at?: string
           current_period_end?: string
           current_period_start?: string
+          custom_domain_enabled?: boolean | null
           deepfake_addon?: boolean
           id?: string
+          max_white_label_users?: number | null
           plan_id?: string
           social_media_addon?: boolean
           status?: string
@@ -1195,6 +1203,7 @@ export type Database = {
           stripe_subscription_id?: string | null
           updated_at?: string
           user_id?: string
+          white_label_enabled?: boolean | null
         }
         Relationships: []
       }
@@ -1380,6 +1389,180 @@ export type Database = {
         }
         Relationships: []
       }
+      white_label_domains: {
+        Row: {
+          created_at: string
+          dns_configured: boolean | null
+          domain: string
+          id: string
+          is_primary: boolean | null
+          organization_id: string
+          ssl_enabled: boolean | null
+          updated_at: string
+          verification_token: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          dns_configured?: boolean | null
+          domain: string
+          id?: string
+          is_primary?: boolean | null
+          organization_id: string
+          ssl_enabled?: boolean | null
+          updated_at?: string
+          verification_token?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          dns_configured?: boolean | null
+          domain?: string
+          id?: string
+          is_primary?: boolean | null
+          organization_id?: string
+          ssl_enabled?: boolean | null
+          updated_at?: string
+          verification_token?: string | null
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "white_label_domains_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "white_label_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      white_label_organizations: {
+        Row: {
+          accent_color: string | null
+          company_description: string | null
+          company_name: string
+          created_at: string
+          custom_css: string | null
+          custom_domain: string | null
+          domain_verified: boolean | null
+          domain_verified_at: string | null
+          features: Json | null
+          id: string
+          is_active: boolean | null
+          logo_url: string | null
+          max_artworks: number | null
+          max_users: number | null
+          name: string
+          owner_id: string
+          primary_color: string | null
+          secondary_color: string | null
+          slug: string
+          subscription_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          accent_color?: string | null
+          company_description?: string | null
+          company_name: string
+          created_at?: string
+          custom_css?: string | null
+          custom_domain?: string | null
+          domain_verified?: boolean | null
+          domain_verified_at?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          max_artworks?: number | null
+          max_users?: number | null
+          name: string
+          owner_id: string
+          primary_color?: string | null
+          secondary_color?: string | null
+          slug: string
+          subscription_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          accent_color?: string | null
+          company_description?: string | null
+          company_name?: string
+          created_at?: string
+          custom_css?: string | null
+          custom_domain?: string | null
+          domain_verified?: boolean | null
+          domain_verified_at?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          max_artworks?: number | null
+          max_users?: number | null
+          name?: string
+          owner_id?: string
+          primary_color?: string | null
+          secondary_color?: string | null
+          slug?: string
+          subscription_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "white_label_organizations_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      white_label_users: {
+        Row: {
+          created_at: string
+          id: string
+          invited_at: string | null
+          invited_by: string | null
+          is_active: boolean | null
+          joined_at: string | null
+          organization_id: string
+          role: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invited_at?: string | null
+          invited_by?: string | null
+          is_active?: boolean | null
+          joined_at?: string | null
+          organization_id: string
+          role?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invited_at?: string | null
+          invited_by?: string | null
+          is_active?: boolean | null
+          joined_at?: string | null
+          organization_id?: string
+          role?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "white_label_users_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "white_label_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -1411,6 +1594,16 @@ export type Database = {
           is_active: boolean
         }[]
       }
+      get_user_white_label_org: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          org_id: string
+          org_name: string
+          org_slug: string
+          is_owner: boolean
+          user_role: string
+        }[]
+      }
       has_role: {
         Args: {
           _user_id: string
@@ -1432,6 +1625,10 @@ export type Database = {
       }
       user_has_membership: {
         Args: { _user_id: string }
+        Returns: boolean
+      }
+      user_has_white_label_access: {
+        Args: Record<PropertyKey, never>
         Returns: boolean
       }
       validate_admin_token: {

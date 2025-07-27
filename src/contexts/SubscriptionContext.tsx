@@ -2,13 +2,15 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
-type PlanId = 'student' | 'starter' | 'professional';
+type PlanId = 'student' | 'starter' | 'professional' | 'enterprise';
 
 interface Subscription {
   plan_id: PlanId;
   status: string;
   social_media_addon: boolean;
   deepfake_addon: boolean;
+  white_label_enabled: boolean;
+  custom_domain_enabled: boolean;
   is_active: boolean;
 }
 
@@ -59,6 +61,8 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
           status: sub.status,
           social_media_addon: sub.social_media_addon,
           deepfake_addon: sub.deepfake_addon,
+          white_label_enabled: sub.white_label_enabled || false,
+          custom_domain_enabled: sub.custom_domain_enabled || false,
           is_active: sub.is_active
         });
       } else {
