@@ -13,11 +13,15 @@ import {
   ExternalLink,
   Layers,
   Network,
-  TrendingUp
+  TrendingUp,
+  Download,
+  FileText,
+  Award
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import jsPDF from 'jspdf';
 
 interface BlockchainCertificate {
   id: string;
@@ -27,6 +31,7 @@ interface BlockchainCertificate {
   status: string;
   created_at: string;
   certificate_data: any;
+  ownership_proof?: string;
   artwork?: {
     title: string;
     category: string;
@@ -215,6 +220,113 @@ export const RealTimeBlockchainWidget = () => {
     }
   };
 
+  const downloadCertificate = async (cert: BlockchainCertificate) => {
+    try {
+      const certData = cert.certificate_data as any;
+      const network = certData?.network || 'polygon';
+      
+      // Create PDF certificate
+      const pdf = new jsPDF();
+      
+      // Header
+      pdf.setFontSize(24);
+      pdf.setTextColor(59, 130, 246); // Blue color
+      pdf.text('BLOCKCHAIN CERTIFICATE OF AUTHENTICITY', 20, 30);
+      
+      // TSMO Logo text
+      pdf.setFontSize(12);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text('TSMO - The Social Media Observer', 20, 45);
+      
+      // Certificate ID
+      pdf.setFontSize(16);
+      pdf.setTextColor(0, 0, 0);
+      pdf.text(`Certificate ID: ${cert.certificate_id}`, 20, 65);
+      
+      // Artwork Details
+      pdf.setFontSize(14);
+      pdf.text('ARTWORK DETAILS', 20, 85);
+      pdf.setFontSize(12);
+      pdf.text(`Title: ${cert.artwork?.title || 'Unknown'}`, 20, 100);
+      pdf.text(`Category: ${cert.artwork?.category || 'Digital'}`, 20, 115);
+      pdf.text(`Registration Date: ${new Date(cert.created_at).toLocaleDateString()}`, 20, 130);
+      
+      // Blockchain Details
+      pdf.setFontSize(14);
+      pdf.text('BLOCKCHAIN VERIFICATION', 20, 150);
+      pdf.setFontSize(12);
+      pdf.text(`Network: ${network.charAt(0).toUpperCase() + network.slice(1)}`, 20, 165);
+      pdf.text(`Blockchain Hash: ${cert.blockchain_hash}`, 20, 180);
+      pdf.text(`Status: ${cert.status.toUpperCase()}`, 20, 195);
+      
+      // Smart Contract Details
+      if (certData?.contractAddress) {
+        pdf.text(`Smart Contract: ${certData.contractAddress}`, 20, 210);
+      }
+      if (certData?.tokenId) {
+        pdf.text(`NFT Token ID: ${certData.tokenId}`, 20, 225);
+      }
+      if (certData?.gasFee) {
+        pdf.text(`Gas Fee: ${certData.gasFee} ETH`, 20, 240);
+      }
+      
+      // Ownership Proof
+      pdf.setFontSize(14);
+      pdf.text('OWNERSHIP PROOF', 20, 260);
+      pdf.setFontSize(10);
+      const ownershipProof = cert.ownership_proof || 'Digital fingerprint verified';
+      const lines = pdf.splitTextToSize(ownershipProof, 170);
+      pdf.text(lines, 20, 275);
+      
+      // Footer
+      pdf.setFontSize(10);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text('This certificate provides immutable proof of digital asset ownership', 20, 290);
+      pdf.text('registered on the blockchain. Verify at blockchain explorer.', 20, 300);
+      
+      // Download
+      const fileName = `TSMO_Certificate_${cert.certificate_id}_${new Date().toISOString().split('T')[0]}.pdf`;
+      pdf.save(fileName);
+      
+      toast({
+        title: "📄 Certificate Downloaded",
+        description: `${fileName} saved to your device`,
+      });
+      
+    } catch (error) {
+      console.error('Error generating certificate:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate certificate",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const downloadAllCertificates = async () => {
+    try {
+      for (let i = 0; i < certificates.length; i++) {
+        await downloadCertificate(certificates[i]);
+        // Small delay between downloads
+        if (i < certificates.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
+      
+      toast({
+        title: "📦 All Certificates Downloaded",
+        description: `${certificates.length} certificates saved to your device`,
+      });
+    } catch (error) {
+      console.error('Error downloading all certificates:', error);
+      toast({
+        title: "Error",
+        description: "Failed to download all certificates",
+        variant: "destructive"
+      });
+    }
+  };
+
   const getNetworkIcon = (network: string) => {
     switch (network) {
       case 'ethereum':
@@ -341,8 +453,23 @@ export const RealTimeBlockchainWidget = () => {
       {certificates.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Recent Blockchain Certificates</CardTitle>
-            <CardDescription>Latest blockchain registrations and their status</CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Recent Blockchain Certificates</CardTitle>
+                <CardDescription>Latest blockchain registrations and their status</CardDescription>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={downloadAllCertificates}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <Download className="w-4 h-4" />
+                  Download All
+                </Button>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -367,6 +494,14 @@ export const RealTimeBlockchainWidget = () => {
                       <Badge variant={getStatusColor(cert.status)}>
                         {cert.status}
                       </Badge>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => downloadCertificate(cert)}
+                        className="flex items-center gap-1"
+                      >
+                        <Download className="w-4 h-4" />
+                      </Button>
                       {certData?.transactionUrl && (
                         <Button 
                           variant="ghost" 
