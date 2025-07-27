@@ -127,7 +127,7 @@ const Pricing = () => {
       discount: '25% OFF',
       color: 'from-green-500 to-emerald-600',
       features: [
-        'Up to 200 artworks protected',
+        'Up to 150 artworks protected',
         'Advanced AI monitoring',
         'Real-time alerts',
         'Watermark protection',

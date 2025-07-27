@@ -509,7 +509,7 @@ const Index = () => {
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Up to 25 artworks</span>
+                    <span className="text-sm">Up to 50 artworks</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Check className="h-4 w-4 text-green-500" />
@@ -567,7 +567,7 @@ const Index = () => {
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Up to 50 artworks</span>
+                    <span className="text-sm">Up to 150 artworks</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Check className="h-4 w-4 text-green-500" />
@@ -626,7 +626,7 @@ const Index = () => {
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Up to 500 artworks</span>
+                    <span className="text-sm">Up to 1,000 artworks</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Check className="h-4 w-4 text-green-500" />
