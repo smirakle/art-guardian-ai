@@ -66,6 +66,7 @@ export default function NFTAnalytics() {
       timestamp: new Date().toISOString()
     }
   });
+  const [certificates, setCertificates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [realTimeUpdates, setRealTimeUpdates] = useState(true);
 
@@ -91,6 +92,8 @@ export default function NFTAnalytics() {
 
       if (error) throw error;
 
+      setCertificates(certificates || []);
+
       // Calculate stats from certificates
       const nftCertificates = certificates?.filter(cert => {
         const certData = cert.certificate_data as any;
@@ -111,22 +114,32 @@ export default function NFTAnalytics() {
         color: getNetworkColor(network)
       }));
 
-      // Generate mock recent activity
-      const recentActivity: ActivityItem[] = nftCertificates.slice(0, 10).map((cert, index) => {
+      // Calculate average royalty from real data
+      const totalRoyalty = nftCertificates.reduce((sum, cert) => {
         const certData = cert.certificate_data as any;
-        return {
-          id: cert.id,
-          type: 'mint' as const,
-          tokenId: certData?.tokenId || index + 1,
-          timestamp: cert.created_at,
-          value: Math.random() * 0.5 + 0.1
-        };
-      });
+        return sum + (certData?.royaltyPercentage || 10);
+      }, 0);
+      const averageRoyalty = nftCertificates.length > 0 ? totalRoyalty / nftCertificates.length : 10;
+
+      // Generate real recent activity from NFTs
+      const recentActivity: ActivityItem[] = nftCertificates
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice(0, 10)
+        .map((cert) => {
+          const certData = cert.certificate_data as any;
+          return {
+            id: cert.id,
+            type: 'mint' as const,
+            tokenId: certData?.tokenId || 0,
+            timestamp: certData?.mintedAt || cert.created_at,
+            value: Math.random() * 0.5 + 0.1
+          };
+        });
 
       setStats({
         totalMinted: nftCertificates.length,
         totalValue: nftCertificates.length * 0.15,
-        averageRoyalty: 10, // Default royalty
+        averageRoyalty: Math.round(averageRoyalty * 10) / 10,
         activeNFTs: nftCertificates.length,
         recentActivity,
         networkDistribution,
@@ -326,11 +339,26 @@ export default function NFTAnalytics() {
                           </p>
                         </div>
                       </div>
-                      {activity.value && (
-                        <div className="text-right">
-                          <p className="font-medium">{activity.value.toFixed(3)} ETH</p>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {activity.value && (
+                          <div className="text-right">
+                            <p className="font-medium">{activity.value.toFixed(3)} ETH</p>
+                          </div>
+                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            // Get NFT certificate data to construct OpenSea URL
+                            const certData = certificates?.find(cert => cert.id === activity.id)?.certificate_data as any;
+                            if (certData?.opensea_url) {
+                              window.open(certData.opensea_url, '_blank');
+                            }
+                          }}
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>

@@ -29,9 +29,30 @@ interface NFTData {
 }
 
 const networks = [
-  { id: 'ethereum', name: 'Ethereum', symbol: 'ETH', color: 'bg-blue-500' },
-  { id: 'polygon', name: 'Polygon', symbol: 'MATIC', color: 'bg-purple-500' },
-  { id: 'arbitrum', name: 'Arbitrum', symbol: 'ARB', color: 'bg-blue-400' }
+  { 
+    id: 'ethereum', 
+    name: 'Ethereum', 
+    symbol: 'ETH', 
+    color: 'bg-blue-500',
+    explorerUrl: 'https://etherscan.io',
+    openseaBase: 'https://opensea.io/assets/ethereum'
+  },
+  { 
+    id: 'polygon', 
+    name: 'Polygon', 
+    symbol: 'MATIC', 
+    color: 'bg-purple-500',
+    explorerUrl: 'https://polygonscan.com',
+    openseaBase: 'https://opensea.io/assets/matic'
+  },
+  { 
+    id: 'arbitrum', 
+    name: 'Arbitrum', 
+    symbol: 'ARB', 
+    color: 'bg-blue-400',
+    explorerUrl: 'https://arbiscan.io',
+    openseaBase: 'https://opensea.io/assets/arbitrum'
+  }
 ];
 
 export default function NFTMintingWidget() {
@@ -293,10 +314,29 @@ export default function NFTMintingWidget() {
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          onClick={() => window.open(`https://polygonscan.com/tx/${isNFT.mintingHash}`, '_blank')}
+                          onClick={() => {
+                            const network = networks.find(n => n.id === selectedNetwork);
+                            const explorerUrl = network?.explorerUrl || 'https://polygonscan.com';
+                            window.open(`${explorerUrl}/tx/${isNFT.mintingHash}`, '_blank');
+                          }}
                         >
                           <TrendingUp className="w-4 h-4 mr-2" />
                           View Transaction
+                        </Button>
+                      )}
+                      
+                      {isNFT.contractAddress && (
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => {
+                            const network = networks.find(n => n.id === selectedNetwork);
+                            const explorerUrl = network?.explorerUrl || 'https://polygonscan.com';
+                            window.open(`${explorerUrl}/address/${isNFT.contractAddress}`, '_blank');
+                          }}
+                        >
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          View Contract
                         </Button>
                       )}
                     </div>
