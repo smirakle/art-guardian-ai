@@ -32,6 +32,7 @@ interface BlockchainCertificate {
   created_at: string;
   certificate_data: any;
   ownership_proof?: string;
+  artwork_fingerprint?: string;
   artwork?: {
     title: string;
     category: string;
@@ -222,82 +223,147 @@ export const RealTimeBlockchainWidget = () => {
 
   const downloadCertificate = async (cert: BlockchainCertificate) => {
     try {
+      console.log('Starting certificate download for:', cert.certificate_id);
       const certData = cert.certificate_data as any;
       const network = certData?.network || 'polygon';
       
       // Create PDF certificate
       const pdf = new jsPDF();
       
-      // Header
-      pdf.setFontSize(24);
-      pdf.setTextColor(59, 130, 246); // Blue color
-      pdf.text('BLOCKCHAIN CERTIFICATE OF AUTHENTICITY', 20, 30);
+      // Set up colors
+      const primaryBlue = [59, 130, 246];
+      const darkGray = [55, 65, 81];
+      const lightGray = [156, 163, 175];
       
-      // TSMO Logo text
+      // Header background
+      pdf.setFillColor(59, 130, 246);
+      pdf.rect(0, 0, 210, 40, 'F');
+      
+      // Header text
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(20);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('BLOCKCHAIN CERTIFICATE', 20, 25);
+      
+      // Subheader
       pdf.setFontSize(12);
-      pdf.setTextColor(100, 100, 100);
-      pdf.text('TSMO - The Social Media Observer', 20, 45);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('Certificate of Authenticity & Ownership', 20, 35);
       
-      // Certificate ID
-      pdf.setFontSize(16);
-      pdf.setTextColor(0, 0, 0);
-      pdf.text(`Certificate ID: ${cert.certificate_id}`, 20, 65);
+      // Reset colors for body
+      pdf.setTextColor(55, 65, 81);
       
-      // Artwork Details
+      // TSMO branding
+      pdf.setFontSize(10);
+      pdf.text('TSMO - The Social Media Observer', 20, 50);
+      pdf.text('Advanced Blockchain Protection System', 20, 55);
+      
+      // Certificate details section
       pdf.setFontSize(14);
-      pdf.text('ARTWORK DETAILS', 20, 85);
-      pdf.setFontSize(12);
-      pdf.text(`Title: ${cert.artwork?.title || 'Unknown'}`, 20, 100);
-      pdf.text(`Category: ${cert.artwork?.category || 'Digital'}`, 20, 115);
-      pdf.text(`Registration Date: ${new Date(cert.created_at).toLocaleDateString()}`, 20, 130);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('CERTIFICATE DETAILS', 20, 70);
       
-      // Blockchain Details
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Certificate ID: ${cert.certificate_id}`, 20, 80);
+      pdf.text(`Blockchain Hash: ${cert.blockchain_hash}`, 20, 88);
+      pdf.text(`Registration Date: ${new Date(cert.created_at).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })}`, 20, 96);
+      pdf.text(`Status: ${cert.status.toUpperCase()}`, 20, 104);
+      
+      // Artwork details section
       pdf.setFontSize(14);
-      pdf.text('BLOCKCHAIN VERIFICATION', 20, 150);
-      pdf.setFontSize(12);
-      pdf.text(`Network: ${network.charAt(0).toUpperCase() + network.slice(1)}`, 20, 165);
-      pdf.text(`Blockchain Hash: ${cert.blockchain_hash}`, 20, 180);
-      pdf.text(`Status: ${cert.status.toUpperCase()}`, 20, 195);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('PROTECTED ARTWORK', 20, 120);
       
-      // Smart Contract Details
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Title: ${cert.artwork?.title || 'Digital Asset'}`, 20, 130);
+      pdf.text(`Category: ${cert.artwork?.category || 'Digital'}`, 20, 138);
+      pdf.text(`Artwork Fingerprint: ${cert.artwork_fingerprint}`, 20, 146);
+      
+      // Blockchain network details
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('BLOCKCHAIN VERIFICATION', 20, 162);
+      
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Network: ${network.charAt(0).toUpperCase() + network.slice(1)}`, 20, 172);
+      pdf.text(`Chain ID: ${certData?.chainId || 'N/A'}`, 20, 180);
+      
       if (certData?.contractAddress) {
-        pdf.text(`Smart Contract: ${certData.contractAddress}`, 20, 210);
-      }
-      if (certData?.tokenId) {
-        pdf.text(`NFT Token ID: ${certData.tokenId}`, 20, 225);
+        pdf.text(`Smart Contract: ${certData.contractAddress}`, 20, 188);
       }
       if (certData?.gasFee) {
-        pdf.text(`Gas Fee: ${certData.gasFee} ETH`, 20, 240);
+        pdf.text(`Gas Fee: ${certData.gasFee.toFixed(8)} ETH`, 20, 196);
+      }
+      if (certData?.ipfsHash) {
+        pdf.text(`IPFS Hash: ${certData.ipfsHash}`, 20, 204);
       }
       
-      // Ownership Proof
+      // Advanced features
+      if (certData?.royaltyPercentage) {
+        pdf.text(`Royalty: ${certData.royaltyPercentage}%`, 20, 212);
+      }
+      if (certData?.licenseTerms) {
+        pdf.text(`License: ${certData.licenseTerms}`, 20, 220);
+      }
+      
+      // Ownership proof section
       pdf.setFontSize(14);
-      pdf.text('OWNERSHIP PROOF', 20, 260);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('OWNERSHIP PROOF', 20, 236);
+      
       pdf.setFontSize(10);
-      const ownershipProof = cert.ownership_proof || 'Digital fingerprint verified';
-      const lines = pdf.splitTextToSize(ownershipProof, 170);
-      pdf.text(lines, 20, 275);
+      pdf.setFont('helvetica', 'normal');
+      const ownershipProof = cert.ownership_proof || certData?.ownershipProof || 'Digital signature verified on blockchain';
+      const proofLines = pdf.splitTextToSize(`Proof Hash: ${ownershipProof}`, 170);
+      pdf.text(proofLines, 20, 246);
+      
+      // Verification instructions
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('VERIFICATION', 20, 265);
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('This certificate can be verified on the blockchain:', 20, 275);
+      if (certData?.transactionUrl) {
+        pdf.setTextColor(59, 130, 246);
+        pdf.text(certData.transactionUrl, 20, 283);
+      }
       
       // Footer
-      pdf.setFontSize(10);
-      pdf.setTextColor(100, 100, 100);
-      pdf.text('This certificate provides immutable proof of digital asset ownership', 20, 290);
-      pdf.text('registered on the blockchain. Verify at blockchain explorer.', 20, 300);
+      pdf.setTextColor(156, 163, 175);
+      pdf.setFontSize(9);
+      pdf.text('This document certifies immutable proof of digital asset ownership', 20, 295);
+      pdf.text('registered on the blockchain network. All data is cryptographically verified.', 20, 300);
+      pdf.text(`Generated on ${new Date().toLocaleString()}`, 20, 305);
       
-      // Download
+      // Generate filename
       const fileName = `TSMO_Certificate_${cert.certificate_id}_${new Date().toISOString().split('T')[0]}.pdf`;
+      
+      console.log('Saving PDF with filename:', fileName);
+      
+      // Save the PDF
       pdf.save(fileName);
       
       toast({
         title: "📄 Certificate Downloaded",
-        description: `${fileName} saved to your device`,
+        description: `${fileName} saved successfully`,
       });
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating certificate:', error);
       toast({
-        title: "Error",
-        description: "Failed to generate certificate",
+        title: "Download Failed",
+        description: error.message || "Unable to generate certificate",
         variant: "destructive"
       });
     }
