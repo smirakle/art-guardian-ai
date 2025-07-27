@@ -26,6 +26,7 @@ interface NFTData {
   royaltyPercentage?: number;
   transferable?: boolean;
   resellable?: boolean;
+  network?: string;
 }
 
 const networks = [
@@ -88,17 +89,21 @@ export default function NFTMintingWidget() {
       const nftDataMap: Record<string, NFTData> = {};
       data?.forEach(cert => {
         const certData = cert.certificate_data as any;
+        console.log('Certificate data:', cert.id, certData); // Debug log
+        
         if (certData?.tokenId) {
           nftDataMap[cert.id] = {
             tokenId: certData.tokenId,
-            contractAddress: certData.nftContractAddress,
+            contractAddress: certData.contractAddress || certData.nftContractAddress, // Fix mapping
             mintingHash: certData.mintingHash,
             opensea_url: certData.opensea_url,
             mintedAt: certData.mintedAt,
             royaltyPercentage: certData.royaltyPercentage,
             transferable: certData.transferable,
-            resellable: certData.resellable
+            resellable: certData.resellable,
+            network: certData.network || 'polygon' // Extract network from certificate
           };
+          console.log('NFT data extracted:', nftDataMap[cert.id]); // Debug log
         }
       });
       setNftData(nftDataMap);
@@ -142,7 +147,8 @@ export default function NFTMintingWidget() {
           mintedAt: new Date().toISOString(),
           royaltyPercentage,
           transferable,
-          resellable
+          resellable,
+          network: selectedNetwork
         }
       }));
 
@@ -292,8 +298,8 @@ export default function NFTMintingWidget() {
                       <div>
                         <span className="text-muted-foreground">Network:</span>
                         <div className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${networks.find(n => n.id === selectedNetwork)?.color}`} />
-                          {networks.find(n => n.id === selectedNetwork)?.name}
+                          <div className={`w-2 h-2 rounded-full ${networks.find(n => n.id === (isNFT.network || selectedNetwork))?.color}`} />
+                          {networks.find(n => n.id === (isNFT.network || selectedNetwork))?.name}
                         </div>
                       </div>
                     </div>
@@ -315,8 +321,10 @@ export default function NFTMintingWidget() {
                           variant="outline" 
                           size="sm" 
                           onClick={() => {
-                            const network = networks.find(n => n.id === selectedNetwork);
+                            const nftNetwork = isNFT.network || selectedNetwork;
+                            const network = networks.find(n => n.id === nftNetwork);
                             const explorerUrl = network?.explorerUrl || 'https://polygonscan.com';
+                            console.log('Opening transaction:', `${explorerUrl}/tx/${isNFT.mintingHash}`);
                             window.open(`${explorerUrl}/tx/${isNFT.mintingHash}`, '_blank');
                           }}
                         >
@@ -330,8 +338,10 @@ export default function NFTMintingWidget() {
                           variant="outline" 
                           size="sm" 
                           onClick={() => {
-                            const network = networks.find(n => n.id === selectedNetwork);
+                            const nftNetwork = isNFT.network || selectedNetwork;
+                            const network = networks.find(n => n.id === nftNetwork);
                             const explorerUrl = network?.explorerUrl || 'https://polygonscan.com';
+                            console.log('Opening contract:', `${explorerUrl}/address/${isNFT.contractAddress}`);
                             window.open(`${explorerUrl}/address/${isNFT.contractAddress}`, '_blank');
                           }}
                         >
