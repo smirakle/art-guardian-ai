@@ -592,6 +592,25 @@ const Index = () => {
                     <span className="text-sm">Mobile app access</span>
                   </div>
                 </div>
+                
+                {/* Add-ons */}
+                <div className="border-t pt-4 space-y-3">
+                  <div className="text-sm font-semibold text-muted-foreground">Available Add-ons:</div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm p-2 bg-blue-50 rounded">
+                      <span>Social Media Monitoring</span>
+                      <div className="text-right">
+                        <div className="font-semibold">$100/month</div>
+                        <div className="text-xs text-muted-foreground">$199 startup fee</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-sm p-2 bg-orange-50 rounded">
+                      <span>Deepfake Scanning</span>
+                      <div className="font-semibold">$49/month</div>
+                    </div>
+                  </div>
+                </div>
+                
                 <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
                   <div>• Limited to personal use</div>
                   <div>• Standard response time (48hrs)</div>
@@ -647,6 +666,25 @@ const Index = () => {
                     <span className="text-sm">Priority support</span>
                   </div>
                 </div>
+                
+                {/* Add-ons */}
+                <div className="border-t pt-4 space-y-3">
+                  <div className="text-sm font-semibold text-muted-foreground">Available Add-ons:</div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm p-2 bg-blue-50 rounded">
+                      <span>Social Media Monitoring</span>
+                      <div className="text-right">
+                        <div className="font-semibold">$100/month</div>
+                        <div className="text-xs text-muted-foreground">$199 startup fee</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-sm p-2 bg-orange-50 rounded">
+                      <span>Deepfake Scanning</span>
+                      <div className="font-semibold">$49/month</div>
+                    </div>
+                  </div>
+                </div>
+                
                 <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
                   <div>• Commercial use allowed</div>
                   <div>• Standard takedown assistance</div>
@@ -707,6 +745,24 @@ const Index = () => {
                   <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
                     <span className="text-sm">Dedicated account manager</span>
+                  </div>
+                </div>
+                
+                {/* Add-ons */}
+                <div className="border-t pt-4 space-y-3">
+                  <div className="text-sm font-semibold text-muted-foreground">Available Add-ons:</div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm p-2 bg-blue-50 rounded">
+                      <span>Social Media Monitoring</span>
+                      <div className="text-right">
+                        <div className="font-semibold">$100/month</div>
+                        <div className="text-xs text-muted-foreground">$199 startup fee</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-sm p-2 bg-orange-50 rounded">
+                      <span>Deepfake Scanning</span>
+                      <div className="font-semibold">$49/month</div>
+                    </div>
                   </div>
                 </div>
                 <Button 
