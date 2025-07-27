@@ -490,190 +490,175 @@ const Index = () => {
               Choose Your Protection Plan
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              From individual artists to large studios, we have a plan that fits your needs and budget.
+              Comprehensive art protection with industry-leading features. 
+              Choose the plan that fits your creative journey.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-4 gap-6">
             {/* Student Plan */}
             <Card className="border-2 border-border hover:border-primary/50 transition-colors">
               <CardHeader>
-                <Badge className="mx-auto mb-4 bg-blue-600">Student</Badge>
+                <Badge className="mx-auto mb-4 bg-blue-600">24% OFF</Badge>
                 <CardTitle className="text-center">Student</CardTitle>
+                <CardDescription className="text-center text-sm">
+                  Perfect for students and emerging artists
+                </CardDescription>
                 <div className="text-center">
+                  <div className="text-sm text-muted-foreground line-through">$25</div>
                   <div className="text-4xl font-bold">$19</div>
                   <div className="text-muted-foreground">/month</div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Up to 50 artworks</span>
+                    <span className="text-sm">Up to 50 artworks protected</span>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Basic visual recognition</span>
+                    <span className="text-sm">Basic AI monitoring</span>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Monthly monitoring reports</span>
+                    <span className="text-sm">Email alerts</span>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Email support</span>
+                    <span className="text-sm">Educational resources</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Community support</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Mobile app access</span>
                   </div>
                 </div>
-                <Separator className="my-4" />
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-primary" />
-                      Social Media Monitoring
-                    </span>
-                    <span className="text-muted-foreground">+$99/mo</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2">
-                      <UserX className="h-4 w-4 text-primary" />
-                      Deepfake Monitoring
-                    </span>
-                    <span className="text-muted-foreground">+$49/mo</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    $199 setup fee for social media monitoring
-                  </p>
+                <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
+                  <div>• Limited to personal use</div>
+                  <div>• Standard response time (48hrs)</div>
                 </div>
                 <Button 
                   className="w-full" 
                   variant="outline"
                   onClick={() => handlePricingPlan("Student")}
                 >
-                  Choose This Plan
+                  Choose Student Plan
                 </Button>
               </CardContent>
             </Card>
 
-            {/* Basic Plan */}
-            <Card className="border-2 border-border hover:border-primary/50 transition-colors">
+            {/* Starter Plan */}
+            <Card className="border-2 border-primary shadow-lg">
               <CardHeader>
+                <Badge className="mx-auto mb-4 bg-green-600">25% OFF • POPULAR</Badge>
                 <CardTitle className="text-center">Starter</CardTitle>
+                <CardDescription className="text-center text-sm">
+                  Ideal for freelancers and small creators
+                </CardDescription>
                 <div className="text-center">
+                  <div className="text-sm text-muted-foreground line-through">$39</div>
                   <div className="text-4xl font-bold">$29</div>
                   <div className="text-muted-foreground">/month</div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Up to 150 artworks</span>
+                    <span className="text-sm">Up to 150 artworks protected</span>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Basic visual recognition</span>
+                    <span className="text-sm">Advanced AI monitoring</span>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Weekly monitoring reports</span>
+                    <span className="text-sm">Real-time alerts</span>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Email support</span>
+                    <span className="text-sm">Watermark protection</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">API access</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Priority support</span>
                   </div>
                 </div>
-                <Separator className="my-4" />
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-primary" />
-                      Social Media Monitoring
-                    </span>
-                    <span className="text-muted-foreground">+$99/mo</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2">
-                      <UserX className="h-4 w-4 text-primary" />
-                      Deepfake Monitoring
-                    </span>
-                    <span className="text-muted-foreground">+$49/mo</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    $199 setup fee for social media monitoring
-                  </p>
+                <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
+                  <div>• Commercial use allowed</div>
+                  <div>• Standard takedown assistance</div>
                 </div>
                 <Button 
-                  className="w-full" 
-                  variant="outline"
+                  className="w-full bg-green-600 hover:bg-green-700"
                   onClick={() => handlePricingPlan("Starter")}
                 >
-                  Choose This Plan
+                  Choose Starter Plan
                 </Button>
               </CardContent>
             </Card>
             
-            {/* Pro Plan */}
-            <Card className="border-2 border-primary shadow-lg transform scale-105">
+            {/* Professional Plan */}
+            <Card className="border-2 border-border hover:border-primary/50 transition-colors">
               <CardHeader>
-                <Badge className="mx-auto mb-4 bg-primary">Most Popular</Badge>
+                <Badge className="mx-auto mb-4 bg-orange-600">20% OFF</Badge>
                 <CardTitle className="text-center">Professional</CardTitle>
+                <CardDescription className="text-center text-sm">
+                  Complete art protection suite for established artists
+                </CardDescription>
                 <div className="text-center">
-                  <div className="text-4xl font-bold">$99</div>
+                  <div className="text-sm text-muted-foreground line-through">$99</div>
+                  <div className="text-4xl font-bold">$79</div>
                   <div className="text-muted-foreground">/month</div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Up to 1,000 artworks</span>
+                    <span className="text-sm">Up to 1,000 artworks protected</span>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Advanced AI monitoring</span>
+                    <span className="text-sm">Premium AI monitoring</span>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Real-time alerts</span>
+                    <span className="text-sm">Instant alerts & notifications</span>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Priority support</span>
+                    <span className="text-sm">Advanced watermarking</span>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Real-time deepfake detection</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
                     <span className="text-sm">Blockchain verification</span>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Deepfake detection & monitoring</span>
+                    <span className="text-sm">White-label options</span>
                   </div>
-                </div>
-                <Separator className="my-4" />
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-primary" />
-                      Social Media Monitoring
-                    </span>
-                    <span className="text-muted-foreground">+$99/mo</span>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Dedicated account manager</span>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2">
-                      <UserX className="h-4 w-4 text-primary" />
-                      Advanced Deepfake Scanner
-                    </span>
-                    <span className="text-green-600 font-medium">Included</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    $199 setup fee for social media monitoring
-                  </p>
                 </div>
                 <Button 
                   className="w-full"
                   onClick={() => handlePricingPlan("Professional")}
                 >
-                  Choose This Plan
+                  Choose Professional Plan
                 </Button>
               </CardContent>
             </Card>
@@ -681,33 +666,49 @@ const Index = () => {
             {/* Enterprise Plan */}
             <Card className="border-2 border-border hover:border-primary/50 transition-colors">
               <CardHeader>
-                <CardTitle className="text-center">Enterprise</CardTitle>
+                <Badge className="mx-auto mb-4 bg-purple-600">CUSTOM</Badge>
+                <CardTitle className="text-center">Enterprise Custom</CardTitle>
+                <CardDescription className="text-center text-sm">
+                  Tailored solutions for large organizations
+                </CardDescription>
                 <div className="text-center">
                   <div className="text-4xl font-bold">Custom</div>
                   <div className="text-muted-foreground">Contact us</div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Unlimited artworks</span>
+                    <span className="text-sm">Unlimited artworks protected</span>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Custom AI training</span>
+                    <span className="text-sm">Custom AI model training</span>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Dedicated support</span>
+                    <span className="text-sm">24/7 monitoring & support</span>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">White-label options</span>
+                    <span className="text-sm">Advanced deepfake detection</span>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Social Media Monitoring</span>
+                    <span className="text-sm">Advanced blockchain integration</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Enterprise SSO</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Custom integrations</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">SLA guarantees</span>
                   </div>
                 </div>
                 <Button 
@@ -716,7 +717,7 @@ const Index = () => {
                   onClick={() => {
                     toast({
                       title: "Contact Sales",
-                      description: "Our team will reach out within 24 hours to discuss your enterprise needs.",
+                      description: "Our enterprise team will contact you within 24 hours to discuss your custom solution.",
                     });
                   }}
                 >
