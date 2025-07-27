@@ -380,7 +380,10 @@ const RealTimeDeepfakeMonitor = () => {
                           variant="ghost" 
                           size="sm" 
                           className="p-1"
-                          onClick={() => navigate(`/deepfake-match/${match.id}`)}
+                          onClick={() => {
+                            console.log('Navigating to:', `/deepfake-match/${match.id}`);
+                            navigate(`/deepfake-match/${match.id}`);
+                          }}
                         >
                           <Info className="w-3 h-3" />
                         </Button>

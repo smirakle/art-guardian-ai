@@ -216,7 +216,10 @@ export default function RecentDeepfakeDetections() {
                   variant="default" 
                   size="sm" 
                   className="w-full sm:w-auto"
-                  onClick={() => navigate(`/deepfake-match/${detection.id}`)}
+                  onClick={() => {
+                    console.log('Navigating to:', `/deepfake-match/${detection.id}`);
+                    navigate(`/deepfake-match/${detection.id}`);
+                  }}
                 >
                   <Info className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                   <span className="text-xs sm:text-sm">View Details</span>
