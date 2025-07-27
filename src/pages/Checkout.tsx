@@ -64,7 +64,7 @@ const Checkout = () => {
     },
     professional: {
       name: "Professional",
-      price: 99,
+      price: 199,
       features: ["Up to 500 artworks", "Advanced AI recognition", "Real-time monitoring", "Blockchain verification", "Deepfake detection included", "Automated DMCA", "Priority support"],
       badge: "Most Popular"
     }
