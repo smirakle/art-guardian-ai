@@ -79,7 +79,11 @@ const App = () => {
                         <Route path="/auth" element={<Auth />} />
                         <Route path="/contact" element={<Contact />} />
                         <Route path="/upload" element={<Upload />} />
-                        <Route path="/admin" element={<Admin />} />
+                        <Route path="/admin" element={
+                          <ProtectedRoute requiredRole="admin">
+                            <Admin />
+                          </ProtectedRoute>
+                        } />
                         <Route path="/checkout" element={<Checkout />} />
                         <Route path="/success" element={<Success />} />
                         <Route path="/deep-scan" element={<DeepWebScan />} />

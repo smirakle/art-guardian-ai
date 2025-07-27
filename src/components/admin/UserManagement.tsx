@@ -29,6 +29,7 @@ interface User {
   role?: 'admin' | 'user';
   artworkCount?: number;
   lastActive?: string;
+  subscription?: any;
 }
 
 const UserManagement = () => {
@@ -65,8 +66,14 @@ const UserManagement = () => {
 
       if (rolesError) throw rolesError;
 
-      // Fetch artwork counts for each user
+      // Fetch user emails from auth.users (admin can see this)
       const userIds = profiles?.map(p => p.user_id) || [];
+      const emailMap: Record<string, string> = {};
+      
+      // For each user, try to get email from auth metadata or use a service call
+      // Note: In a real implementation, you might need a server function to get emails
+      
+      // Fetch artwork counts for each user
       const artworkCounts: Record<string, number> = {};
       
       if (userIds.length > 0) {
@@ -82,6 +89,9 @@ const UserManagement = () => {
         }
       }
 
+      // For now, skip subscription fetching until the admin function is properly implemented
+      // This can be added later when needed
+
       // Create role lookup
       const roleMap = new Map(roles?.map(r => [r.user_id, r.role]) || []);
 
@@ -89,7 +99,9 @@ const UserManagement = () => {
       const enrichedUsers: User[] = profiles?.map(profile => ({
         ...profile,
         role: roleMap.get(profile.user_id) || 'user',
-        artworkCount: artworkCounts[profile.user_id] || 0
+        artworkCount: artworkCounts[profile.user_id] || 0,
+        email: emailMap[profile.user_id] || 'Email not available',
+        lastActive: 'Recently' // You could fetch this from a last_seen table if implemented
       })) || [];
 
       setUsers(enrichedUsers);
