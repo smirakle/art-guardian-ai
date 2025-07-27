@@ -28,6 +28,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { RealTimeMonitoringWidget } from '@/components/dashboard/RealTimeMonitoringWidget';
+import { RealTimeBlockchainWidget } from '@/components/dashboard/RealTimeBlockchainWidget';
 import { RecentDetectionsWidget } from '@/components/dashboard/RecentDetectionsWidget';
 import { MonitoringWidget } from '@/components/dashboard/MonitoringWidget';
 import { UploadWidget } from '@/components/dashboard/UploadWidget';
@@ -457,6 +458,7 @@ const Dashboard = () => {
           {/* Advanced Blockchain Tab */}
           {hasFeature('advanced_blockchain') && (
             <TabsContent value="advanced-blockchain" className="space-y-6">
+              <RealTimeBlockchainWidget />
               <AdvancedBlockchain />
             </TabsContent>
           )}

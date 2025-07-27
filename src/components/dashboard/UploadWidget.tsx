@@ -286,27 +286,65 @@ export const UploadWidget = ({ onUploadComplete }: UploadWidgetProps) => {
         });
       }
 
-      // 6. Blockchain verification
+      // 6. Advanced Blockchain Protection
       if (enableBlockchain) {
         try {
-          await supabase.functions.invoke('blockchain-registration', {
+          // Use advanced blockchain registration for real-time protection
+          const { data, error } = await supabase.functions.invoke('advanced-blockchain-registration', {
             body: {
               artworkId: artworkId,
-              title: artworkTitle || file.name,
-              description: description || null,
-              category: category || 'digital',
-              filePaths: [fileName],
-              userEmail: user?.email || 'unknown@example.com',
-              userId: user?.id
+              network: 'polygon', // Default to fast, low-cost Polygon
+              userId: user!.id,
+              smartContractSettings: {
+                royaltyPercentage: 10,
+                licenseTerms: 'standard',
+                transferable: true,
+                resellable: true
+              },
+              advancedFeatures: true,
+              realTimeProtection: true
             }
           });
+
+          if (error) throw error;
           
           toast({
-            title: "Blockchain Certificate Created",
-            description: "Immutable proof of ownership registered",
+            title: "⛓️ Advanced Blockchain Protection Active",
+            description: `Registered on ${data.network} - Hash: ${data.transactionHash?.substring(0, 10)}...`,
           });
+
+          // Also create real-time monitoring for blockchain verification
+          await supabase.from('monitoring_scans').insert({
+            artwork_id: artworkId,
+            scan_type: 'blockchain-verification',
+            status: 'running',
+            started_at: new Date().toISOString(),
+            total_sources: 1
+          });
+
         } catch (error) {
-          console.error('Blockchain registration failed:', error);
+          console.error('Advanced blockchain registration failed:', error);
+          // Fallback to basic blockchain registration
+          try {
+            await supabase.functions.invoke('blockchain-registration', {
+              body: {
+                artworkId: artworkId,
+                title: artworkTitle || file.name,
+                description: description || null,
+                category: category || 'digital',
+                filePaths: [fileName],
+                userEmail: user?.email || 'unknown@example.com',
+                userId: user?.id
+              }
+            });
+            
+            toast({
+              title: "Basic Blockchain Certificate Created",
+              description: "Immutable proof of ownership registered",
+            });
+          } catch (fallbackError) {
+            console.error('Fallback blockchain registration failed:', fallbackError);
+          }
         }
       }
 
