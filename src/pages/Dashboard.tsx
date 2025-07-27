@@ -16,7 +16,8 @@ import {
   Clock,
   Globe,
   Brain,
-  Zap
+  Zap,
+  Building2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -28,6 +29,8 @@ import { MonitoringWidget } from '@/components/dashboard/MonitoringWidget';
 import { UploadWidget } from '@/components/dashboard/UploadWidget';
 import DailyReport from '@/components/DailyReport';
 import ScheduledScansManager from '@/components/ScheduledScansManager';
+import { WhiteLabelManager } from '@/components/WhiteLabelManager';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 
 interface DashboardStats {
   protectedArtworks: number;
@@ -41,6 +44,7 @@ interface DashboardStats {
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
+  const { hasFeature } = useSubscription();
   const { toast } = useToast();
   const [stats, setStats] = useState<DashboardStats>({
     protectedArtworks: 0,
@@ -247,7 +251,7 @@ const Dashboard = () => {
 
         {/* Main Dashboard Content */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className={`grid w-full ${hasFeature('white_label') ? 'grid-cols-7' : 'grid-cols-6'}`}>
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Activity className="w-4 h-4" />
               Overview
@@ -272,6 +276,12 @@ const Dashboard = () => {
               <FileImage className="w-4 h-4" />
               Reports
             </TabsTrigger>
+            {hasFeature('white_label') && (
+              <TabsTrigger value="white-label" className="flex items-center gap-2">
+                <Building2 className="w-4 h-4" />
+                White Label
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {/* Overview Tab */}
@@ -430,6 +440,13 @@ const Dashboard = () => {
               />
             </div>
           </TabsContent>
+
+          {/* White Label Tab */}
+          {hasFeature('white_label') && (
+            <TabsContent value="white-label" className="space-y-6">
+              <WhiteLabelManager />
+            </TabsContent>
+          )}
         </Tabs>
       </div>
     </div>

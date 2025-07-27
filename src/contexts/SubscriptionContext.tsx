@@ -61,8 +61,8 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
           status: sub.status,
           social_media_addon: sub.social_media_addon,
           deepfake_addon: sub.deepfake_addon,
-          white_label_enabled: sub.white_label_enabled || false,
-          custom_domain_enabled: sub.custom_domain_enabled || false,
+          white_label_enabled: (sub as any).white_label_enabled || false,
+          custom_domain_enabled: (sub as any).custom_domain_enabled || false,
           is_active: sub.is_active
         });
       } else {
@@ -109,10 +109,21 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
       case 'deepfake_detection':
         return subscription.plan_id === 'professional' || subscription.deepfake_addon;
 
+      case 'white_label':
+        return (subscription.plan_id === 'professional' || subscription.plan_id === 'enterprise') && subscription.white_label_enabled;
+
+      case 'custom_domain':
+        return (subscription.plan_id === 'professional' || subscription.plan_id === 'enterprise') && subscription.custom_domain_enabled;
+
+      case 'unlimited_users':
+      case 'api_access':
+      case 'advanced_analytics':
+        return subscription.plan_id === 'enterprise';
+
       // Student plan only gets basic features
       case 'enhanced_monitoring':
       case 'advanced_alerts':
-        return subscription.plan_id === 'starter' || subscription.plan_id === 'professional';
+        return subscription.plan_id === 'starter' || subscription.plan_id === 'professional' || subscription.plan_id === 'enterprise';
 
       default:
         return false;
