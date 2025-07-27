@@ -356,7 +356,7 @@ const Community = () => {
                       Share Your Protection Strategy
                     </CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      Demo mode - Authentication required for posting in production.
+                      Share your experiences, strategies, and questions with the community.
                     </p>
                   </CardHeader>
                   <CardContent>
@@ -366,7 +366,6 @@ const Community = () => {
                         value={newPost.title}
                         onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
                         required
-                        disabled={true}
                       />
                       <Textarea
                         placeholder="Share your protection strategy, success story, or ask for advice..."
@@ -374,21 +373,19 @@ const Community = () => {
                         onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
                         rows={6}
                         required
-                          disabled={true}
                       />
                       <div className="flex gap-2">
                         <select
-                          className="px-3 py-2 border border-input rounded-md bg-background text-sm disabled:opacity-50"
+                          className="px-3 py-2 border border-input rounded-md bg-background text-sm"
                           value={newPost.category}
                           onChange={(e) => setNewPost({ ...newPost, category: e.target.value })}
-                          disabled={true}
                         >
                           <option value="strategy">Protection Strategy</option>
                           <option value="success">Success Story</option>
                           <option value="question">Ask for Help</option>
                           <option value="resources">Resources</option>
                         </select>
-                        <Button type="submit" className="ml-auto" disabled={true}>
+                        <Button type="submit" className="ml-auto">
                           Share with Community
                         </Button>
                       </div>
