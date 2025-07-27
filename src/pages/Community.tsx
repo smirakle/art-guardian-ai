@@ -22,7 +22,10 @@ import {
   FileText,
   Gavel,
   Heart,
-  Clock
+  Clock,
+  GraduationCap,
+  Video,
+  Download
 } from "lucide-react";
 import { useCommunity } from "@/hooks/useCommunity";
 import { formatDistanceToNow } from "date-fns";
@@ -108,6 +111,105 @@ const Community = () => {
     }
   ];
 
+  const educationalResources = [
+    {
+      category: "Copyright Fundamentals",
+      icon: GraduationCap,
+      resources: [
+        {
+          title: "Copyright Law Basics for Artists",
+          description: "Comprehensive guide covering what copyright protects, duration, and artist rights",
+          type: "article",
+          url: "https://www.copyright.gov/what-is-copyright/"
+        },
+        {
+          title: "Understanding Fair Use",
+          description: "Learn the four factors of fair use and how they apply to artistic works",
+          type: "video",
+          url: "https://www.youtube.com/watch?v=1Jwo5qc78QU"
+        },
+        {
+          title: "Work for Hire vs. Independent Contractor",
+          description: "Essential knowledge for artists working with clients and employers",
+          type: "guide",
+          url: "https://www.copyright.gov/circs/circ09.pdf"
+        }
+      ]
+    },
+    {
+      category: "Digital Protection Strategies",
+      icon: Shield,
+      resources: [
+        {
+          title: "Digital Watermarking Best Practices",
+          description: "How to effectively watermark your digital artwork without compromising aesthetics",
+          type: "tutorial",
+          url: "#"
+        },
+        {
+          title: "Online Portfolio Security",
+          description: "Protecting your work when sharing online - resolution, metadata, and licensing",
+          type: "checklist",
+          url: "#"
+        },
+        {
+          title: "Social Media Copyright Protection",
+          description: "Understanding platform policies and protecting your work on social media",
+          type: "guide",
+          url: "#"
+        }
+      ]
+    },
+    {
+      category: "Legal Action & Enforcement",
+      icon: Gavel,
+      resources: [
+        {
+          title: "DMCA Takedown Process",
+          description: "Step-by-step guide to filing effective DMCA takedown notices",
+          type: "tutorial",
+          url: "https://www.copyright.gov/legislation/dmca.pdf"
+        },
+        {
+          title: "Cease & Desist Letters",
+          description: "When and how to send cease and desist letters for copyright infringement",
+          type: "template",
+          url: "#"
+        },
+        {
+          title: "Working with IP Attorneys",
+          description: "What to expect when hiring legal help for copyright issues",
+          type: "guide",
+          url: "#"
+        }
+      ]
+    },
+    {
+      category: "Business & Licensing",
+      icon: TrendingUp,
+      resources: [
+        {
+          title: "Licensing Your Artwork",
+          description: "Different types of licenses and how to monetize your intellectual property",
+          type: "course",
+          url: "#"
+        },
+        {
+          title: "Artist Contracts & Agreements",
+          description: "Essential contracts every artist should know about",
+          type: "templates",
+          url: "#"
+        },
+        {
+          title: "International Copyright Protection",
+          description: "Understanding copyright protection across different countries",
+          type: "article",
+          url: "#"
+        }
+      ]
+    }
+  ];
+
   const displayStats = [
     { label: "Community Posts", value: stats.posts.toString(), icon: MessageSquare },
     { label: "Total Likes", value: stats.likes.toString(), icon: Heart },
@@ -172,11 +274,12 @@ const Community = () => {
           {/* Main Content */}
           <div className="lg:col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="community">Community Posts</TabsTrigger>
-                <TabsTrigger value="share">Share Strategy</TabsTrigger>
-                <TabsTrigger value="experts">Expert Advice</TabsTrigger>
-                <TabsTrigger value="legal">Legal Resources</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-5">
+                <TabsTrigger value="community">Community</TabsTrigger>
+                <TabsTrigger value="share">Share</TabsTrigger>
+                <TabsTrigger value="experts">Experts</TabsTrigger>
+                <TabsTrigger value="education">Education</TabsTrigger>
+                <TabsTrigger value="legal">Legal</TabsTrigger>
               </TabsList>
 
               <TabsContent value="community" className="space-y-6">
@@ -343,6 +446,66 @@ const Community = () => {
                 )}
               </TabsContent>
 
+              <TabsContent value="education" className="space-y-6">
+                {educationalResources.map((category, categoryIndex) => {
+                  const Icon = category.icon;
+                  return (
+                    <Card key={categoryIndex}>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Icon className="w-5 h-5 text-primary" />
+                          {category.category}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {category.resources.map((resource, resourceIndex) => {
+                          const getTypeIcon = (type: string) => {
+                            switch (type) {
+                              case 'video': return Video;
+                              case 'guide': 
+                              case 'tutorial': 
+                              case 'course': return BookOpen;
+                              case 'template':
+                              case 'templates':
+                              case 'checklist': return Download;
+                              default: return FileText;
+                            }
+                          };
+                          const TypeIcon = getTypeIcon(resource.type);
+                          
+                          return (
+                            <div key={resourceIndex} className="flex items-start gap-3 p-4 border border-border rounded-lg hover:bg-secondary/50 transition-colors">
+                              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                                <TypeIcon className="w-5 h-5 text-primary" />
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-start justify-between mb-2">
+                                  <h4 className="font-medium">{resource.title}</h4>
+                                  <Badge variant="secondary" className="text-xs">
+                                    {resource.type}
+                                  </Badge>
+                                </div>
+                                <p className="text-sm text-muted-foreground mb-3">{resource.description}</p>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => resource.url !== '#' ? window.open(resource.url, '_blank') : null}
+                                  className="text-xs"
+                                  disabled={resource.url === '#'}
+                                >
+                                  <ExternalLink className="w-3 h-3 mr-1" />
+                                  {resource.url === '#' ? 'Coming Soon' : 'Access Resource'}
+                                </Button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </TabsContent>
+
               <TabsContent value="legal" className="space-y-6">
                 {legalResources.map((category, categoryIndex) => {
                   const Icon = category.icon;
@@ -391,6 +554,14 @@ const Community = () => {
                 <Button className="w-full justify-start" variant="outline">
                   <AlertTriangle className="w-4 h-4 mr-2" />
                   Report IP Theft
+                </Button>
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline"
+                  onClick={() => setActiveTab("education")}
+                >
+                  <GraduationCap className="w-4 h-4 mr-2" />
+                  Learn & Grow
                 </Button>
                 <Button 
                   className="w-full justify-start" 
