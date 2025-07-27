@@ -10,9 +10,10 @@ interface AnalysisResultsProps {
   fileName?: string;
   artworkId?: string;
   userId?: string;
+  onTakeProtectionAction?: () => void;
 }
 
-const AnalysisResults = ({ results, fileName, artworkId, userId }: AnalysisResultsProps) => {
+const AnalysisResults = ({ results, fileName, artworkId, userId, onTakeProtectionAction }: AnalysisResultsProps) => {
   const getRiskColor = (riskLevel: string) => {
     switch (riskLevel) {
       case 'high': return 'destructive';
@@ -111,7 +112,12 @@ const AnalysisResults = ({ results, fileName, artworkId, userId }: AnalysisResul
             )}
 
             {result.riskLevel === 'high' && (
-              <Button size="sm" variant="destructive" className="w-full">
+              <Button 
+                size="sm" 
+                variant="destructive" 
+                className="w-full"
+                onClick={onTakeProtectionAction}
+              >
                 <Shield className="w-3 h-3 mr-1" />
                 Take Protection Action
               </Button>

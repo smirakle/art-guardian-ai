@@ -8,9 +8,10 @@ import AnalysisResults from "./AnalysisResults";
 interface ImageAnalysisCardProps {
   image: ImageAnalysis;
   index: number;
+  onTakeProtectionAction?: () => void;
 }
 
-const ImageAnalysisCard = ({ image, index }: ImageAnalysisCardProps) => {
+const ImageAnalysisCard = ({ image, index, onTakeProtectionAction }: ImageAnalysisCardProps) => {
   return (
     <Card key={index} className="bg-card/50 backdrop-blur-sm border-border/50">
       <CardHeader>
@@ -65,6 +66,7 @@ const ImageAnalysisCard = ({ image, index }: ImageAnalysisCardProps) => {
               results={image.results} 
               fileName={image.file.name}
               artworkId={image.artworkId}
+              onTakeProtectionAction={onTakeProtectionAction}
             />
       </CardContent>
     </Card>
