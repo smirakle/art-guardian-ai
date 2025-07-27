@@ -20,7 +20,8 @@ import {
   Building2,
   Settings,
   Users,
-  Bell
+  Bell,
+  Crown
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -33,6 +34,7 @@ import { UploadWidget } from '@/components/dashboard/UploadWidget';
 import DailyReport from '@/components/DailyReport';
 import ScheduledScansManager from '@/components/ScheduledScansManager';
 import { WhiteLabelManager } from '@/components/WhiteLabelManager';
+import AdvancedBlockchain from '@/components/AdvancedBlockchain';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 
 interface DashboardStats {
@@ -254,7 +256,7 @@ const Dashboard = () => {
 
         {/* Main Dashboard Content */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className={`grid w-full ${hasFeature('white_label') ? 'grid-cols-7' : 'grid-cols-6'}`}>
+          <TabsList className={`grid w-full ${hasFeature('white_label') ? (hasFeature('advanced_blockchain') ? 'grid-cols-8' : 'grid-cols-7') : (hasFeature('advanced_blockchain') ? 'grid-cols-7' : 'grid-cols-6')}`}>
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Activity className="w-4 h-4" />
               Overview
@@ -279,6 +281,14 @@ const Dashboard = () => {
               <FileImage className="w-4 h-4" />
               Reports
             </TabsTrigger>
+            
+            {hasFeature('advanced_blockchain') && (
+              <TabsTrigger value="advanced-blockchain" className="flex items-center gap-2">
+                <Crown className="w-4 h-4" />
+                Advanced Blockchain
+              </TabsTrigger>
+            )}
+            
             {hasFeature('white_label') && (
               <TabsTrigger value="white-label" className="flex items-center gap-2">
                 <Building2 className="w-4 h-4" />
@@ -443,6 +453,13 @@ const Dashboard = () => {
               />
             </div>
           </TabsContent>
+
+          {/* Advanced Blockchain Tab */}
+          {hasFeature('advanced_blockchain') && (
+            <TabsContent value="advanced-blockchain" className="space-y-6">
+              <AdvancedBlockchain />
+            </TabsContent>
+          )}
 
           {/* White Label Tab */}
           {hasFeature('white_label') && (

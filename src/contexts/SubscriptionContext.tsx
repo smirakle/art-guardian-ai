@@ -104,6 +104,11 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
         return true; // All plans have basic features
 
       case 'blockchain_verification':
+        return subscription.plan_id === 'professional' || subscription.plan_id === 'enterprise';
+
+      case 'advanced_blockchain':
+        return subscription.plan_id === 'professional' || subscription.plan_id === 'enterprise';
+
       case 'real_time_monitoring':
       case 'automated_dmca':
       case 'advanced_ai':
