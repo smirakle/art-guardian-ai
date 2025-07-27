@@ -94,7 +94,7 @@ async function analyzeImageWithOpenAI(imageUrl: string) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'gpt-4-vision-preview',
+        model: 'gpt-4o',
         messages: [
           {
             role: 'user',
@@ -251,7 +251,7 @@ async function storeDeepfakeDetection(detection: any) {
       context: {
         detection_method: 'openai_vision',
         analysis_details: detection.analysis_details,
-        model_version: 'gpt-4-vision'
+        model_version: 'gpt-4o'
       }
     })
     .select()
