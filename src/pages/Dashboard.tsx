@@ -32,6 +32,8 @@ import { RealTimeBlockchainWidget } from '@/components/dashboard/RealTimeBlockch
 import { RecentDetectionsWidget } from '@/components/dashboard/RecentDetectionsWidget';
 import { MonitoringWidget } from '@/components/dashboard/MonitoringWidget';
 import { UploadWidget } from '@/components/dashboard/UploadWidget';
+import NFTMintingWidget from '@/components/nft/NFTMintingWidget';
+import NFTAnalytics from '@/components/nft/NFTAnalytics';
 import DailyReport from '@/components/DailyReport';
 import ScheduledScansManager from '@/components/ScheduledScansManager';
 import { WhiteLabelManager } from '@/components/WhiteLabelManager';
@@ -458,8 +460,26 @@ const Dashboard = () => {
           {/* Advanced Blockchain Tab */}
           {hasFeature('advanced_blockchain') && (
             <TabsContent value="advanced-blockchain" className="space-y-6">
-              <RealTimeBlockchainWidget />
-              <AdvancedBlockchain />
+              <Tabs defaultValue="blockchain" className="space-y-4">
+                <TabsList>
+                  <TabsTrigger value="blockchain">Blockchain Certificates</TabsTrigger>
+                  <TabsTrigger value="nft">NFT Minting</TabsTrigger>
+                  <TabsTrigger value="analytics">NFT Analytics</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="blockchain">
+                  <RealTimeBlockchainWidget />
+                  <AdvancedBlockchain />
+                </TabsContent>
+                
+                <TabsContent value="nft">
+                  <NFTMintingWidget />
+                </TabsContent>
+                
+                <TabsContent value="analytics">
+                  <NFTAnalytics />
+                </TabsContent>
+              </Tabs>
             </TabsContent>
           )}
 
