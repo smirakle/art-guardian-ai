@@ -20,6 +20,7 @@ interface SubscriptionContextType {
   hasFeature: (feature: string) => boolean;
   artworkLimit: number;
   refreshSubscription: () => Promise<void>;
+  isAdmin: boolean;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
@@ -33,10 +34,13 @@ export const useSubscription = () => {
 };
 
 export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
   const [artworkLimit, setArtworkLimit] = useState(0);
+
+  // Check if the current user is admin
+  const isAdmin = role === 'admin';
 
   const fetchSubscription = async () => {
     if (!user) {
@@ -89,6 +93,9 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   };
 
   const hasFeature = (feature: string): boolean => {
+    // Admin has access to all features
+    if (isAdmin) return true;
+    
     if (!subscription?.is_active) return false;
 
     switch (feature) {
@@ -101,13 +108,13 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
       case 'automated_dmca':
       case 'advanced_ai':
       case 'priority_support':
-        return subscription.plan_id === 'professional';
+        return subscription.plan_id === 'professional' || subscription.plan_id === 'enterprise';
 
       case 'social_media_monitoring':
-        return subscription.plan_id === 'professional' || subscription.social_media_addon;
+        return subscription.plan_id === 'professional' || subscription.plan_id === 'enterprise' || subscription.social_media_addon;
 
       case 'deepfake_detection':
-        return subscription.plan_id === 'professional' || subscription.deepfake_addon;
+        return subscription.plan_id === 'professional' || subscription.plan_id === 'enterprise' || subscription.deepfake_addon;
 
       case 'white_label':
         return (subscription.plan_id === 'professional' || subscription.plan_id === 'enterprise') && subscription.white_label_enabled;
@@ -143,8 +150,9 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     subscription,
     loading,
     hasFeature,
-    artworkLimit,
+    artworkLimit: isAdmin ? 999999 : artworkLimit, // Admin gets unlimited artworks
     refreshSubscription,
+    isAdmin,
   };
 
   return (
