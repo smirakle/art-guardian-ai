@@ -21,7 +21,8 @@ import {
   Settings,
   Users,
   Bell,
-  Crown
+  Crown,
+  HelpCircle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -190,14 +191,55 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 pt-24 pb-12">
       <div className="container mx-auto px-4 max-w-7xl">
-        {/* Welcome Header */}
+        {/* Welcome Header with Improved Guidance */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Welcome back, {profile?.full_name || user?.email?.split('@')[0] || 'Artist'}!
-          </h1>
-          <p className="text-muted-foreground">
-            Real-time AI monitoring dashboard for your protected content.
-          </p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground mb-2">
+                Welcome back, {profile?.full_name || user?.email?.split('@')[0] || 'Artist'}!
+              </h1>
+              <p className="text-muted-foreground">
+                Real-time AI monitoring dashboard for your protected content.
+              </p>
+            </div>
+            <div className="hidden md:flex gap-2">
+              <Button
+                onClick={() => navigate('/upload')}
+                className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Add Content
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate('/help')}
+              >
+                <HelpCircle className="w-4 h-4 mr-2" />
+                Help
+              </Button>
+            </div>
+          </div>
+          
+          {/* Quick Status Banner */}
+          {stats.protectedArtworks === 0 && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                  <Upload className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-blue-900">Get Started with Your First Upload</h3>
+                  <p className="text-sm text-blue-700">Upload your artwork to begin AI-powered protection and monitoring.</p>
+                </div>
+                <Button
+                  onClick={() => navigate('/upload')}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  Start Now
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Stats Overview */}
