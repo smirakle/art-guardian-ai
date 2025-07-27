@@ -17,7 +17,10 @@ import {
   Globe,
   Brain,
   Zap,
-  Building2
+  Building2,
+  Settings,
+  Users,
+  Bell
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -444,7 +447,42 @@ const Dashboard = () => {
           {/* White Label Tab */}
           {hasFeature('white_label') && (
             <TabsContent value="white-label" className="space-y-6">
-              <WhiteLabelManager />
+              <Card>
+                <CardHeader className="text-center">
+                  <CardTitle className="text-2xl font-bold mb-2">White Label Solutions</CardTitle>
+                  <p className="text-muted-foreground">Enterprise-grade customization coming soon</p>
+                </CardHeader>
+                <CardContent className="text-center py-12">
+                  <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                    <Settings className="w-8 h-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-4">Coming Soon</h3>
+                  <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                    We're working on powerful white label features that will allow you to customize the platform with your own branding, domain, and user management.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto mb-8">
+                    <div className="p-4 border border-border rounded-lg">
+                      <Badge className="w-6 h-6 text-primary mb-2" />
+                      <h4 className="font-medium mb-1">Custom Branding</h4>
+                      <p className="text-sm text-muted-foreground">Your logo, colors, and styling</p>
+                    </div>
+                    <div className="p-4 border border-border rounded-lg">
+                      <Globe className="w-6 h-6 text-primary mb-2" />
+                      <h4 className="font-medium mb-1">Custom Domain</h4>
+                      <p className="text-sm text-muted-foreground">Host on your own domain</p>
+                    </div>
+                    <div className="p-4 border border-border rounded-lg">
+                      <Users className="w-6 h-6 text-primary mb-2" />
+                      <h4 className="font-medium mb-1">User Management</h4>
+                      <p className="text-sm text-muted-foreground">Manage your team members</p>
+                    </div>
+                  </div>
+                  <Button variant="outline" disabled>
+                    <Bell className="w-4 h-4 mr-2" />
+                    Notify Me When Available
+                  </Button>
+                </CardContent>
+              </Card>
             </TabsContent>
           )}
         </Tabs>
