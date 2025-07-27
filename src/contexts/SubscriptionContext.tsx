@@ -90,7 +90,7 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     switch (feature) {
       case 'basic_monitoring':
       case 'visual_recognition':
-        return true; // All plans
+        return true; // All plans have basic features
 
       case 'blockchain_verification':
       case 'real_time_monitoring':
@@ -100,10 +100,15 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
         return subscription.plan_id === 'professional';
 
       case 'social_media_monitoring':
-        return subscription.social_media_addon;
+        return subscription.plan_id === 'professional' || subscription.social_media_addon;
 
       case 'deepfake_detection':
         return subscription.plan_id === 'professional' || subscription.deepfake_addon;
+
+      // Student plan only gets basic features
+      case 'enhanced_monitoring':
+      case 'advanced_alerts':
+        return subscription.plan_id === 'starter' || subscription.plan_id === 'professional';
 
       default:
         return false;
