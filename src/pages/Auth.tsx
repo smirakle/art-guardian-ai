@@ -20,17 +20,17 @@ const Auth: React.FC = () => {
   const [username, setUsername] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<string>('starter');
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-  const [paymentProcessing, setPaymentProcessing] = useState(false);
+  const [accountType, setAccountType] = useState<'free' | 'paid'>('free');
 
-  const plans = {
-    student: {
-      name: 'Student',
-      monthly: 19,
-      yearly: 190,
-      features: ['Basic monitoring', '5 artworks', 'Email alerts']
-    },
+  const freeFeatures = [
+    'Upload up to 5 artworks',
+    'Basic copyright monitoring', 
+    'Email alerts for violations',
+    'Community access',
+    'Basic legal templates'
+  ];
+
+  const paidPlans = {
     starter: {
       name: 'Starter',
       monthly: 29,
@@ -38,7 +38,7 @@ const Auth: React.FC = () => {
       features: ['Advanced monitoring', '25 artworks', 'Real-time alerts', 'Basic reporting']
     },
     professional: {
-      name: 'Professional',
+      name: 'Professional', 
       monthly: 79,
       yearly: 790,
       features: ['Premium monitoring', 'Unlimited artworks', 'Priority alerts', 'Advanced analytics', 'DMCA assistance']
@@ -63,17 +63,21 @@ const Auth: React.FC = () => {
       if (isLogin) {
         const { error } = await signIn(email, password);
         if (!error) {
-          navigate('/');
+          navigate('/dashboard');
         }
       } else {
-        // For signup, create account first, then redirect to payment
+        // For free account signup
         const { error } = await signUp(email, password, {
           full_name: fullName,
-          username: username
+          username: username,
+          account_type: 'free'
         });
+        
         if (!error) {
-          // After account creation, process payment
-          await handlePayment();
+          toast({
+            title: "Account created successfully!",
+            description: "Check your email to verify your account, then you can start using TSMO for free.",
+          });
         }
       }
     } catch (error) {
@@ -83,21 +87,28 @@ const Auth: React.FC = () => {
     }
   };
 
-  const handlePayment = async () => {
-    setPaymentProcessing(true);
-    
+  const handleUpgrade = async () => {
+    if (!user) {
+      toast({
+        title: "Please sign in first",
+        description: "You need to be signed in to upgrade your account.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: {
-          planId: selectedPlan,
-          billingCycle,
+          planId: 'starter',
+          billingCycle: 'monthly',
           email
         }
       });
 
       if (error) {
         toast({
-          title: "Payment setup failed",
+          title: "Upgrade failed",
           description: error.message,
           variant: "destructive",
         });
@@ -105,22 +116,19 @@ const Auth: React.FC = () => {
       }
 
       if (data?.url) {
-        // Open Stripe checkout in a new tab
         window.open(data.url, '_blank');
         toast({
-          title: "Payment setup opened",
-          description: "Complete your payment in the new tab to activate your account.",
+          title: "Upgrade opened",
+          description: "Complete your payment in the new tab to upgrade your account.",
         });
       }
     } catch (error) {
-      console.error('Payment error:', error);
+      console.error('Upgrade error:', error);
       toast({
-        title: "Payment error",
-        description: "Failed to setup payment. Please try again.",
+        title: "Upgrade error",
+        description: "Failed to setup upgrade. Please try again.",
         variant: "destructive",
       });
-    } finally {
-      setPaymentProcessing(false);
     }
   };
 
@@ -129,12 +137,12 @@ const Auth: React.FC = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
-            {isLogin ? 'Welcome back' : 'Create account'}
+            {isLogin ? 'Welcome back' : 'Join TSMO for Free'}
           </CardTitle>
           <CardDescription className="text-center">
             {isLogin
               ? 'Sign in to your TSMO account'
-              : 'Enter your details to create your account'
+              : 'Create your free account and start protecting your content today'
             }
           </CardDescription>
         </CardHeader>
@@ -287,89 +295,49 @@ const Auth: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Plan Selection */}
+                {/* Free Account Benefits */}
                 <div className="space-y-3 pt-4 border-t">
-                  <Label>Choose your plan</Label>
-                  
-                  {/* Billing Toggle */}
-                  <div className="flex items-center justify-center space-x-2 mb-4">
-                    <Button
-                      type="button"
-                      variant={billingCycle === 'monthly' ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setBillingCycle('monthly')}
-                    >
-                      Monthly
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={billingCycle === 'yearly' ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setBillingCycle('yearly')}
-                    >
-                      Yearly
-                      <Badge variant="secondary" className="ml-2">Save 17%</Badge>
-                    </Button>
+                  <div className="text-center">
+                    <h3 className="text-lg font-semibold text-green-600">Free Account Includes:</h3>
                   </div>
-
-                  {/* Plan Cards */}
+                  
                   <div className="space-y-2">
-                    {Object.entries(plans).map(([planId, plan]) => (
-                      <div
-                        key={planId}
-                        className={`relative p-3 border rounded-lg cursor-pointer transition-colors ${
-                          selectedPlan === planId
-                            ? 'border-primary bg-primary/5'
-                            : 'border-muted hover:border-primary/50'
-                        }`}
-                        onClick={() => setSelectedPlan(planId)}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-2">
-                              <h4 className="font-medium">{plan.name}</h4>
-                              {planId === 'starter' && (
-                                <Badge variant="secondary">Most Popular</Badge>
-                              )}
-                            </div>
-                            <p className="text-sm text-muted-foreground">
-                              ${billingCycle === 'monthly' ? plan.monthly : plan.yearly}
-                              /{billingCycle === 'monthly' ? 'month' : 'year'}
-                            </p>
-                          </div>
-                          {selectedPlan === planId && (
-                            <Check className="h-5 w-5 text-primary" />
-                          )}
-                        </div>
-                        <div className="mt-2">
-                          <div className="flex flex-wrap gap-1">
-                            {plan.features.slice(0, 3).map((feature, index) => (
-                              <span key={index} className="text-xs text-muted-foreground">
-                                {feature}{index < 2 ? ' •' : ''}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
+                    {freeFeatures.map((feature, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-green-500" />
+                        <span className="text-sm">{feature}</span>
                       </div>
                     ))}
+                  </div>
+                  
+                  <div className="text-center text-xs text-muted-foreground">
+                    You can upgrade to premium features anytime after creating your account.
                   </div>
                 </div>
 
                 <Button 
                   type="submit" 
-                  className="w-full" 
-                  disabled={loading || paymentProcessing}
+                  className="w-full bg-green-600 hover:bg-green-700" 
+                  disabled={loading}
                 >
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  {loading || paymentProcessing ? 'Processing...' : `Create Account & Pay $${plans[selectedPlan as keyof typeof plans][billingCycle]}`}
+                  {loading ? 'Creating Account...' : 'Create Free Account'}
                 </Button>
               </form>
             </TabsContent>
           </Tabs>
         </CardContent>
 
-        <CardFooter className="text-center">
-          <p className="text-sm text-muted-foreground">
+        <CardFooter className="flex flex-col space-y-2">
+          {!isLogin && (
+            <Button
+              variant="outline"
+              onClick={() => navigate('/pricing')}
+              className="w-full"
+            >
+              View Premium Plans
+            </Button>
+          )}
+          <p className="text-sm text-muted-foreground text-center">
             By continuing, you agree to our Terms of Service and Privacy Policy.
           </p>
         </CardFooter>
