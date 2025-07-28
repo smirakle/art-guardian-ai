@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { Coins, Zap, ExternalLink, Clock, TrendingUp } from 'lucide-react';
+import { Coins, Zap, ExternalLink, Clock, TrendingUp, Shield, Network } from 'lucide-react';
 
 interface Certificate {
   id: string;
@@ -20,13 +21,19 @@ interface Certificate {
 interface NFTData {
   tokenId?: number;
   contractAddress?: string;
-  mintingHash?: string;
+  transactionHash?: string;
+  blockNumber?: number;
   opensea_url?: string;
+  explorer_url?: string;
   mintedAt?: string;
   royaltyPercentage?: number;
   transferable?: boolean;
   resellable?: boolean;
   network?: string;
+  gasUsed?: number;
+  gasPriceGwei?: number;
+  ipfsHash?: string;
+  tokenURI?: string;
 }
 
 const networks = [
@@ -47,12 +54,12 @@ const networks = [
     openseaBase: 'https://opensea.io/assets/matic'
   },
   { 
-    id: 'arbitrum', 
-    name: 'Arbitrum', 
-    symbol: 'ARB', 
+    id: 'sepolia', 
+    name: 'Sepolia (Testnet)', 
+    symbol: 'SEP', 
     color: 'bg-blue-400',
-    explorerUrl: 'https://arbiscan.io',
-    openseaBase: 'https://opensea.io/assets/arbitrum'
+    explorerUrl: 'https://sepolia.etherscan.io',
+    openseaBase: 'https://testnets.opensea.io/assets/sepolia'
   }
 ];
 
@@ -89,21 +96,26 @@ export default function NFTMintingWidget() {
       const nftDataMap: Record<string, NFTData> = {};
       data?.forEach(cert => {
         const certData = cert.certificate_data as any;
-        console.log('Certificate data:', cert.id, certData); // Debug log
+        console.log('Certificate data:', cert.id, certData);
         
         if (certData?.tokenId) {
           nftDataMap[cert.id] = {
             tokenId: certData.tokenId,
-            contractAddress: certData.contractAddress || certData.nftContractAddress, // Fix mapping
-            mintingHash: certData.mintingHash,
+            contractAddress: certData.contractAddress,
+            transactionHash: certData.transactionHash,
+            blockNumber: certData.blockNumber,
             opensea_url: certData.opensea_url,
+            explorer_url: certData.explorer_url,
             mintedAt: certData.mintedAt,
             royaltyPercentage: certData.royaltyPercentage,
             transferable: certData.transferable,
             resellable: certData.resellable,
-            network: certData.network || 'polygon' // Extract network from certificate
+            network: certData.network || 'polygon',
+            gasUsed: certData.gasUsed,
+            gasPriceGwei: certData.gasPriceGwei,
+            ipfsHash: certData.ipfsHash,
+            tokenURI: certData.tokenURI
           };
-          console.log('NFT data extracted:', nftDataMap[cert.id]); // Debug log
         }
       });
       setNftData(nftDataMap);
@@ -115,11 +127,13 @@ export default function NFTMintingWidget() {
     }
   };
 
-  const mintNFT = async (certificateId: string) => {
+  const mintRealNFT = async (certificateId: string) => {
     setMintingStatus(prev => ({ ...prev, [certificateId]: true }));
 
     try {
-      const { data, error } = await supabase.functions.invoke('nft-minting', {
+      console.log('Starting real NFT minting for certificate:', certificateId);
+      
+      const { data, error } = await supabase.functions.invoke('real-nft-minting', {
         body: {
           certificateId,
           network: selectedNetwork,
@@ -127,14 +141,21 @@ export default function NFTMintingWidget() {
           royaltyPercentage,
           metadata: {
             transferable,
-            resellable
+            resellable,
+            name: `TSMO Certificate #${certificateId}`,
+            description: `Blockchain certificate of authenticity for digital asset protection`,
+            image: `https://utneaqmbyjwxaqrrarpc.supabase.co/storage/v1/object/public/artwork/certificates/${certificateId}.png`
           }
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('NFT minting error:', error);
+        throw error;
+      }
 
-      toast.success('NFT minted successfully!');
+      console.log('NFT minting successful:', data);
+      toast.success('🚀 NFT minted successfully on real blockchain!');
       
       // Update local state with new NFT data
       setNftData(prev => ({
@@ -142,21 +163,27 @@ export default function NFTMintingWidget() {
         [certificateId]: {
           tokenId: data.tokenId,
           contractAddress: data.contractAddress,
-          mintingHash: data.mintingHash,
+          transactionHash: data.transactionHash,
+          blockNumber: data.blockNumber,
           opensea_url: data.opensea_url,
+          explorer_url: data.explorer_url,
           mintedAt: new Date().toISOString(),
           royaltyPercentage,
           transferable,
           resellable,
-          network: selectedNetwork
+          network: selectedNetwork,
+          gasUsed: data.gasUsed,
+          gasPriceGwei: data.gasPriceGwei,
+          ipfsHash: data.ipfsHash,
+          tokenURI: data.tokenURI
         }
       }));
 
       // Refresh certificates to get updated data
       await fetchCertificates();
-    } catch (error) {
-      console.error('Error minting NFT:', error);
-      toast.error('Failed to mint NFT');
+    } catch (error: any) {
+      console.error('Error minting real NFT:', error);
+      toast.error(`Failed to mint NFT: ${error.message || 'Unknown error'}`);
     } finally {
       setMintingStatus(prev => ({ ...prev, [certificateId]: false }));
     }
@@ -166,13 +193,18 @@ export default function NFTMintingWidget() {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
+  const formatGas = (gasUsed: number, gasPriceGwei: number) => {
+    const totalCost = (gasUsed * gasPriceGwei) / 1e9;
+    return `${gasUsed.toLocaleString()} gas (${totalCost.toFixed(6)} ETH)`;
+  };
+
   if (loading) {
     return (
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Coins className="w-5 h-5" />
-            NFT Minting
+            Real Blockchain NFT Minting
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -190,14 +222,17 @@ export default function NFTMintingWidget() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Coins className="w-5 h-5" />
-          NFT Minting
+          <Shield className="w-5 h-5" />
+          Real Blockchain NFT Minting
         </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Mint your certificates as NFTs on real blockchain networks
+        </p>
         <div className="flex gap-4 mt-4">
           <div>
             <label className="text-sm font-medium">Network</label>
             <Select value={selectedNetwork} onValueChange={setSelectedNetwork}>
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-48">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -256,23 +291,23 @@ export default function NFTMintingWidget() {
                   {isNFT ? (
                     <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                       <Zap className="w-3 h-3 mr-1" />
-                      NFT Minted
+                      Live on Blockchain
                     </Badge>
                   ) : (
                     <Button 
-                      onClick={() => mintNFT(certificate.id)}
+                      onClick={() => mintRealNFT(certificate.id)}
                       disabled={isMinting}
                       size="sm"
                     >
                       {isMinting ? (
                         <>
                           <Clock className="w-4 h-4 mr-2 animate-spin" />
-                          Minting...
+                          Minting on Blockchain...
                         </>
                       ) : (
                         <>
-                          <Coins className="w-4 h-4 mr-2" />
-                          Mint NFT
+                          <Shield className="w-4 h-4 mr-2" />
+                          Mint Real NFT
                         </>
                       )}
                     </Button>
@@ -292,19 +327,31 @@ export default function NFTMintingWidget() {
                         <p className="font-mono">{formatAddress(isNFT.contractAddress || '')}</p>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Royalty:</span>
-                        <p>{isNFT.royaltyPercentage}%</p>
+                        <span className="text-muted-foreground">Block:</span>
+                        <p className="font-mono">#{isNFT.blockNumber?.toLocaleString()}</p>
                       </div>
                       <div>
                         <span className="text-muted-foreground">Network:</span>
                         <div className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${networks.find(n => n.id === (isNFT.network || selectedNetwork))?.color}`} />
-                          {networks.find(n => n.id === (isNFT.network || selectedNetwork))?.name}
+                          <div className={`w-2 h-2 rounded-full ${networks.find(n => n.id === (isNFT.network))?.color}`} />
+                          {networks.find(n => n.id === (isNFT.network))?.name}
                         </div>
                       </div>
+                      {isNFT.gasUsed && isNFT.gasPriceGwei && (
+                        <div className="col-span-2">
+                          <span className="text-muted-foreground">Gas Cost:</span>
+                          <p className="text-xs">{formatGas(isNFT.gasUsed, isNFT.gasPriceGwei)}</p>
+                        </div>
+                      )}
+                      {isNFT.ipfsHash && (
+                        <div className="col-span-2">
+                          <span className="text-muted-foreground">IPFS:</span>
+                          <p className="font-mono text-xs">{isNFT.ipfsHash}</p>
+                        </div>
+                      )}
                     </div>
                     
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                       {isNFT.opensea_url && (
                         <Button 
                           variant="outline" 
@@ -312,24 +359,18 @@ export default function NFTMintingWidget() {
                           onClick={() => window.open(isNFT.opensea_url, '_blank')}
                         >
                           <ExternalLink className="w-4 h-4 mr-2" />
-                          View on OpenSea
+                          OpenSea
                         </Button>
                       )}
                       
-                      {isNFT.mintingHash && (
+                      {isNFT.explorer_url && (
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          onClick={() => {
-                            const nftNetwork = isNFT.network || selectedNetwork;
-                            const network = networks.find(n => n.id === nftNetwork);
-                            const explorerUrl = network?.explorerUrl || 'https://polygonscan.com';
-                            console.log('Opening transaction:', `${explorerUrl}/tx/${isNFT.mintingHash}`);
-                            window.open(`${explorerUrl}/tx/${isNFT.mintingHash}`, '_blank');
-                          }}
+                          onClick={() => window.open(isNFT.explorer_url, '_blank')}
                         >
                           <TrendingUp className="w-4 h-4 mr-2" />
-                          View Transaction
+                          Explorer
                         </Button>
                       )}
                       
@@ -338,15 +379,13 @@ export default function NFTMintingWidget() {
                           variant="outline" 
                           size="sm" 
                           onClick={() => {
-                            const nftNetwork = isNFT.network || selectedNetwork;
-                            const network = networks.find(n => n.id === nftNetwork);
+                            const network = networks.find(n => n.id === isNFT.network);
                             const explorerUrl = network?.explorerUrl || 'https://polygonscan.com';
-                            console.log('Opening contract:', `${explorerUrl}/address/${isNFT.contractAddress}`);
                             window.open(`${explorerUrl}/address/${isNFT.contractAddress}`, '_blank');
                           }}
                         >
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          View Contract
+                          <Network className="w-4 h-4 mr-2" />
+                          Contract
                         </Button>
                       )}
                     </div>

@@ -1,3 +1,4 @@
+
 project_id = "utneaqmbyjwxaqrrarpc"
 
 [functions.process-monitoring-scan]
@@ -41,3 +42,6 @@ verify_jwt = true
 
 [functions.admin-performance-metrics]
 verify_jwt = true
+
+[functions.real-nft-minting]
+verify_jwt = false
