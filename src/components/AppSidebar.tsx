@@ -1,4 +1,4 @@
-import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
@@ -38,7 +38,7 @@ export function AppSidebar() {
   const mainNavItems = [
     { path: "/", label: t('nav.home'), icon: Home },
     { path: "/dashboard", label: "Dashboard", icon: Home },
-    { path: "/upload", label: "Upload Monitoring", icon: Upload },
+    { path: "/upload", label: "Image Monitoring Systems", icon: Monitor },
     { path: "/community", label: t('nav.community'), icon: Users },
     { path: "/legal-templates", label: "Legal Templates", icon: FileText },
     { path: "/faq", label: "FAQ", icon: HelpCircle },
