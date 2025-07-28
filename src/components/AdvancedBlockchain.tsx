@@ -38,6 +38,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import FeatureGuard from "@/components/FeatureGuard";
 import { supabase } from "@/integrations/supabase/client";
+import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 
 interface AdvancedBlockchainCertificate {
   id: string;
@@ -570,99 +571,145 @@ const AdvancedBlockchain = () => {
           <TabsContent value="certificates" className="space-y-6">
             <div className="grid gap-6">
               {certificates.map((cert) => (
-                <Card key={cert.id} className="border-l-4 border-l-primary">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-lg">{cert.artwork?.title || 'Untitled'}</CardTitle>
-                        <CardDescription>
-                          Certificate ID: {cert.certificate_id}
-                        </CardDescription>
-                      </div>
-                      <div className="flex gap-2">
-                        <Badge variant="secondary">{cert.blockchain_network.toUpperCase()}</Badge>
-                        <Badge variant="outline">{cert.status}</Badge>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                      <div>
-                        <p className="font-medium">Network</p>
-                        <p className="text-muted-foreground">{cert.blockchain_network}</p>
-                      </div>
-                      <div>
-                        <p className="font-medium">Gas Fee</p>
-                        <p className="text-muted-foreground">${cert.gas_fee?.toFixed(4) || '0'}</p>
-                      </div>
-                      <div>
-                        <p className="font-medium">Confirmations</p>
-                        <p className="text-muted-foreground">{cert.confirmation_blocks}</p>
-                      </div>
-                      <div>
-                        <p className="font-medium">Royalty</p>
-                        <p className="text-muted-foreground">{cert.royalty_percentage || 0}%</p>
-                      </div>
+                <div key={cert.id} className="relative">
+                  {/* Certificate Design */}
+                  <div className="bg-white border-4 border-gray-900 rounded-lg p-12 max-w-2xl mx-auto relative">
+                    {/* TSMO Logo and Header */}
+                    <div className="text-center mb-8">
+                      <img 
+                        src={tsmoLogo} 
+                        alt="TSMO Logo" 
+                        className="w-32 h-32 mx-auto mb-4"
+                      />
+                      <h1 className="text-3xl font-bold text-gray-900 tracking-wide">
+                        BLOCKCHAIN CERTIFICATE
+                      </h1>
                     </div>
 
-                    {cert.smart_contract_address && (
-                      <div className="p-3 bg-secondary/50 rounded-lg">
-                        <p className="text-sm font-medium mb-1">Smart Contract</p>
-                        <div className="flex items-center gap-2">
-                          <code className="text-xs bg-background px-2 py-1 rounded">
-                            {cert.smart_contract_address}
-                          </code>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => navigator.clipboard.writeText(cert.smart_contract_address!)}
-                          >
-                            <Copy className="w-3 h-3" />
-                          </Button>
+                    {/* Certificate Details */}
+                    <div className="space-y-4 text-gray-900">
+                      <div>
+                        <span className="font-bold">Certificate ID: </span>
+                        <span>{cert.certificate_id}</span>
+                      </div>
+                      <div>
+                        <span className="font-bold">Artwork Title: </span>
+                        <span>{cert.artwork?.title || 'Untitled'}</span>
+                      </div>
+                      <div>
+                        <span className="font-bold">Category: </span>
+                        <span>{cert.artwork?.category || 'digital-art'}</span>
+                      </div>
+                      <div>
+                        <span className="font-bold">Blockchain Hash:</span>
+                        <div className="font-mono text-sm break-all mt-1">
+                          {cert.blockchain_hash}
                         </div>
                       </div>
-                    )}
-
-                    <div className="flex gap-2 flex-wrap">
-                      <Button size="sm" variant="outline">
-                        <Download className="w-3 h-3 mr-1" />
-                        Download Certificate
-                      </Button>
-                      
-                      {cert.transaction_url && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => window.open(cert.transaction_url, '_blank')}
-                        >
-                          <ArrowUpRight className="w-3 h-3 mr-1" />
-                          View on Explorer
-                        </Button>
-                      )}
-                      
-                      {!cert.nft_token_id && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => mintAsNFT(cert.certificate_id)}
-                          disabled={nftMinting === cert.certificate_id}
-                        >
-                          {nftMinting === cert.certificate_id ? (
-                            <>
-                              <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
-                              Minting...
-                            </>
-                          ) : (
-                            <>
-                              <Zap className="w-3 h-3 mr-1" />
-                              Mint as NFT
-                            </>
-                          )}
-                        </Button>
-                      )}
+                      <div>
+                        <span className="font-bold">Registration Date: </span>
+                        <span>{new Date(cert.registration_timestamp).toLocaleDateString()}</span>
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
+
+                    {/* Verification Text */}
+                    <div className="text-center mt-12 mb-8">
+                      <p className="text-gray-900 leading-relaxed">
+                        This certificate verifies the ownership and authenticity<br />
+                        of the above artwork on the blockchain.
+                      </p>
+                    </div>
+
+                    {/* Generated Date */}
+                    <div className="text-center">
+                      <p className="text-gray-900">
+                        Generated on: {new Date(cert.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex justify-center gap-4 mt-6">
+                    <Button size="sm" variant="outline">
+                      <Download className="w-4 h-4 mr-2" />
+                      Download Certificate
+                    </Button>
+                    
+                    {cert.transaction_url && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => window.open(cert.transaction_url, '_blank')}
+                      >
+                        <ArrowUpRight className="w-4 h-4 mr-2" />
+                        View on Explorer
+                      </Button>
+                    )}
+                    
+                    {!cert.nft_token_id && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => mintAsNFT(cert.certificate_id)}
+                        disabled={nftMinting === cert.certificate_id}
+                      >
+                        {nftMinting === cert.certificate_id ? (
+                          <>
+                            <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                            Minting...
+                          </>
+                        ) : (
+                          <>
+                            <Zap className="w-4 h-4 mr-2" />
+                            Mint as NFT
+                          </>
+                        )}
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Additional Info Card */}
+                  <Card className="mt-6 max-w-2xl mx-auto">
+                    <CardContent className="pt-6">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div>
+                          <p className="font-medium">Network</p>
+                          <p className="text-muted-foreground">{cert.blockchain_network}</p>
+                        </div>
+                        <div>
+                          <p className="font-medium">Gas Fee</p>
+                          <p className="text-muted-foreground">${cert.gas_fee?.toFixed(4) || '0'}</p>
+                        </div>
+                        <div>
+                          <p className="font-medium">Confirmations</p>
+                          <p className="text-muted-foreground">{cert.confirmation_blocks}</p>
+                        </div>
+                        <div>
+                          <p className="font-medium">Status</p>
+                          <Badge variant="outline">{cert.status}</Badge>
+                        </div>
+                      </div>
+
+                      {cert.smart_contract_address && (
+                        <div className="mt-4 p-3 bg-secondary/50 rounded-lg">
+                          <p className="text-sm font-medium mb-1">Smart Contract</p>
+                          <div className="flex items-center gap-2">
+                            <code className="text-xs bg-background px-2 py-1 rounded flex-1 break-all">
+                              {cert.smart_contract_address}
+                            </code>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => navigator.clipboard.writeText(cert.smart_contract_address!)}
+                            >
+                              <Copy className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
               ))}
             </div>
           </TabsContent>
