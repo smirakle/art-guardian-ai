@@ -75,6 +75,8 @@ const Dashboard = () => {
   useEffect(() => {
     if (user) {
       loadDashboardStats();
+    } else {
+      setLoading(false);
     }
   }, [user]);
 
@@ -197,6 +199,48 @@ const Dashboard = () => {
               ))}
             </div>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login prompt if user is not authenticated
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 pt-24 pb-12">
+        <div className="container mx-auto px-4 max-w-7xl flex items-center justify-center">
+          <Card className="w-full max-w-md">
+            <CardHeader className="text-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-8 h-8 text-primary" />
+              </div>
+              <CardTitle className="text-2xl">Dashboard Access</CardTitle>
+              <CardDescription>
+                You need to be logged in to access your dashboard
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground text-center">
+                Sign in to view your protected content, monitoring statistics, and AI-powered protection tools.
+              </p>
+              <div className="space-y-2">
+                <Button 
+                  onClick={() => navigate('/auth')} 
+                  className="w-full"
+                  size="lg"
+                >
+                  Sign In
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/')} 
+                  className="w-full"
+                >
+                  Back to Home
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
