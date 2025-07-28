@@ -1576,6 +1576,10 @@ export type Database = {
         }
         Returns: string
       }
+      create_free_subscription_for_user: {
+        Args: { _user_id: string }
+        Returns: undefined
+      }
       get_artwork_limit: {
         Args: Record<PropertyKey, never>
         Returns: number
