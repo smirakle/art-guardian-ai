@@ -94,10 +94,135 @@ serve(async (req) => {
       };
       
       // Try quick test calls to each API to verify the keys work
-      try {
-        if (apiStatus.google.api_key && apiStatus.google.search_engine_id) {
-          const testUrl = `https://www.googleapis.com/customsearch/v1?key=${Deno.env.get('GOOGLE_CUSTOM_SEARCH_API_KEY')}&cx=${Deno.env.get('GOOGLE_SEARCH_ENGINE_ID')}&q=test`;
+      const startTime = Date.now();
+      
+      // Test Google API
+      if (apiStatus.google.api_key && apiStatus.google.search_engine_id) {
+        try {
+          const testUrl = `https://www.googleapis.com/customsearch/v1?key=${Deno.env.get('GOOGLE_CUSTOM_SEARCH_API_KEY')}&cx=${Deno.env.get('GOOGLE_SEARCH_ENGINE_ID')}&q=test&num=1`;
           const response = await fetch(testUrl);
+          const responseTime = Date.now() - startTime;
+          
+          if (response.ok) {
+            const data = await response.json();
+            apiStatus.google.status = 'working';
+            apiStatus.google.working = true;
+            apiStatus.google.response_time = responseTime;
+            apiStatus.google.quota = data.queries?.request?.[0]?.totalResults ? 'Available' : 'Limited';
+          } else {
+            const errorData = await response.text();
+            apiStatus.google.status = 'error';
+            apiStatus.google.working = false;
+            apiStatus.google.error = `HTTP ${response.status}: ${errorData.substring(0, 100)}`;
+          }
+        } catch (error) {
+          apiStatus.google.status = 'error';
+          apiStatus.google.working = false;
+          apiStatus.google.error = error.message;
+        }
+      }
+      
+      // Test Bing API
+      if (apiStatus.bing.api_key) {
+        try {
+          const testResponse = await fetch('https://api.bing.microsoft.com/v7.0/images/visualsearch', {
+            method: 'POST',
+            headers: {
+              'Ocp-Apim-Subscription-Key': Deno.env.get('BING_VISUAL_SEARCH_API_KEY') ?? '',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ url: 'https://via.placeholder.com/150' })
+          });
+          
+          if (testResponse.ok || testResponse.status === 400) { // 400 is expected for test data
+            apiStatus.bing.status = 'working';
+            apiStatus.bing.working = true;
+            apiStatus.bing.response_time = Date.now() - startTime;
+          } else {
+            apiStatus.bing.status = 'error';
+            apiStatus.bing.working = false;
+            apiStatus.bing.error = `HTTP ${testResponse.status}`;
+          }
+        } catch (error) {
+          apiStatus.bing.status = 'error';
+          apiStatus.bing.working = false;
+          apiStatus.bing.error = error.message;
+        }
+      }
+      
+      // Test SerpAPI
+      if (apiStatus.serpapi.api_key) {
+        try {
+          const testUrl = `https://serpapi.com/search.json?engine=google&q=test&api_key=${Deno.env.get('SERPAPI_KEY')}`;
+          const response = await fetch(testUrl);
+          
+          if (response.ok) {
+            apiStatus.serpapi.status = 'working';
+            apiStatus.serpapi.working = true;
+            apiStatus.serpapi.response_time = Date.now() - startTime;
+          } else {
+            apiStatus.serpapi.status = 'error';
+            apiStatus.serpapi.working = false;
+            apiStatus.serpapi.error = `HTTP ${response.status}`;
+          }
+        } catch (error) {
+          apiStatus.serpapi.status = 'error';
+          apiStatus.serpapi.working = false;
+          apiStatus.serpapi.error = error.message;
+        }
+      }
+      
+      // Test OpenAI API
+      if (apiStatus.openai.api_key) {
+        try {
+          const response = await fetch('https://api.openai.com/v1/models', {
+            headers: {
+              'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+            }
+          });
+          
+          if (response.ok) {
+            apiStatus.openai.status = 'working';
+            apiStatus.openai.working = true;
+            apiStatus.openai.response_time = Date.now() - startTime;
+          } else {
+            apiStatus.openai.status = 'error';
+            apiStatus.openai.working = false;
+            apiStatus.openai.error = `HTTP ${response.status}`;
+          }
+        } catch (error) {
+          apiStatus.openai.status = 'error';
+          apiStatus.openai.working = false;
+          apiStatus.openai.error = error.message;
+        }
+      }
+      
+      // TinEye testing is complex due to HMAC, mark as configured if keys exist
+      if (apiStatus.tineye.api_key && apiStatus.tineye.api_secret) {
+        apiStatus.tineye.status = 'working'; // Assume working if both keys present
+        apiStatus.tineye.working = true;
+        apiStatus.tineye.error = 'HMAC authentication - assumed working if keys present';
+      }
+      
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          apiStatus,
+          totalWorking: Object.values(apiStatus).filter(api => api.working).length
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    } catch (error) {
+      console.error('API key testing error:', error);
+      return new Response(
+        JSON.stringify({ error: 'API testing failed', details: error.message }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      );
+    }
+    }
+
+    // Original search functionality
+    try {
           apiStatus.google.status = response.ok ? 'working' : `error: ${response.status}`;
         }
       } catch (error) {

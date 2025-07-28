@@ -6,17 +6,19 @@ import AdminDashboard from "./AdminDashboard";
 import DetailedSystemMetrics from "./DetailedSystemMetrics";
 import LiveActivityFeed from "./LiveActivityFeed";
 import NetworkMonitoring from "./NetworkMonitoring";
+import ApiKeyTestingPanel from "./ApiKeyTestingPanel";
 
 const AdminPanel: React.FC = () => {
   return (
     <div className="min-h-screen bg-background pt-20 pb-12">
       <div className="container mx-auto px-4">
         <Tabs defaultValue="dashboard" className="w-full">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="metrics">Metrics</TabsTrigger>
             <TabsTrigger value="activity">Live Feed</TabsTrigger>
             <TabsTrigger value="network">Network</TabsTrigger>
+            <TabsTrigger value="api-keys">API Keys</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="security">Security</TabsTrigger>
           </TabsList>
@@ -42,6 +44,10 @@ const AdminPanel: React.FC = () => {
           
           <TabsContent value="network">
             <NetworkMonitoring />
+          </TabsContent>
+          
+          <TabsContent value="api-keys">
+            <ApiKeyTestingPanel />
           </TabsContent>
           
           <TabsContent value="users">
