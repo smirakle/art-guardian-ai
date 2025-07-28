@@ -360,7 +360,7 @@ const Dashboard = () => {
         {/* Dashboard Navigation */}
         <div className="mb-8">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-gray-700">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-gray-700">
               {/* Real-Time AI */}
               <button 
                 onClick={() => {
@@ -431,6 +431,24 @@ const Dashboard = () => {
                 </div>
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">Web Scanner</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Comprehensive web search</p>
+              </button>
+
+              {/* Scheduling */}
+              <button 
+                onClick={() => {
+                  const section = document.getElementById('scheduling-section');
+                  section?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left group"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center group-hover:bg-orange-200 dark:group-hover:bg-orange-800 transition-colors">
+                    <Clock className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                  </div>
+                  <Badge variant="secondary" className="text-xs">Auto</Badge>
+                </div>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">Scheduling</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">24/7 monitoring & scans</p>
               </button>
 
               {/* Blockchain */}
@@ -523,6 +541,20 @@ const Dashboard = () => {
               </div>
             </div>
             <RecentDetectionsWidget />
+          </div>
+
+          {/* Scheduling & Automation Section */}
+          <div id="scheduling-section" className="scroll-mt-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
+                <Clock className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Scheduling & Automation</h2>
+                <p className="text-muted-foreground">Set up 24/7 monitoring and schedule automated scans</p>
+              </div>
+            </div>
+            <ScheduledScansManager />
           </div>
 
           {/* Web Scanner Section */}
