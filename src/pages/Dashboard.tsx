@@ -313,517 +313,248 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Main Dashboard Content */}
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className={`grid w-full ${hasFeature('white_label') ? (hasFeature('advanced_blockchain') ? 'grid-cols-10' : 'grid-cols-9') : (hasFeature('advanced_blockchain') ? 'grid-cols-9' : 'grid-cols-8')}`}>
-            <TabsTrigger value="overview" className="flex items-center gap-2">
-              <Activity className="w-4 h-4" />
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="realtime" className="flex items-center gap-2">
-              <Globe className="w-4 h-4" />
-              Real-Time AI
-            </TabsTrigger>
-            <TabsTrigger value="social" className="flex items-center gap-2">
-              <Shield className="w-4 h-4" />
-              Social Media
-            </TabsTrigger>
-            <TabsTrigger value="deepfake" className="flex items-center gap-2">
-              <Brain className="w-4 h-4" />
-              Deepfake Detection
-            </TabsTrigger>
-            <TabsTrigger value="webscanner" className="flex items-center gap-2">
-              <Globe className="w-4 h-4" />
-              Web Scanner
-            </TabsTrigger>
-            <TabsTrigger value="blockchain" className="flex items-center gap-2">
-              <Crown className="w-4 h-4" />
-              Blockchain Verification
-            </TabsTrigger>
-            <TabsTrigger value="detections" className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4" />
-              Detections
-            </TabsTrigger>
-            <TabsTrigger value="protection" className="flex items-center gap-2">
-              <Shield className="w-4 h-4" />
-              Protection
-            </TabsTrigger>
-            <TabsTrigger value="scheduling" className="flex items-center gap-2">
-              <Clock className="w-4 h-4" />
-              Scheduling
-            </TabsTrigger>
-            <TabsTrigger value="reports" className="flex items-center gap-2">
-              <FileImage className="w-4 h-4" />
-              Reports
-            </TabsTrigger>
-            
-            {hasFeature('advanced_blockchain') && (
-              <TabsTrigger value="advanced-blockchain" className="flex items-center gap-2">
-                <Crown className="w-4 h-4" />
-                Advanced Blockchain
-              </TabsTrigger>
-            )}
-            
-            {hasFeature('white_label') && (
-              <TabsTrigger value="white-label" className="flex items-center gap-2">
-                <Building2 className="w-4 h-4" />
-                White Label
-              </TabsTrigger>
-            )}
-          </TabsList>
-
-          {/* Overview Tab - Redesigned Layout */}
-          <TabsContent value="overview" className="space-y-8">
-            {/* Welcome Section */}
-            <div className="bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 rounded-xl p-8 border border-primary/20">
-              <div className="max-w-4xl">
-                <h2 className="text-3xl font-bold text-foreground mb-4">AI-Powered Content Protection</h2>
-                <p className="text-lg text-muted-foreground mb-6">
-                  Monitor, protect, and verify your digital assets with cutting-edge AI technology across multiple platforms and blockchain networks.
-                </p>
-                <div className="flex flex-wrap gap-4">
-                  <Button onClick={() => navigate('/upload')} size="lg" className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
-                    <Upload className="w-5 h-5 mr-2" />
-                    Upload Content
-                  </Button>
-                  <Button variant="outline" size="lg" onClick={() => {
-                    const blockchainTab = document.querySelector('[value="blockchain"]') as HTMLElement;
-                    if (blockchainTab) blockchainTab.click();
-                  }}>
-                    <Crown className="w-5 h-5 mr-2" />
-                    Learn About Blockchain
-                  </Button>
+        {/* Dashboard Navigation */}
+        <div className="mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-gray-700">
+              {/* Real-Time AI */}
+              <button 
+                onClick={() => {
+                  const section = document.getElementById('realtime-section');
+                  section?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left group"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center group-hover:bg-blue-200 dark:group-hover:bg-blue-800 transition-colors">
+                    <Brain className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <Badge variant="secondary" className="text-xs">AI</Badge>
                 </div>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">Real-Time AI</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Image analysis & detection</p>
+              </button>
+
+              {/* Social Media */}
+              <button 
+                onClick={() => {
+                  const section = document.getElementById('social-section');
+                  section?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left group"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center group-hover:bg-green-200 dark:group-hover:bg-green-800 transition-colors">
+                    <Shield className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  </div>
+                  <Badge variant="secondary" className="text-xs">Active</Badge>
+                </div>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">Social Media</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Platform monitoring</p>
+              </button>
+
+              {/* Deepfake Detection */}
+              <button 
+                onClick={() => {
+                  const section = document.getElementById('deepfake-section');
+                  section?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left group"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center group-hover:bg-purple-200 dark:group-hover:bg-purple-800 transition-colors">
+                    <Eye className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <Badge variant="secondary" className="text-xs">Pro</Badge>
+                </div>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">Deepfake Detection</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Advanced AI scanning</p>
+              </button>
+
+              {/* Web Scanner */}
+              <button 
+                onClick={() => {
+                  const section = document.getElementById('webscanner-section');
+                  section?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left group"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center group-hover:bg-orange-200 dark:group-hover:bg-orange-800 transition-colors">
+                    <Globe className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                  </div>
+                  <Badge variant="secondary" className="text-xs">Scan</Badge>
+                </div>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">Web Scanner</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Comprehensive web search</p>
+              </button>
+
+              {/* Blockchain */}
+              <button 
+                onClick={() => {
+                  const section = document.getElementById('blockchain-section');
+                  section?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left group"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex items-center justify-center group-hover:bg-yellow-200 dark:group-hover:bg-yellow-800 transition-colors">
+                    <Crown className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+                  </div>
+                  <Badge variant="secondary" className="text-xs">Proof</Badge>
+                </div>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">Blockchain</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Immutable verification</p>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Dashboard Content */}
+        <div className="space-y-12">
+
+          {/* Welcome Section */}
+          <div className="bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 rounded-xl p-8 border border-primary/20 mb-12">
+            <div className="max-w-4xl">
+              <h2 className="text-3xl font-bold text-foreground mb-4">AI-Powered Content Protection</h2>
+              <p className="text-lg text-muted-foreground mb-6">
+                Monitor, protect, and verify your digital assets with cutting-edge AI technology across multiple platforms and blockchain networks.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Button onClick={() => navigate('/upload')} size="lg" className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
+                  <Upload className="w-5 h-5 mr-2" />
+                  Upload Content
+                </Button>
+                <Button variant="outline" size="lg" onClick={() => {
+                  const section = document.getElementById('blockchain-section');
+                  section?.scrollIntoView({ behavior: 'smooth' });
+                }}>
+                  <Crown className="w-5 h-5 mr-2" />
+                  Learn About Blockchain
+                </Button>
               </div>
             </div>
+          </div>
 
-            {/* Main Content Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Quick Actions - Enhanced */}
-              <Card className="lg:col-span-1">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-primary" />
-                    Quick Actions
-                  </CardTitle>
-                  <CardDescription>AI-powered protection tools</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {quickActions.map((action, index) => {
-                    const Icon = action.icon;
-                    return (
-                      <Button
-                        key={index}
-                        variant="ghost"
-                        className="w-full justify-start h-auto p-4 border border-border/50 hover:border-primary/50 transition-all"
-                        onClick={action.action}
-                      >
-                        <div className={`w-10 h-10 rounded-lg ${action.color} flex items-center justify-center mr-3 shadow-lg`}>
-                          <Icon className="h-5 w-5 text-white" />
-                        </div>
-                        <div className="text-left">
-                          <div className="font-medium">{action.title}</div>
-                          <div className="text-sm text-muted-foreground">{action.description}</div>
-                        </div>
-                      </Button>
-                    );
-                  })}
-                </CardContent>
-              </Card>
-
-              {/* Recent Activity - Enhanced */}
-              <Card className="lg:col-span-2">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-primary" />
-                    Recent Activity
-                  </CardTitle>
-                  <CardDescription>Latest AI monitoring updates</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {recentActivity.map((activity) => (
-                      <div key={activity.id} className="flex items-start space-x-4 p-3 rounded-lg bg-muted/30 border border-border/50">
-                        <div className={`w-3 h-3 rounded-full mt-1.5 ${
-                          activity.status === 'success' ? 'bg-green-500' :
-                          activity.status === 'warning' ? 'bg-yellow-500' :
-                          activity.status === 'error' ? 'bg-red-500' :
-                          'bg-blue-500'
-                        }`} />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-foreground">
-                            {activity.description}
-                          </p>
-                          <div className="flex items-center space-x-2 mt-1">
-                            <Clock className="h-3 w-3 text-muted-foreground" />
-                            <p className="text-xs text-muted-foreground">{activity.time}</p>
-                          </div>
-                        </div>
-                        <Badge variant={
-                          activity.status === 'success' ? 'default' :
-                          activity.status === 'warning' ? 'secondary' :
-                          'outline'
-                        } className="text-xs">
-                          {activity.type}
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Global Protection Status - Enhanced */}
-            <Card className="bg-gradient-to-r from-muted/50 to-muted/30 border-2 border-dashed border-primary/20">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Globe className="h-6 w-6 text-primary" />
-                  <span>Global AI Protection Network</span>
-                </CardTitle>
-                <CardDescription>Real-time AI monitoring across all platforms and blockchain networks</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                  <div className="text-center p-4 rounded-lg bg-background border">
-                    <div className="text-3xl font-bold text-green-500 mb-2">Active</div>
-                    <p className="text-sm text-muted-foreground">AI Monitoring</p>
-                  </div>
-                  <div className="text-center p-4 rounded-lg bg-background border">
-                    <div className="text-3xl font-bold text-blue-500 mb-2">2.5M+</div>
-                    <p className="text-sm text-muted-foreground">Sources Monitored</p>
-                  </div>
-                  <div className="text-center p-4 rounded-lg bg-background border">
-                    <div className="text-3xl font-bold text-purple-500 mb-2">15+</div>
-                    <p className="text-sm text-muted-foreground">Blockchain Networks</p>
-                  </div>
-                  <div className="text-center p-4 rounded-lg bg-background border">
-                    <div className="text-3xl font-bold text-orange-500 mb-2">99.8%</div>
-                    <p className="text-sm text-muted-foreground">Detection Accuracy</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Real-Time AI Monitoring Tab */}
-          <TabsContent value="realtime" className="space-y-6">
-            <div className="mb-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-primary/10 rounded-lg">
-                  <Globe className="w-8 h-8 text-primary" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-foreground">Real-Time AI Image Analysis</h2>
-                  <p className="text-muted-foreground">AI-powered image analysis and monitoring</p>
-                </div>
+          {/* Real-Time AI Section */}
+          <div id="realtime-section" className="scroll-mt-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                <Brain className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Real-Time AI Monitoring</h2>
+                <p className="text-muted-foreground">AI-powered image analysis and content detection</p>
               </div>
             </div>
             <RealTimeImageAnalysis />
-          </TabsContent>
+          </div>
 
-          {/* Social Media Monitoring Tab */}
-          <TabsContent value="social" className="space-y-6">
-            <div className="mb-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-primary/10 rounded-lg">
-                  <Shield className="w-8 h-8 text-primary" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-foreground">Social Media Monitoring</h2>
-                  <p className="text-muted-foreground">Monitor your content across social platforms</p>
-                </div>
+          {/* Social Media Section */}
+          <div id="social-section" className="scroll-mt-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                <Shield className="w-5 h-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Social Media Scanner</h2>
+                <p className="text-muted-foreground">Monitor content across social platforms</p>
               </div>
             </div>
             <SocialMediaAccountManager />
-            <SocialMediaMonitoringResults />
-          </TabsContent>
+            <div className="mt-6">
+              <SocialMediaMonitoringResults />
+            </div>
+          </div>
 
-          {/* Deepfake Detection Tab */}
-          <TabsContent value="deepfake" className="space-y-6">
-            <div className="mb-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-primary/10 rounded-lg">
-                  <Brain className="w-8 h-8 text-primary" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-foreground">
-                    Real-Time Deepfake Monitoring
-                  </h2>
-                  <p className="text-muted-foreground">
-                    Continuous AI-powered scanning across 2.5M+ surface and dark web sources
-                  </p>
-                </div>
+          {/* Deepfake Detection Section */}
+          <div id="deepfake-section" className="scroll-mt-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                <Eye className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Deepfake Detection</h2>
+                <p className="text-muted-foreground">Advanced AI deepfake scanning and analysis</p>
               </div>
             </div>
+            <RecentDetectionsWidget />
+          </div>
 
-            <Tabs defaultValue="monitor" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="monitor" className="flex items-center gap-2">
-                  <Activity className="w-4 h-4" />
-                  Live Monitoring
-                </TabsTrigger>
-                <TabsTrigger value="detected" className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4" />
-                  Detection Feed
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="monitor">
-                <RealTimeMonitoringWidget />
-              </TabsContent>
-
-              <TabsContent value="detected">
-                <RecentDetectionsWidget />
-              </TabsContent>
-            </Tabs>
-          </TabsContent>
-
-          {/* Web Scanner Tab */}
-          <TabsContent value="webscanner" className="space-y-6">
-            <div className="mb-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-primary/10 rounded-lg">
-                  <Globe className="w-8 h-8 text-primary" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-foreground">Comprehensive Web Scanner</h2>
-                  <p className="text-muted-foreground">Deep web scanning and content monitoring</p>
-                </div>
+          {/* Web Scanner Section */}
+          <div id="webscanner-section" className="scroll-mt-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
+                <Globe className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Web Scanner</h2>
+                <p className="text-muted-foreground">Comprehensive web scanning for unauthorized usage</p>
               </div>
             </div>
             <ComprehensiveWebScanner />
-          </TabsContent>
+          </div>
 
-          {/* Blockchain Verification Tab */}
-          <TabsContent value="blockchain" className="space-y-6">
-            <div className="mb-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg">
-                  <Crown className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-foreground">Blockchain Verification</h2>
-                  <p className="text-muted-foreground">Immutable proof of ownership and authenticity</p>
-                </div>
+          {/* Blockchain Section */}
+          <div id="blockchain-section" className="scroll-mt-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex items-center justify-center">
+                <Crown className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Blockchain Verification</h2>
+                <p className="text-muted-foreground">Immutable proof of ownership and authenticity</p>
               </div>
             </div>
+            
+            {/* Educational Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+              <Card className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-950/20 dark:to-orange-950/20 border-yellow-200 dark:border-yellow-800">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-yellow-900 dark:text-yellow-100">
+                    <Crown className="w-5 h-5" />
+                    What is Blockchain?
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3 text-yellow-800 dark:text-yellow-200">
+                  <p>Blockchain is a distributed ledger technology that creates an immutable, transparent record of digital transactions and ownership.</p>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-600" />
+                      <span className="text-sm">Immutable proof of creation</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-600" />
+                      <span className="text-sm">Tamper-proof ownership records</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-600" />
+                      <span className="text-sm">Global verification network</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-            {/* Educational Content */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <Card className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/50 dark:to-indigo-900/30 border-blue-200 dark:border-blue-800">
+              <Card className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border-blue-200 dark:border-blue-800">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-blue-900 dark:text-blue-100">
-                    <Shield className="w-5 h-5" />
-                    What is Blockchain Verification?
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4 text-blue-800 dark:text-blue-200">
-                  <p>
-                    Blockchain verification creates an immutable, timestamped record of your content on a distributed ledger. 
-                    This provides cryptographic proof of when you created or owned the content.
-                  </p>
-                  <div className="space-y-2">
-                    <h4 className="font-semibold">Key Benefits:</h4>
-                    <ul className="list-disc list-inside space-y-1 text-sm">
-                      <li>Immutable timestamp proof</li>
-                      <li>Decentralized verification</li>
-                      <li>Global accessibility</li>
-                      <li>Cryptographic security</li>
-                      <li>Cannot be altered or deleted</li>
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-950/50 dark:to-emerald-900/30 border-green-200 dark:border-green-800">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-green-900 dark:text-green-100">
                     <Scale className="w-5 h-5" />
-                    Blockchain vs. Copyright
+                    Blockchain vs Copyright
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4 text-green-800 dark:text-green-200">
-                  <p>
-                    While copyright provides legal protection, blockchain offers technical proof. 
-                    They work together to create comprehensive protection for your intellectual property.
-                  </p>
-                  <div className="space-y-2">
-                    <h4 className="font-semibold">Comparison:</h4>
-                    <div className="text-sm space-y-1">
-                      <div><strong>Copyright:</strong> Legal protection, requires enforcement</div>
-                      <div><strong>Blockchain:</strong> Technical proof, self-enforcing</div>
-                      <div><strong>Together:</strong> Complete protection ecosystem</div>
-                    </div>
+                <CardContent className="space-y-3 text-blue-800 dark:text-blue-200">
+                  <p><strong>Copyright:</strong> Legal protection that requires registration and can be disputed in courts.</p>
+                  <p><strong>Blockchain:</strong> Technical proof of creation timestamp and ownership that cannot be altered or disputed.</p>
+                  <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-lg">
+                    <p className="text-sm font-medium">Both work together: Blockchain provides technical proof, while copyright provides legal protection.</p>
                   </div>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Blockchain Networks */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Crown className="w-5 h-5 text-primary" />
-                  Supported Blockchain Networks
-                </CardTitle>
-                <CardDescription>Multi-chain verification for maximum security and accessibility</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 border rounded-lg bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/30 dark:to-orange-900/20 border-orange-200 dark:border-orange-800">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                        <Crown className="w-4 h-4 text-white" />
-                      </div>
-                      <h3 className="font-semibold text-orange-900 dark:text-orange-100">Bitcoin</h3>
-                    </div>
-                    <p className="text-sm text-orange-700 dark:text-orange-300">
-                      The most secure and established blockchain network. Perfect for high-value artwork and long-term preservation.
-                    </p>
-                  </div>
-
-                  <div className="p-4 border rounded-lg bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/20 border-purple-200 dark:border-purple-800">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
-                        <Crown className="w-4 h-4 text-white" />
-                      </div>
-                      <h3 className="font-semibold text-purple-900 dark:text-purple-100">Ethereum</h3>
-                    </div>
-                    <p className="text-sm text-purple-700 dark:text-purple-300">
-                      Smart contract capabilities and NFT support. Ideal for digital art and programmable ownership.
-                    </p>
-                  </div>
-
-                  <div className="p-4 border rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/20 border-blue-200 dark:border-blue-800">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                        <Crown className="w-4 h-4 text-white" />
-                      </div>
-                      <h3 className="font-semibold text-blue-900 dark:text-blue-100">Polygon</h3>
-                    </div>
-                    <p className="text-sm text-blue-700 dark:text-blue-300">
-                      Fast and cost-effective verification. Great for frequent registrations and batch operations.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Blockchain Widget */}
             <RealTimeBlockchainWidget />
-          </TabsContent>
-
-          {/* Detections Tab */}
-          <TabsContent value="detections" className="space-y-6">
-            <RecentDetectionsWidget />
-          </TabsContent>
-
-          {/* Protection Tab */}
-          <TabsContent value="protection" className="space-y-6">
-            <MonitoringWidget />
-          </TabsContent>
-
-          {/* Scheduling Tab */}
-          <TabsContent value="scheduling" className="space-y-6">
-            <ScheduledScansManager />
-          </TabsContent>
-
-          {/* Reports Tab */}
-          <TabsContent value="reports" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <DailyReport 
-                type="monitoring" 
-                realTimeStats={{
-                  totalScans: stats.totalScans,
-                  activeAlerts: stats.detectionsThisMonth,
-                  protectedAssets: stats.protectedArtworks,
-                  systemUptime: stats.protectionScore,
-                  lastScanTime: '2 hours ago',
-                  threatLevel: stats.recentThreatLevel
-                }}
-              />
-              <DailyReport 
-                type="deep-scan"
-                realTimeStats={{
-                  totalScans: Math.floor(stats.totalScans * 0.3),
-                  activeAlerts: Math.floor(stats.detectionsThisMonth * 1.5),
-                  protectedAssets: stats.protectedArtworks,
-                  systemUptime: Math.min(99.9, stats.protectionScore + 5),
-                  lastScanTime: '6 hours ago',
-                  threatLevel: stats.recentThreatLevel
-                }}
-              />
-            </div>
-          </TabsContent>
-
-          {/* Advanced Blockchain Tab */}
-          {hasFeature('advanced_blockchain') && (
-            <TabsContent value="advanced-blockchain" className="space-y-6">
-              <Tabs defaultValue="blockchain" className="space-y-4">
-                <TabsList>
-                  <TabsTrigger value="blockchain">Blockchain Certificates</TabsTrigger>
-                  <TabsTrigger value="nft">NFT Minting</TabsTrigger>
-                  <TabsTrigger value="analytics">NFT Analytics</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="blockchain">
-                  <RealTimeBlockchainWidget />
-                  <AdvancedBlockchain />
-                </TabsContent>
-                
-                <TabsContent value="nft">
-                  <NFTMintingWidget />
-                </TabsContent>
-                
-                <TabsContent value="analytics">
-                  <NFTAnalytics />
-                </TabsContent>
-              </Tabs>
-            </TabsContent>
-          )}
-
-          {/* White Label Tab */}
-          {hasFeature('white_label') && (
-            <TabsContent value="white-label" className="space-y-6">
-              <Card>
-                <CardHeader className="text-center">
-                  <CardTitle className="text-2xl font-bold mb-2">White Label Solutions</CardTitle>
-                  <p className="text-muted-foreground">Enterprise-grade customization coming soon</p>
-                </CardHeader>
-                <CardContent className="text-center py-12">
-                  <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-                    <Settings className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-4">Coming Soon</h3>
-                  <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                    We're working on powerful white label features that will allow you to customize the platform with your own branding, domain, and user management.
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto mb-8">
-                    <div className="p-4 border border-border rounded-lg">
-                      <Badge className="w-6 h-6 text-primary mb-2" />
-                      <h4 className="font-medium mb-1">Custom Branding</h4>
-                      <p className="text-sm text-muted-foreground">Your logo, colors, and styling</p>
-                    </div>
-                    <div className="p-4 border border-border rounded-lg">
-                      <Globe className="w-6 h-6 text-primary mb-2" />
-                      <h4 className="font-medium mb-1">Custom Domain</h4>
-                      <p className="text-sm text-muted-foreground">Host on your own domain</p>
-                    </div>
-                    <div className="p-4 border border-border rounded-lg">
-                      <Users className="w-6 h-6 text-primary mb-2" />
-                      <h4 className="font-medium mb-1">User Management</h4>
-                      <p className="text-sm text-muted-foreground">Manage your team members</p>
-                    </div>
-                  </div>
-                  <Button variant="outline" disabled>
-                    <Bell className="w-4 h-4 mr-2" />
-                    Notify Me When Available
-                  </Button>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          )}
-        </Tabs>
+          </div>
+        </div>
       </div>
     </div>
   );
