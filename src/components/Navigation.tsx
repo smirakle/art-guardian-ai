@@ -23,8 +23,8 @@ const Navigation = () => {
   // All navigation items - available to everyone
   const allNavItems = [
     { path: "/", label: t('nav.home'), icon: Home },
-    { path: "/dashboard", label: "Dashboard", icon: Home },
-    { path: "/upload", label: "Upload Monitoring", icon: Upload },
+    { path: "/dashboard", label: "AI Monitoring Dashboard", icon: Activity },
+    { path: "/upload", label: "Upload & Protect", icon: Upload },
     { path: "/community", label: t('nav.community'), icon: Users },
     { path: "/legal-templates", label: "Legal Templates", icon: FileText },
     { path: "/faq", label: "FAQ", icon: HelpCircle },

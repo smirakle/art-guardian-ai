@@ -41,6 +41,12 @@ import { WhiteLabelManager } from '@/components/WhiteLabelManager';
 import AdvancedBlockchain from '@/components/AdvancedBlockchain';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 
+// Import monitoring components from Upload page
+import RealTimeImageAnalysis from '@/components/RealTimeImageAnalysis';
+import SocialMediaAccountManager from '@/components/SocialMediaAccountManager';
+import SocialMediaMonitoringResults from '@/components/SocialMediaMonitoringResults';
+import { ComprehensiveWebScanner } from '@/components/ComprehensiveWebScanner';
+
 interface DashboardStats {
   protectedArtworks: number;
   totalScans: number;
@@ -137,37 +143,44 @@ const Dashboard = () => {
 
   const quickActions = [
     { 
-      title: 'Upload Monitoring', 
-      description: 'Protect artwork with AI monitoring',
+      title: 'Real-Time AI', 
+      description: 'AI-powered image analysis',
       icon: Brain,
       action: () => {
-        // Switch to the Upload tab
-        const uploadTab = document.querySelector('[value="upload"]') as HTMLElement;
-        if (uploadTab) uploadTab.click();
+        const realtimeTab = document.querySelector('[value="realtime"]') as HTMLElement;
+        if (realtimeTab) realtimeTab.click();
       },
       color: 'bg-blue-500'
     },
     { 
-      title: 'View Protection Status', 
-      description: 'Check real-time protection status',
-      icon: Activity,
+      title: 'Social Media Monitoring', 
+      description: 'Monitor social platforms',
+      icon: Shield,
       action: () => {
-        // Switch to the Protection tab
-        const protectionTab = document.querySelector('[value="protection"]') as HTMLElement;
-        if (protectionTab) protectionTab.click();
+        const socialTab = document.querySelector('[value="social"]') as HTMLElement;
+        if (socialTab) socialTab.click();
       },
       color: 'bg-green-500'
     },
     { 
-      title: 'AI Detection Reports', 
-      description: 'Review AI-powered detections',
+      title: 'Deepfake Detection', 
+      description: 'AI deepfake scanning',
       icon: Eye,
       action: () => {
-        // Switch to the Detections tab
-        const detectionsTab = document.querySelector('[value="detections"]') as HTMLElement;
-        if (detectionsTab) detectionsTab.click();
+        const deepfakeTab = document.querySelector('[value="deepfake"]') as HTMLElement;
+        if (deepfakeTab) deepfakeTab.click();
       },
       color: 'bg-purple-500'
+    },
+    { 
+      title: 'Web Scanner', 
+      description: 'Comprehensive web scanning',
+      icon: Globe,
+      action: () => {
+        const webscannerTab = document.querySelector('[value="webscanner"]') as HTMLElement;
+        if (webscannerTab) webscannerTab.click();
+      },
+      color: 'bg-orange-500'
     }
   ];
 
@@ -301,14 +314,26 @@ const Dashboard = () => {
 
         {/* Main Dashboard Content */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className={`grid w-full ${hasFeature('white_label') ? (hasFeature('advanced_blockchain') ? 'grid-cols-8' : 'grid-cols-7') : (hasFeature('advanced_blockchain') ? 'grid-cols-7' : 'grid-cols-6')}`}>
+          <TabsList className={`grid w-full ${hasFeature('white_label') ? (hasFeature('advanced_blockchain') ? 'grid-cols-9' : 'grid-cols-8') : (hasFeature('advanced_blockchain') ? 'grid-cols-8' : 'grid-cols-7')}`}>
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Activity className="w-4 h-4" />
               Overview
             </TabsTrigger>
-            <TabsTrigger value="upload" className="flex items-center gap-2">
-              <Upload className="w-4 h-4" />
-              Upload
+            <TabsTrigger value="realtime" className="flex items-center gap-2">
+              <Globe className="w-4 h-4" />
+              Real-Time AI
+            </TabsTrigger>
+            <TabsTrigger value="social" className="flex items-center gap-2">
+              <Shield className="w-4 h-4" />
+              Social Media
+            </TabsTrigger>
+            <TabsTrigger value="deepfake" className="flex items-center gap-2">
+              <Brain className="w-4 h-4" />
+              Deepfake Detection
+            </TabsTrigger>
+            <TabsTrigger value="webscanner" className="flex items-center gap-2">
+              <Globe className="w-4 h-4" />
+              Web Scanner
             </TabsTrigger>
             <TabsTrigger value="detections" className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4" />
@@ -444,7 +469,96 @@ const Dashboard = () => {
             <RealTimeMonitoringWidget />
           </TabsContent>
 
-          {/* Upload Tab */}
+          {/* Real-Time AI Monitoring Tab */}
+          <TabsContent value="realtime" className="space-y-6">
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-3 bg-primary/10 rounded-lg">
+                  <Globe className="w-8 h-8 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-foreground">Real-Time AI Image Analysis</h2>
+                  <p className="text-muted-foreground">AI-powered image analysis and monitoring</p>
+                </div>
+              </div>
+            </div>
+            <RealTimeImageAnalysis />
+          </TabsContent>
+
+          {/* Social Media Monitoring Tab */}
+          <TabsContent value="social" className="space-y-6">
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-3 bg-primary/10 rounded-lg">
+                  <Shield className="w-8 h-8 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-foreground">Social Media Monitoring</h2>
+                  <p className="text-muted-foreground">Monitor your content across social platforms</p>
+                </div>
+              </div>
+            </div>
+            <SocialMediaAccountManager />
+            <SocialMediaMonitoringResults />
+          </TabsContent>
+
+          {/* Deepfake Detection Tab */}
+          <TabsContent value="deepfake" className="space-y-6">
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-3 bg-primary/10 rounded-lg">
+                  <Brain className="w-8 h-8 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-foreground">
+                    Real-Time Deepfake Monitoring
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Continuous AI-powered scanning across 2.5M+ surface and dark web sources
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <Tabs defaultValue="monitor" className="space-y-6">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="monitor" className="flex items-center gap-2">
+                  <Activity className="w-4 h-4" />
+                  Live Monitoring
+                </TabsTrigger>
+                <TabsTrigger value="detected" className="flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4" />
+                  Detection Feed
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="monitor">
+                <RealTimeMonitoringWidget />
+              </TabsContent>
+
+              <TabsContent value="detected">
+                <RecentDetectionsWidget />
+              </TabsContent>
+            </Tabs>
+          </TabsContent>
+
+          {/* Web Scanner Tab */}
+          <TabsContent value="webscanner" className="space-y-6">
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-3 bg-primary/10 rounded-lg">
+                  <Globe className="w-8 h-8 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-foreground">Comprehensive Web Scanner</h2>
+                  <p className="text-muted-foreground">Deep web scanning and content monitoring</p>
+                </div>
+              </div>
+            </div>
+            <ComprehensiveWebScanner />
+          </TabsContent>
+
+          {/* Upload Tab - Remove this since upload functionality is separate */}
           <TabsContent value="upload" className="space-y-6">
             <UploadWidget onUploadComplete={(artworkId) => {
               toast({

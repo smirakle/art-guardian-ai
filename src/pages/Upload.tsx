@@ -33,13 +33,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import VisualRecognition from "@/components/VisualRecognition";
 
-import RealTimeDeepfakeMonitor from "@/components/RealTimeDeepfakeMonitor";
-import RecentDeepfakeDetections from "@/components/RecentDeepfakeDetections";
-import SocialMediaAccountManager from "@/components/SocialMediaAccountManager";
-import SocialMediaMonitoringResults from "@/components/SocialMediaMonitoringResults";
-import { ComprehensiveWebScanner } from "@/components/ComprehensiveWebScanner";
-import RealTimeImageAnalysis from "@/components/RealTimeImageAnalysis";
-
 interface UploadedFile {
   id: string;
   name: string;
@@ -526,18 +519,18 @@ const Upload = () => {
           <div className="text-center max-w-3xl mx-auto">
             <div className="flex items-center justify-center gap-3 mb-4">
               <Shield className="w-10 h-10 text-primary" />
-              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Protect Your Art
-              </h1>
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Upload & Protect
+            </h1>
             </div>
             <p className="text-lg md:text-xl text-muted-foreground mb-4">
-              Upload your creative work and get AI-powered protection with 24/7 monitoring
+              Upload your creative work to start AI-powered protection
             </p>
             
-            <Alert className="mb-4 border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800">
-              <Info className="h-4 w-4 text-amber-600" />
-              <AlertDescription className="text-amber-800">
-                <span className="font-medium">New feature:</span> Test our monitoring system with our copyrighted image detector. Go to <strong>Quick Analysis → Test System</strong> tab to try it.
+            <Alert className="mb-4 border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-800">
+              <Info className="h-4 w-4 text-blue-600" />
+              <AlertDescription className="text-blue-800">
+                <span className="font-medium">Note:</span> For advanced monitoring features, visit the <strong>Dashboard</strong> after uploading your content.
               </AlertDescription>
             </Alert>
             
@@ -557,86 +550,7 @@ const Upload = () => {
       <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
         
         <div data-upload-area>
-          <Tabs defaultValue="protect" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="protect" className="flex items-center gap-2">
-                <UploadIcon className="w-4 h-4" />
-                Upload Monitoring
-              </TabsTrigger>
-              <TabsTrigger value="realtime" className="flex items-center gap-2">
-                <Globe className="w-4 h-4" />
-                Real-Time AI
-              </TabsTrigger>
-              <TabsTrigger value="social" className="flex items-center gap-2">
-                <Shield className="w-4 h-4" />
-                Social Media
-              </TabsTrigger>
-              <TabsTrigger value="deepfake" className="flex items-center gap-2">
-                <Brain className="w-4 h-4" />
-                Deepfake Detection
-              </TabsTrigger>
-              <TabsTrigger value="webscanner" className="flex items-center gap-2">
-                <Globe className="w-4 h-4" />
-                Web Scanner
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="protect" className="space-y-6">
-              <VisualRecognition />
-            </TabsContent>
-
-            <TabsContent value="social" className="space-y-6">
-              <SocialMediaAccountManager />
-              <SocialMediaMonitoringResults />
-            </TabsContent>
-
-            <TabsContent value="realtime" className="space-y-6">
-              <RealTimeImageAnalysis />
-            </TabsContent>
-
-            <TabsContent value="deepfake" className="space-y-6">
-              <div className="mb-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-3 bg-primary/10 rounded-lg">
-                    <Brain className="w-8 h-8 text-primary" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-foreground">
-                      Real-Time Deepfake Monitoring
-                    </h2>
-                    <p className="text-muted-foreground">
-                      Continuous AI-powered scanning across 2.5M+ surface and dark web sources
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <Tabs defaultValue="monitor" className="space-y-6">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="monitor" className="flex items-center gap-2">
-                    <Activity className="w-4 h-4" />
-                    Live Monitoring
-                  </TabsTrigger>
-                  <TabsTrigger value="detected" className="flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4" />
-                    Detection Feed
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="monitor">
-                  <RealTimeDeepfakeMonitor />
-                </TabsContent>
-
-                <TabsContent value="detected">
-                  <RecentDeepfakeDetections />
-                </TabsContent>
-              </Tabs>
-            </TabsContent>
-
-            <TabsContent value="webscanner" className="space-y-6">
-              <ComprehensiveWebScanner />
-            </TabsContent>
-          </Tabs>
+          <VisualRecognition />
         </div>
       </div>
     </div>
