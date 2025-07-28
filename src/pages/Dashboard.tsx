@@ -637,19 +637,6 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Reports Section */}
-          <div id="reports-section" className="scroll-mt-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
-                <FileText className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-foreground">Daily Reports</h2>
-                <p className="text-muted-foreground">Comprehensive downloadable reports with all monitoring data</p>
-              </div>
-            </div>
-            <DailyReport type="comprehensive" />
-          </div>
         </div>
       </div>
     </div>
