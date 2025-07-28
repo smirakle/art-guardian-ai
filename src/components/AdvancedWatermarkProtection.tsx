@@ -25,20 +25,22 @@ import {
   AlertTriangle,
   Settings,
   Crown,
-  Lock
+  Lock,
+  Upload,
+  FolderOpen
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import { advancedWatermarkService, AdvancedWatermarkOptions, WatermarkResult } from '@/lib/advancedWatermark';
 
 interface AdvancedWatermarkProtectionProps {
-  files: File[];
+  files?: File[];
   onWatermarkComplete?: (results: WatermarkResult[]) => void;
   className?: string;
 }
 
 export const AdvancedWatermarkProtection: React.FC<AdvancedWatermarkProtectionProps> = ({
-  files,
+  files: propFiles = [],
   onWatermarkComplete,
   className = ''
 }) => {
@@ -48,6 +50,11 @@ export const AdvancedWatermarkProtection: React.FC<AdvancedWatermarkProtectionPr
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [results, setResults] = useState<WatermarkResult[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  
+  // Use either prop files or uploaded files
+  const files = propFiles.length > 0 ? propFiles : uploadedFiles;
   
   // Watermark options
   const [options, setOptions] = useState<AdvancedWatermarkOptions>({
@@ -226,6 +233,34 @@ export const AdvancedWatermarkProtection: React.FC<AdvancedWatermarkProtectionPr
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files);
+      setUploadedFiles(prev => [...prev, ...newFiles]);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const droppedFiles = Array.from(e.dataTransfer.files);
+    setUploadedFiles(prev => [...prev, ...droppedFiles]);
+  };
+
+  const removeFile = (index: number) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -458,13 +493,55 @@ export const AdvancedWatermarkProtection: React.FC<AdvancedWatermarkProtectionPr
             </TabsContent>
 
             <TabsContent value="files" className="space-y-4">
+              {/* Upload Interface */}
+              {propFiles.length === 0 && (
+                <Card>
+                  <CardContent className="pt-6">
+                    <div
+                      className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                        isDragging 
+                          ? 'border-primary bg-primary/5' 
+                          : 'border-muted-foreground/25 hover:border-muted-foreground/50'
+                      }`}
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onDrop={handleDrop}
+                    >
+                      <FolderOpen className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                      <h3 className="text-lg font-semibold mb-2">
+                        Drop files here or click to upload
+                      </h3>
+                      <p className="text-muted-foreground mb-4">
+                        Supports all file types: images, videos, audio, documents
+                      </p>
+                      <Input
+                        type="file"
+                        multiple
+                        onChange={handleFileUpload}
+                        className="hidden"
+                        id="advanced-file-upload"
+                        accept="*/*"
+                      />
+                      <Button asChild>
+                        <label htmlFor="advanced-file-upload" className="cursor-pointer">
+                          <Upload className="h-4 w-4 mr-2" />
+                          Select Files
+                        </label>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
               {files.length === 0 ? (
-                <Alert>
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription>
-                    No files selected for watermarking.
-                  </AlertDescription>
-                </Alert>
+                !propFiles.length && (
+                  <Alert>
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertDescription>
+                      Upload files above to start watermarking.
+                    </AlertDescription>
+                  </Alert>
+                )
               ) : (
                 <div className="space-y-2">
                   {files.map((file, index) => (
@@ -478,9 +555,20 @@ export const AdvancedWatermarkProtection: React.FC<AdvancedWatermarkProtectionPr
                           </p>
                         </div>
                       </div>
-                      <Badge variant="outline">
-                        {advancedWatermarkService['detectFileType'](file)}
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline">
+                          {advancedWatermarkService['detectFileType'](file)}
+                        </Badge>
+                        {propFiles.length === 0 && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => removeFile(index)}
+                          >
+                            ✕
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
