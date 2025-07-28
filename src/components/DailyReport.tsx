@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   Download, 
   FileText, 
@@ -12,9 +14,14 @@ import {
   AlertTriangle,
   Shield,
   Eye,
-  Clock
+  Clock,
+  Brain,
+  Globe,
+  Crown,
+  Users,
+  BarChart3
 } from "lucide-react";
-import { format } from "date-fns";
+import { format, subDays } from "date-fns";
 import jsPDF from 'jspdf';
 
 
@@ -28,6 +35,15 @@ interface ReportData {
   marketplacesScanned: number;
   criticalFindings: number;
   resolutionTime: string;
+  // Enhanced data fields
+  aiScans: number;
+  socialMediaScans: number;
+  webScans: number;
+  blockchainCertificates: number;
+  deepfakeDetections: number;
+  socialMediaAccounts: number;
+  copyrightMatches: number;
+  socialMediaThreats: number;
 }
 
 interface MonitoringStats {
@@ -40,28 +56,152 @@ interface MonitoringStats {
 }
 
 interface DailyReportProps {
-  type: 'monitoring' | 'deep-scan';
+  type?: 'comprehensive' | 'monitoring' | 'deep-scan';
   data?: ReportData;
   realTimeStats?: MonitoringStats;
 }
 
-const DailyReport = ({ type, data, realTimeStats }: DailyReportProps) => {
+const DailyReport = ({ type = 'comprehensive', data, realTimeStats }: DailyReportProps) => {
+  const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [reportFormat, setReportFormat] = useState<string>("pdf");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [reportData, setReportData] = useState<ReportData | null>(null);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  // Use real-time stats if available, otherwise use provided data
-  const reportData: ReportData = data || {
+  useEffect(() => {
+    if (user) {
+      loadReportData();
+    }
+  }, [user, selectedDate]);
+
+  const loadReportData = async () => {
+    try {
+      setLoading(true);
+      const dateStr = format(selectedDate, 'yyyy-MM-dd');
+      const nextDay = format(subDays(selectedDate, -1), 'yyyy-MM-dd');
+
+      // Load comprehensive data from all sources
+      const [
+        artworkData,
+        monitoringScansData,
+        socialMediaScansData,
+        webScansData,
+        blockchainData,
+        deepfakeData,
+        socialAccountsData,
+        copyrightMatchesData,
+        socialMediaResultsData
+      ] = await Promise.all([
+        // Protected artworks
+        supabase.from('artwork').select('*').eq('user_id', user!.id),
+        
+        // AI monitoring scans
+        supabase.from('monitoring_scans')
+          .select('*')
+          .gte('started_at', dateStr)
+          .lt('started_at', nextDay),
+        
+        // Social media scans
+        supabase.from('social_media_scans')
+          .select('*, account:social_media_accounts!inner(user_id)')
+          .eq('account.user_id', user!.id)
+          .gte('started_at', dateStr)
+          .lt('started_at', nextDay),
+        
+        // Web scans
+        supabase.from('web_scans')
+          .select('*')
+          .eq('user_id', user!.id)
+          .gte('started_at', dateStr)
+          .lt('started_at', nextDay),
+        
+        // Blockchain certificates
+        supabase.from('blockchain_certificates')
+          .select('*')
+          .eq('user_id', user!.id)
+          .gte('created_at', dateStr)
+          .lt('created_at', nextDay),
+        
+        // Deepfake detections
+        supabase.from('deepfake_matches')
+          .select('*')
+          .gte('detected_at', dateStr)
+          .lt('detected_at', nextDay),
+        
+        // Social media accounts
+        supabase.from('social_media_accounts')
+          .select('*')
+          .eq('user_id', user!.id),
+        
+        // Copyright matches
+        supabase.from('copyright_matches')
+          .select('*, artwork!inner(user_id)')
+          .eq('artwork.user_id', user!.id)
+          .gte('detected_at', dateStr)
+          .lt('detected_at', nextDay),
+        
+        // Social media monitoring results
+        supabase.from('social_media_monitoring_results')
+          .select('*, account:social_media_accounts!inner(user_id)')
+          .eq('account.user_id', user!.id)
+          .gte('detected_at', dateStr)
+          .lt('detected_at', nextDay)
+      ]);
+
+      const compiledData: ReportData = {
+        date: dateStr,
+        protectedAssets: artworkData.data?.length || 0,
+        totalScans: (monitoringScansData.data?.length || 0) + (socialMediaScansData.data?.length || 0) + (webScansData.data?.length || 0),
+        aiScans: monitoringScansData.data?.length || 0,
+        socialMediaScans: socialMediaScansData.data?.length || 0,
+        webScans: webScansData.data?.length || 0,
+        blockchainCertificates: blockchainData.data?.length || 0,
+        deepfakeDetections: deepfakeData.data?.length || 0,
+        socialMediaAccounts: socialAccountsData.data?.length || 0,
+        copyrightMatches: copyrightMatchesData.data?.length || 0,
+        socialMediaThreats: socialMediaResultsData.data?.length || 0,
+        threatsDetected: (copyrightMatchesData.data?.length || 0) + (socialMediaResultsData.data?.length || 0) + (deepfakeData.data?.length || 0),
+        systemUptime: 99.8,
+        alertsGenerated: (copyrightMatchesData.data?.length || 0) + (socialMediaResultsData.data?.length || 0),
+        marketplacesScanned: 150,
+        criticalFindings: copyrightMatchesData.data?.filter(m => m.threat_level === 'high').length || 0,
+        resolutionTime: "2.3 hours"
+      };
+
+      setReportData(compiledData);
+    } catch (error) {
+      console.error('Error loading report data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load report data",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Use loaded report data if available, otherwise use provided data or defaults
+  const finalReportData: ReportData = reportData || data || {
     date: format(selectedDate, "yyyy-MM-dd"),
-    totalScans: realTimeStats?.totalScans || 1247,
+    totalScans: realTimeStats?.totalScans || 0,
     threatsDetected: realTimeStats?.threatLevel === 'high' ? 5 : realTimeStats?.threatLevel === 'medium' ? 2 : 0,
-    protectedAssets: realTimeStats?.protectedAssets || 156,
+    protectedAssets: realTimeStats?.protectedAssets || 0,
     systemUptime: realTimeStats?.systemUptime || 99.8,
-    alertsGenerated: realTimeStats?.activeAlerts || 7,
+    alertsGenerated: realTimeStats?.activeAlerts || 0,
     marketplacesScanned: 150,
     criticalFindings: realTimeStats?.threatLevel === 'high' ? 2 : realTimeStats?.threatLevel === 'medium' ? 1 : 0,
-    resolutionTime: "2.3 hours"
+    resolutionTime: "2.3 hours",
+    aiScans: 0,
+    socialMediaScans: 0,
+    webScans: 0,
+    blockchainCertificates: 0,
+    deepfakeDetections: 0,
+    socialMediaAccounts: 0,
+    copyrightMatches: 0,
+    socialMediaThreats: 0
   };
 
   const generateReport = async () => {
@@ -70,16 +210,16 @@ const DailyReport = ({ type, data, realTimeStats }: DailyReportProps) => {
     // Generate report
     setTimeout(() => {
       if (reportFormat === 'pdf') {
-        generatePDFReport(reportData);
+        generatePDFReport(finalReportData);
       } else {
-        const reportContent = generateReportContent(reportData);
+        const reportContent = generateReportContent(finalReportData);
         downloadReport(reportContent, reportFormat);
       }
       setIsGenerating(false);
       
       toast({
         title: "Report Generated Successfully",
-        description: `${type === 'monitoring' ? 'Monitoring' : 'Deep Scan'} report for ${format(selectedDate, "MMM dd, yyyy")} has been downloaded.`
+        description: `${type === 'comprehensive' ? 'Comprehensive' : type === 'monitoring' ? 'Monitoring' : 'Deep Scan'} report for ${format(selectedDate, "MMM dd, yyyy")} has been downloaded.`
       });
     }, 2000);
   };
@@ -116,7 +256,7 @@ const DailyReport = ({ type, data, realTimeStats }: DailyReportProps) => {
     doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(25, 25, 112); // Navy blue
-    const reportTitle = type === 'monitoring' ? 'Daily Monitoring Report' : 'Deep Web Scan Report';
+    const reportTitle = type === 'comprehensive' ? 'Comprehensive Daily Report' : type === 'monitoring' ? 'Daily Monitoring Report' : 'Deep Web Scan Report';
     doc.text(reportTitle, pageWidth / 2, yPosition, { align: "center" });
     yPosition += 6;
     
@@ -163,19 +303,23 @@ const DailyReport = ({ type, data, realTimeStats }: DailyReportProps) => {
 
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
-    doc.text(`Total Scans: ${data.totalScans.toLocaleString()}  •  Threats: ${data.threatsDetected}  •  Assets: ${data.protectedAssets}  •  Uptime: ${data.systemUptime}%`, margin, yPosition);
+    doc.text(`Total Scans: ${data.totalScans.toLocaleString()}  •  AI: ${data.aiScans}  •  Social: ${data.socialMediaScans}  •  Web: ${data.webScans}`, margin, yPosition);
+    yPosition += 6;
+    doc.text(`Threats: ${data.threatsDetected}  •  Assets: ${data.protectedAssets}  •  Blockchain: ${data.blockchainCertificates}  •  Uptime: ${data.systemUptime}%`, margin, yPosition);
     yPosition += 15;
 
-    // Security Metrics
+    // Detailed Analytics
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
-    doc.text("SECURITY METRICS", margin, yPosition);
+    doc.text("DETAILED ANALYTICS", margin, yPosition);
     yPosition += 10;
 
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
+    doc.text(`Deepfake Detections: ${data.deepfakeDetections}  •  Copyright Matches: ${data.copyrightMatches}  •  Social Accounts: ${data.socialMediaAccounts}`, margin, yPosition);
+    yPosition += 6;
     const metricsText = `Alerts: ${data.alertsGenerated}  •  Critical: ${data.criticalFindings}  •  Avg Resolution: ${data.resolutionTime}`;
-    const deepScanText = type === 'deep-scan' ? `  •  Marketplaces: ${data.marketplacesScanned}` : '';
+    const deepScanText = type === 'deep-scan' || type === 'comprehensive' ? `  •  Marketplaces: ${data.marketplacesScanned}` : '';
     doc.text(metricsText + deepScanText, margin, yPosition);
     yPosition += 15;
 
@@ -232,7 +376,7 @@ const DailyReport = ({ type, data, realTimeStats }: DailyReportProps) => {
 
 
   const generateReportContent = (data: ReportData) => {
-    const reportTitle = type === 'monitoring' ? 'TSMO Daily Monitoring Report' : 'TSMO Deep Web Scan Report';
+    const reportTitle = type === 'comprehensive' ? 'TSMO Comprehensive Daily Report' : type === 'monitoring' ? 'TSMO Daily Monitoring Report' : 'TSMO Deep Web Scan Report';
     
     return `
 ╔═══════════════════════════════════════════════════════════════════════════════════╗
@@ -255,15 +399,23 @@ Status: ${realTimeStats ? 'REAL-TIME DATA' : 'HISTORICAL DATA'}
 
 === EXECUTIVE SUMMARY ===
 Total Scans Performed: ${data.totalScans.toLocaleString()}
+- AI Monitoring Scans: ${data.aiScans}
+- Social Media Scans: ${data.socialMediaScans}
+- Web Scans: ${data.webScans}
 Threats Detected: ${data.threatsDetected}
 Protected Assets: ${data.protectedAssets}
 System Uptime: ${data.systemUptime}%
 
-=== SECURITY METRICS ===
+=== DETAILED ANALYTICS ===
+Blockchain Certificates: ${data.blockchainCertificates}
+Deepfake Detections: ${data.deepfakeDetections}
+Copyright Matches: ${data.copyrightMatches}
+Social Media Accounts Monitored: ${data.socialMediaAccounts}
+Social Media Threats: ${data.socialMediaThreats}
 Alerts Generated: ${data.alertsGenerated}
 Critical Findings: ${data.criticalFindings}
 Average Resolution Time: ${data.resolutionTime}
-${type === 'deep-scan' ? `Marketplaces Scanned: ${data.marketplacesScanned}` : ''}
+${type === 'deep-scan' || type === 'comprehensive' ? `Marketplaces Scanned: ${data.marketplacesScanned}` : ''}
 
 === THREAT ANALYSIS ===
 Risk Level: ${data.threatsDetected === 0 ? 'LOW' : data.threatsDetected < 5 ? 'MEDIUM' : 'HIGH'}
@@ -293,9 +445,9 @@ Report generated by TSMO Security Platform
     
     if (fileFormat === 'csv') {
       mimeType = 'text/csv';
-      // Convert to CSV format
-      fileContent = `Date,Total Scans,Threats Detected,Protected Assets,System Uptime,Alerts Generated,Critical Findings,Resolution Time\n`;
-      fileContent += `${reportData.date},${reportData.totalScans},${reportData.threatsDetected},${reportData.protectedAssets},${reportData.systemUptime},${reportData.alertsGenerated},${reportData.criticalFindings},${reportData.resolutionTime}`;
+      // Convert to CSV format with comprehensive data
+      fileContent = `Date,Total Scans,AI Scans,Social Media Scans,Web Scans,Threats Detected,Protected Assets,Blockchain Certificates,Deepfake Detections,Copyright Matches,Social Media Accounts,Social Media Threats,System Uptime,Alerts Generated,Critical Findings,Resolution Time\n`;
+      fileContent += `${finalReportData.date},${finalReportData.totalScans},${finalReportData.aiScans},${finalReportData.socialMediaScans},${finalReportData.webScans},${finalReportData.threatsDetected},${finalReportData.protectedAssets},${finalReportData.blockchainCertificates},${finalReportData.deepfakeDetections},${finalReportData.copyrightMatches},${finalReportData.socialMediaAccounts},${finalReportData.socialMediaThreats},${finalReportData.systemUptime},${finalReportData.alertsGenerated},${finalReportData.criticalFindings},${finalReportData.resolutionTime}`;
     }
     
     const blob = new Blob([fileContent], { type: mimeType });
@@ -303,7 +455,7 @@ Report generated by TSMO Security Platform
     const link = document.createElement('a');
     link.href = url;
     
-    const fileName = `TSMO_${type === 'monitoring' ? 'Monitoring' : 'DeepScan'}_Report_${format(selectedDate, "yyyy-MM-dd")}.${fileFormat}`;
+    const fileName = `TSMO_${type === 'comprehensive' ? 'Comprehensive' : type === 'monitoring' ? 'Monitoring' : 'DeepScan'}_Report_${format(selectedDate, "yyyy-MM-dd")}.${fileFormat}`;
     link.download = fileName;
     
     document.body.appendChild(link);
@@ -314,27 +466,51 @@ Report generated by TSMO Security Platform
 
   const reportStats = [
     { 
-      icon: Eye, 
-      label: "Total Scans", 
-      value: reportData.totalScans.toLocaleString(),
-      color: "text-primary"
+      icon: Brain, 
+      label: "AI Scans", 
+      value: finalReportData.aiScans.toString(),
+      color: "text-blue-500"
     },
     { 
-      icon: AlertTriangle, 
-      label: "Threats Found", 
-      value: reportData.threatsDetected.toString(),
-      color: "text-destructive"
-    },
-    { 
-      icon: Shield, 
-      label: "Protected Assets", 
-      value: reportData.protectedAssets.toString(),
+      icon: Users, 
+      label: "Social Media", 
+      value: finalReportData.socialMediaScans.toString(),
       color: "text-green-500"
     },
     { 
-      icon: Clock, 
-      label: "Avg Response", 
-      value: reportData.resolutionTime,
+      icon: Globe, 
+      label: "Web Scans", 
+      value: finalReportData.webScans.toString(),
+      color: "text-orange-500"
+    },
+    { 
+      icon: Crown, 
+      label: "Blockchain", 
+      value: finalReportData.blockchainCertificates.toString(),
+      color: "text-yellow-500"
+    },
+    { 
+      icon: Eye, 
+      label: "Deepfakes", 
+      value: finalReportData.deepfakeDetections.toString(),
+      color: "text-purple-500"
+    },
+    { 
+      icon: AlertTriangle, 
+      label: "Threats", 
+      value: finalReportData.threatsDetected.toString(),
+      color: "text-red-500"
+    },
+    { 
+      icon: Shield, 
+      label: "Protected", 
+      value: finalReportData.protectedAssets.toString(),
+      color: "text-primary"
+    },
+    { 
+      icon: BarChart3, 
+      label: "Alerts", 
+      value: finalReportData.alertsGenerated.toString(),
       color: "text-accent"
     }
   ];
@@ -344,7 +520,7 @@ Report generated by TSMO Security Platform
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <FileText className="w-5 h-5" />
-          Daily {type === 'monitoring' ? 'Monitoring' : 'Deep Scan'} Report
+          {type === 'comprehensive' ? 'Comprehensive Daily Report' : type === 'monitoring' ? 'Monitoring Report' : 'Deep Scan Report'}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -387,15 +563,27 @@ Report generated by TSMO Security Platform
         </div>
 
         {/* Report Preview Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {reportStats.map((stat) => (
-            <div key={stat.label} className="bg-background/50 rounded-lg p-3 text-center">
-              <stat.icon className={`w-5 h-5 mx-auto mb-1 ${stat.color}`} />
-              <div className="text-lg font-bold">{stat.value}</div>
-              <div className="text-xs text-muted-foreground">{stat.label}</div>
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[1,2,3,4,5,6,7,8].map((i) => (
+              <div key={i} className="bg-background/50 rounded-lg p-3 animate-pulse">
+                <div className="h-5 w-5 bg-muted rounded mx-auto mb-1" />
+                <div className="h-6 bg-muted rounded mb-1" />
+                <div className="h-3 bg-muted rounded" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {reportStats.map((stat) => (
+              <div key={stat.label} className="bg-background/50 rounded-lg p-3 text-center">
+                <stat.icon className={`w-5 h-5 mx-auto mb-1 ${stat.color}`} />
+                <div className="text-lg font-bold">{stat.value}</div>
+                <div className="text-xs text-muted-foreground">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Generate Button */}
         <Button 
@@ -408,7 +596,7 @@ Report generated by TSMO Security Platform
         </Button>
         
         <p className="text-xs text-muted-foreground text-center">
-          Reports include security metrics, threat analysis, and compliance data
+          Comprehensive reports include AI scans, social media monitoring, web scanning, blockchain verification, and threat analysis
         </p>
       </CardContent>
     </Card>
