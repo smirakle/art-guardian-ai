@@ -2,8 +2,31 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Download, FileText, Scale, Shield, Eye, AlertTriangle } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { 
+  Download, 
+  FileText, 
+  Scale, 
+  Shield, 
+  Eye, 
+  AlertTriangle, 
+  Search, 
+  Filter,
+  Clock,
+  Star,
+  CheckCircle,
+  ArrowRight,
+  Users,
+  Gavel,
+  FileCheck,
+  BookOpen,
+  Zap,
+  Award
+} from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import jsPDF from 'jspdf';
@@ -12,16 +35,26 @@ interface LegalTemplate {
   id: string;
   title: string;
   description: string;
-  category: 'dmca' | 'contracts' | 'policies' | 'notices';
+  category: 'dmca' | 'contracts' | 'policies' | 'notices' | 'compliance' | 'licensing';
   format: 'pdf' | 'docx' | 'txt';
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   icon: React.ComponentType<any>;
   content: string;
+  tags: string[];
+  estimatedTime: string;
+  popularity: number;
+  lastUpdated: string;
+  featured?: boolean;
 }
 
 const LegalTemplates = () => {
   const { toast } = useToast();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'popular' | 'recent' | 'alphabetical'>('popular');
+  const [previewTemplate, setPreviewTemplate] = useState<LegalTemplate | null>(null);
 
   useEffect(() => {
     checkLoginStatus();
@@ -55,11 +88,16 @@ const LegalTemplates = () => {
     {
       id: 'dmca-takedown',
       title: 'DMCA Takedown Notice',
-      description: 'Complete DMCA takedown notice template for copyright infringement',
+      description: 'Complete DMCA takedown notice template for copyright infringement with step-by-step guidance',
       category: 'dmca',
       format: 'pdf',
       difficulty: 'beginner',
       icon: Shield,
+      tags: ['copyright', 'dmca', 'takedown', 'infringement'],
+      estimatedTime: '15 min',
+      popularity: 95,
+      lastUpdated: '2024-01-15',
+      featured: true,
       content: `
 DMCA TAKEDOWN NOTICE
 
@@ -114,11 +152,15 @@ Sincerely,
     {
       id: 'cease-desist',
       title: 'Cease and Desist Letter',
-      description: 'Professional cease and desist letter for copyright infringement',
+      description: 'Professional cease and desist letter for copyright infringement with legal backing',
       category: 'notices',
       format: 'pdf',
       difficulty: 'intermediate',
       icon: AlertTriangle,
+      tags: ['cease-desist', 'copyright', 'legal-notice', 'enforcement'],
+      estimatedTime: '20 min',
+      popularity: 87,
+      lastUpdated: '2024-01-10',
       content: `
 CEASE AND DESIST LETTER
 
@@ -169,11 +211,16 @@ Sincerely,
     {
       id: 'licensing-agreement',
       title: 'Art Licensing Agreement',
-      description: 'Standard licensing agreement template for artwork usage',
-      category: 'contracts',
+      description: 'Comprehensive licensing agreement template for artwork usage with royalty structures',
+      category: 'licensing',
       format: 'pdf',
       difficulty: 'advanced',
       icon: FileText,
+      tags: ['licensing', 'contracts', 'royalties', 'artwork'],
+      estimatedTime: '45 min',
+      popularity: 78,
+      lastUpdated: '2024-01-05',
+      featured: true,
       content: `
 ARTWORK LICENSING AGREEMENT
 
@@ -229,13 +276,80 @@ Licensee: _________________ Date: _______
       `
     },
     {
+      id: 'nft-terms',
+      title: 'NFT Terms & Conditions',
+      description: 'Modern terms and conditions specifically designed for NFT creators and marketplaces',
+      category: 'compliance',
+      format: 'pdf',
+      difficulty: 'advanced',
+      icon: Zap,
+      tags: ['nft', 'blockchain', 'digital-rights', 'terms'],
+      estimatedTime: '35 min',
+      popularity: 92,
+      lastUpdated: '2024-01-20',
+      featured: true,
+      content: `
+NFT TERMS AND CONDITIONS
+
+1. DEFINITIONS
+- "NFT" means non-fungible token
+- "Digital Asset" means the artwork or content associated with the NFT
+- "Creator" means the original artist or content creator
+- "Owner" means the current holder of the NFT
+
+2. OWNERSHIP RIGHTS
+- Purchase of NFT grants ownership of the token, not the underlying artwork
+- Creator retains all intellectual property rights
+- Owner receives limited usage rights as specified
+
+3. PERMITTED USES
+NFT owners may:
+- Display the digital asset for personal use
+- Resell the NFT through compatible platforms
+- Use in virtual worlds and metaverse platforms (where applicable)
+
+4. RESTRICTIONS
+NFT owners may NOT:
+- Create derivative works without permission
+- Use for commercial purposes beyond specified rights
+- Claim ownership of intellectual property
+- Remove or alter copyright notices
+
+5. MARKETPLACE OBLIGATIONS
+- All sales must comply with platform terms
+- Royalties must be paid to creators as specified
+- Accurate representation of NFT contents required
+
+6. ENVIRONMENTAL CONSIDERATIONS
+- Platform commits to carbon-neutral blockchain operations
+- Support for eco-friendly blockchain networks
+
+7. DISPUTE RESOLUTION
+Disputes will be resolved through:
+- Initial mediation
+- Binding arbitration if necessary
+- Applicable jurisdiction: [Location]
+
+8. SMART CONTRACT TERMS
+- NFT governed by underlying smart contract
+- Platform not responsible for blockchain-level issues
+- Gas fees responsibility of transacting party
+
+Last Updated: [Date]
+      `
+    },
+    {
       id: 'copyright-registration',
       title: 'Copyright Registration Guide',
-      description: 'Step-by-step guide for registering your artwork with the US Copyright Office',
-      category: 'policies',
+      description: 'Complete step-by-step guide for registering your artwork with copyright offices worldwide',
+      category: 'compliance',
       format: 'pdf',
       difficulty: 'beginner',
       icon: Scale,
+      tags: ['copyright', 'registration', 'protection', 'legal'],
+      estimatedTime: '30 min',
+      popularity: 84,
+      lastUpdated: '2024-01-12',
       content: `
 COPYRIGHT REGISTRATION GUIDE
 
@@ -303,12 +417,16 @@ Washington, DC 20559
     },
     {
       id: 'privacy-policy',
-      title: 'Privacy Policy Template',
-      description: 'GDPR-compliant privacy policy template for art platforms',
+      title: 'GDPR Privacy Policy',
+      description: 'Comprehensive GDPR-compliant privacy policy template for creative platforms and digital services',
       category: 'policies',
       format: 'pdf',
       difficulty: 'intermediate',
       icon: Eye,
+      tags: ['privacy', 'gdpr', 'compliance', 'data-protection'],
+      estimatedTime: '25 min',
+      popularity: 89,
+      lastUpdated: '2024-01-18',
       content: `
 PRIVACY POLICY
 
@@ -381,85 +499,6 @@ Privacy Officer
 UPDATES TO POLICY
 We will notify you of material changes to this policy.
       `
-    },
-    {
-      id: 'terms-of-service',
-      title: 'Terms of Service Template',
-      description: 'Comprehensive terms of service for creative platforms',
-      category: 'policies',
-      format: 'pdf',
-      difficulty: 'advanced',
-      icon: FileText,
-      content: `
-TERMS OF SERVICE
-
-ACCEPTANCE OF TERMS
-By using our service, you agree to these terms.
-
-SERVICE DESCRIPTION
-We provide copyright monitoring and protection services for digital artwork.
-
-USER ACCOUNTS
-- You must provide accurate information
-- You are responsible for account security
-- One account per user
-
-INTELLECTUAL PROPERTY
-- You retain ownership of your uploaded content
-- You grant us license to provide services
-- We respect copyright and intellectual property rights
-
-PROHIBITED USES
-You may not:
-- Upload content you don't own
-- Violate others' intellectual property
-- Use the service for illegal purposes
-- Attempt to circumvent security measures
-
-CONTENT STANDARDS
-Uploaded content must:
-- Be your original work
-- Not infringe on others' rights
-- Comply with applicable laws
-- Meet our quality guidelines
-
-SERVICE AVAILABILITY
-- We strive for 99.9% uptime
-- Scheduled maintenance will be announced
-- No guarantee of uninterrupted service
-
-PAYMENT TERMS
-- Subscription fees are non-refundable
-- Prices may change with notice
-- Automatic renewal unless cancelled
-
-LIMITATION OF LIABILITY
-Our liability is limited to the amount paid for services.
-
-INDEMNIFICATION
-You agree to indemnify us against claims arising from your use.
-
-TERMINATION
-We may terminate accounts for:
-- Terms of service violations
-- Non-payment
-- Abuse of service
-
-GOVERNING LAW
-These terms are governed by [State/Country] law.
-
-DISPUTE RESOLUTION
-Disputes will be resolved through binding arbitration.
-
-MODIFICATIONS
-We may update these terms with reasonable notice.
-
-CONTACT INFORMATION
-Questions about terms should be directed to:
-Legal Department
-[Your Company]
-[Contact Information]
-      `
     }
   ];
 
@@ -511,8 +550,8 @@ Legal Department
       pdf.save(fileName);
 
       toast({
-        title: "PDF Downloaded",
-        description: `${template.title} has been downloaded as a PDF.`,
+        title: "Template Downloaded",
+        description: `${template.title} has been downloaded successfully.`,
       });
     } catch (error) {
       toast({
@@ -525,91 +564,140 @@ Legal Department
 
   const categoryLabels = {
     dmca: 'DMCA & Takedowns',
-    contracts: 'Contracts & Licensing',
-    policies: 'Policies & Terms',
-    notices: 'Legal Notices'
+    contracts: 'Contracts',
+    policies: 'Privacy & Policies',
+    notices: 'Legal Notices',
+    compliance: 'Compliance',
+    licensing: 'Licensing'
+  };
+
+  const categoryIcons = {
+    dmca: Shield,
+    contracts: FileText,
+    policies: Eye,
+    notices: AlertTriangle,
+    compliance: CheckCircle,
+    licensing: Award
   };
 
   const difficultyColors = {
-    beginner: 'bg-green-100 text-green-800',
-    intermediate: 'bg-yellow-100 text-yellow-800',
-    advanced: 'bg-red-100 text-red-800'
+    beginner: 'bg-green-100 text-green-800 border-green-200',
+    intermediate: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    advanced: 'bg-red-100 text-red-800 border-red-200'
   };
 
-  const groupedTemplates = templates.reduce((acc, template) => {
-    if (!acc[template.category]) {
-      acc[template.category] = [];
-    }
-    acc[template.category].push(template);
-    return acc;
-  }, {} as Record<string, LegalTemplate[]>);
+  // Filter and sort templates
+  const filteredTemplates = templates
+    .filter(template => {
+      const matchesSearch = template.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           template.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           template.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchesCategory = selectedCategory === 'all' || template.category === selectedCategory;
+      const matchesDifficulty = selectedDifficulty === 'all' || template.difficulty === selectedDifficulty;
+      
+      return matchesSearch && matchesCategory && matchesDifficulty;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'popular':
+          return b.popularity - a.popularity;
+        case 'recent':
+          return new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime();
+        case 'alphabetical':
+          return a.title.localeCompare(b.title);
+        default:
+          return 0;
+      }
+    });
+
+  const featuredTemplates = templates.filter(t => t.featured);
 
   return (
     <div className="space-y-8">
-      <div className="text-center">
-        <h2 className="text-3xl font-bold mb-4">Legal Templates Library</h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          Download professional legal templates to protect your creative work. 
-          All templates are designed to be easy to customize and legally compliant.
+      {/* Header Section */}
+      <div className="text-center space-y-4">
+        <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full text-primary font-medium">
+          <BookOpen className="h-4 w-4" />
+          Legal Templates Library
+        </div>
+        <h1 className="text-4xl font-bold gradient-text">
+          Professional Legal Templates
+        </h1>
+        <p className="text-muted-foreground max-w-3xl mx-auto text-lg">
+          Download expertly crafted legal templates to protect your creative work. 
+          All templates are designed by legal professionals and updated regularly to ensure compliance.
         </p>
       </div>
 
-      {Object.entries(groupedTemplates).map(([category, categoryTemplates]) => (
-        <div key={category} className="space-y-4">
-          <h3 className="text-2xl font-semibold">{categoryLabels[category as keyof typeof categoryLabels]}</h3>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categoryTemplates.map((template) => {
+      {/* Stats Section */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card className="text-center p-4">
+          <div className="text-2xl font-bold text-primary">{templates.length}</div>
+          <div className="text-sm text-muted-foreground">Templates</div>
+        </Card>
+        <Card className="text-center p-4">
+          <div className="text-2xl font-bold text-green-600">Free</div>
+          <div className="text-sm text-muted-foreground">Always</div>
+        </Card>
+        <Card className="text-center p-4">
+          <div className="text-2xl font-bold text-blue-600">6</div>
+          <div className="text-sm text-muted-foreground">Categories</div>
+        </Card>
+        <Card className="text-center p-4">
+          <div className="text-2xl font-bold text-purple-600">100%</div>
+          <div className="text-sm text-muted-foreground">Legal Compliant</div>
+        </Card>
+      </div>
+
+      {/* Featured Templates */}
+      {featuredTemplates.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Star className="h-5 w-5 text-yellow-500 fill-current" />
+            <h2 className="text-2xl font-semibold">Featured Templates</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {featuredTemplates.map((template) => {
               const Icon = template.icon;
-              
               return (
-                <Card key={template.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                        <Icon className="h-6 w-6 text-primary" />
-                      </div>
-                      <Badge className={difficultyColors[template.difficulty]}>
-                        {template.difficulty}
-                      </Badge>
+                <Card key={`featured-${template.id}`} className="relative overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-primary/20">
+                  <div className="absolute top-3 right-3">
+                    <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0">
+                      <Star className="h-3 w-3 mr-1 fill-current" />
+                      Featured
+                    </Badge>
+                  </div>
+                  <CardHeader className="pb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/70 rounded-xl flex items-center justify-center mb-3">
+                      <Icon className="h-6 w-6 text-white" />
                     </div>
                     <CardTitle className="text-lg">{template.title}</CardTitle>
-                    <CardDescription>{template.description}</CardDescription>
+                    <CardDescription className="line-clamp-2">{template.description}</CardDescription>
                   </CardHeader>
-                  
                   <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <FileText className="h-4 w-4" />
-                          {template.format.toUpperCase()}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between text-sm text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-4 w-4" />
+                          {template.estimatedTime}
                         </div>
-                        
-                        <Badge className="bg-green-100 text-green-800">
-                          Free
-                        </Badge>
+                        <div className="flex items-center gap-1">
+                          <Users className="h-4 w-4" />
+                          {template.popularity}% popular
+                        </div>
                       </div>
-                      
-                      <div className="flex justify-end">
-                        {isLoggedIn ? (
-                          <Button
-                            onClick={() => downloadTemplate(template)}
-                            size="sm"
-                            className="flex items-center gap-2"
-                          >
-                            <Download className="h-4 w-4" />
-                            Download
-                          </Button>
-                        ) : (
-                          <Button
-                            onClick={() => handleDownloadTemplate(template)}
-                            size="sm"
-                            className="flex items-center gap-2"
-                          >
-                            <Download className="h-4 w-4" />
-                            Download
-                          </Button>
-                        )}
+                      <div className="flex justify-between items-center">
+                        <Badge className={difficultyColors[template.difficulty]}>
+                          {template.difficulty}
+                        </Badge>
+                        <Button
+                          onClick={() => handleDownloadTemplate(template)}
+                          size="sm"
+                          className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                        >
+                          <Download className="h-4 w-4 mr-2" />
+                          Download
+                        </Button>
                       </div>
                     </div>
                   </CardContent>
@@ -618,21 +706,259 @@ Legal Department
             })}
           </div>
         </div>
-      ))}
+      )}
 
-      <div className="mt-12 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-        <div className="flex items-start gap-3">
-          <AlertTriangle className="h-6 w-6 text-yellow-600 flex-shrink-0 mt-0.5" />
-          <div>
-            <h4 className="font-semibold text-yellow-800 mb-2">Legal Disclaimer</h4>
-            <p className="text-yellow-700 text-sm">
-              These templates are provided for informational purposes only and do not constitute legal advice. 
-              We recommend consulting with a qualified attorney before using any legal document. 
-              Laws vary by jurisdiction, and these templates may need modification to comply with local requirements.
-            </p>
+      {/* Search and Filter Section */}
+      <Card className="p-6">
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 mb-4">
+            <Filter className="h-5 w-5" />
+            <h3 className="text-lg font-semibold">Find Your Template</h3>
+          </div>
+          
+          <div className="grid md:grid-cols-4 gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search templates..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger>
+                <SelectValue placeholder="All Categories" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {Object.entries(categoryLabels).map(([key, label]) => (
+                  <SelectItem key={key} value={key}>{label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
+              <SelectTrigger>
+                <SelectValue placeholder="All Levels" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Levels</SelectItem>
+                <SelectItem value="beginner">Beginner</SelectItem>
+                <SelectItem value="intermediate">Intermediate</SelectItem>
+                <SelectItem value="advanced">Advanced</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Select value={sortBy} onValueChange={(value: 'popular' | 'recent' | 'alphabetical') => setSortBy(value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="popular">Most Popular</SelectItem>
+                <SelectItem value="recent">Recently Updated</SelectItem>
+                <SelectItem value="alphabetical">Alphabetical</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
+      </Card>
+
+      {/* Templates Grid */}
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-semibold">
+            {selectedCategory === 'all' ? 'All Templates' : categoryLabels[selectedCategory as keyof typeof categoryLabels]}
+          </h2>
+          <div className="text-sm text-muted-foreground">
+            {filteredTemplates.length} template{filteredTemplates.length !== 1 ? 's' : ''} found
+          </div>
+        </div>
+
+        {filteredTemplates.length === 0 ? (
+          <Card className="p-12 text-center">
+            <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold mb-2">No templates found</h3>
+            <p className="text-muted-foreground">Try adjusting your search criteria or browse all categories.</p>
+          </Card>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredTemplates.map((template) => {
+              const Icon = template.icon;
+              
+              return (
+                <Card key={template.id} className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                        <Icon className="h-6 w-6 text-primary" />
+                      </div>
+                      <Badge className={difficultyColors[template.difficulty]}>
+                        {template.difficulty}
+                      </Badge>
+                    </div>
+                    <CardTitle className="text-lg group-hover:text-primary transition-colors">
+                      {template.title}
+                    </CardTitle>
+                    <CardDescription className="line-clamp-2">
+                      {template.description}
+                    </CardDescription>
+                  </CardHeader>
+                  
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex flex-wrap gap-1">
+                        {template.tags.slice(0, 3).map((tag) => (
+                          <Badge key={tag} variant="outline" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                        {template.tags.length > 3 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{template.tags.length - 3} more
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {template.estimatedTime}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <FileText className="h-3 w-3" />
+                          {template.format.toUpperCase()}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Users className="h-3 w-3" />
+                          {template.popularity}%
+                        </div>
+                      </div>
+                      
+                      <Separator />
+                      
+                      <div className="flex gap-2">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="flex-1"
+                              onClick={() => setPreviewTemplate(template)}
+                            >
+                              <Eye className="h-4 w-4 mr-2" />
+                              Preview
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                            <DialogHeader>
+                              <DialogTitle className="flex items-center gap-2">
+                                <Icon className="h-5 w-5" />
+                                {template.title}
+                              </DialogTitle>
+                              <DialogDescription>
+                                {template.description}
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                              <div className="flex gap-2 flex-wrap">
+                                {template.tags.map((tag) => (
+                                  <Badge key={tag} variant="secondary" className="text-xs">
+                                    {tag}
+                                  </Badge>
+                                ))}
+                              </div>
+                              <Separator />
+                              <div className="bg-muted/50 p-4 rounded-lg">
+                                <pre className="whitespace-pre-wrap text-sm font-mono">
+                                  {template.content.trim().substring(0, 1000)}...
+                                </pre>
+                              </div>
+                              <div className="flex justify-end">
+                                <Button onClick={() => handleDownloadTemplate(template)}>
+                                  <Download className="h-4 w-4 mr-2" />
+                                  Download Full Template
+                                </Button>
+                              </div>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                        
+                        <Button
+                          onClick={() => handleDownloadTemplate(template)}
+                          size="sm"
+                          className="flex-1"
+                        >
+                          <Download className="h-4 w-4 mr-2" />
+                          Download
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
       </div>
+
+      {/* Category Quick Links */}
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold mb-4">Browse by Category</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {Object.entries(categoryLabels).map(([key, label]) => {
+            const IconComponent = categoryIcons[key as keyof typeof categoryIcons];
+            const categoryCount = templates.filter(t => t.category === key).length;
+            
+            return (
+              <Button
+                key={key}
+                variant="outline"
+                className="h-auto p-4 flex flex-col items-center gap-2 hover:bg-primary/5"
+                onClick={() => setSelectedCategory(key)}
+              >
+                <IconComponent className="h-6 w-6" />
+                <div className="text-center">
+                  <div className="font-medium text-sm">{label}</div>
+                  <div className="text-xs text-muted-foreground">{categoryCount} templates</div>
+                </div>
+              </Button>
+            );
+          })}
+        </div>
+      </Card>
+
+      {/* Legal Disclaimer */}
+      <Card className="border-yellow-200 bg-yellow-50/50">
+        <CardContent className="p-6">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="h-6 w-6 text-yellow-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-semibold text-yellow-800 mb-2">Important Legal Disclaimer</h4>
+              <p className="text-yellow-700 text-sm mb-3">
+                These templates are provided for informational purposes only and do not constitute legal advice. 
+                We strongly recommend consulting with a qualified attorney before using any legal document. 
+                Laws vary by jurisdiction, and these templates may need modification to comply with local requirements.
+              </p>
+              <div className="flex items-center gap-4 text-sm text-yellow-700">
+                <div className="flex items-center gap-1">
+                  <CheckCircle className="h-4 w-4" />
+                  Regularly Updated
+                </div>
+                <div className="flex items-center gap-1">
+                  <Gavel className="h-4 w-4" />
+                  Legal Professional Reviewed
+                </div>
+                <div className="flex items-center gap-1">
+                  <Shield className="h-4 w-4" />
+                  Best Practice Guidelines
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
