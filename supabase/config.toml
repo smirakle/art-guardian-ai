@@ -25,19 +25,19 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.admin-maintenance-auth]
-verify_jwt = false
+verify_jwt = true
 
 [functions.admin-system-health]
-verify_jwt = false
+verify_jwt = true
 
 [functions.admin-user-details]
-verify_jwt = false
+verify_jwt = true
 
 [functions.admin-realtime-dashboard]
-verify_jwt = false
+verify_jwt = true
 
 [functions.admin-security-scan]
-verify_jwt = false
+verify_jwt = true
 
 [functions.admin-performance-metrics]
-verify_jwt = false
+verify_jwt = true
