@@ -44,6 +44,7 @@ import { ScanHistoryResults } from '@/components/ScanHistoryResults';
 import ScheduledScansManager from '@/components/ScheduledScansManager';
 import { WhiteLabelManager } from '@/components/WhiteLabelManager';
 import AdvancedBlockchain from '@/components/AdvancedBlockchain';
+import FeatureGuard from '@/components/FeatureGuard';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 
 // Import monitoring components from Upload page
@@ -364,7 +365,7 @@ const Dashboard = () => {
         {/* Dashboard Navigation */}
         <div className="mb-8">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-gray-700">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-gray-700">
               {/* Real-Time AI */}
               <button 
                 onClick={() => {
@@ -473,6 +474,24 @@ const Dashboard = () => {
                 <p className="text-sm text-gray-600 dark:text-gray-400">Detailed scan results</p>
               </button>
 
+              {/* White Label */}
+              <button 
+                onClick={() => {
+                  const section = document.getElementById('whitelabel-section');
+                  section?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left group"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center group-hover:bg-indigo-200 dark:group-hover:bg-indigo-800 transition-colors">
+                    <Building2 className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  <Badge variant="secondary" className="text-xs">Pro</Badge>
+                </div>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">White Label</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Custom branding</p>
+              </button>
+
               {/* Blockchain */}
               <button 
                 onClick={() => {
@@ -496,6 +515,26 @@ const Dashboard = () => {
 
         {/* Main Dashboard Content */}
         <div className="space-y-12">
+
+          {/* White Label Section */}
+          <div id="whitelabel-section" className="scroll-mt-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
+                <Building2 className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">White Label Management</h2>
+                <p className="text-muted-foreground">Create and manage your branded platform with custom domains and styling</p>
+              </div>
+            </div>
+            <FeatureGuard 
+              feature="white_label" 
+              fallbackTitle="White Label Access Required"
+              fallbackDescription="Upgrade to Professional or Enterprise plan to access white label management features."
+            >
+              <WhiteLabelManager />
+            </FeatureGuard>
+          </div>
 
           {/* Daily Reports Section */}
           <div id="reports-section" className="scroll-mt-8">
