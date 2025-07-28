@@ -63,7 +63,7 @@ const networks = [
   }
 ];
 
-export default function NFTMintingWidget() {
+function NFTMintingWidget() {
   const { user } = useAuth();
   const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [selectedNetwork, setSelectedNetwork] = useState('polygon');
@@ -400,4 +400,4 @@ export default function NFTMintingWidget() {
   );
 }
 
-
+export default NFTMintingWidget;
