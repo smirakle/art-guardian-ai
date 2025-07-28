@@ -33,10 +33,12 @@ import { useToast } from "@/hooks/use-toast";
 import { RealTimeMonitoringWidget } from '@/components/dashboard/RealTimeMonitoringWidget';
 import { RealTimeBlockchainWidget } from '@/components/dashboard/RealTimeBlockchainWidget';
 import { RecentDetectionsWidget } from '@/components/dashboard/RecentDetectionsWidget';
+import NFTMintingWidget from '@/components/nft/NFTMintingWidget';
+import { NFTMintingAnalytics } from '@/components/nft/NFTMintingAnalytics';
+import { LiveNFTStatusFeed } from '@/components/nft/LiveNFTStatusFeed';
+import { NFTGasPriceTracker } from '@/components/nft/NFTGasPriceTracker';
 import { MonitoringWidget } from '@/components/dashboard/MonitoringWidget';
 import { UploadWidget } from '@/components/dashboard/UploadWidget';
-import NFTMintingWidget from '@/components/nft/NFTMintingWidget';
-import NFTAnalytics from '@/components/nft/NFTAnalytics';
 import DailyReport from '@/components/DailyReport';
 import { ScanHistoryResults } from '@/components/ScanHistoryResults';
 import ScheduledScansManager from '@/components/ScheduledScansManager';
@@ -676,7 +678,25 @@ const Dashboard = () => {
               </Card>
             </div>
 
-            <RealTimeBlockchainWidget />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              <RealTimeBlockchainWidget />
+              <NFTMintingWidget />
+            </div>
+
+            {/* NFT Real-Time Analytics */}
+            <div className="mb-8">
+              <h3 className="text-xl font-semibold mb-4">Real-Time NFT Analytics</h3>
+              <NFTMintingAnalytics />
+            </div>
+
+            {/* Live Activity Feed and Gas Tracker */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              <LiveNFTStatusFeed />
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Gas Price Monitor</h3>
+                <NFTGasPriceTracker />
+              </div>
+            </div>
             
             {/* Advanced Blockchain Section */}
             <div className="mt-8">
