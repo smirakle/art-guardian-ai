@@ -44,6 +44,11 @@ interface ReportData {
   socialMediaAccounts: number;
   copyrightMatches: number;
   socialMediaThreats: number;
+  // Real-world protection data
+  adversarialProtections: number;
+  rightsMetadataInjections: number;
+  crawlerBlockingApplied: number;
+  totalProtectedFiles: number;
 }
 
 interface MonitoringStats {
@@ -150,6 +155,14 @@ const DailyReport = ({ type = 'comprehensive', data, realTimeStats }: DailyRepor
           .lt('detected_at', nextDay)
       ]);
 
+      // Load real-world protection data
+      const { realWorldProtection } = await import('@/lib/realWorldProtection');
+      const protectionRecords = realWorldProtection.getProtectionRecords(dateStr);
+      
+      const adversarialCount = protectionRecords.filter(r => r.methods_applied.includes('Adversarial Noise')).length;
+      const metadataCount = protectionRecords.filter(r => r.methods_applied.includes('Rights Metadata')).length;
+      const crawlerBlockingCount = protectionRecords.filter(r => r.methods_applied.includes('Web Crawler Blocking')).length;
+
       const compiledData: ReportData = {
         date: dateStr,
         protectedAssets: artworkData.data?.length || 0,
@@ -167,7 +180,12 @@ const DailyReport = ({ type = 'comprehensive', data, realTimeStats }: DailyRepor
         alertsGenerated: (copyrightMatchesData.data?.length || 0) + (socialMediaResultsData.data?.length || 0),
         marketplacesScanned: 150,
         criticalFindings: copyrightMatchesData.data?.filter(m => m.threat_level === 'high').length || 0,
-        resolutionTime: "2.3 hours"
+        resolutionTime: "2.3 hours",
+        // Real-world protection metrics
+        adversarialProtections: adversarialCount,
+        rightsMetadataInjections: metadataCount,
+        crawlerBlockingApplied: crawlerBlockingCount,
+        totalProtectedFiles: protectionRecords.length
       };
 
       setReportData(compiledData);
@@ -201,7 +219,11 @@ const DailyReport = ({ type = 'comprehensive', data, realTimeStats }: DailyRepor
     deepfakeDetections: 0,
     socialMediaAccounts: 0,
     copyrightMatches: 0,
-    socialMediaThreats: 0
+    socialMediaThreats: 0,
+    adversarialProtections: 0,
+    rightsMetadataInjections: 0,
+    crawlerBlockingApplied: 0,
+    totalProtectedFiles: 0
   };
 
   const generateReport = async () => {
@@ -321,6 +343,17 @@ const DailyReport = ({ type = 'comprehensive', data, realTimeStats }: DailyRepor
     const metricsText = `Alerts: ${data.alertsGenerated}  •  Critical: ${data.criticalFindings}  •  Avg Resolution: ${data.resolutionTime}`;
     const deepScanText = type === 'deep-scan' || type === 'comprehensive' ? `  •  Marketplaces: ${data.marketplacesScanned}` : '';
     doc.text(metricsText + deepScanText, margin, yPosition);
+    yPosition += 10;
+    
+    // Real-world protection metrics
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "bold");
+    doc.text("REAL-WORLD PROTECTION APPLIED", margin, yPosition);
+    yPosition += 8;
+    doc.setFont("helvetica", "normal");
+    doc.text(`Adversarial Noise: ${data.adversarialProtections}  •  Rights Metadata: ${data.rightsMetadataInjections}  •  Crawler Blocking: ${data.crawlerBlockingApplied}`, margin, yPosition);
+    yPosition += 6;
+    doc.text(`Total Protected Files: ${data.totalProtectedFiles}`, margin, yPosition);
     yPosition += 15;
 
     // Threat Analysis
@@ -416,6 +449,12 @@ Alerts Generated: ${data.alertsGenerated}
 Critical Findings: ${data.criticalFindings}
 Average Resolution Time: ${data.resolutionTime}
 ${type === 'deep-scan' || type === 'comprehensive' ? `Marketplaces Scanned: ${data.marketplacesScanned}` : ''}
+
+=== REAL-WORLD PROTECTION APPLIED ===
+Adversarial Noise Protection: ${data.adversarialProtections} files
+Rights Metadata Injections: ${data.rightsMetadataInjections} files
+Web Crawler Blocking: ${data.crawlerBlockingApplied} files
+Total Protected Files: ${data.totalProtectedFiles} files
 
 === THREAT ANALYSIS ===
 Risk Level: ${data.threatsDetected === 0 ? 'LOW' : data.threatsDetected < 5 ? 'MEDIUM' : 'HIGH'}

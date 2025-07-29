@@ -74,7 +74,35 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
     onFileUpload(files);
   };
 
-  const handleProtectionApplied = (protectionLevel: string, methods: string[]) => {
+  const handleProtectionApplied = async (protectionLevel: string, methods: string[]) => {
+    const currentFile = pendingFiles[currentFileIndex];
+    
+    // Apply real-world protection
+    try {
+      const { realWorldProtection } = await import('@/lib/realWorldProtection');
+      const result = await realWorldProtection.protectFile(currentFile.file, {
+        adversarialNoise: methods.includes('Adversarial Protection'),
+        rightsMetadata: methods.includes('Rights Metadata'),
+        webCrawlerBlocking: methods.includes('Web Crawler Blocking'),
+        protectionLevel: protectionLevel as any,
+        copyrightInfo: {
+          owner: 'TSMO User',
+          year: new Date().getFullYear(),
+          rights: 'All Rights Reserved'
+        }
+      });
+
+      if (result.success && result.protectedBlob) {
+        // Replace the file with protected version
+        const protectedFile = new File([result.protectedBlob], currentFile.file.name, {
+          type: currentFile.file.type
+        });
+        pendingFiles[currentFileIndex].file = protectedFile;
+      }
+    } catch (error) {
+      console.error('Protection failed:', error);
+    }
+
     // Move to next file or finish
     if (currentFileIndex < pendingFiles.length - 1) {
       setCurrentFileIndex(prev => prev + 1);
