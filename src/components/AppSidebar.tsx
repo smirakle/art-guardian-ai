@@ -1,4 +1,4 @@
-import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
@@ -99,6 +99,20 @@ export function AppSidebar() {
                     >
                       <BarChart3 className="w-4 h-4" />
                       {!collapsed && <span>SLA Status</span>}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )}
+
+                {/* Custom Integrations for Enterprise */}
+                {subscription?.plan_id === 'enterprise' && (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => navigate('/custom-integrations')}
+                      isActive={isActive('/custom-integrations')}
+                      className="flex items-center gap-2"
+                    >
+                      <Settings className="w-4 h-4" />
+                      {!collapsed && <span>Custom Integrations</span>}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )}
