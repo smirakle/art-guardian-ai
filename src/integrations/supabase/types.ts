@@ -337,6 +337,48 @@ export type Database = {
           },
         ]
       }
+      custom_integrations: {
+        Row: {
+          api_key: string
+          config: Json
+          created_at: string
+          endpoint_url: string | null
+          id: string
+          last_used: string | null
+          name: string
+          status: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          api_key: string
+          config?: Json
+          created_at?: string
+          endpoint_url?: string | null
+          id?: string
+          last_used?: string | null
+          name: string
+          status?: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          api_key?: string
+          config?: Json
+          created_at?: string
+          endpoint_url?: string | null
+          id?: string
+          last_used?: string | null
+          name?: string
+          status?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       deepfake_matches: {
         Row: {
           claimed_location: string | null

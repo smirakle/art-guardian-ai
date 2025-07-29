@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { FeatureGuard } from '@/components/FeatureGuard';
+import FeatureGuard from '@/components/FeatureGuard';
 import { 
   Plus, 
   Trash2, 
@@ -29,13 +29,15 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface CustomIntegration {
   id: string;
+  user_id: string;
   name: string;
-  type: 'webhook' | 'api' | 'export';
-  status: 'active' | 'inactive' | 'error';
+  type: string;
+  status: string;
   endpoint_url?: string;
   api_key: string;
-  config: Record<string, any>;
+  config: any;
   created_at: string;
+  updated_at: string;
   last_used?: string;
 }
 
@@ -85,11 +87,15 @@ export const CustomIntegrations: React.FC = () => {
 
   const createIntegration = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Authentication required');
+      
       const apiKey = generateApiKey();
       
       const { data, error } = await supabase
         .from('custom_integrations')
         .insert({
+          user_id: user.id,
           name: formData.name,
           type: formData.type,
           endpoint_url: formData.endpoint_url,
@@ -226,7 +232,7 @@ export const CustomIntegrations: React.FC = () => {
   };
 
   return (
-    <FeatureGuard feature="enterprise_integrations" plan="enterprise">
+    <FeatureGuard feature="enterprise_integrations" fallbackTitle="Enterprise Integrations" fallbackDescription="Custom integrations and APIs for enterprise customers">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
