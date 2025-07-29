@@ -1,8 +1,9 @@
-import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ export function AppSidebar() {
   const currentPath = location.pathname;
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const { user, role, signOut } = useAuth();
+  const { subscription } = useSubscription();
   const { t } = useTranslation();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
@@ -86,6 +88,20 @@ export function AppSidebar() {
                     </SidebarMenuItem>
                   );
                 })}
+                
+                {/* SLA Status for Professional/Enterprise */}
+                {(subscription?.plan_id === 'professional' || subscription?.plan_id === 'enterprise') && (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => navigate('/sla-status')}
+                      isActive={isActive('/sla-status')}
+                      className="flex items-center gap-2"
+                    >
+                      <BarChart3 className="w-4 h-4" />
+                      {!collapsed && <span>SLA Status</span>}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

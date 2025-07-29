@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { CheckCircle, Star, Shield, Zap, Crown, Building2, CreditCard, User, Mail, Phone, MapPin, Lock, UserCheck, Tag, Users } from "lucide-react";
+import { SLAGuarantees } from "@/components/sla/SLAGuarantees";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -799,6 +800,11 @@ const Pricing = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* SLA Guarantees Section */}
+        <div className="mt-16">
+          <SLAGuarantees showComparison={true} />
+        </div>
 
         {/* FAQ Section */}
         <div className="mt-16 text-center">
