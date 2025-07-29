@@ -88,6 +88,45 @@ const FAQ = () => {
         {
           question: "Can I stop AI models from training on my work?",
           answer: "While complete prevention is complex, TSMO identifies AI training use so you can file removal requests, add protective metadata, or pursue legal action if your rights are violated."
+        },
+        {
+          question: "What is Advanced Blockchain Technology and how is it different from regular blockchain verification?",
+          answer: (
+            <div>
+              <p className="mb-3"><strong>Advanced Blockchain Technology</strong> in TSMO Watch provides enterprise-grade intellectual property protection through sophisticated multi-layer blockchain registration and verification systems.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Key differences from regular blockchain verification:</h4>
+                <div className="space-y-3">
+                  <div>
+                    <strong>Regular Blockchain Verification:</strong>
+                    <ul className="ml-4 mt-1 space-y-1 text-sm">
+                      <li>• Simple hash registration on a single network</li>
+                      <li>• Basic timestamp proof</li>
+                      <li>• Limited metadata storage</li>
+                      <li>• No smart contract automation</li>
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <strong>Advanced Blockchain Technology:</strong>
+                    <ul className="ml-4 mt-1 space-y-1 text-sm">
+                      <li>• Multi-network deployment (Ethereum, Polygon, Arbitrum)</li>
+                      <li>• Smart contract-based ownership proofs</li>
+                      <li>• IPFS integration for decentralized metadata storage</li>
+                      <li>• Cryptographic fingerprinting with multiple hash algorithms</li>
+                      <li>• Gas optimization and transaction batching</li>
+                      <li>• Automated royalty and licensing enforcement</li>
+                      <li>• Cross-chain verification capabilities</li>
+                      <li>• Immutable audit trails with legal compliance</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              <p className="text-sm">This advanced system provides court-admissible proof of ownership, automated rights management, and enterprise-level security for high-value creative assets.</p>
+            </div>
+          )
         }
       ]
     }
