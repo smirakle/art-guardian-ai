@@ -53,6 +53,7 @@ import RealTimeImageAnalysis from '@/components/RealTimeImageAnalysis';
 import SocialMediaAccountManager from '@/components/SocialMediaAccountManager';
 import SocialMediaMonitoringResults from '@/components/SocialMediaMonitoringResults';
 import { ComprehensiveWebScanner } from '@/components/ComprehensiveWebScanner';
+import { AIProtectionStatusWidget } from '@/components/dashboard/AIProtectionStatusWidget';
 
 interface DashboardStats {
   protectedArtworks: number;
@@ -361,6 +362,11 @@ const Dashboard = () => {
               <Progress value={stats.protectionScore} className="mt-2" />
             </CardContent>
           </Card>
+        </div>
+
+        {/* AI Protection Status Widget */}
+        <div className="mb-8">
+          <AIProtectionStatusWidget />
         </div>
 
         {/* SLA Status Widget for Professional/Enterprise */}
