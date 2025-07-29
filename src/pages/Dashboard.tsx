@@ -40,7 +40,7 @@ import { NFTGasPriceTracker } from '@/components/nft/NFTGasPriceTracker';
 import { MonitoringWidget } from '@/components/dashboard/MonitoringWidget';
 import { UploadWidget } from '@/components/dashboard/UploadWidget';
 import DailyReport from '@/components/DailyReport';
-import { ScanHistoryResults } from '@/components/ScanHistoryResults';
+import { UnifiedScanResults } from '@/components/dashboard/UnifiedScanResults';
 import ScheduledScansManager from '@/components/ScheduledScansManager';
 import { WhiteLabelManager } from '@/components/WhiteLabelManager';
 import AdvancedBlockchain from '@/components/AdvancedBlockchain';
@@ -51,7 +51,6 @@ import { SLAStatusWidget } from '@/components/sla/SLAStatusWidget';
 // Import monitoring components from Upload page
 import RealTimeImageAnalysis from '@/components/RealTimeImageAnalysis';
 import SocialMediaAccountManager from '@/components/SocialMediaAccountManager';
-import SocialMediaMonitoringResults from '@/components/SocialMediaMonitoringResults';
 import { ComprehensiveWebScanner } from '@/components/ComprehensiveWebScanner';
 import { AIProtectionStatusWidget } from '@/components/dashboard/AIProtectionStatusWidget';
 
@@ -547,22 +546,21 @@ const Dashboard = () => {
 
           {/* White Label Section */}
           <div id="whitelabel-section" className="scroll-mt-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
-                <Building2 className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+              {/* Dashboard Content Widgets */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <MonitoringWidget />
+                <UploadWidget />
               </div>
-              <div>
-                <h2 className="text-2xl font-bold text-foreground">White Label Management</h2>
-                <p className="text-muted-foreground">Create and manage your branded platform with custom domains and styling</p>
+
+              {/* Daily Report */}
+              <div className="mb-8">
+                <DailyReport />
               </div>
-            </div>
-            <FeatureGuard 
-              feature="white_label" 
-              fallbackTitle="White Label Access Required"
-              fallbackDescription="Upgrade to Professional or Enterprise plan to access white label management features."
-            >
-              <WhiteLabelManager />
-            </FeatureGuard>
+
+              {/* Unified Scan Results */}
+              <div className="mb-8">
+                <UnifiedScanResults />
+              </div>
           </div>
 
           {/* Daily Reports Section */}
@@ -590,7 +588,7 @@ const Dashboard = () => {
                 <p className="text-muted-foreground">Detailed history of all your scans and detections</p>
               </div>
             </div>
-            <ScanHistoryResults />
+            <UnifiedScanResults />
           </div>
 
           {/* Welcome Section */}
@@ -642,9 +640,6 @@ const Dashboard = () => {
               </div>
             </div>
             <SocialMediaAccountManager />
-            <div className="mt-6">
-              <SocialMediaMonitoringResults />
-            </div>
           </div>
 
           {/* Deepfake Detection Section */}
