@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Shield, Eye, Zap, FileText, Lock, Globe, CheckCircle, Clock, AlertTriangle, Settings } from "lucide-react";
+import { Shield, Eye, Zap, FileText, Lock, Globe, CheckCircle, Clock, AlertTriangle, Settings, Download } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from "@/components/ui/use-toast";
+import { AIProtectionCertificateGenerator } from '@/lib/aiProtectionCertificate';
 
 interface ProtectionStatus {
   method: string;
@@ -17,6 +20,9 @@ interface ProtectionStatus {
 
 export const AIProtectionStatusWidget: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const protectionMethods: ProtectionStatus[] = [
     {
@@ -85,6 +91,52 @@ export const AIProtectionStatusWidget: React.FC = () => {
   
   const activeMethodsCount = protectionMethods.filter(method => method.status === 'active').length;
   const protectionScore = Math.round((activeMethodsCount / protectionMethods.length) * 100);
+
+  const handleDownloadCertificate = async () => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to download your protection certificate.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsDownloading(true);
+
+    try {
+      const activeMethods = protectionMethods
+        .filter(method => method.status === 'active')
+        .map(method => method.method);
+
+      const certificateData = {
+        userId: user.id,
+        protectedFiles: totalProtectedFiles,
+        protectionMethods: activeMethods,
+        certificateDate: new Date(),
+        protectionLevel: protectionScore >= 80 ? 'maximum' : protectionScore >= 60 ? 'advanced' : 'basic',
+        verificationId: `VERIFY-${Date.now().toString(36).toUpperCase()}`
+      };
+
+      const pdfBlob = AIProtectionCertificateGenerator.generateProtectionCertificate(certificateData);
+      AIProtectionCertificateGenerator.downloadCertificate(pdfBlob, 'pdf');
+
+      toast({
+        title: "Certificate Downloaded",
+        description: "Your AI protection certificate has been downloaded successfully.",
+        duration: 5000
+      });
+    } catch (error) {
+      console.error('Error generating certificate:', error);
+      toast({
+        title: "Download Failed",
+        description: "Failed to generate protection certificate. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   return (
     <Card className="w-full">
@@ -178,8 +230,15 @@ export const AIProtectionStatusWidget: React.FC = () => {
               <p className="text-sm text-amber-800 mb-3">
                 Your content is legally protected with timestamped proof of AI training restrictions.
               </p>
-              <Button variant="outline" size="sm" className="border-amber-300 text-amber-800 hover:bg-amber-100">
-                Download Certificate
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="border-amber-300 text-amber-800 hover:bg-amber-100"
+                onClick={handleDownloadCertificate}
+                disabled={isDownloading}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                {isDownloading ? 'Generating...' : 'Download Certificate'}
               </Button>
             </div>
           </div>
