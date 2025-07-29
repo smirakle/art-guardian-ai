@@ -59,11 +59,21 @@ export const RealTimeBlockchainWidget = () => {
     networkDistribution: {}
   });
   const [isAutoRegistering, setIsAutoRegistering] = useState(false);
+  const [retryingArtworks, setRetryingArtworks] = useState<Set<string>>(new Set());
+  const [pendingArtworks, setPendingArtworks] = useState<any[]>([]);
 
   useEffect(() => {
     if (user) {
       loadBlockchainData();
+      loadPendingArtworks();
       setupRealTimeSubscriptions();
+      
+      // Auto-recovery check every 30 seconds
+      const interval = setInterval(() => {
+        checkAndRecoverStuckRegistrations();
+      }, 30000);
+      
+      return () => clearInterval(interval);
     }
   }, [user]);
 
@@ -116,6 +126,61 @@ export const RealTimeBlockchainWidget = () => {
 
     } catch (error) {
       console.error('Error loading blockchain data:', error);
+      toast({
+        title: "Data Load Error",
+        description: "Failed to load blockchain data. Retrying...",
+        variant: "destructive"
+      });
+      
+      // Retry after 3 seconds
+      setTimeout(() => loadBlockchainData(), 3000);
+    }
+  };
+
+  const loadPendingArtworks = async () => {
+    try {
+      const { data: artworks, error } = await supabase
+        .from('artwork')
+        .select('id, title, category, enable_blockchain, blockchain_hash, blockchain_certificate_id, created_at')
+        .eq('user_id', user!.id)
+        .eq('enable_blockchain', true)
+        .is('blockchain_certificate_id', null)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setPendingArtworks(artworks || []);
+    } catch (error) {
+      console.error('Error loading pending artworks:', error);
+    }
+  };
+
+  const checkAndRecoverStuckRegistrations = async () => {
+    try {
+      // Find artworks that have been pending for more than 5 minutes
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+      
+      const { data: stuckArtworks, error } = await supabase
+        .from('artwork')
+        .select('id, title')
+        .eq('user_id', user!.id)
+        .eq('enable_blockchain', true)
+        .is('blockchain_certificate_id', null)
+        .lt('created_at', fiveMinutesAgo);
+
+      if (error) throw error;
+
+      if (stuckArtworks && stuckArtworks.length > 0) {
+        console.log('Found stuck registrations:', stuckArtworks.length);
+        
+        // Retry each stuck registration
+        for (const artwork of stuckArtworks) {
+          if (!retryingArtworks.has(artwork.id)) {
+            await retryBlockchainRegistration(artwork.id, artwork.title);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error checking stuck registrations:', error);
     }
   };
 
@@ -139,11 +204,13 @@ export const RealTimeBlockchainWidget = () => {
               title: "⛓️ New Blockchain Certificate",
               description: `Certificate ${payload.new.certificate_id} created`,
             });
+            loadPendingArtworks(); // Refresh pending list
           } else if (payload.eventType === 'UPDATE' && payload.new.status === 'registered') {
             toast({
               title: "✅ Certificate Confirmed",
               description: `${payload.new.certificate_id} confirmed on blockchain`,
             });
+            loadPendingArtworks(); // Refresh pending list
           }
         }
       )
@@ -176,38 +243,65 @@ export const RealTimeBlockchainWidget = () => {
         return;
       }
 
-      // Start batch registration
-      for (const artwork of unprotectedArtworks) {
-        await supabase.functions.invoke('advanced-blockchain-registration', {
-          body: {
-            artworkId: artwork.id,
-            network: 'polygon',
-            userId: user!.id,
-            smartContractSettings: {
-              royaltyPercentage: 10,
-              licenseTerms: 'standard',
-              transferable: true,
-              resellable: true
-            },
-            advancedFeatures: true,
-            realTimeProtection: true
-          }
-        });
+      // Start batch registration with better error handling
+      let successCount = 0;
+      let failedArtworks: string[] = [];
 
-        // Update artwork to mark as blockchain protected
-        await supabase
-          .from('artwork')
-          .update({ enable_blockchain: true })
-          .eq('id', artwork.id);
+      for (const artwork of unprotectedArtworks) {
+        try {
+          const { data, error: funcError } = await supabase.functions.invoke('advanced-blockchain-registration', {
+            body: {
+              artworkId: artwork.id,
+              network: 'polygon',
+              userId: user!.id,
+              smartContractSettings: {
+                royaltyPercentage: 10,
+                licenseTerms: 'standard',
+                transferable: true,
+                resellable: true
+              },
+              advancedFeatures: true,
+              realTimeProtection: true
+            }
+          });
+
+          if (funcError) throw funcError;
+
+          // Update artwork to mark as blockchain protected
+          await supabase
+            .from('artwork')
+            .update({ enable_blockchain: true })
+            .eq('id', artwork.id);
+
+          successCount++;
+          
+        } catch (artworkError) {
+          console.error(`Failed to register ${artwork.title}:`, artworkError);
+          failedArtworks.push(artwork.title);
+        }
 
         // Small delay to prevent rate limiting
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
 
-      toast({
-        title: "🚀 Auto-Registration Complete",
-        description: `${unprotectedArtworks.length} artworks now have blockchain protection`,
-      });
+      if (successCount > 0) {
+        toast({
+          title: "🚀 Auto-Registration Complete",
+          description: `${successCount} artworks now have blockchain protection`,
+        });
+      }
+
+      if (failedArtworks.length > 0) {
+        toast({
+          title: "⚠️ Some Registrations Failed",
+          description: `${failedArtworks.length} artworks failed to register. They will be retried automatically.`,
+          variant: "destructive"
+        });
+      }
+
+      // Refresh data
+      await loadBlockchainData();
+      await loadPendingArtworks();
 
     } catch (error) {
       console.error('Error in auto registration:', error);
@@ -219,6 +313,57 @@ export const RealTimeBlockchainWidget = () => {
     } finally {
       setIsAutoRegistering(false);
     }
+  };
+
+  const retryBlockchainRegistration = async (artworkId: string, artworkTitle: string) => {
+    setRetryingArtworks(prev => new Set(prev).add(artworkId));
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('advanced-blockchain-registration', {
+        body: {
+          artworkId,
+          network: 'polygon',
+          userId: user!.id,
+          smartContractSettings: {
+            royaltyPercentage: 10,
+            licenseTerms: 'standard',
+            transferable: true,
+            resellable: true
+          },
+          advancedFeatures: true,
+          realTimeProtection: true
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "🔄 Registration Retry Successful",
+        description: `${artworkTitle} blockchain registration completed`,
+      });
+
+      // Refresh data
+      await loadBlockchainData();
+      await loadPendingArtworks();
+
+    } catch (error) {
+      console.error('Retry registration error:', error);
+      toast({
+        title: "Retry Failed",
+        description: `Failed to retry registration for ${artworkTitle}`,
+        variant: "destructive"
+      });
+    } finally {
+      setRetryingArtworks(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(artworkId);
+        return newSet;
+      });
+    }
+  };
+
+  const manualRegisterArtwork = async (artworkId: string, artworkTitle: string) => {
+    await retryBlockchainRegistration(artworkId, artworkTitle);
   };
 
   const downloadCertificate = async (cert: BlockchainCertificate) => {
@@ -463,6 +608,57 @@ export const RealTimeBlockchainWidget = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Pending Artworks Alert */}
+      {pendingArtworks.length > 0 && (
+        <Card className="border-yellow-200 bg-yellow-50">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5 text-yellow-600" />
+                <div>
+                  <p className="font-medium text-yellow-800">Pending Blockchain Registrations</p>
+                  <p className="text-sm text-yellow-600">{pendingArtworks.length} artworks waiting for confirmation</p>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => pendingArtworks.forEach(artwork => manualRegisterArtwork(artwork.id, artwork.title))}
+                disabled={retryingArtworks.size > 0}
+              >
+                {retryingArtworks.size > 0 ? 'Retrying...' : 'Retry All'}
+              </Button>
+            </div>
+            
+            <div className="space-y-2 max-h-32 overflow-y-auto">
+              {pendingArtworks.map((artwork) => (
+                <div key={artwork.id} className="flex items-center justify-between p-2 bg-white rounded text-sm">
+                  <span className="font-medium">{artwork.title}</span>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="text-xs">
+                      {retryingArtworks.has(artwork.id) ? 'Retrying...' : 'Pending'}
+                    </Badge>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => manualRegisterArtwork(artwork.id, artwork.title)}
+                      disabled={retryingArtworks.has(artwork.id)}
+                      className="h-6 px-2"
+                    >
+                      {retryingArtworks.has(artwork.id) ? <Clock className="w-3 h-3 animate-spin" /> : 'Retry'}
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="mt-3 text-xs text-yellow-600">
+              💡 Stuck registrations are automatically retried every 30 seconds
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
