@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Camera, Upload, Loader, ImageIcon, Link, FileText } from "lucide-react";
+import { Camera, Upload, Loader, ImageIcon, Link, FileText, Shield } from "lucide-react";
+import { AITrainingProtection } from '@/components/AITrainingProtection';
 
 interface UploadAreaProps {
   onFileUpload: (files: FileList | null) => void;
@@ -13,10 +14,26 @@ interface UploadAreaProps {
   isEmpty: boolean;
 }
 
+interface UploadedFile {
+  file: File;
+  needsProtection: boolean;
+  fileType: 'image' | 'video' | 'audio' | 'document';
+}
+
 const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, isEmpty }: UploadAreaProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [urlInput, setUrlInput] = useState("");
   const [textInput, setTextInput] = useState("");
+  const [pendingFiles, setPendingFiles] = useState<UploadedFile[]>([]);
+  const [showProtection, setShowProtection] = useState(false);
+  const [currentFileIndex, setCurrentFileIndex] = useState(0);
+
+  const getFileType = (file: File): 'image' | 'video' | 'audio' | 'document' => {
+    if (file.type.startsWith('image/')) return 'image';
+    if (file.type.startsWith('video/')) return 'video';
+    if (file.type.startsWith('audio/')) return 'audio';
+    return 'document';
+  };
 
   const handleUrlSubmit = () => {
     if (urlInput.trim()) {
@@ -31,6 +48,76 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
       setTextInput("");
     }
   };
+
+  const handleFileUpload = (files: FileList | null) => {
+    if (!files) return;
+    
+    // Check if AI protection is enabled
+    const aiProtectionSettings = localStorage.getItem('aiProtectionSettings');
+    const settings = aiProtectionSettings ? JSON.parse(aiProtectionSettings) : { globalProtection: true, autoApply: true };
+    
+    if (settings.globalProtection && settings.autoApply) {
+      // Prepare files for protection
+      const uploadedFiles: UploadedFile[] = Array.from(files).map(file => ({
+        file,
+        needsProtection: true,
+        fileType: getFileType(file)
+      }));
+      
+      setPendingFiles(uploadedFiles);
+      setCurrentFileIndex(0);
+      setShowProtection(true);
+      return;
+    }
+    
+    // Process files without protection
+    onFileUpload(files);
+  };
+
+  const handleProtectionApplied = (protectionLevel: string, methods: string[]) => {
+    // Move to next file or finish
+    if (currentFileIndex < pendingFiles.length - 1) {
+      setCurrentFileIndex(prev => prev + 1);
+    } else {
+      // All files processed, now upload them
+      setShowProtection(false);
+      const fileList = new DataTransfer();
+      pendingFiles.forEach(f => fileList.items.add(f.file));
+      onFileUpload(fileList.files);
+      setPendingFiles([]);
+      setCurrentFileIndex(0);
+    }
+  };
+
+  const skipProtection = () => {
+    setShowProtection(false);
+    const fileList = new DataTransfer();
+    pendingFiles.forEach(f => fileList.items.add(f.file));
+    onFileUpload(fileList.files);
+    setPendingFiles([]);
+    setCurrentFileIndex(0);
+  };
+
+  if (showProtection && pendingFiles.length > 0) {
+    const currentFile = pendingFiles[currentFileIndex];
+    return (
+      <div className="w-full max-w-4xl mx-auto space-y-4">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold">
+            AI Training Protection ({currentFileIndex + 1} of {pendingFiles.length})
+          </h3>
+          <Button variant="outline" onClick={skipProtection}>
+            Skip Protection
+          </Button>
+        </div>
+        <AITrainingProtection
+          fileType={currentFile.fileType}
+          fileName={currentFile.file.name}
+          onProtectionApply={handleProtectionApplied}
+        />
+      </div>
+    );
+  }
 
   if (isEmpty) {
     return (
@@ -87,7 +174,7 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
               type="file"
               multiple
               accept="image/*,video/*,audio/*,application/pdf"
-              onChange={(e) => onFileUpload(e.target.files)}
+              onChange={(e) => handleFileUpload(e.target.files)}
               className="hidden"
             />
           </div>
@@ -155,7 +242,7 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
               type="file"
               multiple
               accept="image/*,video/*,audio/*,application/pdf"
-              onChange={(e) => onFileUpload(e.target.files)}
+              onChange={(e) => handleFileUpload(e.target.files)}
               className="hidden"
             />
           </div>

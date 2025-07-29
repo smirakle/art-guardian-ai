@@ -33,6 +33,7 @@ import Pricing from "./pages/Pricing";
 import SLAStatus from "./pages/SLAStatus";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AIProtectionSettings from "./pages/AIProtectionSettings";
 
 const queryClient = new QueryClient();
 
@@ -96,6 +97,7 @@ const App = () => {
                         <Route path="/legal-templates" element={<LegalTemplatesPage />} />
                          <Route path="/pricing" element={<Pricing />} />
                          <Route path="/sla-status" element={<SLAStatus />} />
+                         <Route path="/ai-protection-settings" element={<AIProtectionSettings />} />
                           <Route path="/certificate/:certificateId" element={<Certificate />} />
                         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                         <Route path="*" element={<NotFound />} />
