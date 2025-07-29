@@ -154,23 +154,31 @@ export const UnifiedScanResults = () => {
 
       const artworkIds = artworkData?.map(a => a.id) || [];
 
-      // Fetch monitoring scans
-      const { data: monitoringScans } = await supabase
-        .from('monitoring_scans')
-        .select('*')
-        .in('artwork_id', artworkIds)
-        .order('started_at', { ascending: false })
-        .limit(20);
+      // Fetch monitoring scans - only if user has artwork
+      let monitoringScans = [];
+      if (artworkIds.length > 0) {
+        const { data: monitoringData } = await supabase
+          .from('monitoring_scans')
+          .select('*')
+          .in('artwork_id', artworkIds)
+          .order('started_at', { ascending: false })
+          .limit(20);
+        monitoringScans = monitoringData || [];
+      }
 
-      // Fetch copyright matches
-      const { data: copyrightMatches } = await supabase
-        .from('copyright_matches')
-        .select('*')
-        .in('artwork_id', artworkIds)
-        .order('detected_at', { ascending: false })
-        .limit(20);
+      // Fetch copyright matches - only if user has artwork
+      let copyrightMatches = [];
+      if (artworkIds.length > 0) {
+        const { data: copyrightData } = await supabase
+          .from('copyright_matches')
+          .select('*')
+          .in('artwork_id', artworkIds)
+          .order('detected_at', { ascending: false })
+          .limit(20);
+        copyrightMatches = copyrightData || [];
+      }
 
-      // Fetch web scan results
+      // Fetch web scan results (these are user-specific via RLS)
       const { data: webScans } = await supabase
         .from('web_scan_results')
         .select(`
@@ -180,15 +188,22 @@ export const UnifiedScanResults = () => {
         .order('detected_at', { ascending: false })
         .limit(20);
 
-      // Fetch deepfake matches
+      // Fetch deepfake matches (global data, not user-specific)
       const { data: deepfakeMatches } = await supabase
         .from('deepfake_matches')
         .select('*')
         .order('detected_at', { ascending: false })
         .limit(20);
 
+      console.log('Fetched scan data:', {
+        artworkIds: artworkIds.length,
+        monitoring: monitoringScans.length,
+        copyright: copyrightMatches.length,
+        web: webScans?.length || 0,
+        deepfake: deepfakeMatches?.length || 0
+      });
       // Transform data to unified format
-      const monitoring: ScanResult[] = (monitoringScans || []).map(scan => ({
+      const monitoring: ScanResult[] = monitoringScans.map(scan => ({
         id: scan.id,
         type: 'monitoring',
         status: scan.status,
@@ -198,7 +213,7 @@ export const UnifiedScanResults = () => {
         source: 'AI Monitoring'
       }));
 
-      const copyright: ScanResult[] = (copyrightMatches || []).map(match => ({
+      const copyright: ScanResult[] = copyrightMatches.map(match => ({
         id: match.id,
         type: 'copyright',
         status: 'completed',
@@ -434,89 +449,114 @@ export const UnifiedScanResults = () => {
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 bg-muted p-1 h-auto">
-            <TabsTrigger value="monitoring" className="text-xs data-[state=active]:bg-background">
+          <TabsList className="grid w-full grid-cols-5 bg-muted/50 p-1 h-auto rounded-lg border border-border">
+            <TabsTrigger 
+              value="monitoring" 
+              className="text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm"
+            >
               <Activity className="w-3 h-3 mr-1" />
-              Monitoring ({scanResults.monitoring.length})
+              <span className="hidden sm:inline">Monitoring</span> ({scanResults.monitoring.length})
             </TabsTrigger>
-            <TabsTrigger value="copyright" className="text-xs data-[state=active]:bg-background">
+            <TabsTrigger 
+              value="copyright" 
+              className="text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm"
+            >
               <Shield className="w-3 h-3 mr-1" />
-              Copyright ({scanResults.copyright.length})
+              <span className="hidden sm:inline">Copyright</span> ({scanResults.copyright.length})
             </TabsTrigger>
-            <TabsTrigger value="social" className="text-xs data-[state=active]:bg-background">
+            <TabsTrigger 
+              value="social" 
+              className="text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm"
+            >
               <Share2 className="w-3 h-3 mr-1" />
-              Social ({socialMediaResults.length})
+              <span className="hidden sm:inline">Social</span> ({socialMediaResults.length})
             </TabsTrigger>
-            <TabsTrigger value="web" className="text-xs data-[state=active]:bg-background">
+            <TabsTrigger 
+              value="web" 
+              className="text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm"
+            >
               <Globe className="w-3 h-3 mr-1" />
-              Web ({scanResults.webScans.length})
+              <span className="hidden sm:inline">Web</span> ({scanResults.webScans.length})
             </TabsTrigger>
-            <TabsTrigger value="deepfake" className="text-xs data-[state=active]:bg-background">
+            <TabsTrigger 
+              value="deepfake" 
+              className="text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm"
+            >
               <Eye className="w-3 h-3 mr-1" />
-              Deepfake ({scanResults.deepfake.length})
+              <span className="hidden sm:inline">Deepfake</span> ({scanResults.deepfake.length})
             </TabsTrigger>
           </TabsList>
 
-          <div className="mt-6">
-            <TabsContent value="monitoring" className="space-y-4">
+          <div className="mt-6 min-h-[200px]">
+            <TabsContent value="monitoring" className="space-y-4 mt-0">
               {scanResults.monitoring.length > 0 ? (
-                scanResults.monitoring.map(renderScanCard)
+                <div className="space-y-3">
+                  {scanResults.monitoring.map(renderScanCard)}
+                </div>
               ) : (
-                <Alert>
-                  <Activity className="w-4 h-4" />
-                  <AlertDescription>
+                <Alert className="border-blue-200 bg-blue-50">
+                  <Activity className="w-4 h-4 text-blue-600" />
+                  <AlertDescription className="text-blue-800">
                     No monitoring scans found. Start monitoring your artwork to see results here.
                   </AlertDescription>
                 </Alert>
               )}
             </TabsContent>
 
-            <TabsContent value="copyright" className="space-y-4">
+            <TabsContent value="copyright" className="space-y-4 mt-0">
               {scanResults.copyright.length > 0 ? (
-                scanResults.copyright.map(renderScanCard)
+                <div className="space-y-3">
+                  {scanResults.copyright.map(renderScanCard)}
+                </div>
               ) : (
-                <Alert>
-                  <Shield className="w-4 h-4" />
-                  <AlertDescription>
+                <Alert className="border-green-200 bg-green-50">
+                  <Shield className="w-4 h-4 text-green-600" />
+                  <AlertDescription className="text-green-800">
                     No copyright matches detected. Your content appears to be protected.
                   </AlertDescription>
                 </Alert>
               )}
             </TabsContent>
 
-            <TabsContent value="social" className="space-y-4">
+            <TabsContent value="social" className="space-y-4 mt-0">
               {socialMediaResults.length > 0 ? (
-                socialMediaResults.map(renderSocialMediaCard)
+                <div className="space-y-3">
+                  {socialMediaResults.map(renderSocialMediaCard)}
+                </div>
               ) : (
-                <Alert>
-                  <Share2 className="w-4 h-4" />
-                  <AlertDescription>
+                <Alert className="border-purple-200 bg-purple-50">
+                  <Share2 className="w-4 h-4 text-purple-600" />
+                  <AlertDescription className="text-purple-800">
                     No social media violations detected yet. Connect your accounts to start monitoring.
                   </AlertDescription>
                 </Alert>
               )}
             </TabsContent>
 
-            <TabsContent value="web" className="space-y-4">
+            <TabsContent value="web" className="space-y-4 mt-0">
               {scanResults.webScans.length > 0 ? (
-                scanResults.webScans.map(renderScanCard)
+                <div className="space-y-3">
+                  {scanResults.webScans.map(renderScanCard)}
+                </div>
               ) : (
-                <Alert>
-                  <Globe className="w-4 h-4" />
-                  <AlertDescription>
+                <Alert className="border-orange-200 bg-orange-50">
+                  <Globe className="w-4 h-4 text-orange-600" />
+                  <AlertDescription className="text-orange-800">
                     No web scan results found. Run web scans to detect unauthorized usage.
                   </AlertDescription>
                 </Alert>
               )}
             </TabsContent>
 
-            <TabsContent value="deepfake" className="space-y-4">
+            <TabsContent value="deepfake" className="space-y-4 mt-0">
               {scanResults.deepfake.length > 0 ? (
-                scanResults.deepfake.map(renderScanCard)
+                <div className="space-y-3">
+                  {scanResults.deepfake.map(renderScanCard)}
+                </div>
               ) : (
-                <Alert>
-                  <Eye className="w-4 h-4" />
-                  <AlertDescription>
+                <Alert className="border-red-200 bg-red-50">
+                  <Eye className="w-4 h-4 text-red-600" />
+                  <AlertDescription className="text-red-800">
                     No deepfake detections found. Your identity appears secure.
                   </AlertDescription>
                 </Alert>
