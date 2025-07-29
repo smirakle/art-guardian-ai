@@ -46,7 +46,7 @@ import { WhiteLabelManager } from '@/components/WhiteLabelManager';
 import AdvancedBlockchain from '@/components/AdvancedBlockchain';
 import FeatureGuard from '@/components/FeatureGuard';
 import { useSubscription } from '@/contexts/SubscriptionContext';
-import { SLAStatusWidget } from '@/components/sla/SLAStatusWidget';
+
 
 // Import monitoring components from Upload page
 import RealTimeImageAnalysis from '@/components/RealTimeImageAnalysis';
@@ -368,27 +368,6 @@ const Dashboard = () => {
           <AIProtectionStatusWidget />
         </div>
 
-        {/* SLA Status Widget for Professional/Enterprise */}
-        {(subscription?.plan_id === 'professional' || subscription?.plan_id === 'enterprise') && (
-          <div className="mb-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <SLAStatusWidget plan={subscription.plan_id as 'professional' | 'enterprise'} />
-              </div>
-              <div>
-                <Button 
-                  onClick={() => navigate('/sla-status')} 
-                  variant="outline" 
-                  className="w-full h-full min-h-[100px] flex flex-col items-center justify-center gap-2"
-                >
-                  <Shield className="w-8 h-8 text-primary" />
-                  <span className="font-medium">View Full SLA Dashboard</span>
-                  <span className="text-xs text-muted-foreground">Detailed performance metrics</span>
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Dashboard Navigation */}
         <div className="mb-8">
