@@ -820,6 +820,153 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          id: string
+          is_read: boolean
+          is_resolved: boolean
+          message: string
+          metadata: Json | null
+          portfolio_id: string
+          severity: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          is_resolved?: boolean
+          message: string
+          metadata?: Json | null
+          portfolio_id: string
+          severity?: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          is_resolved?: boolean
+          message?: string
+          metadata?: Json | null
+          portfolio_id?: string
+          severity?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      portfolio_items: {
+        Row: {
+          added_at: string
+          artwork_id: string
+          id: string
+          is_active: boolean
+          portfolio_id: string
+        }
+        Insert: {
+          added_at?: string
+          artwork_id: string
+          id?: string
+          is_active?: boolean
+          portfolio_id: string
+        }
+        Update: {
+          added_at?: string
+          artwork_id?: string
+          id?: string
+          is_active?: boolean
+          portfolio_id?: string
+        }
+        Relationships: []
+      }
+      portfolio_monitoring_results: {
+        Row: {
+          artworks_scanned: number
+          created_at: string
+          high_risk_matches: number
+          id: string
+          low_risk_matches: number
+          medium_risk_matches: number
+          platforms_scanned: string[]
+          portfolio_id: string
+          scan_date: string
+          scan_duration_minutes: number | null
+          total_artworks: number
+          total_matches: number
+        }
+        Insert: {
+          artworks_scanned?: number
+          created_at?: string
+          high_risk_matches?: number
+          id?: string
+          low_risk_matches?: number
+          medium_risk_matches?: number
+          platforms_scanned?: string[]
+          portfolio_id: string
+          scan_date?: string
+          scan_duration_minutes?: number | null
+          total_artworks?: number
+          total_matches?: number
+        }
+        Update: {
+          artworks_scanned?: number
+          created_at?: string
+          high_risk_matches?: number
+          id?: string
+          low_risk_matches?: number
+          medium_risk_matches?: number
+          platforms_scanned?: string[]
+          portfolio_id?: string
+          scan_date?: string
+          scan_duration_minutes?: number | null
+          total_artworks?: number
+          total_matches?: number
+        }
+        Relationships: []
+      }
+      portfolios: {
+        Row: {
+          alert_settings: Json | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          monitoring_enabled: boolean
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alert_settings?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          monitoring_enabled?: boolean
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alert_settings?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          monitoring_enabled?: boolean
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profile_impersonation_alerts: {
         Row: {
           alert_type: string
