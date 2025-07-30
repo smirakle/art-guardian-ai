@@ -1,4 +1,4 @@
-import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search, Briefcase, UserCheck } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
@@ -126,6 +126,30 @@ export function AppSidebar() {
                   >
                     <ShieldCheck className="w-4 h-4" />
                     {!collapsed && <span>AI Protection</span>}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+
+                {/* Profile Monitoring */}
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    onClick={() => navigate('/profile-monitoring')}
+                    isActive={isActive('/profile-monitoring')}
+                    className="flex items-center gap-2"
+                  >
+                    <UserCheck className="w-4 h-4" />
+                    {!collapsed && <span>Profile Monitoring</span>}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+
+                {/* Portfolio Monitoring */}
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    onClick={() => navigate('/portfolio-monitoring')}
+                    isActive={isActive('/portfolio-monitoring')}
+                    className="flex items-center gap-2"
+                  >
+                    <Briefcase className="w-4 h-4" />
+                    {!collapsed && <span>Portfolio Monitoring</span>}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>

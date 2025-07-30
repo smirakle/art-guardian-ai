@@ -45,23 +45,29 @@ export function PortfolioMonitoring() {
     try {
       const { data, error } = await supabase
         .from('portfolios')
-        .select(`
-          id,
-          name,
-          monitoring_enabled,
-          portfolio_items(count)
-        `)
+        .select('id, name, monitoring_enabled')
         .eq('is_active', true)
         .order('name');
 
       if (error) throw error;
 
-      const processedPortfolios = data?.map(portfolio => ({
-        ...portfolio,
-        artwork_count: portfolio.portfolio_items?.[0]?.count || 0
-      })) || [];
+      // Get artwork counts for each portfolio
+      const portfoliosWithCounts = await Promise.all(
+        (data || []).map(async (portfolio) => {
+          const { count } = await supabase
+            .from('portfolio_items')
+            .select('*', { count: 'exact', head: true })
+            .eq('portfolio_id', portfolio.id)
+            .eq('is_active', true);
+          
+          return {
+            ...portfolio,
+            artwork_count: count || 0
+          };
+        })
+      );
 
-      setPortfolios(processedPortfolios);
+      setPortfolios(portfoliosWithCounts);
     } catch (error) {
       console.error('Error fetching portfolios:', error);
       toast({

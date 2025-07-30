@@ -55,7 +55,13 @@ export function PortfolioSettings() {
         .order('name');
 
       if (error) throw error;
-      setPortfolios(data || []);
+      
+      const portfoliosWithSettings = (data || []).map(portfolio => ({
+        ...portfolio,
+        alert_settings: (portfolio.alert_settings as Record<string, any>) || {}
+      }));
+      
+      setPortfolios(portfoliosWithSettings);
       
       if (data && data.length > 0) {
         setSelectedPortfolio(data[0].id);

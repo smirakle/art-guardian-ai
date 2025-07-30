@@ -36,6 +36,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AIProtectionSettings from "./pages/AIProtectionSettings";
 import { CustomIntegrations } from "./components/CustomIntegrations";
 import ProfileMonitoring from "./pages/ProfileMonitoring";
+import PortfolioMonitoring from "./pages/PortfolioMonitoring";
 
 const queryClient = new QueryClient();
 
@@ -101,7 +102,8 @@ const App = () => {
                          <Route path="/sla-status" element={<SLAStatus />} />
                           <Route path="/ai-protection-settings" element={<AIProtectionSettings />} />
                          <Route path="/custom-integrations" element={<CustomIntegrations />} />
-                         <Route path="/profile-monitoring" element={<ProfileMonitoring />} />
+            <Route path="/profile-monitoring" element={<ProfileMonitoring />} />
+            <Route path="/portfolio-monitoring" element={<PortfolioMonitoring />} />
                           <Route path="/certificate/:certificateId" element={<Certificate />} />
                         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                         <Route path="*" element={<NotFound />} />

@@ -47,29 +47,36 @@ export function PortfolioDashboard() {
     try {
       setLoading(true);
 
-      // Fetch portfolios with artwork count
+      // Fetch portfolios
       const { data: portfoliosData, error: portfoliosError } = await supabase
         .from('portfolios')
-        .select(`
-          *,
-          portfolio_items(count)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (portfoliosError) throw portfoliosError;
 
-      // Process portfolios data
-      const processedPortfolios = portfoliosData?.map(portfolio => ({
-        ...portfolio,
-        artwork_count: portfolio.portfolio_items?.[0]?.count || 0
-      })) || [];
+      // Get artwork counts for each portfolio
+      const portfoliosWithCounts = await Promise.all(
+        (portfoliosData || []).map(async (portfolio) => {
+          const { count } = await supabase
+            .from('portfolio_items')
+            .select('*', { count: 'exact', head: true })
+            .eq('portfolio_id', portfolio.id)
+            .eq('is_active', true);
+          
+          return {
+            ...portfolio,
+            artwork_count: count || 0
+          };
+        })
+      );
 
-      setPortfolios(processedPortfolios);
+      setPortfolios(portfoliosWithCounts);
 
       // Calculate stats
-      const totalPortfolios = processedPortfolios.length;
-      const activeMonitoring = processedPortfolios.filter(p => p.monitoring_enabled).length;
-      const totalArtworks = processedPortfolios.reduce((sum, p) => sum + (p.artwork_count || 0), 0);
+      const totalPortfolios = portfoliosWithCounts.length;
+      const activeMonitoring = portfoliosWithCounts.filter(p => p.monitoring_enabled).length;
+      const totalArtworks = portfoliosWithCounts.reduce((sum, p) => sum + (p.artwork_count || 0), 0);
 
       setStats({
         total_portfolios: totalPortfolios,

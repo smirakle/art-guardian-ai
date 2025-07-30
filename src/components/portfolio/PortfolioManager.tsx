@@ -55,21 +55,29 @@ export function PortfolioManager() {
     try {
       const { data, error } = await supabase
         .from('portfolios')
-        .select(`
-          *,
-          portfolio_items(count)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      const processedPortfolios = data?.map(portfolio => ({
-        ...portfolio,
-        alert_settings: portfolio.alert_settings as Record<string, any> || {},
-        artwork_count: 0
-      })) || [];
+      // Get artwork counts for each portfolio
+      const portfoliosWithCounts = await Promise.all(
+        (data || []).map(async (portfolio) => {
+          const { count } = await supabase
+            .from('portfolio_items')
+            .select('*', { count: 'exact', head: true })
+            .eq('portfolio_id', portfolio.id)
+            .eq('is_active', true);
+          
+          return {
+            ...portfolio,
+            alert_settings: (portfolio.alert_settings as Record<string, any>) || {},
+            artwork_count: count || 0
+          };
+        })
+      );
 
-      setPortfolios(processedPortfolios);
+      setPortfolios(portfoliosWithCounts);
     } catch (error) {
       console.error('Error fetching portfolios:', error);
       toast({
@@ -110,7 +118,13 @@ export function PortfolioManager() {
 
       if (error) throw error;
 
-      setPortfolios([data, ...portfolios]);
+      const portfolioWithDefaults = {
+        ...data,
+        alert_settings: (data.alert_settings as Record<string, any>) || {},
+        artwork_count: 0
+      };
+
+      setPortfolios([portfolioWithDefaults, ...portfolios]);
       setIsCreateDialogOpen(false);
       setNewPortfolio({ name: '', description: '', monitoring_enabled: true });
       
