@@ -8,9 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Edit, Trash2, Briefcase, Image, Settings } from 'lucide-react';
+import { Plus, Edit, Trash2, Briefcase, Image, Settings, Lock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 
 interface Portfolio {
   id: string;
@@ -34,11 +35,13 @@ export function PortfolioManager() {
   const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
   const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [selectedPortfolio, setSelectedPortfolio] = useState<Portfolio | null>(null);
+  const [portfolioLimit, setPortfolioLimit] = useState<number>(2);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isArtworkDialogOpen, setIsArtworkDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { hasFeature } = useSubscription();
 
   const [newPortfolio, setNewPortfolio] = useState({
     name: '',
@@ -49,6 +52,7 @@ export function PortfolioManager() {
   useEffect(() => {
     fetchPortfolios();
     fetchArtworks();
+    fetchPortfolioLimit();
   }, []);
 
   const fetchPortfolios = async () => {
@@ -90,6 +94,17 @@ export function PortfolioManager() {
     }
   };
 
+  const fetchPortfolioLimit = async () => {
+    try {
+      const { data, error } = await supabase.rpc('get_portfolio_limit');
+      if (error) throw error;
+      setPortfolioLimit(data || 2);
+    } catch (error) {
+      console.error('Error fetching portfolio limit:', error);
+      setPortfolioLimit(2); // Default to free tier
+    }
+  };
+
   const fetchArtworks = async () => {
     try {
       const { data, error } = await supabase
@@ -106,6 +121,16 @@ export function PortfolioManager() {
   };
 
   const createPortfolio = async () => {
+    // Check portfolio limit
+    if (portfolioLimit !== -1 && portfolios.length >= portfolioLimit) {
+      toast({
+        title: "Portfolio Limit Reached",
+        description: `You can create up to ${portfolioLimit} portfolios with your current plan. Upgrade to create more.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) throw new Error('Not authenticated');
@@ -240,9 +265,15 @@ export function PortfolioManager() {
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="flex items-center gap-2">
+            <Button 
+              className="flex items-center gap-2"
+              disabled={portfolioLimit !== -1 && portfolios.length >= portfolioLimit}
+            >
               <Plus className="w-4 h-4" />
               Create Portfolio
+              {portfolioLimit !== -1 && portfolios.length >= portfolioLimit && (
+                <Lock className="w-3 h-3 ml-1" />
+              )}
             </Button>
           </DialogTrigger>
           <DialogContent>
@@ -373,9 +404,31 @@ export function PortfolioManager() {
             <p className="text-muted-foreground mb-4">
               Create your first portfolio to organize and monitor your artworks
             </p>
-            <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <Button 
+              onClick={() => setIsCreateDialogOpen(true)}
+              disabled={portfolioLimit !== -1 && portfolios.length >= portfolioLimit}
+            >
               Create Portfolio
             </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Portfolio Limit Info */}
+      {portfolioLimit !== -1 && (
+        <Card className="border-dashed">
+          <CardContent className="text-center py-6">
+            <div className="flex items-center justify-center gap-2 text-muted-foreground">
+              <Briefcase className="w-4 h-4" />
+              <span>
+                {portfolios.length} / {portfolioLimit} portfolios used
+              </span>
+            </div>
+            {portfolios.length >= portfolioLimit && (
+              <p className="text-sm text-muted-foreground mt-2">
+                Upgrade your plan to create more portfolios
+              </p>
+            )}
           </CardContent>
         </Card>
       )}

@@ -2042,6 +2042,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      get_portfolio_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       get_user_subscription: {
         Args: Record<PropertyKey, never>
         Returns: {
