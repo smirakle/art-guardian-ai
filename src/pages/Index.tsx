@@ -577,6 +577,10 @@ const Index = () => {
                   </div>
                   <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Portfolio monitoring (up to 5)</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
                     <span className="text-sm">Email alerts</span>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -648,6 +652,14 @@ const Index = () => {
                   <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
                     <span className="text-sm">Advanced AI monitoring</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Portfolio monitoring (up to 10)</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Scheduled portfolio scans</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
@@ -724,6 +736,18 @@ const Index = () => {
                   </div>
                   <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Portfolio monitoring (up to 50)</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Advanced portfolio analytics</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Scheduled & automated scans</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
                     <span className="text-sm">Instant alerts & notifications</span>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -792,6 +816,14 @@ const Index = () => {
                   <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
                     <span className="text-sm">Unlimited artworks protected</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Unlimited portfolio monitoring</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Enterprise portfolio management</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
