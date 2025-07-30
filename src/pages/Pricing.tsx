@@ -107,6 +107,7 @@ const Pricing = () => {
       features: [
         'Up to 50 artworks protected',
         'Basic AI monitoring',
+        'Portfolio monitoring (up to 5)',
         'Email alerts',
         'Educational resources',
         'Community support',
@@ -130,6 +131,8 @@ const Pricing = () => {
       features: [
         'Up to 150 artworks protected',
         'Advanced AI monitoring',
+        'Portfolio monitoring (up to 10)',
+        'Scheduled portfolio scans',
         'Real-time alerts',
         'Watermark protection',
         'API access',
@@ -153,6 +156,9 @@ const Pricing = () => {
       features: [
         'Up to 1,000 artworks protected',
         'Premium AI monitoring',
+        'Portfolio monitoring (up to 50)',
+        'Advanced portfolio analytics',
+        'Scheduled & automated scans',
         'Instant alerts & notifications',
         'Advanced watermarking',
         'Real-time deepfake detection',
@@ -174,11 +180,12 @@ const Pricing = () => {
       color: 'from-purple-600 to-pink-600',
       features: [
         'Unlimited artworks protected',
+        'Unlimited portfolio monitoring',
+        'Enterprise portfolio management',
         'Custom AI model training',
         '24/7 monitoring & support',
         'Advanced deepfake detection & prevention',
         'Advanced blockchain integration',
-        
         'Enterprise SSO',
         'Custom integrations',
         'On-premise deployment options',
