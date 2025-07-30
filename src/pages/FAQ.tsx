@@ -90,6 +90,74 @@ const FAQ = () => {
           answer: "While complete prevention is complex, TSMO identifies AI training use so you can file removal requests, add protective metadata, or pursue legal action if your rights are violated."
         },
         {
+          question: "What is AI Training Protection and how does it work?",
+          answer: (
+            <div>
+              <p className="mb-3"><strong>AI Training Protection</strong> is a comprehensive system that prevents unauthorized use of your creative work in AI model training and provides real-time monitoring for violations.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">How it works:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• Technical Protection:</strong> Applies adversarial noise patterns, metadata injection, and fingerprinting to make your content resistant to AI training</li>
+                  <li><strong>• Rights Metadata:</strong> Embeds copyright information and usage restrictions directly into your files</li>
+                  <li><strong>• Crawler Blocking:</strong> Prevents automated bots from accessing and downloading your content</li>
+                  <li><strong>• Real-time Monitoring:</strong> Continuously scans AI datasets and training repositories for your protected content</li>
+                  <li><strong>• Violation Alerts:</strong> Instant notifications when your work is detected in unauthorized AI training</li>
+                  <li><strong>• Legal Documentation:</strong> Generates violation reports for DMCA takedowns and legal action</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm"><strong>Who it's for:</strong> Digital artists, photographers, illustrators, content creators, and anyone who wants to protect their work from being used to train AI models without permission.</p>
+            </div>
+          )
+        },
+        {
+          question: "What is Profile Monitoring and how does it protect me?",
+          answer: (
+            <div>
+              <p className="mb-3"><strong>Profile Monitoring</strong> is an advanced system that protects your personal and professional identity across social media platforms by detecting impersonation and fake accounts.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">How it works:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• Multi-Platform Scanning:</strong> Monitors 15+ social media platforms including Instagram, Twitter, TikTok, LinkedIn, and more</li>
+                  <li><strong>• AI-Powered Detection:</strong> Uses advanced algorithms to identify fake profiles using your name, photos, or bio information</li>
+                  <li><strong>• Risk Assessment:</strong> Analyzes detected profiles and assigns risk scores based on similarity and potential harm</li>
+                  <li><strong>• Real-time Alerts:</strong> Instant notifications when suspicious profiles are detected</li>
+                  <li><strong>• Automated Reporting:</strong> Generates detailed reports for platform takedown requests</li>
+                  <li><strong>• Brand Protection:</strong> Monitors for unauthorized use of your brand, logo, or professional identity</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm"><strong>Who it's for:</strong> Public figures, influencers, business owners, professionals, and anyone concerned about identity theft or brand impersonation on social media.</p>
+            </div>
+          )
+        },
+        {
+          question: "What is Portfolio Monitoring and how does it protect my artwork?",
+          answer: (
+            <div>
+              <p className="mb-3"><strong>Portfolio Monitoring</strong> is a comprehensive system that tracks and protects collections of your artwork across the internet, detecting unauthorized use and copyright violations.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">How it works:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• Collection Management:</strong> Organize your artwork into portfolios for efficient monitoring and protection</li>
+                  <li><strong>• Multi-Platform Scanning:</strong> Searches across websites, social media, marketplaces, and NFT platforms</li>
+                  <li><strong>• Visual Recognition:</strong> Uses AI to detect your artwork even when modified, cropped, or filtered</li>
+                  <li><strong>• Scheduled Scans:</strong> Automated daily, weekly, or monthly scans of your entire portfolio</li>
+                  <li><strong>• Threat Assessment:</strong> Categorizes matches by risk level (high, medium, low) based on usage context</li>
+                  <li><strong>• Analytics Dashboard:</strong> Detailed insights into where your work appears and usage trends</li>
+                  <li><strong>• Automated Alerts:</strong> Real-time notifications for new matches and copyright violations</li>
+                  <li><strong>• Legal Support:</strong> Integration with DMCA takedown tools and legal documentation</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm"><strong>Who it's for:</strong> Artists, photographers, designers, creative agencies, studios, and anyone with a collection of creative work that needs comprehensive protection.</p>
+            </div>
+          )
+        },
+        {
           question: "What is Advanced Blockchain Technology and how is it different from regular blockchain verification?",
           answer: (
             <div>
