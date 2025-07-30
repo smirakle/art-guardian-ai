@@ -8,10 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Edit, Trash2, Briefcase, Image, Settings, Lock } from 'lucide-react';
+import { Plus, Edit, Trash2, Briefcase, Image, Settings, Lock, Upload } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useSubscription } from '@/contexts/SubscriptionContext';
+import { PortfolioUploadWidget } from './PortfolioUploadWidget';
 
 interface Portfolio {
   id: string;
@@ -39,6 +40,7 @@ export function PortfolioManager() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isArtworkDialogOpen, setIsArtworkDialogOpen] = useState(false);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const { hasFeature } = useSubscription();
@@ -374,18 +376,32 @@ export function PortfolioManager() {
                   </Badge>
                 </div>
                 <div className="flex justify-between items-center pt-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setSelectedPortfolio(portfolio);
-                      setIsArtworkDialogOpen(true);
-                    }}
-                    className="flex items-center gap-1"
-                  >
-                    <Image className="w-3 h-3" />
-                    Add Artwork
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedPortfolio(portfolio);
+                        setIsArtworkDialogOpen(true);
+                      }}
+                      className="flex items-center gap-1"
+                    >
+                      <Image className="w-3 h-3" />
+                      Add Existing
+                    </Button>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedPortfolio(portfolio);
+                        setIsUploadDialogOpen(true);
+                      }}
+                      className="flex items-center gap-1"
+                    >
+                      <Upload className="w-3 h-3" />
+                      Upload
+                    </Button>
+                  </div>
                   <Button variant="ghost" size="sm">
                     <Settings className="w-4 h-4" />
                   </Button>
@@ -519,6 +535,27 @@ export function PortfolioManager() {
               </p>
             )}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Portfolio Upload Dialog */}
+      <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Upload to Portfolio</DialogTitle>
+            <DialogDescription>Upload files directly to {selectedPortfolio?.name}</DialogDescription>
+          </DialogHeader>
+          {selectedPortfolio && (
+            <PortfolioUploadWidget
+              portfolioId={selectedPortfolio.id}
+              portfolioName={selectedPortfolio.name}
+              onUploadComplete={() => {
+                fetchPortfolios(); // Refresh portfolio counts
+                setIsUploadDialogOpen(false);
+              }}
+              onClose={() => setIsUploadDialogOpen(false)}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>
