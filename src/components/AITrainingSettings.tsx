@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Shield, Settings, FileImage, Video, Music, FileText, Globe, AlertTriangle } from "lucide-react";
+import { Shield, Settings, FileImage, Video, Music, FileText, Globe, AlertTriangle, Download } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { AIProtectedFilesManager } from "@/components/ai-protection/AIProtectedFilesManager";
 
 interface AIProtectionSettings {
   globalProtection: boolean;
@@ -215,10 +216,11 @@ export const AITrainingSettings: React.FC = () => {
         
         <CardContent>
           <Tabs defaultValue="general" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="general">General</TabsTrigger>
               <TabsTrigger value="filetypes">File Types</TabsTrigger>
               <TabsTrigger value="methods">Methods</TabsTrigger>
+              <TabsTrigger value="downloads">Downloads</TabsTrigger>
             </TabsList>
 
             <TabsContent value="general" className="space-y-6">
@@ -317,8 +319,12 @@ export const AITrainingSettings: React.FC = () => {
                   </div>
                 ))}
               </div>
-            </TabsContent>
-          </Tabs>
+          </TabsContent>
+
+          <TabsContent value="downloads" className="space-y-6">
+            <AIProtectedFilesManager />
+          </TabsContent>
+        </Tabs>
 
           {/* Warning Notice */}
           <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">

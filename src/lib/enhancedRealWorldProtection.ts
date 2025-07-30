@@ -6,6 +6,7 @@ export interface EnhancedProtectionResult {
   protectedBlob: Blob;
   protectionMethods: string[];
   protectionLevel: string;
+  storagePath?: string;
   metadata: any;
   errors?: string[];
   artworkId?: string;
@@ -83,6 +84,19 @@ export class EnhancedRealWorldProtection {
         ...options.copyrightInfo
       };
 
+      // Upload protected file to storage
+      const fileExtension = options.fileName.split('.').pop() || 'bin';
+      const storagePath = `${options.userId}/${protectionId}.${fileExtension}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('ai-protected-files')
+        .upload(storagePath, protectedBlob);
+      
+      if (uploadError) {
+        console.error('Storage upload failed:', uploadError);
+        throw new Error('Failed to store protected file');
+      }
+
       // Save protection record to database
       const { data: protectionRecord, error: dbError } = await supabase
         .from('ai_protection_records')
@@ -95,6 +109,7 @@ export class EnhancedRealWorldProtection {
           metadata: metadata,
           file_fingerprint: fileFingerprint,
           original_filename: options.fileName,
+          protected_file_path: storagePath,
           is_active: true
         })
         .select()
@@ -124,6 +139,7 @@ export class EnhancedRealWorldProtection {
         protectedBlob,
         protectionMethods: appliedMethods,
         protectionLevel: options.protectionLevel,
+        storagePath,
         metadata,
         artworkId: options.artworkId,
         recordId: protectionRecord.id
