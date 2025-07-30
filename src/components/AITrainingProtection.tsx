@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Shield, Eye, FileImage, Video, Music, FileText, Zap, Globe, Lock } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AITrainingProtectionProps {
   fileType: 'image' | 'video' | 'audio' | 'document';
   fileName: string;
+  file?: File;
   onProtectionApply: (protectionLevel: string, methods: string[]) => void;
 }
 
@@ -24,6 +26,7 @@ interface ProtectionMethod {
 export const AITrainingProtection: React.FC<AITrainingProtectionProps> = ({
   fileType,
   fileName,
+  file,
   onProtectionApply
 }) => {
   const { toast } = useToast();
@@ -120,20 +123,48 @@ export const AITrainingProtection: React.FC<AITrainingProtectionProps> = ({
     }
 
     try {
-      // Simulate protection application
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      let protectionResult = null;
+      
+      // Apply real protection if file is provided
+      if (file) {
+        const { enhancedRealWorldProtection } = await import('@/lib/enhancedRealWorldProtection');
+        
+        protectionResult = await enhancedRealWorldProtection.protectFileWithDatabase(file, {
+          enableAdversarialNoise: enabledMethods.includes('adversarialNoise'),
+          enableRightsMetadata: enabledMethods.includes('metadataInjection'),
+          enableCrawlerBlocking: enabledMethods.includes('robotsTxtEntry'),
+          protectionLevel,
+          copyrightInfo: {
+            owner: 'TSMO User',
+            year: new Date().getFullYear(),
+            rights: 'All Rights Reserved'
+          },
+          userId: (await supabase.auth.getUser()).data.user?.id || 'anonymous',
+          fileName: file.name
+        });
+        
+        if (!protectionResult.success) {
+          throw new Error(protectionResult.error || 'Protection failed');
+        }
+      } else {
+        // Simulate protection for cases without file
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
       
       onProtectionApply(protectionLevel, enabledMethods);
       
       toast({
         title: "AI Training Protection Applied",
-        description: `${enabledMethods.length} protection methods applied to ${fileName}`,
+        description: file 
+          ? `File protected and saved with ID: ${protectionResult?.protectionId}`
+          : `${enabledMethods.length} protection methods applied to ${fileName}`,
         duration: 5000
       });
     } catch (error) {
+      console.error('Protection error:', error);
       toast({
         title: "Protection Failed",
-        description: "Failed to apply AI training protection. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to apply AI training protection. Please try again.",
         variant: "destructive"
       });
     }

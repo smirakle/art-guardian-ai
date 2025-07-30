@@ -9,6 +9,8 @@ import { Shield, Settings, FileImage, Video, Music, FileText, Globe, AlertTriang
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { AIProtectedFilesManager } from "@/components/ai-protection/AIProtectedFilesManager";
+import { ExistingFilesProtection } from "@/components/ai-protection/ExistingFilesProtection";
+import { ProtectionDemo } from "@/components/ai-protection/ProtectionDemo";
 
 interface AIProtectionSettings {
   globalProtection: boolean;
@@ -81,11 +83,12 @@ export const AITrainingSettings: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Count protected files from artwork table
+      // Count protected files from ai_protection_records table
       const { count } = await supabase
-        .from('artwork')
+        .from('ai_protection_records')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .eq('is_active', true);
 
       setProtectedFilesCount(count || 0);
     } catch (error) {
@@ -322,6 +325,8 @@ export const AITrainingSettings: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="downloads" className="space-y-6">
+            <ProtectionDemo />
+            <ExistingFilesProtection />
             <AIProtectedFilesManager />
           </TabsContent>
         </Tabs>

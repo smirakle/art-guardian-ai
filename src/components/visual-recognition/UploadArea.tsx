@@ -144,6 +144,7 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
         <AITrainingProtection
           fileType={currentFile.fileType}
           fileName={currentFile.file.name}
+          file={currentFile.file}
           onProtectionApply={handleProtectionApplied}
         />
       </div>
