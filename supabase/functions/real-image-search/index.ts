@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 
@@ -212,71 +213,6 @@ serve(async (req) => {
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
-    } catch (error) {
-      console.error('API key testing error:', error);
-      return new Response(
-        JSON.stringify({ error: 'API testing failed', details: error.message }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-      );
-    }
-    }
-
-    // Original search functionality
-    try {
-          apiStatus.google.status = response.ok ? 'working' : `error: ${response.status}`;
-        }
-      } catch (error) {
-        apiStatus.google.status = `error: ${error.message}`;
-      }
-      
-      try {
-        if (apiStatus.bing.api_key) {
-          const response = await fetch('https://api.bing.microsoft.com/v7.0/search?q=test', {
-            headers: { 'Ocp-Apim-Subscription-Key': Deno.env.get('BING_VISUAL_SEARCH_API_KEY') || '' }
-          });
-          apiStatus.bing.status = response.ok ? 'working' : `error: ${response.status}`;
-        }
-      } catch (error) {
-        apiStatus.bing.status = `error: ${error.message}`;
-      }
-      
-      try {
-        if (apiStatus.serpapi.api_key) {
-          const response = await fetch(`https://serpapi.com/search.json?engine=google&q=test&api_key=${Deno.env.get('SERPAPI_KEY')}`);
-          apiStatus.serpapi.status = response.ok ? 'working' : `error: ${response.status}`;
-        }
-      } catch (error) {
-        apiStatus.serpapi.status = `error: ${error.message}`;
-      }
-      
-      try {
-        if (apiStatus.openai.api_key) {
-          const response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              model: 'gpt-4o-mini',
-              messages: [{ role: 'user', content: 'Say hi' }],
-              max_tokens: 5
-            })
-          });
-          apiStatus.openai.status = response.ok ? 'working' : `error: ${response.status}`;
-        }
-      } catch (error) {
-        apiStatus.openai.status = `error: ${error.message}`;
-      }
-      
-      return new Response(
-        JSON.stringify({ 
-          success: true,
-          api_status: apiStatus,
-          message: 'API key status check completed'
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
     }
 
     // Check if we have all required parameters for a search
@@ -389,8 +325,6 @@ serve(async (req) => {
         console.error('Deepfake detection failed:', error);
       }
     }
-    
-    // Mock results removed - using only real search results
 
     console.log(`Found ${results.length} total results`);
 
