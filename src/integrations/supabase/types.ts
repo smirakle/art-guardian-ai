@@ -654,6 +654,39 @@ export type Database = {
         }
         Relationships: []
       }
+      monitored_platforms: {
+        Row: {
+          api_endpoint: string | null
+          created_at: string
+          features: Json | null
+          id: string
+          is_enabled: boolean | null
+          platform_category: string
+          platform_name: string
+          scan_frequency_minutes: number | null
+        }
+        Insert: {
+          api_endpoint?: string | null
+          created_at?: string
+          features?: Json | null
+          id?: string
+          is_enabled?: boolean | null
+          platform_category: string
+          platform_name: string
+          scan_frequency_minutes?: number | null
+        }
+        Update: {
+          api_endpoint?: string | null
+          created_at?: string
+          features?: Json | null
+          id?: string
+          is_enabled?: boolean | null
+          platform_category?: string
+          platform_name?: string
+          scan_frequency_minutes?: number | null
+        }
+        Relationships: []
+      }
       monitoring_alerts: {
         Row: {
           alert_type: string
@@ -786,6 +819,238 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      profile_impersonation_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          description: string
+          id: string
+          is_acknowledged: boolean | null
+          is_resolved: boolean | null
+          recommended_actions: string[] | null
+          resolved_at: string | null
+          scan_result_id: string
+          severity: string | null
+          target_id: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string
+          description: string
+          id?: string
+          is_acknowledged?: boolean | null
+          is_resolved?: boolean | null
+          recommended_actions?: string[] | null
+          resolved_at?: string | null
+          scan_result_id: string
+          severity?: string | null
+          target_id: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_acknowledged?: boolean | null
+          is_resolved?: boolean | null
+          recommended_actions?: string[] | null
+          resolved_at?: string | null
+          scan_result_id?: string
+          severity?: string | null
+          target_id?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_profile_impersonation_alerts_scan_result"
+            columns: ["scan_result_id"]
+            isOneToOne: false
+            referencedRelation: "profile_scan_results"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_profile_impersonation_alerts_target"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "profile_monitoring_targets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_monitoring_targets: {
+        Row: {
+          created_at: string
+          id: string
+          last_scan_at: string | null
+          monitoring_enabled: boolean | null
+          platforms_to_monitor: string[] | null
+          profile_images: string[] | null
+          risk_score: number | null
+          target_description: string | null
+          target_emails: string[] | null
+          target_name: string
+          target_usernames: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_scan_at?: string | null
+          monitoring_enabled?: boolean | null
+          platforms_to_monitor?: string[] | null
+          profile_images?: string[] | null
+          risk_score?: number | null
+          target_description?: string | null
+          target_emails?: string[] | null
+          target_name: string
+          target_usernames?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_scan_at?: string | null
+          monitoring_enabled?: boolean | null
+          platforms_to_monitor?: string[] | null
+          profile_images?: string[] | null
+          risk_score?: number | null
+          target_description?: string | null
+          target_emails?: string[] | null
+          target_name?: string
+          target_usernames?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profile_risk_assessments: {
+        Row: {
+          assessment_factors: Json | null
+          brand_damage_risk: number | null
+          created_at: string
+          financial_risk: number | null
+          id: string
+          identity_theft_risk: number | null
+          impersonation_risk: number | null
+          last_updated: string
+          overall_risk_score: number | null
+          recommendations: string[] | null
+          target_id: string
+        }
+        Insert: {
+          assessment_factors?: Json | null
+          brand_damage_risk?: number | null
+          created_at?: string
+          financial_risk?: number | null
+          id?: string
+          identity_theft_risk?: number | null
+          impersonation_risk?: number | null
+          last_updated?: string
+          overall_risk_score?: number | null
+          recommendations?: string[] | null
+          target_id: string
+        }
+        Update: {
+          assessment_factors?: Json | null
+          brand_damage_risk?: number | null
+          created_at?: string
+          financial_risk?: number | null
+          id?: string
+          identity_theft_risk?: number | null
+          impersonation_risk?: number | null
+          last_updated?: string
+          overall_risk_score?: number | null
+          recommendations?: string[] | null
+          target_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_profile_risk_assessments_target"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "profile_monitoring_targets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_scan_results: {
+        Row: {
+          confidence_score: number | null
+          created_at: string
+          detected_at: string
+          detected_issues: string[] | null
+          id: string
+          is_reviewed: boolean | null
+          is_verified: boolean | null
+          metadata: Json | null
+          platform: string
+          profile_bio: string | null
+          profile_image_url: string | null
+          profile_name: string | null
+          profile_url: string
+          profile_username: string | null
+          risk_level: string | null
+          scan_type: string | null
+          similarity_score: number | null
+          target_id: string
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string
+          detected_at?: string
+          detected_issues?: string[] | null
+          id?: string
+          is_reviewed?: boolean | null
+          is_verified?: boolean | null
+          metadata?: Json | null
+          platform: string
+          profile_bio?: string | null
+          profile_image_url?: string | null
+          profile_name?: string | null
+          profile_url: string
+          profile_username?: string | null
+          risk_level?: string | null
+          scan_type?: string | null
+          similarity_score?: number | null
+          target_id: string
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string
+          detected_at?: string
+          detected_issues?: string[] | null
+          id?: string
+          is_reviewed?: boolean | null
+          is_verified?: boolean | null
+          metadata?: Json | null
+          platform?: string
+          profile_bio?: string | null
+          profile_image_url?: string | null
+          profile_name?: string | null
+          profile_url?: string
+          profile_username?: string | null
+          risk_level?: string | null
+          scan_type?: string | null
+          similarity_score?: number | null
+          target_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_profile_scan_results_target"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "profile_monitoring_targets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
