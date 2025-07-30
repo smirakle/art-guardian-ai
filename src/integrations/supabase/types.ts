@@ -38,8 +38,119 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_protection_records: {
+        Row: {
+          applied_at: string
+          artwork_id: string
+          created_at: string
+          file_fingerprint: string
+          id: string
+          is_active: boolean
+          metadata: Json
+          original_filename: string
+          protected_file_path: string | null
+          protection_id: string
+          protection_level: string
+          protection_methods: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          applied_at?: string
+          artwork_id: string
+          created_at?: string
+          file_fingerprint: string
+          id?: string
+          is_active?: boolean
+          metadata?: Json
+          original_filename: string
+          protected_file_path?: string | null
+          protection_id: string
+          protection_level?: string
+          protection_methods?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          applied_at?: string
+          artwork_id?: string
+          created_at?: string
+          file_fingerprint?: string
+          id?: string
+          is_active?: boolean
+          metadata?: Json
+          original_filename?: string
+          protected_file_path?: string | null
+          protection_id?: string
+          protection_level?: string
+          protection_methods?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ai_training_violations: {
+        Row: {
+          artwork_id: string
+          confidence_score: number
+          created_at: string
+          detected_at: string
+          dmca_notice_id: string | null
+          evidence_data: Json
+          id: string
+          legal_action_taken: boolean
+          protection_record_id: string
+          resolved_at: string | null
+          source_domain: string | null
+          source_url: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          violation_type: string
+        }
+        Insert: {
+          artwork_id: string
+          confidence_score?: number
+          created_at?: string
+          detected_at?: string
+          dmca_notice_id?: string | null
+          evidence_data?: Json
+          id?: string
+          legal_action_taken?: boolean
+          protection_record_id: string
+          resolved_at?: string | null
+          source_domain?: string | null
+          source_url?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          violation_type: string
+        }
+        Update: {
+          artwork_id?: string
+          confidence_score?: number
+          created_at?: string
+          detected_at?: string
+          dmca_notice_id?: string | null
+          evidence_data?: Json
+          id?: string
+          legal_action_taken?: boolean
+          protection_record_id?: string
+          resolved_at?: string | null
+          source_domain?: string | null
+          source_url?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          violation_type?: string
+        }
+        Relationships: []
+      }
       artwork: {
         Row: {
+          ai_protection_enabled: boolean | null
+          ai_protection_level: string | null
+          ai_protection_methods: Json | null
           blockchain_certificate_id: string | null
           blockchain_hash: string | null
           blockchain_registered_at: string | null
@@ -51,6 +162,7 @@ export type Database = {
           file_paths: string[]
           id: string
           license_type: string | null
+          protection_record_id: string | null
           status: string | null
           tags: string[] | null
           title: string
@@ -58,6 +170,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          ai_protection_enabled?: boolean | null
+          ai_protection_level?: string | null
+          ai_protection_methods?: Json | null
           blockchain_certificate_id?: string | null
           blockchain_hash?: string | null
           blockchain_registered_at?: string | null
@@ -69,6 +184,7 @@ export type Database = {
           file_paths: string[]
           id?: string
           license_type?: string | null
+          protection_record_id?: string | null
           status?: string | null
           tags?: string[] | null
           title: string
@@ -76,6 +192,9 @@ export type Database = {
           user_id: string
         }
         Update: {
+          ai_protection_enabled?: boolean | null
+          ai_protection_level?: string | null
+          ai_protection_methods?: Json | null
           blockchain_certificate_id?: string | null
           blockchain_hash?: string | null
           blockchain_registered_at?: string | null
@@ -87,6 +206,7 @@ export type Database = {
           file_paths?: string[]
           id?: string
           license_type?: string | null
+          protection_record_id?: string | null
           status?: string | null
           tags?: string[] | null
           title?: string

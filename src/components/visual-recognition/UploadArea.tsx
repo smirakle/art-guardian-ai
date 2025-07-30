@@ -5,6 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Camera, Upload, Loader, ImageIcon, Link, FileText, Shield } from "lucide-react";
 import { AITrainingProtection } from '@/components/AITrainingProtection';
+import { enhancedRealWorldProtection } from '@/lib/enhancedRealWorldProtection';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface UploadAreaProps {
   onFileUpload: (files: FileList | null) => void;
