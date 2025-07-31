@@ -77,29 +77,46 @@ export const AIProtectedFilesManager = () => {
   };
 
   const downloadFile = async (file: ProtectedFile) => {
-    if (!file.protected_file_path) {
-      toast({
-        title: 'Error',
-        description: 'Protected file not found in storage',
-        variant: 'destructive',
-      });
-      return;
-    }
-
     try {
       setDownloading(prev => new Set(prev).add(file.id));
 
-      const { data, error } = await supabase.storage
-        .from('ai-protected-files')
-        .download(file.protected_file_path);
+      let downloadData: Blob;
+      let filename = file.original_filename;
 
-      if (error) throw error;
+      // Check if this is a newly protected file with a dedicated storage path
+      if (file.protected_file_path) {
+        const { data, error } = await supabase.storage
+          .from('ai-protected-files')
+          .download(file.protected_file_path);
+
+        if (error) throw error;
+        downloadData = data;
+      } 
+      // Handle files that were protected but don't have a separate protected copy
+      else if (file.artwork_id && file.metadata?.originalPaths?.[0]) {
+        // Try to download from artwork bucket using original path
+        const originalPath = file.metadata.originalPaths[0];
+        const { data, error } = await supabase.storage
+          .from('artwork')
+          .download(originalPath);
+
+        if (error) throw error;
+        downloadData = data;
+        filename = `protected_${filename}`;
+      } else {
+        toast({
+          title: 'Error',
+          description: 'No file available for download',
+          variant: 'destructive',
+        });
+        return;
+      }
 
       // Create download link
-      const url = URL.createObjectURL(data);
+      const url = URL.createObjectURL(downloadData);
       const a = document.createElement('a');
       a.href = url;
-      a.download = file.original_filename;
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -107,13 +124,13 @@ export const AIProtectedFilesManager = () => {
 
       toast({
         title: 'Success',
-        description: `Downloaded ${file.original_filename}`,
+        description: `Downloaded ${filename}`,
       });
     } catch (error) {
       console.error('Error downloading file:', error);
       toast({
         title: 'Error',
-        description: 'Failed to download file',
+        description: 'Failed to download file. Please check if the file still exists.',
         variant: 'destructive',
       });
     } finally {
