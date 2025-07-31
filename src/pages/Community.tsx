@@ -479,11 +479,11 @@ Governs the creation of custom artwork for specific clients.
 - **Cancellation terms**: Conditions and compensation for early termination
 
 #### Sample Timeline Clause
-```
+\`\`\`
 Artist will provide initial sketches within 10 business days of deposit receipt. 
 Client has 5 business days to approve or request revisions. 
 Final artwork will be completed within 30 days of sketch approval.
-```
+\`\`\`
 
 #### Payment Structure Example
 - 50% deposit upon contract signing
@@ -646,39 +646,39 @@ Allow others to use your artwork while retaining copyright ownership.
 ## Contract Clauses Every Artist Should Include
 
 ### 1. Copyright Retention
-```
+\`\`\`
 Artist retains all copyright in the Work. This Agreement grants only 
 the specific rights expressly set forth herein, and no additional 
 rights are granted by implication.
-```
+\`\`\`
 
 ### 2. Credit and Attribution
-```
+\`\`\`
 Client agrees to provide appropriate credit to Artist in the form: 
 "Artwork by [Artist Name]" in a size and location reasonably 
 calculated to give notice of Artist's authorship.
-```
+\`\`\`
 
 ### 3. Moral Rights (where applicable)
-```
+\`\`\`
 Client agrees not to intentionally distort, mutilate, or modify 
 the Work in a manner that would be prejudicial to Artist's 
 honor or reputation.
-```
+\`\`\`
 
 ### 4. Payment Protection
-```
+\`\`\`
 Late payments will incur a service charge of 1.5% per month. 
 Artist reserves the right to withhold delivery and suspend work 
 until payments are current.
-```
+\`\`\`
 
 ### 5. Force Majeure
-```
+\`\`\`
 Neither party shall be liable for delays or failures in performance 
 resulting from acts beyond the reasonable control of such party, 
 including natural disasters, war, terrorism, or pandemic.
-```
+\`\`\`
 
 ## Digital Age Considerations
 
