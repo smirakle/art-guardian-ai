@@ -2154,6 +2154,13 @@ export type Database = {
         Args: { _user_id: string }
         Returns: undefined
       }
+      get_all_template_download_counts: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          template_id: string
+          download_count: number
+        }[]
+      }
       get_artwork_limit: {
         Args: Record<PropertyKey, never>
         Returns: number

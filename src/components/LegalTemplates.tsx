@@ -55,9 +55,32 @@ const LegalTemplates = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'popular' | 'recent' | 'alphabetical'>('popular');
   const [previewTemplate, setPreviewTemplate] = useState<LegalTemplate | null>(null);
+  const [downloadCounts, setDownloadCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
     checkLoginStatus();
+    fetchDownloadCounts();
+    
+    // Set up real-time subscription for template purchases
+    const channel = supabase
+      .channel('template-purchases-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'template_purchases'
+        },
+        () => {
+          // Refetch download counts when purchases change
+          fetchDownloadCounts();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const checkLoginStatus = async () => {
@@ -67,6 +90,24 @@ const LegalTemplates = () => {
     } catch (error) {
       console.error('Error checking login status:', error);
       setIsLoggedIn(false);
+    }
+  };
+
+  const fetchDownloadCounts = async () => {
+    try {
+      const { data, error } = await supabase.rpc('get_all_template_download_counts');
+      if (error) {
+        console.error('Error fetching download counts:', error);
+        return;
+      }
+      
+      const countMap: Record<string, number> = {};
+      data?.forEach((item: { template_id: string; download_count: number }) => {
+        countMap[item.template_id] = Number(item.download_count);
+      });
+      setDownloadCounts(countMap);
+    } catch (error) {
+      console.error('Error fetching download counts:', error);
     }
   };
 
@@ -682,8 +723,8 @@ We will notify you of material changes to this policy.
                           {template.estimatedTime}
                         </div>
                         <div className="flex items-center gap-1">
-                          <Users className="h-4 w-4" />
-                          {template.popularity}% popular
+                          <Download className="h-4 w-4" />
+                          {downloadCounts[template.id] || 0} downloads
                         </div>
                       </div>
                       <div className="flex justify-between items-center">
@@ -831,8 +872,8 @@ We will notify you of material changes to this policy.
                           {template.format.toUpperCase()}
                         </div>
                         <div className="flex items-center gap-1">
-                          <Users className="h-3 w-3" />
-                          {template.popularity}%
+                          <Download className="h-3 w-3" />
+                          {downloadCounts[template.id] || 0}
                         </div>
                       </div>
                       
