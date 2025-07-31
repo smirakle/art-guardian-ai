@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Download, FileText, Image, Music, Video, Search, Filter, CheckSquare, Square } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Download, FileText, Image, Music, Video, Search, Filter, CheckSquare, Square, ExternalLink, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -25,6 +26,9 @@ interface ProtectedFile {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  artwork_file_paths?: string[];
+  is_downloadable?: boolean;
+  download_reason?: string;
 }
 
 export const AIProtectedFilesManager = () => {
@@ -45,24 +49,87 @@ export const AIProtectedFilesManager = () => {
   const loadProtectedFiles = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      
+      // First get AI protection records
+      const { data: protectionData, error: protectionError } = await supabase
         .from('ai_protection_records')
         .select('*')
         .eq('user_id', user?.id)
         .eq('is_active', true)
         .order('applied_at', { ascending: false });
 
-      if (error) throw error;
+      if (protectionError) throw protectionError;
 
-      // Transform data to match our interface
-      const transformedFiles = (data || []).map(item => ({
-        ...item,
-        protection_methods: Array.isArray(item.protection_methods) 
+      // Transform data to match our interface and determine downloadability
+      const transformedFiles = await Promise.all((protectionData || []).map(async (item) => {
+        const protectionMethods = Array.isArray(item.protection_methods) 
           ? item.protection_methods.map(method => String(method))
           : typeof item.protection_methods === 'string'
             ? [item.protection_methods]
-            : []
+            : [];
+
+        // Determine if file is downloadable
+        let isDownloadable = false;
+        let downloadReason = 'File not available for download';
+        let artworkFilePaths: string[] = [];
+
+        if (item.protected_file_path) {
+          // Has dedicated protected file
+          isDownloadable = true;
+          downloadReason = 'Protected file available';
+        } else if (item.artwork_id) {
+          // Try to get artwork file paths
+          const { data: artworkData } = await supabase
+            .from('artwork')
+            .select('file_paths')
+            .eq('id', item.artwork_id)
+            .single();
+          
+          if (artworkData?.file_paths) {
+            artworkFilePaths = artworkData.file_paths;
+            const validPaths = artworkFilePaths.filter(path => 
+              path && !path.startsWith('http') && !path.startsWith('https')
+            );
+            
+            if (validPaths.length > 0) {
+              isDownloadable = true;
+              downloadReason = 'Original artwork file available';
+            } else {
+              downloadReason = 'File contains only external URLs';
+            }
+          }
+        }
+        
+        // Check metadata paths as fallback
+        if (!isDownloadable && item.metadata && typeof item.metadata === 'object') {
+          const metadata = item.metadata as any;
+          if (metadata.originalPaths) {
+            const originalPaths = Array.isArray(metadata.originalPaths) 
+              ? metadata.originalPaths 
+              : [metadata.originalPaths];
+            
+            const validPaths = originalPaths.filter((path: any) => 
+              path && typeof path === 'string' && !path.startsWith('http') && !path.startsWith('https')
+            );
+            
+            if (validPaths.length > 0) {
+              isDownloadable = true;
+              downloadReason = 'File available in storage';
+            } else if (!isDownloadable) {
+              downloadReason = 'File contains only external URLs';
+            }
+          }
+        }
+
+        return {
+          ...item,
+          protection_methods: protectionMethods,
+          artwork_file_paths: artworkFilePaths,
+          is_downloadable: isDownloadable,
+          download_reason: downloadReason
+        };
       }));
+      
       setFiles(transformedFiles);
     } catch (error) {
       console.error('Error loading protected files:', error);
@@ -77,6 +144,15 @@ export const AIProtectedFilesManager = () => {
   };
 
   const downloadFile = async (file: ProtectedFile) => {
+    if (!file.is_downloadable) {
+      toast({
+        title: 'Cannot Download',
+        description: file.download_reason || 'File not available for download',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     try {
       setDownloading(prev => new Set(prev).add(file.id));
 
@@ -92,24 +168,53 @@ export const AIProtectedFilesManager = () => {
         if (error) throw error;
         downloadData = data;
       } 
-      // Handle files that were protected but don't have a separate protected copy
-      else if (file.artwork_id && file.metadata?.originalPaths?.[0]) {
-        // Try to download from artwork bucket using original path
-        const originalPath = file.metadata.originalPaths[0];
+      // Handle artwork files
+      else if (file.artwork_file_paths && file.artwork_file_paths.length > 0) {
+        // Use the first valid (non-URL) path
+        const validPath = file.artwork_file_paths.find(path => 
+          !path.startsWith('http') && !path.startsWith('https')
+        );
+        
+        if (!validPath) {
+          throw new Error('No valid storage path found');
+        }
+
         const { data, error } = await supabase.storage
           .from('artwork')
-          .download(originalPath);
+          .download(validPath);
 
         if (error) throw error;
         downloadData = data;
         filename = `protected_${filename}`;
+      }
+      // Handle metadata paths
+      else if (file.metadata && typeof file.metadata === 'object') {
+        const metadata = file.metadata as any;
+        if (metadata.originalPaths) {
+          const originalPaths = Array.isArray(metadata.originalPaths) 
+            ? metadata.originalPaths 
+            : [metadata.originalPaths];
+          
+          const validPath = originalPaths.find((path: any) => 
+            path && typeof path === 'string' && !path.startsWith('http') && !path.startsWith('https')
+          );
+          
+          if (!validPath) {
+            throw new Error('No valid storage path found');
+          }
+
+          const { data, error } = await supabase.storage
+            .from('artwork')
+            .download(validPath);
+
+          if (error) throw error;
+          downloadData = data;
+          filename = `protected_${filename}`;
+        } else {
+          throw new Error('No download path available');
+        }
       } else {
-        toast({
-          title: 'Error',
-          description: 'No file available for download',
-          variant: 'destructive',
-        });
-        return;
+        throw new Error('No download path available');
       }
 
       // Create download link
@@ -129,8 +234,8 @@ export const AIProtectedFilesManager = () => {
     } catch (error) {
       console.error('Error downloading file:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to download file. Please check if the file still exists.',
+        title: 'Download Failed',
+        description: error instanceof Error ? error.message : 'Failed to download file',
         variant: 'destructive',
       });
     } finally {
@@ -143,7 +248,18 @@ export const AIProtectedFilesManager = () => {
   };
 
   const downloadSelectedFiles = async () => {
-    const filesToDownload = files.filter(file => selectedFiles.has(file.id));
+    const filesToDownload = files.filter(file => 
+      selectedFiles.has(file.id) && file.is_downloadable
+    );
+    
+    if (filesToDownload.length === 0) {
+      toast({
+        title: 'No Downloadable Files',
+        description: 'None of the selected files are available for download',
+        variant: 'destructive',
+      });
+      return;
+    }
     
     for (const file of filesToDownload) {
       await downloadFile(file);
@@ -213,34 +329,35 @@ export const AIProtectedFilesManager = () => {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Download className="h-5 w-5" />
-          AI Protected Files ({files.length})
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Search and controls */}
-        <div className="flex flex-col sm:flex-row gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search files..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9"
-            />
+    <TooltipProvider>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Download className="h-5 w-5" />
+            AI Protected Files ({files.length})
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Search and controls */}
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search files..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            {selectedFiles.size > 0 && (
+              <Button
+                onClick={downloadSelectedFiles}
+                className="whitespace-nowrap"
+              >
+                Download Selected ({selectedFiles.size})
+              </Button>
+            )}
           </div>
-          {selectedFiles.size > 0 && (
-            <Button
-              onClick={downloadSelectedFiles}
-              className="whitespace-nowrap"
-            >
-              Download Selected ({selectedFiles.size})
-            </Button>
-          )}
-        </div>
 
         {filteredFiles.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
@@ -290,8 +407,18 @@ export const AIProtectedFilesManager = () => {
                     )}
                   </Button>
                   
-                  <div className="text-muted-foreground">
+                  <div className="text-muted-foreground flex items-center gap-1">
                     {getFileIcon(file.original_filename)}
+                    {!file.is_downloadable && (
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <ExternalLink className="h-3 w-3 text-orange-500" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{file.download_reason}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
                   </div>
                   
                   <div className="flex-1 min-w-0">
@@ -330,21 +457,40 @@ export const AIProtectedFilesManager = () => {
                     </div>
                   </div>
                   
-                  <Button
-                    onClick={() => downloadFile(file)}
-                    disabled={downloading.has(file.id)}
-                    size="sm"
-                    className="shrink-0"
-                  >
-                    {downloading.has(file.id) ? (
-                      'Downloading...'
-                    ) : (
-                      <>
-                        <Download className="h-4 w-4 mr-1" />
-                        Download
-                      </>
-                    )}
-                  </Button>
+                  {file.is_downloadable ? (
+                    <Button
+                      onClick={() => downloadFile(file)}
+                      disabled={downloading.has(file.id)}
+                      size="sm"
+                      className="shrink-0"
+                    >
+                      {downloading.has(file.id) ? (
+                        'Downloading...'
+                      ) : (
+                        <>
+                          <Download className="h-4 w-4 mr-1" />
+                          Download
+                        </>
+                      )}
+                    </Button>
+                  ) : (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          disabled
+                          size="sm"
+                          variant="outline"
+                          className="shrink-0"
+                        >
+                          <AlertCircle className="h-4 w-4 mr-1" />
+                          Not Available
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{file.download_reason}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
                 </div>
               ))}
             </div>
@@ -352,5 +498,6 @@ export const AIProtectedFilesManager = () => {
         )}
       </CardContent>
     </Card>
+    </TooltipProvider>
   );
 };
