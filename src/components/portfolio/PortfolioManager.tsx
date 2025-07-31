@@ -227,6 +227,28 @@ export function PortfolioManager() {
 
   const addArtworkToPortfolio = async (portfolioId: string, artworkId: string) => {
     try {
+      // Check if artwork is already in portfolio
+      const { data: existingItem, error: checkError } = await supabase
+        .from('portfolio_items')
+        .select('id')
+        .eq('portfolio_id', portfolioId)
+        .eq('artwork_id', artworkId)
+        .eq('is_active', true)
+        .single();
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        throw checkError;
+      }
+
+      if (existingItem) {
+        toast({
+          title: "Already Added",
+          description: "This artwork is already in the portfolio",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const { error } = await supabase
         .from('portfolio_items')
         .insert([{ portfolio_id: portfolioId, artwork_id: artworkId }]);
@@ -234,16 +256,23 @@ export function PortfolioManager() {
       if (error) throw error;
 
       await fetchPortfolios(); // Refresh to update counts
+      setIsArtworkDialogOpen(false); // Close dialog on success
       
       toast({
         title: "Success",
         description: "Artwork added to portfolio",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding artwork to portfolio:', error);
+      
+      let errorMessage = "Failed to add artwork to portfolio";
+      if (error.code === '23505') {
+        errorMessage = "This artwork is already in the portfolio";
+      }
+      
       toast({
         title: "Error",
-        description: "Failed to add artwork to portfolio",
+        description: errorMessage,
         variant: "destructive",
       });
     }
