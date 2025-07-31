@@ -1,12 +1,7 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shield, Search, AlertTriangle, BarChart3, Users, Globe } from 'lucide-react';
-import { ProfileMonitoringDashboard } from '@/components/profile-monitoring/ProfileMonitoringDashboard';
-import { ProfileTargetManager } from '@/components/profile-monitoring/ProfileTargetManager';
-import { ImpersonationAlerts } from '@/components/profile-monitoring/ImpersonationAlerts';
-import { ProfileRiskAnalyzer } from '@/components/profile-monitoring/ProfileRiskAnalyzer';
-import { MultiPlatformScanner } from '@/components/profile-monitoring/MultiPlatformScanner';
-import { ProfileReporting } from '@/components/profile-monitoring/ProfileReporting';
+import { ComingSoon } from '@/components/ComingSoon';
 
 export default function ProfileMonitoring() {
   return (
@@ -55,27 +50,51 @@ export default function ProfileMonitoring() {
           </TabsList>
 
           <TabsContent value="dashboard">
-            <ProfileMonitoringDashboard />
+            <ComingSoon 
+              title="Profile Monitoring Dashboard" 
+              description="Advanced identity protection and monitoring tools are being developed to safeguard your online presence."
+              icon={<Shield className="w-12 h-12 text-muted-foreground" />}
+            />
           </TabsContent>
 
           <TabsContent value="targets">
-            <ProfileTargetManager />
+            <ComingSoon 
+              title="Target Management" 
+              description="Define and manage profiles to monitor across multiple platforms."
+              icon={<Users className="w-12 h-12 text-muted-foreground" />}
+            />
           </TabsContent>
 
           <TabsContent value="scanner">
-            <MultiPlatformScanner />
+            <ComingSoon 
+              title="Multi-Platform Scanner" 
+              description="Automated scanning across social media and web platforms for impersonation attempts."
+              icon={<Search className="w-12 h-12 text-muted-foreground" />}
+            />
           </TabsContent>
 
           <TabsContent value="alerts">
-            <ImpersonationAlerts />
+            <ComingSoon 
+              title="Impersonation Alerts" 
+              description="Real-time alerts when unauthorized use of your identity is detected."
+              icon={<AlertTriangle className="w-12 h-12 text-muted-foreground" />}
+            />
           </TabsContent>
 
           <TabsContent value="risk">
-            <ProfileRiskAnalyzer />
+            <ComingSoon 
+              title="Risk Analysis" 
+              description="Advanced AI-powered risk assessment and threat analysis for your digital identity."
+              icon={<Shield className="w-12 h-12 text-muted-foreground" />}
+            />
           </TabsContent>
 
           <TabsContent value="reports">
-            <ProfileReporting />
+            <ComingSoon 
+              title="Monitoring Reports" 
+              description="Comprehensive reports and analytics on your profile monitoring activities."
+              icon={<Globe className="w-12 h-12 text-muted-foreground" />}
+            />
           </TabsContent>
         </Tabs>
       </div>

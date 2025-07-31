@@ -11,6 +11,7 @@ import SocialMediaMonitoringResults from "@/components/monitoring/SocialMediaMon
 import FakeAccountDetector from "@/components/FakeAccountDetector";
 import SocialMediaAccountManager from "@/components/SocialMediaAccountManager";
 import FeatureGuard from "@/components/FeatureGuard";
+import { ComingSoon } from "@/components/ComingSoon";
 
 export default function Monitoring() {
   return (
@@ -92,25 +93,19 @@ export default function Monitoring() {
           </TabsContent>
 
           <TabsContent value="social" className="space-y-6">
-            <FeatureGuard 
-              feature="social_media_monitoring" 
-              plan="addon"
-              fallbackTitle="Social Media Monitoring"
-              fallbackDescription="Monitor social media platforms for unauthorized use of your content"
-            >
-              <SocialMediaAccountManager />
-              <SocialMediaMonitoringResults />
-            </FeatureGuard>
+            <ComingSoon 
+              title="Social Media Monitoring" 
+              description="Advanced social media monitoring and content protection across all major platforms is under development."
+              icon={<Users className="w-12 h-12 text-muted-foreground" />}
+            />
           </TabsContent>
 
           <TabsContent value="deepfakes" className="space-y-6">
-            <FeatureGuard 
-              feature="deepfake_detection"
-              fallbackTitle="Deepfake Detection"
-              fallbackDescription="AI-powered deepfake detection and monitoring across the web"
-            >
-              <FakeAccountDetector />
-            </FeatureGuard>
+            <ComingSoon 
+              title="Deepfake Detection" 
+              description="AI-powered deepfake detection and monitoring technology is being developed to protect against synthetic media threats."
+              icon={<Brain className="w-12 h-12 text-muted-foreground" />}
+            />
           </TabsContent>
 
           <TabsContent value="dmca" className="space-y-6">
