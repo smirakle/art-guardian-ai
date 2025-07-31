@@ -133,6 +133,9 @@ export const AITrainingProtection: React.FC<AITrainingProtectionProps> = ({
           enableAdversarialNoise: enabledMethods.includes('adversarialNoise'),
           enableRightsMetadata: enabledMethods.includes('metadataInjection'),
           enableCrawlerBlocking: enabledMethods.includes('robotsTxtEntry'),
+          enableInvisibleWatermark: enabledMethods.includes('invisibleWatermark'),
+          enableBlockchainRegistration: enabledMethods.includes('blockchainRegistration'),
+          enableLikenessProtection: enabledMethods.includes('likenenessProtection'),
           protectionLevel,
           copyrightInfo: {
             owner: 'TSMO User',

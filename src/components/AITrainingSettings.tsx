@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AIProtectedFilesManager } from "@/components/ai-protection/AIProtectedFilesManager";
 import { ExistingFilesProtection } from "@/components/ai-protection/ExistingFilesProtection";
 import { ProtectionDemo } from "@/components/ai-protection/ProtectionDemo";
+import { ProtectionTestPanel } from "@/components/ai-protection/ProtectionTestPanel";
 
 interface AIProtectionSettings {
   globalProtection: boolean;
@@ -325,6 +326,7 @@ export const AITrainingSettings: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="downloads" className="space-y-6">
+            <ProtectionTestPanel />
             <ProtectionDemo />
             <ExistingFilesProtection />
             <AIProtectedFilesManager />
