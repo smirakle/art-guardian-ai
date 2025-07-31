@@ -499,6 +499,57 @@ export type Database = {
         }
         Relationships: []
       }
+      deepfake_analysis_results: {
+        Row: {
+          analysis_methods: string[]
+          confidence_score: number
+          countermeasures: string[]
+          created_at: string
+          facial_artifacts: string[]
+          id: string
+          is_deepfake: boolean
+          manipulation_type: string | null
+          media_type: string
+          media_url: string
+          metadata_anomalies: string[]
+          technical_details: Json
+          temporal_inconsistencies: string[]
+          threat_level: string
+        }
+        Insert: {
+          analysis_methods?: string[]
+          confidence_score?: number
+          countermeasures?: string[]
+          created_at?: string
+          facial_artifacts?: string[]
+          id?: string
+          is_deepfake?: boolean
+          manipulation_type?: string | null
+          media_type: string
+          media_url: string
+          metadata_anomalies?: string[]
+          technical_details?: Json
+          temporal_inconsistencies?: string[]
+          threat_level?: string
+        }
+        Update: {
+          analysis_methods?: string[]
+          confidence_score?: number
+          countermeasures?: string[]
+          created_at?: string
+          facial_artifacts?: string[]
+          id?: string
+          is_deepfake?: boolean
+          manipulation_type?: string | null
+          media_type?: string
+          media_url?: string
+          metadata_anomalies?: string[]
+          technical_details?: Json
+          temporal_inconsistencies?: string[]
+          threat_level?: string
+        }
+        Relationships: []
+      }
       deepfake_matches: {
         Row: {
           claimed_location: string | null
@@ -1282,6 +1333,36 @@ export type Database = {
           scan_types?: string[]
           schedule_name?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      monitoring_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          monitoring_type: string
+          started_at: string
+          status: string
+          stopped_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          monitoring_type: string
+          started_at?: string
+          status?: string
+          stopped_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          monitoring_type?: string
+          started_at?: string
+          status?: string
+          stopped_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -2166,6 +2247,51 @@ export type Database = {
           template_title?: string
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      threat_intelligence: {
+        Row: {
+          confidence_score: number
+          created_at: string
+          description: string | null
+          first_seen: string
+          id: string
+          indicator_type: string
+          indicator_value: string
+          last_seen: string
+          source: string
+          tags: string[]
+          threat_level: string
+          updated_at: string
+        }
+        Insert: {
+          confidence_score?: number
+          created_at?: string
+          description?: string | null
+          first_seen?: string
+          id?: string
+          indicator_type: string
+          indicator_value: string
+          last_seen?: string
+          source: string
+          tags?: string[]
+          threat_level?: string
+          updated_at?: string
+        }
+        Update: {
+          confidence_score?: number
+          created_at?: string
+          description?: string | null
+          first_seen?: string
+          id?: string
+          indicator_type?: string
+          indicator_value?: string
+          last_seen?: string
+          source?: string
+          tags?: string[]
+          threat_level?: string
+          updated_at?: string
         }
         Relationships: []
       }
