@@ -189,7 +189,7 @@ export class EnhancedRealWorldProtection {
   }
 
   private generateProtectionId(): string {
-    return `ai-protect-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return crypto.randomUUID();
   }
 
   private async calculateFileFingerprint(file: File): Promise<string> {
