@@ -56,10 +56,14 @@ const LegalTemplates = () => {
   const [sortBy, setSortBy] = useState<'popular' | 'recent' | 'alphabetical'>('popular');
   const [previewTemplate, setPreviewTemplate] = useState<LegalTemplate | null>(null);
   const [downloadCounts, setDownloadCounts] = useState<Record<string, number>>({});
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [generatedDocuments, setGeneratedDocuments] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<'templates' | 'documents' | 'compliance'>('templates');
 
   useEffect(() => {
     checkLoginStatus();
     fetchDownloadCounts();
+    loadGeneratedDocuments();
     
     // Set up real-time subscription for template purchases
     const channel = supabase
@@ -108,6 +112,27 @@ const LegalTemplates = () => {
       setDownloadCounts(countMap);
     } catch (error) {
       console.error('Error fetching download counts:', error);
+    }
+  };
+
+  const loadGeneratedDocuments = async () => {
+    if (!isLoggedIn) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('legal_document_generations')
+        .select('*')
+        .order('generated_at', { ascending: false })
+        .limit(10);
+
+      if (error) {
+        console.error('Error loading documents:', error);
+        return;
+      }
+
+      setGeneratedDocuments(data || []);
+    } catch (error) {
+      console.error('Error loading documents:', error);
     }
   };
 
@@ -1193,30 +1218,53 @@ Project Manager: _________________ Date: _______
           Professional Legal Templates
         </h1>
         <p className="text-muted-foreground max-w-3xl mx-auto text-lg">
-          Download expertly crafted legal templates to protect your creative work. 
-          All templates are designed by legal professionals and updated regularly to ensure compliance.
+          Generate personalized legal documents with real-world functionality. 
+          All templates include compliance tracking, digital signatures, and legal review options.
         </p>
+        
+        {/* Legal Profile Setup */}
+        <div className="flex justify-center pt-4">
+          <LegalProfileManager onProfileComplete={setUserProfile} />
+        </div>
       </div>
 
-      {/* Stats Section */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="text-center p-4">
-          <div className="text-2xl font-bold text-primary">{templates.length}</div>
-          <div className="text-sm text-muted-foreground">Templates</div>
-        </Card>
-        <Card className="text-center p-4">
-          <div className="text-2xl font-bold text-green-600">Free</div>
-          <div className="text-sm text-muted-foreground">Always</div>
-        </Card>
-        <Card className="text-center p-4">
-          <div className="text-2xl font-bold text-blue-600">6</div>
-          <div className="text-sm text-muted-foreground">Categories</div>
-        </Card>
-        <Card className="text-center p-4">
-          <div className="text-2xl font-bold text-purple-600">100%</div>
-          <div className="text-sm text-muted-foreground">Legal Compliant</div>
-        </Card>
-      </div>
+      {/* Navigation Tabs */}
+      <Tabs value={activeTab} onValueChange={(value: any) => setActiveTab(value)} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="templates" className="gap-2">
+            <FileText className="h-4 w-4" />
+            Templates
+          </TabsTrigger>
+          <TabsTrigger value="documents" className="gap-2">
+            <FileSignature className="h-4 w-4" />
+            My Documents
+          </TabsTrigger>
+          <TabsTrigger value="compliance" className="gap-2">
+            <Calendar className="h-4 w-4" />
+            Compliance
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="templates" className="space-y-6">
+          {/* Stats Section */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card className="text-center p-4">
+              <div className="text-2xl font-bold text-primary">{templates.length}</div>
+              <div className="text-sm text-muted-foreground">Templates</div>
+            </Card>
+            <Card className="text-center p-4">
+              <div className="text-2xl font-bold text-green-600">{generatedDocuments.length}</div>
+              <div className="text-sm text-muted-foreground">Generated</div>
+            </Card>
+            <Card className="text-center p-4">
+              <div className="text-2xl font-bold text-blue-600">6</div>
+              <div className="text-sm text-muted-foreground">Categories</div>
+            </Card>
+            <Card className="text-center p-4">
+              <div className="text-2xl font-bold text-purple-600">100%</div>
+              <div className="text-sm text-muted-foreground">Verified</div>
+            </Card>
+          </div>
 
       {/* Featured Templates */}
       {featuredTemplates.length > 0 && (
@@ -1259,14 +1307,13 @@ Project Manager: _________________ Date: _______
                         <Badge className={difficultyColors[template.difficulty]}>
                           {template.difficulty}
                         </Badge>
-                        <Button
-                          onClick={() => handleDownloadTemplate(template)}
-                          size="sm"
-                          className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
-                        >
-                          <Download className="h-4 w-4 mr-2" />
-                          Download
-                        </Button>
+                        <DocumentGenerator 
+                          template={template} 
+                          onGenerated={(doc) => {
+                            setGeneratedDocuments(prev => [doc, ...prev]);
+                            loadGeneratedDocuments();
+                          }}
+                        />
                       </div>
                     </div>
                   </CardContent>

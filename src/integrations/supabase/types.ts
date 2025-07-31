@@ -774,6 +774,352 @@ export type Database = {
         }
         Relationships: []
       }
+      legal_compliance_tracking: {
+        Row: {
+          compliance_type: string
+          cost_usd: number | null
+          created_at: string
+          deadline_date: string | null
+          document_id: string
+          filing_date: string | null
+          filing_number: string | null
+          government_response: Json | null
+          id: string
+          jurisdiction: string
+          reminder_sent: boolean
+          status: string
+          supporting_documents: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          compliance_type: string
+          cost_usd?: number | null
+          created_at?: string
+          deadline_date?: string | null
+          document_id: string
+          filing_date?: string | null
+          filing_number?: string | null
+          government_response?: Json | null
+          id?: string
+          jurisdiction: string
+          reminder_sent?: boolean
+          status?: string
+          supporting_documents?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          compliance_type?: string
+          cost_usd?: number | null
+          created_at?: string
+          deadline_date?: string | null
+          document_id?: string
+          filing_date?: string | null
+          filing_number?: string | null
+          government_response?: Json | null
+          id?: string
+          jurisdiction?: string
+          reminder_sent?: boolean
+          status?: string
+          supporting_documents?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_compliance_tracking_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "legal_document_generations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_consultations: {
+        Row: {
+          actual_cost: number | null
+          budget_range: string | null
+          consultation_type: string
+          created_at: string
+          description: string
+          estimated_cost: number | null
+          follow_up_date: string | null
+          follow_up_required: boolean
+          id: string
+          preferred_communication: string | null
+          professional_id: string
+          professional_response: string | null
+          rating: number | null
+          requested_date: string | null
+          review_text: string | null
+          session_notes: string | null
+          status: string
+          subject: string
+          updated_at: string
+          urgency_level: string
+          user_id: string
+        }
+        Insert: {
+          actual_cost?: number | null
+          budget_range?: string | null
+          consultation_type: string
+          created_at?: string
+          description: string
+          estimated_cost?: number | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean
+          id?: string
+          preferred_communication?: string | null
+          professional_id: string
+          professional_response?: string | null
+          rating?: number | null
+          requested_date?: string | null
+          review_text?: string | null
+          session_notes?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+          urgency_level?: string
+          user_id: string
+        }
+        Update: {
+          actual_cost?: number | null
+          budget_range?: string | null
+          consultation_type?: string
+          created_at?: string
+          description?: string
+          estimated_cost?: number | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean
+          id?: string
+          preferred_communication?: string | null
+          professional_id?: string
+          professional_response?: string | null
+          rating?: number | null
+          requested_date?: string | null
+          review_text?: string | null
+          session_notes?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+          urgency_level?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_consultations_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "legal_professionals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_document_generations: {
+        Row: {
+          created_at: string
+          custom_fields: Json
+          document_hash: string
+          download_count: number
+          expires_at: string | null
+          generated_at: string
+          generated_content: string
+          id: string
+          is_signed: boolean
+          last_downloaded: string | null
+          legal_review_date: string | null
+          legal_review_notes: string | null
+          legal_review_status: string | null
+          legal_reviewer_id: string | null
+          notarization_data: Json | null
+          signature_data: Json | null
+          template_id: string
+          template_title: string
+          updated_at: string
+          user_id: string
+          witness_data: Json | null
+        }
+        Insert: {
+          created_at?: string
+          custom_fields?: Json
+          document_hash: string
+          download_count?: number
+          expires_at?: string | null
+          generated_at?: string
+          generated_content: string
+          id?: string
+          is_signed?: boolean
+          last_downloaded?: string | null
+          legal_review_date?: string | null
+          legal_review_notes?: string | null
+          legal_review_status?: string | null
+          legal_reviewer_id?: string | null
+          notarization_data?: Json | null
+          signature_data?: Json | null
+          template_id: string
+          template_title: string
+          updated_at?: string
+          user_id: string
+          witness_data?: Json | null
+        }
+        Update: {
+          created_at?: string
+          custom_fields?: Json
+          document_hash?: string
+          download_count?: number
+          expires_at?: string | null
+          generated_at?: string
+          generated_content?: string
+          id?: string
+          is_signed?: boolean
+          last_downloaded?: string | null
+          legal_review_date?: string | null
+          legal_review_notes?: string | null
+          legal_review_status?: string | null
+          legal_reviewer_id?: string | null
+          notarization_data?: Json | null
+          signature_data?: Json | null
+          template_id?: string
+          template_title?: string
+          updated_at?: string
+          user_id?: string
+          witness_data?: Json | null
+        }
+        Relationships: []
+      }
+      legal_professionals: {
+        Row: {
+          accepts_new_clients: boolean
+          bar_numbers: Json | null
+          bio: string | null
+          certifications: string[] | null
+          consultation_fee: number | null
+          created_at: string
+          education: string[] | null
+          email: string
+          full_name: string
+          hourly_rate_max: number | null
+          hourly_rate_min: number | null
+          id: string
+          is_active: boolean
+          jurisdictions: string[]
+          languages: string[] | null
+          law_firm: string | null
+          linkedin_url: string | null
+          phone: string | null
+          profile_image_url: string | null
+          rating: number | null
+          response_time_hours: number | null
+          review_count: number
+          specialties: string[]
+          updated_at: string
+          verification_documents: Json | null
+          verified_status: string
+          website: string | null
+          years_experience: number | null
+        }
+        Insert: {
+          accepts_new_clients?: boolean
+          bar_numbers?: Json | null
+          bio?: string | null
+          certifications?: string[] | null
+          consultation_fee?: number | null
+          created_at?: string
+          education?: string[] | null
+          email: string
+          full_name: string
+          hourly_rate_max?: number | null
+          hourly_rate_min?: number | null
+          id?: string
+          is_active?: boolean
+          jurisdictions?: string[]
+          languages?: string[] | null
+          law_firm?: string | null
+          linkedin_url?: string | null
+          phone?: string | null
+          profile_image_url?: string | null
+          rating?: number | null
+          response_time_hours?: number | null
+          review_count?: number
+          specialties?: string[]
+          updated_at?: string
+          verification_documents?: Json | null
+          verified_status?: string
+          website?: string | null
+          years_experience?: number | null
+        }
+        Update: {
+          accepts_new_clients?: boolean
+          bar_numbers?: Json | null
+          bio?: string | null
+          certifications?: string[] | null
+          consultation_fee?: number | null
+          created_at?: string
+          education?: string[] | null
+          email?: string
+          full_name?: string
+          hourly_rate_max?: number | null
+          hourly_rate_min?: number | null
+          id?: string
+          is_active?: boolean
+          jurisdictions?: string[]
+          languages?: string[] | null
+          law_firm?: string | null
+          linkedin_url?: string | null
+          phone?: string | null
+          profile_image_url?: string | null
+          rating?: number | null
+          response_time_hours?: number | null
+          review_count?: number
+          specialties?: string[]
+          updated_at?: string
+          verification_documents?: Json | null
+          verified_status?: string
+          website?: string | null
+          years_experience?: number | null
+        }
+        Relationships: []
+      }
+      legal_template_customizations: {
+        Row: {
+          created_at: string
+          custom_clauses: Json | null
+          custom_fields: Json
+          id: string
+          is_default: boolean
+          preferred_jurisdiction: string | null
+          saved_name: string
+          template_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          custom_clauses?: Json | null
+          custom_fields?: Json
+          id?: string
+          is_default?: boolean
+          preferred_jurisdiction?: string | null
+          saved_name: string
+          template_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          custom_clauses?: Json | null
+          custom_fields?: Json
+          id?: string
+          is_default?: boolean
+          preferred_jurisdiction?: string | null
+          saved_name?: string
+          template_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       monitored_platforms: {
         Row: {
           api_endpoint: string | null
@@ -1823,6 +2169,69 @@ export type Database = {
         }
         Relationships: []
       }
+      user_legal_profiles: {
+        Row: {
+          address_line_1: string
+          address_line_2: string | null
+          business_name: string | null
+          business_type: string | null
+          city: string
+          country: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          phone: string | null
+          postal_code: string
+          preferred_jurisdiction: string | null
+          state_province: string
+          tax_id: string | null
+          updated_at: string
+          user_id: string
+          website: string | null
+        }
+        Insert: {
+          address_line_1: string
+          address_line_2?: string | null
+          business_name?: string | null
+          business_type?: string | null
+          city: string
+          country?: string
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          phone?: string | null
+          postal_code: string
+          preferred_jurisdiction?: string | null
+          state_province: string
+          tax_id?: string | null
+          updated_at?: string
+          user_id: string
+          website?: string | null
+        }
+        Update: {
+          address_line_1?: string
+          address_line_2?: string | null
+          business_name?: string | null
+          business_type?: string | null
+          city?: string
+          country?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          postal_code?: string
+          preferred_jurisdiction?: string | null
+          state_province?: string
+          tax_id?: string | null
+          updated_at?: string
+          user_id?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -2153,6 +2562,10 @@ export type Database = {
       create_free_subscription_for_user: {
         Args: { _user_id: string }
         Returns: undefined
+      }
+      generate_document_hash: {
+        Args: { content: string }
+        Returns: string
       }
       get_all_template_download_counts: {
         Args: Record<PropertyKey, never>
