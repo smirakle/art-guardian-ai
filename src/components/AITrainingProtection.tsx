@@ -129,6 +129,15 @@ export const AITrainingProtection: React.FC<AITrainingProtectionProps> = ({
       if (file) {
         const { enhancedRealWorldProtection } = await import('@/lib/enhancedRealWorldProtection');
         
+        // Get authenticated user
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        
+        if (authError || !user) {
+          throw new Error('Authentication required. Please sign in to protect files.');
+        }
+        
+        console.log('Applying protection for user:', user.id);
+        
         protectionResult = await enhancedRealWorldProtection.protectFileWithDatabase(file, {
           enableAdversarialNoise: enabledMethods.includes('adversarialNoise'),
           enableRightsMetadata: enabledMethods.includes('metadataInjection'),
@@ -142,7 +151,7 @@ export const AITrainingProtection: React.FC<AITrainingProtectionProps> = ({
             year: new Date().getFullYear(),
             rights: 'All Rights Reserved'
           },
-          userId: (await supabase.auth.getUser()).data.user?.id || 'anonymous',
+          userId: user.id,
           fileName: file.name
         });
         
