@@ -45,3 +45,6 @@ verify_jwt = true
 
 [functions.real-nft-minting]
 verify_jwt = false
+
+[functions.portfolio-realtime-data]
+verify_jwt = false
