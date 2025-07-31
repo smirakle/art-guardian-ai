@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import UploadArea from "./visual-recognition/UploadArea";
 import ImageAnalysisCard from "./visual-recognition/ImageAnalysisCard";
+import GoogleLensInterface from "./GoogleLensInterface";
 import RealTimeMonitoring from "./RealTimeMonitoring";
 import BlockchainVerification from "./BlockchainVerification";
 import UserGuidance from "./UserGuidance";
