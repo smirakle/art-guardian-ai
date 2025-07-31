@@ -88,14 +88,20 @@ export const PortfolioUploadWidget = ({
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('File selection triggered', e.target.files);
     if (e.target.files) {
       const selectedFiles = Array.from(e.target.files);
+      console.log('Processing files:', selectedFiles);
       processFiles(selectedFiles);
     }
   };
 
   const processFiles = async (fileList: File[]) => {
+    console.log('Starting to process files:', fileList.length, 'files');
+    console.log('User authenticated:', !!user);
+    
     if (!user) {
+      console.error('User not authenticated');
       toast({
         title: "Authentication Required",
         description: "Please sign in to upload files",
@@ -104,7 +110,10 @@ export const PortfolioUploadWidget = ({
       return;
     }
 
+    console.log('Processing files for portfolio:', portfolioId, portfolioName);
+    
     for (const file of fileList) {
+      console.log('Processing file:', file.name, file.type, file.size);
       const fileId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
       const newFile: UploadedFile = {
         id: fileId,
