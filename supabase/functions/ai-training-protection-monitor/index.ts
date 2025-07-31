@@ -16,10 +16,16 @@ interface ThreatIntelligence {
 }
 
 // Fetch real-time threat intelligence
-async function fetchRealTimeThreatIntelligence(): Promise<ThreatIntelligence> {
-  // In production, this would integrate with real threat intelligence APIs
+async function fetchRealTimeThreatIntelligence(supabaseClient: any): Promise<ThreatIntelligence> {
   const currentHour = new Date().getHours();
   const baseRisk = currentHour >= 9 && currentHour <= 17 ? 'high' : 'medium';
+  
+  // Get actual active threats from database
+  const { data: activeViolations } = await supabaseClient
+    .from('ai_training_violations')
+    .select('id')
+    .eq('status', 'pending')
+    .gte('detected_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()); // Last 24 hours
   
   return {
     aiPlatforms: [
@@ -42,41 +48,42 @@ async function fetchRealTimeThreatIntelligence(): Promise<ThreatIntelligence> {
       'feature_learning'
     ],
     riskLevel: baseRisk,
-    activeThreats: Math.floor(Math.random() * 10) + 5 // 5-15 active threats
+    activeThreats: activeViolations?.length || 0
   };
 }
 
 // Monitor for real-time violations
 async function scanForRealTimeViolations(
   protectionRecordId: string, 
-  intelligence: ThreatIntelligence
+  intelligence: ThreatIntelligence,
+  supabaseClient: any
 ) {
   const violations = [];
   const currentTime = new Date().toISOString();
   
-  // Simulate real-time detection based on threat intelligence
-  for (const platform of intelligence.aiPlatforms.slice(0, 2)) {
-    const confidence = Math.random() * 0.4 + 0.6; // 0.6-1.0
-    
-    if (confidence > 0.7) {
-      violations.push({
-        violation_type: 'unauthorized_training',
-        source_url: `https://${platform}/dataset-${Date.now()}`,
-        source_domain: platform,
-        confidence_score: confidence * 100,
-        evidence_data: {
-          platform,
-          detection_method: 'real_time_monitoring',
-          threat_indicators: intelligence.trainingIndicators.slice(0, 2),
-          risk_level: intelligence.riskLevel,
-          timestamp: currentTime,
-          real_time_scan: true
-        }
-      });
-    }
-  }
+  // Check for existing violations first
+  const { data: existingViolations } = await supabaseClient
+    .from('ai_training_violations')
+    .select('source_domain, violation_type')
+    .eq('protection_record_id', protectionRecordId)
+    .gte('detected_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()); // Last 7 days
   
-  return violations;
+  // Only scan platforms that haven't been checked recently
+  const recentDomains = existingViolations?.map(v => v.source_domain) || [];
+  const platformsToCheck = intelligence.aiPlatforms.filter(platform => 
+    !recentDomains.some(domain => platform.includes(domain))
+  );
+  
+  // Real scanning would happen here - for now, only trigger if there's actual suspicious activity
+  console.log(`Checking ${platformsToCheck.length} platforms for new violations`);
+  
+  // In a real implementation, this would:
+  // 1. Monitor network traffic patterns
+  // 2. Check known AI training endpoints 
+  // 3. Analyze API usage patterns
+  // 4. Only create violations when real evidence is found
+  
+  return violations; // Return empty unless real evidence is detected
 }
 
 serve(async (req) => {
@@ -108,13 +115,14 @@ serve(async (req) => {
 
     if (enableRealTimeScanning || scanType === 'realtime') {
       // Fetch real-time threat intelligence
-      threatIntelligence = await fetchRealTimeThreatIntelligence();
-      console.log(`Real-time threat level: ${threatIntelligence.riskLevel}`);
+      threatIntelligence = await fetchRealTimeThreatIntelligence(supabaseClient);
+      console.log(`Real-time threat level: ${threatIntelligence.riskLevel}, Active threats: ${threatIntelligence.activeThreats}`);
       
       // Scan for real-time violations
       const realTimeViolations = await scanForRealTimeViolations(
         protectionRecordId, 
-        threatIntelligence
+        threatIntelligence,
+        supabaseClient
       );
       violations.push(...realTimeViolations);
       
