@@ -39,6 +39,61 @@ export function PortfolioMonitoring() {
   useEffect(() => {
     fetchPortfolios();
     fetchMonitoringResults();
+
+    // Set up real-time subscriptions
+    const channel = supabase
+      .channel('portfolio-monitoring')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'portfolios'
+        },
+        (payload) => {
+          console.log('Portfolio change detected:', payload);
+          fetchPortfolios();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'portfolio_monitoring_results'
+        },
+        (payload) => {
+          console.log('New monitoring result:', payload);
+          // Add the new result to the top of the list
+          setMonitoringResults(prev => [payload.new as MonitoringResult, ...prev.slice(0, 9)]);
+          toast({
+            title: "New Scan Results",
+            description: "Portfolio monitoring scan completed",
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'portfolio_monitoring_results'
+        },
+        (payload) => {
+          console.log('Monitoring result updated:', payload);
+          // Update the specific result
+          setMonitoringResults(prev => 
+            prev.map(result => 
+              result.id === payload.new.id ? payload.new as MonitoringResult : result
+            )
+          );
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchPortfolios = async () => {

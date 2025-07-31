@@ -29,6 +29,69 @@ export function PortfolioAlerts() {
 
   useEffect(() => {
     fetchAlerts();
+
+    // Set up real-time subscriptions for alerts
+    const channel = supabase
+      .channel('portfolio-alerts')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'portfolio_alerts'
+        },
+        (payload) => {
+          console.log('New portfolio alert:', payload);
+          const newAlert = {
+            ...payload.new,
+            metadata: payload.new.metadata as Record<string, any> || {},
+            portfolio_name: 'Portfolio'
+          } as PortfolioAlert;
+          
+          setAlerts(prev => [newAlert, ...prev]);
+          
+          // Show notification for new high priority alerts
+          if (payload.new.severity === 'high') {
+            toast({
+              title: "High Priority Alert",
+              description: payload.new.title,
+              variant: "destructive",
+            });
+          } else {
+            toast({
+              title: "New Alert",
+              description: payload.new.title,
+            });
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'portfolio_alerts'
+        },
+        (payload) => {
+          console.log('Portfolio alert updated:', payload);
+          const updatedAlert = {
+            ...payload.new,
+            metadata: payload.new.metadata as Record<string, any> || {},
+            portfolio_name: 'Portfolio'
+          } as PortfolioAlert;
+          
+          setAlerts(prev => 
+            prev.map(alert => 
+              alert.id === payload.new.id ? updatedAlert : alert
+            )
+          );
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchAlerts = async () => {

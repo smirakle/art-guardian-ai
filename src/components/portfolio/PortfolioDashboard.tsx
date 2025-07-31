@@ -41,6 +41,51 @@ export function PortfolioDashboard() {
 
   useEffect(() => {
     fetchDashboardData();
+
+    // Set up real-time subscriptions
+    const channel = supabase
+      .channel('portfolio-dashboard')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'portfolios'
+        },
+        (payload) => {
+          console.log('Portfolio change detected:', payload);
+          fetchDashboardData();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'portfolio_monitoring_results'
+        },
+        (payload) => {
+          console.log('Portfolio monitoring result change:', payload);
+          fetchDashboardData();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'portfolio_alerts'
+        },
+        (payload) => {
+          console.log('Portfolio alert change:', payload);
+          fetchDashboardData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchDashboardData = async () => {
@@ -78,11 +123,20 @@ export function PortfolioDashboard() {
       const activeMonitoring = portfoliosWithCounts.filter(p => p.monitoring_enabled).length;
       const totalArtworks = portfoliosWithCounts.reduce((sum, p) => sum + (p.artwork_count || 0), 0);
 
+      // Get real recent threats from portfolio alerts (last 24 hours)
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      
+      const { data: recentAlerts } = await supabase
+        .from('portfolio_alerts')
+        .select('id')
+        .gte('created_at', yesterday.toISOString());
+
       setStats({
         total_portfolios: totalPortfolios,
         active_monitoring: activeMonitoring,
         total_artworks: totalArtworks,
-        recent_threats: Math.floor(Math.random() * 10), // Mock data
+        recent_threats: recentAlerts?.length || 0,
         monitoring_coverage: totalPortfolios > 0 ? Math.round((activeMonitoring / totalPortfolios) * 100) : 0
       });
 
@@ -115,6 +169,28 @@ export function PortfolioDashboard() {
       toast({
         title: "Error",
         description: "Failed to start quick scan",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const startRealtimeSimulation = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('portfolio-realtime-data', {
+        body: { action: 'start_realtime_simulation' }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Real-time Simulation Started",
+        description: "Portfolio monitoring data will be generated continuously for 1 hour",
+      });
+    } catch (error) {
+      console.error('Error starting real-time simulation:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start real-time simulation",
         variant: "destructive",
       });
     }
@@ -194,6 +270,10 @@ export function PortfolioDashboard() {
             <Button onClick={startQuickScan} className="flex items-center gap-2">
               <Activity className="w-4 h-4" />
               Start Quick Scan
+            </Button>
+            <Button onClick={startRealtimeSimulation} variant="secondary" className="flex items-center gap-2">
+              <Activity className="w-4 h-4" />
+              Start Real-time Data
             </Button>
             <Button variant="outline" className="flex items-center gap-2">
               <Eye className="w-4 h-4" />
