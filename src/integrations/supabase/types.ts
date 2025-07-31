@@ -41,7 +41,7 @@ export type Database = {
       ai_protection_records: {
         Row: {
           applied_at: string
-          artwork_id: string
+          artwork_id: string | null
           created_at: string
           file_fingerprint: string
           id: string
@@ -57,7 +57,7 @@ export type Database = {
         }
         Insert: {
           applied_at?: string
-          artwork_id: string
+          artwork_id?: string | null
           created_at?: string
           file_fingerprint: string
           id?: string
@@ -73,7 +73,7 @@ export type Database = {
         }
         Update: {
           applied_at?: string
-          artwork_id?: string
+          artwork_id?: string | null
           created_at?: string
           file_fingerprint?: string
           id?: string
