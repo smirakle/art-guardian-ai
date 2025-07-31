@@ -123,7 +123,7 @@ export class EnhancedRealWorldProtection {
       const { data: protectionRecord, error: dbError } = await supabase
         .from('ai_protection_records')
         .insert({
-          artwork_id: options.artworkId,
+          artwork_id: options.artworkId || null,
           user_id: options.userId,
           protection_id: protectionId,
           protection_methods: appliedMethods,
