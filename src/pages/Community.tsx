@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -32,6 +33,7 @@ import { formatDistanceToNow } from "date-fns";
 
 const Community = () => {
   const { posts, expertAdvice, loading, createPost, toggleLike, getStats } = useCommunity();
+  const navigate = useNavigate();
   const [newPost, setNewPost] = useState({ title: "", content: "", category: "strategy" });
   const [activeTab, setActiveTab] = useState("community");
 
@@ -1472,12 +1474,18 @@ The global creative economy offers tremendous opportunities for artists willing 
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => resource.url !== '#' ? window.open(resource.url, '_blank') : null}
+                                  onClick={() => {
+                                    if (resource.url === 'internal-guide') {
+                                      navigate('/legal-templates');
+                                    } else if (resource.url !== '#') {
+                                      window.open(resource.url, '_blank');
+                                    }
+                                  }}
                                   className="text-xs"
                                   disabled={resource.url === '#'}
                                 >
                                   <ExternalLink className="w-3 h-3 mr-1" />
-                                  {resource.url === '#' ? 'Coming Soon' : 'Access Resource'}
+                                  {resource.url === '#' ? 'Coming Soon' : resource.url === 'internal-guide' ? 'View Templates' : 'Access Resource'}
                                 </Button>
                               </div>
                             </div>
@@ -1509,11 +1517,17 @@ The global creative economy offers tremendous opportunities for artists willing 
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => window.open(resource.url, '_blank')}
+                                onClick={() => {
+                                  if (resource.url === 'internal-guide') {
+                                    navigate('/legal-templates');
+                                  } else {
+                                    window.open(resource.url, '_blank');
+                                  }
+                                }}
                                 className="text-xs"
                               >
                                 <ExternalLink className="w-3 h-3 mr-1" />
-                                Visit Resource
+                                {resource.url === 'internal-guide' ? 'View Templates' : 'Visit Resource'}
                               </Button>
                             </div>
                           </div>
