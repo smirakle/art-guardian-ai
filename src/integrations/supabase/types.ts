@@ -2166,6 +2166,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      get_template_download_count: {
+        Args: { template_id_param: string }
+        Returns: number
+      }
       get_user_subscription: {
         Args: Record<PropertyKey, never>
         Returns: {
