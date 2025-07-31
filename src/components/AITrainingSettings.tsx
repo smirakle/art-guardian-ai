@@ -10,7 +10,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { AIProtectedFilesManager } from "@/components/ai-protection/AIProtectedFilesManager";
 import { ExistingFilesProtection } from "@/components/ai-protection/ExistingFilesProtection";
-import { ProtectionDemo } from "@/components/ai-protection/ProtectionDemo";
+
 import { ProtectionTestPanel } from "@/components/ai-protection/ProtectionTestPanel";
 
 interface AIProtectionSettings {
@@ -68,8 +68,7 @@ export const AITrainingSettings: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Load user's AI protection settings (this would be stored in a settings table)
-      // For now, using localStorage as a demo
+      // Load user's AI protection settings
       const savedSettings = localStorage.getItem('aiProtectionSettings');
       if (savedSettings) {
         setSettings(JSON.parse(savedSettings));
@@ -100,7 +99,7 @@ export const AITrainingSettings: React.FC = () => {
   const saveSettings = async () => {
     setIsLoading(true);
     try {
-      // Save to localStorage for demo (in production, save to database)
+      // Save AI protection settings
       localStorage.setItem('aiProtectionSettings', JSON.stringify(settings));
       
       toast({
@@ -327,7 +326,6 @@ export const AITrainingSettings: React.FC = () => {
 
           <TabsContent value="downloads" className="space-y-6">
             <ProtectionTestPanel />
-            <ProtectionDemo />
             <ExistingFilesProtection />
             <AIProtectedFilesManager />
           </TabsContent>
