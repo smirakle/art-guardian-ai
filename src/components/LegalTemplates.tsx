@@ -540,6 +540,534 @@ Privacy Officer
 UPDATES TO POLICY
 We will notify you of material changes to this policy.
       `
+    },
+    {
+      id: 'commission-agreement',
+      title: 'Art Commission Agreement',
+      description: 'Professional commission agreement for custom artwork with clear terms, payment schedules, and rights',
+      category: 'contracts',
+      format: 'pdf',
+      difficulty: 'intermediate',
+      icon: FileText,
+      tags: ['commission', 'custom-art', 'payment', 'deadlines'],
+      estimatedTime: '25 min',
+      popularity: 91,
+      lastUpdated: '2024-01-25',
+      featured: true,
+      content: `
+ART COMMISSION AGREEMENT
+
+This Commission Agreement is entered into on [Date] between:
+
+ARTIST:
+Name: [Artist Name]
+Address: [Artist Address]
+Email: [Artist Email]
+Phone: [Artist Phone]
+
+CLIENT:
+Name: [Client Name]
+Address: [Client Address]
+Email: [Client Email]
+Phone: [Client Phone]
+
+1. COMMISSION DETAILS
+- Artwork Description: [Detailed description of commissioned work]
+- Medium: [Oil, watercolor, digital, etc.]
+- Dimensions: [Size specifications]
+- Style: [Artistic style/approach]
+- Subject Matter: [What will be depicted]
+
+2. TIMELINE
+- Start Date: [Date]
+- Completion Date: [Date]
+- Progress Updates: [Frequency of updates]
+- Approval Stages: [When client approval is required]
+
+3. PRICING AND PAYMENT
+- Total Commission Fee: $[Amount]
+- Deposit (50%): $[Amount] - Due upon signing
+- Final Payment (50%): $[Amount] - Due upon completion
+- Additional Fees: [Rush orders, revisions, etc.]
+
+4. REVISION POLICY
+- Included Revisions: [Number] minor revisions included
+- Major Changes: Additional $[Amount] per significant revision
+- Client must approve sketches before proceeding to final artwork
+
+5. MATERIALS AND DELIVERY
+- Artist provides all materials unless otherwise specified
+- Artwork delivered as: [Physical/Digital/Both]
+- Shipping/Delivery: [Who pays and method]
+- Framing: [If included or separate]
+
+6. COPYRIGHT AND USAGE RIGHTS
+- Artist retains copyright to the artwork
+- Client receives: [Specific usage rights granted]
+- Artist may: Display in portfolio, use for promotional purposes
+- Commercial Usage: [Additional fees if applicable]
+
+7. CANCELLATION POLICY
+- Client cancellation: Deposit non-refundable if work has begun
+- Artist cancellation: Full refund if unable to complete
+- Force Majeure: [Natural disasters, illness, etc.]
+
+8. APPROVAL AND SATISFACTION
+- Client has [Number] days to request changes after delivery
+- Final approval constitutes acceptance of work
+- No refunds after final approval
+
+9. ADDITIONAL TERMS
+- Artist not liable for color variations in reproductions
+- Client responsible for providing clear reference materials
+- All communications to be in writing
+
+SIGNATURES:
+Artist: _________________ Date: _______
+Client: _________________ Date: _______
+      `
+    },
+    {
+      id: 'collaboration-agreement',
+      title: 'Artist Collaboration Agreement',
+      description: 'Comprehensive agreement for artist collaborations covering credit, ownership, and revenue sharing',
+      category: 'contracts',
+      format: 'pdf',
+      difficulty: 'advanced',
+      icon: Users,
+      tags: ['collaboration', 'partnership', 'revenue-sharing', 'credit'],
+      estimatedTime: '35 min',
+      popularity: 76,
+      lastUpdated: '2024-01-22',
+      content: `
+ARTIST COLLABORATION AGREEMENT
+
+This Collaboration Agreement is entered into on [Date] between:
+
+ARTIST 1:
+Name: [Artist 1 Name]
+Address: [Address]
+Email: [Email]
+
+ARTIST 2:
+Name: [Artist 2 Name]
+Address: [Address]
+Email: [Email]
+
+1. PROJECT DESCRIPTION
+- Project Title: [Name of collaborative work]
+- Project Description: [Detailed description]
+- Project Goals: [Objectives and intended outcomes]
+- Target Completion: [Date]
+
+2. CONTRIBUTIONS
+Artist 1 Responsibilities:
+- [Specific tasks and contributions]
+- [Skills/materials provided]
+- [Time commitment]
+
+Artist 2 Responsibilities:
+- [Specific tasks and contributions]
+- [Skills/materials provided]
+- [Time commitment]
+
+3. OWNERSHIP AND COPYRIGHT
+- Joint ownership: [Percentage] Artist 1, [Percentage] Artist 2
+- Credit line: "Collaborative work by [Artist 1] and [Artist 2]"
+- Both artists must consent to any licensing or sale
+- Individual elements: [How separately created elements are handled]
+
+4. REVENUE SHARING
+- Sales Revenue: [Percentage] to Artist 1, [Percentage] to Artist 2
+- Licensing Fees: Split [equally/based on contribution]
+- Exhibition Fees: [How appearance fees are divided]
+- Future Derivatives: [Rights to create related works]
+
+5. EXPENSES AND COSTS
+- Material Costs: [How expenses are shared]
+- Exhibition Costs: [Transportation, framing, insurance]
+- Marketing Costs: [Promotional materials, advertising]
+- Expense Approval: Expenses over $[Amount] require both artists' approval
+
+6. DECISION MAKING
+- Creative Decisions: [Consensus/majority/designated lead]
+- Business Decisions: [How sales, exhibitions are decided]
+- Dispute Resolution: [Mediation/arbitration process]
+- Deadlock Resolution: [Process if artists disagree]
+
+7. MARKETING AND PROMOTION
+- Both artists may promote the work individually
+- Consistent credit must be given to both artists
+- Social media: [Guidelines for posting and tagging]
+- Press materials: [Who handles media relations]
+
+8. EXHIBITION AND DISPLAY
+- Both artists must consent to exhibition venues
+- Exhibition credits: Both names in equal prominence
+- Artist statements: [Joint or individual]
+- Physical presence: [Requirements for openings/events]
+
+9. TERMINATION
+- Project Completion: Agreement ends upon delivery
+- Early Termination: [Process for ending collaboration]
+- Incomplete Work: [How to handle unfinished projects]
+- Assets Division: [How materials/work are divided]
+
+10. CONFIDENTIALITY
+- Project details confidential until public release
+- Neither artist may share proprietary techniques without consent
+- Client information remains confidential
+
+SIGNATURES:
+Artist 1: _________________ Date: _______
+Artist 2: _________________ Date: _______
+      `
+    },
+    {
+      id: 'gallery-representation',
+      title: 'Gallery Representation Agreement',
+      description: 'Exclusive or non-exclusive gallery representation contract with commission structures and obligations',
+      category: 'contracts',
+      format: 'pdf',
+      difficulty: 'advanced',
+      icon: Award,
+      tags: ['gallery', 'representation', 'exhibition', 'sales'],
+      estimatedTime: '40 min',
+      popularity: 82,
+      lastUpdated: '2024-01-20',
+      content: `
+GALLERY REPRESENTATION AGREEMENT
+
+This Representation Agreement is entered into on [Date] between:
+
+GALLERY:
+Name: [Gallery Name]
+Address: [Gallery Address]
+Contact Person: [Director Name]
+Email: [Gallery Email]
+Phone: [Gallery Phone]
+
+ARTIST:
+Name: [Artist Name]
+Address: [Artist Address]
+Email: [Artist Email]
+Phone: [Artist Phone]
+
+1. REPRESENTATION TYPE
+- [Exclusive/Non-Exclusive] representation
+- Geographic Territory: [Geographic limitations]
+- Duration: [Start Date] to [End Date]
+- Medium/Style: [Scope of represented work]
+
+2. GALLERY OBLIGATIONS
+- Promote and market artist's work professionally
+- Maintain appropriate insurance on consigned works
+- Provide secure storage and display conditions
+- Handle all sale transactions and contracts
+- Provide monthly sales reports and statements
+- Pay artist within [Number] days of sale
+
+3. ARTIST OBLIGATIONS
+- Provide [Number] works annually for gallery inventory
+- Maintain consistent quality and style
+- Participate in openings and gallery events when possible
+- Provide high-quality images and descriptions
+- Not sell directly from studio at prices below gallery prices
+- Give gallery first right of refusal on new work
+
+4. COMMISSION STRUCTURE
+- Gallery Commission: [Percentage]% of sale price
+- Artist Receives: [Percentage]% of sale price
+- Payment Schedule: [Terms for payment to artist]
+- Price Setting: [How prices are determined]
+
+5. EXHIBITION COMMITMENTS
+- Solo Exhibition: Guaranteed every [Time Period]
+- Group Exhibitions: [Frequency and terms]
+- Exhibition Costs: [Who pays for what]
+- Marketing Materials: [Catalog, advertising responsibilities]
+- Opening Reception: [Who organizes and pays]
+
+6. PRICING AND SALES
+- Retail prices set jointly by gallery and artist
+- Gallery has authority to offer standard trade discounts
+- Discounts over [Percentage]% require artist approval
+- Artist may not sell similar works at lower prices elsewhere
+
+7. INVENTORY AND CONSIGNMENT
+- Minimum inventory: [Number] pieces at all times
+- Consignment receipt provided within [Number] days
+- Works remain artist's property until sold
+- Insurance: Gallery maintains adequate coverage
+- Return of unsold work: [Notice period and conditions]
+
+8. MARKETING AND PROMOTION
+- Gallery maintains artist webpage and portfolio
+- Professional photography of all works
+- Inclusion in gallery publications and advertisements
+- Social media promotion and announcements
+- Art fair participation: [Terms and cost sharing]
+
+9. EXCLUSIVITY TERMS (if applicable)
+- Artist may not exhibit or sell through other galleries in [Territory]
+- Studio sales prohibited during representation period
+- Online sales: [Restrictions and revenue sharing]
+- Art fair sales outside territory: [Permission requirements]
+
+10. TERMINATION
+- Either party may terminate with [Number] days written notice
+- Upon termination: All works returned within [Number] days
+- Outstanding payments: Due within [Number] days
+- Non-compete period: [Duration after termination]
+
+11. ADDITIONAL TERMS
+- Gallery may not alter or restore works without written consent
+- Artist guarantees authenticity and clear title to all works
+- Disputes resolved through arbitration in [Jurisdiction]
+- Agreement governed by laws of [State/Country]
+
+SIGNATURES:
+Gallery Representative: _________________ Date: _______
+Artist: _________________ Date: _______
+      `
+    },
+    {
+      id: 'artist-model-release',
+      title: 'Artist Model Release Form',
+      description: 'Professional model release form for artists working with live models, ensuring legal protection',
+      category: 'contracts',
+      format: 'pdf',
+      difficulty: 'beginner',
+      icon: Eye,
+      tags: ['model-release', 'portrait', 'figure-drawing', 'consent'],
+      estimatedTime: '15 min',
+      popularity: 67,
+      lastUpdated: '2024-01-18',
+      content: `
+ARTIST MODEL RELEASE FORM
+
+Date: [Date]
+Location: [Studio/Location Address]
+
+MODEL INFORMATION:
+Name: [Model's Full Legal Name]
+Address: [Model's Address]
+Phone: [Phone Number]
+Email: [Email Address]
+Date of Birth: [DOB] (if under 18, parent/guardian must sign)
+
+ARTIST INFORMATION:
+Name: [Artist's Full Name]
+Address: [Artist's Address]
+Phone: [Phone Number]
+Email: [Email Address]
+
+SESSION DETAILS:
+- Session Date(s): [Date(s)]
+- Session Time: [Start] to [End]
+- Type of Artwork: [Drawing, Painting, Sculpture, Photography, etc.]
+- Pose Type: [Clothed, Partially Clothed, Nude, etc.]
+- Compensation: $[Amount] per [hour/session]
+
+CONSENT AND RELEASE:
+I, [Model's Name], hereby grant permission to [Artist's Name] to:
+
+1. CREATE ARTWORK
+- Create artistic works including but not limited to drawings, paintings, sculptures, or photographs during the session(s)
+- Use my likeness as a model for artistic purposes
+- Work from life during sessions and from reference materials afterward
+
+2. USAGE RIGHTS
+I understand and agree that the artist may:
+- Display the artwork in galleries, exhibitions, and shows
+- Reproduce the artwork in catalogs, portfolios, and promotional materials
+- Sell the original artwork and/or prints
+- Use the artwork for educational purposes
+- Post images of the artwork on websites and social media
+
+3. RESTRICTIONS (if any):
+☐ No restrictions - Full usage rights granted
+☐ Limited usage - Restrictions as follows: [Specify restrictions]
+
+4. COMPENSATION
+- Payment Amount: $[Amount]
+- Payment Method: [Cash, Check, PayPal, etc.]
+- Payment Schedule: [When payment is due]
+
+5. PROFESSIONALISM AND CONDUCT
+- The artist agrees to maintain a professional environment
+- The model may request breaks as needed
+- Either party may end the session at any time
+- Mutual respect and professional boundaries will be maintained
+
+6. SAFETY AND COMFORT
+- Studio temperature will be maintained at comfortable levels
+- Adequate privacy and changing facilities provided
+- Model may bring a chaperone if desired
+- No alcohol or drugs permitted during sessions
+
+7. COPYRIGHT AND OWNERSHIP
+- Artist retains full copyright to all created works
+- Model has no ownership rights to the artwork
+- Model may request copies of artwork for personal portfolio use
+
+8. LIABILITY WAIVER
+I acknowledge that I am participating voluntarily and assume any risks associated with the modeling session.
+
+9. PRIVACY
+- Artist agrees to maintain professional discretion
+- No unauthorized persons will be present during sessions
+- Images will only be used as specified in this agreement
+
+I HAVE READ AND UNDERSTAND THIS AGREEMENT:
+
+Model Signature: _________________ Date: _______
+Print Name: [Model's Name]
+
+If model is under 18:
+Parent/Guardian Signature: _________________ Date: _______
+Print Name: [Parent/Guardian Name]
+
+Artist Signature: _________________ Date: _______
+Print Name: [Artist's Name]
+
+Witness Signature: _________________ Date: _______
+Print Name: [Witness Name]
+      `
+    },
+    {
+      id: 'art-installation-contract',
+      title: 'Art Installation Contract',
+      description: 'Contract for temporary or permanent art installations including maintenance and liability terms',
+      category: 'contracts',
+      format: 'pdf',
+      difficulty: 'advanced',
+      icon: Zap,
+      tags: ['installation', 'public-art', 'maintenance', 'liability'],
+      estimatedTime: '45 min',
+      popularity: 58,
+      lastUpdated: '2024-01-15',
+      content: `
+ART INSTALLATION CONTRACT
+
+This Installation Contract is entered into on [Date] between:
+
+CLIENT/VENUE:
+Name: [Client/Venue Name]
+Address: [Address]
+Contact Person: [Contact Name]
+Email: [Email]
+Phone: [Phone]
+
+ARTIST:
+Name: [Artist Name]
+Address: [Artist Address]
+Email: [Artist Email]
+Phone: [Artist Phone]
+
+1. INSTALLATION DETAILS
+- Installation Title: [Title of Work]
+- Installation Type: [Temporary/Permanent]
+- Location: [Specific location description]
+- Dimensions: [Size specifications]
+- Materials: [List of materials used]
+- Installation Period: [Start Date] to [End Date]
+
+2. SCOPE OF WORK
+Artist Responsibilities:
+- Design and create the installation
+- Provide detailed installation plans and specifications
+- Supervise installation process
+- Provide maintenance instructions
+- Attend installation opening/unveiling
+
+Client Responsibilities:
+- Provide safe and secure installation site
+- Obtain necessary permits and approvals
+- Provide utilities (power, water, etc.) as needed
+- Provide security during installation period
+- Handle public relations and marketing
+
+3. COMPENSATION
+- Installation Fee: $[Amount]
+- Materials Budget: $[Amount]
+- Installation Costs: $[Amount]
+- Payment Schedule:
+  * 25% upon contract signing
+  * 50% upon delivery/completion
+  * 25% upon successful installation
+
+4. TIMELINE
+- Design Approval: [Date]
+- Production Start: [Date]
+- Delivery to Site: [Date]
+- Installation Begin: [Date]
+- Installation Complete: [Date]
+- Public Opening: [Date]
+
+5. INSTALLATION PROCESS
+- Site preparation: [Who is responsible]
+- Equipment needed: [Cranes, scaffolding, etc.]
+- Labor requirements: [Number of installers needed]
+- Safety measures: [Safety protocols and insurance]
+- Weather contingencies: [Plans for delays]
+
+6. MAINTENANCE AND CARE
+- Regular maintenance: [Who is responsible and frequency]
+- Cleaning requirements: [Specific instructions]
+- Repair costs: [Who pays for damage repairs]
+- Artist consultation: [When artist input is required]
+- Replacement parts: [Availability and cost]
+
+7. COPYRIGHT AND OWNERSHIP
+- Artist retains copyright to the design
+- Client owns the physical installation
+- Documentation rights: [Photo/video permissions]
+- Reproduction rights: [Merchandising limitations]
+- Artist attribution: [How artist must be credited]
+
+8. INSURANCE AND LIABILITY
+- General liability insurance: $[Amount] minimum
+- Installation insurance: [During installation period]
+- Property damage: [Who is liable for what]
+- Public safety: [Safety measures and liability]
+- Force majeure: [Natural disasters, etc.]
+
+9. MODIFICATIONS AND CHANGES
+- No modifications without artist's written consent
+- Change order process: [How modifications are approved]
+- Additional costs: [Who pays for requested changes]
+- Artistic integrity: [Artist's right to refuse changes]
+
+10. REMOVAL AND DEINSTALLATION
+- Deinstallation date: [If temporary installation]
+- Removal process: [Who handles and pays for removal]
+- Disposal of materials: [Environmental considerations]
+- Site restoration: [Returning site to original condition]
+
+11. INTELLECTUAL PROPERTY
+- Artist may use installation images for portfolio
+- Client may use images for promotional purposes
+- Commercial usage: [Restrictions on commercial use]
+- Derivative works: [Rights to create related pieces]
+
+12. TERMINATION
+- Termination before installation: [Cancellation fees]
+- Early removal: [Conditions and compensation]
+- Breach of contract: [Remedies for both parties]
+- Notice requirements: [How much notice is required]
+
+13. SPECIAL CONDITIONS
+- Public access: [Hours and restrictions]
+- Vandalism protection: [Security measures]
+- Weather protection: [Coverings or seasonal removal]
+- Utility access: [Power, water, data connections]
+
+SIGNATURES:
+Client Representative: _________________ Date: _______
+Artist: _________________ Date: _______
+Project Manager: _________________ Date: _______
+      `
     }
   ];
 
