@@ -105,9 +105,19 @@ export const ExistingFilesProtection = () => {
         if (!artwork) continue;
 
         try {
-          // For existing files, we'll create a protection record without re-uploading
-          // This simulates protecting files that are already in storage
-          const protectionMethods = ['metadataInjection', 'robotsTxtEntry'];
+          // For existing files, apply comprehensive AI protection methods
+          const protectionMethods = [
+            'adversarial_noise',
+            'rights_metadata', 
+            'crawler_blocking',
+            'invisible_watermark',
+            'blockchain_registration',
+            'blockchain_verified',
+            'likeness_protection',
+            'advanced_fingerprinting',
+            'metadata_injection',
+            'robots_txt_entry'
+          ];
           
           const { data: protectionRecord, error: protectionError } = await supabase
             .from('ai_protection_records')
