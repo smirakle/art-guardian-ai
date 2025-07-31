@@ -90,32 +90,52 @@ export function PortfolioDashboard() {
 
   const fetchDashboardData = async () => {
     try {
+      console.log('Fetching dashboard data...');
       setLoading(true);
 
       // Fetch portfolios
+      console.log('Fetching portfolios...');
       const { data: portfoliosData, error: portfoliosError } = await supabase
         .from('portfolios')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (portfoliosError) throw portfoliosError;
+      if (portfoliosError) {
+        console.error('Portfolio fetch error:', portfoliosError);
+        throw portfoliosError;
+      }
+
+      console.log('Portfolios fetched:', portfoliosData?.length || 0);
 
       // Get artwork counts for each portfolio
       const portfoliosWithCounts = await Promise.all(
         (portfoliosData || []).map(async (portfolio) => {
-          const { count } = await supabase
-            .from('portfolio_items')
-            .select('*', { count: 'exact', head: true })
-            .eq('portfolio_id', portfolio.id)
-            .eq('is_active', true);
-          
-          return {
-            ...portfolio,
-            artwork_count: count || 0
-          };
+          try {
+            const { count, error: countError } = await supabase
+              .from('portfolio_items')
+              .select('*', { count: 'exact', head: true })
+              .eq('portfolio_id', portfolio.id)
+              .eq('is_active', true);
+            
+            if (countError) {
+              console.warn(`Error counting items for portfolio ${portfolio.id}:`, countError);
+            }
+            
+            return {
+              ...portfolio,
+              artwork_count: count || 0
+            };
+          } catch (error) {
+            console.error(`Error processing portfolio ${portfolio.id}:`, error);
+            return {
+              ...portfolio,
+              artwork_count: 0
+            };
+          }
         })
       );
 
+      console.log('Portfolios with counts:', portfoliosWithCounts);
       setPortfolios(portfoliosWithCounts);
 
       // Calculate stats
@@ -123,28 +143,40 @@ export function PortfolioDashboard() {
       const activeMonitoring = portfoliosWithCounts.filter(p => p.monitoring_enabled).length;
       const totalArtworks = portfoliosWithCounts.reduce((sum, p) => sum + (p.artwork_count || 0), 0);
 
+      console.log('Basic stats calculated:', { totalPortfolios, activeMonitoring, totalArtworks });
+
       // Get real recent threats from portfolio alerts (last 24 hours)
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       
-      const { data: recentAlerts } = await supabase
+      console.log('Fetching recent alerts since:', yesterday.toISOString());
+      const { data: recentAlerts, error: alertsError } = await supabase
         .from('portfolio_alerts')
         .select('id')
         .gte('created_at', yesterday.toISOString());
 
-      setStats({
+      if (alertsError) {
+        console.warn('Error fetching alerts:', alertsError);
+      }
+
+      console.log('Recent alerts found:', recentAlerts?.length || 0);
+
+      const finalStats = {
         total_portfolios: totalPortfolios,
         active_monitoring: activeMonitoring,
         total_artworks: totalArtworks,
         recent_threats: recentAlerts?.length || 0,
         monitoring_coverage: totalPortfolios > 0 ? Math.round((activeMonitoring / totalPortfolios) * 100) : 0
-      });
+      };
+
+      console.log('Final stats:', finalStats);
+      setStats(finalStats);
 
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
       toast({
         title: "Error",
-        description: "Failed to load dashboard data",
+        description: `Failed to load dashboard data: ${error.message || 'Unknown error'}`,
         variant: "destructive",
       });
     } finally {
