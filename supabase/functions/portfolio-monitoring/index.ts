@@ -108,13 +108,10 @@ async function handleStartScan(
     for (const portfolio of portfoliosToScan) {
       console.log(`Scanning portfolio: ${portfolio.name}`)
       
-      // Get artworks in this portfolio
+      // Get artworks in this portfolio - using separate queries to avoid relationship issues
       const { data: portfolioItems, error: itemsError } = await supabase
         .from('portfolio_items')
-        .select(`
-          artwork_id,
-          artwork(id, title, category, file_paths)
-        `)
+        .select('artwork_id')
         .eq('portfolio_id', portfolio.id)
         .eq('is_active', true)
 
@@ -123,7 +120,22 @@ async function handleStartScan(
         continue
       }
 
-      const artworks = portfolioItems?.map(item => item.artwork).filter(Boolean) || []
+      if (!portfolioItems || portfolioItems.length === 0) {
+        console.log(`No portfolio items found for portfolio ${portfolio.name}`)
+        continue
+      }
+
+      // Get artwork details separately
+      const artworkIds = portfolioItems.map(item => item.artwork_id)
+      const { data: artworks, error: artworksError } = await supabase
+        .from('artwork')
+        .select('id, title, category, file_paths')
+        .in('id', artworkIds)
+
+      if (artworksError) {
+        console.error(`Error fetching artworks for portfolio ${portfolio.id}:`, artworksError)
+        continue
+      }
       
       if (artworks.length === 0) {
         console.log(`No artworks found in portfolio ${portfolio.name}`)
