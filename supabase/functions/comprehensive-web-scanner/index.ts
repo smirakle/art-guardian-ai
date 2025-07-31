@@ -614,33 +614,45 @@ async function analyzeContentSimilarity(originalText: string, results: ScanResul
 
 // AI-powered image analysis functions
 async function analyzeImageWithAI(imageUrl: string): Promise<ScanResult[]> {
-  const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+  const results: ScanResult[] = [];
+  const apiKey = Deno.env.get('OPENAI_API_KEY');
   
-  if (!openAIApiKey) {
-    console.log('OpenAI API key not configured for image analysis');
-    return [];
+  if (!apiKey) {
+    console.log('OpenAI API key not configured for AI analysis');
+    return results;
   }
 
   try {
+    console.log('Starting AI-powered image analysis with GPT-4o...');
+    
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4o',
         messages: [
-          {
-            role: 'system',
-            content: 'You are an expert in image analysis and copyright detection. Analyze images for potential copyright infringement, deepfakes, or unauthorized usage. Return detailed analysis.'
-          },
           {
             role: 'user',
             content: [
               {
                 type: 'text',
-                text: 'Analyze this image for: 1) Copyright infringement potential 2) Deepfake indicators 3) Unauthorized usage signs 4) Image quality and authenticity. Provide confidence scores and threat levels.'
+                text: `Analyze this image for copyright infringement potential. Look for:
+                1. Brand logos, trademarks, or copyrighted designs
+                2. Artistic styles that might be protected
+                3. Characters or imagery from known properties
+                4. Professional photography or artwork
+                5. Any watermarks or copyright notices
+                
+                Provide analysis as JSON: {
+                  "hasProtectedContent": boolean,
+                  "confidence": number (0-1),
+                  "detectedElements": ["element1", "element2"],
+                  "riskLevel": "low"|"medium"|"high",
+                  "description": "detailed analysis"
+                }`
               },
               {
                 type: 'image_url',
@@ -649,96 +661,141 @@ async function analyzeImageWithAI(imageUrl: string): Promise<ScanResult[]> {
             ]
           }
         ],
-        temperature: 0.3,
-        max_tokens: 800
-      }),
+        max_tokens: 500,
+        temperature: 0.1
+      })
     });
 
-    if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const analysis = data.choices[0].message.content;
-    
-    // Parse AI analysis and create structured results
-    const results: ScanResult[] = [];
-    
-    // Create result based on AI analysis
-    results.push({
-      id: `ai_analysis_${Date.now()}`,
-      source: 'AI Analysis',
-      url: imageUrl,
-      title: 'AI-Powered Image Analysis',
-      description: analysis,
-      confidence: 0.85,
-      threatLevel: 'medium',
-      contentType: 'photo',
-      detectionType: 'ai_analysis',
-      thumbnailUrl: imageUrl,
-      artifacts: ['ai_powered_analysis', 'computer_vision', 'content_analysis']
-    });
-
-    return results;
-  } catch (error) {
-    console.error('AI image analysis failed:', error);
-    return [];
-  }
-}
-
-async function enhanceResultsWithAI(results: ScanResult[], originalImageUrl: string): Promise<ScanResult[]> {
-  const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
-  
-  if (!openAIApiKey || results.length === 0) {
-    return results;
-  }
-
-  try {
-    // Analyze similarity between original and found images using AI
-    for (const result of results.slice(0, 5)) { // Limit to first 5 for API efficiency
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openAIApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
-            {
-              role: 'system',
-              content: 'Compare two images and assess similarity, potential copyright violation, and threat level. Provide confidence scores.'
-            },
-            {
-              role: 'user',
-              content: [
-                {
-                  type: 'text',
-                  text: `Compare these images for similarity and copyright issues. Original: ${originalImageUrl}, Found: ${result.url || result.thumbnailUrl}`
-                }
-              ]
-            }
-          ],
-          temperature: 0.3,
-          max_tokens: 300
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const aiAssessment = data.choices[0].message.content;
-        
-        // Enhance result with AI assessment
-        result.description = `AI Enhanced: ${aiAssessment}`;
-        result.artifacts = [...(result.artifacts || []), 'ai_similarity_analysis'];
+    if (response.ok) {
+      const data = await response.json();
+      const content = data.choices[0]?.message?.content;
+      
+      if (content) {
+        try {
+          const analysis = JSON.parse(content);
+          
+          if (analysis.hasProtectedContent && analysis.confidence > 0.5) {
+            results.push({
+              id: `ai_analysis_${Date.now()}`,
+              source: 'AI Copyright Analysis',
+              url: imageUrl,
+              title: 'AI-Detected Copyright Content',
+              description: analysis.description,
+              confidence: analysis.confidence,
+              threatLevel: analysis.riskLevel as 'low' | 'medium' | 'high',
+              contentType: 'photo',
+              detectionType: 'ai_copyright_analysis',
+              artifacts: analysis.detectedElements
+            });
+          }
+        } catch (parseError) {
+          console.error('Failed to parse AI analysis response:', parseError);
+        }
       }
     }
   } catch (error) {
-    console.error('AI enhancement failed:', error);
+    console.error('AI image analysis error:', error);
   }
 
   return results;
 }
+
+async function enhanceResultsWithAI(results: ScanResult[], originalImageUrl: string): Promise<ScanResult[]> {
+  const apiKey = Deno.env.get('OPENAI_API_KEY');
+  
+  if (!apiKey || results.length === 0) {
+    return results;
+  }
+
+  try {
+    // Use OpenAI to analyze similarity between original and found images
+    const enhancedResults = await Promise.all(
+      results.slice(0, 5).map(async (result) => { // Limit to first 5 for API efficiency
+        try {
+          const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              model: 'gpt-4o',
+              messages: [
+                {
+                  role: 'user',
+                  content: [
+                    {
+                      type: 'text',
+                      text: `Compare these two images for copyright similarity. Rate similarity 0-1 and identify if this could be copyright infringement.
+                      
+                      Original image:`
+                    },
+                    {
+                      type: 'image_url',
+                      image_url: { url: originalImageUrl }
+                    },
+                    {
+                      type: 'text',
+                      text: `Found image:`
+                    },
+                    {
+                      type: 'image_url',
+                      image_url: { url: result.thumbnailUrl || result.url }
+                    },
+                    {
+                      type: 'text',
+                      text: `Respond with JSON: {
+                        "similarity": number,
+                        "isInfringement": boolean,
+                        "reasoning": "explanation",
+                        "riskLevel": "low"|"medium"|"high"
+                      }`
+                    }
+                  ]
+                }
+              ],
+              max_tokens: 300,
+              temperature: 0.1
+            })
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            const content = data.choices[0]?.message?.content;
+            
+            if (content) {
+              try {
+                const analysis = JSON.parse(content);
+                
+                // Update result with AI-enhanced confidence and threat level
+                return {
+                  ...result,
+                  confidence: Math.max(result.confidence, analysis.similarity),
+                  threatLevel: analysis.riskLevel as 'low' | 'medium' | 'high',
+                  description: `${result.description} - AI Analysis: ${analysis.reasoning}`,
+                  artifacts: [...result.artifacts, 'ai_similarity_verified']
+                };
+              } catch (parseError) {
+                console.error('Failed to parse AI similarity analysis:', parseError);
+              }
+            }
+          }
+        } catch (error) {
+          console.error('AI similarity analysis error for result:', error);
+        }
+        
+        return result; // Return original if AI analysis fails
+      })
+    );
+
+    // Add remaining results without AI enhancement
+    const remainingResults = results.slice(5);
+    
+    return [...enhancedResults, ...remainingResults];
+  } catch (error) {
+    console.error('Error enhancing results with AI:', error);
+    return results;
+  }
 
 async function analyzeContentWithAI(contentText: string, contentType: string, searchTerms: string[]): Promise<ScanResult[]> {
   const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
