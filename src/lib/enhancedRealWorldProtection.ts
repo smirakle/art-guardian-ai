@@ -18,6 +18,7 @@ export interface EnhancedProtectionOptions {
   enableRightsMetadata: boolean;
   enableCrawlerBlocking: boolean;
   enableInvisibleWatermark: boolean;
+  enableRealTimeMonitoring?: boolean;
   enableBlockchainRegistration: boolean;
   enableLikenessProtection: boolean;
   protectionLevel: 'basic' | 'advanced' | 'maximum';
@@ -84,6 +85,12 @@ export class EnhancedRealWorldProtection {
       if (options.enableLikenessProtection) {
         protectedBlob = await this.applyLikenessProtection(protectedBlob);
         appliedMethods.push('likeness_protection');
+      }
+
+      if (options.enableRealTimeMonitoring) {
+        // Apply real-time monitoring markers
+        protectedBlob = await this.applyRealTimeMonitoring(protectedBlob);
+        appliedMethods.push('real_time_monitoring');
       }
 
       // Enhanced protection based on level
@@ -352,6 +359,40 @@ export class EnhancedRealWorldProtection {
     
     // Add original data
     combinedView.set(new Uint8Array(originalBuffer), 8 + protectionBytes.length);
+    
+    return new Blob([combinedBuffer], { type: blob.type });
+  }
+
+  private async applyRealTimeMonitoring(blob: Blob): Promise<Blob> {
+    // Apply real-time monitoring markers for continuous violation detection
+    const monitoringData = {
+      type: 'real_time_monitoring',
+      timestamp: Date.now(),
+      monitoring_id: `rtm-${Math.random().toString(36).substr(2, 9)}`,
+      scan_intervals: ['hourly', 'daily', 'weekly'],
+      threat_detection: true,
+      violation_alerts: true,
+      auto_enforcement: true
+    };
+
+    const monitoringBytes = new TextEncoder().encode(JSON.stringify(monitoringData));
+    const originalBuffer = await blob.arrayBuffer();
+    const combinedBuffer = new ArrayBuffer(originalBuffer.byteLength + monitoringBytes.length + 8);
+    const combinedView = new Uint8Array(combinedBuffer);
+    
+    // Add monitoring signature
+    const signature = new TextEncoder().encode('RTMT'); // Real-Time Monitoring
+    combinedView.set(signature, 0);
+    
+    // Add monitoring data length
+    const lengthView = new DataView(combinedBuffer, 4, 4);
+    lengthView.setUint32(0, monitoringBytes.length, false);
+    
+    // Add monitoring data
+    combinedView.set(monitoringBytes, 8);
+    
+    // Add original data
+    combinedView.set(new Uint8Array(originalBuffer), 8 + monitoringBytes.length);
     
     return new Blob([combinedBuffer], { type: blob.type });
   }
