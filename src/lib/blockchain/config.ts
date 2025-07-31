@@ -16,10 +16,10 @@ export const wagmiConfig = createConfig({
     }),
   ],
   transports: {
-    [mainnet.id]: http(`https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY || 'demo'}`),
+    [mainnet.id]: http(`https://mainnet.infura.io/v3/demo`), // Using demo for now
     [polygon.id]: http(`https://polygon-rpc.com`),
     [arbitrum.id]: http(`https://arb1.arbitrum.io/rpc`),
-    [sepolia.id]: http(`https://sepolia.infura.io/v3/${process.env.INFURA_API_KEY || 'demo'}`),
+    [sepolia.id]: http(`https://sepolia.infura.io/v3/demo`), // Using demo for now
     [polygonMumbai.id]: http(`https://rpc-mumbai.maticvigil.com`),
   },
 })
@@ -94,8 +94,8 @@ export const contractAddresses = {
 // IPFS configuration
 export const ipfsConfig = {
   gateway: 'https://ipfs.io/ipfs/',
-  pinataApiKey: process.env.PINATA_API_KEY || '',
-  pinataSecretKey: process.env.PINATA_SECRET_KEY || '',
-  infuraProjectId: process.env.INFURA_IPFS_PROJECT_ID || '',
-  infuraSecret: process.env.INFURA_IPFS_SECRET || '',
+  pinataApiKey: '', // Will be configured via Supabase secrets
+  pinataSecretKey: '', // Will be configured via Supabase secrets
+  infuraProjectId: '', // Will be configured via Supabase secrets
+  infuraSecret: '', // Will be configured via Supabase secrets
 }
