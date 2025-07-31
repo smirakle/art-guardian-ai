@@ -25,8 +25,13 @@ import {
   FileCheck,
   BookOpen,
   Zap,
-  Award
+  Award,
+  FileSignature,
+  Calendar,
+  Send
 } from 'lucide-react';
+import LegalProfileManager from '@/components/enhanced/LegalProfileManager';
+import DocumentGenerator from '@/components/enhanced/DocumentGenerator';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import jsPDF from 'jspdf';
@@ -41,6 +46,7 @@ interface LegalTemplate {
   icon: React.ComponentType<any>;
   content: string;
   tags: string[];
+  customFields: string[];
   estimatedTime: string;
   popularity: number;
   lastUpdated: string;
@@ -164,6 +170,7 @@ const LegalTemplates = () => {
       popularity: 95,
       lastUpdated: '2024-01-15',
       featured: true,
+      customFields: ['workTitle', 'workDescription', 'creationDate', 'registrationNumber', 'infringingUrl', 'infringementDescription'],
       content: `
 DMCA TAKEDOWN NOTICE
 
@@ -227,6 +234,7 @@ Sincerely,
       estimatedTime: '20 min',
       popularity: 87,
       lastUpdated: '2024-01-10',
+      customFields: ['workTitle', 'workDescription', 'infringingParty', 'infringementDescription'],
       content: `
 CEASE AND DESIST LETTER
 
@@ -287,6 +295,7 @@ Sincerely,
       popularity: 78,
       lastUpdated: '2024-01-05',
       featured: true,
+      customFields: ['workTitle', 'licenseType', 'territory', 'duration', 'royaltyRate'],
       content: `
 ARTWORK LICENSING AGREEMENT
 
@@ -354,6 +363,7 @@ Licensee: _________________ Date: _______
       popularity: 92,
       lastUpdated: '2024-01-20',
       featured: true,
+      customFields: ['nftTitle', 'collectionName', 'royaltyPercentage', 'platforms'],
       content: `
 NFT TERMS AND CONDITIONS
 
@@ -416,6 +426,7 @@ Last Updated: [Date]
       estimatedTime: '30 min',
       popularity: 84,
       lastUpdated: '2024-01-12',
+      customFields: ['workTitle', 'workDescription', 'creationDate', 'authorName'],
       content: `
 COPYRIGHT REGISTRATION GUIDE
 
@@ -493,6 +504,7 @@ Washington, DC 20559
       estimatedTime: '25 min',
       popularity: 89,
       lastUpdated: '2024-01-18',
+      customFields: ['businessName', 'contactInfo', 'dataTypes', 'purposes'],
       content: `
 PRIVACY POLICY
 
@@ -579,6 +591,7 @@ We will notify you of material changes to this policy.
       popularity: 91,
       lastUpdated: '2024-01-25',
       featured: true,
+      customFields: ['projectDescription', 'deliverables', 'timeline', 'price', 'paymentSchedule'],
       content: `
 ART COMMISSION AGREEMENT
 
@@ -664,6 +677,7 @@ Client: _________________ Date: _______
       estimatedTime: '35 min',
       popularity: 76,
       lastUpdated: '2024-01-22',
+      customFields: ['projectTitle', 'collaborators', 'roles', 'revenueShare', 'crediting'],
       content: `
 ARTIST COLLABORATION AGREEMENT
 
@@ -760,6 +774,7 @@ Artist 2: _________________ Date: _______
       estimatedTime: '40 min',
       popularity: 82,
       lastUpdated: '2024-01-20',
+      customFields: ['galleryName', 'representationType', 'commission', 'exclusivity', 'territory'],
       content: `
 GALLERY REPRESENTATION AGREEMENT
 
@@ -868,6 +883,7 @@ Artist: _________________ Date: _______
       estimatedTime: '15 min',
       popularity: 67,
       lastUpdated: '2024-01-18',
+      customFields: ['modelName', 'sessionDate', 'usage', 'compensation'],
       content: `
 ARTIST MODEL RELEASE FORM
 
@@ -972,6 +988,7 @@ Print Name: [Witness Name]
       estimatedTime: '45 min',
       popularity: 58,
       lastUpdated: '2024-01-15',
+      customFields: ['installationTitle', 'location', 'duration', 'maintenance', 'insurance'],
       content: `
 ART INSTALLATION CONTRACT
 
@@ -1544,6 +1561,55 @@ Project Manager: _________________ Date: _______
           })}
         </div>
       </Card>
+        </TabsContent>
+
+        <TabsContent value="documents" className="space-y-6">
+          <div className="text-center py-12">
+            <FileSignature className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Document Management</h3>
+            <p className="text-muted-foreground mb-4">
+              View and manage your generated legal documents.
+            </p>
+            {generatedDocuments.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No documents generated yet.</p>
+            ) : (
+              <div className="grid gap-4 max-w-2xl mx-auto">
+                {generatedDocuments.map((doc) => (
+                  <Card key={doc.id} className="text-left">
+                    <CardContent className="p-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-medium">{doc.template_title}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            Generated {new Date(doc.generated_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <Badge variant={doc.status === 'completed' ? 'default' : 'secondary'}>
+                          {doc.status}
+                        </Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="compliance" className="space-y-6">
+          <div className="text-center py-12">
+            <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Compliance Tracking</h3>
+            <p className="text-muted-foreground mb-4">
+              Monitor the progress of your legal documents and deadlines.
+            </p>
+            <Button variant="outline">
+              <Clock className="h-4 w-4 mr-2" />
+              View Compliance Dashboard
+            </Button>
+          </div>
+        </TabsContent>
+      </Tabs>
 
       {/* Legal Disclaimer */}
       <Card className="border-yellow-200 bg-yellow-50/50">
