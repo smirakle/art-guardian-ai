@@ -64,6 +64,15 @@ verify_jwt = false
 [functions.international-compliance-checker]
 verify_jwt = false
 
+[functions.real-blockchain-registration]
+verify_jwt = false
+
+[functions.real-nft-minting]
+verify_jwt = false
+
+[functions.blockchain-verification]
+verify_jwt = false
+
 [functions.automated-dmca-filing]
 verify_jwt = false
 

@@ -550,6 +550,60 @@ export type Database = {
         }
         Relationships: []
       }
+      blockchain_verifications: {
+        Row: {
+          block_number: number | null
+          block_timestamp: string | null
+          blockchain: string
+          contract_address: string | null
+          created_at: string
+          gas_price: number | null
+          gas_used: number | null
+          id: string
+          is_valid: boolean
+          metadata_uri: string | null
+          owner_address: string | null
+          token_id: number | null
+          transaction_hash: string
+          verification_metadata: Json
+          verification_timestamp: string
+        }
+        Insert: {
+          block_number?: number | null
+          block_timestamp?: string | null
+          blockchain: string
+          contract_address?: string | null
+          created_at?: string
+          gas_price?: number | null
+          gas_used?: number | null
+          id?: string
+          is_valid?: boolean
+          metadata_uri?: string | null
+          owner_address?: string | null
+          token_id?: number | null
+          transaction_hash: string
+          verification_metadata?: Json
+          verification_timestamp?: string
+        }
+        Update: {
+          block_number?: number | null
+          block_timestamp?: string | null
+          blockchain?: string
+          contract_address?: string | null
+          created_at?: string
+          gas_price?: number | null
+          gas_used?: number | null
+          id?: string
+          is_valid?: boolean
+          metadata_uri?: string | null
+          owner_address?: string | null
+          token_id?: number | null
+          transaction_hash?: string
+          verification_metadata?: Json
+          verification_timestamp?: string
+        }
+        Relationships: []
+      }
       cache_statistics: {
         Row: {
           cache_key: string
@@ -1894,6 +1948,84 @@ export type Database = {
         }
         Relationships: []
       }
+      nft_tokens: {
+        Row: {
+          artwork_id: string
+          blockchain: string
+          collection_name: string | null
+          contract_address: string
+          created_at: string
+          current_price: number | null
+          gas_fee_paid: number | null
+          id: string
+          is_listed_for_sale: boolean
+          last_sale_price: number | null
+          listing_marketplace: string | null
+          listing_price: number | null
+          metadata_ipfs_hash: string
+          mint_block_number: number | null
+          mint_transaction_hash: string
+          minting_metadata: Json
+          owner_wallet_address: string
+          royalty_percentage: number
+          token_id: number
+          total_sales: number
+          total_volume: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          artwork_id: string
+          blockchain?: string
+          collection_name?: string | null
+          contract_address: string
+          created_at?: string
+          current_price?: number | null
+          gas_fee_paid?: number | null
+          id?: string
+          is_listed_for_sale?: boolean
+          last_sale_price?: number | null
+          listing_marketplace?: string | null
+          listing_price?: number | null
+          metadata_ipfs_hash: string
+          mint_block_number?: number | null
+          mint_transaction_hash: string
+          minting_metadata?: Json
+          owner_wallet_address: string
+          royalty_percentage?: number
+          token_id: number
+          total_sales?: number
+          total_volume?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          artwork_id?: string
+          blockchain?: string
+          collection_name?: string | null
+          contract_address?: string
+          created_at?: string
+          current_price?: number | null
+          gas_fee_paid?: number | null
+          id?: string
+          is_listed_for_sale?: boolean
+          last_sale_price?: number | null
+          listing_marketplace?: string | null
+          listing_price?: number | null
+          metadata_ipfs_hash?: string
+          mint_block_number?: number | null
+          mint_transaction_hash?: string
+          minting_metadata?: Json
+          owner_wallet_address?: string
+          royalty_percentage?: number
+          token_id?: number
+          total_sales?: number
+          total_volume?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       performance_metrics: {
         Row: {
           additional_data: Json | null
@@ -2959,6 +3091,63 @@ export type Database = {
         }
         Relationships: []
       }
+      smart_contract_interactions: {
+        Row: {
+          block_number: number | null
+          blockchain: string
+          contract_address: string
+          created_at: string
+          error_message: string | null
+          function_name: string
+          gas_price: number | null
+          gas_used: number | null
+          id: string
+          input_data: Json
+          output_data: Json
+          status: string
+          transaction_fee: number | null
+          transaction_hash: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          block_number?: number | null
+          blockchain: string
+          contract_address: string
+          created_at?: string
+          error_message?: string | null
+          function_name: string
+          gas_price?: number | null
+          gas_used?: number | null
+          id?: string
+          input_data?: Json
+          output_data?: Json
+          status?: string
+          transaction_fee?: number | null
+          transaction_hash: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          block_number?: number | null
+          blockchain?: string
+          contract_address?: string
+          created_at?: string
+          error_message?: string | null
+          function_name?: string
+          gas_price?: number | null
+          gas_used?: number | null
+          id?: string
+          input_data?: Json
+          output_data?: Json
+          status?: string
+          transaction_fee?: number | null
+          transaction_hash?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       social_media_accounts: {
         Row: {
           account_handle: string
@@ -3416,6 +3605,51 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      wallet_connections: {
+        Row: {
+          blockchain: string
+          created_at: string
+          id: string
+          is_primary: boolean
+          is_verified: boolean
+          last_connected_at: string | null
+          updated_at: string
+          user_id: string
+          verification_message: string | null
+          verification_signature: string | null
+          wallet_address: string
+          wallet_type: string
+        }
+        Insert: {
+          blockchain: string
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          is_verified?: boolean
+          last_connected_at?: string | null
+          updated_at?: string
+          user_id: string
+          verification_message?: string | null
+          verification_signature?: string | null
+          wallet_address: string
+          wallet_type: string
+        }
+        Update: {
+          blockchain?: string
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          is_verified?: boolean
+          last_connected_at?: string | null
+          updated_at?: string
+          user_id?: string
+          verification_message?: string | null
+          verification_signature?: string | null
+          wallet_address?: string
+          wallet_type?: string
         }
         Relationships: []
       }
