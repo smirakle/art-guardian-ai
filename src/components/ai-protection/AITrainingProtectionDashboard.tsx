@@ -5,10 +5,15 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Shield, AlertTriangle, CheckCircle, Upload, Download, Eye, Lock } from 'lucide-react';
+import { Shield, AlertTriangle, CheckCircle, Upload, Download, Eye, Lock, BarChart3, Bell, Settings } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAIProtectionRateLimit } from '@/hooks/useAIProtectionRateLimit';
+import { useEnhancedCaching } from '@/hooks/useEnhancedCaching';
+import AIProtectionMetrics from './AIProtectionMetrics';
+import AIProtectionNotificationCenter from './AIProtectionNotificationCenter';
+import AIProtectionAuditLog from './AIProtectionAuditLog';
 
 interface ProtectionRecord {
   id: string;
@@ -39,6 +44,8 @@ interface Violation {
 
 const AITrainingProtectionDashboard = () => {
   const { user } = useAuth();
+  const { checkRateLimit } = useAIProtectionRateLimit();
+  const cache = useEnhancedCaching({ maxSize: 100, defaultTTL: 300000, enablePersistence: true });
   const [protectionRecords, setProtectionRecords] = useState<ProtectionRecord[]>([]);
   const [violations, setViolations] = useState<Violation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -295,10 +302,13 @@ const AITrainingProtectionDashboard = () => {
 
       {/* Tabs */}
       <Tabs defaultValue="protected" className="space-y-4">
-        <TabsList>
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="protected">Protected Files</TabsTrigger>
           <TabsTrigger value="violations">Violations</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+          <TabsTrigger value="metrics"><BarChart3 className="h-4 w-4 mr-2" />Metrics</TabsTrigger>
+          <TabsTrigger value="notifications"><Bell className="h-4 w-4 mr-2" />Notifications</TabsTrigger>
+          <TabsTrigger value="audit">Audit Log</TabsTrigger>
+          <TabsTrigger value="settings"><Settings className="h-4 w-4 mr-2" />Settings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="protected" className="space-y-4">
@@ -411,37 +421,47 @@ const AITrainingProtectionDashboard = () => {
           </Card>
         </TabsContent>
 
+        <TabsContent value="metrics" className="space-y-4">
+          <AIProtectionMetrics />
+        </TabsContent>
+
+        <TabsContent value="notifications" className="space-y-4">
+          <AIProtectionNotificationCenter />
+        </TabsContent>
+
+        <TabsContent value="audit" className="space-y-4">
+          <AIProtectionAuditLog />
+        </TabsContent>
+
         <TabsContent value="settings" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Protection Settings</CardTitle>
-              <CardDescription>Configure AI training protection parameters</CardDescription>
+              <CardTitle>Production Settings</CardTitle>
+              <CardDescription>Enterprise-grade AI training protection configuration</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Default Protection Level</label>
-                <div className="grid grid-cols-3 gap-2">
-                  <Button variant="outline" size="sm">Basic</Button>
-                  <Button variant="default" size="sm">Advanced</Button>
-                  <Button variant="outline" size="sm">Maximum</Button>
+            <CardContent className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-medium">Rate Limiting</h4>
+                  <p className="text-sm text-muted-foreground">Current: 10 uploads per hour</p>
                 </div>
+                <Badge variant="secondary">Active</Badge>
               </div>
               
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Monitoring Frequency</label>
-                <div className="grid grid-cols-3 gap-2">
-                  <Button variant="outline" size="sm">Daily</Button>
-                  <Button variant="default" size="sm">Real-time</Button>
-                  <Button variant="outline" size="sm">Weekly</Button>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-medium">Performance Cache</h4>
+                  <p className="text-sm text-muted-foreground">Hit rate: {cache.stats.hitRate.toFixed(1)}%</p>
                 </div>
+                <Button variant="outline" size="sm" onClick={cache.clear}>Clear Cache</Button>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Auto-Response</label>
-                <div className="flex items-center space-x-2">
-                  <input type="checkbox" id="auto-dmca" className="rounded" />
-                  <label htmlFor="auto-dmca" className="text-sm">Automatically send DMCA notices</label>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-medium">Email Notifications</h4>
+                  <p className="text-sm text-muted-foreground">Critical violations auto-notify</p>
                 </div>
+                <Badge variant="default">Enabled</Badge>
               </div>
             </CardContent>
           </Card>

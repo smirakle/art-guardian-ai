@@ -98,6 +98,203 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_protection_audit_log: {
+        Row: {
+          action: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          ip_address: unknown | null
+          resource_id: string | null
+          resource_type: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ai_protection_dmca_notices: {
+        Row: {
+          cost_usd: number | null
+          created_at: string | null
+          deadline_date: string | null
+          filed_at: string | null
+          id: string
+          platform: string
+          reference_number: string | null
+          response_data: Json | null
+          status: string
+          takedown_url: string | null
+          updated_at: string | null
+          user_id: string
+          violation_id: string
+        }
+        Insert: {
+          cost_usd?: number | null
+          created_at?: string | null
+          deadline_date?: string | null
+          filed_at?: string | null
+          id?: string
+          platform: string
+          reference_number?: string | null
+          response_data?: Json | null
+          status?: string
+          takedown_url?: string | null
+          updated_at?: string | null
+          user_id: string
+          violation_id: string
+        }
+        Update: {
+          cost_usd?: number | null
+          created_at?: string | null
+          deadline_date?: string | null
+          filed_at?: string | null
+          id?: string
+          platform?: string
+          reference_number?: string | null
+          response_data?: Json | null
+          status?: string
+          takedown_url?: string | null
+          updated_at?: string | null
+          user_id?: string
+          violation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_protection_dmca_notices_violation_id_fkey"
+            columns: ["violation_id"]
+            isOneToOne: false
+            referencedRelation: "ai_training_violations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_protection_metrics: {
+        Row: {
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          metric_name: string
+          metric_type: string
+          metric_value: number
+          recorded_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          metric_name: string
+          metric_type: string
+          metric_value: number
+          recorded_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          metric_name?: string
+          metric_type?: string
+          metric_value?: number
+          recorded_at?: string | null
+        }
+        Relationships: []
+      }
+      ai_protection_notifications: {
+        Row: {
+          action_url: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          metadata: Json | null
+          notification_type: string
+          severity: string
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          metadata?: Json | null
+          notification_type: string
+          severity?: string
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          metadata?: Json | null
+          notification_type?: string
+          severity?: string
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ai_protection_rate_limits: {
+        Row: {
+          created_at: string | null
+          endpoint: string
+          id: string
+          request_count: number | null
+          updated_at: string | null
+          user_id: string
+          window_start: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          endpoint: string
+          id?: string
+          request_count?: number | null
+          updated_at?: string | null
+          user_id: string
+          window_start?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          endpoint?: string
+          id?: string
+          request_count?: number | null
+          updated_at?: string | null
+          user_id?: string
+          window_start?: string | null
+        }
+        Relationships: []
+      }
       ai_protection_records: {
         Row: {
           applied_at: string
@@ -3321,6 +3518,28 @@ export type Database = {
         }
         Returns: string
       }
+      check_ai_protection_rate_limit: {
+        Args: {
+          user_id_param: string
+          endpoint_param: string
+          max_requests_param?: number
+          window_minutes_param?: number
+        }
+        Returns: boolean
+      }
+      create_ai_protection_notification: {
+        Args: {
+          user_id_param: string
+          notification_type_param: string
+          title_param: string
+          message_param: string
+          severity_param?: string
+          action_url_param?: string
+          metadata_param?: Json
+          expires_hours_param?: number
+        }
+        Returns: string
+      }
       create_free_subscription_for_user: {
         Args: { _user_id: string }
         Returns: undefined
@@ -3396,6 +3615,27 @@ export type Database = {
       is_valid_admin_session: {
         Args: { session_token: string }
         Returns: boolean
+      }
+      log_ai_protection_action: {
+        Args: {
+          user_id_param: string
+          action_param: string
+          resource_type_param: string
+          resource_id_param?: string
+          details_param?: Json
+          ip_param?: unknown
+          user_agent_param?: string
+        }
+        Returns: undefined
+      }
+      record_ai_protection_metric: {
+        Args: {
+          metric_type_param: string
+          metric_name_param: string
+          metric_value_param: number
+          metadata_param?: Json
+        }
+        Returns: undefined
       }
       schedule_compliance_reminder: {
         Args: {
