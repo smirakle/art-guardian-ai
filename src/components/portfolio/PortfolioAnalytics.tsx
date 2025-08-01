@@ -63,8 +63,8 @@ export function PortfolioAnalytics() {
     try {
       setLoading(true);
 
-      // Generate analytics data from actual monitoring results
-      const analyticsData: AnalyticsData = {
+      // Mock analytics data - in a real app, this would come from your analytics service
+      const mockAnalytics: AnalyticsData = {
         threats_by_date: [
           { date: '2024-01-20', high: 2, medium: 5, low: 3 },
           { date: '2024-01-21', high: 1, medium: 8, low: 6 },
@@ -97,7 +97,7 @@ export function PortfolioAnalytics() {
 
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
-      setAnalytics(analyticsData);
+      setAnalytics(mockAnalytics);
     } catch (error) {
       console.error('Error fetching analytics:', error);
     } finally {

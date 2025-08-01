@@ -79,7 +79,7 @@ export function PortfolioSettings() {
   };
 
   const loadGlobalSettings = () => {
-    // Load global portfolio settings from storage
+    // Load from localStorage or API - mock data for now
     const saved = localStorage.getItem('portfolio_global_settings');
     if (saved) {
       setGlobalSettings(JSON.parse(saved));

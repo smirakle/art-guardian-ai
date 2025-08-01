@@ -21,7 +21,10 @@ interface ImageSearchRequest {
   imageUrl?: string;
   artworkId?: string;
   scanId?: string;
+  testMode?: boolean;
   checkApiKeys?: boolean;
+  testCopyrightedImage?: boolean;
+  forceMockResults?: boolean;
   enableDeepfakeDetection?: boolean;
   claimedLocation?: string;
   claimedTime?: string;
@@ -44,18 +47,23 @@ serve(async (req) => {
       imageUrl, 
       artworkId, 
       scanId, 
+      testMode, 
       checkApiKeys,
+      testCopyrightedImage,
+      forceMockResults,
       enableDeepfakeDetection,
       claimedLocation,
       claimedTime
     }: ImageSearchRequest = await req.json()
     
-    console.log('Image search request:', { 
+    console.log('Search request:', { 
       imageUrl, 
       artworkId, 
       scanId, 
-      checkApiKeys,
-      enableDeepfakeDetection
+      testMode, 
+      checkApiKeys, 
+      testCopyrightedImage, 
+      forceMockResults 
     });
 
     // Handle API key testing request
