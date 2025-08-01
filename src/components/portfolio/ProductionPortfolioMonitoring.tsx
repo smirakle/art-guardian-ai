@@ -225,7 +225,7 @@ const ProductionPortfolioMonitoring = () => {
         .eq('user_id', user?.id)
         .eq('realtime_monitoring', true);
 
-      setIsRealTimeActive((realTimePortfolios?.length || 0) > 0);
+      setIsRealTimeActive(realTimePortfolios ? realTimePortfolios.length > 0 : false);
     } catch (error) {
       console.error('Error checking real-time status:', error);
     }
