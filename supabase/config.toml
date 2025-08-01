@@ -57,3 +57,9 @@ verify_jwt = false
 
 [functions.ai-similarity-detection]
 verify_jwt = false
+
+[functions.automated-dmca-filing]
+verify_jwt = false
+
+[functions.real-time-monitoring-engine]
+verify_jwt = false
