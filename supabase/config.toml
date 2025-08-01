@@ -55,7 +55,13 @@ verify_jwt = false
 [functions.google-vision-analysis]
 verify_jwt = false
 
-[functions.ai-similarity-detection]
+[functions.legal-document-generator]
+verify_jwt = false
+
+[functions.government-filing-automation]
+verify_jwt = false
+
+[functions.international-compliance-checker]
 verify_jwt = false
 
 [functions.automated-dmca-filing]
