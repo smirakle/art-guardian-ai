@@ -4,12 +4,15 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom";
+import { WagmiProvider } from 'wagmi'
+import { wagmiConfig } from '@/lib/blockchain/config'
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import MaintenanceMode from "@/components/MaintenanceMode";
 import { useMaintenanceMode } from "@/lib/maintenance";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
+import { BlockchainProvider } from "@/contexts/BlockchainContext";
 import Index from "./pages/Index";
 import AboutTsmo from "./pages/AboutTsmo";
 import FAQ from "./pages/FAQ";
@@ -48,24 +51,28 @@ const App = () => {
   // If maintenance mode is enabled, show only the maintenance page
   if (isMaintenanceMode) {
     return (
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <AuthProvider>
-            <Toaster />
-            <Sonner />
-            <MaintenanceMode />
-          </AuthProvider>
-        </TooltipProvider>
-      </QueryClientProvider>
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <AuthProvider>
+              <Toaster />
+              <Sonner />
+              <MaintenanceMode />
+            </AuthProvider>
+          </TooltipProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
     );
   }
 
   // Normal app when maintenance mode is disabled
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <AuthProvider>
-          <SubscriptionProvider>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <AuthProvider>
+            <SubscriptionProvider>
+              <BlockchainProvider>
             <Toaster />
             <Sonner />
             <SidebarProvider>
@@ -113,10 +120,12 @@ const App = () => {
                 </main>
               </div>
             </SidebarProvider>
+              </BlockchainProvider>
           </SubscriptionProvider>
         </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
+      </WagmiProvider>
   );
 };
 

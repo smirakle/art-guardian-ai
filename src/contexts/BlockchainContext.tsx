@@ -1,52 +1,90 @@
-import React, { createContext, useContext, ReactNode } from 'react'
-import { WagmiProvider } from 'wagmi'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { wagmiConfig } from '@/lib/blockchain/config'
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { useAccount, useChainId, useConnect, useDisconnect } from 'wagmi'
+import { walletService } from '@/lib/blockchain/wallet-service'
+import { toast } from 'sonner'
 
 interface BlockchainContextType {
   isConnected: boolean
-  address?: string
-  chainId?: number
-  connect: () => Promise<void>
-  disconnect: () => Promise<void>
-  switchNetwork: (chainId: number) => Promise<void>
+  address: string | undefined
+  chainId: number | undefined
+  balance: string
+  connectWallet: () => void
+  disconnectWallet: () => void
+  switchNetwork: (chainId: number) => void
+  refreshBalance: () => Promise<void>
 }
 
 const BlockchainContext = createContext<BlockchainContextType | undefined>(undefined)
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      retry: 3,
-    },
-  },
-})
 
 interface BlockchainProviderProps {
   children: ReactNode
 }
 
 export function BlockchainProvider({ children }: BlockchainProviderProps) {
-  return (
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        <BlockchainContextProvider>
-          {children}
-        </BlockchainContextProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
-  )
-}
+  const { address, isConnected } = useAccount()
+  const { connect, connectors } = useConnect()
+  const { disconnect } = useDisconnect()
+  const chainId = useChainId()
+  const [balance, setBalance] = useState('0')
 
-function BlockchainContextProvider({ children }: BlockchainProviderProps) {
-  // This would contain the actual blockchain context logic
-  // For now, providing a basic structure
+  useEffect(() => {
+    if (isConnected && chainId) {
+      refreshBalance()
+    }
+  }, [isConnected, chainId, address])
+
+  const connectWallet = async () => {
+    try {
+      const injectedConnector = connectors.find(c => c.type === 'injected')
+      if (injectedConnector) {
+        await connect({ connector: injectedConnector })
+        toast.success('Wallet connected successfully!')
+      } else {
+        toast.error('No wallet found. Please install MetaMask or another wallet.')
+      }
+    } catch (error: any) {
+      toast.error(`Failed to connect wallet: ${error.message}`)
+    }
+  }
+
+  const disconnectWallet = async () => {
+    try {
+      await disconnect()
+      setBalance('0')
+      toast.success('Wallet disconnected')
+    } catch (error: any) {
+      toast.error(`Failed to disconnect: ${error.message}`)
+    }
+  }
+
+  const switchNetwork = async (newChainId: number) => {
+    try {
+      await walletService.ensureCorrectNetwork(newChainId as any)
+    } catch (error: any) {
+      toast.error(`Failed to switch network: ${error.message}`)
+    }
+  }
+
+  const refreshBalance = async () => {
+    if (!isConnected || !chainId) return
+    
+    try {
+      const walletBalance = await walletService.getWalletBalance(chainId as any)
+      setBalance(walletBalance)
+    } catch (error) {
+      console.error('Failed to fetch balance:', error)
+    }
+  }
+
   const contextValue: BlockchainContextType = {
-    isConnected: false,
-    connect: async () => {},
-    disconnect: async () => {},
-    switchNetwork: async () => {},
+    isConnected,
+    address,
+    chainId,
+    balance,
+    connectWallet,
+    disconnectWallet,
+    switchNetwork,
+    refreshBalance
   }
 
   return (

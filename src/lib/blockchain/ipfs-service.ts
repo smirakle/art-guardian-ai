@@ -11,14 +11,14 @@ export interface NFTMetadata {
   description: string
   image: string
   external_url?: string
-  attributes: Array<{
+  attributes?: Array<{
     trait_type: string
     value: string | number
   }>
-  certificateId: string
-  artworkFingerprint: string
-  blockchainHash: string
-  properties: {
+  certificateId?: string
+  artworkFingerprint?: string
+  blockchainHash?: string
+  properties?: {
     transferable: boolean
     resellable: boolean
     royaltyPercentage: number
