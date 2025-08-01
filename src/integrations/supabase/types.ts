@@ -505,6 +505,51 @@ export type Database = {
           },
         ]
       }
+      compliance_reminders: {
+        Row: {
+          compliance_tracking_id: string
+          created_at: string
+          email_sent: boolean | null
+          id: string
+          is_active: boolean | null
+          notification_sent: boolean | null
+          reminder_count: number | null
+          reminder_type: string
+          scheduled_for: string
+          sent_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          compliance_tracking_id: string
+          created_at?: string
+          email_sent?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          notification_sent?: boolean | null
+          reminder_count?: number | null
+          reminder_type: string
+          scheduled_for: string
+          sent_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          compliance_tracking_id?: string
+          created_at?: string
+          email_sent?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          notification_sent?: boolean | null
+          reminder_count?: number | null
+          reminder_type?: string
+          scheduled_for?: string
+          sent_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       copyright_matches: {
         Row: {
           artwork_id: string
@@ -1096,6 +1141,42 @@ export type Database = {
           },
         ]
       }
+      legal_document_analytics: {
+        Row: {
+          created_at: string
+          document_id: string | null
+          event_metadata: Json | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          template_id: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          document_id?: string | null
+          event_metadata?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          template_id: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          document_id?: string | null
+          event_metadata?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          template_id?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       legal_document_generations: {
         Row: {
           created_at: string
@@ -1165,6 +1246,126 @@ export type Database = {
           updated_at?: string
           user_id?: string
           witness_data?: Json | null
+        }
+        Relationships: []
+      }
+      legal_document_signatures: {
+        Row: {
+          created_at: string
+          document_id: string
+          id: string
+          ip_address: unknown | null
+          signature_data: Json
+          signature_type: string
+          signed_at: string
+          signer_email: string
+          signer_name: string
+          verification_data: Json | null
+          verification_status: string | null
+        }
+        Insert: {
+          created_at?: string
+          document_id: string
+          id?: string
+          ip_address?: unknown | null
+          signature_data: Json
+          signature_type: string
+          signed_at?: string
+          signer_email: string
+          signer_name: string
+          verification_data?: Json | null
+          verification_status?: string | null
+        }
+        Update: {
+          created_at?: string
+          document_id?: string
+          id?: string
+          ip_address?: unknown | null
+          signature_data?: Json
+          signature_type?: string
+          signed_at?: string
+          signer_email?: string
+          signer_name?: string
+          verification_data?: Json | null
+          verification_status?: string | null
+        }
+        Relationships: []
+      }
+      legal_document_versions: {
+        Row: {
+          changes_summary: string | null
+          content: string
+          content_hash: string
+          created_at: string
+          created_by: string
+          document_id: string
+          id: string
+          is_current: boolean | null
+          version_number: number
+        }
+        Insert: {
+          changes_summary?: string | null
+          content: string
+          content_hash: string
+          created_at?: string
+          created_by: string
+          document_id: string
+          id?: string
+          is_current?: boolean | null
+          version_number?: number
+        }
+        Update: {
+          changes_summary?: string | null
+          content?: string
+          content_hash?: string
+          created_at?: string
+          created_by?: string
+          document_id?: string
+          id?: string
+          is_current?: boolean | null
+          version_number?: number
+        }
+        Relationships: []
+      }
+      legal_notifications: {
+        Row: {
+          action_url: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          metadata: Json | null
+          notification_type: string
+          priority: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          metadata?: Json | null
+          notification_type: string
+          priority?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          metadata?: Json | null
+          notification_type?: string
+          priority?: string | null
+          title?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -2646,6 +2847,45 @@ export type Database = {
         }
         Relationships: []
       }
+      template_usage_stats: {
+        Row: {
+          conversion_rate: number | null
+          created_at: string
+          date: string
+          id: string
+          template_id: string
+          total_downloads: number | null
+          total_generations: number | null
+          total_views: number | null
+          unique_users: number | null
+          updated_at: string
+        }
+        Insert: {
+          conversion_rate?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          template_id: string
+          total_downloads?: number | null
+          total_generations?: number | null
+          total_views?: number | null
+          unique_users?: number | null
+          updated_at?: string
+        }
+        Update: {
+          conversion_rate?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          template_id?: string
+          total_downloads?: number | null
+          total_generations?: number | null
+          total_views?: number | null
+          unique_users?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       threat_intelligence: {
         Row: {
           confidence_score: number
@@ -3156,6 +3396,22 @@ export type Database = {
       is_valid_admin_session: {
         Args: { session_token: string }
         Returns: boolean
+      }
+      schedule_compliance_reminder: {
+        Args: {
+          compliance_id_param: string
+          reminder_type_param: string
+          scheduled_date_param: string
+        }
+        Returns: string
+      }
+      track_template_usage: {
+        Args: {
+          template_id_param: string
+          event_type_param: string
+          user_id_param?: string
+        }
+        Returns: undefined
       }
       trigger_scheduled_scans: {
         Args: Record<PropertyKey, never>

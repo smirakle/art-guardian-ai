@@ -13,6 +13,8 @@ import { FileText, Download, Send, Signature, CheckCircle, Clock, AlertTriangle 
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRateLimiting } from '@/hooks/useRateLimiting';
+import { useEnhancedCaching } from '@/hooks/useEnhancedCaching';
 import jsPDF from 'jspdf';
 
 interface LegalTemplate {
