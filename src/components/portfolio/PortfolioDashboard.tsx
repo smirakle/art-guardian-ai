@@ -3,7 +3,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Briefcase, Shield, AlertTriangle, TrendingUp, Eye, Activity } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Separator } from '@/components/ui/separator';
+import { Briefcase, Shield, AlertTriangle, TrendingUp, Eye, Activity, BarChart3, Bell, FileText, Upload, Folder, Monitor, Settings } from 'lucide-react';
+import { PortfolioUploadWidget } from './PortfolioUploadWidget';
+import { PortfolioManager } from './PortfolioManager';
+import { PortfolioAnalytics } from './PortfolioAnalytics';
+import { PortfolioSettings } from './PortfolioSettings';
+import { PortfolioAlerts } from './PortfolioAlerts';
+import ProductionPortfolioMonitoring from './ProductionPortfolioMonitoring';
+import { PortfolioMonitoringMetrics } from './PortfolioMonitoringMetrics';
+import { PortfolioMonitoringNotificationCenter } from './PortfolioMonitoringNotificationCenter';
+import { PortfolioMonitoringAuditLog } from './PortfolioMonitoringAuditLog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 

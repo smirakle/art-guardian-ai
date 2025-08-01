@@ -2071,6 +2071,180 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio_monitoring_audit_log: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: unknown | null
+          resource_id: string | null
+          resource_type: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      portfolio_monitoring_cache: {
+        Row: {
+          cache_key: string
+          cache_value: Json
+          created_at: string
+          expires_at: string
+          hit_count: number
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          cache_key: string
+          cache_value: Json
+          created_at?: string
+          expires_at: string
+          hit_count?: number
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          cache_key?: string
+          cache_value?: Json
+          created_at?: string
+          expires_at?: string
+          hit_count?: number
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      portfolio_monitoring_metrics: {
+        Row: {
+          created_at: string
+          id: string
+          metadata: Json | null
+          metric_name: string
+          metric_type: string
+          metric_value: number
+          portfolio_id: string | null
+          recorded_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          metric_name: string
+          metric_type: string
+          metric_value: number
+          portfolio_id?: string | null
+          recorded_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          metric_name?: string
+          metric_type?: string
+          metric_value?: number
+          portfolio_id?: string | null
+          recorded_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      portfolio_monitoring_notifications: {
+        Row: {
+          action_url: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_read: boolean
+          message: string
+          metadata: Json | null
+          notification_type: string
+          severity: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean
+          message: string
+          metadata?: Json | null
+          notification_type: string
+          severity?: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean
+          message?: string
+          metadata?: Json | null
+          notification_type?: string
+          severity?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      portfolio_monitoring_rate_limits: {
+        Row: {
+          created_at: string
+          endpoint: string
+          id: string
+          request_count: number
+          updated_at: string
+          user_id: string
+          window_start: string
+        }
+        Insert: {
+          created_at?: string
+          endpoint: string
+          id?: string
+          request_count?: number
+          updated_at?: string
+          user_id: string
+          window_start: string
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string
+          id?: string
+          request_count?: number
+          updated_at?: string
+          user_id?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       portfolio_monitoring_results: {
         Row: {
           artworks_scanned: number
@@ -2170,6 +2344,39 @@ export type Database = {
           status?: string
           total_matches_found?: number | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      portfolio_performance_metrics: {
+        Row: {
+          additional_data: Json | null
+          created_at: string
+          id: string
+          metric_type: string
+          metric_unit: string
+          metric_value: number
+          recorded_at: string
+          source_component: string
+        }
+        Insert: {
+          additional_data?: Json | null
+          created_at?: string
+          id?: string
+          metric_type: string
+          metric_unit: string
+          metric_value: number
+          recorded_at?: string
+          source_component: string
+        }
+        Update: {
+          additional_data?: Json | null
+          created_at?: string
+          id?: string
+          metric_type?: string
+          metric_unit?: string
+          metric_value?: number
+          recorded_at?: string
+          source_component?: string
         }
         Relationships: []
       }
@@ -3527,6 +3734,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_portfolio_monitoring_rate_limit: {
+        Args: {
+          user_id_param: string
+          endpoint_param: string
+          max_requests_param?: number
+          window_minutes_param?: number
+        }
+        Returns: boolean
+      }
       create_ai_protection_notification: {
         Args: {
           user_id_param: string
@@ -3543,6 +3759,19 @@ export type Database = {
       create_free_subscription_for_user: {
         Args: { _user_id: string }
         Returns: undefined
+      }
+      create_portfolio_monitoring_notification: {
+        Args: {
+          user_id_param: string
+          notification_type_param: string
+          title_param: string
+          message_param: string
+          severity_param?: string
+          action_url_param?: string
+          metadata_param?: Json
+          expires_hours_param?: number
+        }
+        Returns: string
       }
       generate_document_hash: {
         Args: { content: string }
@@ -3566,6 +3795,10 @@ export type Database = {
       get_portfolio_limit: {
         Args: Record<PropertyKey, never>
         Returns: number
+      }
+      get_portfolio_monitoring_cache: {
+        Args: { cache_key_param: string }
+        Returns: Json
       }
       get_template_download_count: {
         Args: { template_id_param: string }
@@ -3628,11 +3861,34 @@ export type Database = {
         }
         Returns: undefined
       }
+      log_portfolio_monitoring_action: {
+        Args: {
+          user_id_param: string
+          action_param: string
+          resource_type_param: string
+          resource_id_param?: string
+          details_param?: Json
+          ip_param?: unknown
+          user_agent_param?: string
+        }
+        Returns: undefined
+      }
       record_ai_protection_metric: {
         Args: {
           metric_type_param: string
           metric_name_param: string
           metric_value_param: number
+          metadata_param?: Json
+        }
+        Returns: undefined
+      }
+      record_portfolio_monitoring_metric: {
+        Args: {
+          metric_type_param: string
+          metric_name_param: string
+          metric_value_param: number
+          user_id_param?: string
+          portfolio_id_param?: string
           metadata_param?: Json
         }
         Returns: undefined
@@ -3644,6 +3900,14 @@ export type Database = {
           scheduled_date_param: string
         }
         Returns: string
+      }
+      set_portfolio_monitoring_cache: {
+        Args: {
+          cache_key_param: string
+          cache_value_param: Json
+          ttl_seconds_param?: number
+        }
+        Returns: undefined
       }
       track_template_usage: {
         Args: {
