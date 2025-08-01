@@ -2914,6 +2914,10 @@ export type Database = {
         Args: { template_id_param: string }
         Returns: number
       }
+      get_user_email_verified: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       get_user_subscription: {
         Args: Record<PropertyKey, never>
         Returns: {
