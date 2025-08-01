@@ -120,7 +120,8 @@ serve(async (req) => {
       url: session.url,
       price: price,
       priceLabel: priceLabel,
-      hasMembership: hasMembership
+      hasMembership: hasMembership,
+      sessionId: session.id
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
