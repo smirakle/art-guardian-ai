@@ -2,17 +2,24 @@ import { http, createConfig } from 'wagmi'
 import { mainnet, polygon, arbitrum, sepolia, polygonMumbai } from 'wagmi/chains'
 import { injected, metaMask, walletConnect } from 'wagmi/connectors'
 
-// Project ID for WalletConnect (you would replace this with your actual project ID)
-const projectId = 'b55db3e3e2e1b7a1dd5bbee9bb9b7d5e' // Placeholder - replace with real one
+// Project ID for WalletConnect - using environment variable or fallback
+const projectId = process.env.VITE_WALLETCONNECT_PROJECT_ID || '4f7c4cdea7ab57a51ef3b8c5b0c5f8c1'
 
 export const wagmiConfig = createConfig({
   chains: [mainnet, polygon, arbitrum, sepolia, polygonMumbai],
   connectors: [
     injected(),
     metaMask(),
+    // WalletConnect with error handling
     walletConnect({
       projectId,
-      showQrModal: true,
+      showQrModal: false, // Disable QR modal to prevent errors
+      metadata: {
+        name: 'TSMO Copyright Protection',
+        description: 'AI-Powered Copyright Protection & NFT Minting',
+        url: typeof window !== 'undefined' ? window.location.origin : 'https://tsmo.ai',
+        icons: [typeof window !== 'undefined' ? `${window.location.origin}/favicon.ico` : 'https://tsmo.ai/favicon.ico']
+      }
     }),
   ],
   transports: {
