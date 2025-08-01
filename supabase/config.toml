@@ -48,3 +48,12 @@ verify_jwt = false
 
 [functions.portfolio-realtime-data]
 verify_jwt = false
+
+[functions.advanced-visual-analysis]
+verify_jwt = false
+
+[functions.google-vision-analysis]
+verify_jwt = false
+
+[functions.ai-similarity-detection]
+verify_jwt = false
