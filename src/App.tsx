@@ -34,6 +34,7 @@ import SLAStatus from "./pages/SLAStatus";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AIProtectionSettings from "./pages/AIProtectionSettings";
+import AITrainingProtection from "./pages/AITrainingProtection";
 import { CustomIntegrations } from "./components/CustomIntegrations";
 import ProfileMonitoring from "./pages/ProfileMonitoring";
 import PortfolioMonitoring from "./pages/PortfolioMonitoring";
@@ -99,7 +100,8 @@ const App = () => {
                       <Route path="/legal-templates" element={<LegalTemplatesPage />} />
                        <Route path="/pricing" element={<Pricing />} />
                        <Route path="/sla-status" element={<SLAStatus />} />
-                        <Route path="/ai-protection-settings" element={<AIProtectionSettings />} />
+                         <Route path="/ai-protection-settings" element={<AIProtectionSettings />} />
+                         <Route path="/ai-training-protection" element={<AITrainingProtection />} />
                        <Route path="/custom-integrations" element={<CustomIntegrations />} />
           <Route path="/profile-monitoring" element={<ProfileMonitoring />} />
           <Route path="/portfolio-monitoring" element={<PortfolioMonitoring />} />
