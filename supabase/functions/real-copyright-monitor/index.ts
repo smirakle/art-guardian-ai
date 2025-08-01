@@ -339,8 +339,8 @@ async function searchYandex(imageUrl: string) {
 }
 
 function determineThreatLevel(confidence: number): string {
-  if (confidence > 0.9) return 'high';
-  if (confidence > 0.7) return 'medium';
+  if (confidence > 80) return 'high';
+  if (confidence > 60) return 'medium';
   return 'low';
 }
 

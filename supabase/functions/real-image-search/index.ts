@@ -331,7 +331,7 @@ serve(async (req) => {
       .single()
     
     for (const result of results) {
-      if (result.confidence > 50) { // Lowered threshold for testing
+      if (result.confidence > 30) { // Lowered threshold for better detection
         console.log(`Storing match: ${result.title} (${result.confidence}% confidence)`)
         
         // Determine match type based on platform and confidence
@@ -378,7 +378,7 @@ serve(async (req) => {
       }
     }
     
-    const storedMatches = results.filter(r => r.confidence > 50).length
+    const storedMatches = results.filter(r => r.confidence > 30).length
     console.log(`✅ STORED ${storedMatches} matches in database`)
 
     return new Response(
