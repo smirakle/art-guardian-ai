@@ -38,6 +38,66 @@ export type Database = {
         }
         Relationships: []
       }
+      advanced_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          alert_type: string
+          created_at: string
+          delivery_channels: string[]
+          delivery_status: Json | null
+          escalation_level: number
+          id: string
+          is_escalated: boolean
+          message: string
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+          source_data: Json | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type: string
+          created_at?: string
+          delivery_channels?: string[]
+          delivery_status?: Json | null
+          escalation_level?: number
+          id?: string
+          is_escalated?: boolean
+          message: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity: string
+          source_data?: Json | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type?: string
+          created_at?: string
+          delivery_channels?: string[]
+          delivery_status?: Json | null
+          escalation_level?: number
+          id?: string
+          is_escalated?: boolean
+          message?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          source_data?: Json | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_protection_records: {
         Row: {
           applied_at: string
@@ -143,6 +203,39 @@ export type Database = {
           updated_at?: string
           user_id?: string
           violation_type?: string
+        }
+        Relationships: []
+      }
+      alert_channels: {
+        Row: {
+          channel_config: Json
+          channel_type: string
+          created_at: string
+          id: string
+          is_active: boolean
+          priority_level: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          channel_config?: Json
+          channel_type: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          priority_level?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          channel_config?: Json
+          channel_type?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          priority_level?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -257,6 +350,42 @@ export type Database = {
           status?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      cache_statistics: {
+        Row: {
+          cache_key: string
+          created_at: string
+          hit_count: number
+          id: string
+          last_accessed: string
+          miss_count: number
+          size_bytes: number
+          ttl_seconds: number
+          updated_at: string
+        }
+        Insert: {
+          cache_key: string
+          created_at?: string
+          hit_count?: number
+          id?: string
+          last_accessed?: string
+          miss_count?: number
+          size_bytes?: number
+          ttl_seconds: number
+          updated_at?: string
+        }
+        Update: {
+          cache_key?: string
+          created_at?: string
+          hit_count?: number
+          id?: string
+          last_accessed?: string
+          miss_count?: number
+          size_bytes?: number
+          ttl_seconds?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1367,6 +1496,39 @@ export type Database = {
         }
         Relationships: []
       }
+      performance_metrics: {
+        Row: {
+          additional_data: Json | null
+          created_at: string
+          id: string
+          metric_type: string
+          metric_unit: string
+          metric_value: number
+          recorded_at: string
+          source_component: string
+        }
+        Insert: {
+          additional_data?: Json | null
+          created_at?: string
+          id?: string
+          metric_type: string
+          metric_unit: string
+          metric_value: number
+          recorded_at?: string
+          source_component: string
+        }
+        Update: {
+          additional_data?: Json | null
+          created_at?: string
+          id?: string
+          metric_type?: string
+          metric_unit?: string
+          metric_value?: number
+          recorded_at?: string
+          source_component?: string
+        }
+        Relationships: []
+      }
       portfolio_alerts: {
         Row: {
           alert_type: string
@@ -2403,6 +2565,42 @@ export type Database = {
           updated_at?: string
           user_id?: string
           white_label_enabled?: boolean | null
+        }
+        Relationships: []
+      }
+      system_optimizations: {
+        Row: {
+          configuration: Json
+          created_at: string
+          enabled_at: string | null
+          enabled_by: string | null
+          id: string
+          is_enabled: boolean
+          optimization_type: string
+          performance_impact: Json | null
+          updated_at: string
+        }
+        Insert: {
+          configuration?: Json
+          created_at?: string
+          enabled_at?: string | null
+          enabled_by?: string | null
+          id?: string
+          is_enabled?: boolean
+          optimization_type: string
+          performance_impact?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          configuration?: Json
+          created_at?: string
+          enabled_at?: string | null
+          enabled_by?: string | null
+          id?: string
+          is_enabled?: boolean
+          optimization_type?: string
+          performance_impact?: Json | null
+          updated_at?: string
         }
         Relationships: []
       }

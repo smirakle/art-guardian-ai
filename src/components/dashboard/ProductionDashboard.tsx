@@ -37,6 +37,7 @@ import { ComprehensiveWebScanner } from '@/components/ComprehensiveWebScanner';
 import { AIProtectionStatusWidget } from '@/components/dashboard/AIProtectionStatusWidget';
 import SocialMediaMonitoringResults from '@/components/monitoring/SocialMediaMonitoringResults';
 import RealTimeDeepfakeMonitor from '@/components/RealTimeDeepfakeMonitor';
+import { ProductionOptimizations } from '@/components/ProductionOptimizations';
 
 interface DashboardStats {
   protectedArtworks: number;
@@ -290,7 +291,7 @@ export const ProductionDashboard = () => {
         {/* Main Dashboard Content - Organized in Tabs */}
         <Tabs defaultValue="monitoring" className="space-y-6">
           <div className="flex items-center justify-between">
-            <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:grid-cols-5">
               <TabsTrigger value="monitoring" className="flex items-center gap-2">
                 <Activity className="w-4 h-4" />
                 <span className="hidden sm:inline">Monitoring</span>
@@ -302,6 +303,10 @@ export const ProductionDashboard = () => {
               <TabsTrigger value="blockchain" className="flex items-center gap-2">
                 <Crown className="w-4 h-4" />
                 <span className="hidden sm:inline">Blockchain</span>
+              </TabsTrigger>
+              <TabsTrigger value="production" className="flex items-center gap-2">
+                <Zap className="w-4 h-4" />
+                <span className="hidden sm:inline">Production</span>
               </TabsTrigger>
               <TabsTrigger value="management" className="flex items-center gap-2">
                 <Settings className="w-4 h-4" />
@@ -456,6 +461,11 @@ export const ProductionDashboard = () => {
                 </Card>
               </div>
             </FeatureGuard>
+          </TabsContent>
+
+          {/* Production Tab */}
+          <TabsContent value="production" className="space-y-6">
+            <ProductionOptimizations />
           </TabsContent>
 
           {/* Management Tab */}
