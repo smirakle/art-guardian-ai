@@ -3,7 +3,7 @@ import { mainnet, polygon, arbitrum, sepolia, polygonMumbai } from 'wagmi/chains
 import { injected, metaMask, walletConnect } from 'wagmi/connectors'
 
 // Project ID for WalletConnect - using environment variable or fallback
-const projectId = process.env.VITE_WALLETCONNECT_PROJECT_ID || '4f7c4cdea7ab57a51ef3b8c5b0c5f8c1'
+const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || '4f7c4cdea7ab57a51ef3b8c5b0c5f8c1'
 
 export const wagmiConfig = createConfig({
   chains: [mainnet, polygon, arbitrum, sepolia, polygonMumbai],
