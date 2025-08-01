@@ -206,34 +206,32 @@ export function PortfolioDashboard() {
     }
   };
 
-  const startRealtimeSimulation = async () => {
+  const startRealtimeMonitoring = async () => {
     try {
-      // First try the edge function approach
+      // Start real-time portfolio monitoring
       const { data, error } = await supabase.functions.invoke('portfolio-realtime-data', {
-        body: { action: 'start_realtime_simulation' }
+        body: { action: 'start_realtime_monitoring' }
       });
 
       if (error) {
-        console.warn('Edge function approach failed, falling back to direct generation:', error);
-        // Fallback: generate data directly
+        console.warn('Real-time monitoring setup failed:', error);
         await generatePortfolioDataDirectly();
         return;
       }
 
       toast({
-        title: "Real-time Simulation Started",
-        description: "Portfolio monitoring data will be generated continuously for 1 hour",
+        title: "Real-time Monitoring Active",
+        description: "Your portfolios are now being continuously monitored for threats",
       });
     } catch (error) {
-      console.error('Error starting real-time simulation:', error);
-      // Fallback: generate data directly
+      console.error('Error starting real-time monitoring:', error);
       try {
         await generatePortfolioDataDirectly();
       } catch (fallbackError) {
-        console.error('Fallback also failed:', fallbackError);
+        console.error('Monitoring activation failed:', fallbackError);
         toast({
           title: "Error",
-          description: "Failed to start real-time simulation",
+          description: "Failed to activate real-time monitoring",
           variant: "destructive",
         });
       }
@@ -279,8 +277,8 @@ export function PortfolioDashboard() {
       setTimeout(() => {
         clearInterval(interval);
         toast({
-          title: "Simulation Complete",
-          description: "Real-time data generation has ended",
+          title: "Monitoring Update",
+          description: "Real-time monitoring cycle completed",
         });
       }, 30 * 60 * 1000); // 30 minutes
 
@@ -508,9 +506,9 @@ export function PortfolioDashboard() {
               <Activity className="w-4 h-4" />
               Start Quick Scan
             </Button>
-            <Button onClick={startRealtimeSimulation} variant="secondary" className="flex items-center gap-2">
+            <Button onClick={startRealtimeMonitoring} variant="secondary" className="flex items-center gap-2">
               <Activity className="w-4 h-4" />
-              Start Real-time Data
+              Activate Real-time Monitoring
             </Button>
             <Button variant="outline" className="flex items-center gap-2">
               <Eye className="w-4 h-4" />

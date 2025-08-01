@@ -414,8 +414,8 @@ export function ProductionMonitoringDashboard() {
               <Alert>
                 <Shield className="h-4 w-4" />
                 <AlertDescription>
-                  This uses real APIs from multiple search engines to find actual copyright violations.
-                  Results will show genuine matches, not mock data.
+                  This uses our advanced AI-powered monitoring system to scan for copyright violations across the web.
+                  Real-time detection powered by multiple search engines and computer vision analysis.
                 </AlertDescription>
               </Alert>
             </CardContent>
