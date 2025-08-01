@@ -2914,6 +2914,16 @@ export type Database = {
         Args: { template_id_param: string }
         Returns: number
       }
+      get_user_dashboard_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          protected_artworks: number
+          total_scans: number
+          high_threats: number
+          total_portfolios: number
+          protection_score: number
+        }[]
+      }
       get_user_email_verified: {
         Args: Record<PropertyKey, never>
         Returns: boolean
