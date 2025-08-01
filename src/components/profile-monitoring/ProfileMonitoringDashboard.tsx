@@ -55,13 +55,8 @@ export function ProfileMonitoringDashboard() {
         .order('created_at', { ascending: false })
         .limit(5);
 
-      // Fetch scan results for today
-      const today = new Date().toISOString().split('T')[0];
-      const { data: todayScans } = await supabase
-        .from('profile_scan_results')
-        .select('id')
-        .eq('user_id', user.id)
-        .gte('created_at', today);
+      // Get today's alerts count - simplified
+      const alertsToday = alerts?.length || 0;
 
       // Calculate platform coverage
       const platformsSet = new Set();
@@ -72,7 +67,7 @@ export function ProfileMonitoringDashboard() {
       const dashboardStats: DashboardStats = {
         totalTargets: targets?.length || 0,
         activeScans: targets?.filter(t => t.monitoring_enabled).length || 0,
-        alertsToday: todayScans?.length || 0,
+        alertsToday: alertsToday,
         platformsCovered: platformsSet.size,
         threatLevel: calculateOverallThreatLevel(targets || []),
         lastScanTime: getLastScanTime(targets || [])
