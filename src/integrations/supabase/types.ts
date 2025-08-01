@@ -1370,12 +1370,16 @@ export type Database = {
       portfolio_alerts: {
         Row: {
           alert_type: string
+          automated_response: Json | null
+          compliance_deadline: string | null
           created_at: string
           id: string
           is_read: boolean
           is_resolved: boolean
+          legal_action_required: boolean | null
           message: string
           metadata: Json | null
+          platform_reported: boolean | null
           portfolio_id: string
           severity: string
           title: string
@@ -1383,12 +1387,16 @@ export type Database = {
         }
         Insert: {
           alert_type: string
+          automated_response?: Json | null
+          compliance_deadline?: string | null
           created_at?: string
           id?: string
           is_read?: boolean
           is_resolved?: boolean
+          legal_action_required?: boolean | null
           message: string
           metadata?: Json | null
+          platform_reported?: boolean | null
           portfolio_id: string
           severity?: string
           title: string
@@ -1396,18 +1404,88 @@ export type Database = {
         }
         Update: {
           alert_type?: string
+          automated_response?: Json | null
+          compliance_deadline?: string | null
           created_at?: string
           id?: string
           is_read?: boolean
           is_resolved?: boolean
+          legal_action_required?: boolean | null
           message?: string
           metadata?: Json | null
+          platform_reported?: boolean | null
           portfolio_id?: string
           severity?: string
           title?: string
           user_id?: string
         }
         Relationships: []
+      }
+      portfolio_compliance_workflows: {
+        Row: {
+          alert_id: string | null
+          automation_enabled: boolean | null
+          created_at: string
+          current_step: string | null
+          deadline: string | null
+          id: string
+          portfolio_id: string
+          priority: string | null
+          status: string
+          steps_completed: Json | null
+          updated_at: string
+          user_id: string
+          workflow_metadata: Json | null
+          workflow_type: string
+        }
+        Insert: {
+          alert_id?: string | null
+          automation_enabled?: boolean | null
+          created_at?: string
+          current_step?: string | null
+          deadline?: string | null
+          id?: string
+          portfolio_id: string
+          priority?: string | null
+          status?: string
+          steps_completed?: Json | null
+          updated_at?: string
+          user_id: string
+          workflow_metadata?: Json | null
+          workflow_type: string
+        }
+        Update: {
+          alert_id?: string | null
+          automation_enabled?: boolean | null
+          created_at?: string
+          current_step?: string | null
+          deadline?: string | null
+          id?: string
+          portfolio_id?: string
+          priority?: string | null
+          status?: string
+          steps_completed?: Json | null
+          updated_at?: string
+          user_id?: string
+          workflow_metadata?: Json | null
+          workflow_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_compliance_workflows_alert_id_fkey"
+            columns: ["alert_id"]
+            isOneToOne: false
+            referencedRelation: "portfolio_alerts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portfolio_compliance_workflows_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       portfolio_items: {
         Row: {
@@ -1436,7 +1514,11 @@ export type Database = {
       portfolio_monitoring_results: {
         Row: {
           artworks_scanned: number
+          automated_actions: Json | null
           created_at: string
+          detection_accuracy: number | null
+          false_positive_rate: number | null
+          geographic_data: Json | null
           high_risk_matches: number
           id: string
           low_risk_matches: number
@@ -1450,7 +1532,11 @@ export type Database = {
         }
         Insert: {
           artworks_scanned?: number
+          automated_actions?: Json | null
           created_at?: string
+          detection_accuracy?: number | null
+          false_positive_rate?: number | null
+          geographic_data?: Json | null
           high_risk_matches?: number
           id?: string
           low_risk_matches?: number
@@ -1464,7 +1550,11 @@ export type Database = {
         }
         Update: {
           artworks_scanned?: number
+          automated_actions?: Json | null
           created_at?: string
+          detection_accuracy?: number | null
+          false_positive_rate?: number | null
+          geographic_data?: Json | null
           high_risk_matches?: number
           id?: string
           low_risk_matches?: number
@@ -1478,6 +1568,102 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio_monitoring_sessions: {
+        Row: {
+          created_at: string
+          ended_at: string | null
+          high_risk_matches: number | null
+          id: string
+          platforms_scanned: number | null
+          portfolios_monitored: number | null
+          session_metadata: Json | null
+          session_type: string
+          started_at: string
+          status: string
+          total_matches_found: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          ended_at?: string | null
+          high_risk_matches?: number | null
+          id?: string
+          platforms_scanned?: number | null
+          portfolios_monitored?: number | null
+          session_metadata?: Json | null
+          session_type: string
+          started_at?: string
+          status?: string
+          total_matches_found?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          ended_at?: string | null
+          high_risk_matches?: number | null
+          id?: string
+          platforms_scanned?: number | null
+          portfolios_monitored?: number | null
+          session_metadata?: Json | null
+          session_type?: string
+          started_at?: string
+          status?: string
+          total_matches_found?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      portfolio_threat_intelligence: {
+        Row: {
+          confidence_score: number
+          created_at: string
+          first_detected: string
+          geographic_origin: string | null
+          id: string
+          is_active: boolean | null
+          last_detected: string
+          occurrence_count: number | null
+          platform_category: string | null
+          threat_indicators: Json | null
+          threat_source: string
+          threat_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          confidence_score?: number
+          created_at?: string
+          first_detected?: string
+          geographic_origin?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_detected?: string
+          occurrence_count?: number | null
+          platform_category?: string | null
+          threat_indicators?: Json | null
+          threat_source: string
+          threat_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          confidence_score?: number
+          created_at?: string
+          first_detected?: string
+          geographic_origin?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_detected?: string
+          occurrence_count?: number | null
+          platform_category?: string | null
+          threat_indicators?: Json | null
+          threat_source?: string
+          threat_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       portfolios: {
         Row: {
           alert_settings: Json | null
@@ -1486,7 +1672,11 @@ export type Database = {
           id: string
           is_active: boolean
           monitoring_enabled: boolean
+          monitoring_frequency: string | null
+          monitoring_settings: Json | null
           name: string
+          next_scan_at: string | null
+          realtime_monitoring: boolean | null
           updated_at: string
           user_id: string
         }
@@ -1497,7 +1687,11 @@ export type Database = {
           id?: string
           is_active?: boolean
           monitoring_enabled?: boolean
+          monitoring_frequency?: string | null
+          monitoring_settings?: Json | null
           name: string
+          next_scan_at?: string | null
+          realtime_monitoring?: boolean | null
           updated_at?: string
           user_id: string
         }
@@ -1508,7 +1702,11 @@ export type Database = {
           id?: string
           is_active?: boolean
           monitoring_enabled?: boolean
+          monitoring_frequency?: string | null
+          monitoring_settings?: Json | null
           name?: string
+          next_scan_at?: string | null
+          realtime_monitoring?: boolean | null
           updated_at?: string
           user_id?: string
         }

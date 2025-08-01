@@ -2,19 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Shield, AlertTriangle, Search, Users, TrendingUp, Eye } from 'lucide-react';
+import { Skeleton } from "@/components/ui/skeleton";
+import { Shield, Users, Globe, AlertTriangle, TrendingUp, Clock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
 
 interface DashboardStats {
   totalTargets: number;
   activeScans: number;
-  totalAlerts: number;
-  unreadAlerts: number;
-  riskProfiles: number;
+  alertsToday: number;
   platformsCovered: number;
+  threatLevel: string;
+  lastScanTime: string;
 }
 
 interface RecentAlert {
@@ -22,19 +21,11 @@ interface RecentAlert {
   title: string;
   severity: string;
   created_at: string;
-  platform: string;
 }
 
-export const ProfileMonitoringDashboard: React.FC = () => {
+export function ProfileMonitoringDashboard() {
   const { user } = useAuth();
-  const [stats, setStats] = useState<DashboardStats>({
-    totalTargets: 0,
-    activeScans: 0,
-    totalAlerts: 0,
-    unreadAlerts: 0,
-    riskProfiles: 0,
-    platformsCovered: 0
-  });
+  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [recentAlerts, setRecentAlerts] = useState<RecentAlert[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -45,86 +36,95 @@ export const ProfileMonitoringDashboard: React.FC = () => {
   }, [user]);
 
   const loadDashboardData = async () => {
+    if (!user) return;
+
     try {
-      // Load targets
+      setLoading(true);
+
+      // Fetch monitoring targets
       const { data: targets } = await supabase
         .from('profile_monitoring_targets')
         .select('*')
-        .eq('user_id', user?.id);
+        .eq('user_id', user.id);
 
-      // Load alerts
+      // Fetch recent alerts
       const { data: alerts } = await supabase
         .from('profile_impersonation_alerts')
-        .select('*')
-        .eq('user_id', user?.id);
-
-      // Load recent scan results for active scans count
-      const { data: scanResults } = await supabase
-        .from('profile_scan_results')
-        .select('*, profile_monitoring_targets!inner(*)')
-        .eq('profile_monitoring_targets.user_id', user?.id)
+        .select('id, title, severity, created_at')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
-        .limit(10);
+        .limit(5);
 
-      // Load platforms
-      const { data: platforms } = await supabase
-        .from('monitored_platforms')
-        .select('*')
-        .eq('is_enabled', true);
+      // Fetch scan results for today
+      const today = new Date().toISOString().split('T')[0];
+      const { data: todayScans } = await supabase
+        .from('profile_scan_results')
+        .select('id')
+        .eq('user_id', user.id)
+        .gte('created_at', today);
 
-      setStats({
-        totalTargets: targets?.length || 0,
-        activeScans: scanResults?.length || 0,
-        totalAlerts: alerts?.length || 0,
-        unreadAlerts: alerts?.filter(alert => !alert.is_acknowledged).length || 0,
-        riskProfiles: targets?.filter(target => target.risk_score > 50).length || 0,
-        platformsCovered: platforms?.length || 0
+      // Calculate platform coverage
+      const platformsSet = new Set();
+      targets?.forEach(target => {
+        target.platforms_to_monitor?.forEach((platform: string) => platformsSet.add(platform));
       });
 
-      // Set recent alerts
-      const recentAlertsData = alerts
-        ?.slice(0, 5)
-        .map(alert => ({
-          id: alert.id,
-          title: alert.title,
-          severity: alert.severity,
-          created_at: alert.created_at,
-          platform: 'Unknown' // We'll need to join with scan results to get platform
-        })) || [];
+      const dashboardStats: DashboardStats = {
+        totalTargets: targets?.length || 0,
+        activeScans: targets?.filter(t => t.monitoring_enabled).length || 0,
+        alertsToday: todayScans?.length || 0,
+        platformsCovered: platformsSet.size,
+        threatLevel: calculateOverallThreatLevel(targets || []),
+        lastScanTime: getLastScanTime(targets || [])
+      };
 
-      setRecentAlerts(recentAlertsData);
+      setStats(dashboardStats);
+      setRecentAlerts(alerts || []);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
-      toast.error('Failed to load dashboard data');
     } finally {
       setLoading(false);
     }
   };
 
-  const getSeverityColor = (severity: string) => {
-    switch (severity.toLowerCase()) {
-      case 'high':
-        return 'destructive';
-      case 'medium':
-        return 'default';
-      case 'low':
-        return 'secondary';
-      default:
-        return 'outline';
-    }
+  const calculateOverallThreatLevel = (targets: any[]): string => {
+    if (targets.length === 0) return 'None';
+    
+    const avgRisk = targets.reduce((sum, target) => sum + (target.risk_score || 0), 0) / targets.length;
+    
+    if (avgRisk >= 80) return 'High';
+    if (avgRisk >= 50) return 'Medium';
+    if (avgRisk >= 20) return 'Low';
+    return 'Minimal';
   };
 
-  const riskPercentage = stats.totalTargets > 0 ? (stats.riskProfiles / stats.totalTargets) * 100 : 0;
+  const getLastScanTime = (targets: any[]): string => {
+    const lastScans = targets
+      .map(t => t.last_scan_at)
+      .filter(Boolean)
+      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+    
+    return lastScans[0] ? new Date(lastScans[0]).toLocaleString() : 'Never';
+  };
+
+  const getSeverityColor = (severity: string) => {
+    switch (severity.toLowerCase()) {
+      case 'high': return 'destructive';
+      case 'medium': return 'default';
+      case 'low': return 'secondary';
+      default: return 'outline';
+    }
+  };
 
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => (
-            <Card key={i} className="animate-pulse">
-              <CardHeader className="space-y-2">
-                <div className="h-4 bg-muted rounded w-3/4"></div>
-                <div className="h-8 bg-muted rounded w-1/2"></div>
+            <Card key={i}>
+              <CardHeader className="pb-3">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-8 w-16" />
               </CardHeader>
             </Card>
           ))}
@@ -136,16 +136,16 @@ export const ProfileMonitoringDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Monitored Profiles</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalTargets}</div>
+            <div className="text-2xl font-bold">{stats?.totalTargets || 0}</div>
             <p className="text-xs text-muted-foreground">
-              Total identity profiles being monitored
+              {stats?.activeScans || 0} actively scanning
             </p>
           </CardContent>
         </Card>
@@ -156,11 +156,9 @@ export const ProfileMonitoringDashboard: React.FC = () => {
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-destructive">
-              {stats.unreadAlerts}
-            </div>
+            <div className="text-2xl font-bold">{stats?.alertsToday || 0}</div>
             <p className="text-xs text-muted-foreground">
-              {stats.totalAlerts} total alerts
+              Detected today
             </p>
           </CardContent>
         </Card>
@@ -168,12 +166,12 @@ export const ProfileMonitoringDashboard: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Platform Coverage</CardTitle>
-            <Search className="h-4 w-4 text-muted-foreground" />
+            <Globe className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.platformsCovered}</div>
+            <div className="text-2xl font-bold">{stats?.platformsCovered || 0}</div>
             <p className="text-xs text-muted-foreground">
-              Platforms actively monitored
+              Platforms monitored
             </p>
           </CardContent>
         </Card>
@@ -184,61 +182,60 @@ export const ProfileMonitoringDashboard: React.FC = () => {
             <Shield className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.riskProfiles}</div>
+            <div className="text-2xl font-bold">{stats?.threatLevel || 'None'}</div>
             <p className="text-xs text-muted-foreground">
-              High-risk profiles detected
+              Overall threat level
             </p>
-            <Progress value={riskPercentage} className="mt-2" />
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Recent Scans</CardTitle>
-            <Eye className="h-4 w-4 text-muted-foreground" />
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.activeScans}</div>
+            <div className="text-2xl font-bold">{stats?.activeScans || 0}</div>
             <p className="text-xs text-muted-foreground">
-              Scans completed this week
+              Active monitoring
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Threat Level</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Last Update</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-500">
-              {riskPercentage > 30 ? 'High' : riskPercentage > 10 ? 'Medium' : 'Low'}
-            </div>
+            <div className="text-sm font-bold">{stats?.lastScanTime || 'Never'}</div>
             <p className="text-xs text-muted-foreground">
-              Overall risk assessment
+              Last scan time
             </p>
           </CardContent>
         </Card>
       </div>
 
       {/* Recent Alerts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Alerts</CardTitle>
-            <CardDescription>
-              Latest impersonation and security alerts
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {recentAlerts.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No recent alerts</p>
-            ) : (
-              recentAlerts.map((alert) => (
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Alerts</CardTitle>
+          <CardDescription>
+            Latest impersonation and identity theft alerts
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {recentAlerts.length === 0 ? (
+            <p className="text-center text-muted-foreground py-4">
+              No recent alerts. Your profiles are secure.
+            </p>
+          ) : (
+            <div className="space-y-4">
+              {recentAlerts.map((alert) => (
                 <div key={alert.id} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="space-y-1">
-                    <p className="text-sm font-medium">{alert.title}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="font-medium">{alert.title}</p>
+                    <p className="text-sm text-muted-foreground">
                       {new Date(alert.created_at).toLocaleDateString()}
                     </p>
                   </div>
@@ -246,38 +243,41 @@ export const ProfileMonitoringDashboard: React.FC = () => {
                     {alert.severity}
                   </Badge>
                 </div>
-              ))
-            )}
-          </CardContent>
-        </Card>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>
-              Common monitoring tasks
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button className="w-full justify-start" variant="outline">
-              <Search className="w-4 h-4 mr-2" />
-              Start New Profile Scan
+      {/* Quick Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>
+            Common monitoring tasks and operations
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Button variant="outline" className="h-auto p-4 flex flex-col gap-2">
+              <Users className="h-5 w-5" />
+              <span className="text-sm">Add Profile</span>
             </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <Users className="w-4 h-4 mr-2" />
-              Add Monitoring Target
+            <Button variant="outline" className="h-auto p-4 flex flex-col gap-2">
+              <Shield className="h-5 w-5" />
+              <span className="text-sm">Scan Now</span>
             </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <AlertTriangle className="w-4 h-4 mr-2" />
-              Review Pending Alerts
+            <Button variant="outline" className="h-auto p-4 flex flex-col gap-2">
+              <AlertTriangle className="h-5 w-5" />
+              <span className="text-sm">View Alerts</span>
             </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <Shield className="w-4 h-4 mr-2" />
-              Generate Risk Report
+            <Button variant="outline" className="h-auto p-4 flex flex-col gap-2">
+              <TrendingUp className="h-5 w-5" />
+              <span className="text-sm">Analytics</span>
             </Button>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
-};
+}

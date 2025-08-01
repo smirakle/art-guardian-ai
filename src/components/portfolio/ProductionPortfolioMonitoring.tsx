@@ -219,13 +219,14 @@ const ProductionPortfolioMonitoring = () => {
 
   const checkRealTimeStatus = async () => {
     try {
-      const { data: realTimePortfolios } = await supabase
+      const { data, error } = await supabase
         .from('portfolios')
         .select('id')
         .eq('user_id', user?.id)
         .eq('realtime_monitoring', true);
 
-      setIsRealTimeActive(realTimePortfolios ? realTimePortfolios.length > 0 : false);
+      if (error) throw error;
+      setIsRealTimeActive(data ? data.length > 0 : false);
     } catch (error) {
       console.error('Error checking real-time status:', error);
     }
