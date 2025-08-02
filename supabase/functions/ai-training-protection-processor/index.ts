@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { applyAdvancedProtectionMethods, startAdvancedMonitoring, performAITPAViolationScan } from './advanced-methods.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -80,18 +81,45 @@ serve(async (req) => {
 });
 
 async function protectFile(supabase: any, userId: string, request: AIProtectionRequest) {
-  console.log('Starting file protection process...');
+  console.log('Starting AITPA-enhanced file protection process...');
   
   // Generate protection ID
-  const protectionId = `prot_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const protectionId = `aitpa_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   
-  // Apply AI training protection algorithms
-  const protectionMethods = await applyProtectionMethods(request.file_path!, request.protection_level!);
+  // Use AITPA Core Engine for advanced analysis
+  const aitpaResponse = await supabase.functions.invoke('aitpa-core-engine', {
+    body: {
+      action: 'analyze',
+      imageUrl: request.file_path,
+      userId,
+      protectionId
+    }
+  });
+
+  if (aitpaResponse.error) {
+    console.error('AITPA analysis failed:', aitpaResponse.error);
+    // Fallback to basic protection
+    const basicMethods = await applyProtectionMethods(request.file_path!, request.protection_level!);
+    const basicFingerprint = await generateFileFingerprint(request.file_path!);
+    
+    return {
+      success: true,
+      protection_id: protectionId,
+      protection_methods: basicMethods,
+      message: 'File protected with basic methods (AITPA unavailable)'
+    };
+  }
+
+  const aitpaResult = aitpaResponse.data.result;
   
-  // Generate file fingerprint
-  const fileFingerprint = await generateFileFingerprint(request.file_path!);
+  // Apply enhanced protection methods based on AITPA analysis
+  const protectionMethods = await applyAdvancedProtectionMethods(
+    request.file_path!, 
+    request.protection_level!,
+    aitpaResult
+  );
   
-  // Store protection record
+  // Store protection record with AITPA data
   const { data: protectionRecord, error } = await supabase
     .from('ai_protection_records')
     .insert({
@@ -100,13 +128,20 @@ async function protectFile(supabase: any, userId: string, request: AIProtectionR
       original_filename: request.original_filename,
       protection_level: request.protection_level,
       protection_methods: protectionMethods,
-      file_fingerprint: fileFingerprint,
+      file_fingerprint: aitpaResult.fingerprint.perceptualHash,
       protected_file_path: `protected/${protectionId}`,
       is_active: true,
       metadata: {
         original_file_path: request.file_path,
         protection_timestamp: new Date().toISOString(),
-        protection_version: '2.0'
+        protection_version: '3.0_aitpa',
+        aitpa_analysis: {
+          confidence: aitpaResult.confidence,
+          threatLevel: aitpaResult.threatLevel,
+          riskFactors: aitpaResult.riskFactors,
+          indicators: aitpaResult.indicators,
+          fingerprint: aitpaResult.fingerprint
+        }
       }
     })
     .select()
@@ -116,15 +151,16 @@ async function protectFile(supabase: any, userId: string, request: AIProtectionR
     throw new Error(`Failed to create protection record: ${error.message}`);
   }
 
-  // Start background monitoring
-  await startMonitoring(supabase, userId, protectionId, fileFingerprint);
+  // Start advanced monitoring with AITPA fingerprint
+  await startAdvancedMonitoring(supabase, userId, protectionId, aitpaResult.fingerprint);
   
-  console.log('File protection completed successfully');
+  console.log('AITPA-enhanced file protection completed successfully');
   return {
     success: true,
     protection_id: protectionId,
     protection_methods: protectionMethods,
-    message: 'File protected against AI training'
+    aitpa_analysis: aitpaResult,
+    message: 'File protected with AITPA algorithm'
   };
 }
 
@@ -332,8 +368,8 @@ async function scanForViolations(supabase: any, userId: string) {
   const violationsFound = [];
   
   for (const file of protectedFiles || []) {
-    // Simulate AI training dataset scanning
-    const violations = await scanDatasets(file);
+    // Use AITPA-enhanced violation scanning
+    const violations = await performAITPAViolationScan(file, supabase);
     violationsFound.push(...violations);
     
     // Store violations in database
