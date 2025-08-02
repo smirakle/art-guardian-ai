@@ -197,6 +197,149 @@ const FAQ = () => {
           )
         }
       ]
+    },
+    {
+      title: "Legal Templates & Documentation",
+      items: [
+        {
+          question: "What are Legal Templates and how do they work?",
+          answer: (
+            <div>
+              <p className="mb-3"><strong>Legal Templates</strong> provide professionally crafted legal documents to help protect your creative work and intellectual property rights.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Available templates include:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• DMCA Takedown Notice:</strong> Standard template for copyright infringement claims ($19.99/$4.99 member)</li>
+                  <li><strong>• Copyright Cease & Desist:</strong> Professional cease and desist letter for copyright violations ($24.99/$7.99 member)</li>
+                  <li><strong>• Artist Licensing Agreement:</strong> Comprehensive licensing template for artwork usage ($39.99/$14.99 member)</li>
+                  <li><strong>• Social Media Usage Rights:</strong> Template for social media content licensing ($29.99/$9.99 member)</li>
+                  <li><strong>• NFT Creator Rights:</strong> Legal framework for NFT creators and collectors ($49.99/$19.99 member)</li>
+                  <li><strong>• International Copyright Notice:</strong> Multi-jurisdiction copyright protection document ($79.99/$24.99 member)</li>
+                </ul>
+              </div>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Features:</h4>
+                <ul className="ml-4 space-y-1 text-sm">
+                  <li>• Professionally reviewed by IP lawyers</li>
+                  <li>• Customizable for your specific needs</li>
+                  <li>• Instant download after purchase</li>
+                  <li>• Member discounts available</li>
+                  <li>• Regular updates to match current laws</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm"><strong>Who it's for:</strong> Artists, content creators, photographers, designers, and anyone needing legal documentation to protect their intellectual property.</p>
+            </div>
+          )
+        },
+        {
+          question: "How do I purchase and use Legal Templates?",
+          answer: "Navigate to the Legal Templates section in your dashboard, browse available templates, and click 'Purchase' on the template you need. After payment, you'll receive an instant download link. Templates come with customization instructions and can be filled out with your specific information. Members receive significant discounts on all templates."
+        },
+        {
+          question: "Are the Legal Templates legally valid?",
+          answer: "Yes, all our legal templates are professionally reviewed and created by intellectual property lawyers. However, we recommend consulting with a local attorney for complex cases or jurisdiction-specific requirements. The templates provide a solid foundation for most common copyright protection needs."
+        }
+      ]
+    },
+    {
+      title: "Advanced Features",
+      items: [
+        {
+          question: "What is Advanced Watermarking and how does it protect my images?",
+          answer: (
+            <div>
+              <p className="mb-3"><strong>Advanced Watermarking</strong> applies sophisticated protection layers to your images that go beyond simple visible watermarks.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Protection methods include:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• Invisible Digital Fingerprints:</strong> Embedded metadata that survives image editing and compression</li>
+                  <li><strong>• Steganographic Watermarks:</strong> Hidden data embedded in image pixels, undetectable to the naked eye</li>
+                  <li><strong>• Frequency Domain Watermarks:</strong> Protection that persists through image transformations</li>
+                  <li><strong>• Blockchain Anchoring:</strong> Links watermarks to immutable blockchain records</li>
+                  <li><strong>• Multi-layer Protection:</strong> Combines visible and invisible watermarks for maximum security</li>
+                  <li><strong>• Tamper Detection:</strong> Alerts when watermarked images are modified</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm">This technology makes your images trackable across the internet even when they're cropped, filtered, or edited, providing comprehensive protection against theft.</p>
+            </div>
+          )
+        },
+        {
+          question: "What is NFT Minting and how does it protect my digital art?",
+          answer: (
+            <div>
+              <p className="mb-3"><strong>NFT Minting</strong> creates unique blockchain-based certificates of authenticity for your digital artwork, providing verifiable proof of ownership and creation.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">How it works:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• Smart Contract Creation:</strong> Generates unique NFT smart contracts for your artwork</li>
+                  <li><strong>• IPFS Storage:</strong> Stores your artwork on decentralized storage for permanence</li>
+                  <li><strong>• Ownership Verification:</strong> Creates immutable proof of creation and ownership</li>
+                  <li><strong>• Royalty Integration:</strong> Automatic royalty payments for secondary sales</li>
+                  <li><strong>• Multi-chain Support:</strong> Deploys on Ethereum, Polygon, and other networks</li>
+                  <li><strong>• Gas Optimization:</strong> Minimizes transaction costs through batch processing</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm">NFT minting provides legal and technical proof of authenticity, helping establish your rights in disputes and enabling monetization of your digital creations.</p>
+            </div>
+          )
+        },
+        {
+          question: "What is Real-time Monitoring and how does it work?",
+          answer: (
+            <div>
+              <p className="mb-3"><strong>Real-time Monitoring</strong> provides instant detection and alerts when your protected content appears anywhere on the internet.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Monitoring capabilities:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• Live Web Scanning:</strong> Continuous monitoring of websites, forums, and marketplaces</li>
+                  <li><strong>• Social Media Tracking:</strong> Real-time detection across Instagram, Twitter, TikTok, and more</li>
+                  <li><strong>• AI Training Set Detection:</strong> Monitors for unauthorized use in AI model training</li>
+                  <li><strong>• Deepfake Detection:</strong> Identifies when your likeness is used in deepfake content</li>
+                  <li><strong>• NFT Marketplace Monitoring:</strong> Tracks unauthorized NFT listings of your work</li>
+                  <li><strong>• Instant Alerts:</strong> Real-time notifications via email, SMS, and in-app alerts</li>
+                  <li><strong>• Threat Assessment:</strong> Automatically categorizes matches by severity and risk level</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm">This system enables immediate response to copyright violations, maximizing your ability to protect your work and minimize damage from theft.</p>
+            </div>
+          )
+        },
+        {
+          question: "How accurate is the visual recognition technology?",
+          answer: "Our AI-powered visual recognition technology achieves over 95% accuracy in detecting your artwork, even when it's been modified, cropped, filtered, or edited. The system uses advanced machine learning algorithms and continues to improve through continuous training on new data patterns."
+        }
+      ]
+    },
+    {
+      title: "Technical & Integration",
+      items: [
+        {
+          question: "Do you offer API integration for businesses?",
+          answer: "Yes, we provide comprehensive API access for businesses and agencies. Our API allows you to integrate TSMO Watch's monitoring capabilities directly into your existing workflows, automate bulk uploads, and receive programmatic alerts. Contact our sales team for enterprise API documentation and pricing."
+        },
+        {
+          question: "What file formats are supported?",
+          answer: "TSMO Watch supports all major image formats (JPEG, PNG, GIF, WebP, SVG), video formats (MP4, AVI, MOV, WebM), and document formats (PDF). We also support RAW image files from major camera manufacturers and various design file formats."
+        },
+        {
+          question: "How do you ensure my data privacy and security?",
+          answer: "We use enterprise-grade encryption for all data transmission and storage. Your uploaded content is processed securely and we never share your work with third parties. We're GDPR compliant and follow strict data protection protocols. You maintain full ownership and control of your content at all times."
+        },
+        {
+          question: "Can I integrate TSMO Watch with my existing creative tools?",
+          answer: "Yes, we offer integrations with popular creative tools and platforms including Adobe Creative Suite, social media schedulers, and portfolio platforms. Our browser extension also allows one-click protection directly from your creative workflows."
+        }
+      ]
     }
   ];
 
@@ -223,6 +366,9 @@ const FAQ = () => {
                   {section.title === "Getting Started" && "Quick start guide for new users"}
                   {section.title === "Pricing & Plans" && "Information about our pricing and subscription options"}
                   {section.title === "AI & Deepfake Protection" && "How we protect against AI misuse and deepfakes"}
+                  {section.title === "Legal Templates & Documentation" && "Professional legal documents for intellectual property protection"}
+                  {section.title === "Advanced Features" && "Cutting-edge protection technologies and monitoring capabilities"}
+                  {section.title === "Technical & Integration" && "API access, file formats, security, and platform integrations"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
