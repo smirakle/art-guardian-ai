@@ -339,29 +339,11 @@ const ProductionLegalTemplates: React.FC = () => {
         return;
       }
 
-      // Check if user gets free access
+      // Check if user is admin - only admins get free access
       if (userRole === 'admin') {
         toast({
           title: "Admin Access",
           description: "Admin access granted - template available for download",
-        });
-        setPurchasedTemplates(prev => [...prev, template.id]);
-        return;
-      }
-
-      if (userMembership?.plan_id === 'student') {
-        toast({
-          title: "Student Access",
-          description: "Free student access granted - template available for download",
-        });
-        setPurchasedTemplates(prev => [...prev, template.id]);
-        return;
-      }
-
-      if (userMembership?.plan_id === 'starter') {
-        toast({
-          title: "Starter Plan Access",
-          description: "Free starter plan access granted - template available for download",
         });
         setPurchasedTemplates(prev => [...prev, template.id]);
         return;
@@ -484,10 +466,12 @@ const ProductionLegalTemplates: React.FC = () => {
     });
 
   const getPrice = (template: ProductionTemplate) => {
-    if (userRole === 'admin') return 0; // Free for admins
-    if (userMembership?.plan_id === 'student') return 0; // Free for students
-    if (userMembership?.plan_id === 'starter') return 0; // Free for starter plan
-    return userMembership ? template.memberPrice : template.price;
+    if (userRole === 'admin') return 0; // Free for admins only
+    // Students and starters get member prices, not free
+    if (userMembership?.plan_id === 'student' || userMembership?.plan_id === 'starter' || userMembership) {
+      return template.memberPrice;
+    }
+    return template.price;
   };
 
   const formatPrice = (cents: number) => {
@@ -619,10 +603,11 @@ const ProductionLegalTemplates: React.FC = () => {
             const isAdmin = userRole === 'admin';
             const isStudent = userMembership?.plan_id === 'student';
             const isStarter = userMembership?.plan_id === 'starter';
-            const isFreeAccess = isAdmin || isStudent || isStarter;
+            const isFreeAccess = isAdmin; // Only admins get free access now
+            const isMember = userMembership && (isStudent || isStarter || userMembership.plan_id);
             const currentPrice = getPrice(template);
             const originalPrice = template.price;
-            const discount = userMembership && template.memberPrice < template.price;
+            const discount = isMember && template.memberPrice < template.price;
 
             return (
               <Card key={template.id} className="group hover:shadow-lg transition-shadow">
@@ -692,17 +677,21 @@ const ProductionLegalTemplates: React.FC = () => {
                         {isFreeAccess ? (
                           <>
                             <span className="text-lg font-bold text-green-600">FREE</span>
-                            {isAdmin && <Badge variant="destructive" className="text-xs">Admin</Badge>}
-                            {isStudent && <Badge variant="secondary" className="text-xs">Student</Badge>}
-                            {isStarter && <Badge variant="secondary" className="text-xs">Starter Plan</Badge>}
+                            <Badge variant="destructive" className="text-xs">Admin</Badge>
                           </>
                         ) : (
                           <div className="flex flex-col gap-1">
                             <div className="flex items-center gap-2">
                               <span className="text-lg font-bold">{formatPrice(currentPrice)}</span>
-                              {discount && <Badge variant="secondary" className="text-xs">Member Price</Badge>}
+                              {discount && (
+                                <>
+                                  {isStudent && <Badge variant="secondary" className="text-xs">Student Price</Badge>}
+                                  {isStarter && <Badge variant="secondary" className="text-xs">Starter Price</Badge>}
+                                  {!isStudent && !isStarter && <Badge variant="secondary" className="text-xs">Member Price</Badge>}
+                                </>
+                              )}
                             </div>
-                            {template.memberPrice !== template.price && (
+                            {template.memberPrice !== template.price && !isMember && (
                               <div className="flex items-center gap-2">
                                 <span className="text-sm text-muted-foreground">
                                   Member: {formatPrice(template.memberPrice)}
