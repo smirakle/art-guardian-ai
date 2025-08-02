@@ -696,14 +696,23 @@ const ProductionLegalTemplates: React.FC = () => {
                             {isStudent && <Badge variant="secondary" className="text-xs">Student</Badge>}
                             {isStarter && <Badge variant="secondary" className="text-xs">Starter Plan</Badge>}
                           </>
-                        ) : discount ? (
-                          <>
-                            <span className="text-lg font-bold text-primary">{formatPrice(currentPrice)}</span>
-                            <span className="text-sm text-muted-foreground line-through">{formatPrice(originalPrice)}</span>
-                            <Badge variant="secondary" className="text-xs">Member Price</Badge>
-                          </>
                         ) : (
-                          <span className="text-lg font-bold">{formatPrice(currentPrice)}</span>
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg font-bold">{formatPrice(currentPrice)}</span>
+                              {discount && <Badge variant="secondary" className="text-xs">Member Price</Badge>}
+                            </div>
+                            {template.memberPrice !== template.price && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm text-muted-foreground">
+                                  Member: {formatPrice(template.memberPrice)}
+                                </span>
+                                <span className="text-xs text-green-600">
+                                  Save {formatPrice(template.price - template.memberPrice)}
+                                </span>
+                              </div>
+                            )}
+                          </div>
                         )}
                       </div>
                       <div className="text-right">
