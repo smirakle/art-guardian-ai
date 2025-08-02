@@ -60,6 +60,7 @@ const ProductionLegalTemplates: React.FC = () => {
   const [userMembership, setUserMembership] = useState<any>(null);
   const [purchasedTemplates, setPurchasedTemplates] = useState<string[]>([]);
   const [userRole, setUserRole] = useState<string>('user');
+  const [downloadingTemplates, setDownloadingTemplates] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     loadProductionTemplates();
@@ -359,6 +360,67 @@ const ProductionLegalTemplates: React.FC = () => {
     }
   };
 
+  const handleDownloadTemplate = async (template: ProductionTemplate) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Login Required",
+          description: "Please sign in to download templates",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setDownloadingTemplates(prev => new Set(prev).add(template.id));
+
+      const { data, error } = await supabase.functions.invoke('real-legal-document-processor', {
+        body: {
+          action: 'generate',
+          templateId: template.id,
+          templateTitle: template.title,
+          customFields: template.customFields.reduce((acc, field) => {
+            acc[field] = `[${field.replace(/([A-Z])/g, ' $1').toLowerCase()}]`;
+            return acc;
+          }, {} as Record<string, string>)
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.documentContent) {
+        // Create and download the document
+        const blob = new Blob([data.documentContent], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${template.title.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        toast({
+          title: "Download Complete",
+          description: `${template.title} has been downloaded successfully`,
+        });
+      }
+    } catch (error) {
+      console.error('Download error:', error);
+      toast({
+        title: "Download Error",
+        description: "Failed to download template. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setDownloadingTemplates(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(template.id);
+        return newSet;
+      });
+    }
+  };
+
   const filteredAndSortedTemplates = templates
     .filter(template => {
       const matchesSearch = template.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -614,9 +676,14 @@ const ProductionLegalTemplates: React.FC = () => {
                     {/* Actions */}
                     <div className="flex gap-2 pt-2">
                       {isPurchased || isAdmin ? (
-                        <Button className="flex-1" variant="secondary">
+                        <Button 
+                          className="flex-1" 
+                          variant="secondary"
+                          onClick={() => handleDownloadTemplate(template)}
+                          disabled={downloadingTemplates.has(template.id)}
+                        >
                           <Download className="h-4 w-4 mr-2" />
-                          Download
+                          {downloadingTemplates.has(template.id) ? 'Downloading...' : 'Download'}
                         </Button>
                       ) : (
                         <Button 
