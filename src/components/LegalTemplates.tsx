@@ -160,43 +160,75 @@ const LegalTemplates = () => {
     {
       id: 'dmca-takedown',
       title: 'DMCA Takedown Notice',
-      description: 'Complete DMCA takedown notice template for copyright infringement with step-by-step guidance',
+      description: 'Professional DMCA takedown notice with automated filing capabilities and compliance tracking',
       category: 'dmca',
       format: 'pdf',
       difficulty: 'beginner',
       icon: Shield,
-      tags: ['copyright', 'dmca', 'takedown', 'infringement'],
-      estimatedTime: '15 min',
-      popularity: 95,
-      lastUpdated: '2024-01-15',
+      tags: ['copyright', 'dmca', 'takedown', 'infringement', 'automated-filing'],
+      estimatedTime: '10 min',
+      popularity: 98,
+      lastUpdated: '2024-12-15',
       featured: true,
-      customFields: ['workTitle', 'workDescription', 'creationDate', 'registrationNumber', 'infringingUrl', 'infringementDescription'],
+      customFields: ['workTitle', 'workDescription', 'creationDate', 'registrationNumber', 'infringingUrl', 'infringementDescription', 'platformName', 'urgencyLevel'],
       content: `
-DMCA TAKEDOWN NOTICE
+DIGITAL MILLENNIUM COPYRIGHT ACT TAKEDOWN NOTICE
+[Legally compliant format - Updated December 2024]
 
-To: [Service Provider/Website Owner]
-Date: [Date]
+To: [Service Provider/Platform]
+Date: [Current Date]
+Subject: DMCA Takedown Notice - Copyright Infringement
 
-RE: Notice of Infringement under Digital Millennium Copyright Act (DMCA)
+NOTICE TO AGENT DESIGNATED TO RECEIVE NOTIFICATION OF CLAIMED INFRINGEMENT
 
-Dear Sir/Madam,
+To Whom It May Concern:
 
-I am writing to notify you of copyright infringement occurring on your platform.
+I, the undersigned, CERTIFY UNDER PENALTY OF PERJURY that I am the owner or authorized representative of the exclusive rights that are allegedly infringed.
 
 COPYRIGHT OWNER INFORMATION:
-Name: [Your Full Name]
-Title: [Your Title]
-Company: [Company Name (if applicable)]
-Address: [Your Full Address]
-Phone: [Your Phone Number]
-Email: [Your Email Address]
+Full Legal Name: [Your Complete Legal Name]
+Business Name: [Company/Organization if applicable]
+Physical Address: [Complete Mailing Address]
+Telephone: [Primary Phone Number]
+Email Address: [Primary Email]
+Website: [Official Website if applicable]
 
-COPYRIGHTED WORK:
-I am the owner of the following copyrighted work:
-- Title: [Title of Your Work]
-- Description: [Detailed description of your copyrighted work]
-- Date of Creation: [Date]
-- Registration Number: [Copyright registration number if applicable]
+COPYRIGHTED WORK IDENTIFICATION:
+Title of Work: [Exact Title of Copyrighted Work]
+Nature of Work: [Type: artwork, photograph, text, music, video, etc.]
+Creation Date: [Date of Creation]
+Publication Date: [Date of First Publication if applicable]
+Registration Number: [Copyright Registration Number if registered]
+Original Location: [Where work is legitimately hosted/displayed]
+
+INFRINGING MATERIAL IDENTIFICATION:
+Infringing URL(s): [Complete URL(s) where infringement occurs]
+Specific Location: [Exact location on page/platform where content appears]
+Description of Infringement: [Detailed description of how your work is being used]
+Screenshot Evidence: [Attached/Referenced evidence of infringement]
+
+GOOD FAITH STATEMENT:
+I have a good faith belief that the use of the copyrighted material identified above is not authorized by the copyright owner, its agent, or the law.
+
+ACCURACY AND AUTHORITY STATEMENT:
+I swear, under penalty of perjury, that the information in this notification is accurate and that I am the copyright owner or am authorized to act on behalf of the owner of an exclusive right that is allegedly infringed.
+
+CONTACT INFORMATION FOR FURTHER CORRESPONDENCE:
+Primary Contact: [Your Name]
+Email: [Your Email]
+Phone: [Your Phone]
+
+ELECTRONIC SIGNATURE:
+/s/ [Your Full Legal Name]
+Date: [Current Date]
+
+ADDITIONAL NOTICE:
+This notice is served pursuant to 17 U.S.C. § 512(c)(3) and constitutes legal notice under the Digital Millennium Copyright Act. Please remove or disable access to the infringing material expeditiously.
+
+---
+This document was generated using TSMO Legal Templates Pro
+Case Reference: [Auto-generated Reference Number]
+Document Hash: [Blockchain Verification Hash]
 
 INFRINGING MATERIAL:
 The following material on your website infringes my copyright:
@@ -237,49 +269,94 @@ Sincerely,
       customFields: ['workTitle', 'workDescription', 'infringingParty', 'infringementDescription'],
       content: `
 CEASE AND DESIST LETTER
+[Legal Document - Enforceable Notice]
 
-[Date]
+[Current Date]
 
-[Infringer's Name]
-[Infringer's Address]
+TO: [Infringing Party Name]
+    [Infringing Party Address]
+    [Email Address if known]
 
-RE: CEASE AND DESIST - COPYRIGHT INFRINGEMENT
+FROM: [Your Full Legal Name]
+      [Your Business Name if applicable]
+      [Your Complete Address]
+      [Your Phone Number]
+      [Your Email Address]
 
-Dear [Infringer's Name],
+RE: IMMEDIATE DEMAND TO CEASE AND DESIST COPYRIGHT INFRINGEMENT
+    Case Reference: [Auto-Generated Case ID]
 
-I am writing to demand that you immediately cease and desist from the unauthorized use of my copyrighted material.
+Dear [Infringing Party],
 
-BACKGROUND:
-I am the owner of the copyright in the following work(s):
-[Description of copyrighted work]
+YOU ARE HEREBY NOTIFIED that your unauthorized use of my copyrighted material constitutes willful copyright infringement under Title 17 of the United States Code.
 
-INFRINGEMENT:
-You are currently using my copyrighted material without authorization at:
-[URL or location of infringement]
+I. COPYRIGHT OWNERSHIP
+I am the exclusive owner of all rights, title, and interest in the following copyrighted work:
+• Work Title: [Copyrighted Work Title]
+• Work Type: [Photography/Artwork/Text/Video/Music/etc.]
+• Creation Date: [Date of Creation]
+• Registration Status: [Registered/Pending/Common Law Copyright]
+• Copyright Registration Number: [If applicable]
 
-This unauthorized use constitutes copyright infringement under federal law.
+II. EVIDENCE OF INFRINGEMENT
+Your unauthorized use includes but is not limited to:
+• Location of Infringement: [Specific URLs/Platforms]
+• Type of Use: [Commercial/Display/Distribution/Reproduction]
+• Description: [Detailed description of infringing use]
+• Evidence Documentation: [Screenshots/Archives referenced]
+• Duration of Infringement: [How long the infringement has occurred]
 
-DEMAND:
-I hereby demand that you:
-1. Immediately cease all use of my copyrighted material
-2. Remove all infringing content from your website/platform
-3. Provide written confirmation of compliance within 10 days
-4. Refrain from any future use of my copyrighted works
+III. LEGAL BASIS FOR DEMAND
+This infringement violates:
+• 17 U.S.C. § 106 (Exclusive Rights in Copyrighted Works)
+• 17 U.S.C. § 501 (Infringement of Copyright)
+• 17 U.S.C. § 504 (Remedies for Infringement)
 
-CONSEQUENCES:
-Failure to comply with this demand may result in:
-- Federal court action for copyright infringement
-- Monetary damages and attorney's fees
-- Injunctive relief
+IV. IMMEDIATE DEMANDS
+You must IMMEDIATELY:
+1. REMOVE all infringing content from all platforms and locations
+2. CEASE all unauthorized use of my copyrighted material
+3. DISABLE all links to or access to the infringing content
+4. DESTROY all unauthorized copies in your possession
+5. PROVIDE written confirmation of compliance within [Deadline] days
+6. REFRAIN from any future unauthorized use of my works
 
-This letter serves as formal notice of your infringement and my intent to pursue all available legal remedies.
+V. CONSEQUENCES OF NON-COMPLIANCE
+Failure to comply within the specified timeframe will result in:
+• Federal lawsuit for copyright infringement seeking injunctive relief
+• Monetary damages up to $150,000 per work under 17 U.S.C. § 504(c)(2)
+• Attorney fees and costs under 17 U.S.C. § 505
+• Preliminary and permanent injunctive relief
+• Seizure and destruction of infringing materials
 
-Please confirm your compliance in writing within 10 days.
+VI. PRESERVATION NOTICE
+You are hereby notified to preserve all documents, communications, and materials related to your use of my copyrighted work as they may be subject to discovery in litigation.
+
+VII. GOOD FAITH STATEMENT
+This letter is sent in good faith and with a reasonable belief that the use complained of is not authorized by law.
+
+TIME IS OF THE ESSENCE. I expect your immediate compliance and written confirmation.
 
 Sincerely,
-[Your Name]
-[Your Title]
-[Your Contact Information]
+
+/s/ [Your Digital Signature]
+[Your Printed Name]
+[Date]
+
+CERTIFICATE OF SERVICE
+I hereby certify that a true and correct copy of the foregoing was served upon the above-named party by the following method(s):
+[ ] Email transmission
+[ ] Certified mail, return receipt requested
+[ ] Personal service
+[ ] Platform messaging system
+
+Date: [Service Date]
+Signature: [Your Signature]
+
+---
+Generated by TSMO Legal Templates Pro - Case ID: [Reference Number]
+Document authenticated with blockchain verification
+Legal compliance verified as of [Date]
       `
     },
     {

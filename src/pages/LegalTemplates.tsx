@@ -1,4 +1,4 @@
-import LegalTemplates from '@/components/LegalTemplates';
+import ProductionLegalTemplates from '@/components/enhanced/ProductionLegalTemplates';
 import LegalTemplateAnalytics from '@/components/enhanced/LegalTemplateAnalytics';
 import LegalNotificationCenter from '@/components/enhanced/LegalNotificationCenter';
 import ComplianceReminders from '@/components/enhanced/ComplianceReminders';
@@ -17,7 +17,7 @@ const LegalTemplatesPage = () => {
           </TabsList>
           
           <TabsContent value="templates">
-            <LegalTemplates />
+            <ProductionLegalTemplates />
           </TabsContent>
           
           <TabsContent value="analytics">
