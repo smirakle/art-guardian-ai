@@ -14,10 +14,10 @@ serve(async (req) => {
   }
 
   try {
-    const { templateId, templateTitle } = await req.json();
+    const { templateId, templateTitle, regularPrice, memberPrice } = await req.json();
 
-    if (!templateId || !templateTitle) {
-      throw new Error('Template ID and title are required');
+    if (!templateId || !templateTitle || regularPrice === undefined || memberPrice === undefined) {
+      throw new Error('Template ID, title, regular price, and member price are required');
     }
 
     // Create Supabase client using the anon key for user authentication
@@ -58,9 +58,9 @@ serve(async (req) => {
 
     const hasMembership = membershipData || false;
     
-    // Set price based on membership status
-    const price = hasMembership ? 299 : 999; // $2.99 for members, $9.99 for non-members
-    const priceLabel = hasMembership ? '$2.99 (Member Price)' : '$9.99';
+    // Use template-specific pricing based on membership status
+    const price = hasMembership ? memberPrice : regularPrice;
+    const priceLabel = hasMembership ? `$${(memberPrice / 100).toFixed(2)} (Member Price)` : `$${(regularPrice / 100).toFixed(2)}`;
 
     console.log(`User ${user.email} has membership: ${hasMembership}, price: ${price}`);
 

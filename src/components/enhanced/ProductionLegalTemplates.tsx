@@ -352,7 +352,9 @@ const ProductionLegalTemplates: React.FC = () => {
       const { data, error } = await supabase.functions.invoke('purchase-template', {
         body: {
           templateId: template.id,
-          templateTitle: template.title
+          templateTitle: template.title,
+          regularPrice: template.price,
+          memberPrice: template.memberPrice,
         }
       });
 
