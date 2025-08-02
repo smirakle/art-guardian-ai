@@ -106,6 +106,9 @@ const PatentDocumentDownload = () => {
     addText('   • Machine learning models trained to identify AI training patterns');
     addText('   • Behavioral analysis of content access patterns');
     addText('   • Anomaly detection in dataset composition changes');
+    addText('   • Proprietary AI Training Protection Algorithm (AITPA)');
+    addText('   • Multi-layer neural network for training pattern classification');
+    addText('   • Real-time threat assessment and confidence scoring');
     yPosition += 10;
 
     addText('Patent Application 2: "Multi-Layered Digital Content Protection with Blockchain Verification"', 12, true);
@@ -139,6 +142,52 @@ const PatentDocumentDownload = () => {
     addText('   • Real-time alert system with severity classification');
     yPosition += 10;
 
+    // Detailed AI Training Protection Algorithm (AITPA)
+    addText('DETAILED AI TRAINING PROTECTION ALGORITHM (AITPA)', 14, true);
+    addText('Core Algorithm Specification:', 12, true);
+    
+    addText('Algorithm Input:', 11, true);
+    addText('• Protected content fingerprint array F = [f1, f2, ..., fn]');
+    addText('• Dataset monitoring targets T = {t1, t2, ..., tm}');
+    addText('• Historical training patterns H = {h1, h2, ..., hk}');
+    addText('• Real-time access logs L = {l1, l2, ..., lp}');
+    
+    addText('Algorithm Processing Steps:', 11, true);
+    addText('Step 1: Multi-dimensional Feature Extraction');
+    addText('   • Extract visual features using CNN layers: V = CNN(content)');
+    addText('   • Generate structural hash: S = Hash(geometry, composition)');
+    addText('   • Create temporal signature: T = Timestamp + metadata');
+    addText('   • Combine features: F = Combine(V, S, T)');
+    
+    addText('Step 2: AI Training Pattern Recognition');
+    addText('   • Apply LSTM network for sequence analysis: P = LSTM(access_patterns)');
+    addText('   • Calculate anomaly score: A = Anomaly_Detector(P, baseline)');
+    addText('   • Determine training probability: Pr = Sigmoid(A * weight_matrix)');
+    
+    addText('Step 3: Confidence Scoring and Classification');
+    addText('   • Multi-factor confidence: C = α*Pr + β*similarity + γ*frequency');
+    addText('   • Classification: Class = Threshold_Function(C, [low, medium, high])');
+    addText('   • Evidence aggregation: E = Collect_Evidence(matches, metadata)');
+    
+    addText('Algorithm Output:', 11, true);
+    addText('• Violation probability score (0-1)');
+    addText('• Classification level (low/medium/high risk)');
+    addText('• Evidence package with source links');
+    addText('• Recommended response actions');
+    
+    addText('Novel Mathematical Framework:', 12, true);
+    addText('Fingerprint Similarity Function:');
+    addText('   S(F1, F2) = Σ(wi * similarity_i(F1_i, F2_i))');
+    addText('   where wi = feature weights optimized for AI training detection');
+    
+    addText('Training Pattern Classifier:');
+    addText('   P(training|pattern) = softmax(W * φ(pattern) + b)');
+    addText('   where φ(pattern) = feature_transform(access_pattern)');
+    
+    addText('Confidence Aggregation:');
+    addText('   Final_Score = Ensemble([CNN_score, LSTM_score, Similarity_score])');
+    yPosition += 15;
+
     // Claims Definitions
     addText('CLAIMS DEFINITIONS', 14, true);
     addText('Primary Claims for Patent Application 1:', 12, true);
@@ -164,6 +213,28 @@ const PatentDocumentDownload = () => {
     addText('• Statistical analysis of content access patterns');
     addText('• Behavioral anomaly detection in dataset composition');
     addText('• Confidence scoring based on multiple violation indicators');
+    
+    addText('Claim 4: AI Training Protection Algorithm (AITPA):', 11, true);
+    addText('A computer-implemented algorithm for detecting unauthorized AI training use, comprising:');
+    addText('• Multi-dimensional feature extraction using CNN and LSTM networks');
+    addText('• Fingerprint similarity function: S(F1,F2) = Σ(wi * similarity_i(F1_i, F2_i))');
+    addText('• Training pattern classifier: P(training|pattern) = softmax(W * φ(pattern) + b)');
+    addText('• Confidence aggregation: Final_Score = Ensemble([CNN_score, LSTM_score, Similarity_score])');
+    addText('• Real-time anomaly detection with threshold-based classification');
+    
+    addText('Claim 5: Mathematical Framework for AI Training Detection:', 11, true);
+    addText('The method of claim 4, wherein the algorithm implements:');
+    addText('• Feature weight optimization for AI training pattern recognition');
+    addText('• Multi-factor confidence scoring with adaptive thresholds');
+    addText('• Ensemble learning for improved detection accuracy');
+    addText('• Temporal pattern analysis for behavioral anomaly detection');
+    
+    addText('Claim 6: Real-time Processing Architecture:', 11, true);
+    addText('The method of claim 4, further comprising:');
+    addText('• Parallel processing of multiple content fingerprints');
+    addText('• Streaming analysis of dataset access patterns');
+    addText('• Dynamic model updates based on new training patterns');
+    addText('• Automated evidence collection and violation reporting');
 
     // Patent Application Strategy
     addText('PATENT APPLICATION STRATEGY', 14, true);
