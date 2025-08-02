@@ -196,6 +196,78 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Beta Testing Disclaimer */}
+      <section className="bg-gradient-to-r from-orange-50 to-yellow-50 border-y border-orange-200 py-12 px-4">
+        <div className="container mx-auto max-w-4xl text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Badge className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 text-sm font-semibold">
+              BETA TESTING
+            </Badge>
+            <Bot className="h-6 w-6 text-orange-600" />
+          </div>
+          
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-orange-800">
+            Beta Version - Testing in Progress
+          </h2>
+          
+          <div className="bg-white/70 backdrop-blur-sm rounded-lg p-6 border border-orange-200 max-w-3xl mx-auto">
+            <p className="text-base text-gray-700 mb-4 leading-relaxed">
+              <strong>Important Notice:</strong> This application is currently in beta testing phase. 
+              While the user interface and core functionality are fully operational, some advanced features 
+              may have limited functionality during this testing period.
+            </p>
+            
+            <div className="text-left space-y-2 text-sm text-gray-600 mb-4">
+              <div className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+                <span>User interface and navigation - Fully functional</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+                <span>File uploads and basic protection - Active</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+                <span>User accounts and authentication - Working</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Eye className="h-4 w-4 text-orange-500 flex-shrink-0" />
+                <span>Advanced copyright detection - In testing phase</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Eye className="h-4 w-4 text-orange-500 flex-shrink-0" />
+                <span>Real-time monitoring alerts - Limited during beta</span>
+              </div>
+            </div>
+            
+            <p className="text-sm text-gray-600 italic">
+              We appreciate your participation in our beta testing program. Your feedback helps us 
+              improve the platform for all creators.
+            </p>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mt-6">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-orange-300 text-orange-700 hover:bg-orange-100"
+              onClick={() => navigate("/contact")}
+            >
+              <Mail className="mr-2 h-4 w-4" />
+              Report Issues
+            </Button>
+            <Button 
+              size="sm" 
+              className="bg-orange-600 hover:bg-orange-700 text-white"
+              onClick={() => navigate("/upload")}
+            >
+              Try Beta Version
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Art Theft Facts Section */}
       <section className="bg-red-50 py-10 px-4">
         <div className="container mx-auto max-w-5xl">
