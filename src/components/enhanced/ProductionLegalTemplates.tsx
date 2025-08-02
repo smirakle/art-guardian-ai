@@ -12,7 +12,8 @@ import {
   Download, Eye, Star, Clock, Users, TrendingUp, 
   CheckCircle, AlertCircle, DollarSign, Lock,
   Search, Filter, ArrowUp, ArrowDown, Calendar,
-  BookOpen, Briefcase, Gavel, FileCheck, Award
+  BookOpen, Briefcase, Gavel, FileCheck, Award,
+  LucideIcon
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -25,7 +26,7 @@ interface ProductionTemplate {
   language: string[];
   format: 'pdf' | 'docx' | 'html';
   difficulty: 'beginner' | 'intermediate' | 'advanced' | 'expert';
-  icon: React.ComponentType;
+  icon: LucideIcon;
   tags: string[];
   estimatedTime: string;
   popularity: number;
@@ -488,9 +489,9 @@ const ProductionLegalTemplates: React.FC = () => {
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <template.icon className="h-6 w-6 text-primary" />
-                      </div>
+                       <div className="p-2 bg-primary/10 rounded-lg">
+                         <template.icon className="h-6 w-6 text-primary" />
+                       </div>
                       <div>
                         <CardTitle className="text-lg">{template.title}</CardTitle>
                         <div className="flex items-center gap-2 mt-1">
