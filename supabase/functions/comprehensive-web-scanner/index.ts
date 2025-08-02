@@ -178,6 +178,7 @@ async function performComprehensiveScan(
       })
       .eq('id', scanId);
   }
+  }
 }
 
 async function scanForImages(imageUrl: string, supabase: any): Promise<ScanResult[]> {
