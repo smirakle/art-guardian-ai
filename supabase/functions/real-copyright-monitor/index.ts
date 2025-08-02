@@ -141,14 +141,50 @@ async function searchTinEye(imageUrl: string) {
   }
 
   try {
-    const response = await fetch(`https://api.tineye.com/rest/search/?url=${encodeURIComponent(imageUrl)}`, {
+    // Implement TinEye HMAC authentication
+    const timestamp = Math.floor(Date.now() / 1000).toString();
+    const httpVerb = 'GET';
+    const requestUrl = `/rest/search/?url=${encodeURIComponent(imageUrl)}`;
+    const contentType = '';
+    const date = new Date().toUTCString();
+    
+    // Create signature string
+    const stringToSign = [
+      httpVerb,
+      contentType,
+      date,
+      requestUrl
+    ].join('\n');
+    
+    // Import crypto for HMAC
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(apiSecret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+    
+    const signature = await crypto.subtle.sign(
+      'HMAC',
+      key,
+      encoder.encode(stringToSign)
+    );
+    
+    const signatureBase64 = btoa(String.fromCharCode(...new Uint8Array(signature)));
+    const authHeader = `APIAuth ${apiKey}:${signatureBase64}`;
+
+    const response = await fetch(`https://api.tineye.com${requestUrl}`, {
+      method: 'GET',
       headers: {
-        'Authorization': `Basic ${btoa(`${apiKey}:${apiSecret}`)}`
+        'Authorization': authHeader,
+        'Date': date
       }
     });
 
     if (!response.ok) {
-      throw new Error(`TinEye API returned ${response.status}`);
+      throw new Error(`TinEye API returned ${response.status}: ${await response.text()}`);
     }
 
     const data = await response.json();
@@ -156,12 +192,12 @@ async function searchTinEye(imageUrl: string) {
     return data.results?.matches?.map((match: any) => ({
       source_url: match.domain,
       source_domain: new URL(match.domain).hostname,
-      source_title: match.title || 'TinEye Match',
+      source_title: match.filename || 'TinEye Match',
       image_url: match.image_url,
-      thumbnail_url: match.thumbnail_url,
-      match_confidence: Math.min(match.score * 100, 100),
+      thumbnail_url: match.image_url,
+      match_confidence: Math.min(Math.round(match.score * 100), 100),
       match_type: 'exact',
-      threat_level: determineThreatLevel(match.score),
+      threat_level: determineThreatLevel(match.score * 100),
       context: `Found via TinEye - Exact match`
     })) || [];
 
@@ -186,22 +222,37 @@ async function searchGoogle(imageUrl: string) {
     );
 
     if (!response.ok) {
-      throw new Error(`Google API returned ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`Google API returned ${response.status}: ${errorText}`);
     }
 
     const data = await response.json();
     
-    return data.items?.map((item: any) => ({
-      source_url: item.image.contextLink || item.link,
-      source_domain: new URL(item.image.contextLink || item.link).hostname,
-      source_title: item.title,
-      image_url: item.link,
-      thumbnail_url: item.image.thumbnailLink,
-      match_confidence: 85, // Google doesn't provide confidence scores
-      match_type: 'similar',
-      threat_level: 'medium',
-      context: `Found via Google Custom Search`
-    })) || [];
+    if (data.error) {
+      throw new Error(`Google API error: ${data.error.message}`);
+    }
+    
+    return data.items?.map((item: any) => {
+      try {
+        const contextLink = item.image?.contextLink || item.link;
+        const domain = contextLink ? new URL(contextLink).hostname : 'unknown';
+        
+        return {
+          source_url: contextLink,
+          source_domain: domain,
+          source_title: item.title,
+          image_url: item.link,
+          thumbnail_url: item.image?.thumbnailLink,
+          match_confidence: 85, // Google doesn't provide confidence scores
+          match_type: 'similar',
+          threat_level: 'medium',
+          context: `Found via Google Custom Search`
+        };
+      } catch (urlError) {
+        console.warn('Error parsing Google result:', urlError);
+        return null;
+      }
+    }).filter(Boolean) || [];
 
   } catch (error) {
     console.error('Google search failed:', error.message);
@@ -230,27 +281,41 @@ async function searchBing(imageUrl: string) {
     });
 
     if (!response.ok) {
-      throw new Error(`Bing API returned ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`Bing API returned ${response.status}: ${errorText}`);
     }
 
     const data = await response.json();
     const matches: any[] = [];
 
+    if (data.error) {
+      throw new Error(`Bing API error: ${data.error.message}`);
+    }
+
     data.tags?.forEach((tag: any) => {
       tag.actions?.forEach((action: any) => {
         if (action.actionType === 'VisualSearch' && action.data?.value) {
           action.data.value.forEach((item: any) => {
-            matches.push({
-              source_url: item.hostPageUrl || item.webSearchUrl,
-              source_domain: item.hostPageDisplayUrl ? new URL('https://' + item.hostPageDisplayUrl).hostname : 'bing.com',
-              source_title: item.name,
-              image_url: item.contentUrl,
-              thumbnail_url: item.thumbnailUrl,
-              match_confidence: 80,
-              match_type: 'similar',
-              threat_level: 'medium',
-              context: `Found via Bing Visual Search`
-            });
+            try {
+              const hostPageUrl = item.hostPageUrl || item.webSearchUrl;
+              const domain = item.hostPageDisplayUrl ? 
+                new URL('https://' + item.hostPageDisplayUrl).hostname : 
+                (hostPageUrl ? new URL(hostPageUrl).hostname : 'bing.com');
+              
+              matches.push({
+                source_url: hostPageUrl,
+                source_domain: domain,
+                source_title: item.name,
+                image_url: item.contentUrl,
+                thumbnail_url: item.thumbnailUrl,
+                match_confidence: 80,
+                match_type: 'similar',
+                threat_level: 'medium',
+                context: `Found via Bing Visual Search`
+              });
+            } catch (urlError) {
+              console.warn('Error parsing Bing result:', urlError);
+            }
           });
         }
       });
@@ -278,22 +343,36 @@ async function searchSerpAPI(imageUrl: string) {
     );
 
     if (!response.ok) {
-      throw new Error(`SerpAPI returned ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`SerpAPI returned ${response.status}: ${errorText}`);
     }
 
     const data = await response.json();
     
-    return data.image_results?.map((item: any) => ({
-      source_url: item.source,
-      source_domain: new URL(item.source).hostname,
-      source_title: item.title,
-      image_url: item.original,
-      thumbnail_url: item.thumbnail,
-      match_confidence: 90,
-      match_type: 'exact',
-      threat_level: 'high',
-      context: `Found via SerpAPI Google Reverse Image Search`
-    })) || [];
+    if (data.error) {
+      throw new Error(`SerpAPI error: ${data.error}`);
+    }
+    
+    return data.image_results?.map((item: any) => {
+      try {
+        const domain = item.source ? new URL(item.source).hostname : 'unknown';
+        
+        return {
+          source_url: item.source,
+          source_domain: domain,
+          source_title: item.title,
+          image_url: item.original,
+          thumbnail_url: item.thumbnail,
+          match_confidence: 90,
+          match_type: 'exact',
+          threat_level: 'high',
+          context: `Found via SerpAPI Google Reverse Image Search`
+        };
+      } catch (urlError) {
+        console.warn('Error parsing SerpAPI result:', urlError);
+        return null;
+      }
+    }).filter(Boolean) || [];
 
   } catch (error) {
     console.error('SerpAPI search failed:', error.message);
@@ -315,22 +394,36 @@ async function searchYandex(imageUrl: string) {
     );
 
     if (!response.ok) {
-      throw new Error(`Yandex via SerpAPI returned ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`Yandex via SerpAPI returned ${response.status}: ${errorText}`);
     }
 
     const data = await response.json();
     
-    return data.images_results?.map((item: any) => ({
-      source_url: item.source,
-      source_domain: new URL(item.source).hostname,
-      source_title: item.title,
-      image_url: item.original,
-      thumbnail_url: item.thumbnail,
-      match_confidence: 85,
-      match_type: 'similar',
-      threat_level: 'medium',
-      context: `Found via Yandex Image Search`
-    })) || [];
+    if (data.error) {
+      throw new Error(`Yandex SerpAPI error: ${data.error}`);
+    }
+    
+    return data.images_results?.map((item: any) => {
+      try {
+        const domain = item.source ? new URL(item.source).hostname : 'unknown';
+        
+        return {
+          source_url: item.source,
+          source_domain: domain,
+          source_title: item.title,
+          image_url: item.original,
+          thumbnail_url: item.thumbnail,
+          match_confidence: 85,
+          match_type: 'similar',
+          threat_level: 'medium',
+          context: `Found via Yandex Image Search`
+        };
+      } catch (urlError) {
+        console.warn('Error parsing Yandex result:', urlError);
+        return null;
+      }
+    }).filter(Boolean) || [];
 
   } catch (error) {
     console.error('Yandex search failed:', error.message);

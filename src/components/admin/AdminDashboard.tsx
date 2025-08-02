@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useMaintenanceMode } from "@/lib/maintenance";
 import { supabase } from "@/integrations/supabase/client";
 import { CopyrightDiagnostics } from "./CopyrightDiagnostics";
+import { EnhancedCopyrightDiagnostics } from "./EnhancedCopyrightDiagnostics";
 
 import { 
   Shield, 
@@ -238,7 +239,15 @@ const AdminDashboard = () => {
   const renderContent = () => {
     switch (activeTab) {
       case 'diagnostics':
-        return <CopyrightDiagnostics />;
+        return (
+          <div className="space-y-6">
+            <EnhancedCopyrightDiagnostics />
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-semibold mb-4">Legacy Diagnostics</h3>
+              <CopyrightDiagnostics />
+            </div>
+          </div>
+        );
       default:
         return (
           <>

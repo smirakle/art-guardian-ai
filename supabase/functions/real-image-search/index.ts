@@ -416,7 +416,8 @@ async function searchGoogle(imageUrl: string): Promise<SearchResult[]> {
     
     const response = await fetch(searchUrl)
     if (!response.ok) {
-      console.error('Google search failed:', response.status, response.statusText)
+      const errorText = await response.text()
+      console.error('Google search failed:', response.status, response.statusText, errorText)
       return []
     }
     
@@ -425,16 +426,20 @@ async function searchGoogle(imageUrl: string): Promise<SearchResult[]> {
     
     if (data.items) {
       for (const item of data.items) {
-        const domain = item.link ? new URL(item.link).hostname : 'unknown'
-        results.push({
-          platform: 'Google',
-          url: item.link,
-          title: item.title || 'Untitled',
-          confidence: Math.floor(Math.random() * 30) + 70, // 70-100% confidence
-          domain: domain,
-          thumbnail: item.image?.thumbnailLink || imageUrl,
-          snippet: item.snippet || `Found on ${domain}`
-        })
+        try {
+          const domain = item.link ? new URL(item.link).hostname : 'unknown'
+          results.push({
+            platform: 'Google',
+            url: item.link,
+            title: item.title || 'Untitled',
+            confidence: Math.floor(Math.random() * 30) + 70, // 70-100% confidence
+            domain: domain,
+            thumbnail: item.image?.thumbnailLink || imageUrl,
+            snippet: item.snippet || `Found on ${domain}`
+          })
+        } catch (urlError) {
+          console.warn('Error parsing Google result:', urlError)
+        }
       }
     }
     
@@ -457,22 +462,23 @@ async function searchBing(imageUrl: string): Promise<SearchResult[]> {
   try {
     console.log('Performing Bing visual search...')
     
-    // Use Bing Visual Search API
+    // Use Bing Visual Search API with JSON body instead of FormData
     const searchUrl = 'https://api.bing.microsoft.com/v7.0/images/visualsearch'
-    
-    const formData = new FormData()
-    formData.append('imageInfo', JSON.stringify({ url: imageUrl }))
     
     const response = await fetch(searchUrl, {
       method: 'POST',
       headers: {
         'Ocp-Apim-Subscription-Key': apiKey,
+        'Content-Type': 'application/json'
       },
-      body: formData
+      body: JSON.stringify({
+        imageInfo: { url: imageUrl }
+      })
     })
     
     if (!response.ok) {
-      console.error('Bing search failed:', response.status, response.statusText)
+      const errorText = await response.text()
+      console.error('Bing search failed:', response.status, response.statusText, errorText)
       return []
     }
     
@@ -518,14 +524,80 @@ async function searchTinEye(imageUrl: string): Promise<SearchResult[]> {
   try {
     console.log('Performing TinEye search...')
     
-    // TinEye API implementation would go here
-    // For now, we'll search for similar images using their API
-    const searchUrl = `https://api.tineye.com/rest/search/?url=${encodeURIComponent(imageUrl)}`
+    // Implement TinEye HMAC authentication
+    const timestamp = Math.floor(Date.now() / 1000).toString()
+    const nonce = Math.random().toString(36).substring(2, 15)
+    const httpVerb = 'GET'
+    const requestUrl = `/rest/search/?url=${encodeURIComponent(imageUrl)}`
+    const contentType = ''
+    const date = ''
     
-    // TinEye requires HMAC authentication which is complex to implement
-    // For now, we'll return empty results and focus on Google/Bing
-    console.log('TinEye API requires HMAC authentication - implementation pending')
-    return []
+    // Create signature string
+    const stringToSign = [
+      httpVerb,
+      contentType,
+      date,
+      requestUrl
+    ].join('\n')
+    
+    // Import crypto for HMAC
+    const encoder = new TextEncoder()
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(apiSecret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    )
+    
+    const signature = await crypto.subtle.sign(
+      'HMAC',
+      key,
+      encoder.encode(stringToSign)
+    )
+    
+    const signatureBase64 = btoa(String.fromCharCode(...new Uint8Array(signature)))
+    
+    const authHeader = `APIAuth ${apiKey}:${signatureBase64}`
+    
+    const response = await fetch(`https://api.tineye.com${requestUrl}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': authHeader,
+        'Date': new Date().toUTCString()
+      }
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('TinEye search failed:', response.status, errorText)
+      return []
+    }
+    
+    const data = await response.json()
+    const results: SearchResult[] = []
+    
+    if (data.results && data.results.matches) {
+      for (const match of data.results.matches.slice(0, 10)) {
+        try {
+          const domain = new URL(match.domain).hostname
+          results.push({
+            platform: 'TinEye',
+            url: match.domain,
+            title: match.filename || 'TinEye Match',
+            confidence: Math.min(Math.round(match.score * 100), 100),
+            domain: domain,
+            thumbnail: match.image_url,
+            snippet: `Exact match found on ${domain}`
+          })
+        } catch (urlError) {
+          console.warn('Error parsing TinEye result:', urlError)
+        }
+      }
+    }
+    
+    console.log(`Found ${results.length} results from TinEye`)
+    return results
   } catch (error) {
     console.error('TinEye search error:', error)
     return []
@@ -548,25 +620,35 @@ async function searchYahoo(imageUrl: string): Promise<SearchResult[]> {
     
     const response = await fetch(searchUrl)
     if (!response.ok) {
-      console.error('SerpAPI search failed:', response.status, response.statusText)
+      const errorText = await response.text()
+      console.error('SerpAPI search failed:', response.status, response.statusText, errorText)
       return []
     }
     
     const data = await response.json()
     const results: SearchResult[] = []
     
+    if (data.error) {
+      console.error('SerpAPI error:', data.error)
+      return []
+    }
+    
     if (data.image_results) {
       for (const item of data.image_results.slice(0, 10)) {
-        const domain = item.link ? new URL(item.link).hostname : 'unknown'
-        results.push({
-          platform: 'SerpAPI',
-          url: item.link,
-          title: item.title || 'Untitled',
-          confidence: Math.floor(Math.random() * 25) + 65, // 65-90% confidence
-          domain: domain,
-          thumbnail: item.thumbnail || imageUrl,
-          snippet: `Found on ${domain} via SerpAPI`
-        })
+        try {
+          const domain = item.link ? new URL(item.link).hostname : 'unknown'
+          results.push({
+            platform: 'SerpAPI',
+            url: item.link,
+            title: item.title || 'Untitled',
+            confidence: Math.floor(Math.random() * 25) + 65, // 65-90% confidence
+            domain: domain,
+            thumbnail: item.thumbnail || imageUrl,
+            snippet: `Found on ${domain} via SerpAPI`
+          })
+        } catch (urlError) {
+          console.warn('Error parsing SerpAPI result:', urlError)
+        }
       }
     }
     
