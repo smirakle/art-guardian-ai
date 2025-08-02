@@ -197,6 +197,32 @@ const AITrainingProtectionDashboard = () => {
     }
   };
 
+  const startRealTimeScanning = async (protectionId: string) => {
+    try {
+      const canProceed = await checkRateLimit('ai-training-scan', 50, 60);
+      if (!canProceed) {
+        toast.error('Rate limit exceeded. Please try again later.');
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('ai-training-protection-monitor', {
+        body: {
+          protectionRecordId: protectionId,
+          enableRealTimeScanning: true,
+          scanType: 'comprehensive'
+        }
+      });
+
+      if (error) throw error;
+      
+      toast.success(`Real-time scanning initiated: ${data.violations_detected} threats detected`);
+      loadViolations();
+    } catch (error) {
+      console.error('Error starting real-time scan:', error);
+      toast.error('Failed to start real-time scanning');
+    }
+  };
+
   const takeAction = async (violationId: string, action: string) => {
     try {
       const { error } = await supabase.functions.invoke('ai-training-protection-processor', {
@@ -340,16 +366,24 @@ const AITrainingProtectionDashboard = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => downloadProtectedFile(record.protection_id, record.original_filename)}
-                        >
-                          <Download className="h-4 w-4 mr-2" />
-                          Download
-                        </Button>
-                      </div>
+                       <div className="flex gap-2">
+                         <Button
+                           variant="outline"
+                           size="sm"
+                           onClick={() => startRealTimeScanning(record.id)}
+                         >
+                           <Eye className="h-4 w-4 mr-2" />
+                           Scan Now
+                         </Button>
+                         <Button
+                           variant="outline"
+                           size="sm"
+                           onClick={() => downloadProtectedFile(record.protection_id, record.original_filename)}
+                         >
+                           <Download className="h-4 w-4 mr-2" />
+                           Download
+                         </Button>
+                       </div>
                     </div>
                   ))}
                 </div>

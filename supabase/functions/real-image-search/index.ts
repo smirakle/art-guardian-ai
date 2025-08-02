@@ -1,6 +1,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
+import { detectAITrainingPatterns } from './ai-training-detection.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -272,17 +273,17 @@ serve(async (req) => {
       console.log('Skipping SerpAPI search - API key not found');
     }
 
-    // 5. Computer Vision Analysis
+    // 5. Enhanced AI Training Detection with OpenAI Vision Analysis
     if (Deno.env.get('OPENAI_API_KEY')) {
-      console.log('Analyzing image with OpenAI Vision...');
+      console.log('Analyzing image for AI training patterns with OpenAI Vision...');
       try {
-        const visionResults = await analyzeImageWithVision(imageUrl)
-        results.push(...visionResults)
+        const aiTrainingResults = await detectAITrainingPatterns(imageUrl, artworkId)
+        results.push(...aiTrainingResults)
       } catch (error) {
-        console.error('OpenAI Vision analysis failed with error:', error);
+        console.error('AI Training pattern detection failed with error:', error);
       }
     } else {
-      console.log('Skipping OpenAI Vision analysis - API key not found');
+      console.log('Skipping AI Training pattern analysis - OpenAI API key not found');
     }
 
     // 6. Deepfake Detection & Verification (if enabled)

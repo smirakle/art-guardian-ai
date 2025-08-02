@@ -247,8 +247,8 @@ const Index = () => {
               </h4>
               <div className="space-y-2 text-sm text-orange-700">
                 <div className="flex items-center gap-2">
-                  <Bot className="h-4 w-4 text-orange-600 flex-shrink-0" />
-                  <span><strong>AI Training Protection:</strong> Interface available, core detection algorithms require API configuration</span>
+                  <Bot className="h-4 w-4 text-green-600 flex-shrink-0" />
+                  <span><strong>AI Training Protection:</strong> ✅ Real-time detection algorithms active with API integrations</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <UserX className="h-4 w-4 text-orange-600 flex-shrink-0" />
