@@ -59,10 +59,12 @@ const ProductionLegalTemplates: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [userMembership, setUserMembership] = useState<any>(null);
   const [purchasedTemplates, setPurchasedTemplates] = useState<string[]>([]);
+  const [userRole, setUserRole] = useState<string>('user');
 
   useEffect(() => {
     loadProductionTemplates();
     checkUserMembership();
+    checkUserRole();
     loadUserPurchases();
   }, []);
 
@@ -259,6 +261,25 @@ const ProductionLegalTemplates: React.FC = () => {
     }
   };
 
+  const checkUserRole = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data, error } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id)
+          .single();
+        
+        if (!error && data) {
+          setUserRole(data.role);
+        }
+      }
+    } catch (error) {
+      console.error('Error checking user role:', error);
+    }
+  };
+
   const checkUserMembership = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -298,9 +319,20 @@ const ProductionLegalTemplates: React.FC = () => {
       if (!user) {
         toast({
           title: "Login Required",
-          description: "Please sign in to purchase templates",
+          description: "Please sign in to access templates",
           variant: "destructive"
         });
+        return;
+      }
+
+      // Check if user is admin - admins get free access
+      if (userRole === 'admin') {
+        toast({
+          title: "Admin Access",
+          description: "Admin access granted - template available for download",
+        });
+        // Add template to purchased list for admin
+        setPurchasedTemplates(prev => [...prev, template.id]);
         return;
       }
 
@@ -358,10 +390,12 @@ const ProductionLegalTemplates: React.FC = () => {
     });
 
   const getPrice = (template: ProductionTemplate) => {
+    if (userRole === 'admin') return 0; // Free for admins
     return userMembership ? template.memberPrice : template.price;
   };
 
   const formatPrice = (cents: number) => {
+    if (cents === 0) return 'FREE';
     return `$${(cents / 100).toFixed(2)}`;
   };
 
@@ -404,6 +438,12 @@ const ProductionLegalTemplates: React.FC = () => {
               <Zap className="h-4 w-4" />
               Auto-Filing Ready
             </Badge>
+            {userRole === 'admin' && (
+              <Badge variant="destructive" className="flex items-center gap-2">
+                <Award className="h-4 w-4" />
+                Admin Access
+              </Badge>
+            )}
           </div>
         </div>
 
@@ -478,8 +518,9 @@ const ProductionLegalTemplates: React.FC = () => {
 
         {/* Templates Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAndSortedTemplates.map((template) => {
+        {filteredAndSortedTemplates.map((template) => {
             const isPurchased = purchasedTemplates.includes(template.id);
+            const isAdmin = userRole === 'admin';
             const currentPrice = getPrice(template);
             const originalPrice = template.price;
             const discount = userMembership && template.memberPrice < template.price;
@@ -549,7 +590,12 @@ const ProductionLegalTemplates: React.FC = () => {
                     {/* Price */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        {discount ? (
+                        {isAdmin ? (
+                          <>
+                            <span className="text-lg font-bold text-green-600">FREE</span>
+                            <Badge variant="destructive" className="text-xs">Admin</Badge>
+                          </>
+                        ) : discount ? (
                           <>
                             <span className="text-lg font-bold text-primary">{formatPrice(currentPrice)}</span>
                             <span className="text-sm text-muted-foreground line-through">{formatPrice(originalPrice)}</span>
@@ -567,7 +613,7 @@ const ProductionLegalTemplates: React.FC = () => {
 
                     {/* Actions */}
                     <div className="flex gap-2 pt-2">
-                      {isPurchased ? (
+                      {isPurchased || isAdmin ? (
                         <Button className="flex-1" variant="secondary">
                           <Download className="h-4 w-4 mr-2" />
                           Download
