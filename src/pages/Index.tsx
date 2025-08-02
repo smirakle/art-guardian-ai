@@ -261,6 +261,23 @@ const Index = () => {
               </div>
             </div>
             
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Additional Feature Status
+              </h4>
+              <div className="space-y-2 text-sm text-blue-700">
+                <div className="flex items-center gap-2">
+                  <Scale className="h-4 w-4 text-orange-600 flex-shrink-0" />
+                  <span><strong>Legal Templates:</strong> Interface complete, document downloads are simulated for testing</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-orange-600 flex-shrink-0" />
+                  <span><strong>Community Features:</strong> UI functional, real user interactions limited during beta phase</span>
+                </div>
+              </div>
+            </div>
+            
             <p className="text-sm text-gray-600 italic">
               We appreciate your participation in our beta testing program. Your feedback helps us 
               improve the platform for all creators.
