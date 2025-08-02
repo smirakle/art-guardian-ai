@@ -470,6 +470,187 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Advanced Protection Features */}
+      <section className="py-20 px-4 bg-gradient-to-br from-blue-50 to-purple-50">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <Badge variant="secondary" className="mb-4 px-4 py-2">
+              🛡️ Advanced Protection Suite
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Three-Layer Defense System
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Comprehensive protection across AI training datasets, social media profiles, 
+              and entire creative portfolios with real-time monitoring and automated response.
+            </p>
+          </div>
+          
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* AI Training Protection */}
+            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                  <Bot className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl text-center mb-4">AI Training Protection</CardTitle>
+                <CardDescription className="text-center text-base">
+                  Prevent unauthorized use of your creative work in AI training datasets and generative models.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Real-time AI scraping detection across major platforms</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Watermarking technology invisible to humans but detectable by AI</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Automated DMCA notices to AI training companies</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Legal certificate of protection for court cases</span>
+                  </div>
+                </div>
+                <div className="pt-4">
+                  <Button 
+                    className="w-full bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700"
+                    onClick={() => navigate("/ai-protection")}
+                  >
+                    Protect from AI Training
+                    <Shield className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Profile Monitoring */}
+            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                  <UserX className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl text-center mb-4">Profile Monitoring</CardTitle>
+                <CardDescription className="text-center text-base">
+                  Monitor for fake accounts, impersonation, and unauthorized use of your identity across social platforms.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Scan Instagram, Twitter, TikTok, Facebook for fake profiles</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Identity theft and impersonation detection</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Automated reporting to platform abuse teams</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Risk assessment and threat level analysis</span>
+                  </div>
+                </div>
+                <div className="pt-4">
+                  <Button 
+                    className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700"
+                    onClick={() => navigate("/profile-monitoring")}
+                  >
+                    Monitor Your Profile
+                    <Users className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Portfolio Monitoring */}
+            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                  <FileImage className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl text-center mb-4">Portfolio Monitoring</CardTitle>
+                <CardDescription className="text-center text-base">
+                  Comprehensive protection for your entire creative portfolio with multi-platform scanning and analytics.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Bulk monitoring of unlimited artworks and projects</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Cross-platform detection: marketplaces, social media, websites</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Scheduled scans and automated monitoring workflows</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Detailed analytics and threat intelligence reports</span>
+                  </div>
+                </div>
+                <div className="pt-4">
+                  <Button 
+                    className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700"
+                    onClick={() => navigate("/portfolio-monitoring")}
+                  >
+                    Monitor Portfolio
+                    <TrendingUp className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Protection Process */}
+          <div className="mt-16 bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+            <h3 className="text-2xl font-bold text-center mb-8">How It Works</h3>
+            <div className="grid md:grid-cols-4 gap-6">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
+                  1
+                </div>
+                <h4 className="font-semibold mb-2">Upload & Protect</h4>
+                <p className="text-sm text-muted-foreground">Upload your creative work and apply our multi-layer protection</p>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
+                  2
+                </div>
+                <h4 className="font-semibold mb-2">24/7 Scanning</h4>
+                <p className="text-sm text-muted-foreground">Our AI continuously monitors the web for unauthorized usage</p>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
+                  3
+                </div>
+                <h4 className="font-semibold mb-2">Instant Alerts</h4>
+                <p className="text-sm text-muted-foreground">Get notified immediately when potential theft is detected</p>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
+                  4
+                </div>
+                <h4 className="font-semibold mb-2">Take Action</h4>
+                <p className="text-sm text-muted-foreground">Automated DMCA filing and legal support to protect your rights</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Legal Resources Section */}
       <section className="py-20 px-4 bg-gray-50">
         <div className="container mx-auto max-w-6xl">
