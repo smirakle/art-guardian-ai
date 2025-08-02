@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
-import PatentDocumentDownload from '@/components/PatentDocumentDownload';
+
 
 import { 
   Shield, 
@@ -279,7 +279,7 @@ const Index = () => {
               </div>
             </div>
             
-            <PatentDocumentDownload />
+            
             
             <p className="text-sm text-gray-600 italic">
               We appreciate your participation in our beta testing program. Your feedback helps us 
