@@ -240,6 +240,27 @@ const Index = () => {
               </div>
             </div>
             
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+              <h4 className="font-semibold text-orange-800 mb-2 flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                Three-Layer Defense System Status
+              </h4>
+              <div className="space-y-2 text-sm text-orange-700">
+                <div className="flex items-center gap-2">
+                  <Bot className="h-4 w-4 text-orange-600 flex-shrink-0" />
+                  <span><strong>AI Training Protection:</strong> Interface available, core detection algorithms require API configuration</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <UserX className="h-4 w-4 text-orange-600 flex-shrink-0" />
+                  <span><strong>Profile Monitoring:</strong> Dashboard functional, real scanning requires external API setup</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FileImage className="h-4 w-4 text-orange-600 flex-shrink-0" />
+                  <span><strong>Portfolio Monitoring:</strong> Management tools active, deep web scanning in development</span>
+                </div>
+              </div>
+            </div>
+            
             <p className="text-sm text-gray-600 italic">
               We appreciate your participation in our beta testing program. Your feedback helps us 
               improve the platform for all creators.
