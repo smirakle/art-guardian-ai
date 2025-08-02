@@ -78,3 +78,6 @@ verify_jwt = false
 
 [functions.real-time-monitoring-engine]
 verify_jwt = false
+
+[functions.real-legal-document-processor]
+verify_jwt = true

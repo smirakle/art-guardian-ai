@@ -169,6 +169,7 @@ async function generateRealDocument(supabase: any, userId: string, request: Real
 
   return {
     documentId: document.id,
+    documentContent: personalizedContent, // Return the text content
     hash: documentHash,
     blockchainTxId,
     complianceReport,

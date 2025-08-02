@@ -389,12 +389,12 @@ const ProductionLegalTemplates: React.FC = () => {
       if (error) throw error;
 
       if (data?.documentContent) {
-        // Create and download the document
-        const blob = new Blob([data.documentContent], { type: 'application/pdf' });
+        // Create and download the document as a text file
+        const blob = new Blob([data.documentContent], { type: 'text/plain' });
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `${template.title.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+        link.download = `${template.title.replace(/[^a-zA-Z0-9]/g, '_')}.txt`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -404,6 +404,8 @@ const ProductionLegalTemplates: React.FC = () => {
           title: "Download Complete",
           description: `${template.title} has been downloaded successfully`,
         });
+      } else {
+        throw new Error('No document content received');
       }
     } catch (error) {
       console.error('Download error:', error);
