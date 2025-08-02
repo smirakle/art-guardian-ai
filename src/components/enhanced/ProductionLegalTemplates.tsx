@@ -285,9 +285,22 @@ const ProductionLegalTemplates: React.FC = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data, error } = await supabase.rpc('user_has_membership', { _user_id: user.id });
-        if (!error) {
+        // Get subscription info using the get_user_subscription function
+        const { data, error } = await supabase.rpc('get_user_subscription');
+        if (!error && data) {
           setUserMembership(data);
+        } else {
+          // Fallback: check subscriptions table directly
+          const { data: subData, error: subError } = await supabase
+            .from('subscriptions')
+            .select('plan_id, status')
+            .eq('user_id', user.id)
+            .eq('status', 'active')
+            .single();
+          
+          if (!subError && subData) {
+            setUserMembership(subData);
+          }
         }
       }
     } catch (error) {
@@ -326,13 +339,30 @@ const ProductionLegalTemplates: React.FC = () => {
         return;
       }
 
-      // Check if user is admin - admins get free access
+      // Check if user gets free access
       if (userRole === 'admin') {
         toast({
           title: "Admin Access",
           description: "Admin access granted - template available for download",
         });
-        // Add template to purchased list for admin
+        setPurchasedTemplates(prev => [...prev, template.id]);
+        return;
+      }
+
+      if (userMembership?.plan_id === 'student') {
+        toast({
+          title: "Student Access",
+          description: "Free student access granted - template available for download",
+        });
+        setPurchasedTemplates(prev => [...prev, template.id]);
+        return;
+      }
+
+      if (userMembership?.plan_id === 'starter') {
+        toast({
+          title: "Starter Plan Access",
+          description: "Free starter plan access granted - template available for download",
+        });
         setPurchasedTemplates(prev => [...prev, template.id]);
         return;
       }
@@ -455,6 +485,8 @@ const ProductionLegalTemplates: React.FC = () => {
 
   const getPrice = (template: ProductionTemplate) => {
     if (userRole === 'admin') return 0; // Free for admins
+    if (userMembership?.plan_id === 'student') return 0; // Free for students
+    if (userMembership?.plan_id === 'starter') return 0; // Free for starter plan
     return userMembership ? template.memberPrice : template.price;
   };
 
@@ -585,6 +617,9 @@ const ProductionLegalTemplates: React.FC = () => {
         {filteredAndSortedTemplates.map((template) => {
             const isPurchased = purchasedTemplates.includes(template.id);
             const isAdmin = userRole === 'admin';
+            const isStudent = userMembership?.plan_id === 'student';
+            const isStarter = userMembership?.plan_id === 'starter';
+            const isFreeAccess = isAdmin || isStudent || isStarter;
             const currentPrice = getPrice(template);
             const originalPrice = template.price;
             const discount = userMembership && template.memberPrice < template.price;
@@ -654,10 +689,12 @@ const ProductionLegalTemplates: React.FC = () => {
                     {/* Price */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        {isAdmin ? (
+                        {isFreeAccess ? (
                           <>
                             <span className="text-lg font-bold text-green-600">FREE</span>
-                            <Badge variant="destructive" className="text-xs">Admin</Badge>
+                            {isAdmin && <Badge variant="destructive" className="text-xs">Admin</Badge>}
+                            {isStudent && <Badge variant="secondary" className="text-xs">Student</Badge>}
+                            {isStarter && <Badge variant="secondary" className="text-xs">Starter Plan</Badge>}
                           </>
                         ) : discount ? (
                           <>
@@ -677,7 +714,7 @@ const ProductionLegalTemplates: React.FC = () => {
 
                     {/* Actions */}
                     <div className="flex gap-2 pt-2">
-                      {isPurchased || isAdmin ? (
+                      {isPurchased || isFreeAccess ? (
                         <Button 
                           className="flex-1" 
                           variant="secondary"
