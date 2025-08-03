@@ -41,6 +41,7 @@ import AITrainingProtection from "./pages/AITrainingProtection";
 import { CustomIntegrations } from "./components/CustomIntegrations";
 import ProfileMonitoring from "./pages/ProfileMonitoring";
 import PortfolioMonitoring from "./pages/PortfolioMonitoring";
+import TrademarkMonitoring from "./pages/TrademarkMonitoring";
 
 const queryClient = new QueryClient();
 
@@ -110,8 +111,9 @@ const App = () => {
                          <Route path="/ai-protection-settings" element={<AIProtectionSettings />} />
                          <Route path="/ai-training-protection" element={<AITrainingProtection />} />
                        <Route path="/custom-integrations" element={<CustomIntegrations />} />
-          <Route path="/profile-monitoring" element={<ProfileMonitoring />} />
-          <Route path="/portfolio-monitoring" element={<PortfolioMonitoring />} />
+           <Route path="/profile-monitoring" element={<ProfileMonitoring />} />
+           <Route path="/portfolio-monitoring" element={<PortfolioMonitoring />} />
+           <Route path="/trademark-monitoring" element={<TrademarkMonitoring />} />
                         <Route path="/certificate/:certificateId" element={<Certificate />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
