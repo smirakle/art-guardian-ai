@@ -3524,6 +3524,501 @@ export type Database = {
         }
         Relationships: []
       }
+      trademark_alerts: {
+        Row: {
+          alert_type: string
+          auto_resolved: boolean | null
+          confidence_score: number | null
+          created_at: string
+          description: string
+          dmca_notice_sent: boolean | null
+          evidence_data: Json | null
+          geographic_data: Json | null
+          id: string
+          legal_action_taken: boolean | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+          source_domain: string | null
+          source_url: string | null
+          status: string
+          title: string
+          trademark_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alert_type: string
+          auto_resolved?: boolean | null
+          confidence_score?: number | null
+          created_at?: string
+          description: string
+          dmca_notice_sent?: boolean | null
+          evidence_data?: Json | null
+          geographic_data?: Json | null
+          id?: string
+          legal_action_taken?: boolean | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          source_domain?: string | null
+          source_url?: string | null
+          status?: string
+          title: string
+          trademark_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alert_type?: string
+          auto_resolved?: boolean | null
+          confidence_score?: number | null
+          created_at?: string
+          description?: string
+          dmca_notice_sent?: boolean | null
+          evidence_data?: Json | null
+          geographic_data?: Json | null
+          id?: string
+          legal_action_taken?: boolean | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          source_domain?: string | null
+          source_url?: string | null
+          status?: string
+          title?: string
+          trademark_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trademark_alerts_trademark_id_fkey"
+            columns: ["trademark_id"]
+            isOneToOne: false
+            referencedRelation: "trademarks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trademark_monitoring_scans: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          error_details: Json | null
+          geographic_scope: string[] | null
+          high_risk_matches: number | null
+          id: string
+          low_risk_matches: number | null
+          medium_risk_matches: number | null
+          platforms_scanned: string[] | null
+          potential_infringements: number | null
+          scan_duration_seconds: number | null
+          scan_parameters: Json | null
+          scan_status: string
+          scan_type: string
+          search_terms_used: string[] | null
+          started_at: string
+          total_results_found: number | null
+          trademark_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          error_details?: Json | null
+          geographic_scope?: string[] | null
+          high_risk_matches?: number | null
+          id?: string
+          low_risk_matches?: number | null
+          medium_risk_matches?: number | null
+          platforms_scanned?: string[] | null
+          potential_infringements?: number | null
+          scan_duration_seconds?: number | null
+          scan_parameters?: Json | null
+          scan_status?: string
+          scan_type?: string
+          search_terms_used?: string[] | null
+          started_at?: string
+          total_results_found?: number | null
+          trademark_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          error_details?: Json | null
+          geographic_scope?: string[] | null
+          high_risk_matches?: number | null
+          id?: string
+          low_risk_matches?: number | null
+          medium_risk_matches?: number | null
+          platforms_scanned?: string[] | null
+          potential_infringements?: number | null
+          scan_duration_seconds?: number | null
+          scan_parameters?: Json | null
+          scan_status?: string
+          scan_type?: string
+          search_terms_used?: string[] | null
+          started_at?: string
+          total_results_found?: number | null
+          trademark_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trademark_monitoring_scans_trademark_id_fkey"
+            columns: ["trademark_id"]
+            isOneToOne: false
+            referencedRelation: "trademarks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trademark_portfolio_metrics: {
+        Row: {
+          active_trademarks: number
+          average_scan_duration_minutes: number | null
+          compliance_score: number | null
+          created_at: string
+          expired_trademarks: number
+          geographic_coverage: string[] | null
+          high_risk_alerts_count: number
+          id: string
+          metadata: Json | null
+          metric_date: string
+          monitoring_alerts_count: number
+          pending_applications: number
+          portfolio_value_estimate_usd: number | null
+          protection_score: number | null
+          renewals_due_30_days: number
+          renewals_due_90_days: number
+          total_scans_performed: number
+          total_trademarks: number
+          trademark_classes_covered: string[] | null
+          unresolved_alerts_count: number
+          user_id: string
+        }
+        Insert: {
+          active_trademarks?: number
+          average_scan_duration_minutes?: number | null
+          compliance_score?: number | null
+          created_at?: string
+          expired_trademarks?: number
+          geographic_coverage?: string[] | null
+          high_risk_alerts_count?: number
+          id?: string
+          metadata?: Json | null
+          metric_date?: string
+          monitoring_alerts_count?: number
+          pending_applications?: number
+          portfolio_value_estimate_usd?: number | null
+          protection_score?: number | null
+          renewals_due_30_days?: number
+          renewals_due_90_days?: number
+          total_scans_performed?: number
+          total_trademarks?: number
+          trademark_classes_covered?: string[] | null
+          unresolved_alerts_count?: number
+          user_id: string
+        }
+        Update: {
+          active_trademarks?: number
+          average_scan_duration_minutes?: number | null
+          compliance_score?: number | null
+          created_at?: string
+          expired_trademarks?: number
+          geographic_coverage?: string[] | null
+          high_risk_alerts_count?: number
+          id?: string
+          metadata?: Json | null
+          metric_date?: string
+          monitoring_alerts_count?: number
+          pending_applications?: number
+          portfolio_value_estimate_usd?: number | null
+          protection_score?: number | null
+          renewals_due_30_days?: number
+          renewals_due_90_days?: number
+          total_scans_performed?: number
+          total_trademarks?: number
+          trademark_classes_covered?: string[] | null
+          unresolved_alerts_count?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      trademark_renewals: {
+        Row: {
+          attorney_handling: string | null
+          automatic_renewal: boolean | null
+          confirmation_number: string | null
+          created_at: string
+          due_date: string
+          filed_date: string | null
+          grace_period_end: string | null
+          id: string
+          last_reminder_sent: string | null
+          notes: string | null
+          payment_method_id: string | null
+          receipt_url: string | null
+          reminder_schedule: Json | null
+          reminder_sent: boolean | null
+          renewal_fee_usd: number | null
+          renewal_type: string
+          status: string
+          trademark_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attorney_handling?: string | null
+          automatic_renewal?: boolean | null
+          confirmation_number?: string | null
+          created_at?: string
+          due_date: string
+          filed_date?: string | null
+          grace_period_end?: string | null
+          id?: string
+          last_reminder_sent?: string | null
+          notes?: string | null
+          payment_method_id?: string | null
+          receipt_url?: string | null
+          reminder_schedule?: Json | null
+          reminder_sent?: boolean | null
+          renewal_fee_usd?: number | null
+          renewal_type: string
+          status?: string
+          trademark_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attorney_handling?: string | null
+          automatic_renewal?: boolean | null
+          confirmation_number?: string | null
+          created_at?: string
+          due_date?: string
+          filed_date?: string | null
+          grace_period_end?: string | null
+          id?: string
+          last_reminder_sent?: string | null
+          notes?: string | null
+          payment_method_id?: string | null
+          receipt_url?: string | null
+          reminder_schedule?: Json | null
+          reminder_sent?: boolean | null
+          renewal_fee_usd?: number | null
+          renewal_type?: string
+          status?: string
+          trademark_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trademark_renewals_trademark_id_fkey"
+            columns: ["trademark_id"]
+            isOneToOne: false
+            referencedRelation: "trademarks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trademark_search_results: {
+        Row: {
+          applicant_name: string | null
+          application_number: string | null
+          confidence_score: number
+          created_at: string
+          evidence_preserved: boolean | null
+          filing_date: string | null
+          geographic_scope: string | null
+          goods_services: string | null
+          id: string
+          is_reviewed: boolean | null
+          legal_analysis: Json | null
+          match_type: string
+          recommended_actions: string[] | null
+          result_type: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          reviewer_notes: string | null
+          risk_level: string
+          scan_id: string
+          similarity_analysis: Json | null
+          source_description: string | null
+          source_platform: string
+          source_title: string | null
+          source_url: string | null
+          status: string | null
+          trademark_class: string[] | null
+          trademark_id: string
+          trademark_image_url: string | null
+          trademark_text: string | null
+          user_id: string
+        }
+        Insert: {
+          applicant_name?: string | null
+          application_number?: string | null
+          confidence_score: number
+          created_at?: string
+          evidence_preserved?: boolean | null
+          filing_date?: string | null
+          geographic_scope?: string | null
+          goods_services?: string | null
+          id?: string
+          is_reviewed?: boolean | null
+          legal_analysis?: Json | null
+          match_type: string
+          recommended_actions?: string[] | null
+          result_type: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_notes?: string | null
+          risk_level?: string
+          scan_id: string
+          similarity_analysis?: Json | null
+          source_description?: string | null
+          source_platform: string
+          source_title?: string | null
+          source_url?: string | null
+          status?: string | null
+          trademark_class?: string[] | null
+          trademark_id: string
+          trademark_image_url?: string | null
+          trademark_text?: string | null
+          user_id: string
+        }
+        Update: {
+          applicant_name?: string | null
+          application_number?: string | null
+          confidence_score?: number
+          created_at?: string
+          evidence_preserved?: boolean | null
+          filing_date?: string | null
+          geographic_scope?: string | null
+          goods_services?: string | null
+          id?: string
+          is_reviewed?: boolean | null
+          legal_analysis?: Json | null
+          match_type?: string
+          recommended_actions?: string[] | null
+          result_type?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_notes?: string | null
+          risk_level?: string
+          scan_id?: string
+          similarity_analysis?: Json | null
+          source_description?: string | null
+          source_platform?: string
+          source_title?: string | null
+          source_url?: string | null
+          status?: string | null
+          trademark_class?: string[] | null
+          trademark_id?: string
+          trademark_image_url?: string | null
+          trademark_text?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trademark_search_results_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "trademark_monitoring_scans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trademark_search_results_trademark_id_fkey"
+            columns: ["trademark_id"]
+            isOneToOne: false
+            referencedRelation: "trademarks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trademarks: {
+        Row: {
+          application_number: string | null
+          attorney_info: Json | null
+          created_at: string
+          description: string | null
+          filing_date: string | null
+          goods_services: string | null
+          id: string
+          jurisdiction: string
+          last_monitored_at: string | null
+          madrid_protocol: boolean | null
+          metadata: Json | null
+          monitoring_enabled: boolean | null
+          owner_address: string | null
+          owner_name: string | null
+          priority_claims: Json | null
+          registration_date: string | null
+          registration_number: string | null
+          renewal_date: string | null
+          status: string
+          trademark_class: string[] | null
+          trademark_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          application_number?: string | null
+          attorney_info?: Json | null
+          created_at?: string
+          description?: string | null
+          filing_date?: string | null
+          goods_services?: string | null
+          id?: string
+          jurisdiction: string
+          last_monitored_at?: string | null
+          madrid_protocol?: boolean | null
+          metadata?: Json | null
+          monitoring_enabled?: boolean | null
+          owner_address?: string | null
+          owner_name?: string | null
+          priority_claims?: Json | null
+          registration_date?: string | null
+          registration_number?: string | null
+          renewal_date?: string | null
+          status?: string
+          trademark_class?: string[] | null
+          trademark_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          application_number?: string | null
+          attorney_info?: Json | null
+          created_at?: string
+          description?: string | null
+          filing_date?: string | null
+          goods_services?: string | null
+          id?: string
+          jurisdiction?: string
+          last_monitored_at?: string | null
+          madrid_protocol?: boolean | null
+          metadata?: Json | null
+          monitoring_enabled?: boolean | null
+          owner_address?: string | null
+          owner_name?: string | null
+          priority_claims?: Json | null
+          registration_date?: string | null
+          registration_number?: string | null
+          renewal_date?: string | null
+          status?: string
+          trademark_class?: string[] | null
+          trademark_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_legal_profiles: {
         Row: {
           address_line_1: string
