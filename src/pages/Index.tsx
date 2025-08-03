@@ -511,6 +511,16 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground">Automated DMCA filing and legal assistance when needed</p>
               </div>
             </div>
+
+            <div className="flex items-start space-x-4">
+              <div className="w-8 h-8 bg-emerald-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+                <Scale className="h-4 w-4 text-emerald-500" />
+              </div>
+              <div>
+                <h3 className="font-semibold mb-2">Trademark Intelligence</h3>
+                <p className="text-sm text-muted-foreground">AI-powered trademark monitoring and legal automation across global jurisdictions</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -523,15 +533,15 @@ const Index = () => {
               🛡️ Advanced Protection Suite
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Three-Layer Defense System
+              Four-Layer Defense System
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Comprehensive protection across AI training datasets, social media profiles, 
-              and entire creative portfolios with real-time monitoring and automated response.
+              entire creative portfolios, and trademark intelligence with real-time monitoring and automated response.
             </p>
           </div>
           
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-2 xl:grid-cols-4 gap-8">
             {/* AI Training Protection */}
             <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
               <CardHeader className="pb-4">
@@ -653,6 +663,49 @@ const Index = () => {
                   >
                     Monitor Portfolio
                     <TrendingUp className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Trademark Intelligence */}
+            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                  <Scale className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl text-center mb-4">Trademark Intelligence</CardTitle>
+                <CardDescription className="text-center text-base">
+                  AI-powered trademark monitoring and legal automation across global jurisdictions for comprehensive IP protection.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Multi-jurisdiction trademark similarity analysis</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Real-time monitoring across USPTO and international databases</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Automated legal workflow and document generation</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Advanced analytics and portfolio management</span>
+                  </div>
+                </div>
+                
+                <div className="pt-4">
+                  <Button 
+                    className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
+                    onClick={() => navigate("/trademark-monitoring")}
+                  >
+                    Monitor Trademarks
+                    <Scale className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
               </CardContent>
