@@ -1,36 +1,36 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, Shield, AlertTriangle, CheckCircle, Clock } from "lucide-react";
+import { Brain, Globe, Shield, Zap, AlertTriangle, BarChart3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import AdvancedTrademarkSearch from "@/components/trademark/AdvancedTrademarkSearch";
+import TrademarkAnalytics from "@/components/trademark/TrademarkAnalytics";
+import TrademarkPortfolio from "@/components/trademark/TrademarkPortfolio";
+import RealTimeTrademarkAlerts from "@/components/trademark/RealTimeTrademarkAlerts";
+
+interface SearchParameters {
+  query: string;
+  searchType: 'text' | 'image' | 'phonetic' | 'semantic';
+  jurisdictions: string[];
+  classifications: string[];
+  similarityThreshold: number;
+  platforms: string[];
+  includeExpired: boolean;
+  fuzzyMatching: boolean;
+  searchDepth: 'surface' | 'deep' | 'comprehensive';
+}
 
 const TrademarkMonitoring: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
   const [isScanning, setIsScanning] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
 
-  const handleTrademarkScan = async () => {
-    if (!searchQuery.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a trademark name to search",
-        variant: "destructive"
-      });
-      return;
-    }
-
+  const handleAdvancedSearch = async (searchParams: SearchParameters) => {
     if (!user) {
       toast({
         title: "Authentication Required",
-        description: "Please sign in to start a trademark scan",
+        description: "Please sign in to start a trademark search",
         variant: "destructive"
       });
       return;
@@ -38,45 +38,51 @@ const TrademarkMonitoring: React.FC = () => {
 
     setIsScanning(true);
     try {
-      // First create a trademark record
+      // Create trademark record
       const { data: trademark, error: trademarkError } = await supabase
         .from('trademarks')
         .insert({
           user_id: user.id,
-          trademark_name: searchQuery.trim(),
-          jurisdiction: 'US',
+          trademark_name: searchParams.query.trim(),
+          jurisdiction: searchParams.jurisdictions[0] || 'US',
           status: 'monitoring',
-          description: `Trademark monitoring for "${searchQuery.trim()}"`
+          description: `Advanced trademark monitoring for "${searchParams.query.trim()}"`,
+          trademark_class: searchParams.classifications
         })
         .select()
         .single();
 
       if (trademarkError) throw trademarkError;
 
-      // Now start the monitoring scan
+      // Start advanced monitoring scan
       const { data, error } = await supabase.functions.invoke('trademark-monitoring-engine', {
         body: {
           action: 'scan_trademark',
           trademark_id: trademark.id,
-          scan_type: 'comprehensive',
-          platforms: ['uspto', 'google', 'amazon'],
-          search_terms: [searchQuery.trim()]
+          scan_type: searchParams.searchDepth,
+          platforms: searchParams.platforms,
+          search_terms: [searchParams.query.trim()],
+          jurisdictions: searchParams.jurisdictions,
+          similarity_threshold: searchParams.similarityThreshold,
+          fuzzy_matching: searchParams.fuzzyMatching,
+          include_expired: searchParams.includeExpired,
+          search_type: searchParams.searchType
         }
       });
 
       if (error) throw error;
 
       toast({
-        title: "Scan Started",
-        description: `Trademark monitoring scan initiated for "${searchQuery}"`,
+        title: "Advanced Search Started",
+        description: `AI-powered trademark analysis initiated for "${searchParams.query}"`,
       });
 
-      console.log('Scan results:', data);
+      console.log('Advanced search results:', data);
     } catch (error) {
-      console.error('Scan error:', error);
+      console.error('Search error:', error);
       toast({
-        title: "Scan Failed",
-        description: "Failed to start trademark monitoring scan. Please try again.",
+        title: "Search Failed",
+        description: "Failed to start advanced trademark search. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -87,178 +93,71 @@ const TrademarkMonitoring: React.FC = () => {
   return (
     <div className="min-h-screen bg-background pt-20 pb-12">
       <div className="container mx-auto px-4">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-4">
-              Trademark Monitoring
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+              Advanced Trademark Intelligence
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Protect your brand with comprehensive trademark monitoring across multiple platforms
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              AI-powered trademark monitoring, analysis, and protection across 200+ platforms and 50+ jurisdictions worldwide
             </p>
+            <div className="flex items-center justify-center gap-6 mt-6">
+              <div className="flex items-center gap-2 text-sm">
+                <Brain className="h-4 w-4 text-primary" />
+                <span>AI-Powered Analysis</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Globe className="h-4 w-4 text-primary" />
+                <span>Global Coverage</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Zap className="h-4 w-4 text-primary" />
+                <span>Real-Time Monitoring</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Shield className="h-4 w-4 text-primary" />
+                <span>Legal Automation</span>
+              </div>
+            </div>
           </div>
 
           <Tabs defaultValue="search" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="search">Search & Monitor</TabsTrigger>
-              <TabsTrigger value="alerts">Alerts</TabsTrigger>
-              <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-4 h-14">
+              <TabsTrigger value="search" className="flex items-center gap-2 text-base">
+                <Brain className="h-4 w-4" />
+                AI Search
+              </TabsTrigger>
+              <TabsTrigger value="alerts" className="flex items-center gap-2 text-base">
+                <AlertTriangle className="h-4 w-4" />
+                Live Alerts
+              </TabsTrigger>
+              <TabsTrigger value="portfolio" className="flex items-center gap-2 text-base">
+                <Shield className="h-4 w-4" />
+                Portfolio
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className="flex items-center gap-2 text-base">
+                <BarChart3 className="h-4 w-4" />
+                Analytics
+              </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="search" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Search className="h-5 w-5" />
-                    Trademark Search & Monitoring
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="trademark-search">Trademark Name</Label>
-                    <Input
-                      id="trademark-search"
-                      placeholder="Enter trademark name to monitor..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                  
-                  <Alert>
-                    <Shield className="h-4 w-4" />
-                    <AlertDescription>
-                      Our monitoring system will scan USPTO, EUIPO, Google, Amazon, and social media platforms for potential trademark conflicts.
-                    </AlertDescription>
-                  </Alert>
-
-                  <Button 
-                    onClick={handleTrademarkScan}
-                    disabled={isScanning}
-                    className="w-full"
-                  >
-                    {isScanning ? (
-                      <>
-                        <Clock className="mr-2 h-4 w-4 animate-spin" />
-                        Scanning...
-                      </>
-                    ) : (
-                      <>
-                        <Search className="mr-2 h-4 w-4" />
-                        Start Monitoring Scan
-                      </>
-                    )}
-                  </Button>
-                </CardContent>
-              </Card>
+            <TabsContent value="search" className="mt-6">
+              <AdvancedTrademarkSearch 
+                onSearch={handleAdvancedSearch}
+                isSearching={isScanning}
+              />
             </TabsContent>
 
-            <TabsContent value="alerts" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5" />
-                    Recent Alerts
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div className="h-3 w-3 bg-red-500 rounded-full"></div>
-                        <div>
-                          <p className="font-medium">High Risk Match Detected</p>
-                          <p className="text-sm text-muted-foreground">Similar trademark found on USPTO</p>
-                        </div>
-                      </div>
-                      <Badge variant="destructive">High Risk</Badge>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div className="h-3 w-3 bg-yellow-500 rounded-full"></div>
-                        <div>
-                          <p className="font-medium">Domain Registration Alert</p>
-                          <p className="text-sm text-muted-foreground">Similar domain registered recently</p>
-                        </div>
-                      </div>
-                      <Badge variant="secondary">Medium Risk</Badge>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div className="h-3 w-3 bg-green-500 rounded-full"></div>
-                        <div>
-                          <p className="font-medium">Monitoring Complete</p>
-                          <p className="text-sm text-muted-foreground">Weekly scan completed successfully</p>
-                        </div>
-                      </div>
-                      <Badge variant="outline">Resolved</Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+            <TabsContent value="alerts" className="mt-6">
+              <RealTimeTrademarkAlerts />
             </TabsContent>
 
-            <TabsContent value="portfolio" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-5 w-5" />
-                    Trademark Portfolio
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div className="text-center p-4 border rounded-lg">
-                      <div className="text-2xl font-bold text-primary">0</div>
-                      <div className="text-sm text-muted-foreground">Active Trademarks</div>
-                    </div>
-                    <div className="text-center p-4 border rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">0</div>
-                      <div className="text-sm text-muted-foreground">Protected Assets</div>
-                    </div>
-                    <div className="text-center p-4 border rounded-lg">
-                      <div className="text-2xl font-bold text-orange-600">0</div>
-                      <div className="text-sm text-muted-foreground">Pending Renewals</div>
-                    </div>
-                  </div>
-                  
-                  <Alert>
-                    <CheckCircle className="h-4 w-4" />
-                    <AlertDescription>
-                      No trademarks registered yet. Start by adding your first trademark to begin monitoring.
-                    </AlertDescription>
-                  </Alert>
-                </CardContent>
-              </Card>
+            <TabsContent value="portfolio" className="mt-6">
+              <TrademarkPortfolio />
             </TabsContent>
 
-            <TabsContent value="analytics" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Monitoring Analytics</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="text-center p-4 border rounded-lg">
-                      <div className="text-2xl font-bold">0</div>
-                      <div className="text-sm text-muted-foreground">Total Scans</div>
-                    </div>
-                    <div className="text-center p-4 border rounded-lg">
-                      <div className="text-2xl font-bold">0</div>
-                      <div className="text-sm text-muted-foreground">Matches Found</div>
-                    </div>
-                    <div className="text-center p-4 border rounded-lg">
-                      <div className="text-2xl font-bold">0</div>
-                      <div className="text-sm text-muted-foreground">High Risk Alerts</div>
-                    </div>
-                    <div className="text-center p-4 border rounded-lg">
-                      <div className="text-2xl font-bold">0</div>
-                      <div className="text-sm text-muted-foreground">Actions Taken</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+            <TabsContent value="analytics" className="mt-6">
+              <TrademarkAnalytics />
             </TabsContent>
           </Tabs>
         </div>
