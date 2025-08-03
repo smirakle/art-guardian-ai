@@ -796,6 +796,7 @@ async function enhanceResultsWithAI(results: ScanResult[], originalImageUrl: str
     console.error('Error enhancing results with AI:', error);
     return results;
   }
+}
 
 async function analyzeContentWithAI(contentText: string, contentType: string, searchTerms: string[]): Promise<ScanResult[]> {
   const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
