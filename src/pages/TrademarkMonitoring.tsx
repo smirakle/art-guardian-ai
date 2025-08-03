@@ -7,13 +7,15 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Shield, AlertTriangle, CheckCircle, Clock } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 const TrademarkMonitoring: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isScanning, setIsScanning] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleTrademarkScan = async () => {
     if (!searchQuery.trim()) {
@@ -25,15 +27,40 @@ const TrademarkMonitoring: React.FC = () => {
       return;
     }
 
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to start a trademark scan",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsScanning(true);
     try {
+      // First create a trademark record
+      const { data: trademark, error: trademarkError } = await supabase
+        .from('trademarks')
+        .insert({
+          user_id: user.id,
+          trademark_name: searchQuery.trim(),
+          jurisdiction: 'US',
+          status: 'monitoring',
+          description: `Trademark monitoring for "${searchQuery.trim()}"`
+        })
+        .select()
+        .single();
+
+      if (trademarkError) throw trademarkError;
+
+      // Now start the monitoring scan
       const { data, error } = await supabase.functions.invoke('trademark-monitoring-engine', {
         body: {
           action: 'scan_trademark',
-          trademark_id: 'demo-trademark-id',
+          trademark_id: trademark.id,
           scan_type: 'comprehensive',
           platforms: ['uspto', 'google', 'amazon'],
-          search_terms: [searchQuery]
+          search_terms: [searchQuery.trim()]
         }
       });
 
@@ -49,7 +76,7 @@ const TrademarkMonitoring: React.FC = () => {
       console.error('Scan error:', error);
       toast({
         title: "Scan Failed",
-        description: "Failed to start trademark monitoring scan",
+        description: "Failed to start trademark monitoring scan. Please try again.",
         variant: "destructive"
       });
     } finally {
