@@ -1,4 +1,4 @@
-import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search, Briefcase, UserCheck } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search, Briefcase, UserCheck, Copyright } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
@@ -150,6 +150,18 @@ export function AppSidebar() {
                   >
                     <Briefcase className="w-4 h-4" />
                     {!collapsed && <span>Portfolio Monitoring</span>}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+
+                {/* Trademark Monitoring */}
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    onClick={() => navigate('/trademark-monitoring')}
+                    isActive={isActive('/trademark-monitoring')}
+                    className="flex items-center gap-2"
+                  >
+                    <Copyright className="w-4 h-4" />
+                    {!collapsed && <span>Trademark Monitoring</span>}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
