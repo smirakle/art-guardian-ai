@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { TestTube, Upload, Download, CheckCircle, AlertCircle } from "lucide-react";
+import { TestTube, Upload, Download, CheckCircle, AlertCircle, FileText } from "lucide-react";
 import { enhancedRealWorldProtection } from "@/lib/enhancedRealWorldProtection";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import jsPDF from 'jspdf';
 
 export const ProtectionTestPanel = () => {
   const { user } = useAuth();
@@ -124,6 +125,161 @@ export const ProtectionTestPanel = () => {
     }
   };
 
+  const generateTestReportPDF = async () => {
+    if (!testResults) {
+      toast({
+        title: "No Test Results",
+        description: "Run the protection test first to generate a report.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const pdf = new jsPDF();
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const margin = 20;
+      let yPosition = 30;
+
+      // Header with TSMO branding
+      pdf.setFontSize(24);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('TSMO', margin, yPosition);
+      
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('AI Training Protection System', margin + 50, yPosition);
+      
+      yPosition += 10;
+      pdf.setFontSize(10);
+      pdf.text('Advanced Protection Against Unauthorized AI Training', margin, yPosition);
+
+      // Add line separator
+      yPosition += 15;
+      pdf.line(margin, yPosition, pageWidth - margin, yPosition);
+      yPosition += 20;
+
+      // Title
+      pdf.setFontSize(20);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('AI Protection Test Report', margin, yPosition);
+      yPosition += 20;
+
+      // Test Information
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Test Overview', margin, yPosition);
+      yPosition += 15;
+
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      
+      const testInfo = [
+        `Test Date: ${new Date().toLocaleString()}`,
+        `Test Status: ${testResults.success ? 'PASSED' : 'FAILED'}`,
+        `Protection ID: ${testResults.protectionId || 'N/A'}`,
+        `Protection Level: ${testResults.protectionLevel || 'N/A'}`,
+        `Storage Path: ${testResults.storagePath || 'N/A'}`,
+        `Record ID: ${testResults.recordId || 'N/A'}`,
+        `Methods Applied: ${testResults.protectionMethods?.length || 0}/6`
+      ];
+
+      testInfo.forEach(info => {
+        pdf.text(info, margin, yPosition);
+        yPosition += 12;
+      });
+
+      yPosition += 10;
+
+      // Protection Methods Section
+      if (testResults.protectionMethods && testResults.protectionMethods.length > 0) {
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Applied Protection Methods', margin, yPosition);
+        yPosition += 15;
+
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(10);
+        
+        testResults.protectionMethods.forEach((method: string, index: number) => {
+          pdf.text(`✓ ${method.replace(/_/g, ' ').toUpperCase()}`, margin + 10, yPosition);
+          yPosition += 12;
+        });
+
+        yPosition += 10;
+      }
+
+      // Errors Section (if any)
+      if (testResults.errors && testResults.errors.length > 0) {
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Errors Encountered', margin, yPosition);
+        yPosition += 15;
+
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(10);
+        
+        testResults.errors.forEach((error: string) => {
+          pdf.text(`× ${error}`, margin + 10, yPosition);
+          yPosition += 12;
+        });
+
+        yPosition += 10;
+      }
+
+      // Technical Details
+      yPosition += 10;
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Technical Specifications', margin, yPosition);
+      yPosition += 15;
+
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      
+      const technicalDetails = [
+        'Expected Protection Methods:',
+        '• Adversarial Noise - Prevents neural network recognition',
+        '• Rights Metadata - Embeds copyright information',
+        '• Crawler Blocking - Blocks automated data harvesting',
+        '• Invisible Watermark - Hidden ownership markers',
+        '• Blockchain Registration - Immutable proof of ownership',
+        '• Likeness Protection - Protects against deepfake creation',
+        '• Advanced Fingerprinting - Unique content identification',
+        '• Maximum Obfuscation - Advanced anti-AI techniques'
+      ];
+
+      technicalDetails.forEach(detail => {
+        pdf.text(detail, margin, yPosition);
+        yPosition += 12;
+      });
+
+      // Footer
+      const footerY = pdf.internal.pageSize.getHeight() - 30;
+      pdf.line(margin, footerY, pageWidth - margin, footerY);
+      
+      pdf.setFontSize(8);
+      pdf.text('TSMO - AI Training Protection System', margin, footerY + 10);
+      pdf.text(`Generated on ${new Date().toLocaleDateString()}`, margin, footerY + 20);
+      pdf.text('© 2024 TSMO. All rights reserved.', pageWidth - margin - 60, footerY + 10);
+
+      // Save the PDF
+      pdf.save(`TSMO-AI-Protection-Test-Report-${new Date().toISOString().split('T')[0]}.pdf`);
+
+      toast({
+        title: "PDF Generated",
+        description: "AI Protection test report has been downloaded as PDF.",
+      });
+    } catch (error) {
+      console.error('PDF generation failed:', error);
+      toast({
+        title: "PDF Generation Failed",
+        description: error instanceof Error ? error.message : "Failed to generate PDF report",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -137,7 +293,7 @@ export const ProtectionTestPanel = () => {
           Test the complete AI protection pipeline: create file → apply all 6 protection methods → save to storage → download
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Button 
             onClick={runProtectionTest}
             disabled={testing}
@@ -148,14 +304,25 @@ export const ProtectionTestPanel = () => {
           </Button>
 
           {testResults?.success && (
-            <Button 
-              onClick={downloadTestFile}
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <Download className="w-4 h-4" />
-              Download Test File
-            </Button>
+            <>
+              <Button 
+                onClick={downloadTestFile}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <Download className="w-4 h-4" />
+                Download Test File
+              </Button>
+              
+              <Button 
+                onClick={generateTestReportPDF}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <FileText className="w-4 h-4" />
+                Generate PDF Report
+              </Button>
+            </>
           )}
         </div>
 
