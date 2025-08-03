@@ -3,6 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 import SecurityAuditLog from "@/components/admin/SecurityAuditLog";
 import UserManagement from "@/components/admin/UserManagement";
+import EnhancedUserManagement from "@/components/admin/EnhancedUserManagement";
+import RealTimeDataMonitoring from "@/components/admin/RealTimeDataMonitoring";
 import DataExportPanel from "@/components/admin/DataExportPanel";
 import SystemManagement from "@/components/admin/SystemManagement";
 import RealTimeMonitoring from "@/components/RealTimeMonitoring";
@@ -18,9 +20,11 @@ const Admin = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-8">
+            <TabsList className="grid w-full grid-cols-10">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
+              <TabsTrigger value="enhanced-users">Enhanced Users</TabsTrigger>
+              <TabsTrigger value="realtime">Real-Time</TabsTrigger>
               <TabsTrigger value="data">Data Export</TabsTrigger>
               <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -35,6 +39,14 @@ const Admin = () => {
 
             <TabsContent value="users" className="space-y-6">
               <UserManagement />
+            </TabsContent>
+
+            <TabsContent value="enhanced-users" className="space-y-6">
+              <EnhancedUserManagement />
+            </TabsContent>
+
+            <TabsContent value="realtime" className="space-y-6">
+              <RealTimeDataMonitoring />
             </TabsContent>
 
             <TabsContent value="monitoring" className="space-y-6">
