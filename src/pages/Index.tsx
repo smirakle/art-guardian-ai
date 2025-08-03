@@ -244,7 +244,7 @@ const Index = () => {
             <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
               <h4 className="font-semibold text-orange-800 mb-2 flex items-center gap-2">
                 <Shield className="h-4 w-4" />
-                Three-Layer Defense System Status
+                Four-Layer Defense System Status
               </h4>
               <div className="space-y-2 text-sm text-orange-700">
                 <div className="flex items-center gap-2">
@@ -258,6 +258,10 @@ const Index = () => {
                 <div className="flex items-center gap-2">
                   <FileImage className="h-4 w-4 text-orange-600 flex-shrink-0" />
                   <span><strong>Portfolio Monitoring:</strong> Management tools active, deep web scanning in development</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Scale className="h-4 w-4 text-green-600 flex-shrink-0" />
+                  <span><strong>Trademark Intelligence:</strong> ✅ AI-powered trademark monitoring and legal automation fully functional</span>
                 </div>
               </div>
             </div>

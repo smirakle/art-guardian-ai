@@ -55,6 +55,10 @@
     "apiIntegration": {
       "title": "API Integration",
       "description": "Seamlessly integrate with your existing workflow and portfolio platforms"
+    },
+    "trademarkMonitoring": {
+      "title": "Trademark Intelligence",
+      "description": "AI-powered trademark monitoring, similarity analysis, and automated legal workflows across global jurisdictions"
     }
   },
   "cta": {

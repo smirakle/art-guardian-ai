@@ -9,7 +9,8 @@ import {
   Lock,
   Search,
   AlertTriangle,
-  Scale
+  Scale,
+  ShieldCheck
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -78,6 +79,13 @@ const Features = () => {
       descriptionKey: "features.apiIntegration.description",
       badge: "Developer",
       variant: "secondary" as const
+    },
+    {
+      icon: ShieldCheck,
+      titleKey: "features.trademarkMonitoring.title",
+      descriptionKey: "features.trademarkMonitoring.description",
+      badge: "Intelligence",
+      variant: "destructive" as const
     }
   ];
 
