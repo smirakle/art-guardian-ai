@@ -495,7 +495,7 @@ const InvestorPitchDeck = () => {
       content: (
         <div className="space-y-8">
           <div className="text-center">
-            <h2 className="text-4xl font-bold mb-4">Realistic Financial Projections</h2>
+            <h2 className="text-4xl font-bold mb-4">Financial Projections</h2>
             <p className="text-xl text-muted-foreground">Bootstrap model with clear path to Series A</p>
           </div>
           
