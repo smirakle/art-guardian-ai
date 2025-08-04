@@ -64,7 +64,7 @@ const InvestorPitchDeck = () => {
           </div>
           
           <Badge variant="secondary" className="text-lg px-6 py-2">
-            🚀 Founded 2024 • Legal Technology • Seed Stage
+            🚀 Founded 2025 • Seed Stage
           </Badge>
         </div>
       )
