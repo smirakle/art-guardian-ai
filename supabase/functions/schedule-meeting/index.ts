@@ -61,7 +61,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send confirmation email to the requester
     const confirmationEmail = await resend.emails.send({
-      from: "TSMO Team <hello@tsmowatch.com>",
+      from: "TSMO Team <onboarding@resend.dev>",
       to: [meetingData.email],
       subject: "Meeting Request Received - TSMO",
       html: `
@@ -157,7 +157,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send notification email to TSMO team
     const notificationEmail = await resend.emails.send({
-      from: "TSMO Meeting System <hello@tsmowatch.com>",
+      from: "TSMO Meeting System <onboarding@resend.dev>",
       to: ["shirleena.cunningham@tsmowatch.com"],
       subject: `New Meeting Request: ${getMeetingTypeLabel(meetingData.meetingType)} - ${meetingData.name}`,
       html: `
