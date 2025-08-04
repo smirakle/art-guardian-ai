@@ -64,7 +64,7 @@ const InvestorPitchDeck = () => {
           </div>
           
           <Badge variant="secondary" className="text-lg px-6 py-2">
-            🚀 Founded 2023 • Legal Technology • AI Protection
+            🚀 Founded 2025 • Legal Technology • AI Protection
           </Badge>
         </div>
       )
