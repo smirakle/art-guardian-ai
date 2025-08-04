@@ -197,7 +197,7 @@ const InvestorPitchDeck = () => {
                   <h3 className="text-lg font-semibold">Legal Enforcement</h3>
                 </div>
                 <ul className="space-y-2 text-sm">
-                  <li>• 500+ verified IP lawyers network</li>
+                  <li>• Expert legal network integration</li>
                   <li>• Automated compliance workflows</li>
                   <li>• Government filing integration</li>
                 </ul>
@@ -469,7 +469,7 @@ const InvestorPitchDeck = () => {
               <CardContent className="space-y-3">
                 <div className="flex items-center gap-2">
                   <Award className="h-4 w-4 text-yellow-600" />
-                  <span className="text-sm">500+ verified IP lawyers network</span>
+                  <span className="text-sm">Expert legal network integration</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Globe className="h-4 w-4 text-blue-600" />
