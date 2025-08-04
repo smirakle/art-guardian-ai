@@ -296,19 +296,19 @@ const InvestorPitchDeck = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Student</span>
-                  <span className="font-semibold">$7.99/month</span>
+                  <span className="font-semibold">$19.99/month</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Starter</span>
-                  <span className="font-semibold">$24.99/month</span>
+                  <span className="font-semibold">$29.99/month</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Professional</span>
-                  <span className="font-semibold">$79.99/month</span>
+                  <span className="font-semibold">$199.99/month</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Enterprise</span>
-                  <span className="font-semibold">$199.99/month</span>
+                  <span className="font-semibold">$5,000/month</span>
                 </div>
               </CardContent>
             </Card>
@@ -364,11 +364,11 @@ const InvestorPitchDeck = () => {
                 <div className="text-sm text-green-700">Customer Acquisition Cost</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-green-600">$180</div>
+                <div className="text-2xl font-bold text-green-600">$65</div>
                 <div className="text-sm text-green-700">Lifetime Value</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-green-600">4.5x</div>
+                <div className="text-2xl font-bold text-green-600">6.5x</div>
                 <div className="text-sm text-green-700">LTV/CAC Ratio</div>
               </div>
               <div>
@@ -456,7 +456,7 @@ const InvestorPitchDeck = () => {
                 </div>
                 <div className="flex justify-between">
                   <span>Average Revenue Per User</span>
-                  <span className="font-semibold text-purple-600">$42/month</span>
+                  <span className="font-semibold text-purple-600">$85/month</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Platform Detection Accuracy</span>
@@ -521,9 +521,9 @@ const InvestorPitchDeck = () => {
                 </tr>
                 <tr className="border-b">
                   <td className="p-3 font-medium">ARPU</td>
-                  <td className="p-3 text-center">$42</td>
-                  <td className="p-3 text-center">$38</td>
-                  <td className="p-3 text-center">$35</td>
+                  <td className="p-3 text-center">$85</td>
+                  <td className="p-3 text-center">$78</td>
+                  <td className="p-3 text-center">$72</td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-3 font-medium">Subscription Revenue</td>
@@ -565,9 +565,9 @@ const InvestorPitchDeck = () => {
                 <CardTitle className="text-lg text-green-800">Improving Unit Economics</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm text-green-700">
-                <div>• CAC: $40 → $28 by Year 3</div>
-                <div>• LTV: $180 → $245 by Year 3</div>
-                <div>• LTV/CAC: 4.5x → 8.8x</div>
+                <div>• CAC: $40 → $32 by Year 3</div>
+                <div>• LTV: $265 → $385 by Year 3</div>
+                <div>• LTV/CAC: 6.5x → 12.0x</div>
                 <div>• Gross Margin: 92% maintained</div>
               </CardContent>
             </Card>
