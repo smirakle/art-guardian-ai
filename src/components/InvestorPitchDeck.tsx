@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import MeetingScheduler from '@/components/MeetingScheduler';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -803,11 +804,12 @@ const InvestorPitchDeck = () => {
               <p className="text-muted-foreground mb-4">
                 Contact our team to access detailed financial models, technical specifications, and due diligence materials.
               </p>
-                <div className="text-center">
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <Button className="px-6">
                     <Mail className="mr-2 h-4 w-4" />
                     shirleena.cunningham@tsmowatch.com
                   </Button>
+                  <MeetingScheduler />
                 </div>
             </CardContent>
           </Card>
