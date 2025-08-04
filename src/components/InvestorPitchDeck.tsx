@@ -512,32 +512,32 @@ const InvestorPitchDeck = () => {
               <tbody className="space-y-2">
                 <tr className="border-b">
                   <td className="p-3 font-medium">Subscribers</td>
-                  <td className="p-3 text-center">2,500</td>
-                  <td className="p-3 text-center">15,000</td>
-                  <td className="p-3 text-center text-primary font-bold">45,000</td>
+                  <td className="p-3 text-center">3,200</td>
+                  <td className="p-3 text-center">14,500</td>
+                  <td className="p-3 text-center text-primary font-bold">25,000</td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-3 font-medium">ARPU</td>
-                  <td className="p-3 text-center">$85</td>
-                  <td className="p-3 text-center">$78</td>
-                  <td className="p-3 text-center">$72</td>
+                  <td className="p-3 text-center">$494</td>
+                  <td className="p-3 text-center">$603</td>
+                  <td className="p-3 text-center">$940</td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-3 font-medium">Subscription Revenue</td>
-                  <td className="p-3 text-center">$1.26M</td>
-                  <td className="p-3 text-center">$6.84M</td>
-                  <td className="p-3 text-center text-primary font-bold">$18.9M</td>
+                  <td className="p-3 text-center">$1.42M</td>
+                  <td className="p-3 text-center">$8.40M</td>
+                  <td className="p-3 text-center text-primary font-bold">$22.8M</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 font-medium">Transaction Revenue</td>
-                  <td className="p-3 text-center">$0.32M</td>
-                  <td className="p-3 text-center">$1.71M</td>
-                  <td className="p-3 text-center text-primary font-bold">$4.73M</td>
+                  <td className="p-3 font-medium">Professional Services</td>
+                  <td className="p-3 text-center">$0.16M</td>
+                  <td className="p-3 text-center">$0.35M</td>
+                  <td className="p-3 text-center text-primary font-bold">$0.70M</td>
                 </tr>
                 <tr className="border-b bg-primary/5">
                   <td className="p-3 font-bold">Total Revenue</td>
                   <td className="p-3 text-center font-bold">$1.58M</td>
-                  <td className="p-3 text-center font-bold">$8.55M</td>
+                  <td className="p-3 text-center font-bold">$8.75M</td>
                   <td className="p-3 text-center font-bold text-primary text-lg">$23.5M</td>
                 </tr>
               </tbody>
