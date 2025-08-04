@@ -688,7 +688,7 @@ const InvestorPitchDeck = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="px-8">
                 <Mail className="mr-2 h-5 w-5" />
-                Contact for Due Diligence
+                shirleena.cunningham@tsmowatch.com
               </Button>
               <Button variant="outline" size="lg" className="px-8">
                 <Play className="mr-2 h-5 w-5" />
