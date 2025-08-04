@@ -55,7 +55,7 @@ const InvestorPitchDeck = () => {
           <div className="grid grid-cols-2 gap-8 max-w-2xl mx-auto">
             <div className="text-center">
               <div className="text-sm text-muted-foreground">Seeking</div>
-              <div className="text-2xl font-bold text-primary">$2.5M Series A</div>
+              <div className="text-2xl font-bold text-primary">$100K Series A</div>
             </div>
             <div className="text-center">
               <div className="text-sm text-muted-foreground">Valuation</div>
@@ -602,7 +602,7 @@ const InvestorPitchDeck = () => {
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
                   <span className="font-medium">Amount Seeking:</span>
-                  <span className="text-2xl font-bold text-primary">$2.5M</span>
+                  <span className="text-2xl font-bold text-primary">$100K</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium">Pre-money Valuation:</span>
@@ -610,7 +610,7 @@ const InvestorPitchDeck = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium">Post-money Valuation:</span>
-                  <span className="text-xl font-bold">$17.5M</span>
+                  <span className="text-xl font-bold">$15.1M</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium">Security Type:</span>
@@ -631,7 +631,7 @@ const InvestorPitchDeck = () => {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Team Expansion (40%)</span>
-                    <span className="font-bold">$1.0M</span>
+                    <span className="font-bold">$40K</span>
                   </div>
                   <Progress value={40} className="h-2" />
                 </div>
@@ -639,7 +639,7 @@ const InvestorPitchDeck = () => {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-sm">R&D & Product (30%)</span>
-                    <span className="font-bold">$750K</span>
+                    <span className="font-bold">$30K</span>
                   </div>
                   <Progress value={30} className="h-2" />
                 </div>
@@ -647,7 +647,7 @@ const InvestorPitchDeck = () => {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Sales & Marketing (20%)</span>
-                    <span className="font-bold">$500K</span>
+                    <span className="font-bold">$20K</span>
                   </div>
                   <Progress value={20} className="h-2" />
                 </div>
@@ -655,7 +655,7 @@ const InvestorPitchDeck = () => {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Operations (10%)</span>
-                    <span className="font-bold">$250K</span>
+                    <span className="font-bold">$10K</span>
                   </div>
                   <Progress value={10} className="h-2" />
                 </div>
