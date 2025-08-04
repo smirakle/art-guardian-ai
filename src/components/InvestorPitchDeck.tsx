@@ -55,16 +55,16 @@ const InvestorPitchDeck = () => {
           <div className="grid grid-cols-2 gap-8 max-w-2xl mx-auto">
             <div className="text-center">
               <div className="text-sm text-muted-foreground">Seeking</div>
-              <div className="text-2xl font-bold text-primary">$100K Series A</div>
+              <div className="text-2xl font-bold text-primary">$100K Seed</div>
             </div>
             <div className="text-center">
               <div className="text-sm text-muted-foreground">Valuation</div>
-              <div className="text-2xl font-bold text-primary">$15M pre-money</div>
+              <div className="text-2xl font-bold text-primary">$1M pre-money</div>
             </div>
           </div>
           
           <Badge variant="secondary" className="text-lg px-6 py-2">
-            🚀 Founded 2025 • Legal Technology • AI Protection
+            🚀 Founded 2024 • Legal Technology • Seed Stage
           </Badge>
         </div>
       )
