@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import MeetingScheduler from '@/components/MeetingScheduler';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -690,10 +691,7 @@ const InvestorPitchDeck = () => {
                 <Mail className="mr-2 h-5 w-5" />
                 shirleena.cunningham@tsmowatch.com
               </Button>
-              <Button variant="outline" size="lg" className="px-8">
-                <Play className="mr-2 h-5 w-5" />
-                Schedule Demo
-              </Button>
+              <MeetingScheduler />
             </div>
           </div>
         </div>
@@ -812,10 +810,7 @@ const InvestorPitchDeck = () => {
                   <Mail className="mr-2 h-4 w-4" />
                   shirleena.cunningham@tsmowatch.com
                 </Button>
-                <Button variant="outline" className="px-6">
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  Schedule Meeting
-                </Button>
+                <MeetingScheduler />
               </div>
             </CardContent>
           </Card>
