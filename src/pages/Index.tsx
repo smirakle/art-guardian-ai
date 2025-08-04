@@ -46,6 +46,7 @@ import {
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import MonitoringFlow from "@/components/MonitoringFlow";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import InvestorPitchDeck from "@/components/InvestorPitchDeck";
 
 const Index = () => {
   const { toast } = useToast();
@@ -312,6 +313,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Investor Pitch Deck Section */}
+      <InvestorPitchDeck />
 
       {/* Art Theft Facts Section */}
       <section className="bg-red-50 py-10 px-4">
