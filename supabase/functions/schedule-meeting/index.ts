@@ -1,7 +1,11 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+const resendApiKey = Deno.env.get("RESEND_API_KEY");
+if (!resendApiKey) {
+  console.error("RESEND_API_KEY environment variable is not set");
+}
+const resend = new Resend(resendApiKey);
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -50,9 +54,14 @@ const handler = async (req: Request): Promise<Response> => {
       time: meetingData.preferredTime
     });
 
+    // Check if RESEND_API_KEY is available
+    if (!resendApiKey) {
+      throw new Error("Email service not configured. RESEND_API_KEY is missing.");
+    }
+
     // Send confirmation email to the requester
     const confirmationEmail = await resend.emails.send({
-      from: "TSMO Team <onboarding@resend.dev>",
+      from: "TSMO Team <hello@tsmowatch.com>",
       to: [meetingData.email],
       subject: "Meeting Request Received - TSMO",
       html: `
@@ -148,7 +157,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send notification email to TSMO team
     const notificationEmail = await resend.emails.send({
-      from: "TSMO Meeting System <onboarding@resend.dev>",
+      from: "TSMO Meeting System <hello@tsmowatch.com>",
       to: ["shirleena.cunningham@tsmowatch.com"],
       subject: `New Meeting Request: ${getMeetingTypeLabel(meetingData.meetingType)} - ${meetingData.name}`,
       html: `
@@ -279,10 +288,17 @@ const handler = async (req: Request): Promise<Response> => {
     );
   } catch (error: any) {
     console.error("Error in schedule-meeting function:", error);
+    
+    // More detailed error logging
+    if (error.name === 'ResendError') {
+      console.error("Resend API Error:", error.message, error.details);
+    }
+    
     return new Response(
       JSON.stringify({ 
         error: error.message,
-        success: false
+        success: false,
+        details: error.name === 'ResendError' ? 'Email service error - please try again later' : 'Internal server error'
       }),
       {
         status: 500,

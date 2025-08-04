@@ -1,6 +1,9 @@
 
 project_id = "utneaqmbyjwxaqrrarpc"
 
+[functions.schedule-meeting]
+verify_jwt = false
+
 [functions.process-monitoring-scan]
 verify_jwt = false
 
