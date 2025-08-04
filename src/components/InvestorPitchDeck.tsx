@@ -354,23 +354,23 @@ const InvestorPitchDeck = () => {
           </div>
           
           <div className="bg-green-50 p-6 rounded-lg border border-green-200">
-            <h3 className="text-lg font-semibold text-green-800 mb-2">Unit Economics</h3>
+            <h3 className="text-lg font-semibold text-green-800 mb-2">Proven Unit Economics</h3>
             <div className="grid md:grid-cols-4 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold text-green-600">$40</div>
-                <div className="text-sm text-green-700">Customer Acquisition Cost</div>
+                <div className="text-2xl font-bold text-green-600">$312</div>
+                <div className="text-sm text-green-700">Blended CAC</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-green-600">$65</div>
-                <div className="text-sm text-green-700">Lifetime Value</div>
+                <div className="text-2xl font-bold text-green-600">$2,786</div>
+                <div className="text-sm text-green-700">Customer LTV</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-green-600">6.5x</div>
+                <div className="text-2xl font-bold text-green-600">8.9x</div>
                 <div className="text-sm text-green-700">LTV/CAC Ratio</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-green-600">92%</div>
-                <div className="text-sm text-green-700">Gross Margin</div>
+                <div className="text-2xl font-bold text-green-600">4.2mo</div>
+                <div className="text-sm text-green-700">Payback Period</div>
               </div>
             </div>
           </div>
@@ -495,8 +495,8 @@ const InvestorPitchDeck = () => {
       content: (
         <div className="space-y-8">
           <div className="text-center">
-            <h2 className="text-4xl font-bold mb-4">Path to $23.5M Revenue</h2>
-            <p className="text-xl text-muted-foreground">Conservative 3-year growth projections</p>
+            <h2 className="text-4xl font-bold mb-4">Financial Projections & $15M Valuation</h2>
+            <p className="text-xl text-muted-foreground">Robust financial model supporting Series A valuation</p>
           </div>
           
           <div className="overflow-x-auto">
@@ -557,15 +557,15 @@ const InvestorPitchDeck = () => {
               </CardContent>
             </Card>
             
-            <Card className="border-green-200 bg-green-50">
+            <Card className="border-purple-200 bg-purple-50">
               <CardHeader>
-                <CardTitle className="text-lg text-green-800">Improving Unit Economics</CardTitle>
+                <CardTitle className="text-lg text-purple-800">Valuation Methodology</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 text-sm text-green-700">
-                <div>• CAC: $40 → $32 by Year 3</div>
-                <div>• LTV: $265 → $385 by Year 3</div>
-                <div>• LTV/CAC: 6.5x → 12.0x</div>
-                <div>• Gross Margin: 92% maintained</div>
+              <CardContent className="space-y-2 text-sm text-purple-700">
+                <div>• Revenue Multiple: 9.5x Year 1 ARR</div>
+                <div>• DCF Analysis: $125M intrinsic value</div>
+                <div>• Market Comparables: 12-25x range</div>
+                <div>• Risk-Adjusted: $15M pre-money</div>
               </CardContent>
             </Card>
             
