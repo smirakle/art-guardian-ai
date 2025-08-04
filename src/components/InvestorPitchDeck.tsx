@@ -810,7 +810,7 @@ const InvestorPitchDeck = () => {
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button className="px-6">
                   <Mail className="mr-2 h-4 w-4" />
-                  investors@tsmo.app
+                  shirleena.cunningham@tsmowatch.com
                 </Button>
                 <Button variant="outline" className="px-6">
                   <ExternalLink className="mr-2 h-4 w-4" />
