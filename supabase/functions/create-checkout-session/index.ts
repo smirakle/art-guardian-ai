@@ -38,7 +38,7 @@ serve(async (req) => {
     const planPricing = {
       student: { monthly: 1900, yearly: 19000 }, // $19/month, $190/year
       starter: { monthly: 2900, yearly: 29000 }, // $29/month, $290/year  
-      professional: { monthly: 9900, yearly: 99000 }, // $99/month, $990/year
+      professional: { monthly: 19900, yearly: 199000 }, // $199/month, $1990/year
     };
 
     if (!planPricing[planId as keyof typeof planPricing]) {
