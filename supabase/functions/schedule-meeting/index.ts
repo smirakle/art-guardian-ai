@@ -54,8 +54,11 @@ const handler = async (req: Request): Promise<Response> => {
       time: meetingData.preferredTime
     });
 
+    console.log('RESEND_API_KEY status:', resendApiKey ? 'Present' : 'Missing');
+
     // Check if RESEND_API_KEY is available
     if (!resendApiKey) {
+      console.error("RESEND_API_KEY is missing - cannot send emails");
       throw new Error("Email service not configured. RESEND_API_KEY is missing.");
     }
 
@@ -155,7 +158,7 @@ const handler = async (req: Request): Promise<Response> => {
       `,
     });
 
-    // Send notification email to TSMO team
+    console.log("Confirmation email sent successfully:", confirmationEmail);
     const notificationEmail = await resend.emails.send({
       from: "TSMO Meeting System <onboarding@resend.dev>",
       to: ["shirleena.cunningham@tsmowatch.com"],
@@ -265,6 +268,8 @@ const handler = async (req: Request): Promise<Response> => {
         </div>
       `,
     });
+
+    console.log("Notification email sent successfully:", notificationEmail);
 
     console.log("Meeting request emails sent successfully:", {
       confirmation: confirmationEmail,
