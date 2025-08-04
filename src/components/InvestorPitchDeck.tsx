@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import MeetingScheduler from '@/components/MeetingScheduler';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -686,11 +686,12 @@ const InvestorPitchDeck = () => {
           
           <div className="text-center">
             <h3 className="text-xl font-semibold mb-4">Ready to Protect the Creator Economy?</h3>
-            <div className="flex justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="px-8">
                 <Mail className="mr-2 h-5 w-5" />
                 shirleena.cunningham@tsmowatch.com
               </Button>
+              <MeetingScheduler />
             </div>
           </div>
         </div>
@@ -804,11 +805,12 @@ const InvestorPitchDeck = () => {
               <p className="text-muted-foreground mb-4">
                 Contact our team to access detailed financial models, technical specifications, and due diligence materials.
               </p>
-              <div className="flex justify-center">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button className="px-6">
                   <Mail className="mr-2 h-4 w-4" />
                   shirleena.cunningham@tsmowatch.com
                 </Button>
+                <MeetingScheduler />
               </div>
             </CardContent>
           </Card>
