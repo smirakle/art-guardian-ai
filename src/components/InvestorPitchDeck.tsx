@@ -355,24 +355,24 @@ const InvestorPitchDeck = () => {
           
           <div className="bg-green-50 p-6 rounded-lg border border-green-200">
             <h3 className="text-lg font-semibold text-green-800 mb-2">Proven Unit Economics</h3>
-            <div className="grid md:grid-cols-4 gap-4 text-center">
-              <div>
-                <div className="text-2xl font-bold text-green-600">$312</div>
-                <div className="text-sm text-green-700">Blended CAC</div>
+              <div className="grid md:grid-cols-4 gap-4 text-center">
+                <div>
+                  <div className="text-2xl font-bold text-green-600">$15</div>
+                  <div className="text-sm text-green-700">Blended CAC</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-green-600">$583</div>
+                  <div className="text-sm text-green-700">Customer LTV</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-green-600">39x</div>
+                  <div className="text-sm text-green-700">LTV/CAC Ratio</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-green-600">0.4mo</div>
+                  <div className="text-sm text-green-700">Payback Period</div>
+                </div>
               </div>
-              <div>
-                <div className="text-2xl font-bold text-green-600">$2,786</div>
-                <div className="text-sm text-green-700">Customer LTV</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-green-600">8.9x</div>
-                <div className="text-sm text-green-700">LTV/CAC Ratio</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-green-600">4.2mo</div>
-                <div className="text-sm text-green-700">Payback Period</div>
-              </div>
-            </div>
           </div>
         </div>
       )
@@ -495,8 +495,8 @@ const InvestorPitchDeck = () => {
       content: (
         <div className="space-y-8">
           <div className="text-center">
-            <h2 className="text-4xl font-bold mb-4">Financial Projections & $15M Valuation</h2>
-            <p className="text-xl text-muted-foreground">Robust financial model supporting Series A valuation</p>
+            <h2 className="text-4xl font-bold mb-4">Realistic Financial Projections</h2>
+            <p className="text-xl text-muted-foreground">Bootstrap model with clear path to Series A</p>
           </div>
           
           <div className="overflow-x-auto">
@@ -511,37 +511,97 @@ const InvestorPitchDeck = () => {
               </thead>
               <tbody className="space-y-2">
                 <tr className="border-b">
-                  <td className="p-3 font-medium">Subscribers</td>
-                  <td className="p-3 text-center">3,200</td>
-                  <td className="p-3 text-center">14,500</td>
-                  <td className="p-3 text-center text-primary font-bold">25,000</td>
+                  <td className="p-3 font-medium">Customers</td>
+                  <td className="p-3 text-center">120</td>
+                  <td className="p-3 text-center">350</td>
+                  <td className="p-3 text-center text-primary font-bold">750</td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-3 font-medium">ARPU</td>
-                  <td className="p-3 text-center">$494</td>
-                  <td className="p-3 text-center">$603</td>
-                  <td className="p-3 text-center">$940</td>
+                  <td className="p-3 text-center">$35</td>
+                  <td className="p-3 text-center">$43</td>
+                  <td className="p-3 text-center">$56</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="p-3 font-medium">Subscription Revenue</td>
-                  <td className="p-3 text-center">$1.42M</td>
-                  <td className="p-3 text-center">$8.40M</td>
-                  <td className="p-3 text-center text-primary font-bold">$22.8M</td>
+                  <td className="p-3 font-medium">Monthly Recurring Revenue</td>
+                  <td className="p-3 text-center">$4.2K</td>
+                  <td className="p-3 text-center">$15K</td>
+                  <td className="p-3 text-center text-primary font-bold">$42K</td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-3 font-medium">Professional Services</td>
-                  <td className="p-3 text-center">$0.16M</td>
-                  <td className="p-3 text-center">$0.35M</td>
-                  <td className="p-3 text-center text-primary font-bold">$0.70M</td>
+                  <td className="p-3 text-center">$2.4K</td>
+                  <td className="p-3 text-center">$9K</td>
+                  <td className="p-3 text-center text-primary font-bold">$15K</td>
                 </tr>
                 <tr className="border-b bg-primary/5">
-                  <td className="p-3 font-bold">Total Revenue</td>
-                  <td className="p-3 text-center font-bold">$1.58M</td>
-                  <td className="p-3 text-center font-bold">$8.75M</td>
-                  <td className="p-3 text-center font-bold text-primary text-lg">$23.5M</td>
+                  <td className="p-3 font-bold">Annual Revenue</td>
+                  <td className="p-3 text-center font-bold">$50K</td>
+                  <td className="p-3 text-center font-bold">$180K</td>
+                  <td className="p-3 text-center font-bold text-primary text-lg">$500K</td>
                 </tr>
               </tbody>
             </table>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-6 mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5" />
+                  Growth Metrics
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span>Monthly Growth Rate</span>
+                    <span className="font-bold text-green-600">15%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Customer Acquisition Cost</span>
+                    <span className="font-bold text-blue-600">$15</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Customer Lifetime Value</span>
+                    <span className="font-bold text-purple-600">$583</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>LTV/CAC Ratio</span>
+                    <span className="font-bold text-primary">39x</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Target className="h-5 w-5" />
+                  Series A Readiness
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span>Break-even Timeline</span>
+                    <span className="font-bold">18 months</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Series A ARR Target</span>
+                    <span className="font-bold text-green-600">$50K+</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Expected Series A Valuation</span>
+                    <span className="font-bold text-primary">$3M-$10M</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Timeline to Series A</span>
+                    <span className="font-bold">15-18 months</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
           
           <div className="grid md:grid-cols-3 gap-6">
@@ -562,10 +622,10 @@ const InvestorPitchDeck = () => {
                 <CardTitle className="text-lg text-purple-800">Valuation Methodology</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm text-purple-700">
-                <div>• Revenue Multiple: 9.5x Year 1 ARR</div>
-                <div>• DCF Analysis: $125M intrinsic value</div>
-                <div>• Market Comparables: 12-25x range</div>
-                <div>• Risk-Adjusted: $15M pre-money</div>
+                <div>• Revenue Multiple: 20x Year 1 ARR</div>
+                <div>• Technology Premium: 2-3x multiplier</div>
+                <div>• Early-stage Comparables: $500K-$2M</div>
+                <div>• Conservative: $1M pre-money</div>
               </CardContent>
             </Card>
             
@@ -590,8 +650,8 @@ const InvestorPitchDeck = () => {
       content: (
         <div className="space-y-8">
           <div className="text-center">
-            <h2 className="text-4xl font-bold mb-4">Series A Investment</h2>
-            <p className="text-xl text-muted-foreground">Join us in revolutionizing IP protection</p>
+            <h2 className="text-4xl font-bold mb-4">Seed Investment</h2>
+            <p className="text-xl text-muted-foreground">Bootstrap funding to achieve Series A readiness</p>
           </div>
           
           <div className="grid md:grid-cols-2 gap-8">
@@ -606,11 +666,11 @@ const InvestorPitchDeck = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium">Pre-money Valuation:</span>
-                  <span className="text-xl font-bold">$15M</span>
+                  <span className="text-xl font-bold">$1M</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium">Post-money Valuation:</span>
-                  <span className="text-xl font-bold">$15.1M</span>
+                  <span className="text-xl font-bold">$1.1M</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium">Security Type:</span>
@@ -630,15 +690,15 @@ const InvestorPitchDeck = () => {
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">Team Expansion (40%)</span>
-                    <span className="font-bold">$40K</span>
+                    <span className="text-sm">Product Development (50%)</span>
+                    <span className="font-bold">$50K</span>
                   </div>
-                  <Progress value={40} className="h-2" />
+                  <Progress value={50} className="h-2" />
                 </div>
                 
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">R&D & Product (30%)</span>
+                    <span className="text-sm">Customer Acquisition (30%)</span>
                     <span className="font-bold">$30K</span>
                   </div>
                   <Progress value={30} className="h-2" />
@@ -646,18 +706,18 @@ const InvestorPitchDeck = () => {
                 
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">Sales & Marketing (20%)</span>
-                    <span className="font-bold">$20K</span>
+                    <span className="text-sm">Operations & Legal (15%)</span>
+                    <span className="font-bold">$15K</span>
                   </div>
-                  <Progress value={20} className="h-2" />
+                  <Progress value={15} className="h-2" />
                 </div>
                 
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">Operations (10%)</span>
-                    <span className="font-bold">$10K</span>
+                    <span className="text-sm">Working Capital (5%)</span>
+                    <span className="font-bold">$5K</span>
                   </div>
-                  <Progress value={10} className="h-2" />
+                  <Progress value={5} className="h-2" />
                 </div>
               </CardContent>
             </Card>
@@ -667,16 +727,16 @@ const InvestorPitchDeck = () => {
             <h3 className="text-lg font-semibold mb-4">18-Month Milestones</h3>
             <div className="grid md:grid-cols-3 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary">10,000</div>
-                <div className="text-sm">Active Users (6 months)</div>
+                <div className="text-2xl font-bold text-primary">250</div>
+                <div className="text-sm">Customers (6 months)</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary">$200K</div>
+                <div className="text-2xl font-bold text-primary">$4.2K</div>
                 <div className="text-sm">MRR (12 months)</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary">$500K</div>
-                <div className="text-sm">MRR Target (18 months)</div>
+                <div className="text-2xl font-bold text-primary">$50K</div>
+                <div className="text-sm">ARR → Series A Ready</div>
               </div>
             </div>
           </div>
