@@ -152,13 +152,10 @@ const InvestorPitchDeck = () => {
               <CardContent className="p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <Shield className="h-8 w-8 text-primary" />
-                  <div>
-                    <h3 className="text-lg font-semibold">AI Training Protection</h3>
-                    <Badge className="text-xs">Patent-pending</Badge>
-                  </div>
+                  <h3 className="text-lg font-semibold">AI Training Protection</h3>
                 </div>
                 <ul className="space-y-2 text-sm">
-                  <li>• Patent-pending fingerprinting technology</li>
+                  <li>• Revolutionary fingerprinting technology</li>
                   <li>• Real-time AI training detection</li>
                   <li>• Proactive content protection</li>
                 </ul>
