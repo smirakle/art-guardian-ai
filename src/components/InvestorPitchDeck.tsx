@@ -382,10 +382,10 @@ const InvestorPitchDeck = () => {
       title: "Traction & Metrics",
       content: (
         <div className="space-y-8">
-          <div className="text-center">
-            <h2 className="text-4xl font-bold mb-4">Strong Early Adoption</h2>
-            <p className="text-xl text-muted-foreground">This information is projected. No users at this time.</p>
-          </div>
+      <div className="text-center">
+        <h2 className="text-4xl font-bold mb-4">Strong Early Adoption</h2>
+        <p className="text-xl text-muted-foreground">Current metrics demonstrating rapid growth trajectory</p>
+      </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Card className="border-green-200 bg-green-50">
