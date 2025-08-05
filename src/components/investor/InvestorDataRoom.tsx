@@ -64,7 +64,7 @@ Generated: ${new Date().toLocaleDateString()}
 Confidential & Proprietary Information
 
 For more information, contact:
-investors@tsmo.com
+shirleena.cunningham@tsmowatch.com
 +1 (555) 123-4567
 
 © 2025 TSMO. All rights reserved.`;
@@ -226,7 +226,7 @@ investors@tsmo.com
         <CardContent className="grid md:grid-cols-2 gap-6">
           <div>
             <h3 className="font-semibold mb-2">Primary Contact</h3>
-            <p className="text-sm text-muted-foreground mb-1">investors@tsmo.com</p>
+            <p className="text-sm text-muted-foreground mb-1">shirleena.cunningham@tsmowatch.com</p>
             <p className="text-sm text-muted-foreground mb-4">+1 (555) 123-4567</p>
             
             <Button variant="outline" className="w-full">

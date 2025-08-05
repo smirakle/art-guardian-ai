@@ -117,7 +117,7 @@ const InvestorHub = () => {
           <div className="flex justify-center gap-4">
             <Button size="lg" className="gap-2">
               <Users className="h-5 w-5" />
-              investors@tsmo.com
+              shirleena.cunningham@tsmowatch.com
             </Button>
             <Button variant="outline" size="lg">
               +1 (555) 123-4567

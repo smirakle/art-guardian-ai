@@ -59,7 +59,7 @@ TEAM
 Experienced leadership with expertise in AI, legal technology, and enterprise software.
 
 CONTACT
-investors@tsmo.com
+shirleena.cunningham@tsmowatch.com
 +1 (555) 123-4567
 
 Schedule a demo: calendly.com/tsmo-investors
@@ -349,7 +349,7 @@ Schedule a demo: calendly.com/tsmo-investors
             </Button>
           </div>
           <p className="text-sm text-muted-foreground mt-4">
-            investors@tsmo.com • +1 (555) 123-4567
+            shirleena.cunningham@tsmowatch.com • +1 (555) 123-4567
           </p>
         </CardContent>
       </Card>
