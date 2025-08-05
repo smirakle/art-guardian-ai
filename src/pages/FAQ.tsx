@@ -199,6 +199,89 @@ const FAQ = () => {
       ]
     },
     {
+      title: "Trademark Monitoring",
+      items: [
+        {
+          question: "What is Trademark Monitoring and how does it work?",
+          answer: (
+            <div>
+              <p className="mb-3"><strong>Trademark Monitoring</strong> is an advanced intelligence system that helps protect your brand identity by monitoring trademark applications, domain registrations, and brand usage across multiple platforms.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Key features include:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• AI-Powered Search:</strong> Advanced similarity detection using machine learning algorithms</li>
+                  <li><strong>• Real-Time Alerts:</strong> Instant notifications for new trademark applications that may conflict with yours</li>
+                  <li><strong>• Multi-Jurisdiction Coverage:</strong> Monitors USPTO, EUIPO, WIPO, and other international trademark databases</li>
+                  <li><strong>• Domain Monitoring:</strong> Tracks domain registrations that may infringe on your trademark</li>
+                  <li><strong>• Social Media Scanning:</strong> Monitors brand usage across social platforms and marketplaces</li>
+                  <li><strong>• Portfolio Management:</strong> Centralized dashboard to manage all your trademark assets</li>
+                  <li><strong>• Risk Assessment:</strong> AI-powered threat analysis and similarity scoring</li>
+                  <li><strong>• Legal Strategy Generation:</strong> Automated recommendations for trademark protection and enforcement</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm"><strong>Who it's for:</strong> Business owners, brand managers, legal professionals, and anyone with trademark assets that need comprehensive monitoring and protection.</p>
+            </div>
+          )
+        },
+        {
+          question: "How do I start monitoring my trademarks?",
+          answer: (
+            <div>
+              <p className="mb-3">Getting started with Trademark Monitoring is simple and takes just a few minutes:</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Step-by-step process:</h4>
+                <ol className="ml-4 space-y-2 text-sm list-decimal">
+                  <li><strong>Navigate to Trademark Monitoring:</strong> Go to the Trademark Monitoring section from your dashboard</li>
+                  <li><strong>Add Your Trademarks:</strong> Click "Add New Trademark" and enter your trademark details including name, registration number (if applicable), and jurisdiction</li>
+                  <li><strong>Set Search Parameters:</strong> Configure monitoring preferences including similarity threshold, target jurisdictions, and alert frequency</li>
+                  <li><strong>Choose Platforms:</strong> Select which platforms to monitor (USPTO, domain registries, social media, marketplaces)</li>
+                  <li><strong>Start Monitoring:</strong> Click "Start Monitoring" to begin real-time surveillance of your trademark</li>
+                  <li><strong>Review Alerts:</strong> Check your dashboard for alerts and take action on potential conflicts</li>
+                </ol>
+              </div>
+              
+              <p className="text-sm">You'll receive your first monitoring results within 24 hours, with ongoing alerts delivered in real-time as new potential conflicts are detected.</p>
+            </div>
+          )
+        },
+        {
+          question: "What types of trademark conflicts can the system detect?",
+          answer: (
+            <div>
+              <p className="mb-3">Our AI-powered system can detect various types of trademark conflicts and potential infringements:</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Detection capabilities:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• Identical Marks:</strong> Exact matches of your trademark in the same or related categories</li>
+                  <li><strong>• Phonetically Similar:</strong> Trademarks that sound similar when spoken</li>
+                  <li><strong>• Visually Similar:</strong> Marks with similar appearance, font, or design elements</li>
+                  <li><strong>• Conceptually Similar:</strong> Trademarks with related meanings or concepts</li>
+                  <li><strong>• Domain Squatting:</strong> Domain registrations that incorporate your trademark</li>
+                  <li><strong>• Social Media Infringement:</strong> Unauthorized use of your brand on social platforms</li>
+                  <li><strong>• Marketplace Violations:</strong> Products using your trademark on e-commerce platforms</li>
+                  <li><strong>• International Conflicts:</strong> Similar marks filed in different jurisdictions</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm">Each detection includes a risk assessment score and recommended actions, helping you prioritize which conflicts require immediate attention.</p>
+            </div>
+          )
+        },
+        {
+          question: "How much does Trademark Monitoring cost?",
+          answer: "Trademark Monitoring is included in our Professional and Enterprise plans. Basic monitoring starts at $49/month for up to 5 trademarks, with advanced features like AI strategy generation and bulk analysis available in higher tiers. We also offer pay-per-search options for occasional monitoring needs. Contact our sales team for custom enterprise pricing."
+        },
+        {
+          question: "Can I monitor competitors' trademark activities?",
+          answer: "Yes, our Competitive Intelligence feature allows you to monitor your competitors' trademark filings and brand activities. You can track when competitors file new applications, renew existing marks, or abandon trademarks. This helps you stay informed about market developments and identify potential opportunities or threats in your industry."
+        }
+      ]
+    },
+    {
       title: "Legal Templates & Documentation",
       items: [
         {
@@ -366,6 +449,7 @@ const FAQ = () => {
                   {section.title === "Getting Started" && "Quick start guide for new users"}
                   {section.title === "Pricing & Plans" && "Information about our pricing and subscription options"}
                   {section.title === "AI & Deepfake Protection" && "How we protect against AI misuse and deepfakes"}
+                  {section.title === "Trademark Monitoring" && "Advanced brand protection and trademark intelligence"}
                   {section.title === "Legal Templates & Documentation" && "Professional legal documents for intellectual property protection"}
                   {section.title === "Advanced Features" && "Cutting-edge protection technologies and monitoring capabilities"}
                   {section.title === "Technical & Integration" && "API access, file formats, security, and platform integrations"}
