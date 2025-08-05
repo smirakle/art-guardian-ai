@@ -21,14 +21,19 @@ const InvestorHub = () => {
       <div className="container mx-auto py-8">
         {/* Header */}
         <div className="text-center space-y-6 mb-12">
-          <div className="space-y-2">
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-              TSMO Investor Hub
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Comprehensive investment materials for qualified investors and strategic partners
+        <div className="space-y-2">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+            TSMO Investor Hub
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Comprehensive investment materials for qualified investors and strategic partners
+          </p>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-2xl mx-auto">
+            <p className="text-sm text-yellow-800 font-medium">
+              ⚠️ Beta Testing Phase: All metrics shown are projected. No current users at this time.
             </p>
           </div>
+        </div>
           
           <div className="flex justify-center gap-4">
             <Button size="lg" className="gap-2">

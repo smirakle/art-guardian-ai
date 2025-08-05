@@ -48,14 +48,17 @@ const ExecutiveSummary = () => {
     pdf.text('• Instant Response - Automated DMCA, blockchain verification', 20, 205);
     pdf.text('• Legal Enforcement - Expert network integration', 20, 215);
     
-    pdf.setFontSize(14);
-    pdf.text('MARKET & TRACTION', 20, 235);
+    pdf.text('MARKET & TRACTION (PROJECTED)', 20, 235);
     pdf.setFontSize(10);
     pdf.text('• Total Addressable Market: $15.7B', 20, 245);
-    pdf.text('• Monthly Recurring Revenue: $200 (+45% MoM)', 20, 255);
-    pdf.text('• Active Users: 50+', 20, 265);
-    pdf.text('• Protected Artworks: 500+', 20, 275);
-    pdf.text('• Exceptional Unit Economics: LTV/CAC = 39x', 20, 285);
+    pdf.text('• Monthly Recurring Revenue: $200 (Projected)', 20, 255);
+    pdf.text('• Active Users: 50+ (Projected)', 20, 265);
+    pdf.text('• Protected Artworks: 500+ (Projected)', 20, 275);
+    pdf.text('• Exceptional Unit Economics: LTV/CAC = 39x (Projected)', 20, 285);
+    
+    pdf.setFontSize(8);
+    pdf.text('⚠️ Beta Testing Phase: This information is purely projected.', 20, 300);
+    pdf.text('No current users at this time. Currently in Beta Testing phase.', 20, 310);
     
     pdf.text('CONTACT', 20, 320);
     pdf.text('shirleena.cunningham@tsmowatch.com', 20, 330);
@@ -79,6 +82,12 @@ const ExecutiveSummary = () => {
         <p className="text-xl text-muted-foreground">
           AI-Powered Intellectual Property Protection Platform
         </p>
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-2xl mx-auto">
+          <p className="text-sm text-yellow-800 font-medium">
+            ⚠️ Beta Testing Phase: This information is purely projected. No current users at this time. 
+            Currently in Beta Testing phase.
+          </p>
+        </div>
         <div className="flex justify-center gap-4">
           <Button onClick={handleDownloadSummary} variant="outline">
             <Download className="h-4 w-4 mr-2" />
@@ -228,22 +237,22 @@ const ExecutiveSummary = () => {
             <div>
               <div className="text-2xl font-bold text-primary">$200</div>
               <div className="text-sm text-muted-foreground">Monthly Recurring Revenue</div>
-              <Badge variant="secondary" className="text-xs mt-1">+45% MoM</Badge>
+              <Badge variant="secondary" className="text-xs mt-1">Projected</Badge>
             </div>
             <div>
               <div className="text-2xl font-bold text-primary">50+</div>
               <div className="text-sm text-muted-foreground">Active Users</div>
-              <Badge variant="secondary" className="text-xs mt-1">Growing</Badge>
+              <Badge variant="secondary" className="text-xs mt-1">Projected</Badge>
             </div>
             <div>
               <div className="text-2xl font-bold text-primary">500+</div>
               <div className="text-sm text-muted-foreground">Protected Artworks</div>
-              <Badge variant="secondary" className="text-xs mt-1">Monitored 24/7</Badge>
+              <Badge variant="secondary" className="text-xs mt-1">Projected</Badge>
             </div>
             <div>
               <div className="text-2xl font-bold text-primary">25+</div>
               <div className="text-sm text-muted-foreground">DMCA Filed</div>
-              <Badge variant="secondary" className="text-xs mt-1">85% Success</Badge>
+              <Badge variant="secondary" className="text-xs mt-1">Projected</Badge>
             </div>
           </div>
         </CardContent>

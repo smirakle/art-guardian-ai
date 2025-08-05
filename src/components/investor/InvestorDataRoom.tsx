@@ -142,26 +142,32 @@ const InvestorDataRoom = () => {
             <div className="text-center">
               <div className="text-2xl font-bold text-primary">{metrics.mrr}</div>
               <div className="text-sm text-muted-foreground">Monthly Recurring Revenue</div>
+              <Badge variant="outline" className="text-xs mt-1">Projected</Badge>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-primary">{metrics.users}</div>
               <div className="text-sm text-muted-foreground">Active Users</div>
+              <Badge variant="outline" className="text-xs mt-1">Projected</Badge>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-primary">{metrics.artworks}</div>
               <div className="text-sm text-muted-foreground">Protected Artworks</div>
+              <Badge variant="outline" className="text-xs mt-1">Projected</Badge>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-primary">{metrics.dmcaFiled}</div>
               <div className="text-sm text-muted-foreground">DMCA Filed</div>
+              <Badge variant="outline" className="text-xs mt-1">Projected</Badge>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-primary">{metrics.churn}</div>
               <div className="text-sm text-muted-foreground">Monthly Churn</div>
+              <Badge variant="outline" className="text-xs mt-1">Projected</Badge>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-primary">{metrics.nps}</div>
               <div className="text-sm text-muted-foreground">Net Promoter Score</div>
+              <Badge variant="outline" className="text-xs mt-1">Projected</Badge>
             </div>
           </div>
         </CardContent>
