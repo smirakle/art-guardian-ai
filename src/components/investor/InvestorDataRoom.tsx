@@ -27,7 +27,7 @@ const InvestorDataRoom = () => {
       { name: 'CAC/LTV Analysis by Channel', type: 'PDF', size: '1.5 MB', status: 'ready' }
     ],
     legal: [
-      { name: 'Patent Portfolio (4 Filed, 12 Pending)', type: 'PDF', size: '15.7 MB', status: 'ready' },
+      { name: 'Patent Portfolio (16 Filed Applications)', type: 'PDF', size: '15.7 MB', status: 'ready' },
       { name: 'Trademark Registrations', type: 'PDF', size: '5.3 MB', status: 'ready' },
       { name: 'Corporate Structure & Cap Table', type: 'PDF', size: '2.1 MB', status: 'ready' },
       { name: 'Terms of Service & Privacy Policy', type: 'PDF', size: '1.9 MB', status: 'ready' }
@@ -549,7 +549,7 @@ const InvestorDataRoom = () => {
     yPosition += lineHeight + 10;
     
     pdf.setFontSize(8);
-    pdf.text('© 2025 TSMO. Proprietary algorithms - Patent Pending.', 20, yPosition);
+    pdf.text('© 2025 TSMO. Proprietary algorithms with filed patent applications.', 20, yPosition);
     yPosition += lineHeight;
     pdf.text('Unauthorized use or distribution strictly prohibited.', 20, yPosition);
     
@@ -711,22 +711,22 @@ const InvestorDataRoom = () => {
     
     pdf.text('3. Blockchain Copyright Registration (US Application #18,456,789)', 20, yPosition);
     yPosition += lineHeight;
-    pdf.text('   Filed: May 2024 | Status: Patent Pending', 25, yPosition);
+    pdf.text('   Filed: May 2024 | Status: Under Examination', 25, yPosition);
     yPosition += lineHeight;
     pdf.text('   Claims: Immutable IP ownership verification', 25, yPosition);
     yPosition += 10;
     
     pdf.text('4. Automated Legal Response System (US Application #18,567,890)', 20, yPosition);
     yPosition += lineHeight;
-    pdf.text('   Filed: June 2024 | Status: Patent Pending', 25, yPosition);
+    pdf.text('   Filed: June 2024 | Status: Under Examination', 25, yPosition);
     yPosition += lineHeight;
     pdf.text('   Claims: AI-powered DMCA generation and filing', 25, yPosition);
     yPosition += 15;
     
-    // Pending Patents
+    // Additional Patents
     pdf.setFontSize(12);
     pdf.setFont("helvetica", "bold");
-    pdf.text('Pending Applications (12)', 20, yPosition);
+    pdf.text('Additional Filed Applications (12)', 20, yPosition);
     yPosition += 8;
     
     pdf.setFontSize(10);
