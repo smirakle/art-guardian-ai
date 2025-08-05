@@ -1,4 +1,5 @@
 import React from 'react';
+import jsPDF from 'jspdf';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,63 +19,51 @@ import {
 
 const ExecutiveSummary = () => {
   const handleDownloadSummary = () => {
-    const content = `TSMO - Executive Summary
-Investment Opportunity
-
-Company: TSMO (AI-Powered IP Protection Platform)
-Seeking: $100K Seed Funding
-Pre-Money Valuation: $1M
-Industry: LegalTech / AI / Intellectual Property
-
-THE OPPORTUNITY
-The digital creative industry faces a $24.3B annual loss due to IP theft, accelerated by AI training on copyrighted content without permission. Current solutions are reactive, expensive, and don't address AI-era threats.
-
-OUR SOLUTION
-TSMO's revolutionary Four-Layer Defense System™:
-• AI Training Protection - Patent-pending fingerprinting technology
-• Comprehensive Monitoring - 70+ platforms, 95%+ accuracy
-• Instant Response - Automated DMCA, blockchain verification
-• Legal Enforcement - Expert network integration
-
-MARKET & TRACTION
-• Total Addressable Market: $15.7B
-• Monthly Recurring Revenue: $200 (+45% MoM)
-• Active Users: 50+
-• Protected Artworks: 500+
-• Exceptional Unit Economics: LTV/CAC = 39x
-
-COMPETITIVE ADVANTAGE
-• First-mover in AI protection technology
-• Patent portfolio (4 filed, 12 pending)
-• Proven technology stack
-• Strong early customer adoption
-
-INVESTMENT TERMS
-• Seeking: $100K
-• Valuation: $1M pre-money
-• Security: Convertible Note or Equity
-• Use of Funds: 40% Product Development, 30% Team Expansion, 20% Marketing, 10% Operations
-
-TEAM
-Experienced leadership with expertise in AI, legal technology, and enterprise software.
-
-CONTACT
-shirleena.cunningham@tsmowatch.com
-+1 (555) 123-4567
-
-Schedule a demo: calendly.com/tsmo-investors
-
-© 2025 TSMO. Confidential & Proprietary.`;
-
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'TSMO-Executive-Summary.txt';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const pdf = new jsPDF();
+    
+    // Add content to PDF
+    pdf.setFontSize(20);
+    pdf.text('TSMO - Executive Summary', 20, 30);
+    pdf.text('Investment Opportunity', 20, 45);
+    
+    pdf.setFontSize(12);
+    pdf.text('Company: TSMO (AI-Powered IP Protection Platform)', 20, 65);
+    pdf.text('Seeking: $100K Seed Funding', 20, 75);
+    pdf.text('Pre-Money Valuation: $1M', 20, 85);
+    pdf.text('Industry: LegalTech / AI / Intellectual Property', 20, 95);
+    
+    pdf.setFontSize(14);
+    pdf.text('THE OPPORTUNITY', 20, 115);
+    pdf.setFontSize(10);
+    pdf.text('The digital creative industry faces a $24.3B annual loss due to IP theft,', 20, 125);
+    pdf.text('accelerated by AI training on copyrighted content without permission.', 20, 135);
+    pdf.text('Current solutions are reactive, expensive, and don\'t address AI-era threats.', 20, 145);
+    
+    pdf.setFontSize(14);
+    pdf.text('OUR SOLUTION', 20, 165);
+    pdf.setFontSize(10);
+    pdf.text('TSMO\'s revolutionary Four-Layer Defense System™:', 20, 175);
+    pdf.text('• AI Training Protection - Patent-pending fingerprinting technology', 20, 185);
+    pdf.text('• Comprehensive Monitoring - 70+ platforms, 95%+ accuracy', 20, 195);
+    pdf.text('• Instant Response - Automated DMCA, blockchain verification', 20, 205);
+    pdf.text('• Legal Enforcement - Expert network integration', 20, 215);
+    
+    pdf.setFontSize(14);
+    pdf.text('MARKET & TRACTION', 20, 235);
+    pdf.setFontSize(10);
+    pdf.text('• Total Addressable Market: $15.7B', 20, 245);
+    pdf.text('• Monthly Recurring Revenue: $200 (+45% MoM)', 20, 255);
+    pdf.text('• Active Users: 50+', 20, 265);
+    pdf.text('• Protected Artworks: 500+', 20, 275);
+    pdf.text('• Exceptional Unit Economics: LTV/CAC = 39x', 20, 285);
+    
+    pdf.text('CONTACT', 20, 320);
+    pdf.text('shirleena.cunningham@tsmowatch.com', 20, 330);
+    pdf.text('Schedule a demo: calendly.com/tsmo-investors', 20, 340);
+    
+    pdf.text('© 2025 TSMO. Confidential & Proprietary.', 20, 360);
+    
+    pdf.save('TSMO-Executive-Summary.pdf');
   };
 
   return (
@@ -349,7 +338,7 @@ Schedule a demo: calendly.com/tsmo-investors
             </Button>
           </div>
           <p className="text-sm text-muted-foreground mt-4">
-            shirleena.cunningham@tsmowatch.com • +1 (555) 123-4567
+            shirleena.cunningham@tsmowatch.com
           </p>
         </CardContent>
       </Card>

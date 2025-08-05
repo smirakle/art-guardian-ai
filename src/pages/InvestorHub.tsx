@@ -120,7 +120,7 @@ const InvestorHub = () => {
               shirleena.cunningham@tsmowatch.com
             </Button>
             <Button variant="outline" size="lg">
-              +1 (555) 123-4567
+              Request Data Room Access
             </Button>
           </div>
         </div>

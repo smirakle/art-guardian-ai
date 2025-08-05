@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import jsPDF from 'jspdf';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -55,29 +56,33 @@ const InvestorDataRoom = () => {
   };
 
   const handleDocumentDownload = (docName: string) => {
-    // Generate and download document
-    const content = `TSMO - ${docName}
+    const pdf = new jsPDF();
     
-This is a comprehensive ${docName.toLowerCase()} for TSMO's investor data room.
-
-Generated: ${new Date().toLocaleDateString()}
-Confidential & Proprietary Information
-
-For more information, contact:
-shirleena.cunningham@tsmowatch.com
-+1 (555) 123-4567
-
-© 2025 TSMO. All rights reserved.`;
-
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `TSMO-${docName.replace(/\s+/g, '-')}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    // Add header
+    pdf.setFontSize(16);
+    pdf.text(`TSMO - ${docName}`, 20, 30);
+    
+    pdf.setFontSize(12);
+    pdf.text('Comprehensive investment documentation for TSMO\'s investor data room.', 20, 50);
+    
+    pdf.setFontSize(10);
+    pdf.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 70);
+    pdf.text('Confidential & Proprietary Information', 20, 80);
+    
+    // Add content based on document type
+    pdf.setFontSize(12);
+    pdf.text('Document Contents:', 20, 100);
+    pdf.setFontSize(10);
+    pdf.text('This document contains detailed information about TSMO\'s business model,', 20, 120);
+    pdf.text('financial projections, technical architecture, and market opportunity.', 20, 130);
+    pdf.text('For full access to this document, please contact our investor relations team.', 20, 140);
+    
+    // Footer
+    pdf.text('For more information, contact:', 20, 200);
+    pdf.text('shirleena.cunningham@tsmowatch.com', 20, 210);
+    pdf.text('© 2025 TSMO. All rights reserved.', 20, 240);
+    
+    pdf.save(`TSMO-${docName.replace(/\s+/g, '-')}.pdf`);
   };
 
   if (!accessGranted) {
@@ -227,7 +232,7 @@ shirleena.cunningham@tsmowatch.com
           <div>
             <h3 className="font-semibold mb-2">Primary Contact</h3>
             <p className="text-sm text-muted-foreground mb-1">shirleena.cunningham@tsmowatch.com</p>
-            <p className="text-sm text-muted-foreground mb-4">+1 (555) 123-4567</p>
+            <p className="text-sm text-muted-foreground mb-4"></p>
             
             <Button variant="outline" className="w-full">
               <ExternalLink className="h-4 w-4 mr-2" />
