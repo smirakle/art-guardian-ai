@@ -375,12 +375,174 @@ Document Generated: {{currentDate}}
 Case Reference: {{caseReference}}
 Legal Compliance: {{jurisdiction}} Employment Standards
 Document Hash: {{documentHash}}`
+    },
+    'cease-desist-enterprise': {
+      title: 'Enterprise Cease & Desist',
+      type: 'cease_desist',
+      version: '2024.1',
+      complianceLevel: 'enterprise',
+      jurisdictions: ['US', 'CA', 'UK', 'EU', 'AU', 'JP'],
+      content: `CEASE AND DESIST NOTICE
+[Enterprise Legal Document - Jurisdiction: {{jurisdiction}}]
+
+TO: {{infringingParty}}
+FROM: {{fullName}}
+DATE: {{currentDate}}
+RE: CEASE AND DESIST - COPYRIGHT INFRINGEMENT
+
+NOTICE TO CEASE AND DESIST COPYRIGHT INFRINGEMENT
+
+You are hereby notified that your unauthorized use of {{workTitle}}, owned by {{fullName}}, constitutes copyright infringement under applicable law.
+
+DETAILS OF INFRINGEMENT:
+Work Title: {{workTitle}}
+Your Unauthorized Use: {{violationType}}
+Evidence URLs: {{evidenceUrls}}
+Escalation Level: {{escalationLevel}}
+
+DEMAND TO CEASE AND DESIST:
+You are hereby demanded to immediately cease and desist all use of the copyrighted work and to remove all infringing content.
+
+This letter serves as formal notice of my rights and your infringement. Failure to comply may result in legal action seeking monetary damages and injunctive relief.
+
+Sincerely,
+/s/ {{fullName}}
+{{currentDate}}
+
+---
+Document Generated: {{currentDate}}
+Case Reference: {{caseReference}}
+Legal Compliance: {{jurisdiction}} Copyright Standards
+Document Hash: {{documentHash}}`
+    },
+    'licensing-agreement-2024': {
+      title: 'IP Licensing Agreement Suite',
+      type: 'licensing_agreement',
+      version: '2024.1',
+      complianceLevel: 'enterprise',
+      jurisdictions: ['US', 'CA', 'UK', 'EU', 'AU', 'JP', 'IN'],
+      content: `INTELLECTUAL PROPERTY LICENSING AGREEMENT
+[Legal Document - Jurisdiction: {{jurisdiction}}]
+
+This Licensing Agreement is entered into on {{currentDate}} between:
+
+LICENSOR: {{fullName}}
+LICENSEE: {{licenseeName}}
+
+LICENSE TERMS:
+License Type: {{licenseType}}
+Territory: {{territory}}
+Duration: {{duration}}
+Royalty Structure: {{royaltyStructure}}
+Exclusivity: {{exclusivity}}
+Sublicensing: {{sublicensing}}
+
+The Licensor grants to Licensee the right to use the intellectual property under the terms specified herein.
+
+GOVERNING LAW: {{jurisdiction}}
+
+IN WITNESS WHEREOF, the parties execute this Agreement.
+
+LICENSOR: {{fullName}}
+LICENSEE: {{licenseeName}}
+Date: {{currentDate}}
+
+---
+Document Generated: {{currentDate}}
+Case Reference: {{caseReference}}
+Legal Compliance: {{jurisdiction}} IP Standards
+Document Hash: {{documentHash}}`
+    },
+    'nft-terms-blockchain': {
+      title: 'NFT Terms & Smart Contract',
+      type: 'nft_terms',
+      version: '2024.1',
+      complianceLevel: 'enterprise',
+      jurisdictions: ['US', 'EU', 'UK', 'SG'],
+      content: `NFT TERMS OF SERVICE & SMART CONTRACT AGREEMENT
+[Blockchain Legal Document - Jurisdiction: {{jurisdiction}}]
+
+Collection Name: {{collectionName}}
+Blockchain Network: {{blockchainNetwork}}
+Smart Contract Address: {{smartContractAddress}}
+Royalty Percentage: {{royaltyPercentage}}%
+
+TERMS AND CONDITIONS:
+1. OWNERSHIP RIGHTS
+The NFT represents ownership of unique digital assets with specific rights and limitations.
+
+2. ROYALTY ENFORCEMENT
+Creator royalties of {{royaltyPercentage}}% shall be enforced through smart contract technology.
+
+3. METAVERSE RIGHTS
+{{metaverseRights}}
+
+4. BLOCKCHAIN COMPLIANCE
+This agreement is governed by {{jurisdiction}} law and blockchain regulations.
+
+SMART CONTRACT INTEGRATION:
+Contract Address: {{smartContractAddress}}
+Network: {{blockchainNetwork}}
+
+/s/ {{fullName}}
+Date: {{currentDate}}
+
+---
+Document Generated: {{currentDate}}
+Case Reference: {{caseReference}}
+Blockchain Compliance: {{jurisdiction}} Standards
+Document Hash: {{documentHash}}`
+    },
+    'privacy-policy-gdpr': {
+      title: 'GDPR Privacy Policy Generator',
+      type: 'privacy_policy',
+      version: '2024.1',
+      complianceLevel: 'premium',
+      jurisdictions: ['EU', 'US-CA', 'UK', 'CA', 'AU', 'BR'],
+      content: `PRIVACY POLICY
+[GDPR Compliant - Jurisdiction: {{jurisdiction}}]
+
+Business Type: {{businessType}}
+Data Types Collected: {{dataTypes}}
+Processing Purposes: {{processingPurposes}}
+Third Parties: {{thirdParties}}
+Retention Periods: {{retentionPeriods}}
+
+GDPR COMPLIANCE STATEMENT:
+This privacy policy complies with the General Data Protection Regulation (GDPR) and applicable privacy laws.
+
+YOUR RIGHTS:
+- Right to access your personal data
+- Right to rectification
+- Right to erasure
+- Right to data portability
+
+CONTACT INFORMATION:
+{{fullName}}
+{{emailAddress}}
+
+Last Updated: {{currentDate}}
+
+---
+Document Generated: {{currentDate}}
+Case Reference: {{caseReference}}
+Privacy Compliance: {{jurisdiction}} Standards
+Document Hash: {{documentHash}}`
     }
   };
 
   const template = templates[templateId as keyof typeof templates];
-  if (!template) return null;
-  if (!template.jurisdictions.includes(jurisdiction)) return null;
+  if (!template) {
+    console.log(`Template not found: ${templateId}. Available templates:`, Object.keys(templates));
+    return null;
+  }
+  if (!template.jurisdictions.includes(jurisdiction)) {
+    console.log(`Jurisdiction ${jurisdiction} not supported for template ${templateId}. Supported:`, template.jurisdictions);
+    // Allow US as default fallback for all templates
+    if (jurisdiction !== 'US') {
+      return null;
+    }
+  }
   
   return template;
 }
