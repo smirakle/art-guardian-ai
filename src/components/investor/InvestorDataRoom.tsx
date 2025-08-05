@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import jsPDF from 'jspdf';
+import AIProtectionTechnicalDoc from './AIProtectionTechnicalDoc';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -34,6 +35,7 @@ const InvestorDataRoom = () => {
     ],
     technical: [
       { name: 'Technical Architecture Overview', type: 'PDF', size: '8.4 MB', status: 'ready' },
+      { name: 'AI Training Protection System - Full Technical Guide', type: 'PDF', size: '12.6 MB', status: 'ready' },
       { name: 'AI Training Protection Algorithm', type: 'PDF', size: '12.6 MB', status: 'confidential' },
       { name: 'Security & Compliance Report', type: 'PDF', size: '4.7 MB', status: 'ready' },
       { name: 'Scalability Analysis', type: 'PDF', size: '3.8 MB', status: 'ready' }
@@ -264,6 +266,9 @@ const InvestorDataRoom = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* AI Protection Technical Documentation */}
+      <AIProtectionTechnicalDoc />
     </div>
   );
 };
