@@ -58,6 +58,12 @@ const InvestorDataRoom = () => {
   };
 
   const handleDocumentDownload = (docName: string) => {
+    // Special handling for AI Protection Technical Guide
+    if (docName === 'AI Training Protection System - Full Technical Guide') {
+      generateAIProtectionTechnicalPDF();
+      return;
+    }
+    
     const pdf = new jsPDF();
     
     // Add header
@@ -85,6 +91,148 @@ const InvestorDataRoom = () => {
     pdf.text('© 2025 TSMO. All rights reserved.', 20, 240);
     
     pdf.save(`TSMO-${docName.replace(/\s+/g, '-')}.pdf`);
+  };
+
+  const generateAIProtectionTechnicalPDF = () => {
+    const pdf = new jsPDF();
+    let yPosition = 30;
+    const lineHeight = 10;
+    const pageHeight = 280;
+    
+    // Helper function to add new page if needed
+    const checkAndAddPage = (requiredSpace: number) => {
+      if (yPosition + requiredSpace > pageHeight) {
+        pdf.addPage();
+        yPosition = 30;
+      }
+    };
+    
+    // Header
+    pdf.setFontSize(18);
+    pdf.setFont("helvetica", "bold");
+    pdf.text('TSMO AI Training Protection System', 20, yPosition);
+    yPosition += lineHeight + 5;
+    
+    pdf.setFontSize(14);
+    pdf.text('Technical Architecture & Implementation Guide', 20, yPosition);
+    yPosition += lineHeight + 10;
+    
+    // Document info
+    pdf.setFontSize(10);
+    pdf.setFont("helvetica", "normal");
+    pdf.text(`Generated: ${new Date().toLocaleDateString()}`, 20, yPosition);
+    yPosition += lineHeight;
+    pdf.text('Confidential & Proprietary Information - TSMO', 20, yPosition);
+    yPosition += lineHeight + 15;
+    
+    // Executive Summary
+    checkAndAddPage(60);
+    pdf.setFontSize(14);
+    pdf.setFont("helvetica", "bold");
+    pdf.text('1. EXECUTIVE SUMMARY', 20, yPosition);
+    yPosition += lineHeight + 5;
+    
+    pdf.setFontSize(10);
+    pdf.setFont("helvetica", "normal");
+    pdf.text('TSMO\'s AI Training Protection system represents a breakthrough in intellectual', 20, yPosition);
+    yPosition += lineHeight;
+    pdf.text('property protection, specifically designed to combat unauthorized AI training on', 20, yPosition);
+    yPosition += lineHeight;
+    pdf.text('copyrighted content. Our patent-pending technology creates unique digital', 20, yPosition);
+    yPosition += lineHeight;
+    pdf.text('fingerprints and employs advanced detection algorithms to identify when', 20, yPosition);
+    yPosition += lineHeight;
+    pdf.text('protected content is being used for AI model training without permission.', 20, yPosition);
+    yPosition += lineHeight + 15;
+    
+    // Core Technology
+    checkAndAddPage(80);
+    pdf.setFontSize(14);
+    pdf.setFont("helvetica", "bold");
+    pdf.text('2. CORE TECHNOLOGY ARCHITECTURE', 20, yPosition);
+    yPosition += lineHeight + 5;
+    
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "bold");
+    pdf.text('2.1 Multi-Modal Fingerprinting Engine', 20, yPosition);
+    yPosition += lineHeight + 3;
+    
+    pdf.setFontSize(10);
+    pdf.setFont("helvetica", "normal");
+    pdf.text('Our proprietary fingerprinting engine creates unique digital signatures for:', 20, yPosition);
+    yPosition += lineHeight;
+    pdf.text('• Visual Content: Advanced perceptual hashing algorithms', 25, yPosition);
+    yPosition += lineHeight;
+    pdf.text('• Text Content: Semantic and structural fingerprints', 25, yPosition);
+    yPosition += lineHeight;
+    pdf.text('• Audio Content: Spectral and temporal signatures', 25, yPosition);
+    yPosition += lineHeight;
+    pdf.text('• Video Content: Frame-by-frame and motion analysis', 25, yPosition);
+    yPosition += lineHeight + 10;
+    
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "bold");
+    pdf.text('2.2 AI Training Detection Matrix', 20, yPosition);
+    yPosition += lineHeight + 3;
+    
+    pdf.setFontSize(10);
+    pdf.setFont("helvetica", "normal");
+    pdf.text('Real-time monitoring system that identifies:', 20, yPosition);
+    yPosition += lineHeight;
+    pdf.text('• Data scraping patterns indicative of training data collection', 25, yPosition);
+    yPosition += lineHeight;
+    pdf.text('• AI model training signatures and computational patterns', 25, yPosition);
+    yPosition += lineHeight;
+    pdf.text('• Unauthorized derivative content generation', 25, yPosition);
+    yPosition += lineHeight;
+    pdf.text('• Model fine-tuning activities using protected content', 25, yPosition);
+    yPosition += lineHeight + 15;
+    
+    // Performance Metrics
+    checkAndAddPage(60);
+    pdf.setFontSize(14);
+    pdf.setFont("helvetica", "bold");
+    pdf.text('3. PERFORMANCE METRICS & CAPABILITIES', 20, yPosition);
+    yPosition += lineHeight + 5;
+    
+    pdf.setFontSize(10);
+    pdf.setFont("helvetica", "normal");
+    pdf.text('Detection Accuracy: 95%+ true positive rate', 20, yPosition);
+    yPosition += lineHeight;
+    pdf.text('False Positive Rate: <5% across all content types', 20, yPosition);
+    yPosition += lineHeight;
+    pdf.text('Processing Speed: Real-time fingerprint generation (<2 seconds)', 20, yPosition);
+    yPosition += lineHeight;
+    pdf.text('Platform Coverage: 70+ monitored platforms and repositories', 20, yPosition);
+    yPosition += lineHeight;
+    pdf.text('Response Time: Automated alerts within 2 hours of detection', 20, yPosition);
+    yPosition += lineHeight + 15;
+    
+    // Beta Disclaimer
+    checkAndAddPage(30);
+    pdf.setFontSize(8);
+    pdf.text('⚠️ Beta Testing Phase: This information is purely projected.', 20, yPosition);
+    yPosition += lineHeight;
+    pdf.text('No current users at this time. Currently in Beta Testing phase.', 20, yPosition);
+    yPosition += lineHeight + 10;
+    
+    // Contact & Footer
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "bold");
+    pdf.text('CONTACT INFORMATION', 20, yPosition);
+    yPosition += lineHeight + 5;
+    
+    pdf.setFontSize(10);
+    pdf.setFont("helvetica", "normal");
+    pdf.text('Technical Inquiries: shirleena.cunningham@tsmowatch.com', 20, yPosition);
+    yPosition += lineHeight + 10;
+    
+    pdf.setFontSize(8);
+    pdf.text('© 2025 TSMO. All rights reserved. This document contains confidential', 20, yPosition);
+    yPosition += lineHeight;
+    pdf.text('and proprietary information. Unauthorized distribution is prohibited.', 20, yPosition);
+    
+    pdf.save('TSMO-AI-Training-Protection-Technical-Documentation.pdf');
   };
 
   if (!accessGranted) {
@@ -266,9 +414,6 @@ const InvestorDataRoom = () => {
           </div>
         </CardContent>
       </Card>
-
-      {/* AI Protection Technical Documentation */}
-      <AIProtectionTechnicalDoc />
     </div>
   );
 };
