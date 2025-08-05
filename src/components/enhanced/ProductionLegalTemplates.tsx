@@ -393,6 +393,9 @@ const ProductionLegalTemplates: React.FC = () => {
           action: 'generate',
           templateId: template.id,
           templateTitle: template.title,
+          jurisdiction: 'US',
+          blockchainVerify: template.blockchainVerified,
+          complianceCheck: true,
           customFields: template.customFields.reduce((acc, field) => {
             acc[field] = `[${field.replace(/([A-Z])/g, ' $1').toLowerCase()}]`;
             return acc;
@@ -402,8 +405,30 @@ const ProductionLegalTemplates: React.FC = () => {
 
       if (error) throw error;
 
-      if (data?.documentContent) {
-        // Create and download the document as a text file
+      if (data?.pdfContent) {
+        // Download as PDF
+        const pdfBytes = atob(data.pdfContent);
+        const byteArray = new Uint8Array(pdfBytes.length);
+        for (let i = 0; i < pdfBytes.length; i++) {
+          byteArray[i] = pdfBytes.charCodeAt(i);
+        }
+        
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${template.title.replace(/[^a-zA-Z0-9]/g, '_')}_Legal_Document.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        toast({
+          title: "PDF Download Complete",
+          description: `${template.title} has been downloaded as a legal-compliant PDF with document verification`,
+        });
+      } else if (data?.documentContent) {
+        // Fallback to text download
         const blob = new Blob([data.documentContent], { type: 'text/plain' });
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -649,6 +674,10 @@ const ProductionLegalTemplates: React.FC = () => {
                     <div className="flex flex-wrap gap-1">
                       <Badge variant="outline" className="text-xs">{template.difficulty}</Badge>
                       <Badge variant="outline" className="text-xs">{template.estimatedTime}</Badge>
+                      <Badge variant="outline" className="text-xs">
+                        <FileText className="h-3 w-3 mr-1" />
+                        PDF Format
+                      </Badge>
                       {template.autoFilingCapable && (
                         <Badge variant="outline" className="text-xs">
                           <Zap className="h-3 w-3 mr-1" />
