@@ -115,7 +115,11 @@ const App = () => {
             <Route path="/profile-monitoring" element={<ProfileMonitoring />} />
             <Route path="/portfolio-monitoring" element={<PortfolioMonitoring />} />
             <Route path="/trademark-monitoring" element={<TrademarkMonitoring />} />
-            <Route path="/investors" element={<InvestorHub />} />
+            <Route path="/investors" element={
+              <ProtectedRoute>
+                <InvestorHub />
+              </ProtectedRoute>
+            } />
                          <Route path="/certificate/:certificateId" element={<Certificate />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
