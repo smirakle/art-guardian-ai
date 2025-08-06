@@ -139,11 +139,13 @@
 - 🏛️ **Legal consultation fees:** 20% commission
 - 🎯 **White-label licensing:** $10K-$100K annually
 - 🔧 **Custom integrations:** $25K-$250K
+- 🚀 **Enterprise API access:** $5K-$50K monthly recurring
 
 **Revenue Mix:**
-- 70% Subscription revenue
+- 65% Subscription revenue
 - 20% Transaction fees
 - 10% Enterprise solutions
+- 5% API licensing
 
 ---
 
@@ -203,7 +205,8 @@
 | **ARPU** | $42 | $38 | $35 |
 | **Subscription Revenue** | $1.26M | $6.84M | $18.9M |
 | **Transaction Revenue** | $0.32M | $1.71M | $4.73M |
-| **Total Revenue** | $1.58M | $8.55M | $23.5M |
+| **Enterprise API Revenue** | $0.18M | $0.95M | $2.35M |
+| **Total Revenue** | $1.76M | $9.50M | $25.98M |
 
 **Unit Economics:**
 - **CAC:** $40 (improving to $28 by Year 3)

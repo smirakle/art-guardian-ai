@@ -346,7 +346,7 @@ const InvestorPitchDeck = () => {
                   <span className="font-semibold">$25K-$250K</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm">API Licensing</span>
+                  <span className="text-sm">Enterprise API</span>
                   <span className="font-semibold">$5K-$50K/month</span>
                 </div>
               </CardContent>

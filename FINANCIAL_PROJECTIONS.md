@@ -10,6 +10,7 @@
 | Professional | $79 | Pro creators/agencies | 25 |
 | Enterprise | $299 | Small-medium businesses | 8 |
 | Legal+ | $599 | Organizations with legal needs | 2 |
+| **Enterprise API** | **$5K-$50K** | **Enterprise integrations** | **3** |
 
 ### Realistic Monthly Recurring Revenue (MRR) Growth:
 ```
@@ -59,9 +60,10 @@ Month 24: $15,000 MRR (350 customers)
 
 ### Year 1 (Bootstrap/Validation):
 ```
-Revenue: $50,400
-  - Subscription Revenue: $48,000 (95%)
-  - Setup/Onboarding Fees: $2,400 (5%)
+Revenue: $68,400
+  - Subscription Revenue: $48,000 (70%)
+  - Enterprise API Revenue: $18,000 (26%)
+  - Setup/Onboarding Fees: $2,400 (4%)
 
 Cost of Revenue: $7,560 (15%)
   - Cloud Infrastructure: $3,000
@@ -84,9 +86,10 @@ Note: Covered by $100K funding + revenue
 
 ### Year 2 (Growth with Traction):
 ```
-Revenue: $180,000
-  - Subscription Revenue: $171,000 (95%)
-  - Professional Services: $9,000 (5%)
+Revenue: $234,000
+  - Subscription Revenue: $171,000 (73%)
+  - Enterprise API Revenue: $54,000 (23%)
+  - Professional Services: $9,000 (4%)
 
 Cost of Revenue: $27,000 (15%)
   - Cloud Infrastructure: $12,000
@@ -108,9 +111,10 @@ EBITDA: $18,000 (10%)
 
 ### Year 3 (Scale Preparation):
 ```
-Revenue: $500,000
-  - Subscription Revenue: $485,000 (97%)
-  - Professional Services: $15,000 (3%)
+Revenue: $650,000
+  - Subscription Revenue: $485,000 (75%)
+  - Enterprise API Revenue: $150,000 (23%)
+  - Professional Services: $15,000 (2%)
 
 Cost of Revenue: $75,000 (15%)
   - Cloud Infrastructure: $35,000
