@@ -1184,6 +1184,90 @@ export type Database = {
         }
         Relationships: []
       }
+      government_filing_requests: {
+        Row: {
+          additional_instructions: string | null
+          admin_notes: string | null
+          amount_paid: number
+          contact_email: string
+          contact_name: string
+          contact_phone: string | null
+          created_at: string
+          currency: string
+          document_description: string | null
+          document_paths: Json
+          document_title: string
+          filed_at: string | null
+          filed_by: string | null
+          filing_fee_paid: boolean
+          filing_jurisdiction: string
+          filing_status: string
+          filing_type: string
+          government_response: Json | null
+          id: string
+          payment_status: string
+          stripe_session_id: string | null
+          tracking_number: string | null
+          updated_at: string
+          urgency_level: string
+          user_id: string
+        }
+        Insert: {
+          additional_instructions?: string | null
+          admin_notes?: string | null
+          amount_paid: number
+          contact_email: string
+          contact_name: string
+          contact_phone?: string | null
+          created_at?: string
+          currency?: string
+          document_description?: string | null
+          document_paths?: Json
+          document_title: string
+          filed_at?: string | null
+          filed_by?: string | null
+          filing_fee_paid?: boolean
+          filing_jurisdiction: string
+          filing_status?: string
+          filing_type: string
+          government_response?: Json | null
+          id?: string
+          payment_status?: string
+          stripe_session_id?: string | null
+          tracking_number?: string | null
+          updated_at?: string
+          urgency_level?: string
+          user_id: string
+        }
+        Update: {
+          additional_instructions?: string | null
+          admin_notes?: string | null
+          amount_paid?: number
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string | null
+          created_at?: string
+          currency?: string
+          document_description?: string | null
+          document_paths?: Json
+          document_title?: string
+          filed_at?: string | null
+          filed_by?: string | null
+          filing_fee_paid?: boolean
+          filing_jurisdiction?: string
+          filing_status?: string
+          filing_type?: string
+          government_response?: Json | null
+          id?: string
+          payment_status?: string
+          stripe_session_id?: string | null
+          tracking_number?: string | null
+          updated_at?: string
+          urgency_level?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ip_lawyers: {
         Row: {
           accepts_new_clients: boolean | null
