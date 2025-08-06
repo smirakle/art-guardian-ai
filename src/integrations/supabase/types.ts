@@ -1104,6 +1104,193 @@ export type Database = {
         }
         Relationships: []
       }
+      enterprise_api_keys: {
+        Row: {
+          api_key: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          key_name: string
+          key_prefix: string
+          last_used_at: string | null
+          permissions: string[]
+          rate_limit_requests: number
+          rate_limit_window_minutes: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          api_key: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          key_name: string
+          key_prefix: string
+          last_used_at?: string | null
+          permissions?: string[]
+          rate_limit_requests?: number
+          rate_limit_window_minutes?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          api_key?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          key_name?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          permissions?: string[]
+          rate_limit_requests?: number
+          rate_limit_window_minutes?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      enterprise_api_rate_limits: {
+        Row: {
+          api_key_id: string
+          created_at: string
+          id: string
+          request_count: number
+          updated_at: string
+          window_start: string
+        }
+        Insert: {
+          api_key_id: string
+          created_at?: string
+          id?: string
+          request_count?: number
+          updated_at?: string
+          window_start: string
+        }
+        Update: {
+          api_key_id?: string
+          created_at?: string
+          id?: string
+          request_count?: number
+          updated_at?: string
+          window_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enterprise_api_rate_limits_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "enterprise_api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enterprise_api_usage: {
+        Row: {
+          api_key_id: string
+          created_at: string
+          endpoint: string
+          error_message: string | null
+          id: string
+          ip_address: unknown | null
+          metadata: Json | null
+          method: string
+          request_size_bytes: number | null
+          response_size_bytes: number | null
+          response_time_ms: number | null
+          status_code: number
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          api_key_id: string
+          created_at?: string
+          endpoint: string
+          error_message?: string | null
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          method: string
+          request_size_bytes?: number | null
+          response_size_bytes?: number | null
+          response_time_ms?: number | null
+          status_code: number
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          api_key_id?: string
+          created_at?: string
+          endpoint?: string
+          error_message?: string | null
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          method?: string
+          request_size_bytes?: number | null
+          response_size_bytes?: number | null
+          response_time_ms?: number | null
+          status_code?: number
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enterprise_api_usage_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "enterprise_api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enterprise_webhooks: {
+        Row: {
+          created_at: string
+          event_types: string[]
+          id: string
+          is_active: boolean
+          last_delivery_at: string | null
+          last_delivery_status: string | null
+          retry_count: number
+          timeout_seconds: number
+          updated_at: string
+          user_id: string
+          webhook_secret: string | null
+          webhook_url: string
+        }
+        Insert: {
+          created_at?: string
+          event_types?: string[]
+          id?: string
+          is_active?: boolean
+          last_delivery_at?: string | null
+          last_delivery_status?: string | null
+          retry_count?: number
+          timeout_seconds?: number
+          updated_at?: string
+          user_id: string
+          webhook_secret?: string | null
+          webhook_url: string
+        }
+        Update: {
+          created_at?: string
+          event_types?: string[]
+          id?: string
+          is_active?: boolean
+          last_delivery_at?: string | null
+          last_delivery_status?: string | null
+          retry_count?: number
+          timeout_seconds?: number
+          updated_at?: string
+          user_id?: string
+          webhook_secret?: string | null
+          webhook_url?: string
+        }
+        Relationships: []
+      }
       expert_advice: {
         Row: {
           advice: string
@@ -4547,6 +4734,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_enterprise_api_rate_limit: {
+        Args: { api_key_param: string; endpoint_param?: string }
+        Returns: boolean
+      }
       check_portfolio_monitoring_rate_limit: {
         Args: {
           user_id_param: string
@@ -4588,6 +4779,10 @@ export type Database = {
       }
       generate_document_hash: {
         Args: { content: string }
+        Returns: string
+      }
+      generate_enterprise_api_key: {
+        Args: Record<PropertyKey, never>
         Returns: string
       }
       get_all_template_download_counts: {
@@ -4671,6 +4866,20 @@ export type Database = {
           details_param?: Json
           ip_param?: unknown
           user_agent_param?: string
+        }
+        Returns: undefined
+      }
+      log_enterprise_api_usage: {
+        Args: {
+          api_key_param: string
+          endpoint_param: string
+          method_param: string
+          status_code_param: number
+          response_time_ms_param?: number
+          ip_address_param?: unknown
+          user_agent_param?: string
+          error_message_param?: string
+          metadata_param?: Json
         }
         Returns: undefined
       }

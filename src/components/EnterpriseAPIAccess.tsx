@@ -1,244 +1,338 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { toast } from 'sonner';
 import FeatureGuard from '@/components/FeatureGuard';
+import { supabase } from '@/integrations/supabase/client';
 import { 
-  Plus, 
-  Trash2, 
-  Settings, 
-  ExternalLink, 
-  Copy, 
   Key, 
-  Shield,
-  Activity,
-  AlertCircle,
+  Activity, 
+  BookOpen, 
+  Webhook, 
+  Copy, 
+  Eye, 
+  EyeOff, 
+  Settings, 
+  Trash2,
+  Plus,
   CheckCircle,
+  XCircle,
+  AlertCircle,
   Code,
   BarChart3,
-  Clock,
-  Globe,
-  Eye,
-  EyeOff
+  Clock
 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
 
 interface APIKey {
   id: string;
   user_id: string;
-  name: string;
-  key_value: string;
+  key_name: string;
+  api_key: string;
+  key_prefix: string;
   permissions: string[];
-  rate_limit: number;
-  usage_count: number;
-  last_used?: string;
+  rate_limit_requests: number;
+  rate_limit_window_minutes: number;
   is_active: boolean;
-  created_at: string;
+  last_used_at?: string;
   expires_at?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 interface APIUsage {
   endpoint: string;
   requests: number;
-  last_24h: number;
-  status: 'healthy' | 'warning' | 'error';
+  status: 'success' | 'error';
+}
+
+interface Webhook {
+  id: string;
+  webhook_url: string;
+  event_types: string[];
+  is_active: boolean;
+  created_at: string;
 }
 
 export const EnterpriseAPIAccess: React.FC = () => {
   const [apiKeys, setApiKeys] = useState<APIKey[]>([]);
+  const [usageData, setUsageData] = useState<APIUsage[]>([]);
+  const [webhooks, setWebhooks] = useState<Webhook[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [showKeyValue, setShowKeyValue] = useState<Record<string, boolean>>({});
-  const { toast } = useToast();
+  const [showWebhookForm, setShowWebhookForm] = useState(false);
+  const [visibleKeys, setVisibleKeys] = useState<Set<string>>(new Set());
 
   const [formData, setFormData] = useState({
     name: '',
     permissions: [] as string[],
-    rate_limit: 1000,
-    expires_at: ''
+    rateLimit: 1000,
+    expiresAt: ''
   });
 
-  // Mock API usage data
-  const apiUsage: APIUsage[] = [
-    { endpoint: '/api/v1/scan', requests: 1247, last_24h: 89, status: 'healthy' },
-    { endpoint: '/api/v1/monitor', requests: 856, last_24h: 45, status: 'healthy' },
-    { endpoint: '/api/v1/results', requests: 2341, last_24h: 156, status: 'warning' },
-    { endpoint: '/api/v1/upload', requests: 445, last_24h: 23, status: 'healthy' },
-  ];
+  const [webhookFormData, setWebhookFormData] = useState({
+    url: '',
+    eventTypes: [] as string[],
+    secret: ''
+  });
 
   const availablePermissions = [
-    'scan:read',
-    'scan:write',
-    'monitor:read', 
-    'monitor:write',
-    'results:read',
-    'upload:write',
-    'analytics:read',
-    'admin:all'
+    'scan',
+    'monitor', 
+    'analytics',
+    'results',
+    'webhooks',
+    'admin'
   ];
 
-  useEffect(() => {
-    loadAPIKeys();
-  }, []);
+  const availableEventTypes = [
+    'scan.completed',
+    'monitor.alert',
+    'violation.detected',
+    'key.created',
+    'key.revoked'
+  ];
 
-  const loadAPIKeys = async () => {
+  // Load real API keys from database
+  const loadApiKeys = useCallback(async () => {
     try {
-      // This would normally fetch from a real database table
-      // For demo purposes, we'll use mock data
-      const mockAPIKeys: APIKey[] = [
-        {
-          id: '1',
-          user_id: 'user1',
-          name: 'Production API',
-          key_value: 'tsmo_api_prod_' + Math.random().toString(36).substring(2, 32),
-          permissions: ['scan:read', 'scan:write', 'monitor:read', 'results:read'],
-          rate_limit: 5000,
-          usage_count: 1247,
-          last_used: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-          is_active: true,
-          created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString(),
-          expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toISOString()
-        },
-        {
-          id: '2',
-          user_id: 'user1',
-          name: 'Development API',
-          key_value: 'tsmo_api_dev_' + Math.random().toString(36).substring(2, 32),
-          permissions: ['scan:read', 'results:read'],
-          rate_limit: 1000,
-          usage_count: 89,
-          last_used: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
-          is_active: true,
-          created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString()
-        }
-      ];
-      
-      setApiKeys(mockAPIKeys);
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('enterprise_api_keys')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      setApiKeys(data || []);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load API keys",
-        variant: "destructive"
-      });
+      console.error('Failed to load API keys:', error);
+      toast.error('Failed to load API keys');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const createAPIKey = async () => {
+  // Load usage analytics
+  const loadUsageAnalytics = useCallback(async () => {
     try {
-      const newKey: APIKey = {
-        id: Date.now().toString(),
-        user_id: 'user1',
-        name: formData.name,
-        key_value: 'tsmo_api_' + Math.random().toString(36).substring(2, 32),
-        permissions: formData.permissions,
-        rate_limit: formData.rate_limit,
-        usage_count: 0,
-        is_active: true,
-        created_at: new Date().toISOString(),
-        expires_at: formData.expires_at || undefined
-      };
+      const { data, error } = await supabase
+        .from('enterprise_api_usage')
+        .select('endpoint, status_code')
+        .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
 
-      setApiKeys([newKey, ...apiKeys]);
+      if (error) throw error;
+
+      // Process usage data
+      const usageMap = (data || []).reduce((acc: Record<string, any>, item) => {
+        const endpoint = item.endpoint;
+        if (!acc[endpoint]) {
+          acc[endpoint] = { endpoint, requests: 0, status: 'success' };
+        }
+        acc[endpoint].requests++;
+        if (item.status_code >= 400) {
+          acc[endpoint].status = 'error';
+        }
+        return acc;
+      }, {});
+
+      setUsageData(Object.values(usageMap));
+    } catch (error) {
+      console.error('Failed to load usage analytics:', error);
+    }
+  }, []);
+
+  // Load webhooks
+  const loadWebhooks = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('enterprise_webhooks')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      setWebhooks(data || []);
+    } catch (error) {
+      console.error('Failed to load webhooks:', error);
+    }
+  }, []);
+
+  const createApiKey = useCallback(async () => {
+    if (!formData.name.trim()) {
+      toast.error('API key name is required');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Generate API key
+      const { data: apiKey, error: keyError } = await supabase.rpc('generate_enterprise_api_key');
+      if (keyError) throw keyError;
+
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      // Create API key record
+      const { data, error } = await supabase
+        .from('enterprise_api_keys')
+        .insert({
+          user_id: user.id,
+          key_name: formData.name,
+          api_key: apiKey,
+          key_prefix: apiKey.substring(0, 8),
+          permissions: formData.permissions,
+          rate_limit_requests: formData.rateLimit,
+          rate_limit_window_minutes: 60,
+          expires_at: formData.expiresAt || null
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      await loadApiKeys();
       setShowCreateForm(false);
       resetForm();
-      
-      toast({
-        title: "API Key Created",
-        description: "New API key has been generated successfully"
-      });
+      toast.success('API key created successfully');
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create API key",
-        variant: "destructive"
-      });
+      console.error('Failed to create API key:', error);
+      toast.error('Failed to create API key');
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [formData, loadApiKeys]);
 
-  const deleteAPIKey = async (id: string) => {
+  const deleteApiKey = useCallback(async (id: string) => {
+    setLoading(true);
     try {
-      setApiKeys(apiKeys.filter(k => k.id !== id));
-      
-      toast({
-        title: "API Key Deleted",
-        description: "API key has been revoked and removed"
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete API key",
-        variant: "destructive"
-      });
-    }
-  };
+      const { error } = await supabase
+        .from('enterprise_api_keys')
+        .delete()
+        .eq('id', id);
 
-  const toggleAPIKeyStatus = async (id: string) => {
+      if (error) throw error;
+
+      await loadApiKeys();
+      toast.success('API key deleted successfully');
+    } catch (error) {
+      console.error('Failed to delete API key:', error);
+      toast.error('Failed to delete API key');
+    } finally {
+      setLoading(false);
+    }
+  }, [loadApiKeys]);
+
+  const toggleApiKeyStatus = useCallback(async (id: string) => {
+    setLoading(true);
     try {
-      setApiKeys(apiKeys.map(k => 
-        k.id === id ? { ...k, is_active: !k.is_active } : k
-      ));
-      
-      const key = apiKeys.find(k => k.id === id);
-      toast({
-        title: "Status Updated",
-        description: `API key ${key?.is_active ? 'deactivated' : 'activated'}`
-      });
+      const apiKey = apiKeys.find(k => k.id === id);
+      if (!apiKey) return;
+
+      const { error } = await supabase
+        .from('enterprise_api_keys')
+        .update({ is_active: !apiKey.is_active })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      await loadApiKeys();
+      toast.success('API key status updated');
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update API key status",
-        variant: "destructive"
-      });
+      console.error('Failed to update API key status:', error);
+      toast.error('Failed to update API key status');
+    } finally {
+      setLoading(false);
     }
+  }, [apiKeys, loadApiKeys]);
+
+  const createWebhook = useCallback(async () => {
+    if (!webhookFormData.url.trim() || webhookFormData.eventTypes.length === 0) {
+      toast.error('Webhook URL and event types are required');
+      return;
+    }
+
+    try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      const { error } = await supabase
+        .from('enterprise_webhooks')
+        .insert({
+          user_id: user.id,
+          webhook_url: webhookFormData.url,
+          event_types: webhookFormData.eventTypes,
+          webhook_secret: webhookFormData.secret || null
+        });
+
+      if (error) throw error;
+
+      await loadWebhooks();
+      setShowWebhookForm(false);
+      setWebhookFormData({ url: '', eventTypes: [], secret: '' });
+      toast.success('Webhook created successfully');
+    } catch (error) {
+      console.error('Failed to create webhook:', error);
+      toast.error('Failed to create webhook');
+    }
+  }, [webhookFormData, loadWebhooks]);
+
+  useEffect(() => {
+    loadApiKeys();
+    loadUsageAnalytics();
+    loadWebhooks();
+  }, [loadApiKeys, loadUsageAnalytics, loadWebhooks]);
+
+  const getStatusIcon = (is_active: boolean) => {
+    return is_active 
+      ? <CheckCircle className="h-4 w-4 text-green-500" />
+      : <XCircle className="h-4 w-4 text-red-500" />;
   };
 
-  const copyToClipboard = (text: string) => {
+  const copyToClipboard = useCallback((text: string, label: string) => {
     navigator.clipboard.writeText(text);
-    toast({
-      title: "Copied",
-      description: "API key copied to clipboard"
+    toast.success(`${label} copied to clipboard`);
+  }, []);
+
+  const toggleKeyVisibility = useCallback((keyId: string) => {
+    setVisibleKeys(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(keyId)) {
+        newSet.delete(keyId);
+      } else {
+        newSet.add(keyId);
+      }
+      return newSet;
     });
-  };
+  }, []);
 
-  const toggleKeyVisibility = (keyId: string) => {
-    setShowKeyValue(prev => ({ ...prev, [keyId]: !prev[keyId] }));
-  };
-
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setFormData({
       name: '',
       permissions: [],
-      rate_limit: 1000,
-      expires_at: ''
+      rateLimit: 1000,
+      expiresAt: ''
     });
-  };
+  }, []);
 
-  const formatDate = (dateString: string) => {
+  const formatDate = useCallback((dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'healthy': return 'text-green-600';
-      case 'warning': return 'text-yellow-600';
-      case 'error': return 'text-red-600';
-      default: return 'text-gray-600';
-    }
-  };
+  }, []);
 
   return (
     <FeatureGuard 
@@ -265,7 +359,7 @@ export const EnterpriseAPIAccess: React.FC = () => {
               Manage API keys, monitor usage, and configure enterprise integrations
             </p>
           </div>
-          <Button onClick={() => setShowCreateForm(true)}>
+          <Button onClick={() => setShowCreateForm(true)} disabled={loading}>
             <Plus className="h-4 w-4 mr-2" />
             New API Key
           </Button>
@@ -280,6 +374,7 @@ export const EnterpriseAPIAccess: React.FC = () => {
           </TabsList>
 
           <TabsContent value="keys" className="space-y-4">
+            {/* Stats Cards */}
             <div className="grid gap-4 md:grid-cols-3">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -300,7 +395,7 @@ export const EnterpriseAPIAccess: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {apiKeys.reduce((sum, k) => sum + k.usage_count, 0).toLocaleString()}
+                    {usageData.reduce((sum, u) => sum + u.requests, 0).toLocaleString()}
                   </div>
                 </CardContent>
               </Card>
@@ -312,12 +407,13 @@ export const EnterpriseAPIAccess: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {Math.max(...apiKeys.map(k => k.rate_limit), 0).toLocaleString()}/h
+                    {Math.max(...apiKeys.map(k => k.rate_limit_requests), 0).toLocaleString()}/h
                   </div>
                 </CardContent>
               </Card>
             </div>
 
+            {/* API Keys List */}
             <Card>
               <CardHeader>
                 <CardTitle>API Keys</CardTitle>
@@ -326,92 +422,114 @@ export const EnterpriseAPIAccess: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {apiKeys.map((key) => (
-                    <div
-                      key={key.id}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <h4 className="font-medium">{key.name}</h4>
-                          <Badge variant={key.is_active ? "default" : "secondary"}>
-                            {key.is_active ? 'Active' : 'Inactive'}
-                          </Badge>
+                {loading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {apiKeys.map((apiKey) => (
+                      <Card key={apiKey.id} className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="font-medium">{apiKey.key_name}</h3>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              {getStatusIcon(apiKey.is_active)}
+                              <span>Status: {apiKey.is_active ? 'active' : 'inactive'}</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => toggleApiKeyStatus(apiKey.id)}
+                              disabled={loading}
+                            >
+                              {apiKey.is_active ? 'Disable' : 'Enable'}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => deleteApiKey(apiKey.id)}
+                              disabled={loading}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
-                        
-                        <div className="flex items-center space-x-2 text-sm">
-                          <Input
-                            value={showKeyValue[key.id] ? key.key_value : '••••••••••••••••••••••••••••••••'}
-                            readOnly
-                            className="font-mono text-xs"
-                          />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => toggleKeyVisibility(key.id)}
-                          >
-                            {showKeyValue[key.id] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => copyToClipboard(key.key_value)}
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
+
+                        <div className="space-y-2 mt-4">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">API Key:</span>
+                            <div className="flex items-center gap-2">
+                              <code className="text-sm bg-muted px-2 py-1 rounded">
+                                {visibleKeys.has(apiKey.id) 
+                                  ? apiKey.api_key 
+                                  : `${apiKey.key_prefix}${'*'.repeat(32)}`
+                                }
+                              </code>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => toggleKeyVisibility(apiKey.id)}
+                              >
+                                {visibleKeys.has(apiKey.id) ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => copyToClipboard(apiKey.api_key, 'API key')}
+                              >
+                                <Copy className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <span className="font-medium">Permissions:</span>
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {apiKey.permissions.map(permission => (
+                                  <Badge key={permission} variant="secondary" className="text-xs">
+                                    {permission}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                            <div>
+                              <span className="font-medium">Rate Limit:</span>
+                              <p className="text-muted-foreground">{apiKey.rate_limit_requests}/{apiKey.rate_limit_window_minutes}min</p>
+                            </div>
+                            <div>
+                              <span className="font-medium">Created:</span>
+                              <p className="text-muted-foreground">{formatDate(apiKey.created_at)}</p>
+                            </div>
+                            <div>
+                              <span className="font-medium">Last Used:</span>
+                              <p className="text-muted-foreground">
+                                {apiKey.last_used_at ? formatDate(apiKey.last_used_at) : 'Never'}
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                        
-                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                          <span>Usage: {key.usage_count.toLocaleString()} requests</span>
-                          <span>Rate limit: {key.rate_limit.toLocaleString()}/hour</span>
-                          {key.last_used && (
-                            <span>Last used: {formatDate(key.last_used)}</span>
-                          )}
-                        </div>
-                        
-                        <div className="flex flex-wrap gap-1">
-                          {key.permissions.map((permission) => (
-                            <Badge key={permission} variant="outline" className="text-xs">
-                              {permission}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2 ml-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => toggleAPIKeyStatus(key.id)}
-                        >
-                          {key.is_active ? 'Disable' : 'Enable'}
+                      </Card>
+                    ))}
+
+                    {apiKeys.length === 0 && (
+                      <div className="text-center py-8">
+                        <Key className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                        <h3 className="text-lg font-medium">No API keys yet</h3>
+                        <p className="text-muted-foreground mb-4">
+                          Create your first API key to start using our enterprise API
+                        </p>
+                        <Button onClick={() => setShowCreateForm(true)}>
+                          <Plus className="h-4 w-4 mr-2" />
+                          Create API Key
                         </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => deleteAPIKey(key.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
                       </div>
-                    </div>
-                  ))}
-                  
-                  {apiKeys.length === 0 && (
-                    <div className="text-center py-12">
-                      <Key className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-medium">No API keys yet</h3>
-                      <p className="text-muted-foreground mb-4">
-                        Create your first API key to start using our enterprise API
-                      </p>
-                      <Button onClick={() => setShowCreateForm(true)}>
-                        <Plus className="h-4 w-4 mr-2" />
-                        Create API Key
-                      </Button>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -421,12 +539,12 @@ export const EnterpriseAPIAccess: React.FC = () => {
               <CardHeader>
                 <CardTitle>API Usage Analytics</CardTitle>
                 <CardDescription>
-                  Monitor your API usage across all endpoints
+                  Monitor your API usage across all endpoints (last 30 days)
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {apiUsage.map((usage) => (
+                  {usageData.map((usage) => (
                     <div key={usage.endpoint} className="flex items-center justify-between p-4 border rounded-lg">
                       <div>
                         <div className="font-medium">{usage.endpoint}</div>
@@ -435,15 +553,22 @@ export const EnterpriseAPIAccess: React.FC = () => {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className={`font-medium ${getStatusColor(usage.status)}`}>
-                          {usage.last_24h} requests (24h)
-                        </div>
-                        <Badge variant={usage.status === 'healthy' ? 'default' : usage.status === 'warning' ? 'secondary' : 'destructive'}>
+                        <Badge variant={usage.status === 'success' ? 'default' : 'destructive'}>
                           {usage.status}
                         </Badge>
                       </div>
                     </div>
                   ))}
+                  
+                  {usageData.length === 0 && (
+                    <div className="text-center py-8">
+                      <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <h3 className="text-lg font-medium">No usage data yet</h3>
+                      <p className="text-muted-foreground">
+                        Start making API calls to see usage analytics here
+                      </p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -454,42 +579,64 @@ export const EnterpriseAPIAccess: React.FC = () => {
               <CardHeader>
                 <CardTitle>API Documentation</CardTitle>
                 <CardDescription>
-                  Complete reference for our enterprise API endpoints
+                  Base URL: https://utneaqmbyjwxaqrrarpc.supabase.co/functions/v1/enterprise-api-v1
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <Alert>
-                  <Code className="h-4 w-4" />
-                  <AlertDescription>
-                    Base URL: <code className="bg-muted px-2 py-1 rounded">https://api.tsmo.watch/v1</code>
-                  </AlertDescription>
-                </Alert>
-                
-                <div className="space-y-6">
-                  <div>
-                    <h4 className="font-medium mb-2">Authentication</h4>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Include your API key in the Authorization header:
-                    </p>
-                    <code className="block bg-muted p-3 rounded text-sm">
-                      Authorization: Bearer YOUR_API_KEY
-                    </code>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-medium mb-2">Common Endpoints</h4>
-                    <div className="space-y-2 text-sm">
-                      <div><code>POST /scan</code> - Submit content for scanning</div>
-                      <div><code>GET /results/:id</code> - Retrieve scan results</div>
-                      <div><code>POST /monitor</code> - Set up monitoring for content</div>
-                      <div><code>GET /analytics</code> - Access usage analytics</div>
+              <CardContent className="space-y-6">
+                <div>
+                  <h4 className="font-medium mb-2">Authentication</h4>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Include your API key in the request headers:
+                  </p>
+                  <pre className="bg-muted p-3 rounded text-sm overflow-x-auto">
+{`curl -X POST \\
+  https://utneaqmbyjwxaqrrarpc.supabase.co/functions/v1/enterprise-api-v1/v1/scan \\
+  -H "X-API-Key: your-api-key-here" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "content_url": "https://example.com/image.jpg",
+    "content_type": "image"
+  }'`}
+                  </pre>
+                </div>
+
+                <div>
+                  <h4 className="font-medium mb-2">Available Endpoints</h4>
+                  <div className="space-y-4">
+                    <div className="border rounded-lg p-4">
+                      <h5 className="font-medium">POST /v1/scan</h5>
+                      <p className="text-sm text-muted-foreground mb-2">Scan content for copyright infringement</p>
+                      <pre className="bg-muted p-3 rounded text-sm">
+{`{
+  "content_url": "string",
+  "content_type": "image|text"
+}`}
+                      </pre>
+                    </div>
+
+                    <div className="border rounded-lg p-4">
+                      <h5 className="font-medium">POST /v1/monitor</h5>
+                      <p className="text-sm text-muted-foreground mb-2">Set up monitoring for URLs</p>
+                      <pre className="bg-muted p-3 rounded text-sm">
+{`{
+  "target_urls": ["string"],
+  "scan_frequency": "daily|weekly|monthly"
+}`}
+                      </pre>
+                    </div>
+
+                    <div className="border rounded-lg p-4">
+                      <h5 className="font-medium">GET /v1/results</h5>
+                      <p className="text-sm text-muted-foreground mb-2">Retrieve scan or monitoring results</p>
+                      <p className="text-sm">Query parameters: scan_id, monitor_id, limit, offset</p>
+                    </div>
+
+                    <div className="border rounded-lg p-4">
+                      <h5 className="font-medium">GET /v1/analytics</h5>
+                      <p className="text-sm text-muted-foreground mb-2">Get usage analytics and metrics</p>
+                      <p className="text-sm">Query parameters: start_date, end_date</p>
                     </div>
                   </div>
-                  
-                  <Button variant="outline" className="w-full">
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    View Full Documentation
-                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -498,108 +645,204 @@ export const EnterpriseAPIAccess: React.FC = () => {
           <TabsContent value="webhooks" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Webhook Configuration</CardTitle>
-                <CardDescription>
-                  Configure webhooks to receive real-time notifications
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Webhooks</CardTitle>
+                    <CardDescription>
+                      Configure webhooks to receive real-time notifications
+                    </CardDescription>
+                  </div>
+                  <Button onClick={() => setShowWebhookForm(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Webhook
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                <Alert>
-                  <Globe className="h-4 w-4" />
-                  <AlertDescription>
-                    Webhooks allow you to receive instant notifications when events occur.
-                    Configure your endpoint URL to receive copyright matches, scan completions, and more.
-                  </AlertDescription>
-                </Alert>
+                <div className="space-y-4">
+                  {webhooks.map((webhook) => (
+                    <div key={webhook.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div>
+                        <div className="font-medium">{webhook.webhook_url}</div>
+                        <div className="flex gap-1 mt-1">
+                          {webhook.event_types.map(event => (
+                            <Badge key={event} variant="outline" className="text-xs">
+                              {event}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={webhook.is_active ? 'default' : 'secondary'}>
+                          {webhook.is_active ? 'Active' : 'Inactive'}
+                        </Badge>
+                        <Button size="sm" variant="destructive">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {webhooks.length === 0 && (
+                    <div className="text-center py-8">
+                      <Webhook className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <h3 className="text-lg font-medium">No webhooks configured</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Add a webhook to receive real-time notifications
+                      </p>
+                      <Button onClick={() => setShowWebhookForm(true)}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Webhook
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
 
-        {/* Create API Key Modal */}
-        {showCreateForm && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <CardHeader>
-                <CardTitle>Create New API Key</CardTitle>
-                <CardDescription>
-                  Generate a new API key for enterprise integrations
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="keyName">Key Name</Label>
-                  <Input
-                    id="keyName"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Production API Key"
-                  />
-                </div>
+        {/* Create API Key Dialog */}
+        <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create API Key</DialogTitle>
+              <DialogDescription>
+                Generate a new API key for enterprise access
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="name">Key Name</Label>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="Production API Key"
+                />
+              </div>
 
-                <div className="space-y-2">
-                  <Label>Permissions</Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {availablePermissions.map((permission) => (
-                      <div key={permission} className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          id={permission}
-                          checked={formData.permissions.includes(permission)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setFormData({
-                                ...formData,
-                                permissions: [...formData.permissions, permission]
-                              });
-                            } else {
-                              setFormData({
-                                ...formData,
-                                permissions: formData.permissions.filter(p => p !== permission)
-                              });
-                            }
-                          }}
-                        />
-                        <Label htmlFor={permission} className="text-sm">
-                          {permission}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
+              <div>
+                <Label>Permissions</Label>
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  {availablePermissions.map(permission => (
+                    <div key={permission} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={permission}
+                        checked={formData.permissions.includes(permission)}
+                        onCheckedChange={(checked) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            permissions: checked
+                              ? [...prev.permissions, permission]
+                              : prev.permissions.filter(p => p !== permission)
+                          }));
+                        }}
+                      />
+                      <Label htmlFor={permission} className="text-sm">{permission}</Label>
+                    </div>
+                  ))}
                 </div>
+              </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="rateLimit">Rate Limit (requests/hour)</Label>
-                  <Input
-                    id="rateLimit"
-                    type="number"
-                    value={formData.rate_limit}
-                    onChange={(e) => setFormData({ ...formData, rate_limit: parseInt(e.target.value) || 1000 })}
-                  />
-                </div>
+              <div>
+                <Label htmlFor="rateLimit">Rate Limit (requests per hour)</Label>
+                <Input
+                  id="rateLimit"
+                  type="number"
+                  value={formData.rateLimit}
+                  onChange={(e) => setFormData(prev => ({ ...prev, rateLimit: parseInt(e.target.value) || 1000 }))}
+                />
+              </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="expires">Expiration Date (optional)</Label>
-                  <Input
-                    id="expires"
-                    type="date"
-                    value={formData.expires_at}
-                    onChange={(e) => setFormData({ ...formData, expires_at: e.target.value })}
-                  />
-                </div>
+              <div>
+                <Label htmlFor="expiresAt">Expires At (optional)</Label>
+                <Input
+                  id="expiresAt"
+                  type="datetime-local"
+                  value={formData.expiresAt}
+                  onChange={(e) => setFormData(prev => ({ ...prev, expiresAt: e.target.value }))}
+                />
+              </div>
+            </div>
 
-                <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setShowCreateForm(false)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={createAPIKey}>
-                    Create API Key
-                  </Button>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowCreateForm(false)}>
+                Cancel
+              </Button>
+              <Button onClick={createApiKey} disabled={loading}>
+                Create API Key
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Create Webhook Dialog */}
+        <Dialog open={showWebhookForm} onOpenChange={setShowWebhookForm}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add Webhook</DialogTitle>
+              <DialogDescription>
+                Configure a webhook to receive real-time notifications
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="webhookUrl">Webhook URL</Label>
+                <Input
+                  id="webhookUrl"
+                  value={webhookFormData.url}
+                  onChange={(e) => setWebhookFormData(prev => ({ ...prev, url: e.target.value }))}
+                  placeholder="https://your-app.com/webhook"
+                />
+              </div>
+
+              <div>
+                <Label>Event Types</Label>
+                <div className="grid grid-cols-1 gap-2 mt-2">
+                  {availableEventTypes.map(eventType => (
+                    <div key={eventType} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={eventType}
+                        checked={webhookFormData.eventTypes.includes(eventType)}
+                        onCheckedChange={(checked) => {
+                          setWebhookFormData(prev => ({
+                            ...prev,
+                            eventTypes: checked
+                              ? [...prev.eventTypes, eventType]
+                              : prev.eventTypes.filter(e => e !== eventType)
+                          }));
+                        }}
+                      />
+                      <Label htmlFor={eventType} className="text-sm">{eventType}</Label>
+                    </div>
+                  ))}
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+              </div>
+
+              <div>
+                <Label htmlFor="webhookSecret">Secret (optional)</Label>
+                <Input
+                  id="webhookSecret"
+                  value={webhookFormData.secret}
+                  onChange={(e) => setWebhookFormData(prev => ({ ...prev, secret: e.target.value }))}
+                  placeholder="webhook_secret_key"
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowWebhookForm(false)}>
+                Cancel
+              </Button>
+              <Button onClick={createWebhook}>
+                Add Webhook
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </FeatureGuard>
   );

@@ -1,6 +1,9 @@
 
 project_id = "utneaqmbyjwxaqrrarpc"
 
+[functions.enterprise-api-v1]
+verify_jwt = false
+
 [functions.schedule-meeting]
 verify_jwt = false
 
