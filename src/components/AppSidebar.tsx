@@ -1,4 +1,4 @@
-import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search, Briefcase, UserCheck, Copyright, TrendingUp } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search, Briefcase, UserCheck, Copyright, TrendingUp, Key } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
@@ -113,6 +113,20 @@ export function AppSidebar() {
                     >
                       <Settings className="w-4 h-4" />
                       {!collapsed && <span>Custom Integrations</span>}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )}
+
+                {/* Enterprise API Access */}
+                {subscription?.plan_id === 'enterprise' && (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => navigate('/enterprise-api')}
+                      isActive={isActive('/enterprise-api')}
+                      className="flex items-center gap-2"
+                    >
+                      <Key className="w-4 h-4" />
+                      {!collapsed && <span>Enterprise API</span>}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )}

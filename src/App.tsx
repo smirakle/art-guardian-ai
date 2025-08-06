@@ -39,6 +39,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AIProtectionSettings from "./pages/AIProtectionSettings";
 import AITrainingProtection from "./pages/AITrainingProtection";
 import { CustomIntegrations } from "./components/CustomIntegrations";
+import { EnterpriseAPIAccess } from "./components/EnterpriseAPIAccess";
 import ProfileMonitoring from "./pages/ProfileMonitoring";
 import PortfolioMonitoring from "./pages/PortfolioMonitoring";
 import TrademarkMonitoring from "./pages/TrademarkMonitoring";
@@ -111,7 +112,8 @@ const App = () => {
                        <Route path="/sla-status" element={<SLAStatus />} />
                          <Route path="/ai-protection-settings" element={<AIProtectionSettings />} />
                          <Route path="/ai-training-protection" element={<AITrainingProtection />} />
-                       <Route path="/custom-integrations" element={<CustomIntegrations />} />
+                        <Route path="/custom-integrations" element={<CustomIntegrations />} />
+                        <Route path="/enterprise-api" element={<EnterpriseAPIAccess />} />
             <Route path="/profile-monitoring" element={<ProfileMonitoring />} />
             <Route path="/portfolio-monitoring" element={<PortfolioMonitoring />} />
             <Route path="/trademark-monitoring" element={<TrademarkMonitoring />} />
