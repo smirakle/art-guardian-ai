@@ -11,6 +11,7 @@ interface Subscription {
   deepfake_addon: boolean;
   white_label_enabled: boolean;
   custom_domain_enabled: boolean;
+  enterprise_api_addon: boolean;
   is_active: boolean;
 }
 
@@ -67,6 +68,7 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
           deepfake_addon: sub.deepfake_addon,
           white_label_enabled: (sub as any).white_label_enabled || false,
           custom_domain_enabled: (sub as any).custom_domain_enabled || false,
+          enterprise_api_addon: (sub as any).enterprise_api_addon || false,
           is_active: sub.is_active
         });
       } else {
@@ -128,9 +130,11 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
         return (subscription.plan_id === 'professional' || subscription.plan_id === 'enterprise') && subscription.custom_domain_enabled;
 
       case 'unlimited_users':
-      case 'api_access':
       case 'advanced_analytics':
         return subscription.plan_id === 'enterprise';
+
+      case 'enterprise_integrations':
+        return subscription.enterprise_api_addon;
 
       // Student plan only gets basic features
       case 'enhanced_monitoring':

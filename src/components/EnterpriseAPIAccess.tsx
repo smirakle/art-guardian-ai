@@ -241,11 +241,26 @@ export const EnterpriseAPIAccess: React.FC = () => {
   };
 
   return (
-    <FeatureGuard feature="enterprise_integrations" fallbackTitle="Enterprise API Access" fallbackDescription="Full API access and management for enterprise customers">
+    <FeatureGuard 
+      feature="enterprise_integrations" 
+      fallbackTitle="Enterprise API Access - $899/month" 
+      fallbackDescription="Premium API access for enterprise customers. Only available to subscribers of the Enterprise API add-on."
+    >
       <div className="space-y-6">
+        {/* Pricing Header */}
+        <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-lg p-6">
+          <div className="flex items-center gap-3 mb-2">
+            <Key className="w-6 h-6 text-primary" />
+            <h2 className="text-2xl font-bold text-primary">Enterprise API Access - $899/month</h2>
+          </div>
+          <p className="text-muted-foreground">
+            Unlimited access to enterprise-grade APIs with dedicated support and priority processing.
+          </p>
+        </div>
+
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold">Enterprise API Access</h2>
+            <h3 className="text-xl font-semibold">API Management</h3>
             <p className="text-muted-foreground">
               Manage API keys, monitor usage, and configure enterprise integrations
             </p>

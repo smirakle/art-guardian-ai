@@ -66,6 +66,12 @@ const FeatureGuard: React.FC<FeatureGuardProps> = ({
           description: 'Enhanced AI-powered visual recognition capabilities',
           requiredPlan: 'Professional'
         };
+      case 'enterprise_integrations':
+        return {
+          title: 'Enterprise API Access',
+          description: 'Access enterprise-grade APIs and integrations for $899/month',
+          requiredPlan: 'Enterprise API Add-on ($899/month)'
+        };
       default:
         return {
           title: fallbackTitle || 'Premium Feature',
