@@ -235,6 +235,14 @@ const GovernmentFilingService: React.FC<GovernmentFilingServiceProps> = ({ userS
 
   return (
     <div className="space-y-8">
+      {/* Demo Disclaimer */}
+      <Alert className="border-orange-200 bg-orange-50">
+        <AlertTriangle className="h-4 w-4 text-orange-600" />
+        <AlertDescription className="text-orange-800">
+          <strong>Demo Notice:</strong> The Government Filing service is currently for demonstration purposes only. 
+          All information displayed is for demonstration and testing purposes. No actual government filings will be processed.
+        </AlertDescription>
+      </Alert>
       {/* Service Header */}
       <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
         <CardHeader>
