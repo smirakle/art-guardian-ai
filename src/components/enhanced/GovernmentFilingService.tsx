@@ -29,19 +29,11 @@ const filingFormSchema = z.object({
 type FilingFormData = z.infer<typeof filingFormSchema>;
 
 const FILING_TYPES = [
-  'Trademark Application',
-  'Copyright Registration',
-  'Patent Application',
-  'Business License',
-  'Articles of Incorporation',
-  'DBA Filing',
-  'Federal Tax ID (EIN)',
-  'State Tax Registration',
-  'Professional License',
-  'Environmental Permit',
-  'Building Permit',
-  'Zoning Permit',
-  'Custom Filing'
+  'GDPR Privacy Policy',
+  'Enterprise Cease & Desist',
+  'NFT Terms',
+  'Smart Contract',
+  'DMCA Takedown Notice Pro'
 ];
 
 const JURISDICTIONS = [
