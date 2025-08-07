@@ -41,7 +41,8 @@ import {
   Building,
   Heart,
   ExternalLink,
-  UserX
+  UserX,
+  Calendar
 } from 'lucide-react';
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import MonitoringFlow from "@/components/MonitoringFlow";
@@ -1301,6 +1302,281 @@ const Index = () => {
                 <Users className="h-6 w-6 text-orange-500" />
               </div>
               <div className="text-sm font-medium text-muted-foreground">Expert Support</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Enterprise API Pricing Section */}
+      <section className="py-20 px-4 bg-gradient-to-br from-slate-50 to-blue-50">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <Badge variant="secondary" className="mb-4 px-3 py-1 text-sm">
+              🚀 New: Enterprise API Access
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Enterprise API Solutions
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Integrate TSMO's AI-powered protection directly into your platform with our comprehensive API suite.
+              Perfect for enterprises, SaaS platforms, and legal technology firms.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {/* Starter API */}
+            <Card className="relative border-2 hover:shadow-lg transition-all duration-300">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl mb-2">Starter API</CardTitle>
+                <div className="text-3xl font-bold text-primary">
+                  $499<span className="text-lg font-normal text-muted-foreground">/month</span>
+                </div>
+                <CardDescription>Perfect for small businesses and startups</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-sm">10,000 API calls/month</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-sm">100 calls/hour rate limit</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-sm">Core protection endpoints</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-sm">Basic API documentation</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-sm">Email support</span>
+                  </div>
+                </div>
+                <Button 
+                  className="w-full mt-6" 
+                  variant="outline"
+                  onClick={() => navigate("/enterprise-api")}
+                >
+                  Get Started
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Professional API */}
+            <Card className="relative border-2 border-primary shadow-lg scale-105">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <Badge className="bg-primary text-primary-foreground px-3 py-1">
+                  Most Popular
+                </Badge>
+              </div>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl mb-2">Professional API</CardTitle>
+                <div className="text-3xl font-bold text-primary">
+                  $1,999<span className="text-lg font-normal text-muted-foreground">/month</span>
+                </div>
+                <CardDescription>Ideal for mid-market companies</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-sm">50,000 API calls/month</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-sm">500 calls/hour rate limit</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-sm">Advanced analytics endpoints</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-sm">Webhook integrations</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-sm">Priority support (24hr response)</span>
+                  </div>
+                </div>
+                <Button 
+                  className="w-full mt-6 bg-primary hover:bg-primary/90"
+                  onClick={() => navigate("/enterprise-api")}
+                >
+                  Start Free Trial
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Enterprise API */}
+            <Card className="relative border-2 hover:shadow-lg transition-all duration-300">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl mb-2">Enterprise API</CardTitle>
+                <div className="text-3xl font-bold text-primary">
+                  $9,999<span className="text-lg font-normal text-muted-foreground">/month</span>
+                </div>
+                <CardDescription>For large enterprises and platforms</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-sm">250,000 API calls/month</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-sm">2,500 calls/hour rate limit</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-sm">Custom integrations</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-sm">Dedicated account manager</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-sm">SLA guarantees & premium support</span>
+                  </div>
+                </div>
+                <Button 
+                  className="w-full mt-6" 
+                  variant="outline"
+                  onClick={() => setShowSalesDialog(true)}
+                >
+                  Contact Sales
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Enterprise Plus & Custom Tiers */}
+          <div className="grid md:grid-cols-2 gap-6 mb-12">
+            <Card className="border-2 bg-gradient-to-br from-primary/5 to-accent/5">
+              <CardHeader>
+                <CardTitle className="text-xl">Enterprise Plus</CardTitle>
+                <div className="text-3xl font-bold text-primary">
+                  $24,999<span className="text-lg font-normal text-muted-foreground">/month</span>
+                </div>
+                <CardDescription>Fortune 500 ready with unlimited scale</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span>1M+ API calls/month</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span>Unlimited rate limits</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span>White-label options</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span>99.9% SLA guarantee</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 bg-gradient-to-br from-accent/5 to-primary/5">
+              <CardHeader>
+                <CardTitle className="text-xl">Custom Enterprise</CardTitle>
+                <div className="text-3xl font-bold text-primary">
+                  $50,000+<span className="text-lg font-normal text-muted-foreground">/month</span>
+                </div>
+                <CardDescription>Tailored solutions for complex requirements</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span>Custom API limits & features</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span>Partner integrations</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span>On-premise deployment options</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span>Custom legal & compliance features</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* API Benefits */}
+          <div className="bg-white/50 backdrop-blur-sm rounded-xl p-8 border">
+            <h3 className="text-2xl font-bold text-center mb-8">Why Choose TSMO's Enterprise API?</h3>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Shield className="h-6 w-6 text-primary" />
+                </div>
+                <h4 className="font-semibold mb-2">AI Training Protection</h4>
+                <p className="text-sm text-muted-foreground">First-to-market API for detecting AI training data usage</p>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Zap className="h-6 w-6 text-primary" />
+                </div>
+                <h4 className="font-semibold mb-2">99.9% Uptime</h4>
+                <p className="text-sm text-muted-foreground">Enterprise-grade reliability with SLA guarantees</p>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Globe className="h-6 w-6 text-primary" />
+                </div>
+                <h4 className="font-semibold mb-2">Global Scale</h4>
+                <p className="text-sm text-muted-foreground">Monitor millions of assets across all major platforms</p>
+              </div>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Building className="h-6 w-6 text-primary" />
+                </div>
+                <h4 className="font-semibold mb-2">Enterprise Ready</h4>
+                <p className="text-sm text-muted-foreground">SOC 2 compliant with dedicated support teams</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center mt-12">
+            <div className="space-y-4">
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Join leading enterprises already protecting their intellectual property with TSMO's API platform.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  size="lg" 
+                  className="px-8 py-3 text-lg"
+                  onClick={() => navigate("/enterprise-api")}
+                >
+                  Explore API Documentation
+                  <ExternalLink className="ml-2 h-5 w-5" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="px-8 py-3 text-lg"
+                  onClick={() => setShowSalesDialog(true)}
+                >
+                  Schedule API Demo
+                  <Calendar className="ml-2 h-5 w-5" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
