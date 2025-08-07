@@ -337,18 +337,69 @@ export const EnterpriseAPIAccess: React.FC = () => {
   return (
     <FeatureGuard 
       feature="enterprise_integrations" 
-      fallbackTitle="Enterprise API Access - $899/month" 
-      fallbackDescription="Premium API access for enterprise customers. Only available to subscribers of the Enterprise API add-on."
+      fallbackTitle="Enterprise API Access - Starting at $499/month" 
+      fallbackDescription="Premium API access for enterprise customers. Multiple tiers available from Starter to Custom Enterprise."
     >
       <div className="space-y-6">
         {/* Pricing Header */}
         <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-lg p-6">
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex items-center gap-3 mb-4">
             <Key className="w-6 h-6 text-primary" />
-            <h2 className="text-2xl font-bold text-primary">Enterprise API Access - $899/month</h2>
+            <h2 className="text-2xl font-bold text-primary">Enterprise API Access</h2>
           </div>
-          <p className="text-muted-foreground">
-            Unlimited access to enterprise-grade APIs with dedicated support and priority processing.
+          
+          {/* Pricing Tiers */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+            <div className="bg-card border rounded-lg p-4">
+              <h3 className="font-semibold text-lg mb-2">Starter API</h3>
+              <div className="text-2xl font-bold text-primary mb-1">$499<span className="text-sm font-normal">/month</span></div>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• 10,000 API calls/month</li>
+                <li>• 100 calls/hour rate limit</li>
+                <li>• Basic support</li>
+                <li>• Core endpoints</li>
+              </ul>
+            </div>
+            
+            <div className="bg-card border rounded-lg p-4">
+              <h3 className="font-semibold text-lg mb-2">Professional API</h3>
+              <div className="text-2xl font-bold text-primary mb-1">$1,999<span className="text-sm font-normal">/month</span></div>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• 50,000 API calls/month</li>
+                <li>• 500 calls/hour rate limit</li>
+                <li>• Priority support</li>
+                <li>• Advanced analytics</li>
+              </ul>
+            </div>
+            
+            <div className="bg-card border rounded-lg p-4">
+              <h3 className="font-semibold text-lg mb-2">Enterprise API</h3>
+              <div className="text-2xl font-bold text-primary mb-1">$9,999<span className="text-sm font-normal">/month</span></div>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• 250,000 API calls/month</li>
+                <li>• 2,500 calls/hour rate limit</li>
+                <li>• Dedicated support</li>
+                <li>• Custom integrations</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="bg-card border rounded-lg p-4 flex-1">
+              <h3 className="font-semibold text-lg mb-2">Enterprise Plus</h3>
+              <div className="text-2xl font-bold text-primary mb-1">$24,999<span className="text-sm font-normal">/month</span></div>
+              <p className="text-sm text-muted-foreground">1M+ calls/month • Unlimited rate limits • Fortune 500 ready</p>
+            </div>
+            
+            <div className="bg-card border rounded-lg p-4 flex-1">
+              <h3 className="font-semibold text-lg mb-2">Custom Enterprise</h3>
+              <div className="text-2xl font-bold text-primary mb-1">$50,000+<span className="text-sm font-normal">/month</span></div>
+              <p className="text-sm text-muted-foreground">Custom limits • White-label solutions • Partner integrations</p>
+            </div>
+          </div>
+          
+          <p className="text-muted-foreground mt-4">
+            Enterprise-grade AI training protection APIs with dedicated support and priority processing.
           </p>
         </div>
 
