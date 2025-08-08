@@ -65,6 +65,28 @@ export const CustomIntegrations: React.FC = () => {
     loadIntegrations();
   }, []);
 
+  // SEO - title, meta description, canonical
+  useEffect(() => {
+    document.title = 'TSMO Integrations – Adobe & Buffer';
+    const content = 'Connect Adobe Creative Cloud and Buffer to automate protection.';
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) {
+      meta.setAttribute('content', content);
+    } else {
+      const m = document.createElement('meta');
+      m.name = 'description';
+      m.content = content;
+      document.head.appendChild(m);
+    }
+    let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'canonical';
+      document.head.appendChild(link);
+    }
+    link.href = window.location.href;
+  }, []);
+
   const loadIntegrations = async () => {
     try {
       const { data, error } = await supabase
@@ -205,6 +227,25 @@ export const CustomIntegrations: React.FC = () => {
     });
   };
 
+  const handleConnect = async (provider: 'adobe' | 'buffer') => {
+    try {
+      const appRedirect = `${window.location.origin}/custom-integrations`;
+      const { data, error } = await supabase.functions.invoke('oauth-handler', {
+        body: { provider, appRedirect }
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url as string;
+      }
+    } catch (e) {
+      toast({
+        title: 'Connection failed',
+        description: 'Unable to start OAuth flow',
+        variant: 'destructive'
+      });
+    }
+  };
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'active':
@@ -248,12 +289,13 @@ export const CustomIntegrations: React.FC = () => {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
-            <TabsTrigger value="api">API Access</TabsTrigger>
-            <TabsTrigger value="exports">Data Exports</TabsTrigger>
-          </TabsList>
+            <TabsList>
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="creative">Creative Tools</TabsTrigger>
+              <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
+              <TabsTrigger value="api">API Access</TabsTrigger>
+              <TabsTrigger value="exports">Data Exports</TabsTrigger>
+            </TabsList>
 
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-3">
@@ -356,6 +398,40 @@ export const CustomIntegrations: React.FC = () => {
                       </Button>
                     </div>
                   )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="creative" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Creative Tools Integrations</CardTitle>
+                <CardDescription>
+                  Connect Adobe Creative Cloud (UXP) and Buffer to enable one-click protection and scheduled sharing.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4 md:grid-cols-2">
+                <div className="p-4 border rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <div className="font-medium">Adobe Creative Cloud (Photoshop/Illustrator UXP)</div>
+                      <div className="text-sm text-muted-foreground">Authorize access to enable in-app one-click protection</div>
+                    </div>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <Button onClick={() => handleConnect('adobe')}>Connect Adobe</Button>
+                </div>
+
+                <div className="p-4 border rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <div className="font-medium">Buffer</div>
+                      <div className="text-sm text-muted-foreground">Schedule protected posts to social platforms</div>
+                    </div>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <Button onClick={() => handleConnect('buffer')}>Connect Buffer</Button>
                 </div>
               </CardContent>
             </Card>

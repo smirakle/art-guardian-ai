@@ -87,3 +87,9 @@ verify_jwt = false
 
 [functions.real-legal-document-processor]
 verify_jwt = true
+
+[functions.oauth-handler]
+verify_jwt = false
+
+[functions.one-click-protect]
+verify_jwt = false

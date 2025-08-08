@@ -2297,6 +2297,39 @@ export type Database = {
         }
         Relationships: []
       }
+      oauth_states: {
+        Row: {
+          app_redirect_uri: string
+          created_at: string
+          expires_at: string
+          id: string
+          provider: string
+          state: string
+          used: boolean
+          user_id: string
+        }
+        Insert: {
+          app_redirect_uri: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          provider: string
+          state: string
+          used?: boolean
+          user_id: string
+        }
+        Update: {
+          app_redirect_uri?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          provider?: string
+          state?: string
+          used?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
       performance_metrics: {
         Row: {
           additional_data: Json | null
@@ -4285,6 +4318,51 @@ export type Database = {
           status?: string
           trademark_class?: string[] | null
           trademark_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_integrations: {
+        Row: {
+          access_token: string
+          account_id: string | null
+          account_name: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          provider: string
+          refresh_token: string | null
+          scope: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          account_id?: string | null
+          account_name?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          provider: string
+          refresh_token?: string | null
+          scope?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          account_id?: string | null
+          account_name?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          provider?: string
+          refresh_token?: string | null
+          scope?: string | null
+          status?: string
           updated_at?: string
           user_id?: string
         }
