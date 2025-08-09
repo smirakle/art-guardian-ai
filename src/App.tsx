@@ -47,7 +47,7 @@ import InvestorHub from "./pages/InvestorHub";
 import Roadmap from "./pages/Roadmap";
 import CreatorMarkets from "./pages/CreatorMarkets";
 import ForgeryDetection from "./pages/ForgeryDetection";
-
+import Licensing from "./pages/Licensing";
 const queryClient = new QueryClient();
 
 const App = () => {
