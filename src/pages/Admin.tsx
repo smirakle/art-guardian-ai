@@ -21,7 +21,7 @@ import BlockchainReadiness from "@/components/admin/BlockchainReadiness";
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-11">
+            <TabsList className="grid w-full grid-cols-11 overflow-x-auto whitespace-nowrap gap-1">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
               <TabsTrigger value="enhanced-users">Enhanced Users</TabsTrigger>
