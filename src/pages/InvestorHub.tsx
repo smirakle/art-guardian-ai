@@ -13,7 +13,8 @@ import {
   Database, 
   Monitor,
   Shield,
-  TrendingUp
+  TrendingUp,
+  DollarSign
 } from 'lucide-react';
 
 const InvestorHub = () => {
@@ -113,6 +114,75 @@ const InvestorHub = () => {
                 <div className="text-3xl font-bold text-green-600">39x</div>
                 <div className="text-sm text-muted-foreground">LTV/CAC Ratio</div>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="mb-8 border-primary/30 bg-card/50">
+          <CardHeader>
+            <CardTitle className="text-center text-2xl flex items-center justify-center gap-2">
+              <DollarSign className="h-5 w-5 text-primary" />
+              Enterprise Pricing Guidance
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="rounded-lg border p-4 bg-background/60">
+                <h4 className="font-semibold mb-1">Growth</h4>
+                <p className="text-sm text-muted-foreground mb-2">$2k–$5k/mo</p>
+                <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
+                  <li>Up to 25 seats</li>
+                  <li>10k assets monitored</li>
+                  <li>Email support</li>
+                </ul>
+              </div>
+              <div className="rounded-lg border p-4 bg-background/60">
+                <h4 className="font-semibold mb-1">Scale</h4>
+                <p className="text-sm text-muted-foreground mb-2">$6k–$12k/mo</p>
+                <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
+                  <li>Up to 100 seats</li>
+                  <li>100k assets monitored</li>
+                  <li>Priority support</li>
+                </ul>
+              </div>
+              <div className="rounded-lg border p-4 bg-background/60">
+                <h4 className="font-semibold mb-1">Enterprise</h4>
+                <p className="text-sm text-muted-foreground mb-2">$15k–$30k+/mo</p>
+                <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
+                  <li>Unlimited seats & assets</li>
+                  <li>SAML SSO, audit logs</li>
+                  <li>24/7 SLA</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6 mt-6">
+              <div>
+                <h5 className="font-semibold mb-2">Setup & Discounts</h5>
+                <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
+                  <li>$5k–$20k one-time setup</li>
+                  <li>15–25% off annual prepay</li>
+                </ul>
+              </div>
+              <div>
+                <h5 className="font-semibold mb-2">Add‑ons</h5>
+                <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
+                  <li>$0.005–$0.02 per web scan</li>
+                  <li>$0.10–$0.50 per video minute (deepfake)</li>
+                  <li>$2–$5 per 1k API calls</li>
+                  <li>$50–$200 per legal notice (DMCA)</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-center gap-3">
+              <Button size="lg" className="gap-2" onClick={() => (window.location.href = '/contact')}>
+                Contact Sales
+              </Button>
+              <Button variant="outline" size="lg" className="gap-2" onClick={() => (window.location.href = '/investors#schedule')}>
+                <Users className="h-5 w-5" />
+                Schedule Meeting
+              </Button>
             </div>
           </CardContent>
         </Card>
