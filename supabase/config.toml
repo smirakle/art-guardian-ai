@@ -93,3 +93,9 @@ verify_jwt = false
 
 [functions.one-click-protect]
 verify_jwt = false
+
+[functions.create-license-payment]
+verify_jwt = true
+
+[functions.verify-license-payment]
+verify_jwt = true

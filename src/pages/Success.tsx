@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { CheckCircle, ArrowRight, Shield, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
 
 const Success = () => {
   const [searchParams] = useSearchParams();
@@ -13,6 +14,13 @@ const Success = () => {
     const sessionIdParam = searchParams.get('session_id');
     if (sessionIdParam) {
       setSessionId(sessionIdParam);
+      // Attempt to verify license payments automatically
+      supabase.functions.invoke('verify-license-payment', { body: { session_id: sessionIdParam } })
+        .then((res) => {
+          if (res.error) console.warn('Verify error', res.error);
+          else console.log('Verify result', res.data);
+        })
+        .catch((e) => console.warn('Verify call failed', e));
     }
   }, [searchParams]);
 

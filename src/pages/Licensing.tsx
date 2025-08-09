@@ -7,6 +7,7 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import jsPDF from "jspdf";
 
 interface ArtworkItem {
   id: string;
@@ -146,6 +147,37 @@ const Licensing: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const collectPayment = async (id: string) => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-license-payment", {
+        body: { licenseId: id },
+      });
+      if (error || !data?.url) throw new Error(data?.error || error?.message || "Failed to create checkout");
+      window.open(data.url as string, "_blank");
+    } catch (e: any) {
+      toast({ title: "Payment error", description: e?.message ?? "Unable to start checkout" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const downloadPdf = (l: LicenseRow) => {
+    const doc = new jsPDF();
+    const title = (l.artwork?.title || l.artwork_id);
+    doc.setFontSize(16);
+    doc.text("License Certificate", 20, 20);
+    doc.setFontSize(12);
+    doc.text(`License ID: ${l.id}`, 20, 32);
+    doc.text(`Artwork: ${title}`, 20, 40);
+    doc.text(`Type: ${l.license_type}`, 20, 48);
+    doc.text(`Status: ${l.status}`, 20, 56);
+    if (l.blockchain_certificate_id) doc.text(`Certificate: ${l.blockchain_certificate_id}`, 20, 64);
+    if (l.blockchain_hash) doc.text(`Blockchain Hash: ${l.blockchain_hash.slice(0, 32)}...`, 20, 72);
+    doc.text(`Created: ${new Date(l.created_at).toLocaleString()}`, 20, 80);
+    doc.save(`license-${l.id}.pdf`);
   };
 
   return (
@@ -301,10 +333,20 @@ const Licensing: React.FC = () => {
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      {l.status !== "active" && l.status !== "revoked" && (
+                  <div className="flex items-center gap-2">
+                      {l.price_cents > 0 && l.status !== "paid" && l.status !== "active" && (
+                        <Button size="sm" onClick={() => collectPayment(l.id)} disabled={loading}>
+                          Collect Payment
+                        </Button>
+                      )}
+                      {((l.price_cents === 0) || l.status === "paid") && l.status !== "active" && (
                         <Button size="sm" variant="secondary" onClick={() => activate(l.id)} disabled={loading}>
                           Activate + Chain Proof
+                        </Button>
+                      )}
+                      {l.status === "active" && (
+                        <Button size="sm" variant="outline" onClick={() => downloadPdf(l)}>
+                          Download PDF
                         </Button>
                       )}
                     </div>
