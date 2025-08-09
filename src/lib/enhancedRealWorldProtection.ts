@@ -22,6 +22,11 @@ export interface EnhancedProtectionOptions {
   enableRealTimeMonitoring?: boolean;
   enableBlockchainRegistration: boolean;
   enableLikenessProtection: boolean;
+  // Document-specific protection options
+  enablePolicyEmbedding?: boolean;
+  enableInvisibleTracers?: boolean;
+  enableSemanticPerturbation?: boolean;
+  enableZeroWidthJoiners?: boolean;
   protectionLevel: 'basic' | 'advanced' | 'maximum';
   copyrightInfo?: any;
   artworkId?: string;
@@ -526,7 +531,14 @@ export class EnhancedRealWorldProtection {
       blockchain_registration: 30,
       likeness_protection: 25,
       advanced_fingerprinting: 20,
-      maximum_obfuscation: 25
+      maximum_obfuscation: 25,
+      real_time_monitoring: 15,
+      // Document-specific protection methods
+      policy_embedding: 10,
+      invisible_tracers: 20,
+      semantic_perturbation: 25,
+      zero_width_joiners: 30,
+      document_watermarking: 35
     };
 
     return methods.reduce((total, method) => {

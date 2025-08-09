@@ -87,13 +87,15 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
         adversarialNoise: methods.includes('Adversarial Protection'),
         rightsMetadata: methods.includes('Rights Metadata'),
         webCrawlerBlocking: methods.includes('Web Crawler Blocking'),
-        protectionLevel: protectionLevel as any,
+        protectionLevel: protectionLevel as 'basic' | 'advanced' | 'maximum',
         copyrightInfo: {
           owner: 'TSMO User',
           year: new Date().getFullYear(),
           rights: 'All Rights Reserved'
         }
       });
+      
+      console.log('Protection result:', result);
 
       if (result.success && result.protectedBlob) {
         // Replace the file with protected version
@@ -205,7 +207,7 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
               ref={fileInputRef}
               type="file"
               multiple
-              accept="image/*,video/*,audio/*,application/pdf"
+              accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.md,.rtf"
               onChange={(e) => handleFileUpload(e.target.files)}
               className="hidden"
             />
@@ -273,7 +275,7 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
               ref={fileInputRef}
               type="file"
               multiple
-              accept="image/*,video/*,audio/*,application/pdf"
+              accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.md,.rtf"
               onChange={(e) => handleFileUpload(e.target.files)}
               className="hidden"
             />

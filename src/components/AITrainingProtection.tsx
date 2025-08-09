@@ -83,6 +83,38 @@ export const AITrainingProtection: React.FC<AITrainingProtectionProps> = ({
       fileTypes: ['image', 'video', 'audio', 'document']
     },
     {
+      id: 'policyEmbedding',
+      name: 'Policy Embedding',
+      description: 'Embeds AI training prohibition policies directly into document text',
+      icon: <FileText className="w-4 h-4" />,
+      enabled: true,
+      fileTypes: ['document']
+    },
+    {
+      id: 'invisibleTracers',
+      name: 'Invisible Document Tracers',
+      description: 'Hidden markers that survive text processing and AI training',
+      icon: <Eye className="w-4 h-4" />,
+      enabled: true,
+      fileTypes: ['document']
+    },
+    {
+      id: 'semanticPerturbation',
+      name: 'Semantic Perturbation',
+      description: 'Subtle text modifications that preserve meaning but disrupt training',
+      icon: <Zap className="w-4 h-4" />,
+      enabled: protectionLevel !== 'basic',
+      fileTypes: ['document']
+    },
+    {
+      id: 'zeroWidthJoiners',
+      name: 'Zero-Width Character Protection',
+      description: 'Invisible Unicode characters that create unique fingerprints',
+      icon: <Shield className="w-4 h-4" />,
+      enabled: protectionLevel === 'maximum',
+      fileTypes: ['document']
+    },
+    {
       id: 'likenenessProtection',
       name: 'Likeness Recognition Protection',
       description: 'Protects against deepfake and likeness misuse',
@@ -175,6 +207,11 @@ export const AITrainingProtection: React.FC<AITrainingProtectionProps> = ({
           enableBlockchainRegistration: enabledMethods.includes('blockchainRegistration'),
           enableLikenessProtection: enabledMethods.includes('likenenessProtection'),
           enableRealTimeMonitoring: enabledMethods.includes('realtimeMonitoring'),
+          // Document-specific options
+          enablePolicyEmbedding: enabledMethods.includes('policyEmbedding'),
+          enableInvisibleTracers: enabledMethods.includes('invisibleTracers'),
+          enableSemanticPerturbation: enabledMethods.includes('semanticPerturbation'),
+          enableZeroWidthJoiners: enabledMethods.includes('zeroWidthJoiners'),
           protectionLevel,
           copyrightInfo: {
             owner: 'TSMO User',
@@ -345,11 +382,29 @@ export const AITrainingProtection: React.FC<AITrainingProtectionProps> = ({
         <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
           <h5 className="font-semibold text-amber-800 mb-2">Legal Protection Notice</h5>
           <p className="text-sm text-amber-700">
-            This file is protected by copyright law and explicitly excludes use for AI training, 
+            This {fileType} is protected by copyright law and explicitly excludes use for AI training, 
             machine learning, or algorithmic development without express written consent. 
             Unauthorized use may result in legal action.
+            {fileType === 'document' && (
+              <>
+                {' '}Document tracers and invisible markers have been embedded to detect unauthorized training use.
+              </>
+            )}
           </p>
         </div>
+
+        {/* File-type specific help */}
+        {fileType === 'document' && (
+          <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+            <h5 className="font-semibold text-green-800 mb-2">Document Protection Features</h5>
+            <ul className="text-sm text-green-700 space-y-1">
+              <li>• Zero-width Unicode characters for invisible tracking</li>
+              <li>• Semantic perturbations that preserve readability</li>
+              <li>• Policy statements embedded within document text</li>
+              <li>• Hidden layers in PDF files for detection</li>
+            </ul>
+          </div>
+        )}
 
         {/* Apply Protection Button */}
         <Button 

@@ -210,12 +210,19 @@ To verify authenticity, visit: https://tsmo.ai/verify-certificate
    */
   private static getMethodDisplayName(methodId: string): string {
     const methodNames: Record<string, string> = {
+      'realtimeMonitoring': 'Real-Time Violation Monitoring',
       'invisibleWatermark': 'Invisible Watermarking',
       'adversarialNoise': 'Adversarial Noise Protection',
       'metadataInjection': 'Rights Metadata Injection',
       'blockchainRegistration': 'Blockchain Rights Registration',
       'robotsTxtEntry': 'Web Crawler Blocking',
-      'likenenessProtection': 'Likeness Recognition Protection'
+      'likenenessProtection': 'Likeness Recognition Protection',
+      // Document-specific methods
+      'policyEmbedding': 'Policy Embedding',
+      'invisibleTracers': 'Invisible Document Tracers',
+      'semanticPerturbation': 'Semantic Perturbation',
+      'zeroWidthJoiners': 'Zero-Width Character Protection',
+      'documentWatermarking': 'Document Watermarking'
     };
     return methodNames[methodId] || methodId;
   }
