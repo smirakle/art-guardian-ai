@@ -94,6 +94,10 @@ verify_jwt = false
 [functions.one-click-protect]
 verify_jwt = false
 
+[functions.automated-licensing]
+verify_jwt = true
+
+
 [functions.create-license-payment]
 verify_jwt = true
 
