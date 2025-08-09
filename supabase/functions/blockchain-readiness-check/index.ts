@@ -28,8 +28,12 @@ serve(async (req) => {
 
     if (!secretsOk) {
       return new Response(
-        JSON.stringify({ ...result, message: 'Missing required secrets' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({
+          status: 'needs_attention',
+          message: 'Missing required secrets',
+          result,
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
@@ -120,8 +124,8 @@ serve(async (req) => {
       enableUrl = m ? m[0] : null
     }
     return new Response(
-      JSON.stringify({ error: e?.message ?? 'Internal error', enable_url: enableUrl }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ status: 'needs_attention', error: e?.message ?? 'Internal error', enable_url: enableUrl }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 })
