@@ -12,6 +12,7 @@ import MonitoringDashboard from "@/components/MonitoringDashboard";
 import LiveFeed from "@/components/LiveFeed";
 import BlockchainReadiness from "@/components/admin/BlockchainReadiness";
 import MonitoringReadiness from "@/components/admin/MonitoringReadiness";
+import AITPReadiness from "@/components/admin/AITPReadiness";
  
  const Admin = () => {
    const [activeTab, setActiveTab] = useState("dashboard");
@@ -22,7 +23,7 @@ import MonitoringReadiness from "@/components/admin/MonitoringReadiness";
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-11 overflow-x-auto whitespace-nowrap gap-1">
+            <TabsList className="grid w-full grid-cols-12 overflow-x-auto whitespace-nowrap gap-1">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
               <TabsTrigger value="enhanced-users">Enhanced Users</TabsTrigger>
@@ -33,6 +34,7 @@ import MonitoringReadiness from "@/components/admin/MonitoringReadiness";
               <TabsTrigger value="security">Security</TabsTrigger>
               <TabsTrigger value="system">System</TabsTrigger>
               <TabsTrigger value="blockchain">Blockchain</TabsTrigger>
+              <TabsTrigger value="ai-training">AI Training</TabsTrigger>
               <TabsTrigger value="live-feed">Live Feed</TabsTrigger>
             </TabsList>
 
@@ -75,6 +77,10 @@ import MonitoringReadiness from "@/components/admin/MonitoringReadiness";
 
             <TabsContent value="blockchain" className="space-y-6">
               <BlockchainReadiness />
+            </TabsContent>
+
+            <TabsContent value="ai-training" className="space-y-6">
+              <AITPReadiness />
             </TabsContent>
  
             <TabsContent value="live-feed" className="space-y-6">
