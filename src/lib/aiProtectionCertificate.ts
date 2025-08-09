@@ -15,142 +15,145 @@ export class AIProtectionCertificateGenerator {
    */
   static generateProtectionCertificate(data: AIProtectionData): Blob {
     const doc = new jsPDF();
-    
+
+    // Page helpers
+    const pageWidth = (doc as any).internal.pageSize.getWidth();
+    const pageHeight = (doc as any).internal.pageSize.getHeight();
+    const margin = 20;
+    const contentWidth = pageWidth - margin * 2;
+    let yPos = margin + 5;
+
+    const ensureSpace = (needed: number) => {
+      if (yPos + needed > pageHeight - margin) {
+        doc.addPage();
+        yPos = margin;
+      }
+    };
+
+    const writeWrapped = (text: string, x = margin, lineHeight = 6, bullet = false) => {
+      const lines = doc.splitTextToSize(text, contentWidth - (x - margin));
+      lines.forEach((line, idx) => {
+        ensureSpace(lineHeight);
+        const prefix = bullet && idx === 0 ? '\u2022 ' : '';
+        const indentX = bullet && idx > 0 ? x + 5 : x;
+        doc.text(prefix + line, indentX, yPos);
+        yPos += lineHeight;
+      });
+    };
+
     // Header
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
-    doc.text('AI TRAINING PROTECTION CERTIFICATE', 20, 25);
-    
+    writeWrapped('AI TRAINING PROTECTION CERTIFICATE', margin, 8);
+
     // Subtitle
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
-    doc.text('Official Proof of Content Protection Against Unauthorized AI Training', 20, 35);
-    
-    // TSMO Protection Badge
+    writeWrapped('Official Proof of Content Protection Against Unauthorized AI Training', margin, 6);
+
+    // Badge
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(0, 100, 200);
-    doc.text('Protected by TSMO Advanced AI Protection', 20, 45);
+    writeWrapped('Protected by TSMO Advanced AI Protection', margin, 6);
     doc.setTextColor(0, 0, 0);
-    
+
     // Horizontal line
-    doc.line(20, 50, 190, 50);
-    
+    ensureSpace(10);
+    doc.line(margin, yPos, pageWidth - margin, yPos);
+    yPos += 12;
+
     // Certificate details
     doc.setFontSize(10);
-    let yPos = 62;
-    
     const addField = (label: string, value: string, bold: boolean = false) => {
+      ensureSpace(8);
       doc.setFont('helvetica', 'bold');
-      doc.text(`${label}:`, 20, yPos);
+      doc.text(`${label}:`, margin, yPos);
       doc.setFont('helvetica', bold ? 'bold' : 'normal');
-      doc.text(value, 75, yPos);
-      yPos += 8;
+      const valueX = margin + 55;
+      const valueLines = doc.splitTextToSize(value, contentWidth - 55);
+      valueLines.forEach((line) => {
+        doc.text(line, valueX, yPos);
+        yPos += 8;
+      });
     };
-    
+
     const certificateId = `AI-CERT-${Date.now().toString(36).toUpperCase()}`;
     addField('Certificate ID', certificateId, true);
     addField('Issued Date', data.certificateDate.toLocaleDateString());
     addField('Protection Level', data.protectionLevel.toUpperCase(), true);
     addField('Protected Files', data.protectedFiles.toString());
-    addField('User ID', data.userId.slice(0, 8) + '...');
-    
+    addField('User ID', `${data.userId.slice(0, 8)}...`);
+
     // Protection Methods section
-    yPos += 5;
+    ensureSpace(10);
     doc.setFont('helvetica', 'bold');
-    doc.text('Active Protection Methods:', 20, yPos);
-    yPos += 8;
-    
+    writeWrapped('Active Protection Methods:', margin, 8);
+
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
-    data.protectionMethods.forEach(method => {
-      doc.text(`• ${this.getMethodDisplayName(method)}`, 25, yPos);
-      yPos += 6;
+    (data.protectionMethods || []).forEach((method) => {
+      writeWrapped(`${this.getMethodDisplayName(method)}`, margin + 5, 6, true);
     });
-    
+
     // Legal Notice section
-    yPos += 8;
+    ensureSpace(14);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.text('LEGAL PROTECTION NOTICE', 20, yPos);
-    yPos += 10;
-    
+    writeWrapped('LEGAL PROTECTION NOTICE', margin, 8);
+
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
-    
+
     const legalText = [
-      'This certificate serves as legal proof that the protected content is explicitly',
-      'EXCLUDED from use in artificial intelligence training, machine learning model',
-      'development, or any automated algorithmic processing without express written',
-      'consent from the copyright holder.',
-      '',
-      'UNAUTHORIZED USE PROHIBITED:',
-      '• AI model training or fine-tuning',
-      '• Machine learning dataset compilation',
-      '• Neural network feature extraction',
-      '• Automated content generation based on protected works',
-      '• Deep learning algorithm development',
-      '',
-      'Violation of these protections may result in:',
-      '• Legal action under copyright law',
-      '• DMCA takedown notices',
-      '• Monetary damages and injunctive relief'
+      'This certificate serves as legal proof that the protected content is explicitly excluded from use in artificial intelligence training, machine learning model development, or any automated algorithmic processing without express written consent from the copyright holder.',
+      'Unauthorized use prohibited:',
+      'AI model training or fine-tuning',
+      'Machine learning dataset compilation',
+      'Neural network feature extraction',
+      'Automated content generation based on protected works',
+      'Deep learning algorithm development',
+      'Violation of these protections may result in legal action under copyright law, DMCA takedown notices, and monetary damages with injunctive relief.'
     ];
-    
-    legalText.forEach(line => {
-      if (line === '') {
-        yPos += 3;
-      } else if (line.startsWith('•')) {
-        doc.text(line, 25, yPos);
-        yPos += 5;
-      } else {
-        doc.text(line, 20, yPos);
-        yPos += 5;
-      }
+
+    legalText.forEach((line, idx) => {
+      const bullet = idx > 1 && idx < 7; // bullet list for middle items
+      writeWrapped(line, bullet ? margin + 5 : margin, 5, bullet);
     });
-    
+
     // Verification section
-    yPos += 8;
+    ensureSpace(12);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
-    doc.text('Certificate Verification:', 20, yPos);
-    yPos += 7;
-    
+    writeWrapped('Certificate Verification:', margin, 7);
+
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
-    
+
     const verificationHash = this.generateVerificationHash(data);
     const verificationText = [
       `Verification Hash: ${verificationHash}`,
       `Digital Signature: TSMO-${certificateId.slice(-8)}`,
       `Blockchain Record: ${data.verificationId || 'Pending registration'}`,
-      '',
-      'This certificate is cryptographically verified and legally binding.',
+      'This certificate is cryptographically verified and legally valid.',
       'To verify authenticity, visit: https://tsmo.ai/verify-certificate'
     ];
-    
-    verificationText.forEach(line => {
-      if (line === '') {
-        yPos += 3;
-      } else {
-        doc.text(line, 20, yPos);
-        yPos += 5;
-      }
-    });
-    
+
+    verificationText.forEach((line) => writeWrapped(line, margin, 5));
+
     // Footer
-    yPos += 10;
+    ensureSpace(20);
     doc.setFontSize(7);
     doc.setTextColor(100);
-    doc.text('Generated by TSMO AI Protection System', 20, yPos);
-    doc.text(`Certificate issued on ${new Date().toLocaleString()}`, 20, yPos + 5);
-    doc.text('This document is digitally generated, legally valid, and internationally recognized.', 20, yPos + 10);
-    
-    // Add security watermark
+    writeWrapped('Generated by TSMO AI Protection System', margin, 5);
+    writeWrapped(`Certificate issued on ${new Date().toLocaleString()}`, margin, 5);
+    writeWrapped('This document is digitally generated, legally valid, and internationally recognized.', margin, 5);
+
+    // Security watermark (centered across the page)
     doc.setFontSize(45);
     doc.setTextColor(245, 245, 245);
-    doc.text('PROTECTED', 50, 160, { angle: 45 });
-    
+    doc.text('PROTECTED', pageWidth / 2 - 60, pageHeight / 2, { angle: 45 });
+
     return doc.output('blob');
   }
   
