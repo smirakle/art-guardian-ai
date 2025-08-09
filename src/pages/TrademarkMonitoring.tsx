@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Brain, Globe, Shield, Zap, AlertTriangle, BarChart3 } from "lucide-react";
+import { Brain, Globe, Shield, Zap, AlertTriangle, BarChart3, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,8 @@ import AdvancedTrademarkSearch from "@/components/trademark/AdvancedTrademarkSea
 import TrademarkAnalytics from "@/components/trademark/TrademarkAnalytics";
 import TrademarkPortfolio from "@/components/trademark/TrademarkPortfolio";
 import RealTimeTrademarkAlerts from "@/components/trademark/RealTimeTrademarkAlerts";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 interface SearchParameters {
   query: string;
@@ -118,6 +120,14 @@ const TrademarkMonitoring: React.FC = () => {
                 <Shield className="h-4 w-4 text-primary" />
                 <span>Legal Automation</span>
               </div>
+            </div>
+            <div className="mt-6 flex justify-center">
+              <Button asChild variant="secondary">
+                <Link to="/forgery-detection" aria-label="Go to Image Forgery Detection">
+                  <Search className="h-4 w-4" />
+                  Go to Forgery Detection
+                </Link>
+              </Button>
             </div>
           </div>
 
