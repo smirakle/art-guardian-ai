@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -52,6 +52,47 @@ import InvestorPitchDeck from "@/components/InvestorPitchDeck";
 const Index = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    const title = 'TSMO | AI Art Protection & Forgery Detection';
+    document.title = title;
+
+    const setMeta = (name: string, content: string) => {
+      let tag = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
+      if (!tag) {
+        tag = document.createElement('meta');
+        tag.name = name;
+        document.head.appendChild(tag);
+      }
+      tag.content = content;
+    };
+
+    setMeta('description', 'Protect your art with AI monitoring, blockchain verification, and image forgery detection.');
+
+    let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'canonical';
+      document.head.appendChild(link);
+    }
+    link.href = `${window.location.origin}/`;
+
+    // Organization structured data
+    let script = document.querySelector('script[data-ld="org"]') as HTMLScriptElement | null;
+    if (!script) {
+      script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.setAttribute('data-ld', 'org');
+      document.head.appendChild(script);
+    }
+    script.text = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'TSMO',
+      url: window.location.origin,
+      logo: window.location.origin + '/favicon.ico'
+    });
+  }, []);
   
   const [demoStep, setDemoStep] = useState(0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
