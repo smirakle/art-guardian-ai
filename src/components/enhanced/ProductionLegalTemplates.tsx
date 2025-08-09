@@ -378,19 +378,12 @@ const ProductionLegalTemplates: React.FC = () => {
   const handleDownloadTemplate = async (template: ProductionTemplate) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast({
-          title: "Login Required",
-          description: "Please sign in to download templates",
-          variant: "destructive"
-        });
-        return;
-      }
+      // Free download for everyone (guest allowed)
 
       setDownloadingTemplates(prev => new Set(prev).add(template.id));
 
       // Generate PDF document
-      const pdfDoc = generateLegalPDF(template, user);
+      const pdfDoc = generateLegalPDF(template, user || { email: 'guest@example.com' });
       
       // Download the PDF
       pdfDoc.save(`${template.title.replace(/[^a-zA-Z0-9]/g, '_')}_Legal_Document.pdf`);
@@ -950,7 +943,7 @@ Generated on: ${new Date().toISOString()}
                     <SelectItem value="popular">Popularity</SelectItem>
                     <SelectItem value="recent">Recent</SelectItem>
                     <SelectItem value="rating">Rating</SelectItem>
-                    <SelectItem value="price">Price</SelectItem>
+                    
                   </SelectContent>
                 </Select>
                 <Button
@@ -1046,37 +1039,7 @@ Generated on: ${new Date().toISOString()}
 
                     {/* Price */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {isFreeAccess ? (
-                          <>
-                            <span className="text-lg font-bold text-green-600">FREE</span>
-                            <Badge variant="destructive" className="text-xs">Admin</Badge>
-                          </>
-                        ) : (
-                          <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-2">
-                              <span className="text-lg font-bold">{formatPrice(currentPrice)}</span>
-                              {discount && (
-                                <>
-                                  {isStudent && <Badge variant="secondary" className="text-xs">Student Price</Badge>}
-                                  {isStarter && <Badge variant="secondary" className="text-xs">Starter Price</Badge>}
-                                  {!isStudent && !isStarter && <Badge variant="secondary" className="text-xs">Member Price</Badge>}
-                                </>
-                              )}
-                            </div>
-                            {template.memberPrice !== template.price && !isMember && (
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm text-muted-foreground">
-                                  Member: {formatPrice(template.memberPrice)}
-                                </span>
-                                <span className="text-xs text-green-600">
-                                  Save {formatPrice(template.price - template.memberPrice)}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
+                      <span className="text-lg font-bold text-green-600">FREE</span>
                       <div className="text-right">
                         <div className="text-xs text-muted-foreground">Updated</div>
                         <div className="text-xs">{format(new Date(template.lastUpdated), 'MMM dd, yyyy')}</div>
@@ -1085,25 +1048,15 @@ Generated on: ${new Date().toISOString()}
 
                     {/* Actions */}
                     <div className="flex gap-2 pt-2">
-                      {isPurchased || isFreeAccess ? (
-                        <Button 
-                          className="flex-1" 
-                          variant="secondary"
-                          onClick={() => handleDownloadTemplate(template)}
-                          disabled={downloadingTemplates.has(template.id)}
-                        >
-                          <Download className="h-4 w-4 mr-2" />
-                          {downloadingTemplates.has(template.id) ? 'Downloading...' : 'Download'}
-                        </Button>
-                      ) : (
-                        <Button 
-                          className="flex-1" 
-                          onClick={() => handlePurchaseTemplate(template)}
-                        >
-                          <DollarSign className="h-4 w-4 mr-2" />
-                          Purchase
-                        </Button>
-                      )}
+                      <Button 
+                        className="flex-1" 
+                        variant="secondary"
+                        onClick={() => handleDownloadTemplate(template)}
+                        disabled={downloadingTemplates.has(template.id)}
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        {downloadingTemplates.has(template.id) ? 'Downloading...' : 'Download'}
+                      </Button>
                       <Button variant="outline" size="icon">
                         <Eye className="h-4 w-4" />
                       </Button>
