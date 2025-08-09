@@ -11,6 +11,7 @@ import RealTimeMonitoring from "@/components/RealTimeMonitoring";
 import MonitoringDashboard from "@/components/MonitoringDashboard";
 import LiveFeed from "@/components/LiveFeed";
 import BlockchainReadiness from "@/components/admin/BlockchainReadiness";
+import MonitoringReadiness from "@/components/admin/MonitoringReadiness";
  
  const Admin = () => {
    const [activeTab, setActiveTab] = useState("dashboard");
@@ -53,6 +54,7 @@ import BlockchainReadiness from "@/components/admin/BlockchainReadiness";
 
             <TabsContent value="monitoring" className="space-y-6">
               <RealTimeMonitoring />
+              <MonitoringReadiness />
             </TabsContent>
 
             <TabsContent value="analytics" className="space-y-6">
