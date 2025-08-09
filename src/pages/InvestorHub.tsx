@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,30 @@ import {
 } from 'lucide-react';
 
 const InvestorHub = () => {
+  useEffect(() => {
+    const title = 'TSMO Investor Hub | Digital IP Protection';
+    document.title = title;
+
+    const setMeta = (name: string, content: string) => {
+      let tag = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
+      if (!tag) {
+        tag = document.createElement('meta');
+        tag.name = name;
+        document.head.appendChild(tag);
+      }
+      tag.content = content;
+    };
+
+    setMeta('description', 'Investor materials, pitch deck, roadmap, and data room for TSMO.');
+
+    let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'canonical';
+      document.head.appendChild(link);
+    }
+    link.href = `${window.location.origin}/investors`;
+  }, []);
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <div className="container mx-auto py-8">
@@ -47,6 +71,24 @@ const InvestorHub = () => {
             </Button>
           </div>
         </div>
+
+        {/* Product Updates */}
+        <Card className="mb-8 border-accent/30 bg-gradient-to-r from-accent/10 to-secondary/10">
+          <CardHeader>
+            <CardTitle className="text-center text-2xl">Product Update: Image Forgery Detection</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <p className="text-muted-foreground">
+                We launched a new Image Forgery Detection tool with ELA, metadata, invisible watermark checks, and AI tamper assessment.
+              </p>
+              <Button variant="secondary" className="gap-2" onClick={() => (window.location.href = '/forgery-detection')}>
+                <Shield className="h-4 w-4" />
+                View Feature
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Investment Highlights */}
         <Card className="mb-8 border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">

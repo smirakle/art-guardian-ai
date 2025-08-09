@@ -193,6 +193,15 @@ const Index = () => {
                 <Activity className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                 View Dashboard
               </Button>
+              <Button 
+                variant="secondary" 
+                size="lg" 
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg"
+                onClick={() => navigate("/forgery-detection")}
+              >
+                <Search className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                Try Forgery Detection
+              </Button>
             </>
           </div>
           
