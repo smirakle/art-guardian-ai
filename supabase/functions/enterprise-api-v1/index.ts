@@ -237,13 +237,44 @@ async function handleAnalytics(req: Request, apiKey: string) {
     const startDate = url.searchParams.get('start_date') || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
     const endDate = url.searchParams.get('end_date') || new Date().toISOString();
 
-    // Get API usage analytics
+    // Look up API key record to get ID and rate limit settings
+    const { data: keyRec, error: keyErr } = await supabase
+      .from('enterprise_api_keys')
+      .select('id, rate_limit_requests, rate_limit_window_minutes')
+      .eq('api_key', apiKey)
+      .single();
+
+    if (keyErr || !keyRec) {
+      return new Response(JSON.stringify({ error: 'Invalid API key' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Get API usage analytics for this key id
     const { data: usage } = await supabase
       .from('enterprise_api_usage')
       .select('*')
-      .eq('api_key_id', apiKey)
+      .eq('api_key_id', keyRec.id)
       .gte('created_at', startDate)
       .lte('created_at', endDate);
+
+    // Compute current rate-limit window usage
+    const windowMinutes = keyRec.rate_limit_window_minutes || 60;
+    const now = new Date();
+    const bucketMinutes = Math.floor(now.getMinutes() / windowMinutes) * windowMinutes;
+    const windowStart = new Date(now);
+    windowStart.setMinutes(bucketMinutes, 0, 0);
+
+    const { data: rl } = await supabase
+      .from('enterprise_api_rate_limits')
+      .select('request_count')
+      .eq('api_key_id', keyRec.id)
+      .eq('window_start', windowStart.toISOString())
+      .single();
+
+    const currentWindowUsage = rl?.request_count || 0;
+    const limit = keyRec.rate_limit_requests || 1000;
 
     const analytics = {
       period: {
@@ -254,17 +285,19 @@ async function handleAnalytics(req: Request, apiKey: string) {
         total_requests: usage?.length || 0,
         successful_requests: usage?.filter(u => u.status_code < 400).length || 0,
         failed_requests: usage?.filter(u => u.status_code >= 400).length || 0,
-        average_response_time: usage?.reduce((acc, u) => acc + (u.response_time_ms || 0), 0) / (usage?.length || 1) || 0
+        average_response_time: usage && usage.length > 0
+          ? usage.reduce((acc: number, u: any) => acc + (u.response_time_ms || 0), 0) / usage.length
+          : 0
       },
-      endpoints: usage?.reduce((acc: any, u: any) => {
+      endpoints: (usage || []).reduce((acc: any, u: any) => {
         acc[u.endpoint] = (acc[u.endpoint] || 0) + 1;
         return acc;
-      }, {}) || {},
+      }, {} as Record<string, number>),
       rate_limit: {
-        current_window_usage: 0,
-        limit: 1000,
-        window_minutes: 60,
-        remaining: 1000
+        current_window_usage: currentWindowUsage,
+        limit,
+        window_minutes: windowMinutes,
+        remaining: Math.max(limit - currentWindowUsage, 0)
       }
     };
 
