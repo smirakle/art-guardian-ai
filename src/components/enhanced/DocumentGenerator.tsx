@@ -15,6 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRateLimiting } from '@/hooks/useRateLimiting';
 import { useEnhancedCaching } from '@/hooks/useEnhancedCaching';
+import { isPromptAllowed } from '@/lib/promptGuard';
 import jsPDF from 'jspdf';
 
 interface LegalTemplate {
@@ -66,17 +67,33 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ template, onGener
     },
   });
 
-  const onSubmit = async (data: DMCAFormData) => {
-    if (!user) {
-      toast({
-        title: 'Authentication Required',
-        description: 'Please sign in to generate documents.',
-        variant: 'destructive',
-      });
-      return;
-    }
+const onSubmit = async (data: DMCAFormData) => {
+  if (!user) {
+    toast({
+      title: 'Authentication Required',
+      description: 'Please sign in to generate documents.',
+      variant: 'destructive',
+    });
+    return;
+  }
 
-    setLoading(true);
+  // Prompt/content guard (market-ready safety)
+  const combined = [
+    data.workTitle,
+    data.workDescription,
+    data.infringementDescription,
+  ].filter(Boolean).join('\n');
+  const guard = isPromptAllowed(combined, { maxChars: 4000 });
+  if (!guard.allowed) {
+    toast({
+      title: 'Blocked for Safety',
+      description: guard.reason || 'Request violates content policy.',
+      variant: 'destructive',
+    });
+    return;
+  }
+
+  setLoading(true);
     try {
       const { data: response, error } = await supabase.functions.invoke('legal-document-processor', {
         body: {
