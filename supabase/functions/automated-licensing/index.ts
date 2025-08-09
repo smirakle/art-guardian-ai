@@ -46,31 +46,18 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
-    // Attach the incoming auth header so supabase.auth.getUser() works
+    // Read incoming JWT from Authorization header
     const authHeader = req.headers.get("Authorization") ?? "";
     const token = authHeader.replace("Bearer ", "");
 
-    // Use anon key for auth verification, service key for DB writes
-    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: { persistSession: false },
-    });
-
-    // Enforce auth (function remains protected via verify_jwt = true by default)
-    const authHeader = req.headers.get("Authorization") ?? "";
-    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-
-    // Client bound to incoming JWT via header
-    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
+    // Auth client (for verifying JWT) and service client (for DB writes bypassing RLS)
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey);
     const supabase = createClient(supabaseUrl, supabaseServiceKey, { auth: { persistSession: false } });
 
-    const { data: userData, error: userErr } = await supabaseAuth.auth.getUser();
+    // Enforce auth
+    const { data: userData, error: userErr } = await supabaseAuth.auth.getUser(token);
     if (userErr || !userData?.user) {
       return json({ error: "Unauthorized" }, 401);
     }
