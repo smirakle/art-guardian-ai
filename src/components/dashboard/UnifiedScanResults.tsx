@@ -29,6 +29,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { toast } from 'sonner';
+import { DMCAFormDialog } from '@/components/dmca/DMCAFormDialog';
 
 interface ScanResult {
   id: string;
@@ -359,6 +360,13 @@ export const UnifiedScanResults = () => {
                   <ExternalLink className="w-3 h-3" />
                 </a>
               </Button>
+            )}
+            {(result.type === 'copyright' || result.type === 'web') && result.sourceUrl && (
+              <DMCAFormDialog 
+                matchId={result.id} 
+                sourceUrl={result.sourceUrl}
+                sourceTitle={result.title}
+              />
             )}
           </div>
         </div>

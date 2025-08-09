@@ -20,6 +20,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { DMCAFormDialog } from "@/components/dmca/DMCAFormDialog";
 
 interface MonitoringResult {
   id: string;
@@ -373,6 +374,14 @@ const SocialMediaMonitoringResults = () => {
                               <ExternalLink className="w-4 h-4" />
                               View Content
                             </Button>
+
+                            {result.detection_type === 'copyright' && (
+                              <DMCAFormDialog 
+                                matchId={result.id}
+                                sourceUrl={result.content_url}
+                                sourceTitle={result.content_title || 'Social Media Detection'}
+                              />
+                            )}
 
                             {!result.is_reviewed && (
                               <>
