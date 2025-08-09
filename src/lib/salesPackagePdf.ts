@@ -67,11 +67,11 @@ export function generateB2BSalesPackagePDF() {
   pdf.setTextColor(40, 40, 40);
   pdf.text('Website:', 20, 85);
   pdf.setTextColor(0, 123, 255);
-  pdf.textWithLink('https://tsmo.ai', 40, 85, { url: 'https://tsmo.ai' });
+  pdf.textWithLink('www.tsmowatch.com', 40, 85, { url: 'https://www.tsmowatch.com' });
   pdf.setTextColor(40, 40, 40);
   pdf.text('Contact:', 20, 92);
   pdf.setTextColor(0, 123, 255);
-  pdf.textWithLink('sales@tsmo.ai', 40, 92, { url: 'mailto:sales@tsmo.ai' });
+  pdf.textWithLink('Shirleena.cunningham@tsmowatch.com', 40, 92, { url: 'mailto:Shirleena.cunningham@tsmowatch.com' });
 
   // Key value props on cover
   pdf.setTextColor(60, 60, 60);
@@ -280,8 +280,8 @@ export function generateB2BSalesPackagePDF() {
   }
   y = sectionHeading(pdf, '12. Appendix: Links', y + 2);
   pdf.setTextColor(0, 123, 255);
-  y = addParagraph(pdf, 'Website: https://tsmo.ai', 20, y, 170);
-  y = addParagraph(pdf, 'Contact Sales: sales@tsmo.ai', 20, y, 170);
+  y = addParagraph(pdf, 'Website: www.tsmowatch.com', 20, y, 170);
+  y = addParagraph(pdf, 'Contact Sales: Shirleena.cunningham@tsmowatch.com', 20, y, 170);
   y = addParagraph(pdf, 'Docs & Due Diligence: Available upon request', 20, y, 170);
   pdf.setTextColor(60, 60, 60);
 
