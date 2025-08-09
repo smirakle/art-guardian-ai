@@ -64,7 +64,7 @@ const tldToRegion = (domain?: string | null): Region | null => {
   return null;
 };
 
-const severityVariant = (severity?: string | null): string => {
+const severityVariant = (severity?: string | null): 'default' | 'destructive' | 'secondary' => {
   const s = (severity || '').toLowerCase();
   if (s.includes('high') || s.includes('critical') || s.includes('severe')) return 'destructive';
   if (s.includes('medium') || s.includes('moderate')) return 'default';

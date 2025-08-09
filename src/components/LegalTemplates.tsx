@@ -143,16 +143,7 @@ const LegalTemplates = () => {
   };
 
   const handleDownloadTemplate = async (template: LegalTemplate) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      toast({
-        title: "Login Required",
-        description: "Please sign in to download templates.",
-        variant: "destructive",
-      });
-      return;
-    }
-
+    // Free download for everyone
     downloadTemplate(template);
   };
 
