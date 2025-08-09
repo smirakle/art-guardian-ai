@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { PDFDocument, rgb } from 'pdf-lib';
 
 export interface EnhancedProtectionResult {
   success: boolean;
@@ -104,6 +105,35 @@ export class EnhancedRealWorldProtection {
         appliedMethods.push('maximum_obfuscation');
       }
 
+      // Document-specific protection (zero-width tracers, PDF hidden layer, etc.)
+      const extLower = (options.fileName.split('.').pop() || '').toLowerCase();
+      const isDocument = file.type.startsWith('text') || ['pdf','doc','docx','rtf','md','txt'].includes(extLower);
+      let docMeta: null | {
+        documentMethods: string[];
+        tracerPayload: string;
+        docTracerChecksum: string;
+        wordCount: number;
+        charCount: number;
+        textFingerprint: string;
+        tracerType: string;
+      } = null;
+
+      if (isDocument) {
+        const docResult = await this.applyDocumentProtection(file, protectionId);
+        protectedBlob = docResult.blob;
+        docMeta = {
+          documentMethods: docResult.documentMethods,
+          tracerPayload: docResult.tracerPayload,
+          docTracerChecksum: docResult.docTracerChecksum,
+          wordCount: docResult.wordCount,
+          charCount: docResult.charCount,
+          textFingerprint: docResult.textFingerprint,
+          tracerType: docResult.tracerType,
+        };
+        // Track high-level method tag
+        appliedMethods.push('document_tracers');
+      }
+
       const metadata = {
         originalSize: file.size,
         protectedSize: protectedBlob.size,
@@ -127,26 +157,56 @@ export class EnhancedRealWorldProtection {
       }
 
       // Save protection record to database
+      const contentType = isDocument ? 'document' : (file.type.startsWith('video') ? 'video' : (file.type.startsWith('audio') ? 'audio' : 'image'));
+      const payload: any = {
+        artwork_id: options.artworkId || null,
+        user_id: options.userId,
+        protection_id: protectionId,
+        protection_methods: appliedMethods,
+        protection_level: options.protectionLevel,
+        metadata: metadata,
+        file_fingerprint: fileFingerprint,
+        original_filename: options.fileName,
+        protected_file_path: storagePath,
+        is_active: true,
+        // new columns
+        content_type: contentType,
+        original_mime_type: file.type || null,
+        file_extension: extLower || null,
+        document_methods: docMeta?.documentMethods || [],
+        doc_tracer_checksum: docMeta?.docTracerChecksum || null,
+        word_count: docMeta?.wordCount || 0,
+        char_count: docMeta?.charCount || 0,
+        language: null,
+        text_fingerprint: docMeta?.textFingerprint || null,
+      };
+
       const { data: protectionRecord, error: dbError } = await supabase
         .from('ai_protection_records')
-        .insert({
-          artwork_id: options.artworkId || null,
-          user_id: options.userId,
-          protection_id: protectionId,
-          protection_methods: appliedMethods,
-          protection_level: options.protectionLevel,
-          metadata: metadata,
-          file_fingerprint: fileFingerprint,
-          original_filename: options.fileName,
-          protected_file_path: storagePath,
-          is_active: true
-        })
+        .insert(payload as any)
         .select()
         .single();
 
       if (dbError) {
         console.error('Failed to save protection record:', dbError);
         throw new Error('Failed to save protection record');
+      }
+
+      // Insert document tracer record when applicable
+      if (docMeta) {
+        const { error: tracerErr } = await supabase
+          .from('ai_document_tracers')
+          .insert({
+            user_id: options.userId,
+            protection_record_id: protectionRecord.id,
+            tracer_type: docMeta.tracerType,
+            tracer_payload: docMeta.tracerPayload,
+            checksum: docMeta.docTracerChecksum,
+            notes: `auto for ${options.fileName}`,
+          });
+        if (tracerErr) {
+          console.warn('Failed to insert document tracer (non-fatal):', tracerErr);
+        }
       }
 
       // Update artwork record if provided
@@ -395,6 +455,66 @@ export class EnhancedRealWorldProtection {
     combinedView.set(new Uint8Array(originalBuffer), 8 + monitoringBytes.length);
     
     return new Blob([combinedBuffer], { type: blob.type });
+  }
+
+  // Document-specific protection helpers
+  private async applyDocumentProtection(file: File, protectionId: string): Promise<{ blob: Blob; documentMethods: string[]; tracerPayload: string; docTracerChecksum: string; wordCount: number; charCount: number; textFingerprint: string; tracerType: string; }> {
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    const tracerPayload = `TRC-${protectionId}-${Date.now()}`;
+    const docTracerChecksum = await this.hashString(tracerPayload);
+
+    if (file.type.startsWith('text') || ['txt','md','rtf','csv','json'].includes(ext)) {
+      const originalText = await file.text();
+      const injected = this.embedZeroWidth(tracerPayload) + originalText;
+      const blob = new Blob([injected], { type: 'text/plain' });
+      const wordCount = (originalText.trim().match(/\S+/g) || []).length;
+      const charCount = originalText.length;
+      const textFingerprint = await this.hashString(originalText);
+      return { blob, documentMethods: ['zero_width_tracers'], tracerPayload, docTracerChecksum, wordCount, charCount, textFingerprint, tracerType: 'zero_width' };
+    }
+
+    if (ext === 'pdf' || file.type === 'application/pdf') {
+      const buf = await file.arrayBuffer();
+      const pdfDoc = await PDFDocument.load(buf);
+      const pages = pdfDoc.getPages();
+      pages.forEach((p, idx) => {
+        p.drawText(tracerPayload, { x: 10, y: 10 + (idx % 3), size: 0.5, color: rgb(1,1,1) });
+      });
+      const out = await pdfDoc.save();
+      const blob = new Blob([out], { type: 'application/pdf' });
+      const textFingerprint = await this.hashBuffer(buf);
+      return { blob, documentMethods: ['pdf_hidden_layer'], tracerPayload, docTracerChecksum, wordCount: 0, charCount: 0, textFingerprint, tracerType: 'pdf_hidden_layer' };
+    }
+
+    if (['doc','docx'].includes(ext)) {
+      // Fallback: cannot modify reliably client-side; record tracer only
+      const buf = await file.arrayBuffer();
+      const textFingerprint = await this.hashBuffer(buf);
+      return { blob: file, documentMethods: ['docx_metadata'], tracerPayload, docTracerChecksum, wordCount: 0, charCount: 0, textFingerprint, tracerType: 'metadata' };
+    }
+
+    // Default: no change
+    const buf = await file.arrayBuffer();
+    const textFingerprint = await this.hashBuffer(buf);
+    return { blob: file, documentMethods: ['metadata_only'], tracerPayload, docTracerChecksum, wordCount: 0, charCount: 0, textFingerprint, tracerType: 'metadata' };
+  }
+
+  private embedZeroWidth(payload: string): string {
+    // Encode payload to zero-width characters
+    const bin = Array.from(new TextEncoder().encode(payload)).map(b => b.toString(2).padStart(8, '0')).join('');
+    const zeroWidth = bin.replace(/0/g, '\u200B').replace(/1/g, '\u200C');
+    return `\u200D${zeroWidth}\u200D`;
+  }
+
+  private async hashString(input: string): Promise<string> {
+    const bytes = new TextEncoder().encode(input);
+    const hash = await crypto.subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  private async hashBuffer(buf: ArrayBuffer): Promise<string> {
+    const hash = await crypto.subtle.digest('SHA-256', buf);
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
   private calculateProtectionStrength(methods: string[]): number {

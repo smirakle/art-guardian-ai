@@ -98,6 +98,45 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_document_tracers: {
+        Row: {
+          checksum: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          notes: string | null
+          protection_record_id: string
+          tracer_payload: string
+          tracer_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          checksum?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          protection_record_id: string
+          tracer_payload: string
+          tracer_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          checksum?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          protection_record_id?: string
+          tracer_payload?: string
+          tracer_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_protection_audit_log: {
         Row: {
           action: string
@@ -299,50 +338,77 @@ export type Database = {
         Row: {
           applied_at: string
           artwork_id: string | null
+          char_count: number
+          content_type: string
           created_at: string
+          doc_tracer_checksum: string | null
+          document_methods: Json
+          file_extension: string | null
           file_fingerprint: string
           id: string
           is_active: boolean
+          language: string | null
           metadata: Json
           original_filename: string
+          original_mime_type: string | null
           protected_file_path: string | null
           protection_id: string
           protection_level: string
           protection_methods: Json
+          text_fingerprint: string | null
           updated_at: string
           user_id: string
+          word_count: number
         }
         Insert: {
           applied_at?: string
           artwork_id?: string | null
+          char_count?: number
+          content_type?: string
           created_at?: string
+          doc_tracer_checksum?: string | null
+          document_methods?: Json
+          file_extension?: string | null
           file_fingerprint: string
           id?: string
           is_active?: boolean
+          language?: string | null
           metadata?: Json
           original_filename: string
+          original_mime_type?: string | null
           protected_file_path?: string | null
           protection_id: string
           protection_level?: string
           protection_methods?: Json
+          text_fingerprint?: string | null
           updated_at?: string
           user_id: string
+          word_count?: number
         }
         Update: {
           applied_at?: string
           artwork_id?: string | null
+          char_count?: number
+          content_type?: string
           created_at?: string
+          doc_tracer_checksum?: string | null
+          document_methods?: Json
+          file_extension?: string | null
           file_fingerprint?: string
           id?: string
           is_active?: boolean
+          language?: string | null
           metadata?: Json
           original_filename?: string
+          original_mime_type?: string | null
           protected_file_path?: string | null
           protection_id?: string
           protection_level?: string
           protection_methods?: Json
+          text_fingerprint?: string | null
           updated_at?: string
           user_id?: string
+          word_count?: number
         }
         Relationships: []
       }
