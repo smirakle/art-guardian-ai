@@ -14,6 +14,7 @@ import { useEnhancedCaching } from '@/hooks/useEnhancedCaching';
 import AIProtectionMetrics from './AIProtectionMetrics';
 import AIProtectionNotificationCenter from './AIProtectionNotificationCenter';
 import AIProtectionAuditLog from './AIProtectionAuditLog';
+import StyleCloak from './StyleCloak';
 
 interface ProtectionRecord {
   id: string;
@@ -328,12 +329,13 @@ const AITrainingProtectionDashboard = () => {
 
       {/* Tabs */}
       <Tabs defaultValue="protected" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="protected">Protected Files</TabsTrigger>
           <TabsTrigger value="violations">Violations</TabsTrigger>
           <TabsTrigger value="metrics"><BarChart3 className="h-4 w-4 mr-2" />Metrics</TabsTrigger>
           <TabsTrigger value="notifications"><Bell className="h-4 w-4 mr-2" />Notifications</TabsTrigger>
           <TabsTrigger value="audit">Audit Log</TabsTrigger>
+          <TabsTrigger value="cloaking">Style Cloaking</TabsTrigger>
           <TabsTrigger value="settings"><Settings className="h-4 w-4 mr-2" />Settings</TabsTrigger>
         </TabsList>
 
@@ -465,6 +467,10 @@ const AITrainingProtectionDashboard = () => {
 
         <TabsContent value="audit" className="space-y-4">
           <AIProtectionAuditLog />
+        </TabsContent>
+
+        <TabsContent value="cloaking" className="space-y-4">
+          <StyleCloak />
         </TabsContent>
 
         <TabsContent value="settings" className="space-y-4">
