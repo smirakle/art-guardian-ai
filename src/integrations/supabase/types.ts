@@ -2023,6 +2023,51 @@ export type Database = {
         }
         Relationships: []
       }
+      licenses: {
+        Row: {
+          artwork_id: string | null
+          chain: string | null
+          created_at: string
+          file_hash: string
+          hash_algo: string
+          id: string
+          issued_at: string
+          license_type: string
+          terms: string
+          tx_hash: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          artwork_id?: string | null
+          chain?: string | null
+          created_at?: string
+          file_hash: string
+          hash_algo?: string
+          id?: string
+          issued_at?: string
+          license_type: string
+          terms: string
+          tx_hash?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          artwork_id?: string | null
+          chain?: string | null
+          created_at?: string
+          file_hash?: string
+          hash_algo?: string
+          id?: string
+          issued_at?: string
+          license_type?: string
+          terms?: string
+          tx_hash?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       monitored_platforms: {
         Row: {
           api_endpoint: string | null
