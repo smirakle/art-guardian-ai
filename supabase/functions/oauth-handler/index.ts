@@ -64,7 +64,7 @@ serve(async (req) => {
       switch (provider) {
         case 'adobe': {
           if (!ADOBE_CLIENT_ID) return json({ error: 'ADOBE_CLIENT_ID not set' }, 500)
-          const scope = encodeURIComponent('openid,creative_sdk')
+          const scope = encodeURIComponent('openid creative_sdk')
           authUrl = `https://ims-na1.adobelogin.com/ims/authorize/v2?client_id=${encodeURIComponent(ADOBE_CLIENT_ID)}&response_type=code&redirect_uri=${encodeURIComponent(callback)}&scope=${scope}&state=${state}`
           break
         }

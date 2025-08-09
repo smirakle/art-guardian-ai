@@ -47,6 +47,7 @@ export const CustomIntegrations: React.FC = () => {
   const [selectedIntegration, setSelectedIntegration] = useState<CustomIntegration | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const { toast } = useToast();
+  const [connections, setConnections] = useState<Record<string, string>>({});
 
   const [formData, setFormData] = useState({
     name: '',
@@ -106,6 +107,35 @@ export const CustomIntegrations: React.FC = () => {
       setLoading(false);
     }
   };
+
+  const loadConnections = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data, error } = await supabase
+        .from('user_integrations')
+        .select('provider,status')
+        .eq('user_id', user.id);
+      if (!error && data) {
+        const map: Record<string, string> = {};
+        data.forEach((row: any) => { map[row.provider] = row.status; });
+        setConnections(map);
+      }
+    } catch {}
+  };
+
+  useEffect(() => {
+    loadConnections();
+    const params = new URLSearchParams(window.location.search);
+    const connected = params.get('connected');
+    if (connected) {
+      toast({ title: 'Connected', description: `${connected} connected successfully` });
+      params.delete('connected');
+      const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}${window.location.hash}`;
+      window.history.replaceState({}, '', newUrl);
+      loadConnections();
+    }
+  }, []);
 
   const createIntegration = async () => {
     try {
@@ -415,12 +445,17 @@ export const CustomIntegrations: React.FC = () => {
                 <div className="p-4 border rounded-lg">
                   <div className="flex items-center justify-between mb-2">
                     <div>
-                      <div className="font-medium">Adobe Creative Cloud (Photoshop/Illustrator UXP)</div>
+                      <div className="font-medium flex items-center gap-2">
+                        Adobe Creative Cloud (Photoshop/Illustrator UXP)
+                        {connections['adobe'] === 'active' && <Badge variant="outline">Connected</Badge>}
+                      </div>
                       <div className="text-sm text-muted-foreground">Authorize access to enable in-app one-click protection</div>
                     </div>
                     <ExternalLink className="h-4 w-4 text-muted-foreground" />
                   </div>
-                  <Button onClick={() => handleConnect('adobe')}>Connect Adobe</Button>
+                  <Button onClick={() => handleConnect('adobe')}>
+                    {connections['adobe'] === 'active' ? 'Reconnect Adobe' : 'Connect Adobe'}
+                  </Button>
                 </div>
 
                 <div className="p-4 border rounded-lg">
