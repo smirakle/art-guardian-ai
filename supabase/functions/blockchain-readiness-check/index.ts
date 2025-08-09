@@ -113,8 +113,14 @@ serve(async (req) => {
     )
   } catch (e: any) {
     console.error('blockchain-readiness-check error', e)
+    const body = e?.info?.responseBody
+    let enableUrl: string | null = null
+    if (body && typeof body === 'string' && body.includes('enable the network')) {
+      const m = body.match(/https:\/\/dashboard\.alchemy\.com\/apps\/[A-Za-z0-9_-]+\/networks/)
+      enableUrl = m ? m[0] : null
+    }
     return new Response(
-      JSON.stringify({ error: e?.message ?? 'Internal error' }),
+      JSON.stringify({ error: e?.message ?? 'Internal error', enable_url: enableUrl }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }

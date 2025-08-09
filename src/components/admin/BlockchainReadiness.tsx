@@ -27,15 +27,18 @@ export default function BlockchainReadiness() {
   const runCheck = async () => {
     setLoading(true)
     setData(null)
-    const { data, error } = await supabase.functions.invoke('blockchain-readiness-check')
+    const { data: resp, error } = await supabase.functions.invoke('blockchain-readiness-check')
     setLoading(false)
     if (error) {
-      toast({ title: 'Readiness check failed', description: error.message, variant: 'destructive' })
+      // Supabase returns non-2xx as error but still includes body in data
+      const msg = (resp as any)?.error || (resp as any)?.message || error.message
+      if (resp) setData(resp)
+      toast({ title: 'Readiness check failed', description: String(msg), variant: 'destructive' })
     } else {
-      setData(data)
+      setData(resp)
       toast({
-        title: data.status === 'ok' ? 'Blockchain: Ready' : 'Blockchain: Needs attention',
-        description: data.status === 'ok' ? 'All core checks passed' : 'See details below',
+        title: resp.status === 'ok' ? 'Blockchain: Ready' : 'Blockchain: Needs attention',
+        description: resp.status === 'ok' ? 'All core checks passed' : (resp.message || 'See details below'),
       })
     }
   }
