@@ -10,17 +10,18 @@ import SystemManagement from "@/components/admin/SystemManagement";
 import RealTimeMonitoring from "@/components/RealTimeMonitoring";
 import MonitoringDashboard from "@/components/MonitoringDashboard";
 import LiveFeed from "@/components/LiveFeed";
-
-const Admin = () => {
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [isMonitoring, setIsMonitoring] = useState(true);
+import BlockchainReadiness from "@/components/admin/BlockchainReadiness";
+ 
+ const Admin = () => {
+   const [activeTab, setActiveTab] = useState("dashboard");
+   const [isMonitoring, setIsMonitoring] = useState(true);
 
   return (
     <div className="min-h-screen bg-background pt-20 pb-12">
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-10">
+            <TabsList className="grid w-full grid-cols-11">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
               <TabsTrigger value="enhanced-users">Enhanced Users</TabsTrigger>
@@ -30,6 +31,7 @@ const Admin = () => {
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
               <TabsTrigger value="security">Security</TabsTrigger>
               <TabsTrigger value="system">System</TabsTrigger>
+              <TabsTrigger value="blockchain">Blockchain</TabsTrigger>
               <TabsTrigger value="live-feed">Live Feed</TabsTrigger>
             </TabsList>
 
@@ -69,6 +71,10 @@ const Admin = () => {
               <SystemManagement />
             </TabsContent>
 
+            <TabsContent value="blockchain" className="space-y-6">
+              <BlockchainReadiness />
+            </TabsContent>
+ 
             <TabsContent value="live-feed" className="space-y-6">
               <LiveFeed isActive={isMonitoring} />
             </TabsContent>
