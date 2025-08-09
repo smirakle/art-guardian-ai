@@ -22,9 +22,9 @@ serve(async (req) => {
     if (!authHeader) throw new Error("Unauthorized");
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userErr } = await supabaseAnon.auth.getUser(token);
-    if (userErr || !userData?.user) throw new Error("Unauthorized");
-    const user = userData.user;
+    const { data: userData } = await supabaseAnon.auth.getUser(token);
+    const user = userData?.user;
+    if (!user?.email) throw new Error("Unauthorized");
 
     const { licenseId } = await req.json();
     if (!licenseId) throw new Error("licenseId is required");

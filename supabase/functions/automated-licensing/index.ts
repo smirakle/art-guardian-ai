@@ -61,11 +61,24 @@ serve(async (req) => {
     });
 
     // Enforce auth (function remains protected via verify_jwt = true by default)
-    const { data: userData, error: userErr } = await supabaseAuth.auth.getUser(token);
-    if (userErr || !userData?.user) {
+    let userId: string | null = null;
+    try {
+      const { data: userData } = await supabaseAuth.auth.getUser(token);
+      userId = userData?.user?.id ?? null;
+    } catch (_) {
+      userId = null;
+    }
+    if (!userId) {
+      try {
+        const { data: userData2 } = await supabase.auth.getUser(token);
+        userId = userData2?.user?.id ?? null;
+      } catch (_) {
+        userId = null;
+      }
+    }
+    if (!userId) {
       return json({ error: "Unauthorized" }, 401);
     }
-    const userId = userData.user.id;
 
     const body = (await req.json()) as LicensingRequest;
 
