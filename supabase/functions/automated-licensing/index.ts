@@ -61,24 +61,20 @@ serve(async (req) => {
     });
 
     // Enforce auth (function remains protected via verify_jwt = true by default)
-    let userId: string | null = null;
-    try {
-      const { data: userData } = await supabaseAuth.auth.getUser(token);
-      userId = userData?.user?.id ?? null;
-    } catch (_) {
-      userId = null;
-    }
-    if (!userId) {
-      try {
-        const { data: userData2 } = await supabase.auth.getUser(token);
-        userId = userData2?.user?.id ?? null;
-      } catch (_) {
-        userId = null;
-      }
-    }
-    if (!userId) {
+    const authHeader = req.headers.get("Authorization") ?? "";
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+
+    // Client bound to incoming JWT via header
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, { auth: { persistSession: false } });
+
+    const { data: userData, error: userErr } = await supabaseAuth.auth.getUser();
+    if (userErr || !userData?.user) {
       return json({ error: "Unauthorized" }, 401);
     }
+    const userId = userData.user.id;
 
     const body = (await req.json()) as LicensingRequest;
 
