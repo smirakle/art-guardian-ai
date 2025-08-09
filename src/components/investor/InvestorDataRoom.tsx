@@ -19,6 +19,19 @@ import {
 const InvestorDataRoom = () => {
   const [accessGranted, setAccessGranted] = useState(false);
 
+  const ensureInvestorAccess = () => {
+    const ok = sessionStorage.getItem('investor_access_ok') === 'true';
+    if (ok) return true;
+    const code = window.prompt('Enter investor access code');
+    if (!code) return false;
+    if (code.trim().toUpperCase() === 'INVESTOR') {
+      sessionStorage.setItem('investor_access_ok', 'true');
+      return true;
+    }
+    alert('Invalid access code');
+    return false;
+  };
+
   const documents = {
     financial: [
       { name: 'Financial Model & Projections (3-Year)', type: 'PDF', size: '2.4 MB', status: 'ready' },
@@ -57,6 +70,7 @@ const InvestorDataRoom = () => {
   };
 
   const handleDocumentDownload = (docName: string) => {
+    if (!ensureInvestorAccess()) return;
     // Special handling for AI Protection Algorithm document
     if (docName === 'AI Training Protection Algorithm - Complete Implementation') {
       generateAIProtectionAlgorithmPDF();
@@ -1563,37 +1577,6 @@ const InvestorDataRoom = () => {
     pdf.save(`TSMO-${docName.replace(/\s+/g, '-')}.pdf`);
   };
 
-  if (!accessGranted) {
-    return (
-      <div className="max-w-4xl mx-auto p-6">
-        <Card className="text-center">
-          <CardHeader>
-            <Lock className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-            <CardTitle className="text-2xl">TSMO Investor Data Room</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <p className="text-muted-foreground">
-              Access to this data room is restricted to verified investors only.
-            </p>
-            <div className="space-y-4">
-              <Button 
-                onClick={() => setAccessGranted(true)}
-                size="lg"
-                className="w-full max-w-sm"
-              >
-                <Shield className="h-4 w-4 mr-2" />
-                Request Access
-              </Button>
-              <p className="text-sm text-muted-foreground">
-                By requesting access, you agree to maintain confidentiality of all materials.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
       <div className="text-center space-y-4">
@@ -1601,9 +1584,9 @@ const InvestorDataRoom = () => {
         <p className="text-xl text-muted-foreground">
           Comprehensive due diligence materials for qualified investors
         </p>
-        <Badge variant="secondary" className="text-sm">
-          <CheckCircle className="h-4 w-4 mr-2" />
-          Access Granted - Confidential Materials
+        <Badge variant="outline" className="text-sm">
+          <Lock className="h-4 w-4 mr-2" />
+          Downloads require access code
         </Badge>
       </div>
 

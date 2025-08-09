@@ -18,7 +18,21 @@ import {
 } from 'lucide-react';
 
 const ExecutiveSummary = () => {
+  const ensureInvestorAccess = () => {
+    const ok = sessionStorage.getItem('investor_access_ok') === 'true';
+    if (ok) return true;
+    const code = window.prompt('Enter investor access code');
+    if (!code) return false;
+    if (code.trim().toUpperCase() === 'INVESTOR') {
+      sessionStorage.setItem('investor_access_ok', 'true');
+      return true;
+    }
+    alert('Invalid access code');
+    return false;
+  };
+
   const handleDownloadSummary = () => {
+    if (!ensureInvestorAccess()) return;
     const pdf = new jsPDF();
     
     // Add content to PDF
