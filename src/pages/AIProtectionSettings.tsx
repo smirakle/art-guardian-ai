@@ -1,6 +1,6 @@
 import React from 'react';
 import { AITrainingSettings } from '@/components/AITrainingSettings';
-
+import StyleCloak from '@/components/ai-protection/StyleCloak';
 const AIProtectionSettings = () => {
   return (
     <div className="min-h-screen bg-background">
@@ -13,6 +13,10 @@ const AIProtectionSettings = () => {
         </div>
         
         <AITrainingSettings />
+        
+        <div className="mt-8">
+          <StyleCloak />
+        </div>
       </div>
     </div>
   );
