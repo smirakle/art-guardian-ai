@@ -2023,50 +2023,154 @@ export type Database = {
         }
         Relationships: []
       }
+      license_events: {
+        Row: {
+          created_at: string
+          data: Json | null
+          event_type: string
+          id: string
+          license_id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          data?: Json | null
+          event_type: string
+          id?: string
+          license_id: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          data?: Json | null
+          event_type?: string
+          id?: string
+          license_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_license_events_license"
+            columns: ["license_id"]
+            isOneToOne: false
+            referencedRelation: "licenses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       licenses: {
         Row: {
           artwork_id: string | null
+          blockchain_certificate_id: string | null
+          blockchain_hash: string | null
           chain: string | null
           created_at: string
+          currency: string | null
+          document_hash: string | null
+          document_url: string | null
+          end_date: string | null
           file_hash: string
           hash_algo: string
           id: string
           issued_at: string
           license_type: string
+          licensee_email: string | null
+          licensee_name: string | null
+          licensor_user_id: string | null
+          paid_at: string | null
+          payment_session_id: string | null
+          price_cents: number | null
+          start_date: string | null
+          status: string | null
           terms: string
+          terms_text: string | null
+          territory: string | null
           tx_hash: string | null
           updated_at: string
+          usage_scope: Json | null
           user_id: string
+          verification_code: string | null
         }
         Insert: {
           artwork_id?: string | null
+          blockchain_certificate_id?: string | null
+          blockchain_hash?: string | null
           chain?: string | null
           created_at?: string
+          currency?: string | null
+          document_hash?: string | null
+          document_url?: string | null
+          end_date?: string | null
           file_hash: string
           hash_algo?: string
           id?: string
           issued_at?: string
           license_type: string
+          licensee_email?: string | null
+          licensee_name?: string | null
+          licensor_user_id?: string | null
+          paid_at?: string | null
+          payment_session_id?: string | null
+          price_cents?: number | null
+          start_date?: string | null
+          status?: string | null
           terms: string
+          terms_text?: string | null
+          territory?: string | null
           tx_hash?: string | null
           updated_at?: string
+          usage_scope?: Json | null
           user_id: string
+          verification_code?: string | null
         }
         Update: {
           artwork_id?: string | null
+          blockchain_certificate_id?: string | null
+          blockchain_hash?: string | null
           chain?: string | null
           created_at?: string
+          currency?: string | null
+          document_hash?: string | null
+          document_url?: string | null
+          end_date?: string | null
           file_hash?: string
           hash_algo?: string
           id?: string
           issued_at?: string
           license_type?: string
+          licensee_email?: string | null
+          licensee_name?: string | null
+          licensor_user_id?: string | null
+          paid_at?: string | null
+          payment_session_id?: string | null
+          price_cents?: number | null
+          start_date?: string | null
+          status?: string | null
           terms?: string
+          terms_text?: string | null
+          territory?: string | null
           tx_hash?: string | null
           updated_at?: string
+          usage_scope?: Json | null
           user_id?: string
+          verification_code?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_licenses_artwork"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artwork"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_licenses_licensor"
+            columns: ["licensor_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       monitored_platforms: {
         Row: {
