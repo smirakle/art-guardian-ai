@@ -45,6 +45,7 @@ import PortfolioMonitoring from "./pages/PortfolioMonitoring";
 import TrademarkMonitoring from "./pages/TrademarkMonitoring";
 import InvestorHub from "./pages/InvestorHub";
 import Roadmap from "./pages/Roadmap";
+import CreatorMarkets from "./pages/CreatorMarkets";
 
 const queryClient = new QueryClient();
 
@@ -118,6 +119,7 @@ const App = () => {
             <Route path="/profile-monitoring" element={<ProfileMonitoring />} />
             <Route path="/portfolio-monitoring" element={<PortfolioMonitoring />} />
             <Route path="/trademark-monitoring" element={<TrademarkMonitoring />} />
+            <Route path="/markets" element={<CreatorMarkets />} />
             <Route path="/investors" element={
               <ProtectedRoute>
                 <InvestorHub />

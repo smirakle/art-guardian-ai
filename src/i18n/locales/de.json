@@ -1,0 +1,18 @@
+{
+  "nav": {
+    "markets": "Creator-Märkte"
+  },
+  "markets": {
+    "title": "Creator-Märkte Dashboard",
+    "subtitle": "Top-Märkte: USA, EU, Japan, Südkorea, Brasilien",
+    "regions": {
+      "us": "USA",
+      "eu": "EU",
+      "jp": "Japan",
+      "kr": "Südkorea",
+      "br": "Brasilien"
+    },
+    "alerts": "Warnungen",
+    "noAlerts": "Keine Warnungen gefunden"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "nav": {
+    "markets": "Mercados de Criadores"
+  },
+  "markets": {
+    "title": "Painel dos Mercados de Criadores",
+    "subtitle": "Mercados principais: EUA, UE, Japão, Coreia do Sul, Brasil",
+    "regions": {
+      "us": "Estados Unidos",
+      "eu": "União Europeia",
+      "jp": "Japão",
+      "kr": "Coreia do Sul",
+      "br": "Brasil"
+    },
+    "alerts": "Alertas",
+    "noAlerts": "Nenhum alerta encontrado"
+  }
+}
