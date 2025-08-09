@@ -44,6 +44,7 @@ import ProfileMonitoring from "./pages/ProfileMonitoring";
 import PortfolioMonitoring from "./pages/PortfolioMonitoring";
 import TrademarkMonitoring from "./pages/TrademarkMonitoring";
 import InvestorHub from "./pages/InvestorHub";
+import Roadmap from "./pages/Roadmap";
 
 const queryClient = new QueryClient();
 
@@ -122,9 +123,10 @@ const App = () => {
                 <InvestorHub />
               </ProtectedRoute>
             } />
+                         <Route path="/roadmap" element={<Roadmap />} />
                          <Route path="/certificate/:certificateId" element={<Certificate />} />
-                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                      <Route path="*" element={<NotFound />} />
+                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </div>
                 </main>

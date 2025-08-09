@@ -6,6 +6,7 @@ import InvestorPitchDeck from '@/components/InvestorPitchDeck';
 import ExecutiveSummary from '@/components/investor/ExecutiveSummary';
 import InvestorDataRoom from '@/components/investor/InvestorDataRoom';
 import DemoEnvironment from '@/components/investor/DemoEnvironment';
+import Roadmap from '@/components/investor/Roadmap';
 import { 
   Users, 
   FileText, 
@@ -76,7 +77,7 @@ const InvestorHub = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="summary" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-5 mb-8">
             <TabsTrigger value="summary" className="gap-2">
               <FileText className="h-4 w-4" />
               Executive Summary
@@ -84,6 +85,10 @@ const InvestorHub = () => {
             <TabsTrigger value="pitch" className="gap-2">
               <TrendingUp className="h-4 w-4" />
               Pitch Deck
+            </TabsTrigger>
+            <TabsTrigger value="roadmap" className="gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Roadmap
             </TabsTrigger>
             <TabsTrigger value="demo" className="gap-2">
               <Monitor className="h-4 w-4" />
@@ -101,6 +106,10 @@ const InvestorHub = () => {
 
           <TabsContent value="pitch">
             <InvestorPitchDeck />
+          </TabsContent>
+
+          <TabsContent value="roadmap">
+            <Roadmap />
           </TabsContent>
 
           <TabsContent value="demo">

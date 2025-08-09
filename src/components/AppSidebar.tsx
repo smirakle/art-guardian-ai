@@ -44,6 +44,7 @@ export function AppSidebar() {
     { path: "/community", label: t('nav.community'), icon: Users },
     { path: "/legal-templates", label: "Legal Templates", icon: FileText },
     { path: "/faq", label: "FAQ", icon: HelpCircle },
+    { path: "/roadmap", label: "Roadmap", icon: TrendingUp },
   ];
 
   const secondaryNavItems = [
