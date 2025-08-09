@@ -2,15 +2,18 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
-const Roadmap: React.FC = () => {
+interface RoadmapProps { showHeader?: boolean }
+const Roadmap: React.FC<RoadmapProps> = ({ showHeader = true }) => {
   return (
     <section aria-label="TSMO Watch 2.0 Roadmap" className="space-y-8">
-      <header className="text-center space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">TSMO Watch 2.0 — Concept Roadmap</h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          A phased plan to deepen protection, scale globally, and set the standard for digital rights verification.
-        </p>
-      </header>
+      {showHeader && (
+        <header className="text-center space-y-2">
+          <h2 className="text-3xl font-bold tracking-tight">TSMO Watch 2.0 — Concept Roadmap</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            A phased plan to deepen protection, scale globally, and set the standard for digital rights verification.
+          </p>
+        </header>
+      )}
 
       <div className="grid gap-6 md:grid-cols-3">
         {/* Phase 1 */}

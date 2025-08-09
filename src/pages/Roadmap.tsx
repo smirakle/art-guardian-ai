@@ -38,7 +38,7 @@ const RoadmapPage: React.FC = () => {
           </p>
         </header>
         <main>
-          <Roadmap />
+          <Roadmap showHeader={false} />
         </main>
       </div>
     </div>
