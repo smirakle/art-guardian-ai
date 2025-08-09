@@ -41,6 +41,7 @@ export function AppSidebar() {
     { path: "/", label: t('nav.home'), icon: Home },
     { path: "/dashboard", label: "Dashboard", icon: Home },
     { path: "/upload", label: "Image Monitoring Systems", icon: Monitor },
+    { path: "/forgery-detection", label: "Forgery Detection", icon: Search },
     { path: "/community", label: t('nav.community'), icon: Users },
     { path: "/legal-templates", label: "Legal Templates", icon: FileText },
     { path: "/faq", label: "FAQ", icon: HelpCircle },
