@@ -8,6 +8,10 @@ import { Separator } from '@/components/ui/separator';
 import { Upload, Download, Wand2, Shield, Eye, Sparkles } from 'lucide-react';
 import { cloakImageFromFile } from '@/lib/styleCloak';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+
+const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB limit for reliability
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 const bytesToSize = (bytes: number) => {
   const sizes = ['Bytes', 'KB', 'MB'];
@@ -32,50 +36,123 @@ const StyleCloak: React.FC = () => {
 
   const onPick = () => inputRef.current?.click();
 
-  const onFile = (f?: File) => {
-    const picked = f ?? inputRef.current?.files?.[0] ?? null;
-    if (!picked) return;
-    if (!picked.type.startsWith('image/')) {
-      toast.error('Please select an image file');
+const onFile = (f?: File) => {
+  const picked = f ?? inputRef.current?.files?.[0] ?? null;
+  if (!picked) return;
+  if (!ALLOWED_TYPES.includes(picked.type)) {
+    toast.error('Unsupported format. Use JPEG, PNG, or WebP.');
+    return;
+  }
+  if (picked.size > MAX_FILE_SIZE) {
+    toast.error(`Image too large (${bytesToSize(picked.size)}). Max allowed is ${bytesToSize(MAX_FILE_SIZE)}.`);
+    return;
+  }
+  setFile(picked);
+  const url = URL.createObjectURL(picked);
+  setPreviewUrl((old) => { if (old) URL.revokeObjectURL(old); return url; });
+  setResultUrl((old) => { if (old) URL.revokeObjectURL(old); return null; });
+};
+
+const process = async () => {
+  if (!file) return;
+  try {
+    setProcessing(true);
+
+    // Optional rate limit check (non-blocking if RPC missing)
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData?.user?.id;
+      if (userId) {
+        const { data: allowed } = await supabase.rpc('check_ai_protection_rate_limit', {
+          user_id_param: userId,
+          endpoint_param: 'style_cloak',
+          max_requests_param: 200,
+          window_minutes_param: 60,
+        });
+        if (allowed === false) {
+          toast.error('Rate limit reached. Please try again later.');
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('Rate limit check skipped', e);
+    }
+
+    toast.info('Applying Enhanced Style Cloaking...');
+    const blob = await cloakImageFromFile(file, {
+      strength: strength[0],
+      frequency: frequency[0],
+      colorJitter: colorJitter[0],
+      useSegmentation,
+    });
+    const url = URL.createObjectURL(blob);
+    setResultUrl((old) => { if (old) URL.revokeObjectURL(old); return url; });
+    toast.success('Cloaking applied');
+  } catch (e: any) {
+    console.error(e);
+    toast.error(e?.message ?? 'Failed to cloak image');
+  } finally {
+    setProcessing(false);
+  }
+};
+
+const download = () => {
+  if (!resultUrl || !file) return;
+  const a = document.createElement('a');
+  a.href = resultUrl;
+  const base = file.name.replace(/\.[^.]+$/, '') || 'image';
+  a.download = `${base}_cloaked.png`;
+  a.click();
+};
+
+const saveToSupabase = async () => {
+  try {
+    if (!resultUrl) return;
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData?.user?.id;
+    if (!userId) {
+      toast.error('Please sign in to save to your library.');
       return;
     }
-    setFile(picked);
-    const url = URL.createObjectURL(picked);
-    setPreviewUrl((old) => { if (old) URL.revokeObjectURL(old); return url; });
-    setResultUrl((old) => { if (old) URL.revokeObjectURL(old); return null; });
-  };
 
-  const process = async () => {
-    if (!file) return;
+    const res = await fetch(resultUrl);
+    const blob = await res.blob();
+
+    const base = (file?.name || 'image').replace(/\.[^.]+$/, '');
+    const ts = new Date().toISOString().replace(/[:.]/g, '-');
+    const path = `${userId}/cloaked/${base}_${ts}.png`;
+
+    const { error: upErr } = await supabase.storage
+      .from('ai-protected-files')
+      .upload(path, blob, { contentType: 'image/png', upsert: true });
+
+    if (upErr) throw upErr;
+
+    // Audit log (best-effort)
     try {
-      setProcessing(true);
-      toast.info('Applying Enhanced Style Cloaking...');
-      const blob = await cloakImageFromFile(file, {
-        strength: strength[0],
-        frequency: frequency[0],
-        colorJitter: colorJitter[0],
-        useSegmentation,
+      await supabase.rpc('log_ai_protection_action', {
+        user_id_param: userId,
+        action_param: 'style_cloak_save',
+        resource_type_param: 'image',
+        resource_id_param: path,
+        details_param: {
+          original_filename: file?.name,
+          strength: strength[0],
+          frequency: frequency[0],
+          color_jitter: colorJitter[0],
+          use_segmentation: useSegmentation,
+        },
       });
-      const url = URL.createObjectURL(blob);
-      setResultUrl((old) => { if (old) URL.revokeObjectURL(old); return url; });
-      toast.success('Cloaking applied');
-    } catch (e: any) {
-      console.error(e);
-      toast.error(e?.message ?? 'Failed to cloak image');
-    } finally {
-      setProcessing(false);
+    } catch (e) {
+      console.warn('Audit log failed', e);
     }
-  };
 
-  const download = () => {
-    if (!resultUrl || !file) return;
-    const a = document.createElement('a');
-    a.href = resultUrl;
-    const base = file.name.replace(/\.[^.]+$/, '') || 'image';
-    a.download = `${base}_cloaked.png`;
-    a.click();
-  };
-
+    toast.success('Saved to your protected files');
+  } catch (e: any) {
+    console.error(e);
+    toast.error(e?.message ?? 'Failed to save image');
+  }
+};
   return (
     <Card>
       <CardHeader>
@@ -160,11 +237,14 @@ const StyleCloak: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex justify-end">
-          <Button variant="secondary" disabled={!resultUrl} onClick={download} className="gap-2">
-            <Download className="h-4 w-4" /> Download Cloaked Image
-          </Button>
-        </div>
+<div className="flex justify-end gap-2">
+  <Button variant="default" disabled={!resultUrl} onClick={saveToSupabase} className="gap-2">
+    <Shield className="h-4 w-4" /> Save to Library
+  </Button>
+  <Button variant="secondary" disabled={!resultUrl} onClick={download} className="gap-2">
+    <Download className="h-4 w-4" /> Download Cloaked Image
+  </Button>
+</div>
       </CardContent>
     </Card>
   );

@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AITrainingSettings } from '@/components/AITrainingSettings';
 import StyleCloak from '@/components/ai-protection/StyleCloak';
 const AIProtectionSettings = () => {
+  useEffect(() => {
+    document.title = 'AI Training Protection Settings | Style Cloaking';
+    const desc = 'Configure AI training protection and apply style cloaking to safeguard artwork.';
+    let meta = document.querySelector('meta[name="description"]');
+    if (!meta) { meta = document.createElement('meta'); meta.setAttribute('name', 'description'); document.head.appendChild(meta); }
+    meta.setAttribute('content', desc);
+    let link = document.querySelector('link[rel="canonical"]');
+    if (!link) { link = document.createElement('link'); link.setAttribute('rel', 'canonical'); document.head.appendChild(link); }
+    link.setAttribute('href', window.location.origin + '/ai-protection-settings');
+  }, []);
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
