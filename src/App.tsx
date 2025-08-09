@@ -48,6 +48,7 @@ import Roadmap from "./pages/Roadmap";
 import CreatorMarkets from "./pages/CreatorMarkets";
 import ForgeryDetection from "./pages/ForgeryDetection";
 import Licensing from "./pages/Licensing";
+import SalesPackage from "./pages/SalesPackage";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -130,6 +131,7 @@ const App = () => {
             <Route path="/roadmap" element={<Roadmap />} />
             <Route path="/licensing" element={<Licensing />} />
             <Route path="/certificate/:certificateId" element={<Certificate />} />
+            <Route path="/sales-package" element={<SalesPackage />} />
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />
                     </Routes>

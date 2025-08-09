@@ -198,6 +198,24 @@ export function AppSidebar() {
           </SidebarGroup>
 
           <SidebarGroup>
+            <SidebarGroupLabel>Sales</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    onClick={() => navigate('/sales-package')}
+                    isActive={isActive('/sales-package')}
+                    className="flex items-center gap-2"
+                  >
+                    <FileText className="w-4 h-4" />
+                    {!collapsed && <span>Sales Package</span>}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          <SidebarGroup>
             <SidebarGroupLabel>Other</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
