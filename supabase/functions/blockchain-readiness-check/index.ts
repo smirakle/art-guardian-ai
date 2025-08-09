@@ -33,62 +33,79 @@ serve(async (req) => {
       )
     }
 
-    // Provider (Ethereum mainnet by default)
-    const rpcUrl = `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`
-    const provider = new JsonRpcProvider(rpcUrl)
+    // Attempt mainnet first, then gracefully fall back to Sepolia if mainnet is disabled in Alchemy
+    const makeProvider = (net: 'mainnet' | 'sepolia') => new JsonRpcProvider(
+      net === 'mainnet'
+        ? `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`
+        : `https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}`
+    )
 
-    // Network and block
-    const network = await provider.getNetwork()
-    const blockNumber = await provider.getBlockNumber()
+    const collect = async (provider: JsonRpcProvider) => {
+      const network = await provider.getNetwork()
+      const blockNumber = await provider.getBlockNumber()
+      const wallet = new Wallet(PRIVATE_KEY!, provider)
+      const address = await wallet.getAddress()
+      const balanceWei = await provider.getBalance(address)
+      const balanceEth = formatEther(balanceWei)
+      const nonce = await provider.getTransactionCount(address)
+      const feeData = await provider.getFeeData()
+      let estimateOk = true
+      let estimatedGas: string | null = null
+      try {
+        const gas = await provider.estimateGas({ from: address, to: address, value: 0n })
+        estimatedGas = gas.toString()
+      } catch (e) {
+        estimateOk = false
+        console.error('estimateGas failed', e)
+      }
+      return { network, blockNumber, wallet, address, balanceEth, nonce, feeData, estimateOk, estimatedGas }
+    }
 
-    // Wallet basics
-    const wallet = new Wallet(PRIVATE_KEY!, provider)
-    const address = await wallet.getAddress()
-    const balanceWei = await provider.getBalance(address)
-    const balanceEth = formatEther(balanceWei)
-    const nonce = await provider.getTransactionCount(address)
-
-    // Fee data
-    const feeData = await provider.getFeeData()
-
-    // Gas estimation (no broadcast)
-    let estimateOk = true
-    let estimatedGas: string | null = null
+    let enableUrl: string | null = null
+    let usedNetwork: 'mainnet' | 'sepolia' = 'mainnet'
+    let data: any
     try {
-      const gas = await provider.estimateGas({ from: address, to: address, value: 0n })
-      estimatedGas = gas.toString()
-    } catch (e) {
-      estimateOk = false
-      console.error('estimateGas failed', e)
+      data = await collect(makeProvider('mainnet'))
+    } catch (err: any) {
+      const body: string | undefined = err?.info?.responseBody
+      if (body && body.includes('enable the network')) {
+        const m = body.match(/https:\/\/dashboard\.alchemy\.com\/apps\/[A-Za-z0-9_-]+\/networks/)
+        enableUrl = m ? m[0] : null
+      }
+      // Fallback to Sepolia if mainnet blocked/disabled
+      usedNetwork = 'sepolia'
+      data = await collect(makeProvider('sepolia'))
     }
 
     // Determine readiness
     const minEthRequired = 0.005 // approx for simple tx; NFT minting likely higher
-    const balNum = Number(balanceEth)
+    const balNum = Number(data.balanceEth)
     const requiresFunding = isNaN(balNum) || balNum < minEthRequired
 
     result.checks = [
       ...result.checks as any[],
-      { name: 'RPC reachable', ok: true, details: { chainId: Number(network.chainId), blockNumber } },
-      { name: 'Wallet derived', ok: true, details: { address, nonce } },
-      { name: 'Fee data available', ok: Boolean(feeData?.gasPrice || feeData?.maxFeePerGas) },
-      { name: 'Gas estimation (dry-run)', ok: estimateOk, details: { estimatedGas } },
-      { name: `Sufficient balance (>= ${minEthRequired} ETH)`, ok: !requiresFunding, details: { balanceEth } },
+      { name: 'RPC reachable', ok: true, details: { chainId: Number(data.network.chainId), blockNumber: data.blockNumber, network: usedNetwork } },
+      { name: 'Wallet derived', ok: true, details: { address: data.address, nonce: data.nonce } },
+      { name: 'Fee data available', ok: Boolean(data.feeData?.gasPrice || data.feeData?.maxFeePerGas) },
+      { name: 'Gas estimation (dry-run)', ok: data.estimateOk, details: { estimatedGas: data.estimatedGas } },
+      { name: `Sufficient balance (>= ${minEthRequired} ETH)`, ok: !requiresFunding, details: { balanceEth: data.balanceEth } },
+      ...(enableUrl ? [{ name: 'Mainnet enabled on Alchemy', ok: false, details: { enable_url: enableUrl } }] : []),
     ]
 
-    const ready = secretsOk && estimateOk && !requiresFunding
+    const ready = data.estimateOk && !requiresFunding
     result.ready = ready
     result.requires_funding = requiresFunding
 
     return new Response(
       JSON.stringify({
         status: ready ? 'ok' : 'needs_attention',
-        network: { chainId: Number(network.chainId), blockNumber },
-        wallet: { address, balanceEth, nonce },
+        message: enableUrl ? 'Mainnet is disabled on your Alchemy app. Using Sepolia fallback.' : undefined,
+        network: { chainId: Number(data.network.chainId), blockNumber: data.blockNumber, used: usedNetwork },
+        wallet: { address: data.address, balanceEth: data.balanceEth, nonce: data.nonce },
         feeData: {
-          gasPrice: feeData.gasPrice?.toString() ?? null,
-          maxFeePerGas: feeData.maxFeePerGas?.toString() ?? null,
-          maxPriorityFeePerGas: feeData.maxPriorityFeePerGas?.toString() ?? null,
+          gasPrice: data.feeData.gasPrice?.toString() ?? null,
+          maxFeePerGas: data.feeData.maxFeePerGas?.toString() ?? null,
+          maxPriorityFeePerGas: data.feeData.maxPriorityFeePerGas?.toString() ?? null,
         },
         result,
       }),
