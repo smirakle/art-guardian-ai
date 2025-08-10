@@ -1587,57 +1587,6 @@ export type Database = {
         }
         Relationships: []
       }
-      leads: {
-        Row: {
-          company: string | null
-          consent: boolean
-          created_at: string
-          email: string
-          id: string
-          name: string | null
-          notes: string | null
-          owner_email: string | null
-          source: string | null
-          updated_at: string
-          use_case: string | null
-          utm_campaign: string | null
-          utm_medium: string | null
-          utm_source: string | null
-        }
-        Insert: {
-          company?: string | null
-          consent?: boolean
-          created_at?: string
-          email: string
-          id?: string
-          name?: string | null
-          notes?: string | null
-          owner_email?: string | null
-          source?: string | null
-          updated_at?: string
-          use_case?: string | null
-          utm_campaign?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-        }
-        Update: {
-          company?: string | null
-          consent?: boolean
-          created_at?: string
-          email?: string
-          id?: string
-          name?: string | null
-          notes?: string | null
-          owner_email?: string | null
-          source?: string | null
-          updated_at?: string
-          use_case?: string | null
-          utm_campaign?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-        }
-        Relationships: []
-      }
       legal_compliance_tracking: {
         Row: {
           compliance_type: string

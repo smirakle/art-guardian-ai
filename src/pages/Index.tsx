@@ -48,7 +48,6 @@ import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import MonitoringFlow from "@/components/MonitoringFlow";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import InvestorPitchDeck from "@/components/InvestorPitchDeck";
-import B2BSalesPackageDownload from "@/components/B2BSalesPackageDownload";
 
 const Index = () => {
   const { toast } = useToast();
@@ -363,14 +362,6 @@ const Index = () => {
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
-        </div>
-      </section>
-
-      {/* B2B Sales Package */}
-      <section aria-labelledby="b2b-sales-package" className="py-10 px-4">
-        <div className="container mx-auto max-w-5xl text-center">
-          <h2 id="b2b-sales-package" className="text-2xl md:text-3xl font-bold mb-6">TSMO B2B Sales Package</h2>
-          <B2BSalesPackageDownload />
         </div>
       </section>
 
