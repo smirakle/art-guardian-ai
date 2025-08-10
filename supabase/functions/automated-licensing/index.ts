@@ -99,6 +99,7 @@ serve(async (req) => {
         const { data: licenseRow, error: licErr } = await supabase
           .from("licenses")
           .insert({
+            user_id: userId,
             licensor_user_id: userId,
             artwork_id: payload.artworkId,
             licensee_name: payload.licensee_name ?? null,
