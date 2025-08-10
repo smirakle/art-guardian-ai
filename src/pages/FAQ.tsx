@@ -398,6 +398,53 @@ const FAQ = () => {
           )
         },
         {
+          question: "How does Forgery Detection work and what can it identify?",
+          answer: (
+            <div>
+              <p className="mb-3"><strong>Forgery Detection</strong> uses advanced AI algorithms and digital forensics techniques to identify manipulated, edited, or artificially generated images that may infringe on your original work.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Detection capabilities include:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• Deepfake Detection:</strong> Identifies AI-generated faces, objects, and scenes using neural network analysis</li>
+                  <li><strong>• Digital Manipulation:</strong> Detects photo editing, compositing, and digital alterations using pixel-level analysis</li>
+                  <li><strong>• Copy-Move Forgery:</strong> Finds duplicated or moved elements within the same image</li>
+                  <li><strong>• Splicing Detection:</strong> Identifies images composed from multiple source images</li>
+                  <li><strong>• AI-Generated Content:</strong> Recognizes content created by AI tools like Midjourney, DALL-E, or Stable Diffusion</li>
+                  <li><strong>• Metadata Analysis:</strong> Examines EXIF data inconsistencies and digital signatures</li>
+                  <li><strong>• Compression Artifacts:</strong> Analyzes compression patterns to detect editing and re-saving</li>
+                  <li><strong>• Noise Pattern Analysis:</strong> Examines camera sensor noise to verify authenticity</li>
+                </ul>
+              </div>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">How the analysis works:</h4>
+                <ol className="ml-4 space-y-2 text-sm list-decimal">
+                  <li><strong>Upload Analysis:</strong> When you upload an image, our AI performs multiple forensic tests simultaneously</li>
+                  <li><strong>Multi-Algorithm Processing:</strong> Uses 15+ different detection algorithms to analyze various aspects of the image</li>
+                  <li><strong>Pattern Recognition:</strong> Compares against known forgery signatures and AI-generation patterns</li>
+                  <li><strong>Confidence Scoring:</strong> Provides a forgery probability score from 0-100% for each detected anomaly</li>
+                  <li><strong>Visual Highlighting:</strong> Shows exactly where modifications or suspicious areas are detected</li>
+                  <li><strong>Detailed Report:</strong> Generates comprehensive forensic reports suitable for legal proceedings</li>
+                </ol>
+              </div>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Use cases:</h4>
+                <ul className="ml-4 space-y-1 text-sm">
+                  <li>• Verify authenticity of submitted artwork or photography</li>
+                  <li>• Detect unauthorized AI-generated versions of your work</li>
+                  <li>• Identify manipulated versions of your original content</li>
+                  <li>• Provide evidence for copyright infringement cases</li>
+                  <li>• Screen content before publication or licensing</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm"><strong>Accuracy:</strong> Our forgery detection system achieves 94% accuracy on deepfakes and 97% accuracy on digital manipulations, with continuous improvement through machine learning updates.</p>
+            </div>
+          )
+        },
+        {
           question: "How accurate is the visual recognition technology?",
           answer: "Our AI-powered visual recognition technology achieves over 95% accuracy in detecting your artwork, even when it's been modified, cropped, filtered, or edited. The system uses advanced machine learning algorithms and continues to improve through continuous training on new data patterns."
         }
