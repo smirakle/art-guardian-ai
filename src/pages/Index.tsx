@@ -206,7 +206,7 @@ const Index = () => {
           
           <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
             Protect Your Content.<br />
-            <span className="text-foreground">relcaim your future.</span>
+            <span className="text-foreground">Reclaim Your Future.</span>
           </h1>
           
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-6 sm:mb-8 max-w-4xl mx-auto leading-relaxed px-4">
