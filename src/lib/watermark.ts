@@ -152,12 +152,13 @@ export class InvisibleWatermark {
   }
 
   /**
-   * Detect if image has TSMO watermark (basic detection)
+   * Enhanced watermark detection for various types including visible watermarks
    */
   async detectWatermark(imageFile: File): Promise<{
     hasWatermark: boolean;
     confidence: number;
     watermarkId?: string;
+    watermarkType?: string;
   }> {
     return new Promise((resolve) => {
       const img = new Image();
@@ -166,32 +167,28 @@ export class InvisibleWatermark {
         this.canvas.height = img.height;
         this.ctx.drawImage(img, 0, 0);
 
-        // Simple detection by analyzing pixel patterns
-        // In a real implementation, this would use advanced algorithms
         const imageData = this.ctx.getImageData(0, 0, img.width, img.height);
         const pixels = imageData.data;
         
-        let suspiciousPatterns = 0;
-        const sampleSize = Math.min(10000, pixels.length / 4);
-        
-        for (let i = 0; i < sampleSize * 4; i += 4) {
-          const r = pixels[i];
-          const g = pixels[i + 1];
-          const b = pixels[i + 2];
-          
-          // Look for subtle variations that might indicate watermarking
-          if (Math.abs(r - g) < 3 && Math.abs(g - b) < 3 && r > 250) {
-            suspiciousPatterns++;
-          }
-        }
-        
-        const confidence = Math.min((suspiciousPatterns / sampleSize) * 100, 85);
-        const hasWatermark = confidence > 15;
-        
+        // Multiple detection methods
+        const detectionResults = [
+          this.detectVisibleWatermark(pixels, img.width, img.height),
+          this.detectTransparencyWatermark(pixels, img.width, img.height),
+          this.detectPatternWatermark(pixels, img.width, img.height),
+          this.detectEdgeWatermark(pixels, img.width, img.height),
+          this.detectTSMOWatermark(pixels, img.width, img.height)
+        ];
+
+        // Find the highest confidence detection
+        const bestDetection = detectionResults.reduce((best, current) => 
+          current.confidence > best.confidence ? current : best
+        );
+
         resolve({
-          hasWatermark,
-          confidence,
-          watermarkId: hasWatermark ? 'DETECTED-TSMO-PATTERN' : undefined
+          hasWatermark: bestDetection.confidence > 20,
+          confidence: Math.min(bestDetection.confidence, 95),
+          watermarkId: bestDetection.confidence > 20 ? bestDetection.id : undefined,
+          watermarkType: bestDetection.type
         });
       };
 
@@ -201,6 +198,167 @@ export class InvisibleWatermark {
 
       img.src = URL.createObjectURL(imageFile);
     });
+  }
+
+  private detectVisibleWatermark(pixels: Uint8ClampedArray, width: number, height: number) {
+    let watermarkScore = 0;
+    let semiTransparentPixels = 0;
+    let edgeContrast = 0;
+    
+    // Check for semi-transparent overlays and high contrast text
+    for (let i = 0; i < pixels.length; i += 4) {
+      const r = pixels[i];
+      const g = pixels[i + 1];
+      const b = pixels[i + 2];
+      const a = pixels[i + 3];
+      
+      // Look for semi-transparent pixels (common in watermarks)
+      if (a < 255 && a > 100) {
+        semiTransparentPixels++;
+      }
+      
+      // Check for high contrast (white/black text on background)
+      const brightness = (r + g + b) / 3;
+      if (brightness > 240 || brightness < 15) {
+        watermarkScore++;
+      }
+    }
+    
+    const confidence = Math.min((semiTransparentPixels / (width * height)) * 500 + 
+                               (watermarkScore / (width * height)) * 200, 90);
+    
+    return {
+      confidence,
+      type: 'visible_overlay',
+      id: 'VISIBLE-WATERMARK-DETECTED'
+    };
+  }
+
+  private detectTransparencyWatermark(pixels: Uint8ClampedArray, width: number, height: number) {
+    let transparencyPatterns = 0;
+    
+    // Look for repeated transparency patterns
+    for (let y = 0; y < height - 50; y += 10) {
+      for (let x = 0; x < width - 50; x += 10) {
+        const idx = (y * width + x) * 4;
+        const a1 = pixels[idx + 3];
+        const idx2 = ((y + 25) * width + (x + 25)) * 4;
+        const a2 = pixels[idx2 + 3];
+        
+        if (Math.abs(a1 - a2) > 20 && (a1 < 200 || a2 < 200)) {
+          transparencyPatterns++;
+        }
+      }
+    }
+    
+    const confidence = Math.min((transparencyPatterns / 100) * 60, 85);
+    
+    return {
+      confidence,
+      type: 'transparency_pattern',
+      id: 'TRANSPARENCY-WATERMARK'
+    };
+  }
+
+  private detectPatternWatermark(pixels: Uint8ClampedArray, width: number, height: number) {
+    let repeatedPatterns = 0;
+    const blockSize = 50;
+    
+    // Look for repeated blocks (tiled watermarks)
+    for (let y = 0; y < height - blockSize * 2; y += blockSize) {
+      for (let x = 0; x < width - blockSize * 2; x += blockSize) {
+        let similarity = 0;
+        
+        for (let dy = 0; dy < blockSize; dy += 5) {
+          for (let dx = 0; dx < blockSize; dx += 5) {
+            const idx1 = ((y + dy) * width + (x + dx)) * 4;
+            const idx2 = ((y + dy + blockSize) * width + (x + dx + blockSize)) * 4;
+            
+            const diff = Math.abs(pixels[idx1] - pixels[idx2]) +
+                        Math.abs(pixels[idx1 + 1] - pixels[idx2 + 1]) +
+                        Math.abs(pixels[idx1 + 2] - pixels[idx2 + 2]);
+            
+            if (diff < 30) similarity++;
+          }
+        }
+        
+        if (similarity > 80) repeatedPatterns++;
+      }
+    }
+    
+    const confidence = Math.min((repeatedPatterns / 10) * 70, 88);
+    
+    return {
+      confidence,
+      type: 'repeated_pattern',
+      id: 'PATTERN-WATERMARK'
+    };
+  }
+
+  private detectEdgeWatermark(pixels: Uint8ClampedArray, width: number, height: number) {
+    let edgeWatermarkScore = 0;
+    const margin = 50;
+    
+    // Check edges for watermarks (common placement)
+    const regions = [
+      { x: 0, y: 0, w: margin, h: height }, // left edge
+      { x: width - margin, y: 0, w: margin, h: height }, // right edge
+      { x: 0, y: 0, w: width, h: margin }, // top edge
+      { x: 0, y: height - margin, w: width, h: margin } // bottom edge
+    ];
+    
+    regions.forEach(region => {
+      let textLikePixels = 0;
+      
+      for (let y = region.y; y < region.y + region.h; y += 2) {
+        for (let x = region.x; x < region.x + region.w; x += 2) {
+          const idx = (y * width + x) * 4;
+          const r = pixels[idx];
+          const g = pixels[idx + 1];
+          const b = pixels[idx + 2];
+          
+          // Look for text-like high contrast
+          const brightness = (r + g + b) / 3;
+          if (brightness > 230 || brightness < 25) {
+            textLikePixels++;
+          }
+        }
+      }
+      
+      if (textLikePixels > 20) edgeWatermarkScore += textLikePixels;
+    });
+    
+    const confidence = Math.min((edgeWatermarkScore / 1000) * 60, 80);
+    
+    return {
+      confidence,
+      type: 'edge_watermark',
+      id: 'EDGE-WATERMARK'
+    };
+  }
+
+  private detectTSMOWatermark(pixels: Uint8ClampedArray, width: number, height: number) {
+    // Original TSMO detection algorithm
+    let suspiciousPatterns = 0;
+    const sampleSize = Math.min(10000, pixels.length / 4);
+    
+    for (let i = 0; i < sampleSize * 4; i += 4) {
+      const r = pixels[i];
+      const g = pixels[i + 1];
+      const b = pixels[i + 2];
+      
+      if (Math.abs(r - g) < 3 && Math.abs(g - b) < 3 && r > 250) {
+        suspiciousPatterns++;
+      }
+    }
+    
+    const confidence = Math.min((suspiciousPatterns / sampleSize) * 100, 85);
+    
+    return {
+      confidence,
+      type: 'tsmo_invisible',
+      id: 'TSMO-PATTERN'
+    };
   }
 }
 
