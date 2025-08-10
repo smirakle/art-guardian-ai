@@ -47,6 +47,7 @@ import InvestorHub from "./pages/InvestorHub";
 import Roadmap from "./pages/Roadmap";
 import CreatorMarkets from "./pages/CreatorMarkets";
 import ForgeryDetection from "./pages/ForgeryDetection";
+import TermsAndPrivacy from "./pages/TermsAndPrivacy";
 
 const queryClient = new QueryClient();
 
@@ -128,6 +129,7 @@ const App = () => {
             } />
             <Route path="/forgery-detection" element={<ForgeryDetection />} />
             <Route path="/roadmap" element={<Roadmap />} />
+            <Route path="/terms-and-privacy" element={<TermsAndPrivacy />} />
             
             <Route path="/certificate/:certificateId" element={<Certificate />} />
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
