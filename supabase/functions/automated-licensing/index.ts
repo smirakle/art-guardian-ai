@@ -12,10 +12,7 @@ interface CreateDraftPayload {
   licensee_name?: string;
   licensee_email?: string;
   license_type: string;
-  usage_scope?: Record<string, unknown>;
   territory?: string;
-  start_date?: string;
-  end_date?: string;
   price_cents?: number;
   currency?: string;
   terms_text: string;
@@ -38,25 +35,26 @@ interface ListPayload {
 
 type LicensingRequest = CreateDraftPayload | ActivatePayload | RevokePayload | ListPayload;
 
-type Json = Record<string, unknown> | Array<unknown> | string | number | boolean | null;
-
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
-    // Read incoming JWT from Authorization header
+    // Initialize clients
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey);
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, { 
+      auth: { persistSession: false } 
+    });
+
+    // Authenticate user
     const authHeader = req.headers.get("Authorization") ?? "";
     const token = authHeader.replace("Bearer ", "");
-
-    // Auth client (for verifying JWT) and service client (for DB writes bypassing RLS)
-    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey);
-    const supabase = createClient(supabaseUrl, supabaseServiceKey, { auth: { persistSession: false } });
-
-    // Enforce auth
+    
     const { data: userData, error: userErr } = await supabaseAuth.auth.getUser(token);
     if (userErr || !userData?.user) {
       return json({ error: "Unauthorized" }, 401);
@@ -69,217 +67,213 @@ serve(async (req) => {
       case "create_draft": {
         const payload = body as CreateDraftPayload;
 
-        // Basic validation
+        // Validate required fields
         if (!payload.artworkId || !payload.license_type || !payload.terms_text) {
-          return json({ error: "Missing required fields" }, 400);
+          return json({ error: "Missing required fields: artworkId, license_type, terms_text" }, 400);
         }
 
-        // Ensure artwork belongs to user (defense-in-depth)
+        // Verify artwork ownership
         const { data: artworkRows, error: artErr } = await supabase
           .from("artwork")
           .select("id, user_id")
           .eq("id", payload.artworkId)
-          .limit(1);
-        if (artErr) console.error("artwork fetch error", artErr);
-        if (!artworkRows?.length || artworkRows[0].user_id !== userId) {
+          .eq("user_id", userId)
+          .single();
+
+        if (artErr || !artworkRows) {
+          console.error("Artwork verification failed:", artErr);
           return json({ error: "Artwork not found or not owned by user" }, 403);
         }
 
-        const documentHash = await sha256(
-          JSON.stringify({
-            terms: payload.terms_text,
-            license_type: payload.license_type,
-            usage: payload.usage_scope ?? {},
-            territory: payload.territory ?? "Worldwide",
-          })
-        );
+        // Generate document hash
+        const documentContent = {
+          terms: payload.terms_text,
+          license_type: payload.license_type,
+          territory: payload.territory || "Worldwide",
+          artwork_id: payload.artworkId
+        };
+        const documentHash = await generateHash(JSON.stringify(documentContent));
 
-        const status = (payload.price_cents ?? 0) > 0 ? "pending_payment" : "active";
+        // Determine status based on price
+        const priceInCents = Number(payload.price_cents) || 0;
+        const status = priceInCents > 0 ? "pending_payment" : "draft";
+
+        // Insert license record
+        const licenseData = {
+          user_id: userId,
+          licensor_user_id: userId,
+          artwork_id: payload.artworkId,
+          file_hash: documentHash,
+          hash_algo: "sha256",
+          license_type: payload.license_type,
+          terms: payload.terms_text,
+          terms_text: payload.terms_text,
+          licensee_name: payload.licensee_name || null,
+          licensee_email: payload.licensee_email || null,
+          territory: payload.territory || "Worldwide",
+          price_cents: priceInCents,
+          currency: (payload.currency || "usd").toLowerCase(),
+          status: status,
+          document_hash: documentHash,
+          usage_scope: {}
+        };
 
         const { data: licenseRow, error: licErr } = await supabase
           .from("licenses")
-          .insert({
-            user_id: userId,
-            licensor_user_id: userId,
-            artwork_id: payload.artworkId,
-            file_hash: documentHash, // Required field
-            hash_algo: "sha256", // Has default but better to be explicit
-            licensee_name: payload.licensee_name ?? null,
-            licensee_email: payload.licensee_email ?? null,
-            license_type: payload.license_type,
-            usage_scope: payload.usage_scope ?? {},
-            territory: payload.territory ?? "Worldwide",
-            start_date: payload.start_date ?? null,
-            end_date: payload.end_date ?? null,
-            price_cents: payload.price_cents ?? 0,
-            currency: (payload.currency ?? "usd").toLowerCase(),
-            status,
-            terms: payload.terms_text, // Map to 'terms' column
-            terms_text: payload.terms_text,
-            document_hash: documentHash,
-          })
+          .insert(licenseData)
           .select("*")
           .single();
 
         if (licErr) {
-          console.error("license insert error", licErr);
-          console.error("license insert details", {
-            code: licErr.code,
-            message: licErr.message,
-            details: licErr.details,
-            hint: licErr.hint
+          console.error("License insert failed:", {
+            error: licErr,
+            data: licenseData
           });
-          return json({ error: "Failed to create license", details: licErr.message }, 500);
+          return json({ 
+            error: "Failed to create license", 
+            details: licErr.message,
+            code: licErr.code 
+          }, 500);
         }
 
-        await recordEvent(supabase, licenseRow.id, userId, "created", {
-          status,
-          price_cents: payload.price_cents ?? 0,
-        });
+        // Log event
+        await recordEvent(supabase, licenseRow.id, userId, "created", { status, price_cents: priceInCents });
 
         return json({ success: true, license: licenseRow });
       }
 
       case "activate": {
         const { licenseId } = body as ActivatePayload;
-        if (!licenseId) return json({ error: "licenseId required" }, 400);
+        if (!licenseId) {
+          return json({ error: "licenseId is required" }, 400);
+        }
 
-        // Fetch and authorize
-        const { data: lic, error: getErr } = await supabase
+        // Fetch and verify ownership
+        const { data: license, error: fetchErr } = await supabase
           .from("licenses")
           .select("*")
           .eq("id", licenseId)
-          .limit(1)
-          .maybeSingle();
-        if (getErr) {
-          console.error("license fetch error", getErr);
-          return json({ error: "Failed to fetch license" }, 500);
-        }
-        if (!lic || lic.licensor_user_id !== userId) return json({ error: "Not found" }, 404);
+          .eq("user_id", userId)
+          .single();
 
-        const now = new Date().toISOString();
-        const { data: updated, error: updErr } = await supabase
+        if (fetchErr || !license) {
+          console.error("License fetch failed:", fetchErr);
+          return json({ error: "License not found or access denied" }, 404);
+        }
+
+        // Update to active status
+        const { data: updatedLicense, error: updateErr } = await supabase
           .from("licenses")
-          .update({ status: "active", paid_at: now })
+          .update({ 
+            status: "active", 
+            paid_at: new Date().toISOString() 
+          })
           .eq("id", licenseId)
           .select("*")
           .single();
-        if (updErr) {
-          console.error("license activate error", updErr);
+
+        if (updateErr) {
+          console.error("License activation failed:", updateErr);
           return json({ error: "Failed to activate license" }, 500);
         }
 
-        await recordEvent(supabase, licenseId, userId, "activated", {});
-
-        // Register blockchain proof (simulate)
-        const timestamp = new Date().toISOString();
+        // Generate blockchain proof
         const certificateId = `TSMO-LIC-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-        const licenseFingerprint = await sha256(
-          JSON.stringify({
-            license_id: updated.id,
-            artwork_id: updated.artwork_id,
-            licensor_user_id: updated.licensor_user_id,
-            document_hash: updated.document_hash,
-            timestamp,
-          })
-        );
+        const blockchainHash = await simulateBlockchainTransaction(updatedLicense, certificateId);
 
-        const txHash = await simulateBlockchainTransaction({
-          certificateId,
-          licenseFingerprint,
-          owner: userId,
-          timestamp,
-        });
-
-        const ownershipProof = await sha256(
-          JSON.stringify({ certificateId, licenseId, userId, timestamp, txHash, nonce: Math.random() })
-        );
-
-        const certificate = {
-          certificateId,
-          blockchainHash: txHash,
-          timestamp,
-          licenseFingerprint,
-          ownershipProof,
-          registrationUrl: `https://tsmowatch.com/certificate/${certificateId}`,
-          type: "license",
-        } satisfies Json;
-
-        // Persist certificate (if table exists)
-        const { error: certErr } = await supabase.from("blockchain_certificates").insert({
-          certificate_id: certificateId,
-          artwork_id: updated.artwork_id,
-          user_id: userId,
-          blockchain_hash: txHash,
-          artwork_fingerprint: licenseFingerprint,
-          ownership_proof: ownershipProof,
-          registration_timestamp: timestamp,
-          certificate_data: certificate as unknown as Record<string, unknown>,
-          status: "registered",
-        });
-        if (certErr) console.warn("blockchain_certificates insert warn", certErr?.message);
-
-        // Update license with proof
-        const { data: finalLic, error: setErr } = await supabase
+        // Update with blockchain info
+        const { data: finalLicense, error: blockchainErr } = await supabase
           .from("licenses")
-          .update({ blockchain_hash: txHash, blockchain_certificate_id: certificateId })
+          .update({
+            blockchain_hash: blockchainHash,
+            blockchain_certificate_id: certificateId
+          })
           .eq("id", licenseId)
           .select("*")
           .single();
-        if (setErr) console.error("license update blockchain error", setErr);
 
+        if (blockchainErr) {
+          console.warn("Blockchain info update failed:", blockchainErr);
+        }
+
+        // Record events
+        await recordEvent(supabase, licenseId, userId, "activated", {});
         await recordEvent(supabase, licenseId, userId, "blockchain_registered", {
-          blockchain_hash: txHash,
-          certificate_id: certificateId,
+          blockchain_hash: blockchainHash,
+          certificate_id: certificateId
         });
 
-        return json({ success: true, license: finalLic, certificate });
+        const certificate = {
+          certificateId,
+          blockchainHash,
+          timestamp: new Date().toISOString(),
+          registrationUrl: `https://tsmowatch.com/certificate/${certificateId}`,
+          type: "license"
+        };
+
+        return json({ 
+          success: true, 
+          license: finalLicense || updatedLicense, 
+          certificate 
+        });
       }
 
       case "revoke": {
         const { licenseId, reason } = body as RevokePayload;
-        if (!licenseId) return json({ error: "licenseId required" }, 400);
+        if (!licenseId) {
+          return json({ error: "licenseId is required" }, 400);
+        }
 
-        // Authorize
-        const { data: lic, error: getErr } = await supabase
-          .from("licenses")
-          .select("id, licensor_user_id")
-          .eq("id", licenseId)
-          .maybeSingle();
-        if (getErr) return json({ error: "Failed to fetch license" }, 500);
-        if (!lic || lic.licensor_user_id !== userId) return json({ error: "Not found" }, 404);
-
-        const { data: updated, error: updErr } = await supabase
+        // Verify ownership and update
+        const { data: revokedLicense, error: revokeErr } = await supabase
           .from("licenses")
           .update({ status: "revoked" })
           .eq("id", licenseId)
+          .eq("user_id", userId)
           .select("*")
           .single();
-        if (updErr) return json({ error: "Failed to revoke license" }, 500);
 
-        await recordEvent(supabase, licenseId, userId, "revoked", { reason: reason ?? null });
-        return json({ success: true, license: updated });
+        if (revokeErr) {
+          console.error("License revoke failed:", revokeErr);
+          return json({ error: "Failed to revoke license or access denied" }, 500);
+        }
+
+        await recordEvent(supabase, licenseId, userId, "revoked", { reason: reason || null });
+        return json({ success: true, license: revokedLicense });
       }
 
       case "list": {
-        const { data: rows, error } = await supabase
+        const { data: licenses, error: listErr } = await supabase
           .from("licenses")
-          .select("*, artwork:artwork(id, title)")
-          .eq("licensor_user_id", userId)
+          .select(`
+            *,
+            artwork:artwork(id, title)
+          `)
+          .eq("user_id", userId)
           .order("created_at", { ascending: false });
-        if (error) return json({ error: "Failed to list licenses" }, 500);
-        return json({ success: true, licenses: rows });
+
+        if (listErr) {
+          console.error("License list failed:", listErr);
+          return json({ error: "Failed to fetch licenses" }, 500);
+        }
+
+        return json({ success: true, licenses: licenses || [] });
       }
 
       default:
-        return json({ error: "Unknown action" }, 400);
+        return json({ error: "Invalid action" }, 400);
     }
-  } catch (e: any) {
-    console.error("automated-licensing error", e);
-    return json({ error: "Internal error", details: e?.message ?? String(e) }, 500);
+
+  } catch (error: any) {
+    console.error("Automated licensing error:", error);
+    return json({ 
+      error: "Internal server error", 
+      details: error?.message || String(error) 
+    }, 500);
   }
 });
 
+// Helper functions
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -287,17 +281,27 @@ function json(data: unknown, status = 200) {
   });
 }
 
-async function sha256(input: string): Promise<string> {
-  const enc = new TextEncoder().encode(input);
-  const buf = await crypto.subtle.digest("SHA-256", enc);
-  return Array.from(new Uint8Array(buf))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
+async function generateHash(input: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(input);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
-async function simulateBlockchainTransaction(data: Record<string, unknown>): Promise<string> {
-  const hash = await sha256(JSON.stringify(data));
-  await new Promise((r) => setTimeout(r, 800));
+async function simulateBlockchainTransaction(license: any, certificateId: string): Promise<string> {
+  // Simulate blockchain transaction delay
+  await new Promise(resolve => setTimeout(resolve, 800));
+  
+  const transactionData = {
+    certificateId,
+    licenseId: license.id,
+    artworkId: license.artwork_id,
+    timestamp: new Date().toISOString(),
+    userId: license.user_id
+  };
+  
+  const hash = await generateHash(JSON.stringify(transactionData));
   return `0x${hash.slice(0, 64)}`;
 }
 
@@ -305,14 +309,23 @@ async function recordEvent(
   supabase: ReturnType<typeof createClient>,
   licenseId: string,
   userId: string,
-  event_type: string,
+  eventType: string,
   data: Record<string, unknown>
 ) {
-  const { error } = await supabase.from("license_events").insert({
-    license_id: licenseId,
-    user_id: userId,
-    event_type,
-    data,
-  });
-  if (error) console.warn("license event insert warn", error.message);
+  try {
+    const { error } = await supabase
+      .from("license_events")
+      .insert({
+        license_id: licenseId,
+        user_id: userId,
+        event_type: eventType,
+        data: data
+      });
+    
+    if (error) {
+      console.warn("Failed to record license event:", error);
+    }
+  } catch (err) {
+    console.warn("Event recording error:", err);
+  }
 }
