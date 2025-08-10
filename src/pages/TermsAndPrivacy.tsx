@@ -212,10 +212,10 @@ const TermsAndPrivacy = () => {
             <CardContent>
               <div className="space-y-3">
                 <p className="text-muted-foreground">
-                  <strong>Email:</strong> legal@tsmo.com
+                  <strong>Email:</strong> shirleena.cunningham@tsmowatch.com
                 </p>
                 <p className="text-muted-foreground">
-                  <strong>Privacy Officer:</strong> privacy@tsmo.com
+                  <strong>Privacy Officer:</strong> shirleena.cunningham@tsmowatch.com
                 </p>
                 <p className="text-muted-foreground">
                   <strong>Address:</strong> TSMO Legal Department<br />
