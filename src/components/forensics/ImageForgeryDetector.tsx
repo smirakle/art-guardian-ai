@@ -134,17 +134,33 @@ export default function ImageForgeryDetector() {
     if (!src) return;
     try {
       setProcessing(true);
-      const base64 = await toBase64DataURL(file!);
       const { data, error } = await supabase.functions.invoke('advanced-visual-analysis', {
-        body: { imageData: base64, task: 'forgery_detection' }
+        body: { 
+          imageUrl: src,
+          analysisTypes: ['deepfake_detection']
+        }
       });
       if (error) throw error;
-      const confidence = Math.round((data?.forgeryConfidence ?? 0.5) * 100);
-      setAiResult({ confidence, summary: data?.analysis || 'AI analysis complete.' });
-      toast({ title: 'AI analysis complete', description: `AI confidence: ${confidence}%` });
+      
+      const deepfakeData = data?.results?.deepfake_detection;
+      const confidence = Math.round((deepfakeData?.confidence ?? 0.5) * 100);
+      
+      setAiResult({ 
+        confidence, 
+        summary: deepfakeData?.analysis || 'AI analysis complete.' 
+      });
+      
+      toast({ 
+        title: 'AI analysis complete', 
+        description: `AI confidence: ${confidence}%` 
+      });
     } catch (e: any) {
       console.error(e);
-      toast({ title: 'AI analysis failed', description: e?.message ?? 'Could not analyze image', variant: 'destructive' });
+      toast({ 
+        title: 'AI analysis failed', 
+        description: e?.message ?? 'Could not analyze image', 
+        variant: 'destructive' 
+      });
     } finally {
       setProcessing(false);
     }
