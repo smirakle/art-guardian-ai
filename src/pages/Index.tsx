@@ -273,6 +273,67 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Beta Testing Status - Compact Disclaimer */}
+      <section className="bg-yellow-50 border-y border-yellow-200 py-6 px-4">
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center">
+            <Badge variant="outline" className="text-yellow-700 border-yellow-300 mb-3">
+              🚀 Beta Testing Phase
+            </Badge>
+            <h3 className="text-lg font-semibold mb-3 text-yellow-800">
+              Platform Status: Core Features Active, Advanced Features Rolling Out
+            </h3>
+            
+            <div className="grid sm:grid-cols-2 gap-4 text-sm">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                <div className="font-semibold text-green-800 mb-2 flex items-center justify-center gap-2">
+                  <Check className="h-4 w-4" />
+                  ✅ Working Now
+                </div>
+                <div className="text-green-700 space-y-1">
+                  <div>• Image Upload & Analysis</div>
+                  <div>• Copyright Monitoring</div>
+                  <div>• DMCA Templates</div>
+                  <div>• Portfolio Management</div>
+                </div>
+              </div>
+              
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                <div className="font-semibold text-orange-800 mb-2 flex items-center justify-center gap-2">
+                  <Activity className="h-4 w-4" />
+                  🔧 Coming Soon
+                </div>
+                <div className="text-orange-700 space-y-1">
+                  <div>• Automated Takedowns</div>
+                  <div>• Real-time Monitoring</div>
+                  <div>• Blockchain Registration</div>
+                  <div>• AI Training Protection</div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-4 flex flex-col sm:flex-row gap-2 justify-center">
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+                onClick={() => navigate("/roadmap")}
+              >
+                View Roadmap
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+                onClick={() => navigate("/contact")}
+              >
+                Report Issues
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Creator Success Stories - Quick Preview */}
       <section className="bg-gradient-to-r from-green-50 to-blue-50 border-y border-green-200 py-8 px-4">
         <div className="container mx-auto max-w-5xl">
@@ -1780,146 +1841,7 @@ const Index = () => {
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center">
                     <Scale className="h-6 w-6 text-white" />
-      {/* Beta Testing Status Disclaimer */}
-      <section className="bg-yellow-50 border-t border-yellow-200 py-12 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-8">
-            <Badge variant="outline" className="text-yellow-700 border-yellow-300 mb-4">
-              🚀 Beta Testing Phase
-            </Badge>
-            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-yellow-800">
-              Platform Status & Feature Availability
-            </h2>
-            <p className="text-yellow-700 max-w-2xl mx-auto">
-              We're transparent about what's working and what's still in development. Here's the current status of all features.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Fully Working Features */}
-            <Card className="border-green-300 bg-green-50">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-green-800">
-                  <Check className="h-5 w-5" />
-                  ✅ Fully Operational
-                </CardTitle>
-                <CardDescription className="text-green-700">
-                  These features are production-ready and working reliably
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-600" />
-                  <span className="text-sm">Image Upload & Analysis</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-600" />
-                  <span className="text-sm">Visual Recognition & Similarity Detection</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-600" />
-                  <span className="text-sm">Basic Copyright Monitoring</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-600" />
-                  <span className="text-sm">User Authentication & Profiles</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-600" />
-                  <span className="text-sm">Portfolio Management</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-600" />
-                  <span className="text-sm">Basic Watermarking</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-600" />
-                  <span className="text-sm">Manual DMCA Template Generation</span>
-                </div>
-              </CardContent>
-            </Card>
-            
-            {/* Under Development Features */}
-            <Card className="border-orange-300 bg-orange-50">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-orange-800">
-                  <Activity className="h-5 w-5" />
-                  🔧 Under Development
-                </CardTitle>
-                <CardDescription className="text-orange-700">
-                  These features are being actively developed and tested
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-orange-600" />
-                  <span className="text-sm">Real-time Platform Monitoring</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-orange-600" />
-                  <span className="text-sm">Automated DMCA Takedown Filing</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-orange-600" />
-                  <span className="text-sm">AI Training Protection (AITP)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-orange-600" />
-                  <span className="text-sm">Blockchain Registration & NFT Minting</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-orange-600" />
-                  <span className="text-sm">Deep Web & Social Media Scanning</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-orange-600" />
-                  <span className="text-sm">Advanced Analytics & Reporting</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-orange-600" />
-                  <span className="text-sm">Enterprise API Integration</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div className="mt-8 text-center">
-            <Card className="border-blue-300 bg-blue-50 max-w-3xl mx-auto">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-blue-800 mb-3">
-                  🧪 How to Use TSMO During Beta
-                </h3>
-                <div className="text-left space-y-2 text-sm text-blue-700">
-                  <p>• <strong>Upload & Protect:</strong> All image analysis and basic protection features work reliably</p>
-                  <p>• <strong>Monitor Manually:</strong> Use our tools to check for violations while we finish automation</p>
-                  <p>• <strong>Generate Templates:</strong> Create DMCA notices and legal documents with our templates</p>
-                  <p>• <strong>Stay Updated:</strong> Advanced features roll out weekly - check your dashboard for new capabilities</p>
-                </div>
-                <div className="mt-4 flex flex-col sm:flex-row gap-3 justify-center">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="border-blue-300 text-blue-700 hover:bg-blue-100"
-                    onClick={() => navigate("/contact")}
-                  >
-                    Report Issues
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="border-blue-300 text-blue-700 hover:bg-blue-100"
-                    onClick={() => navigate("/roadmap")}
-                  >
-                    View Development Roadmap
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-    </div>
+                  </div>
                   <div>
                     <div className="font-semibold">Alex Thompson</div>
                     <div className="text-sm text-muted-foreground">Photographer</div>
