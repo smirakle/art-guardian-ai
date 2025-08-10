@@ -102,6 +102,8 @@ serve(async (req) => {
             user_id: userId,
             licensor_user_id: userId,
             artwork_id: payload.artworkId,
+            file_hash: documentHash, // Required field
+            hash_algo: "sha256", // Has default but better to be explicit
             licensee_name: payload.licensee_name ?? null,
             licensee_email: payload.licensee_email ?? null,
             license_type: payload.license_type,
@@ -112,6 +114,7 @@ serve(async (req) => {
             price_cents: payload.price_cents ?? 0,
             currency: (payload.currency ?? "usd").toLowerCase(),
             status,
+            terms: payload.terms_text, // Map to 'terms' column
             terms_text: payload.terms_text,
             document_hash: documentHash,
           })
@@ -120,7 +123,13 @@ serve(async (req) => {
 
         if (licErr) {
           console.error("license insert error", licErr);
-          return json({ error: "Failed to create license" }, 500);
+          console.error("license insert details", {
+            code: licErr.code,
+            message: licErr.message,
+            details: licErr.details,
+            hint: licErr.hint
+          });
+          return json({ error: "Failed to create license", details: licErr.message }, 500);
         }
 
         await recordEvent(supabase, licenseRow.id, userId, "created", {
