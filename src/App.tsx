@@ -132,8 +132,16 @@ const App = () => {
             <Route path="/forgery-detection" element={<ForgeryDetection />} />
             <Route path="/roadmap" element={<Roadmap />} />
             <Route path="/terms-and-privacy" element={<TermsAndPrivacy />} />
-            <Route path="/email-marketing" element={<EmailMarketing />} />
-            <Route path="/tax-management" element={<TaxManagement />} />
+            <Route path="/email-marketing" element={
+              <ProtectedRoute requiredRole="admin">
+                <EmailMarketing />
+              </ProtectedRoute>
+            } />
+            <Route path="/tax-management" element={
+              <ProtectedRoute requiredRole="admin">
+                <TaxManagement />
+              </ProtectedRoute>
+            } />
             
             <Route path="/certificate/:certificateId" element={<Certificate />} />
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

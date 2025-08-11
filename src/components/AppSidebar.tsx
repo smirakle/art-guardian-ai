@@ -44,10 +44,13 @@ export function AppSidebar() {
     { path: "/forgery-detection", label: "Forgery Detection", icon: Search },
     { path: "/community", label: t('nav.community'), icon: Users },
     { path: "/legal-templates", label: "Legal Templates", icon: FileText },
-    { path: "/email-marketing", label: "Email Marketing", icon: Send },
-    { path: "/tax-management", label: "Tax Management", icon: DollarSign },
     { path: "/faq", label: "FAQ", icon: HelpCircle },
     { path: "/roadmap", label: "Roadmap", icon: TrendingUp },
+  ];
+
+  const adminOnlyItems = [
+    { path: "/email-marketing", label: "Email Marketing", icon: Send },
+    { path: "/tax-management", label: "Tax Management", icon: DollarSign },
   ];
 
   const secondaryNavItems = [
@@ -86,6 +89,23 @@ export function AppSidebar() {
                         onClick={() => navigate(item.path)}
                         isActive={isActive(item.path)}
                         className="flex items-center gap-2"
+                      >
+                        <Icon className="w-4 h-4" />
+                        {!collapsed && <span>{item.label}</span>}
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+
+                {/* Admin-only navigation items */}
+                {role === 'admin' && adminOnlyItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <SidebarMenuItem key={item.path}>
+                      <SidebarMenuButton
+                        onClick={() => navigate(item.path)}
+                        isActive={isActive(item.path)}
+                        className="flex items-center gap-2 text-orange-600 hover:text-orange-600"
                       >
                         <Icon className="w-4 h-4" />
                         {!collapsed && <span>{item.label}</span>}
