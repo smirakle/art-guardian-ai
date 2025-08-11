@@ -285,7 +285,8 @@ export const CustomIntegrations: React.FC = () => {
       
       if (data?.url) {
         console.log('Redirecting to:', data.url);
-        window.location.href = data.url as string;
+        // Open in same window to avoid popup blockers
+        window.open(data.url as string, '_self');
       } else {
         console.error('No URL returned from OAuth handler');
         throw new Error('No authorization URL returned');
