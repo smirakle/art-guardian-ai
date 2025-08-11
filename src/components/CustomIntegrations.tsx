@@ -258,19 +258,35 @@ export const CustomIntegrations: React.FC = () => {
   };
 
   const handleConnect = async (provider: 'adobe' | 'buffer') => {
+    console.log('Starting connection for:', provider);
+    
     try {
       const appRedirect = `${window.location.origin}/custom-integrations`;
+      console.log('Redirect URL:', appRedirect);
+      
       const { data, error } = await supabase.functions.invoke('oauth-handler', {
         body: { provider, appRedirect }
       });
-      if (error) throw error;
-      if (data?.url) {
-        window.location.href = data.url as string;
+      
+      console.log('OAuth response:', { data, error });
+      
+      if (error) {
+        console.error('OAuth error:', error);
+        throw error;
       }
-    } catch (e) {
+      
+      if (data?.url) {
+        console.log('Redirecting to:', data.url);
+        window.location.href = data.url as string;
+      } else {
+        console.error('No URL returned from OAuth handler');
+        throw new Error('No authorization URL returned');
+      }
+    } catch (e: any) {
+      console.error('Connection error:', e);
       toast({
-        title: 'Connection failed',
-        description: 'Unable to start OAuth flow',
+        title: 'Connection failed', 
+        description: e.message || 'Unable to start OAuth flow',
         variant: 'destructive'
       });
     }
