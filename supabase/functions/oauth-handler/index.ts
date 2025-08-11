@@ -36,14 +36,21 @@ serve(async (req) => {
 
   try {
     if (req.method === 'POST') {
+      console.log('OAuth POST request received')
       const { provider, appRedirect } = await req.json()
+      console.log('Request data:', { provider, appRedirect })
+      
       if (!provider || !appRedirect) return json({ error: 'Missing provider or appRedirect' }, 400)
 
       // Validate user via Authorization header
       const authHeader = req.headers.get('Authorization')
+      console.log('Auth header present:', !!authHeader)
+      
       if (!authHeader) return json({ error: 'Missing Authorization header' }, 401)
       const token = authHeader.replace('Bearer ', '')
       const { data: authUser, error: authErr } = await supabase.auth.getUser(token)
+      console.log('User auth result:', { user: !!authUser.user, error: authErr })
+      
       if (authErr || !authUser.user) return json({ error: 'Invalid auth' }, 401)
 
       const state = randomState()

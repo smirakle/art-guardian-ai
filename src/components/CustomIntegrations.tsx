@@ -261,11 +261,19 @@ export const CustomIntegrations: React.FC = () => {
     console.log('Starting connection for:', provider);
     
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        throw new Error('You must be logged in to connect integrations');
+      }
+
       const appRedirect = `${window.location.origin}/custom-integrations`;
       console.log('Redirect URL:', appRedirect);
       
       const { data, error } = await supabase.functions.invoke('oauth-handler', {
-        body: { provider, appRedirect }
+        body: { provider, appRedirect },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
       });
       
       console.log('OAuth response:', { data, error });
