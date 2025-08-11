@@ -15,46 +15,46 @@
 ### Realistic Monthly Recurring Revenue (MRR) Growth:
 ```
 Current: $200 MRR (8 customers)
-Month 3: $350 MRR (12 customers, 15% monthly growth)
-Month 6: $750 MRR (25 customers)
-Month 9: $1,800 MRR (55 customers)
-Month 12: $4,200 MRR (120 customers)
-Month 24: $15,000 MRR (350 customers)
+Month 3: $280 MRR (~12% MoM)
+Month 6: $400 MRR
+Month 9: $500 MRR
+Month 12: $620 MRR
+Month 24: $1,900 MRR
 ```
 
 ### Customer Growth Projections:
 | Metric | Current | Year 1 | Year 2 | Year 3 |
 |--------|---------|--------|--------|--------|
-| Total Customers | 8 | 120 | 350 | 750 |
-| Starter Plan | 6 | 84 | 245 | 450 |
-| Professional Plan | 2 | 30 | 87 | 225 |
-| Enterprise Plan | 0 | 6 | 18 | 75 |
-| Average ARPU | $25 | $35 | $43 | $56 |
+| Total Customers | 8 | 25 | 70 | 200 |
+| Starter Plan | 6 | 18 | 50 | 120 |
+| Professional Plan | 2 | 6 | 16 | 60 |
+| Enterprise Plan | 0 | 1 | 4 | 20 |
+| Average ARPU | $25 | $28 | $30 | $32 |
 
 ## Unit Economics Analysis
 
 ### Customer Acquisition Cost (CAC) - Bootstrap Optimized:
 | Channel | CAC | Contribution % |
 |---------|-----|----------------|
-| Content Marketing | $15 | 50% |
-| Partnership Referrals | $10 | 30% |
-| Direct Sales (Founder) | $25 | 15% |
-| Social Media Organic | $8 | 5% |
-| **Blended CAC** | **$15** | **100%** |
+| Content Marketing | $25 | 40% |
+| Partnership Referrals | $20 | 30% |
+| Direct Sales (Founder) | $60 | 20% |
+| Social Media Organic | $15 | 10% |
+| **Blended CAC** | **$32** | **100%** |
 
 ### Customer Lifetime Value (LTV):
 | Segment | Monthly Churn | Avg. Monthly Revenue | LTV |
 |---------|---------------|---------------------|-----|
-| Starter | 8% | $29 | $363 |
-| Professional | 5% | $79 | $1,580 |
-| Enterprise | 3% | $299 | $9,967 |
-| **Blended LTV** | **6%** | **$35** | **$583** |
+| Starter | 10% | $29 | $290 |
+| Professional | 7% | $79 | $1,129 |
+| Enterprise | 5% | $299 | $5,980 |
+| **Blended LTV** | **8%** | **$30** | **$375** |
 
 ### Key Metrics:
-- **LTV/CAC Ratio**: 39x (Exceptional for bootstrap)
-- **Payback Period**: 0.4 months
-- **Gross Revenue Retention**: 90%
-- **Net Revenue Retention**: 105%
+- **LTV/CAC Ratio**: ~12x (conservative, healthy)
+- **Payback Period**: 2–3 months
+- **Gross Revenue Retention**: 85–90%
+- **Net Revenue Retention**: 95–100%
 
 ## Detailed P&L Projections
 
