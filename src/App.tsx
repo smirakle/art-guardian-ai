@@ -48,6 +48,8 @@ import Roadmap from "./pages/Roadmap";
 import CreatorMarkets from "./pages/CreatorMarkets";
 import ForgeryDetection from "./pages/ForgeryDetection";
 import TermsAndPrivacy from "./pages/TermsAndPrivacy";
+import EmailMarketing from "./pages/EmailMarketing";
+import TaxManagement from "./pages/TaxManagement";
 
 const queryClient = new QueryClient();
 
@@ -130,6 +132,8 @@ const App = () => {
             <Route path="/forgery-detection" element={<ForgeryDetection />} />
             <Route path="/roadmap" element={<Roadmap />} />
             <Route path="/terms-and-privacy" element={<TermsAndPrivacy />} />
+            <Route path="/email-marketing" element={<EmailMarketing />} />
+            <Route path="/tax-management" element={<TaxManagement />} />
             
             <Route path="/certificate/:certificateId" element={<Certificate />} />
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
