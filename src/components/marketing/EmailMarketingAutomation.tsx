@@ -43,34 +43,81 @@ export const EmailMarketingAutomation = () => {
   }, []);
 
   const loadCampaigns = async () => {
+    setIsLoading(true);
     try {
-      // Mock data for now - production would use database
-      const mockCampaigns: EmailCampaign[] = [
-        {
-          id: '1',
-          name: 'Welcome Series',
-          subject: 'Welcome to TSMO!',
-          content: 'Thank you for joining us...',
-          status: 'sent',
-          trigger_type: 'welcome',
-          recipients: 150,
-          open_rate: 45.2,
-          click_rate: 12.3
-        }
-      ];
-      setCampaigns(mockCampaigns);
+      const { data: campaigns, error } = await supabase
+        .from('email_campaigns')
+        .select(`
+          id,
+          name,
+          subject,
+          content,
+          status,
+          trigger_type,
+          created_at
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Get recipient counts for each campaign
+      const campaignsWithStats = await Promise.all(
+        (campaigns || []).map(async (campaign) => {
+          const { data: recipients } = await supabase
+            .from('email_campaign_recipients')
+            .select('status, opened_at, clicked_at')
+            .eq('campaign_id', campaign.id);
+
+          const totalRecipients = recipients?.length || 0;
+          const opened = recipients?.filter(r => r.opened_at).length || 0;
+          const clicked = recipients?.filter(r => r.clicked_at).length || 0;
+
+          return {
+            ...campaign,
+            status: campaign.status as 'draft' | 'scheduled' | 'sent' | 'paused',
+            trigger_type: campaign.trigger_type as 'welcome' | 'abandonment' | 'renewal' | 'engagement' | 'manual',
+            recipients: totalRecipients,
+            open_rate: totalRecipients > 0 ? (opened / totalRecipients) * 100 : 0,
+            click_rate: totalRecipients > 0 ? (clicked / totalRecipients) * 100 : 0
+          };
+        })
+      );
+
+      setCampaigns(campaignsWithStats);
     } catch (error) {
       console.error('Error loading campaigns:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load campaigns.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const loadAnalytics = async () => {
     try {
       const { data, error } = await supabase.functions.invoke('email-analytics');
+      
       if (error) throw error;
-      setAnalytics(data);
+      
+      setAnalytics({
+        total_sent: data?.totalSent || 0,
+        total_opens: data?.totalOpened || 0,
+        total_clicks: data?.totalClicked || 0,
+        avg_open_rate: data?.avgOpenRate || 0,
+        avg_click_rate: data?.avgClickRate || 0
+      });
     } catch (error) {
       console.error('Error loading analytics:', error);
+      setAnalytics({
+        total_sent: 0,
+        total_opens: 0,
+        total_clicks: 0,
+        avg_open_rate: 0,
+        avg_click_rate: 0
+      });
     }
   };
 
@@ -78,7 +125,13 @@ export const EmailMarketingAutomation = () => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('create-email-campaign', {
-        body: campaignData
+        body: {
+          name: campaignData.name,
+          subject: campaignData.subject,
+          content: campaignData.content,
+          triggerType: campaignData.trigger_type,
+          sendTime: campaignData.send_time
+        }
       });
 
       if (error) throw error;
@@ -105,17 +158,18 @@ export const EmailMarketingAutomation = () => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('send-email-campaign', {
-        body: { campaign_id: campaignId }
+        body: { campaignId }
       });
 
       if (error) throw error;
 
       toast({
         title: "Campaign Sent",
-        description: "Email campaign has been sent successfully.",
+        description: `Campaign sent! Delivered to ${data?.sent || 0} recipients.`,
       });
 
       loadCampaigns();
+      loadAnalytics();
     } catch (error) {
       console.error('Error sending campaign:', error);
       toast({

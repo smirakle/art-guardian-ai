@@ -1,6 +1,15 @@
 
 project_id = "utneaqmbyjwxaqrrarpc"
 
+[functions.email-analytics]
+verify_jwt = true
+
+[functions.create-email-campaign]
+verify_jwt = true
+
+[functions.send-email-campaign]
+verify_jwt = true
+
 [functions.enterprise-api-v1]
 verify_jwt = false
 

@@ -1170,6 +1170,231 @@ export type Database = {
         }
         Relationships: []
       }
+      email_campaign_recipients: {
+        Row: {
+          bounced_at: string | null
+          campaign_id: string
+          clicked_at: string | null
+          created_at: string
+          email: string
+          id: string
+          metadata: Json
+          opened_at: string | null
+          sent_at: string | null
+          status: string
+          subscriber_id: string | null
+          unsubscribed_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bounced_at?: string | null
+          campaign_id: string
+          clicked_at?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          metadata?: Json
+          opened_at?: string | null
+          sent_at?: string | null
+          status?: string
+          subscriber_id?: string | null
+          unsubscribed_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bounced_at?: string | null
+          campaign_id?: string
+          clicked_at?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          metadata?: Json
+          opened_at?: string | null
+          sent_at?: string | null
+          status?: string
+          subscriber_id?: string | null
+          unsubscribed_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_campaign_recipients_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "email_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_campaign_recipients_subscriber_id_fkey"
+            columns: ["subscriber_id"]
+            isOneToOne: false
+            referencedRelation: "email_subscribers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_campaigns: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          name: string
+          send_time: string | null
+          status: string
+          subject: string
+          trigger_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          name: string
+          send_time?: string | null
+          status?: string
+          subject: string
+          trigger_type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          name?: string
+          send_time?: string | null
+          status?: string
+          subject?: string
+          trigger_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      email_events: {
+        Row: {
+          campaign_id: string | null
+          email: string | null
+          event_type: string
+          id: string
+          occurred_at: string
+          payload: Json
+          subscriber_id: string | null
+          user_id: string
+        }
+        Insert: {
+          campaign_id?: string | null
+          email?: string | null
+          event_type: string
+          id?: string
+          occurred_at?: string
+          payload?: Json
+          subscriber_id?: string | null
+          user_id: string
+        }
+        Update: {
+          campaign_id?: string | null
+          email?: string | null
+          event_type?: string
+          id?: string
+          occurred_at?: string
+          payload?: Json
+          subscriber_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_events_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "email_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_events_subscriber_id_fkey"
+            columns: ["subscriber_id"]
+            isOneToOne: false
+            referencedRelation: "email_subscribers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          first_name: string | null
+          id: string
+          last_engaged_at: string | null
+          last_name: string | null
+          metadata: Json
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          first_name?: string | null
+          id?: string
+          last_engaged_at?: string | null
+          last_name?: string | null
+          metadata?: Json
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          first_name?: string | null
+          id?: string
+          last_engaged_at?: string | null
+          last_name?: string | null
+          metadata?: Json
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      email_templates: {
+        Row: {
+          created_at: string
+          html_content: string
+          id: string
+          is_active: boolean
+          name: string
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          html_content: string
+          id?: string
+          is_active?: boolean
+          name: string
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          html_content?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       enterprise_api_keys: {
         Row: {
           api_key: string
@@ -1584,6 +1809,57 @@ export type Database = {
           updated_at?: string
           website?: string | null
           years_experience?: number | null
+        }
+        Relationships: []
+      }
+      leads: {
+        Row: {
+          company: string | null
+          consent: boolean
+          created_at: string
+          email: string
+          id: string
+          name: string | null
+          notes: string | null
+          owner_email: string | null
+          source: string | null
+          updated_at: string
+          use_case: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          company?: string | null
+          consent?: boolean
+          created_at?: string
+          email: string
+          id?: string
+          name?: string | null
+          notes?: string | null
+          owner_email?: string | null
+          source?: string | null
+          updated_at?: string
+          use_case?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          company?: string | null
+          consent?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string | null
+          notes?: string | null
+          owner_email?: string | null
+          source?: string | null
+          updated_at?: string
+          use_case?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
         }
         Relationships: []
       }
