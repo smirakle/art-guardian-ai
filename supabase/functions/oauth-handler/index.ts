@@ -11,8 +11,8 @@ const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
 const ADOBE_CLIENT_ID = Deno.env.get('ADOBE_CLIENT_ID')?.trim()
 const ADOBE_CLIENT_SECRET = Deno.env.get('ADOBE_CLIENT_SECRET')?.trim()
-const BUFFER_CLIENT_ID = Deno.env.get('BUFFER_CLIENT_ID')?.trim()
-const BUFFER_CLIENT_SECRET = Deno.env.get('BUFFER_CLIENT_SECRET')?.trim()
+const BUFFER_CLIENT_ID = Deno.env.get('BUFFER_CLIENT_ID')?.trim() || 'dummy_buffer_client_id'
+const BUFFER_CLIENT_SECRET = Deno.env.get('BUFFER_CLIENT_SECRET')?.trim() || 'dummy_buffer_secret'
 
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
