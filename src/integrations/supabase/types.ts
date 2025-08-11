@@ -1170,6 +1170,100 @@ export type Database = {
         }
         Relationships: []
       }
+      email_automation_executions: {
+        Row: {
+          campaign_sent: boolean
+          error_message: string | null
+          executed_at: string
+          id: string
+          rule_id: string
+          trigger_data: Json
+          user_id: string
+        }
+        Insert: {
+          campaign_sent?: boolean
+          error_message?: string | null
+          executed_at?: string
+          id?: string
+          rule_id: string
+          trigger_data?: Json
+          user_id: string
+        }
+        Update: {
+          campaign_sent?: boolean
+          error_message?: string | null
+          executed_at?: string
+          id?: string
+          rule_id?: string
+          trigger_data?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_automation_executions_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "email_automation_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_automation_rules: {
+        Row: {
+          campaign_id: string | null
+          created_at: string
+          delay_minutes: number
+          description: string | null
+          execution_count: number
+          id: string
+          is_active: boolean
+          last_executed_at: string | null
+          name: string
+          trigger_conditions: Json
+          trigger_event: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          campaign_id?: string | null
+          created_at?: string
+          delay_minutes?: number
+          description?: string | null
+          execution_count?: number
+          id?: string
+          is_active?: boolean
+          last_executed_at?: string | null
+          name: string
+          trigger_conditions?: Json
+          trigger_event: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          campaign_id?: string | null
+          created_at?: string
+          delay_minutes?: number
+          description?: string | null
+          execution_count?: number
+          id?: string
+          is_active?: boolean
+          last_executed_at?: string | null
+          name?: string
+          trigger_conditions?: Json
+          trigger_event?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_automation_rules_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "email_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_campaign_recipients: {
         Row: {
           bounced_at: string | null
