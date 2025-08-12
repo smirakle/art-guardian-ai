@@ -50,6 +50,7 @@ import MonitoringFlow from "@/components/MonitoringFlow";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import InvestorPitchDeck from "@/components/InvestorPitchDeck";
 import OnboardingTour from "@/components/OnboardingTour";
+import DemoEnvironment from "@/components/investor/DemoEnvironment";
 
 const Index = () => {
   const { toast } = useToast();
@@ -108,6 +109,7 @@ const Index = () => {
   });
   const [isSendingSales, setIsSendingSales] = useState(false);
   const [showOnboardingTour, setShowOnboardingTour] = useState(false);
+  const [showLiveDemo, setShowLiveDemo] = useState(false);
 
   const startDemo = () => {
     setIsAnalyzing(true);
@@ -194,6 +196,19 @@ const Index = () => {
       {showOnboardingTour && (
         <OnboardingTour startOpen onClose={() => setShowOnboardingTour(false)} />
       )}
+      
+      {/* Live Demo Modal */}
+      <Dialog open={showLiveDemo} onOpenChange={setShowLiveDemo}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Live Demo - TSMO Protection Platform</DialogTitle>
+            <DialogDescription>
+              Experience our IP protection platform in action with real-time monitoring simulation.
+            </DialogDescription>
+          </DialogHeader>
+          <DemoEnvironment />
+        </DialogContent>
+      </Dialog>
       {/* Hero Section */}
       <section className="pt-24 sm:pt-32 pb-20 px-4">
         <div className="container mx-auto text-center max-w-6xl">
@@ -249,7 +264,7 @@ const Index = () => {
               variant="outline" 
               size="lg" 
               className="w-full sm:w-auto px-8 py-4 text-lg border-2"
-              onClick={() => navigate("/monitoring")}
+              onClick={() => setShowLiveDemo(true)}
             >
               <Activity className="mr-2 h-5 w-5" />
               See Live Demo
