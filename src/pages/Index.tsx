@@ -226,28 +226,28 @@ const Index = () => {
           </div>
           
           <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
-            Protect Your Content.<br />
-            <span className="text-foreground">Own Your Future.</span>
+            Protect Your Art.<br />
+            <span className="text-foreground">Keep What's Yours.</span>
           </h1>
           
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-6 sm:mb-8 max-w-4xl mx-auto leading-relaxed px-4">
-            Stop AI training theft, unauthorized merch sales, and content scraping.<br />
-            <span className="text-primary font-semibold">Join 15,000+ creators</span> protecting their work with automated monitoring, instant takedown notices, and legal automation.
+            Stop people from stealing your art for AI, selling fake merch, and copying your work.<br />
+            <span className="text-primary font-semibold">Join 15,000+ creators</span> who watch their art 24/7 and get thieves removed instantly.
           </p>
 
           {/* Creator Pain Points */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 max-w-4xl mx-auto px-4">
             <div className="flex items-center justify-center gap-2 bg-red-50 border border-red-200 rounded-lg p-3">
               <Bot className="h-5 w-5 text-red-600 flex-shrink-0" />
-              <span className="text-sm text-red-700">AI Training Theft</span>
+              <span className="text-sm text-red-700">AI Art Theft</span>
             </div>
             <div className="flex items-center justify-center gap-2 bg-red-50 border border-red-200 rounded-lg p-3">
               <FileImage className="h-5 w-5 text-red-600 flex-shrink-0" />
-              <span className="text-sm text-red-700">Unauthorized Merch</span>
+              <span className="text-sm text-red-700">Fake Products</span>
             </div>
             <div className="flex items-center justify-center gap-2 bg-red-50 border border-red-200 rounded-lg p-3">
               <Search className="h-5 w-5 text-red-600 flex-shrink-0" />
-              <span className="text-sm text-red-700">Content Scraping</span>
+              <span className="text-sm text-red-700">Art Copying</span>
             </div>
           </div>
           
@@ -306,9 +306,9 @@ const Index = () => {
       <section id="why-tsmo" className="py-16 px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-bold mb-3">Why TSMO</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-3">How We Protect You</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Four-Layer Defense, real-time monitoring, and legal automation designed to stop AI training theft and unauthorized use.
+              Four ways to protect your art: invisible shields, 24/7 watching, automatic legal action, and proof of ownership.
             </p>
           </div>
 
@@ -318,10 +318,10 @@ const Index = () => {
                 <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <ShieldCheck className="h-5 w-5 text-primary" />
                 </div>
-                <CardTitle className="text-base">Four-Layer Defense</CardTitle>
+                <CardTitle className="text-base">Complete Protection</CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                StyleCloak, monitoring, training enforcement, and takedowns work together to protect your content end-to-end.
+                Invisible shields, 24/7 watching, automatic legal action, and takedown notices work together to protect your art.
               </CardContent>
             </Card>
 
@@ -330,10 +330,10 @@ const Index = () => {
                 <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <EyeOff className="h-5 w-5 text-primary" />
                 </div>
-                <CardTitle className="text-base">StyleCloak Protection</CardTitle>
+                <CardTitle className="text-base">Invisible Art Shield</CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                Invisible, creator-friendly protection that disrupts AI model training without harming visual quality.
+                Hidden protection that stops AI from learning your style without changing how your art looks.
               </CardContent>
             </Card>
 
@@ -342,10 +342,10 @@ const Index = () => {
                 <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <Fingerprint className="h-5 w-5 text-primary" />
                 </div>
-                <CardTitle className="text-base">Multi-Modal Fingerprinting</CardTitle>
+                <CardTitle className="text-base">Smart Art Detection</CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                Detects image, text, and metadata misuse across platforms with resilient, explainable signals.
+                Finds copies of your art anywhere online, even when they try to hide or change it.
               </CardContent>
             </Card>
 
@@ -355,10 +355,10 @@ const Index = () => {
                 <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <BadgeCheck className="h-5 w-5 text-primary" />
                 </div>
-                <CardTitle className="text-base">Blockchain Verification</CardTitle>
+                <CardTitle className="text-base">Ownership Proof</CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                Verifiable proof of ownership, timestamps, and chain-of-custody for licensing and disputes.
+                Digital certificates that prove you created your art first, perfect for legal disputes.
               </CardContent>
             </Card>
 
@@ -367,10 +367,10 @@ const Index = () => {
                 <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <Scale className="h-5 w-5 text-primary" />
                 </div>
-                <CardTitle className="text-base">Closed-Loop Legal Automation</CardTitle>
+                <CardTitle className="text-base">Automatic Legal Action</CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                From detection to DMCA and takedowns, automate response with audit-ready, lawyer-approved templates.
+                We automatically send legal notices to remove stolen art using lawyer-approved templates.
               </CardContent>
             </Card>
           </div>
