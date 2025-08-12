@@ -44,6 +44,7 @@ import {
   UserX,
   Calendar
 } from 'lucide-react';
+import { ShieldCheck, EyeOff, Fingerprint, Code2, BadgeCheck } from 'lucide-react';
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import MonitoringFlow from "@/components/MonitoringFlow";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -283,6 +284,102 @@ const Index = () => {
             </div>
           </div>
           
+        </div>
+      </section>
+
+      {/* Why TSMO - Highlight Section */}
+      <section id="why-tsmo" className="py-16 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-bold mb-3">Why TSMO</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Four-Layer Defense, real-time monitoring, and legal automation designed to stop AI training theft and unauthorized use.
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <Card>
+              <CardHeader className="flex flex-row items-center gap-3 pb-2">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <ShieldCheck className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-base">Four-Layer Defense</CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground">
+                StyleCloak, monitoring, training enforcement, and takedowns work together to protect your content end-to-end.
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center gap-3 pb-2">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <EyeOff className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-base">StyleCloak Protection</CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground">
+                Invisible, creator-friendly protection that disrupts AI model training without harming visual quality.
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center gap-3 pb-2">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Fingerprint className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-base">Multi-Modal Fingerprinting</CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground">
+                Detects image, text, and metadata misuse across platforms with resilient, explainable signals.
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center gap-3 pb-2">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Code2 className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-base">IP Guardrail API</CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground">
+                Enterprise-ready API to prevent ingestion of protected content and enforce policy in real-time.
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center gap-3 pb-2">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <BadgeCheck className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-base">Blockchain Verification</CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground">
+                Verifiable proof of ownership, timestamps, and chain-of-custody for licensing and disputes.
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center gap-3 pb-2">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Scale className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-base">Closed-Loop Legal Automation</CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground">
+                From detection to DMCA and takedowns, automate response with audit-ready, lawyer-approved templates.
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+            <Button size="lg" className="px-8" onClick={() => navigate("/upload")}>
+              Start Free Protection
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <Button variant="outline" size="lg" className="px-8" onClick={() => navigate("/monitoring")}>
+              Learn More
+            </Button>
+          </div>
         </div>
       </section>
 
