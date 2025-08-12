@@ -48,7 +48,6 @@ import { ShieldCheck, EyeOff, Fingerprint, Code2, BadgeCheck } from 'lucide-reac
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import MonitoringFlow from "@/components/MonitoringFlow";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import InvestorPitchDeck from "@/components/InvestorPitchDeck";
 import OnboardingTour from "@/components/OnboardingTour";
 import DemoEnvironment from "@/components/investor/DemoEnvironment";
 
@@ -221,9 +220,6 @@ const Index = () => {
           </Button>
           <Button variant="ghost" size="sm" onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}>
             Pricing
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => document.getElementById('investor-info')?.scrollIntoView({ behavior: 'smooth' })}>
-            Investor Info
           </Button>
         </div>
       </div>
@@ -597,8 +593,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Investor Pitch Deck Section */}
-      <InvestorPitchDeck />
 
       {/* Creator Problems & Solution */}
       <section className="bg-red-50 py-10 px-4">
@@ -1554,184 +1548,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Investor Information Section */}
-      <section id="investor-info" className="py-20 px-4 bg-gradient-to-br from-slate-50 to-blue-50">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <Badge variant="outline" className="mb-6 px-4 py-2 text-lg border-blue-300 text-blue-700">
-              💼 Investment Opportunity
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              TSMO Investment Overview
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Revolutionary AI-powered intellectual property protection platform targeting the $25B+ creative industry market.
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-8 mb-16">
-            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-              <CardHeader className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <TrendingUp className="h-8 w-8 text-white" />
-                </div>
-                <CardTitle className="text-2xl">Market Opportunity</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-green-600 mb-2">$25B+</div>
-                  <p className="text-muted-foreground">Total Addressable Market</p>
-                </div>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="bg-green-50 p-3 rounded-lg text-center">
-                    <div className="font-bold text-green-700">$8.2B</div>
-                    <div className="text-green-600">Digital Art Market</div>
-                  </div>
-                  <div className="bg-blue-50 p-3 rounded-lg text-center">
-                    <div className="font-bold text-blue-700">15M+</div>
-                    <div className="text-blue-600">Digital Creators</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-              <CardHeader className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Building className="h-8 w-8 text-white" />
-                </div>
-                <CardTitle className="text-2xl">Business Model</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="bg-blue-50 p-3 rounded-lg">
-                    <div className="font-semibold text-blue-800">SaaS Subscriptions</div>
-                    <div className="text-sm text-blue-600">$19-399/month recurring revenue</div>
-                  </div>
-                  <div className="bg-purple-50 p-3 rounded-lg">
-                    <div className="font-semibold text-purple-800">Enterprise Licensing</div>
-                    <div className="text-sm text-purple-600">Custom solutions & API access</div>
-                  </div>
-                  <div className="bg-green-50 p-3 rounded-lg">
-                    <div className="font-semibold text-green-800">Transaction Fees</div>
-                    <div className="text-sm text-green-600">Legal automation services</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-              <CardHeader className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Star className="h-8 w-8 text-white" />
-                </div>
-                <CardTitle className="text-2xl">Competitive Edge</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="text-xs">Patent Pending</Badge>
-                    <span className="text-sm">StyleCloak AI Protection</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="text-xs">Proprietary</Badge>
-                    <span className="text-sm">Multi-Modal Detection AI</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="text-xs">First-to-Market</Badge>
-                    <span className="text-sm">Blockchain IP Registry</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="text-xs">Automated</Badge>
-                    <span className="text-sm">Legal Workflow Engine</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-xl">Investment Highlights</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <Check className="h-5 w-5 text-green-600" />
-                  <span className="text-sm">15,000+ beta users with 94% retention rate</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Check className="h-5 w-5 text-green-600" />
-                  <span className="text-sm">$2.4M in verified revenue recovery for clients</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Check className="h-5 w-5 text-green-600" />
-                  <span className="text-sm">Patent-pending AI protection technology</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Check className="h-5 w-5 text-green-600" />
-                  <span className="text-sm">Experienced team with IP and AI expertise</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Check className="h-5 w-5 text-green-600" />
-                  <span className="text-sm">Scalable technology platform</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-xl">Funding Goals</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="text-center mb-4">
-                  <div className="text-2xl font-bold text-primary mb-1">$2.5M Series A</div>
-                  <div className="text-sm text-muted-foreground">Target funding round</div>
-                </div>
-                <div className="space-y-3">
-                  <div className="bg-blue-50 p-3 rounded-lg">
-                    <div className="font-semibold text-blue-800 text-sm">60% - Product Development</div>
-                    <div className="text-xs text-blue-600">AI enhancement, platform scaling</div>
-                  </div>
-                  <div className="bg-green-50 p-3 rounded-lg">
-                    <div className="font-semibold text-green-800 text-sm">25% - Market Expansion</div>
-                    <div className="text-xs text-green-600">Sales, marketing, partnerships</div>
-                  </div>
-                  <div className="bg-purple-50 p-3 rounded-lg">
-                    <div className="font-semibold text-purple-800 text-sm">15% - Team Growth</div>
-                    <div className="text-xs text-purple-600">Engineering, legal, operations</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="text-center">
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                size="lg"
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-8"
-                onClick={() => window.open('/investor-hub', '_blank')}
-              >
-                <Building className="mr-2 h-5 w-5" />
-                View Investor Hub
-              </Button>
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="border-blue-300 text-blue-700 hover:bg-blue-50 px-8"
-                onClick={() => setShowSalesDialog(true)}
-              >
-                <Mail className="mr-2 h-5 w-5" />
-                Contact for Investment
-              </Button>
-            </div>
-            <p className="mt-6 text-sm text-muted-foreground max-w-2xl mx-auto">
-              Accredited investors and institutional partners interested in the intellectual property protection space.
-            </p>
-          </div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-primary/5 to-accent/5">
