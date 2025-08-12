@@ -16,6 +16,7 @@ import {
   TrendingUp,
   DollarSign
 } from 'lucide-react';
+import IPGuardrailDocumentation from '@/components/enterprise/IPGuardrailDocumentation';
 
 const InvestorHub = () => {
   useEffect(() => {
@@ -189,7 +190,7 @@ const InvestorHub = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="summary" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-8">
+          <TabsList className="grid w-full grid-cols-6 mb-8">
             <TabsTrigger value="summary" className="gap-2">
               <FileText className="h-4 w-4" />
               Executive Summary
@@ -209,6 +210,10 @@ const InvestorHub = () => {
             <TabsTrigger value="dataroom" className="gap-2">
               <Database className="h-4 w-4" />
               Data Room
+            </TabsTrigger>
+            <TabsTrigger value="api" className="gap-2">
+              <Shield className="h-4 w-4" />
+              Partner API
             </TabsTrigger>
           </TabsList>
 
@@ -230,6 +235,10 @@ const InvestorHub = () => {
 
           <TabsContent value="dataroom">
             <InvestorDataRoom />
+          </TabsContent>
+
+          <TabsContent value="api">
+            <IPGuardrailDocumentation />
           </TabsContent>
         </Tabs>
 

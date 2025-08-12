@@ -15,6 +15,7 @@ import AIProtectionMetrics from './AIProtectionMetrics';
 import AIProtectionNotificationCenter from './AIProtectionNotificationCenter';
 import AIProtectionAuditLog from './AIProtectionAuditLog';
 import StyleCloak from './StyleCloak';
+import LegalPackGenerator from './LegalPackGenerator';
 
 interface ProtectionRecord {
   id: string;
@@ -41,6 +42,7 @@ interface Violation {
   status: string;
   detected_at: string;
   legal_action_taken: boolean;
+  evidence_data: any;
 }
 
 const AITrainingProtectionDashboard = () => {
@@ -410,46 +412,54 @@ const AITrainingProtectionDashboard = () => {
               ) : (
                 <div className="space-y-4">
                   {violations.map((violation) => (
-                    <Alert key={violation.id} className="border-destructive">
-                      <AlertTriangle className="h-4 w-4" />
-                      <AlertDescription>
-                        <div className="flex items-center justify-between">
-                          <div className="space-y-1">
-                            <p className="font-medium">{violation.violation_type}</p>
-                            <p className="text-sm text-muted-foreground">
-                              Found on: {violation.source_domain}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              Confidence: {Math.round(violation.confidence_score * 100)}%
-                            </p>
-                            <div className="flex gap-2 mt-2">
-                              <Badge variant={violation.status === 'pending' ? 'destructive' : 'secondary'}>
-                                {violation.status}
-                              </Badge>
-                              {violation.legal_action_taken && (
-                                <Badge variant="outline">Legal Action Taken</Badge>
-                              )}
+                    <div key={violation.id} className="space-y-4">
+                      <Alert className="border-destructive">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertDescription>
+                          <div className="flex items-center justify-between">
+                            <div className="space-y-1">
+                              <p className="font-medium">{violation.violation_type}</p>
+                              <p className="text-sm text-muted-foreground">
+                                Found on: {violation.source_domain}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                Confidence: {Math.round(violation.confidence_score * 100)}%
+                              </p>
+                              <div className="flex gap-2 mt-2">
+                                <Badge variant={violation.status === 'pending' ? 'destructive' : 'secondary'}>
+                                  {violation.status}
+                                </Badge>
+                                {violation.legal_action_taken && (
+                                  <Badge variant="outline">Legal Action Taken</Badge>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => takeAction(violation.id, 'send_notice')}
+                              >
+                                Send Notice
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => takeAction(violation.id, 'legal_action')}
+                              >
+                                Legal Action
+                              </Button>
                             </div>
                           </div>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => takeAction(violation.id, 'send_notice')}
-                            >
-                              Send Notice
-                            </Button>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => takeAction(violation.id, 'legal_action')}
-                            >
-                              Legal Action
-                            </Button>
-                          </div>
-                        </div>
-                      </AlertDescription>
-                    </Alert>
+                        </AlertDescription>
+                      </Alert>
+                      
+                      {/* Legal Pack Generator for each violation */}
+                      <LegalPackGenerator 
+                        violation={violation} 
+                        onPackGenerated={() => loadViolations()}
+                      />
+                    </div>
                   ))}
                 </div>
               )}
