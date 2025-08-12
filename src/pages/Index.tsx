@@ -42,12 +42,7 @@ import {
   Heart,
   ExternalLink,
   UserX,
-  Calendar,
-  DollarSign,
-  Target,
-  Brain,
-  BarChart3,
-  Briefcase
+  Calendar
 } from 'lucide-react';
 import { ShieldCheck, EyeOff, Fingerprint, Code2, BadgeCheck } from 'lucide-react';
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
@@ -1559,203 +1554,42 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Comprehensive Investor Information Section */}
+      {/* Investor Information Section */}
       <section id="investor-info" className="py-20 px-4 bg-gradient-to-br from-slate-50 to-blue-50">
-        <div className="container mx-auto max-w-7xl">
+        <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <Badge variant="outline" className="mb-6 px-4 py-2 text-lg border-blue-300 text-blue-700">
-              💼 Investment Opportunity - Series A Ready
+              💼 Investment Opportunity
             </Badge>
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
               TSMO Investment Overview
             </h2>
-            <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-              Revolutionary AI-powered intellectual property protection platform targeting the $15.7B creative industry market. 
-              Patent-pending technology with proven traction and clear path to profitability.
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Revolutionary AI-powered intellectual property protection platform targeting the $25B+ creative industry market.
             </p>
           </div>
 
-          {/* Investment Highlights Banner */}
-          <div className="grid lg:grid-cols-4 gap-6 mb-16">
-            <Card className="border-0 shadow-xl bg-gradient-to-br from-green-500 to-emerald-600 text-white">
-              <CardContent className="p-6 text-center">
-                <DollarSign className="h-12 w-12 mx-auto mb-4 opacity-90" />
-                <div className="text-3xl font-bold mb-2">$100K</div>
-                <div className="text-sm opacity-90">Seed Funding Target</div>
-              </CardContent>
-            </Card>
-            <Card className="border-0 shadow-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-              <CardContent className="p-6 text-center">
-                <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-90" />
-                <div className="text-3xl font-bold mb-2">$1M</div>
-                <div className="text-sm opacity-90">Pre-money Valuation</div>
-              </CardContent>
-            </Card>
-            <Card className="border-0 shadow-xl bg-gradient-to-br from-purple-500 to-purple-600 text-white">
-              <CardContent className="p-6 text-center">
-                <Users className="h-12 w-12 mx-auto mb-4 opacity-90" />
-                <div className="text-3xl font-bold mb-2">15K+</div>
-                <div className="text-sm opacity-90">Beta Users (94% retention)</div>
-              </CardContent>
-            </Card>
-            <Card className="border-0 shadow-xl bg-gradient-to-br from-orange-500 to-red-600 text-white">
-              <CardContent className="p-6 text-center">
-                <Target className="h-12 w-12 mx-auto mb-4 opacity-90" />
-                <div className="text-3xl font-bold mb-2">39x</div>
-                <div className="text-sm opacity-90">LTV/CAC Ratio</div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Market Opportunity & Business Model */}
-          <div className="grid lg:grid-cols-2 gap-12 mb-16">
-            <div>
-              <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                <Globe className="h-8 w-8 text-primary" />
-                Market Opportunity
-              </h3>
-              <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <div className="text-center mb-6">
-                    <div className="text-4xl font-bold text-primary mb-2">$15.7B</div>
-                    <p className="text-muted-foreground">Total Addressable Market</p>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Digital Content Creators</span>
-                      <span className="font-bold text-green-600">$8.2B (52%)</span>
-                    </div>
-                    <Progress value={52} className="h-2" />
-                    
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Enterprise IP Management</span>
-                      <span className="font-bold text-blue-600">$4.7B (30%)</span>
-                    </div>
-                    <Progress value={30} className="h-2" />
-                    
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Legal Technology</span>
-                      <span className="font-bold text-purple-600">$2.8B (18%)</span>
-                    </div>
-                    <Progress value={18} className="h-2" />
-                  </div>
-                  
-                  <div className="mt-6 pt-4 border-t">
-                    <h4 className="font-semibold mb-3 text-sm">Market Drivers:</h4>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="flex items-center gap-1">
-                        <TrendingUp className="h-3 w-3 text-green-600" />
-                        <span>Creator economy +23% annually</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Brain className="h-3 w-3 text-blue-600" />
-                        <span>AI adoption accelerating</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Shield className="h-3 w-3 text-purple-600" />
-                        <span>Regulatory pressure rising</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Globe className="h-3 w-3 text-orange-600" />
-                        <span>Global IP demand growing</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div>
-              <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                <Building className="h-8 w-8 text-primary" />
-                Business Model & Unit Economics
-              </h3>
-              <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <div className="space-y-6">
-                    <div>
-                      <h4 className="font-semibold mb-3">Revenue Streams</h4>
-                      <div className="space-y-3">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm">SaaS Subscriptions (70%)</span>
-                          <span className="font-bold">$19-5,000/month</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm">Transaction Fees (20%)</span>
-                          <span className="font-bold">15-20% commission</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm">Enterprise Solutions (10%)</span>
-                          <span className="font-bold">$10K-250K/year</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                      <h4 className="font-semibold text-green-800 mb-3">Proven Unit Economics</h4>
-                      <div className="grid grid-cols-2 gap-4 text-center">
-                        <div>
-                          <div className="text-xl font-bold text-green-600">$15</div>
-                          <div className="text-xs text-green-700">Blended CAC</div>
-                        </div>
-                        <div>
-                          <div className="text-xl font-bold text-green-600">$583</div>
-                          <div className="text-xs text-green-700">Customer LTV</div>
-                        </div>
-                        <div>
-                          <div className="text-xl font-bold text-green-600">39x</div>
-                          <div className="text-xs text-green-700">LTV/CAC Ratio</div>
-                        </div>
-                        <div>
-                          <div className="text-xl font-bold text-green-600">0.4mo</div>
-                          <div className="text-xs text-green-700">Payback Period</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-
-          {/* Traction & Competitive Advantages */}
           <div className="grid lg:grid-cols-3 gap-8 mb-16">
             <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
               <CardHeader className="text-center">
                 <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BarChart3 className="h-8 w-8 text-white" />
+                  <TrendingUp className="h-8 w-8 text-white" />
                 </div>
-                <CardTitle className="text-xl">Current Traction</CardTitle>
+                <CardTitle className="text-2xl">Market Opportunity</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 text-center">
-                  <div className="bg-green-50 p-3 rounded-lg">
-                    <div className="text-lg font-bold text-green-600">$200</div>
-                    <div className="text-xs text-green-700">MRR (+45% MoM)</div>
-                  </div>
-                  <div className="bg-blue-50 p-3 rounded-lg">
-                    <div className="text-lg font-bold text-blue-600">15K+</div>
-                    <div className="text-xs text-blue-700">Active Users</div>
-                  </div>
-                  <div className="bg-purple-50 p-3 rounded-lg">
-                    <div className="text-lg font-bold text-purple-600">500+</div>
-                    <div className="text-xs text-purple-700">Protected Works</div>
-                  </div>
-                  <div className="bg-orange-50 p-3 rounded-lg">
-                    <div className="text-lg font-bold text-orange-600">94%</div>
-                    <div className="text-xs text-orange-700">Satisfaction</div>
-                  </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-green-600 mb-2">$25B+</div>
+                  <p className="text-muted-foreground">Total Addressable Market</p>
                 </div>
-                <div className="pt-2 border-t">
-                  <div className="text-sm space-y-1">
-                    <div className="flex justify-between">
-                      <span>Monthly Retention:</span>
-                      <span className="font-semibold text-green-600">89%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Detection Accuracy:</span>
-                      <span className="font-semibold text-blue-600">95%+</span>
-                    </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="bg-green-50 p-3 rounded-lg text-center">
+                    <div className="font-bold text-green-700">$8.2B</div>
+                    <div className="text-green-600">Digital Art Market</div>
+                  </div>
+                  <div className="bg-blue-50 p-3 rounded-lg text-center">
+                    <div className="font-bold text-blue-700">15M+</div>
+                    <div className="text-blue-600">Digital Creators</div>
                   </div>
                 </div>
               </CardContent>
@@ -1764,9 +1598,34 @@ const Index = () => {
             <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
               <CardHeader className="text-center">
                 <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Building className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl">Business Model</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="bg-blue-50 p-3 rounded-lg">
+                    <div className="font-semibold text-blue-800">SaaS Subscriptions</div>
+                    <div className="text-sm text-blue-600">$19-399/month recurring revenue</div>
+                  </div>
+                  <div className="bg-purple-50 p-3 rounded-lg">
+                    <div className="font-semibold text-purple-800">Enterprise Licensing</div>
+                    <div className="text-sm text-purple-600">Custom solutions & API access</div>
+                  </div>
+                  <div className="bg-green-50 p-3 rounded-lg">
+                    <div className="font-semibold text-green-800">Transaction Fees</div>
+                    <div className="text-sm text-green-600">Legal automation services</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+              <CardHeader className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Star className="h-8 w-8 text-white" />
                 </div>
-                <CardTitle className="text-xl">Competitive Edge</CardTitle>
+                <CardTitle className="text-2xl">Competitive Edge</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
@@ -1787,124 +1646,67 @@ const Index = () => {
                     <span className="text-sm">Legal Workflow Engine</span>
                   </div>
                 </div>
-                <div className="bg-blue-50 p-3 rounded-lg text-center">
-                  <div className="font-semibold text-blue-800 text-sm">$24.3B Problem</div>
-                  <div className="text-xs text-blue-600">AI-era IP theft requires new solutions</div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-xl">Investment Highlights</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-green-600" />
+                  <span className="text-sm">15,000+ beta users with 94% retention rate</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-green-600" />
+                  <span className="text-sm">$2.4M in verified revenue recovery for clients</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-green-600" />
+                  <span className="text-sm">Patent-pending AI protection technology</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-green-600" />
+                  <span className="text-sm">Experienced team with IP and AI expertise</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-green-600" />
+                  <span className="text-sm">Scalable technology platform</span>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-              <CardHeader className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Briefcase className="h-8 w-8 text-white" />
-                </div>
-                <CardTitle className="text-xl">Use of Funds</CardTitle>
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-xl">Funding Goals</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="text-center mb-4">
+                  <div className="text-2xl font-bold text-primary mb-1">$2.5M Series A</div>
+                  <div className="text-sm text-muted-foreground">Target funding round</div>
+                </div>
                 <div className="space-y-3">
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm">Product Development</span>
-                      <span className="font-bold">$50K (50%)</span>
-                    </div>
-                    <Progress value={50} className="h-2" />
+                  <div className="bg-blue-50 p-3 rounded-lg">
+                    <div className="font-semibold text-blue-800 text-sm">60% - Product Development</div>
+                    <div className="text-xs text-blue-600">AI enhancement, platform scaling</div>
                   </div>
-                  
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm">Customer Acquisition</span>
-                      <span className="font-bold">$30K (30%)</span>
-                    </div>
-                    <Progress value={30} className="h-2" />
+                  <div className="bg-green-50 p-3 rounded-lg">
+                    <div className="font-semibold text-green-800 text-sm">25% - Market Expansion</div>
+                    <div className="text-xs text-green-600">Sales, marketing, partnerships</div>
                   </div>
-                  
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm">Operations & Legal</span>
-                      <span className="font-bold">$15K (15%)</span>
-                    </div>
-                    <Progress value={15} className="h-2" />
-                  </div>
-                  
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm">Working Capital</span>
-                      <span className="font-bold">$5K (5%)</span>
-                    </div>
-                    <Progress value={5} className="h-2" />
+                  <div className="bg-purple-50 p-3 rounded-lg">
+                    <div className="font-semibold text-purple-800 text-sm">15% - Team Growth</div>
+                    <div className="text-xs text-purple-600">Engineering, legal, operations</div>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Financial Projections */}
-          <div className="mb-16">
-            <h3 className="text-2xl font-bold mb-8 text-center">Financial Projections & Milestones</h3>
-            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-              <CardContent className="p-8">
-                <div className="overflow-x-auto mb-6">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left p-3 font-semibold">Metric</th>
-                        <th className="text-center p-3 font-semibold">Year 1</th>
-                        <th className="text-center p-3 font-semibold">Year 2</th>
-                        <th className="text-center p-3 font-semibold">Year 3</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="border-b">
-                        <td className="p-3 font-medium">Customers</td>
-                        <td className="p-3 text-center">120</td>
-                        <td className="p-3 text-center">350</td>
-                        <td className="p-3 text-center text-primary font-bold">750</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="p-3 font-medium">Monthly Recurring Revenue</td>
-                        <td className="p-3 text-center">$4.2K</td>
-                        <td className="p-3 text-center">$15K</td>
-                        <td className="p-3 text-center text-primary font-bold">$42K</td>
-                      </tr>
-                      <tr className="border-b bg-primary/5">
-                        <td className="p-3 font-bold">Annual Revenue</td>
-                        <td className="p-3 text-center font-bold">$50K</td>
-                        <td className="p-3 text-center font-bold">$180K</td>
-                        <td className="p-3 text-center font-bold text-primary text-lg">$500K</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                
-                <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-6 rounded-lg">
-                  <h4 className="text-lg font-semibold mb-4 text-center">18-Month Milestones</h4>
-                  <div className="grid md:grid-cols-3 gap-6 text-center">
-                    <div>
-                      <div className="text-2xl font-bold text-primary">250</div>
-                      <div className="text-sm text-muted-foreground">Customers (6 months)</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-primary">$4.2K</div>
-                      <div className="text-sm text-muted-foreground">MRR (12 months)</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-primary">$50K</div>
-                      <div className="text-sm text-muted-foreground">ARR → Series A Ready</div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Call to Action */}
           <div className="text-center">
-            <h3 className="text-2xl font-bold mb-6">Ready to Protect the Creator Economy?</h3>
-            <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto">
-              Join us in revolutionizing IP protection with patent-pending AI technology. 
-              Strong traction, proven economics, clear path to Series A.
-            </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 size="lg"
@@ -1912,7 +1714,7 @@ const Index = () => {
                 onClick={() => window.open('/investor-hub', '_blank')}
               >
                 <Building className="mr-2 h-5 w-5" />
-                View Full Pitch Deck
+                View Investor Hub
               </Button>
               <Button 
                 variant="outline" 
@@ -1921,11 +1723,11 @@ const Index = () => {
                 onClick={() => setShowSalesDialog(true)}
               >
                 <Mail className="mr-2 h-5 w-5" />
-                shirleena.cunningham@tsmowatch.com
+                Contact for Investment
               </Button>
             </div>
             <p className="mt-6 text-sm text-muted-foreground max-w-2xl mx-auto">
-              <strong>Seeking $100K seed funding at $1M pre-money valuation.</strong> Accredited investors and strategic partners welcome.
+              Accredited investors and institutional partners interested in the intellectual property protection space.
             </p>
           </div>
         </div>
