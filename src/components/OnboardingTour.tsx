@@ -66,19 +66,24 @@ const onboardingSteps: OnboardingStep[] = [
   }
 ];
 
-const OnboardingTour = () => {
+interface OnboardingTourProps { startOpen?: boolean; onClose?: () => void }
+const OnboardingTour: React.FC<OnboardingTourProps> = ({ startOpen, onClose }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Show onboarding for new users
-    const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
-    if (!hasSeenOnboarding) {
-      setIsVisible(true);
-    }
-  }, []);
+useEffect(() => {
+  // Show onboarding when explicitly requested or for new users
+  if (startOpen) {
+    setIsVisible(true);
+    return;
+  }
+  const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
+  if (!hasSeenOnboarding) {
+    setIsVisible(true);
+  }
+}, [startOpen]);
 
   const nextStep = () => {
     if (currentStep < onboardingSteps.length - 1) {
@@ -98,15 +103,17 @@ const OnboardingTour = () => {
     navigate(path);
   };
 
-  const skipTour = () => {
-    localStorage.setItem('hasSeenOnboarding', 'true');
-    setIsVisible(false);
-  };
+const skipTour = () => {
+  localStorage.setItem('hasSeenOnboarding', 'true');
+  setIsVisible(false);
+  onClose?.();
+};
 
-  const completeTour = () => {
-    localStorage.setItem('hasSeenOnboarding', 'true');
-    setIsVisible(false);
-  };
+const completeTour = () => {
+  localStorage.setItem('hasSeenOnboarding', 'true');
+  setIsVisible(false);
+  onClose?.();
+};
 
   if (!isVisible) return null;
 
