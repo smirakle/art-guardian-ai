@@ -16,6 +16,7 @@ import AIProtectionNotificationCenter from './AIProtectionNotificationCenter';
 import AIProtectionAuditLog from './AIProtectionAuditLog';
 import StyleCloak from './StyleCloak';
 import LegalPackGenerator from './LegalPackGenerator';
+import AITrainingEnforcementEngine from './AITrainingEnforcementEngine';
 
 interface ProtectionRecord {
   id: string;
@@ -331,9 +332,10 @@ const AITrainingProtectionDashboard = () => {
 
       {/* Tabs */}
       <Tabs defaultValue="protected" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-7">
+        <TabsList className="grid w-full grid-cols-8">
           <TabsTrigger value="protected">Protected Files</TabsTrigger>
           <TabsTrigger value="violations">Violations</TabsTrigger>
+          <TabsTrigger value="enforcement">Enforcement</TabsTrigger>
           <TabsTrigger value="metrics"><BarChart3 className="h-4 w-4 mr-2" />Metrics</TabsTrigger>
           <TabsTrigger value="notifications"><Bell className="h-4 w-4 mr-2" />Notifications</TabsTrigger>
           <TabsTrigger value="audit">Audit Log</TabsTrigger>
@@ -465,6 +467,16 @@ const AITrainingProtectionDashboard = () => {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="enforcement" className="space-y-4">
+          <AITrainingEnforcementEngine 
+            protectionRecordId={protectionRecords[0]?.id}
+            onWorkflowComplete={(certificateHash) => {
+              toast.success(`Protection certificate issued: ${certificateHash.slice(0, 16)}...`);
+              loadProtectionData();
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="metrics" className="space-y-4">
