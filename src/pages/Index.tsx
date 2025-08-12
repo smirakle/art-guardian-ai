@@ -231,7 +231,7 @@ const Index = () => {
           </h1>
           
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-6 sm:mb-8 max-w-4xl mx-auto leading-relaxed px-4">
-            Stop people from stealing your art for AI, selling fake merch, and copying your work.<br />
+            Advanced AI-powered protection for digital artists. Monitor, verify, and secure your creative work with blockchain technology and real-time threat detection.<br />
             <span className="text-primary font-semibold">Join 15,000+ creators</span> who watch their art 24/7 and get thieves removed instantly.
           </p>
 
