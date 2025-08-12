@@ -9,6 +9,7 @@ import { Upload, Download, Wand2, Shield, Eye, Sparkles } from 'lucide-react';
 import { cloakImageFromFile } from '@/lib/styleCloak';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import StyleCloakResilience from './StyleCloakResilience';
 
 const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB limit for reliability
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -247,15 +248,12 @@ const saveToSupabase = async () => {
             </Button>
           </div>
           <div>
-            {/** Resilience score card */}
-            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-            {/* @ts-ignore - lazy import for bundle split not needed here */}
-            {React.createElement(require('./StyleCloakResilience').default, {
-              strength: strength[0],
-              frequency: frequency[0],
-              colorJitter: colorJitter[0],
-              useSegmentation,
-            })}
+            <StyleCloakResilience
+              strength={strength[0]}
+              frequency={frequency[0]}
+              colorJitter={colorJitter[0]}
+              useSegmentation={useSegmentation}
+            />
           </div>
         </div>
       </CardContent>
