@@ -192,7 +192,7 @@ const Index = () => {
   };
   
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       {showOnboardingTour && (
         <OnboardingTour startOpen onClose={() => setShowOnboardingTour(false)} />
       )}
@@ -209,241 +209,390 @@ const Index = () => {
           <DemoEnvironment />
         </DialogContent>
       </Dialog>
-      {/* Hero Section */}
-      <section className="pt-24 sm:pt-32 pb-20 px-4">
-        <div className="container mx-auto text-center max-w-6xl">
-          <Badge variant="secondary" className="mb-6 px-3 sm:px-4 py-2 text-xs sm:text-sm">
+
+      {/* Navigation Menu - Quick Access */}
+      <div className="fixed top-20 right-4 z-40 bg-background/95 backdrop-blur-sm border rounded-lg p-2 shadow-lg">
+        <div className="flex flex-col gap-1">
+          <Button variant="ghost" size="sm" onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}>
+            How It Works
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => document.getElementById('beta-status')?.scrollIntoView({ behavior: 'smooth' })}>
+            Beta Status
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}>
+            Pricing
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => document.getElementById('investor-info')?.scrollIntoView({ behavior: 'smooth' })}>
+            Investor Info
+          </Button>
+        </div>
+      </div>
+
+      {/* Hero Section - Simplified */}
+      <section className="pt-24 sm:pt-32 pb-16 px-4">
+        <div className="container mx-auto text-center max-w-5xl">
+          <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm animate-pulse">
             💰 Stop Losing Money to Content Thieves
           </Badge>
           
-          {/* TSMO Logo */}
-          <div className="mb-6 sm:mb-8">
+          {/* TSMO Logo - Reduced Size */}
+          <div className="mb-8">
             <img 
               src={tsmoLogo} 
               alt="TSMO Multimedia Creative Protection Logo" 
-              className="h-64 sm:h-80 md:h-96 lg:h-112 mx-auto object-contain"
+              className="h-48 sm:h-64 md:h-80 mx-auto object-contain"
             />
           </div>
           
-          <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
             Protect Your Art.<br />
             <span className="text-foreground">Keep What's Yours.</span>
           </h1>
           
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-6 sm:mb-8 max-w-4xl mx-auto leading-relaxed px-4">
-            Advanced AI-powered protection for digital artists. Monitor, verify, and secure your creative work with blockchain technology and&nbsp;real-time&nbsp;threat&nbsp;detection.<br />
-            <span className="text-primary font-semibold">Join 15,000+ creators</span> who watch their art 24/7 and get thieves removed instantly.
+          <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 max-w-4xl mx-auto leading-relaxed">
+            Advanced AI-powered protection for digital artists. Monitor, verify, and secure your creative work with blockchain technology and&nbsp;real-time&nbsp;threat&nbsp;detection.
           </p>
 
-          {/* Creator Pain Points */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 max-w-4xl mx-auto px-4">
-            <div className="flex items-center justify-center gap-2 bg-red-50 border border-red-200 rounded-lg p-3">
-              <Bot className="h-5 w-5 text-red-600 flex-shrink-0" />
-              <span className="text-sm text-red-700">AI Art Theft</span>
-            </div>
-            <div className="flex items-center justify-center gap-2 bg-red-50 border border-red-200 rounded-lg p-3">
-              <FileImage className="h-5 w-5 text-red-600 flex-shrink-0" />
-              <span className="text-sm text-red-700">Fake Products</span>
-            </div>
-            <div className="flex items-center justify-center gap-2 bg-red-50 border border-red-200 rounded-lg p-3">
-              <Search className="h-5 w-5 text-red-600 flex-shrink-0" />
-              <span className="text-sm text-red-700">Art Copying</span>
-            </div>
+          <div className="mb-8 p-4 bg-primary/10 rounded-lg border border-primary/20">
+            <p className="text-primary font-semibold text-lg">Join 15,000+ creators who watch their art 24/7 and get thieves removed instantly.</p>
           </div>
-          
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12 px-4">
+
+          {/* Action Buttons - Simplified */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Button 
               size="lg" 
-              className="w-full sm:w-auto px-8 py-4 text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg hover:shadow-xl transition-all"
+              className="w-full sm:w-auto px-10 py-5 text-xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg hover:shadow-xl transition-all duration-300"
               onClick={() => navigate("/upload")}
             >
               Start Free Protection
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <ArrowRight className="ml-2 h-6 w-6" />
             </Button>
             <Button 
               variant="outline" 
               size="lg" 
-              className="w-full sm:w-auto px-8 py-4 text-lg border-2"
+              className="w-full sm:w-auto px-10 py-5 text-xl border-2 border-primary hover:bg-primary/10"
               onClick={() => setShowLiveDemo(true)}
             >
-              <Activity className="mr-2 h-5 w-5" />
+              <Activity className="mr-2 h-6 w-6" />
               See Live Demo
-            </Button>
-            <Button
-              variant="secondary"
-              size="lg"
-              className="w-full sm:w-auto px-8 py-4 text-lg"
-              onClick={() => setShowOnboardingTour(true)}
-            >
-              Start Tour
             </Button>
           </div>
 
-          {/* Social Proof Numbers */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 max-w-3xl mx-auto">
-            <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-primary">15K+</div>
+          {/* Social Proof - Enhanced */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12 max-w-4xl mx-auto">
+            <Card className="p-4 text-center border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <div className="text-3xl font-bold text-primary mb-1">15K+</div>
               <div className="text-sm text-muted-foreground">Creators Protected</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-primary">$2.4M</div>
+            </Card>
+            <Card className="p-4 text-center border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <div className="text-3xl font-bold text-primary mb-1">$2.4M</div>
               <div className="text-sm text-muted-foreground">Revenue Recovered</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-primary">50K+</div>
+            </Card>
+            <Card className="p-4 text-center border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <div className="text-3xl font-bold text-primary mb-1">50K+</div>
               <div className="text-sm text-muted-foreground">Violations Detected</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-primary">24/7</div>
+            </Card>
+            <Card className="p-4 text-center border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <div className="text-3xl font-bold text-primary mb-1">24/7</div>
               <div className="text-sm text-muted-foreground">Monitoring</div>
-            </div>
+            </Card>
           </div>
-          
+
+          {/* Problem Showcase */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
+            <Card className="p-4 bg-red-50 border border-red-200">
+              <div className="flex items-center gap-3 mb-2">
+                <Bot className="h-6 w-6 text-red-600" />
+                <span className="font-semibold text-red-700">AI Art Theft</span>
+              </div>
+              <p className="text-sm text-red-600">AI models stealing your style without permission</p>
+            </Card>
+            <Card className="p-4 bg-red-50 border border-red-200">
+              <div className="flex items-center gap-3 mb-2">
+                <FileImage className="h-6 w-6 text-red-600" />
+                <span className="font-semibold text-red-700">Fake Products</span>
+              </div>
+              <p className="text-sm text-red-600">Unauthorized merchandise using your artwork</p>
+            </Card>
+            <Card className="p-4 bg-red-50 border border-red-200">
+              <div className="flex items-center gap-3 mb-2">
+                <Search className="h-6 w-6 text-red-600" />
+                <span className="font-semibold text-red-700">Art Copying</span>
+              </div>
+              <p className="text-sm text-red-600">Direct copying and unauthorized distribution</p>
+            </Card>
+          </div>
         </div>
       </section>
 
-      {/* Why TSMO - Highlight Section */}
-      <section id="why-tsmo" className="py-16 px-4">
+      {/* How It Works - Clearer Process */}
+      <section id="how-it-works" className="py-20 px-4 bg-muted/30">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-bold mb-3">How We Protect You</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Four ways to protect your art: invisible shields, 24/7 watching, automatic legal action, and proof of ownership.
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">How We Protect You</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Our comprehensive protection system combines AI technology, blockchain verification, and legal automation to safeguard your creative work.
             </p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <Card>
-              <CardHeader className="flex flex-row items-center gap-3 pb-2">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <ShieldCheck className="h-5 w-5 text-primary" />
+          {/* Step-by-step Process */}
+          <div className="grid md:grid-cols-4 gap-8 mb-16">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
+                1
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Upload & Protect</h3>
+              <p className="text-muted-foreground">Upload your artwork and apply our invisible protection layers that don't affect image quality</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
+                2
+              </div>
+              <h3 className="text-xl font-semibold mb-3">24/7 AI Monitoring</h3>
+              <p className="text-muted-foreground">Our AI continuously scans the internet, social media, and marketplaces for unauthorized use</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
+                3
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Instant Detection</h3>
+              <p className="text-muted-foreground">Get notified immediately when violations are found, with detailed evidence and location data</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
+                4
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Automated Response</h3>
+              <p className="text-muted-foreground">Automatic takedown notices and legal documentation to protect your rights</p>
+            </div>
+          </div>
+
+          {/* Protection Features Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+              <CardHeader className="text-center">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <EyeOff className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="text-base">Complete Protection</CardTitle>
+                <CardTitle>Invisible Art Shield</CardTitle>
               </CardHeader>
-              <CardContent className="text-sm text-muted-foreground">
-                Invisible shields, 24/7 watching, automatic legal action, and takedown notices work together to protect your art.
+              <CardContent className="text-center">
+                <p className="text-muted-foreground mb-4">
+                  Invisible protection that prevents AI from learning your artistic style while keeping your artwork visually unchanged.
+                </p>
+                <Badge variant="secondary">StyleCloak Technology</Badge>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center gap-3 pb-2">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <EyeOff className="h-5 w-5 text-primary" />
+            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+              <CardHeader className="text-center">
+                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Fingerprint className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="text-base">Invisible Art Shield</CardTitle>
+                <CardTitle>Smart Detection</CardTitle>
               </CardHeader>
-              <CardContent className="text-sm text-muted-foreground">
-                Hidden protection that stops AI from learning your style without changing how your art looks.
+              <CardContent className="text-center">
+                <p className="text-muted-foreground mb-4">
+                  Advanced AI finds copies of your art anywhere online, even when modified, cropped, or filtered.
+                </p>
+                <Badge variant="secondary">Multi-Modal AI</Badge>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center gap-3 pb-2">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Fingerprint className="h-5 w-5 text-primary" />
+            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+              <CardHeader className="text-center">
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <BadgeCheck className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="text-base">Smart Art Detection</CardTitle>
+                <CardTitle>Blockchain Proof</CardTitle>
               </CardHeader>
-              <CardContent className="text-sm text-muted-foreground">
-                Finds copies of your art anywhere online, even when they try to hide or change it.
+              <CardContent className="text-center">
+                <p className="text-muted-foreground mb-4">
+                  Immutable blockchain certificates that prove ownership and creation date for legal disputes.
+                </p>
+                <Badge variant="secondary">Permanent Record</Badge>
               </CardContent>
             </Card>
 
-
-            <Card>
-              <CardHeader className="flex flex-row items-center gap-3 pb-2">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <BadgeCheck className="h-5 w-5 text-primary" />
+            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+              <CardHeader className="text-center">
+                <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Scale className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="text-base">Ownership Proof</CardTitle>
+                <CardTitle>Legal Automation</CardTitle>
               </CardHeader>
-              <CardContent className="text-sm text-muted-foreground">
-                Digital certificates that prove you created your art first, perfect for legal disputes.
+              <CardContent className="text-center">
+                <p className="text-muted-foreground mb-4">
+                  Automated DMCA notices and takedown requests using lawyer-approved templates and documentation.
+                </p>
+                <Badge variant="secondary">Legal-Grade</Badge>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center gap-3 pb-2">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Scale className="h-5 w-5 text-primary" />
+            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+              <CardHeader className="text-center">
+                <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Activity className="h-6 w-6 text-white" />
                 </div>
-                <CardTitle className="text-base">Automatic Legal Action</CardTitle>
+                <CardTitle>Real-Time Alerts</CardTitle>
               </CardHeader>
-              <CardContent className="text-sm text-muted-foreground">
-                We automatically send legal notices to remove stolen art using lawyer-approved templates.
+              <CardContent className="text-center">
+                <p className="text-muted-foreground mb-4">
+                  Instant notifications when violations are detected, with detailed reports and evidence packages.
+                </p>
+                <Badge variant="secondary">24/7 Monitoring</Badge>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+              <CardHeader className="text-center">
+                <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-teal-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Globe className="h-6 w-6 text-white" />
+                </div>
+                <CardTitle>Global Coverage</CardTitle>
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="text-muted-foreground mb-4">
+                  Monitor across all major platforms, marketplaces, social media, and websites worldwide.
+                </p>
+                <Badge variant="secondary">Worldwide Scan</Badge>
               </CardContent>
             </Card>
           </div>
 
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <Button size="lg" className="px-8" onClick={() => navigate("/upload")}>
-              Start Free Protection
+          <div className="mt-12 text-center">
+            <Button size="lg" className="px-10 py-4 text-lg" onClick={() => navigate("/upload")}>
+              Start Protecting Your Art Now
               <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button variant="outline" size="lg" className="px-8" onClick={() => navigate("/monitoring")}>
-              Learn More
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Beta Testing Status - Compact Disclaimer */}
-      <section className="bg-yellow-50 border-y border-yellow-200 py-6 px-4">
-        <div className="container mx-auto max-w-5xl">
-          <div className="text-center">
-            <Badge variant="outline" className="text-yellow-700 border-yellow-300 mb-3">
-              🚀 Beta Testing Phase
+      {/* Beta Testing Status - Enhanced */}
+      <section id="beta-status" className="py-16 px-4 bg-gradient-to-r from-yellow-50 to-orange-50 border-y border-yellow-200">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <Badge variant="outline" className="text-yellow-700 border-yellow-300 mb-6 px-4 py-2 text-lg">
+              🚀 Beta Testing Phase - Join Early Access
             </Badge>
-            <h3 className="text-lg font-semibold mb-3 text-yellow-800">
-              Platform Status: Core Features Active, Advanced Features Rolling Out
-            </h3>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-yellow-800">
+              Platform Development Status
+            </h2>
+            <p className="text-xl text-yellow-700 max-w-3xl mx-auto">
+              Core protection features are live and working. Advanced automation features are being rolled out weekly.
+            </p>
+          </div>
+          
+          <div className="grid lg:grid-cols-2 gap-8 mb-12">
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-green-50 to-emerald-50">
+              <CardHeader className="text-center pb-4">
+                <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Check className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl text-green-800">✅ Active & Working</CardTitle>
+                <CardDescription className="text-green-700">Ready to use right now</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="bg-white/80 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Upload className="h-5 w-5 text-green-600" />
+                      <span className="font-semibold text-green-800">Image Protection</span>
+                    </div>
+                    <p className="text-sm text-green-700">Upload and analyze artwork with AI protection layers</p>
+                  </div>
+                  <div className="bg-white/80 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Eye className="h-5 w-5 text-green-600" />
+                      <span className="font-semibold text-green-800">Monitoring System</span>
+                    </div>
+                    <p className="text-sm text-green-700">Track violations across major platforms</p>
+                  </div>
+                  <div className="bg-white/80 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <FileText className="h-5 w-5 text-green-600" />
+                      <span className="font-semibold text-green-800">Legal Templates</span>
+                    </div>
+                    <p className="text-sm text-green-700">DMCA and takedown notice templates</p>
+                  </div>
+                  <div className="bg-white/80 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Users className="h-5 w-5 text-green-600" />
+                      <span className="font-semibold text-green-800">Portfolio Management</span>
+                    </div>
+                    <p className="text-sm text-green-700">Organize and manage your protected works</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
             
-            <div className="grid sm:grid-cols-2 gap-4 text-sm">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                <div className="font-semibold text-green-800 mb-2 flex items-center justify-center gap-2">
-                  <Check className="h-4 w-4" />
-                  ✅ Working Now
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-orange-50 to-red-50">
+              <CardHeader className="text-center pb-4">
+                <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Activity className="h-8 w-8 text-white" />
                 </div>
-                <div className="text-green-700 space-y-1">
-                  <div>• Image Upload & Analysis</div>
-                  <div>• Copyright Monitoring</div>
-                  <div>• DMCA Templates</div>
-                  <div>• Portfolio Management</div>
+                <CardTitle className="text-2xl text-orange-800">🔧 Coming Soon</CardTitle>
+                <CardDescription className="text-orange-700">Rolling out in the next 30 days</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="bg-white/80 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Zap className="h-5 w-5 text-orange-600" />
+                      <span className="font-semibold text-orange-800">Auto Takedowns</span>
+                    </div>
+                    <p className="text-sm text-orange-700">Automated DMCA filing and platform reporting</p>
+                  </div>
+                  <div className="bg-white/80 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Globe className="h-5 w-5 text-orange-600" />
+                      <span className="font-semibold text-orange-800">Real-time Scanning</span>
+                    </div>
+                    <p className="text-sm text-orange-700">Instant detection across all platforms</p>
+                  </div>
+                  <div className="bg-white/80 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Lock className="h-5 w-5 text-orange-600" />
+                      <span className="font-semibold text-orange-800">Blockchain Registry</span>
+                    </div>
+                    <p className="text-sm text-orange-700">Immutable ownership certificates</p>
+                  </div>
+                  <div className="bg-white/80 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Bot className="h-5 w-5 text-orange-600" />
+                      <span className="font-semibold text-orange-800">AI Training Protection</span>
+                    </div>
+                    <p className="text-sm text-orange-700">StyleCloak anti-training technology</p>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
-                <div className="font-semibold text-orange-800 mb-2 flex items-center justify-center gap-2">
-                  <Activity className="h-4 w-4" />
-                  🔧 Coming Soon
-                </div>
-                <div className="text-orange-700 space-y-1">
-                  <div>• Automated Takedowns</div>
-                  <div>• Real-time Monitoring</div>
-                  <div>• Blockchain Registration</div>
-                  <div>• AI Training Protection</div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-4 flex flex-col sm:flex-row gap-2 justify-center">
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div className="text-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
-                variant="outline" 
-                size="sm"
-                className="border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+                size="lg"
+                className="bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 px-8"
                 onClick={() => navigate("/roadmap")}
               >
-                View Roadmap
+                <Calendar className="mr-2 h-5 w-5" />
+                View Development Roadmap
               </Button>
               <Button 
                 variant="outline" 
-                size="sm"
-                className="border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+                size="lg"
+                className="border-yellow-300 text-yellow-700 hover:bg-yellow-100 px-8"
                 onClick={() => navigate("/contact")}
               >
-                Report Issues
+                <Mail className="mr-2 h-5 w-5" />
+                Report Issues & Feedback
               </Button>
             </div>
+            <p className="mt-6 text-sm text-yellow-700 max-w-2xl mx-auto">
+              <strong>Beta Testers Get:</strong> Lifetime 50% discount on all plans, priority support, and direct input on feature development.
+            </p>
           </div>
         </div>
       </section>
@@ -1401,6 +1550,185 @@ const Index = () => {
                 <span>99.9% threat detection rate</span>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Investor Information Section */}
+      <section id="investor-info" className="py-20 px-4 bg-gradient-to-br from-slate-50 to-blue-50">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <Badge variant="outline" className="mb-6 px-4 py-2 text-lg border-blue-300 text-blue-700">
+              💼 Investment Opportunity
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              TSMO Investment Overview
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Revolutionary AI-powered intellectual property protection platform targeting the $25B+ creative industry market.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-8 mb-16">
+            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+              <CardHeader className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <TrendingUp className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl">Market Opportunity</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-green-600 mb-2">$25B+</div>
+                  <p className="text-muted-foreground">Total Addressable Market</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="bg-green-50 p-3 rounded-lg text-center">
+                    <div className="font-bold text-green-700">$8.2B</div>
+                    <div className="text-green-600">Digital Art Market</div>
+                  </div>
+                  <div className="bg-blue-50 p-3 rounded-lg text-center">
+                    <div className="font-bold text-blue-700">15M+</div>
+                    <div className="text-blue-600">Digital Creators</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+              <CardHeader className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Building className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl">Business Model</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="bg-blue-50 p-3 rounded-lg">
+                    <div className="font-semibold text-blue-800">SaaS Subscriptions</div>
+                    <div className="text-sm text-blue-600">$19-399/month recurring revenue</div>
+                  </div>
+                  <div className="bg-purple-50 p-3 rounded-lg">
+                    <div className="font-semibold text-purple-800">Enterprise Licensing</div>
+                    <div className="text-sm text-purple-600">Custom solutions & API access</div>
+                  </div>
+                  <div className="bg-green-50 p-3 rounded-lg">
+                    <div className="font-semibold text-green-800">Transaction Fees</div>
+                    <div className="text-sm text-green-600">Legal automation services</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+              <CardHeader className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Star className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl">Competitive Edge</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="text-xs">Patent Pending</Badge>
+                    <span className="text-sm">StyleCloak AI Protection</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="text-xs">Proprietary</Badge>
+                    <span className="text-sm">Multi-Modal Detection AI</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="text-xs">First-to-Market</Badge>
+                    <span className="text-sm">Blockchain IP Registry</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="text-xs">Automated</Badge>
+                    <span className="text-sm">Legal Workflow Engine</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-xl">Investment Highlights</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-green-600" />
+                  <span className="text-sm">15,000+ beta users with 94% retention rate</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-green-600" />
+                  <span className="text-sm">$2.4M in verified revenue recovery for clients</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-green-600" />
+                  <span className="text-sm">Patent-pending AI protection technology</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-green-600" />
+                  <span className="text-sm">Experienced team with IP and AI expertise</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-green-600" />
+                  <span className="text-sm">Scalable technology platform</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-xl">Funding Goals</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="text-center mb-4">
+                  <div className="text-2xl font-bold text-primary mb-1">$2.5M Series A</div>
+                  <div className="text-sm text-muted-foreground">Target funding round</div>
+                </div>
+                <div className="space-y-3">
+                  <div className="bg-blue-50 p-3 rounded-lg">
+                    <div className="font-semibold text-blue-800 text-sm">60% - Product Development</div>
+                    <div className="text-xs text-blue-600">AI enhancement, platform scaling</div>
+                  </div>
+                  <div className="bg-green-50 p-3 rounded-lg">
+                    <div className="font-semibold text-green-800 text-sm">25% - Market Expansion</div>
+                    <div className="text-xs text-green-600">Sales, marketing, partnerships</div>
+                  </div>
+                  <div className="bg-purple-50 p-3 rounded-lg">
+                    <div className="font-semibold text-purple-800 text-sm">15% - Team Growth</div>
+                    <div className="text-xs text-purple-600">Engineering, legal, operations</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                size="lg"
+                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-8"
+                onClick={() => window.open('/investor-hub', '_blank')}
+              >
+                <Building className="mr-2 h-5 w-5" />
+                View Investor Hub
+              </Button>
+              <Button 
+                variant="outline" 
+                size="lg"
+                className="border-blue-300 text-blue-700 hover:bg-blue-50 px-8"
+                onClick={() => setShowSalesDialog(true)}
+              >
+                <Mail className="mr-2 h-5 w-5" />
+                Contact for Investment
+              </Button>
+            </div>
+            <p className="mt-6 text-sm text-muted-foreground max-w-2xl mx-auto">
+              Accredited investors and institutional partners interested in the intellectual property protection space.
+            </p>
           </div>
         </div>
       </section>
