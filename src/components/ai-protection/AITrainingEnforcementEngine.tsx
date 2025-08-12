@@ -60,7 +60,8 @@ export default function AITrainingEnforcementEngine({
 
   const loadEnforcementWorkflows = async () => {
     try {
-      const { data, error } = await supabase
+      // Use a generic query since the table might not be in types yet
+      const { data, error }: { data: any[] | null, error: any } = await (supabase as any)
         .from('ai_training_enforcement_workflows')
         .select('*')
         .eq('user_id', user?.id)
@@ -94,7 +95,7 @@ export default function AITrainingEnforcementEngine({
       .channel('enforcement_updates')
       .on('postgres_changes', 
         { event: '*', schema: 'public', table: 'ai_training_enforcement_workflows', filter: `user_id=eq.${user?.id}` },
-        (payload) => {
+        (payload: any) => {
           loadEnforcementWorkflows();
           
           if (payload.eventType === 'UPDATE' && payload.new.status === 'certified') {
@@ -123,7 +124,8 @@ export default function AITrainingEnforcementEngine({
           protection_record_id: protectionRecordId,
           enforcement_level: 'comprehensive',
           auto_legal_action: true,
-          certificate_issuance: true
+          certificate_issuance: true,
+          userId: user?.id
         }
       });
 

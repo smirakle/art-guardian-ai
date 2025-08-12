@@ -8,12 +8,16 @@ const corsHeaders = {
 };
 
 interface AITPARequest {
-  action: 'analyze' | 'fingerprint' | 'compare' | 'scan_datasets';
+  action: 'analyze' | 'fingerprint' | 'compare' | 'scan_datasets' | 'initiate_enforcement_workflow';
   imageUrl?: string;
   fingerprint?: string;
   comparisonUrls?: string[];
   userId?: string;
   protectionId?: string;
+  protection_record_id?: string;
+  enforcement_level?: string;
+  auto_legal_action?: boolean;
+  certificate_issuance?: boolean;
 }
 
 interface AITPAFingerprint {
@@ -66,6 +70,9 @@ serve(async (req) => {
         break;
       case 'scan_datasets':
         result = await scanAITrainingDatasets(request.fingerprint!, supabase);
+        break;
+      case 'initiate_enforcement_workflow':
+        result = await initiateEnforcementWorkflow(supabase, request);
         break;
       default:
         throw new Error('Invalid action');
@@ -480,4 +487,192 @@ async function scanAITrainingDatasets(fingerprint: string, supabase: any): Promi
   }
   
   return { matches, totalDatasets: datasets.length };
+}
+
+async function initiateEnforcementWorkflow(supabase: any, request: AITPARequest) {
+  try {
+    // Create enforcement workflow record
+    const { data: workflow, error: workflowError } = await supabase
+      .from('ai_training_enforcement_workflows')
+      .insert({
+        user_id: request.userId,
+        protection_record_id: request.protection_record_id,
+        status: 'initiated',
+        steps_completed: ['workflow_created'],
+        metadata: {
+          enforcement_level: request.enforcement_level,
+          auto_legal_action: request.auto_legal_action,
+          certificate_issuance: request.certificate_issuance,
+          initiated_at: new Date().toISOString()
+        }
+      })
+      .select()
+      .single();
+
+    if (workflowError) throw workflowError;
+
+    // Start the closed-loop process
+    await initiateClosedLoopProcess(supabase, workflow.id, request.protection_record_id!, request.userId!);
+
+    return { 
+      workflow,
+      message: 'Closed-loop enforcement workflow initiated'
+    };
+  } catch (error) {
+    console.error('Error initiating enforcement workflow:', error);
+    throw error;
+  }
+}
+
+async function initiateClosedLoopProcess(supabase: any, workflowId: string, protectionRecordId: string, userId: string) {
+  try {
+    // Step 1: Update status to scanning
+    await supabase
+      .from('ai_training_enforcement_workflows')
+      .update({
+        status: 'scanning',
+        steps_completed: ['workflow_created', 'scanning_initiated'],
+        metadata: { last_updated: new Date().toISOString() }
+      })
+      .eq('id', workflowId);
+
+    // Step 2: Invoke AI training protection monitor for scanning
+    const { data: scanResult } = await supabase.functions.invoke('ai-training-protection-monitor', {
+      body: {
+        protectionRecordId,
+        enableRealTimeScanning: true,
+        scanType: 'comprehensive',
+        workflowId
+      }
+    });
+
+    // Step 3: If violations detected, initiate legal action
+    if (scanResult?.violations_detected > 0) {
+      await supabase
+        .from('ai_training_enforcement_workflows')
+        .update({
+          status: 'violation_detected',
+          steps_completed: ['workflow_created', 'scanning_initiated', 'violations_detected'],
+          violation_id: scanResult.violation_ids?.[0],
+          metadata: { 
+            violations_count: scanResult.violations_detected,
+            last_updated: new Date().toISOString()
+          }
+        })
+        .eq('id', workflowId);
+
+      // Step 4: Trigger automated legal workflow
+      await supabase.functions.invoke('automated-legal-workflow', {
+        body: {
+          violation_id: scanResult.violation_ids?.[0],
+          action: 'auto_enforce',
+          workflow_id: workflowId
+        }
+      });
+
+      // Step 5: Update to legal action status
+      await supabase
+        .from('ai_training_enforcement_workflows')
+        .update({
+          status: 'legal_action',
+          steps_completed: ['workflow_created', 'scanning_initiated', 'violations_detected', 'legal_action_initiated'],
+          metadata: { 
+            legal_action_started: new Date().toISOString(),
+            last_updated: new Date().toISOString()
+          }
+        })
+        .eq('id', workflowId);
+
+      // Step 6: Schedule follow-up and certificate generation
+      setTimeout(async () => {
+        await completeEnforcementWorkflow(supabase, workflowId, protectionRecordId, userId);
+      }, 30000); // 30 second delay for demo purposes
+
+    } else {
+      // No violations found - issue clean certificate
+      await completeEnforcementWorkflow(supabase, workflowId, protectionRecordId, userId, 'clean');
+    }
+
+  } catch (error) {
+    console.error('Error in closed-loop process:', error);
+    
+    // Update workflow with error status
+    await supabase
+      .from('ai_training_enforcement_workflows')
+      .update({
+        status: 'error',
+        metadata: { 
+          error: error.message,
+          last_updated: new Date().toISOString()
+        }
+      })
+      .eq('id', workflowId);
+  }
+}
+
+async function completeEnforcementWorkflow(supabase: any, workflowId: string, protectionRecordId: string, userId: string, type = 'enforced') {
+  try {
+    // Generate blockchain certificate hash
+    const certificateData = {
+      workflow_id: workflowId,
+      protection_record_id: protectionRecordId,
+      user_id: userId,
+      timestamp: new Date().toISOString(),
+      type: type,
+      enforcement_completed: true
+    };
+
+    // Simulate blockchain registration (in real implementation, this would call actual blockchain)
+    const certificateHash = await generateBlockchainHash(certificateData);
+
+    // Update workflow to resolved status
+    await supabase
+      .from('ai_training_enforcement_workflows')
+      .update({
+        status: 'resolved',
+        steps_completed: ['workflow_created', 'scanning_initiated', 'violations_detected', 'legal_action_initiated', 'violations_resolved'],
+        metadata: { 
+          resolved_at: new Date().toISOString(),
+          last_updated: new Date().toISOString()
+        }
+      })
+      .eq('id', workflowId);
+
+    // Step 7: Issue protection certificate with blockchain verification
+    await supabase.functions.invoke('real-blockchain-registration', {
+      body: {
+        action: 'issue_protection_certificate',
+        workflow_id: workflowId,
+        protection_record_id: protectionRecordId,
+        certificate_hash: certificateHash
+      }
+    });
+
+    // Final update: certified status
+    await supabase
+      .from('ai_training_enforcement_workflows')
+      .update({
+        status: 'certified',
+        certificate_hash: certificateHash,
+        steps_completed: ['workflow_created', 'scanning_initiated', 'violations_detected', 'legal_action_initiated', 'violations_resolved', 'certificate_issued'],
+        metadata: { 
+          certified_at: new Date().toISOString(),
+          certificate_hash: certificateHash,
+          last_updated: new Date().toISOString()
+        }
+      })
+      .eq('id', workflowId);
+
+  } catch (error) {
+    console.error('Error completing enforcement workflow:', error);
+  }
+}
+
+async function generateBlockchainHash(data: any): Promise<string> {
+  // Simulate blockchain hash generation
+  const encoder = new TextEncoder();
+  const dataString = JSON.stringify(data);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(dataString));
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return '0x' + hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }

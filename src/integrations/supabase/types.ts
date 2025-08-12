@@ -412,6 +412,45 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_training_enforcement_workflows: {
+        Row: {
+          certificate_hash: string | null
+          created_at: string
+          id: string
+          metadata: Json
+          protection_record_id: string
+          status: string
+          steps_completed: Json
+          updated_at: string
+          user_id: string
+          violation_id: string | null
+        }
+        Insert: {
+          certificate_hash?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          protection_record_id: string
+          status?: string
+          steps_completed?: Json
+          updated_at?: string
+          user_id: string
+          violation_id?: string | null
+        }
+        Update: {
+          certificate_hash?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          protection_record_id?: string
+          status?: string
+          steps_completed?: Json
+          updated_at?: string
+          user_id?: string
+          violation_id?: string | null
+        }
+        Relationships: []
+      }
       ai_training_violations: {
         Row: {
           artwork_id: string
