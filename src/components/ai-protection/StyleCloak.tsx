@@ -237,14 +237,27 @@ const saveToSupabase = async () => {
           </div>
         </div>
 
-<div className="flex justify-end gap-2">
-  <Button variant="default" disabled={!resultUrl} onClick={saveToSupabase} className="gap-2">
-    <Shield className="h-4 w-4" /> Save to Library
-  </Button>
-  <Button variant="secondary" disabled={!resultUrl} onClick={download} className="gap-2">
-    <Download className="h-4 w-4" /> Download Cloaked Image
-  </Button>
-</div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="md:col-span-2 flex justify-end gap-2">
+            <Button variant="default" disabled={!resultUrl} onClick={saveToSupabase} className="gap-2">
+              <Shield className="h-4 w-4" /> Save to Library
+            </Button>
+            <Button variant="secondary" disabled={!resultUrl} onClick={download} className="gap-2">
+              <Download className="h-4 w-4" /> Download Cloaked Image
+            </Button>
+          </div>
+          <div>
+            {/** Resilience score card */}
+            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+            {/* @ts-ignore - lazy import for bundle split not needed here */}
+            {React.createElement(require('./StyleCloakResilience').default, {
+              strength: strength[0],
+              frequency: frequency[0],
+              colorJitter: colorJitter[0],
+              useSegmentation,
+            })}
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

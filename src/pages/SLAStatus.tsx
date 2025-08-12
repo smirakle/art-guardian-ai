@@ -171,8 +171,14 @@ export default function SLAStatus() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Current SLA Status */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 space-y-4">
             <SLAStatusWidget plan={userPlan!} />
+            {/* Outcome-based SLA metrics */}
+            {/** Keep beta disclosures */}
+            {(() => {
+              const Comp = require('@/components/sla/OutcomeSLAMetrics').OutcomeSLAMetrics;
+              return <Comp periodDays={30} />;
+            })()}
           </div>
           
           {/* Quick Stats */}

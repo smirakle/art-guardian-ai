@@ -1,4 +1,3 @@
-
 project_id = "utneaqmbyjwxaqrrarpc"
 
 [functions.email-analytics]
@@ -109,9 +108,16 @@ verify_jwt = false
 [functions.automated-licensing]
 verify_jwt = true
 
-
 [functions.create-license-payment]
 verify_jwt = true
 
 [functions.verify-license-payment]
 verify_jwt = true
+
+# New functions
+[functions.ip-guardrail]
+verify_jwt = false
+
+[functions.sla-metrics]
+verify_jwt = true
+
