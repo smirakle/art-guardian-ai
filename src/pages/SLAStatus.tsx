@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SLAStatusWidget } from "@/components/sla/SLAStatusWidget";
 import { SLAGuarantees } from "@/components/sla/SLAGuarantees";
+import { OutcomeSLAMetrics } from "@/components/sla/OutcomeSLAMetrics";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { ArrowLeft, Download, RefreshCw, Calendar, TrendingUp, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -174,11 +175,7 @@ export default function SLAStatus() {
           <div className="lg:col-span-2 space-y-4">
             <SLAStatusWidget plan={userPlan!} />
             {/* Outcome-based SLA metrics */}
-            {/** Keep beta disclosures */}
-            {(() => {
-              const Comp = require('@/components/sla/OutcomeSLAMetrics').OutcomeSLAMetrics;
-              return <Comp periodDays={30} />;
-            })()}
+            <OutcomeSLAMetrics periodDays={30} />
           </div>
           
           {/* Quick Stats */}
