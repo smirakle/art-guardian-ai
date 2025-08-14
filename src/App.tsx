@@ -48,6 +48,7 @@ import Roadmap from "./pages/Roadmap";
 import CreatorMarkets from "./pages/CreatorMarkets";
 import ForgeryDetection from "./pages/ForgeryDetection";
 import TermsAndPrivacy from "./pages/TermsAndPrivacy";
+import { PartnerPricingManager } from "./components/partner/PartnerPricingManager";
 import EmailMarketing from "./pages/EmailMarketing";
 import TaxManagement from "./pages/TaxManagement";
 
@@ -125,6 +126,7 @@ const App = () => {
             <Route path="/trademark-monitoring" element={<TrademarkMonitoring />} />
             <Route path="/markets" element={<CreatorMarkets />} />
             <Route path="/investors" element={<InvestorHub />} />
+            <Route path="/partner-pricing" element={<PartnerPricingManager />} />
             <Route path="/forgery-detection" element={<ForgeryDetection />} />
             <Route path="/roadmap" element={<Roadmap />} />
             <Route path="/terms-and-privacy" element={<TermsAndPrivacy />} />

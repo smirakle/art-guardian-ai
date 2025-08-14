@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -2954,6 +2954,119 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_pricing_tiers: {
+        Row: {
+          api_calls_included: number
+          created_at: string
+          custom_branding: boolean
+          custom_integrations: boolean
+          dedicated_support: boolean
+          features: Json | null
+          id: string
+          is_active: boolean
+          max_domains: number | null
+          max_organizations: number | null
+          max_users_per_org: number | null
+          monthly_price: number
+          rate_limit_per_hour: number
+          tier_name: string
+          updated_at: string
+          white_label_included: boolean
+        }
+        Insert: {
+          api_calls_included: number
+          created_at?: string
+          custom_branding?: boolean
+          custom_integrations?: boolean
+          dedicated_support?: boolean
+          features?: Json | null
+          id?: string
+          is_active?: boolean
+          max_domains?: number | null
+          max_organizations?: number | null
+          max_users_per_org?: number | null
+          monthly_price: number
+          rate_limit_per_hour: number
+          tier_name: string
+          updated_at?: string
+          white_label_included?: boolean
+        }
+        Update: {
+          api_calls_included?: number
+          created_at?: string
+          custom_branding?: boolean
+          custom_integrations?: boolean
+          dedicated_support?: boolean
+          features?: Json | null
+          id?: string
+          is_active?: boolean
+          max_domains?: number | null
+          max_organizations?: number | null
+          max_users_per_org?: number | null
+          monthly_price?: number
+          rate_limit_per_hour?: number
+          tier_name?: string
+          updated_at?: string
+          white_label_included?: boolean
+        }
+        Relationships: []
+      }
+      partner_subscriptions: {
+        Row: {
+          api_calls_reset_at: string
+          api_calls_used: number
+          created_at: string
+          current_period_end: string
+          current_period_start: string
+          id: string
+          metadata: Json | null
+          organization_id: string | null
+          status: string
+          stripe_subscription_id: string | null
+          tier_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          api_calls_reset_at?: string
+          api_calls_used?: number
+          created_at?: string
+          current_period_end: string
+          current_period_start?: string
+          id?: string
+          metadata?: Json | null
+          organization_id?: string | null
+          status?: string
+          stripe_subscription_id?: string | null
+          tier_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          api_calls_reset_at?: string
+          api_calls_used?: number
+          created_at?: string
+          current_period_end?: string
+          current_period_start?: string
+          id?: string
+          metadata?: Json | null
+          organization_id?: string | null
+          status?: string
+          stripe_subscription_id?: string | null
+          tier_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_subscriptions_tier_id_fkey"
+            columns: ["tier_id"]
+            isOneToOne: false
+            referencedRelation: "partner_pricing_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       performance_metrics: {
         Row: {
           additional_data: Json | null
@@ -5305,6 +5418,8 @@ export type Database = {
           max_users: number | null
           name: string
           owner_id: string
+          partner_subscription_id: string | null
+          partner_tier_id: string | null
           primary_color: string | null
           secondary_color: string | null
           slug: string
@@ -5328,6 +5443,8 @@ export type Database = {
           max_users?: number | null
           name: string
           owner_id: string
+          partner_subscription_id?: string | null
+          partner_tier_id?: string | null
           primary_color?: string | null
           secondary_color?: string | null
           slug: string
@@ -5351,6 +5468,8 @@ export type Database = {
           max_users?: number | null
           name?: string
           owner_id?: string
+          partner_subscription_id?: string | null
+          partner_tier_id?: string | null
           primary_color?: string | null
           secondary_color?: string | null
           slug?: string
@@ -5358,6 +5477,20 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "white_label_organizations_partner_subscription_id_fkey"
+            columns: ["partner_subscription_id"]
+            isOneToOne: false
+            referencedRelation: "partner_subscriptions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "white_label_organizations_partner_tier_id_fkey"
+            columns: ["partner_tier_id"]
+            isOneToOne: false
+            referencedRelation: "partner_pricing_tiers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "white_label_organizations_subscription_id_fkey"
             columns: ["subscription_id"]
@@ -5421,17 +5554,17 @@ export type Database = {
     Functions: {
       calculate_next_execution: {
         Args: {
-          schedule_type: string
           execution_time: string
           recurrence_pattern: Json
+          schedule_type: string
         }
         Returns: string
       }
       check_ai_protection_rate_limit: {
         Args: {
-          user_id_param: string
           endpoint_param: string
           max_requests_param?: number
+          user_id_param: string
           window_minutes_param?: number
         }
         Returns: boolean
@@ -5442,23 +5575,23 @@ export type Database = {
       }
       check_portfolio_monitoring_rate_limit: {
         Args: {
-          user_id_param: string
           endpoint_param: string
           max_requests_param?: number
+          user_id_param: string
           window_minutes_param?: number
         }
         Returns: boolean
       }
       create_ai_protection_notification: {
         Args: {
-          user_id_param: string
-          notification_type_param: string
-          title_param: string
-          message_param: string
-          severity_param?: string
           action_url_param?: string
-          metadata_param?: Json
           expires_hours_param?: number
+          message_param: string
+          metadata_param?: Json
+          notification_type_param: string
+          severity_param?: string
+          title_param: string
+          user_id_param: string
         }
         Returns: string
       }
@@ -5468,14 +5601,14 @@ export type Database = {
       }
       create_portfolio_monitoring_notification: {
         Args: {
-          user_id_param: string
-          notification_type_param: string
-          title_param: string
-          message_param: string
-          severity_param?: string
           action_url_param?: string
-          metadata_param?: Json
           expires_hours_param?: number
+          message_param: string
+          metadata_param?: Json
+          notification_type_param: string
+          severity_param?: string
+          title_param: string
+          user_id_param: string
         }
         Returns: string
       }
@@ -5490,8 +5623,8 @@ export type Database = {
       get_all_template_download_counts: {
         Args: Record<PropertyKey, never>
         Returns: {
-          template_id: string
           download_count: number
+          template_id: string
         }[]
       }
       get_artwork_limit: {
@@ -5517,41 +5650,61 @@ export type Database = {
       get_user_dashboard_stats: {
         Args: Record<PropertyKey, never>
         Returns: {
-          protected_artworks: number
-          total_scans: number
           high_threats: number
-          total_portfolios: number
+          protected_artworks: number
           protection_score: number
+          total_portfolios: number
+          total_scans: number
         }[]
       }
       get_user_email_verified: {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      get_user_partner_tier: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          api_calls_included: number
+          api_calls_remaining: number
+          api_calls_used: number
+          custom_branding: boolean
+          custom_integrations: boolean
+          dedicated_support: boolean
+          features: Json
+          max_domains: number
+          max_organizations: number
+          max_users_per_org: number
+          monthly_price: number
+          rate_limit_per_hour: number
+          subscription_status: string
+          tier_name: string
+          white_label_included: boolean
+        }[]
+      }
       get_user_subscription: {
         Args: Record<PropertyKey, never>
         Returns: {
-          plan_id: string
-          status: string
-          social_media_addon: boolean
           deepfake_addon: boolean
           is_active: boolean
+          plan_id: string
+          social_media_addon: boolean
+          status: string
         }[]
       }
       get_user_white_label_org: {
         Args: Record<PropertyKey, never>
         Returns: {
+          is_owner: boolean
           org_id: string
           org_name: string
           org_slug: string
-          is_owner: boolean
           user_role: string
         }[]
       }
       has_role: {
         Args: {
-          _user_id: string
           _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
         }
         Returns: boolean
       }
@@ -5561,13 +5714,13 @@ export type Database = {
       }
       log_ai_protection_action: {
         Args: {
-          user_id_param: string
           action_param: string
-          resource_type_param: string
-          resource_id_param?: string
           details_param?: Json
           ip_param?: unknown
+          resource_id_param?: string
+          resource_type_param: string
           user_agent_param?: string
+          user_id_param: string
         }
         Returns: undefined
       }
@@ -5575,45 +5728,45 @@ export type Database = {
         Args: {
           api_key_param: string
           endpoint_param: string
-          method_param: string
-          status_code_param: number
-          response_time_ms_param?: number
-          ip_address_param?: unknown
-          user_agent_param?: string
           error_message_param?: string
+          ip_address_param?: unknown
           metadata_param?: Json
+          method_param: string
+          response_time_ms_param?: number
+          status_code_param: number
+          user_agent_param?: string
         }
         Returns: undefined
       }
       log_portfolio_monitoring_action: {
         Args: {
-          user_id_param: string
           action_param: string
-          resource_type_param: string
-          resource_id_param?: string
           details_param?: Json
           ip_param?: unknown
+          resource_id_param?: string
+          resource_type_param: string
           user_agent_param?: string
+          user_id_param: string
         }
         Returns: undefined
       }
       record_ai_protection_metric: {
         Args: {
-          metric_type_param: string
-          metric_name_param: string
-          metric_value_param: number
           metadata_param?: Json
+          metric_name_param: string
+          metric_type_param: string
+          metric_value_param: number
         }
         Returns: undefined
       }
       record_portfolio_monitoring_metric: {
         Args: {
-          metric_type_param: string
-          metric_name_param: string
-          metric_value_param: number
-          user_id_param?: string
-          portfolio_id_param?: string
           metadata_param?: Json
+          metric_name_param: string
+          metric_type_param: string
+          metric_value_param: number
+          portfolio_id_param?: string
+          user_id_param?: string
         }
         Returns: undefined
       }
@@ -5635,8 +5788,8 @@ export type Database = {
       }
       track_template_usage: {
         Args: {
-          template_id_param: string
           event_type_param: string
+          template_id_param: string
           user_id_param?: string
         }
         Returns: undefined

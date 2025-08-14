@@ -24,7 +24,9 @@ import {
   AlertCircle,
   Code,
   BarChart3,
-  Clock
+  Clock,
+  Crown,
+  ArrowRight
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -347,6 +349,25 @@ export const EnterpriseAPIAccess: React.FC = () => {
           <div className="flex items-center gap-3 mb-4">
             <Key className="w-6 h-6 text-primary" />
             <h2 className="text-2xl font-bold text-primary">Enterprise API Access</h2>
+          </div>
+          
+          <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <div className="flex items-center gap-2 mb-2">
+              <Crown className="w-5 h-5 text-blue-600" />
+              <h3 className="font-semibold text-blue-800 dark:text-blue-200">Partner Program Available</h3>
+            </div>
+            <p className="text-blue-700 dark:text-blue-300 text-sm mb-3">
+              Get white-label solutions, higher API limits, and dedicated support with our Partner Program tiers.
+            </p>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="border-blue-300 text-blue-600 hover:bg-blue-100 dark:border-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/50"
+              onClick={() => window.location.href = '/partner-pricing'}
+            >
+              View Partner Pricing
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
           </div>
           
           {/* Pricing Tiers */}
