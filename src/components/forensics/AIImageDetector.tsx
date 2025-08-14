@@ -108,7 +108,12 @@ const AIImageDetector: React.FC = () => {
       setProgress(100);
 
       if (error) {
-        throw new Error(error.message);
+        console.error('Supabase function error:', error);
+        throw new Error(error.message || 'Function invocation failed');
+      }
+
+      if (!data || !data.result) {
+        throw new Error('Invalid response from detection service');
       }
 
       setResult(data.result);

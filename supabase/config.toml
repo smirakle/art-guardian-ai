@@ -121,3 +121,6 @@ verify_jwt = false
 [functions.sla-metrics]
 verify_jwt = true
 
+[functions.ai-image-detector]
+verify_jwt = false
+

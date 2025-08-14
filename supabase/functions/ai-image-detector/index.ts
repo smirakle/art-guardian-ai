@@ -29,11 +29,24 @@ interface AIDetectionResult {
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
+    console.log('AI Image Detector function called');
+    
+    if (!req.body) {
+      return new Response(
+        JSON.stringify({ error: 'Request body is required' }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
     const { imageUrl, imageData } = await req.json();
     
     if (!imageUrl && !imageData) {
@@ -77,12 +90,27 @@ serve(async (req) => {
       }
     );
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('AI detection error:', error);
+    
+    // Handle JSON parsing errors
+    if (error instanceof SyntaxError) {
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid JSON in request body', 
+          details: error.message 
+        }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+    
     return new Response(
       JSON.stringify({ 
         error: 'AI detection failed', 
-        details: error.message 
+        details: error.message || 'Unknown error occurred'
       }),
       { 
         status: 500, 
@@ -163,7 +191,7 @@ async function analyzeWithOpenAI(imageSource: string) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -200,8 +228,7 @@ async function analyzeWithOpenAI(imageSource: string) {
             ]
           }
         ],
-        max_tokens: 1000,
-        temperature: 0.1
+        max_tokens: 1000
       }),
     });
 
