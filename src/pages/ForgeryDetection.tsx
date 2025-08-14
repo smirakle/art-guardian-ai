@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import ImageForgeryDetector from '@/components/forensics/ImageForgeryDetector';
+import AIImageDetector from '@/components/forensics/AIImageDetector';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const ForgeryDetection: React.FC = () => {
   useEffect(() => {
@@ -18,7 +20,7 @@ const ForgeryDetection: React.FC = () => {
 
     setMeta(
       'description',
-      'Image forgery detection with ELA, metadata verification, invisible watermark checks, and AI tamper assessment.'
+      'Advanced image analysis with AI generation detection, forgery detection, ELA analysis, metadata verification, and tamper assessment.'
     );
 
     // Canonical tag
@@ -36,13 +38,26 @@ const ForgeryDetection: React.FC = () => {
     <main className="min-h-screen bg-background" role="main">
       <div className="container mx-auto px-4 py-8">
         <header className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">Image Forgery Detection</h1>
+          <h1 className="text-3xl font-bold mb-2">Advanced Image Analysis</h1>
           <p className="text-muted-foreground">
-            Detect manipulations with Error Level Analysis, metadata verification, invisible watermark checks,
-            and AI-based tamper assessment.
+            Comprehensive image analysis including AI generation detection, forgery detection, and forensic analysis.
           </p>
         </header>
-        <ImageForgeryDetector />
+        
+        <Tabs defaultValue="ai-detection" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="ai-detection">AI Generation Detection</TabsTrigger>
+            <TabsTrigger value="forgery-detection">Forgery & Tampering</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="ai-detection" className="mt-6">
+            <AIImageDetector />
+          </TabsContent>
+          
+          <TabsContent value="forgery-detection" className="mt-6">
+            <ImageForgeryDetector />
+          </TabsContent>
+        </Tabs>
       </div>
     </main>
   );
