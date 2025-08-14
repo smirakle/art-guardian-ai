@@ -15,21 +15,22 @@ import {
   Lock,
   CheckCircle
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const InvestorDataRoom = () => {
-  const [accessGranted, setAccessGranted] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const ensureInvestorAccess = () => {
-    const ok = sessionStorage.getItem('investor_access_ok') === 'true';
-    if (ok) return true;
-    const code = window.prompt('Enter investor access code');
-    if (!code) return false;
-    if (code.trim().toUpperCase() === 'INVESTOR') {
-      sessionStorage.setItem('investor_access_ok', 'true');
-      return true;
+    if (!user) {
+      const shouldSignIn = window.confirm('You need to sign in to download investor documents. Would you like to sign in now?');
+      if (shouldSignIn) {
+        navigate('/auth');
+      }
+      return false;
     }
-    alert('Invalid access code');
-    return false;
+    return true;
   };
 
   const documents = {
@@ -1586,7 +1587,7 @@ const InvestorDataRoom = () => {
         </p>
         <Badge variant="outline" className="text-sm">
           <Lock className="h-4 w-4 mr-2" />
-          Downloads require access code
+          Downloads require sign in
         </Badge>
       </div>
 

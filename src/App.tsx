@@ -124,11 +124,7 @@ const App = () => {
             <Route path="/portfolio-monitoring" element={<PortfolioMonitoring />} />
             <Route path="/trademark-monitoring" element={<TrademarkMonitoring />} />
             <Route path="/markets" element={<CreatorMarkets />} />
-            <Route path="/investors" element={
-              <ProtectedRoute>
-                <InvestorHub />
-              </ProtectedRoute>
-            } />
+            <Route path="/investors" element={<InvestorHub />} />
             <Route path="/forgery-detection" element={<ForgeryDetection />} />
             <Route path="/roadmap" element={<Roadmap />} />
             <Route path="/terms-and-privacy" element={<TermsAndPrivacy />} />
