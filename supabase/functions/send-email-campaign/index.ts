@@ -24,18 +24,20 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    const authHeader = req.headers.get('authorization');
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: {
+            Authorization: authHeader!,
+          },
+        },
+      }
     );
 
     const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
-
-    // Get the authorization header
-    const authHeader = req.headers.get('authorization');
-    if (authHeader) {
-      supabaseClient.auth.setAuth(authHeader.replace('Bearer ', ''));
-    }
 
     // Get current user
     const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
