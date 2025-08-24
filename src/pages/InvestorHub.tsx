@@ -17,6 +17,7 @@ import {
   DollarSign
 } from 'lucide-react';
 import IPGuardrailDocumentation from '@/components/enterprise/IPGuardrailDocumentation';
+import ComprehensivePatentDocument from '@/components/ComprehensivePatentDocument';
 
 const InvestorHub = () => {
   useEffect(() => {
@@ -190,7 +191,7 @@ const InvestorHub = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="summary" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-8">
+          <TabsList className="grid w-full grid-cols-7 mb-8">
             <TabsTrigger value="summary" className="gap-2">
               <FileText className="h-4 w-4" />
               Executive Summary
@@ -198,6 +199,10 @@ const InvestorHub = () => {
             <TabsTrigger value="pitch" className="gap-2">
               <TrendingUp className="h-4 w-4" />
               Pitch Deck
+            </TabsTrigger>
+            <TabsTrigger value="patents" className="gap-2">
+              <Shield className="h-4 w-4" />
+              Patent Docs
             </TabsTrigger>
             <TabsTrigger value="roadmap" className="gap-2">
               <TrendingUp className="h-4 w-4" />
@@ -223,6 +228,10 @@ const InvestorHub = () => {
 
           <TabsContent value="pitch">
             <InvestorPitchDeck />
+          </TabsContent>
+
+          <TabsContent value="patents">
+            <ComprehensivePatentDocument />
           </TabsContent>
 
           <TabsContent value="roadmap">
