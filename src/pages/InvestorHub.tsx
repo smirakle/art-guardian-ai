@@ -17,7 +17,7 @@ import {
   DollarSign
 } from 'lucide-react';
 import IPGuardrailDocumentation from '@/components/enterprise/IPGuardrailDocumentation';
-import ComprehensivePatentDocument from '@/components/ComprehensivePatentDocument';
+import AdminProtectedPatentDocs from '@/components/AdminProtectedPatentDocs';
 
 const InvestorHub = () => {
   useEffect(() => {
@@ -231,7 +231,7 @@ const InvestorHub = () => {
           </TabsContent>
 
           <TabsContent value="patents">
-            <ComprehensivePatentDocument />
+            <AdminProtectedPatentDocs />
           </TabsContent>
 
           <TabsContent value="roadmap">
