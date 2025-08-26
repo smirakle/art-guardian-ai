@@ -541,6 +541,45 @@ export type Database = {
         }
         Relationships: []
       }
+      alert_notifications_log: {
+        Row: {
+          alert_id: string
+          created_at: string
+          email_id: string | null
+          error_message: string | null
+          id: string
+          notification_type: string
+          recipient_email: string
+          sent_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          alert_id: string
+          created_at?: string
+          email_id?: string | null
+          error_message?: string | null
+          id?: string
+          notification_type?: string
+          recipient_email: string
+          sent_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          alert_id?: string
+          created_at?: string
+          email_id?: string | null
+          error_message?: string | null
+          id?: string
+          notification_type?: string
+          recipient_email?: string
+          sent_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       artwork: {
         Row: {
           ai_protection_enabled: boolean | null
@@ -1455,6 +1494,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      email_notification_preferences: {
+        Row: {
+          copyright_alerts_enabled: boolean
+          created_at: string
+          daily_digest_enabled: boolean
+          deepfake_alerts_enabled: boolean
+          digest_time: string
+          high_priority_only: boolean
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          copyright_alerts_enabled?: boolean
+          created_at?: string
+          daily_digest_enabled?: boolean
+          deepfake_alerts_enabled?: boolean
+          digest_time?: string
+          high_priority_only?: boolean
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          copyright_alerts_enabled?: boolean
+          created_at?: string
+          daily_digest_enabled?: boolean
+          deepfake_alerts_enabled?: boolean
+          digest_time?: string
+          high_priority_only?: boolean
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       email_subscribers: {
         Row: {
@@ -5660,6 +5735,16 @@ export type Database = {
       get_user_email_verified: {
         Args: Record<PropertyKey, never>
         Returns: boolean
+      }
+      get_user_notification_preferences: {
+        Args: { user_id_param: string }
+        Returns: {
+          copyright_alerts_enabled: boolean
+          daily_digest_enabled: boolean
+          deepfake_alerts_enabled: boolean
+          digest_time: string
+          high_priority_only: boolean
+        }[]
       }
       get_user_partner_tier: {
         Args: Record<PropertyKey, never>

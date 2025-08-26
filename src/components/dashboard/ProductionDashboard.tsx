@@ -18,7 +18,8 @@ import {
   Clock,
   Eye,
   Search,
-  Zap
+  Zap,
+  Bell
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -38,6 +39,7 @@ import { AIProtectionStatusWidget } from '@/components/dashboard/AIProtectionSta
 import SocialMediaMonitoringResults from '@/components/monitoring/SocialMediaMonitoringResults';
 import RealTimeDeepfakeMonitor from '@/components/RealTimeDeepfakeMonitor';
 import { ProductionOptimizations } from '@/components/ProductionOptimizations';
+import { EmailNotificationSettings } from '@/components/EmailNotificationSettings';
 
 interface DashboardStats {
   protectedArtworks: number;
@@ -291,7 +293,7 @@ export const ProductionDashboard = () => {
         {/* Main Dashboard Content - Organized in Tabs */}
         <Tabs defaultValue="monitoring" className="space-y-6">
           <div className="flex items-center justify-between">
-            <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:grid-cols-5">
+            <TabsList className="grid w-full grid-cols-6 lg:w-auto lg:grid-cols-6">
               <TabsTrigger value="monitoring" className="flex items-center gap-2">
                 <Activity className="w-4 h-4" />
                 <span className="hidden sm:inline">Monitoring</span>
@@ -303,6 +305,10 @@ export const ProductionDashboard = () => {
               <TabsTrigger value="blockchain" className="flex items-center gap-2">
                 <Crown className="w-4 h-4" />
                 <span className="hidden sm:inline">Blockchain</span>
+              </TabsTrigger>
+              <TabsTrigger value="notifications" className="flex items-center gap-2">
+                <Bell className="w-4 h-4" />
+                <span className="hidden sm:inline">Alerts</span>
               </TabsTrigger>
               <TabsTrigger value="production" className="flex items-center gap-2">
                 <Zap className="w-4 h-4" />
@@ -461,6 +467,11 @@ export const ProductionDashboard = () => {
                 </Card>
               </div>
             </FeatureGuard>
+          </TabsContent>
+
+          {/* Notifications Tab */}
+          <TabsContent value="notifications" className="space-y-6">
+            <EmailNotificationSettings />
           </TabsContent>
 
           {/* Production Tab */}
