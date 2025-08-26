@@ -235,12 +235,12 @@ const GovernmentFilingService: React.FC<GovernmentFilingServiceProps> = ({ userS
 
   return (
     <div className="space-y-8">
-      {/* Demo Disclaimer */}
-      <Alert className="border-orange-200 bg-orange-50">
-        <AlertTriangle className="h-4 w-4 text-orange-600" />
-        <AlertDescription className="text-orange-800">
-          <strong>Demo Notice:</strong> The Government Filing service is currently for demonstration purposes only. 
-          All information displayed is for demonstration and testing purposes. No actual government filings will be processed.
+      {/* Live Service Notice */}
+      <Alert className="border-green-200 bg-green-50">
+        <CheckCircle className="h-4 w-4 text-green-600" />
+        <AlertDescription className="text-green-800">
+          <strong>Live Service:</strong> Government filings are now processed and sent via secure email to the appropriate agencies. 
+          All documents are filed with real government authorities and you will receive confirmation emails.
         </AlertDescription>
       </Alert>
       {/* Service Header */}

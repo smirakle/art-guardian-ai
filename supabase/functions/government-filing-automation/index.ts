@@ -1,6 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.5';
+import { Resend } from "npm:resend@4.0.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,6 +12,8 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_URL') ?? '',
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 );
+
+const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -248,68 +251,225 @@ async function processGovernmentFiling(
 ) {
   const referenceNumber = `${jurisdiction.toUpperCase()}-${filingType.toUpperCase()}-${Date.now()}`;
   
-  // Simulate government API integration
-  console.log(`Filing ${filingType} with ${jurisdiction} government systems`);
+  console.log(`Processing ${filingType} filing with ${jurisdiction} government systems`);
   
-  // In a real implementation, this would:
-  // 1. Connect to actual government APIs
-  // 2. Upload documents to official systems
-  // 3. Pay fees through government payment systems
-  // 4. Receive official confirmation
-  
-  const filingResponse = await simulateGovernmentAPI(
-    document, 
-    filingType, 
-    jurisdiction, 
-    urgency, 
-    referenceNumber
-  );
+  if (autoFile) {
+    try {
+      // Get filing requirements for email contact
+      const requirements = await getFilingRequirements(filingType, jurisdiction);
+      
+      // Send filing via email to government agency
+      const emailResult = await sendGovernmentFilingEmail(
+        document, 
+        filingType, 
+        jurisdiction, 
+        urgency, 
+        referenceNumber,
+        requirements
+      );
+      
+      // Calculate expected response date
+      const processingTime = urgency === 'expedited' ? 
+        requirements.expedited_time : requirements.processing_time;
+      
+      const expectedResponseDate = calculateResponseDate(processingTime);
 
-  // Calculate expected response date
-  const requirements = await getFilingRequirements(filingType, jurisdiction);
-  const processingTime = urgency === 'expedited' ? 
-    requirements.expedited_time : requirements.processing_time;
-  
-  const expectedResponseDate = calculateResponseDate(processingTime);
+      return {
+        status: emailResult.success ? 'filed' : 'failed',
+        referenceNumber,
+        fee: getFee(filingType, urgency, requirements),
+        expectedResponseDate,
+        trackingUrl: `https://tsmo.com/filing-tracking/${referenceNumber}`,
+        confirmationCode: emailResult.messageId || `CONF-${referenceNumber}`,
+        nextSteps: [
+          'Monitor filing status via tracking URL',
+          'Respond to any government requests within 30 days',
+          'Await official response within processing timeframe',
+          'Pay any additional fees if required'
+        ],
+        emailResult
+      };
+    } catch (error) {
+      console.error('Filing failed:', error);
+      return {
+        status: 'failed',
+        referenceNumber,
+        fee: 0,
+        expectedResponseDate: new Date().toISOString(),
+        trackingUrl: `https://tsmo.com/filing-tracking/${referenceNumber}`,
+        confirmationCode: null,
+        nextSteps: ['Contact support for assistance'],
+        error: error.message
+      };
+    }
+  } else {
+    // Prepare filing without sending
+    const requirements = await getFilingRequirements(filingType, jurisdiction);
+    const processingTime = urgency === 'expedited' ? 
+      requirements.expedited_time : requirements.processing_time;
+    
+    const expectedResponseDate = calculateResponseDate(processingTime);
 
-  return {
-    status: autoFile ? 'filed' : 'prepared',
-    referenceNumber,
-    fee: filingResponse.fee,
-    expectedResponseDate,
-    trackingUrl: `https://tracking.gov/${jurisdiction}/${referenceNumber}`,
-    confirmationCode: filingResponse.confirmationCode,
-    nextSteps: filingResponse.nextSteps
-  };
+    return {
+      status: 'prepared',
+      referenceNumber,
+      fee: getFee(filingType, urgency, requirements),
+      expectedResponseDate,
+      trackingUrl: `https://tsmo.com/filing-tracking/${referenceNumber}`,
+      confirmationCode: `PREP-${referenceNumber}`,
+      nextSteps: ['Review document and approve for filing']
+    };
+  }
 }
 
-async function simulateGovernmentAPI(
+async function sendGovernmentFilingEmail(
   document: any,
   filingType: string,
   jurisdiction: string,
   urgency: string,
-  referenceNumber: string
+  referenceNumber: string,
+  requirements: any
 ) {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 2000));
+  try {
+    // Fetch supporting documents from storage
+    const attachments = [];
+    if (document.file_path) {
+      try {
+        const { data: fileData, error: fileError } = await supabase.storage
+          .from('government-filings')
+          .download(document.file_path);
+        
+        if (!fileError && fileData) {
+          const arrayBuffer = await fileData.arrayBuffer();
+          const base64Content = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+          
+          attachments.push({
+            filename: `${document.title || 'document'}.pdf`,
+            content: base64Content,
+            type: 'application/pdf'
+          });
+        }
+      } catch (attachError) {
+        console.warn('Could not attach document:', attachError);
+      }
+    }
 
-  const fees: { [key: string]: number } = {
-    'copyright_registration': urgency === 'expedited' ? 125 : 65,
-    'trademark_application': urgency === 'expedited' ? 500 : 350,
-    'dmca_filing': 6
-  };
+    const filingEmailContent = generateFilingEmailContent(
+      document, 
+      filingType, 
+      jurisdiction, 
+      urgency, 
+      referenceNumber,
+      requirements
+    );
 
-  return {
-    success: true,
-    confirmationCode: `CONF-${referenceNumber}`,
-    fee: fees[filingType] || 100,
-    nextSteps: [
-      'Monitor filing status via tracking URL',
-      'Respond to any government requests within 30 days',
-      'Await official response within processing timeframe',
-      'Pay any additional fees if required'
-    ]
-  };
+    const emailResponse = await resend.emails.send({
+      from: 'TSMO Legal Filings <filings@tsmo.com>',
+      to: [requirements.contact],
+      cc: [document.user_email || 'user@example.com'],
+      subject: `${jurisdiction.toUpperCase()} ${filingType.replace('_', ' ').toUpperCase()} Filing - Ref: ${referenceNumber}`,
+      html: filingEmailContent.html,
+      text: filingEmailContent.text,
+      attachments: attachments.length > 0 ? attachments : undefined,
+      headers: {
+        'X-TSMO-Filing-Reference': referenceNumber,
+        'X-Filing-Type': filingType,
+        'X-Jurisdiction': jurisdiction,
+        'X-Urgency': urgency
+      }
+    });
+
+    console.log(`Government filing email sent successfully: ${emailResponse.data?.id}`);
+
+    return {
+      success: true,
+      messageId: emailResponse.data?.id,
+      error: null
+    };
+  } catch (error) {
+    console.error('Failed to send government filing email:', error);
+    return {
+      success: false,
+      messageId: null,
+      error: error.message
+    };
+  }
+}
+
+function generateFilingEmailContent(
+  document: any,
+  filingType: string,
+  jurisdiction: string,
+  urgency: string,
+  referenceNumber: string,
+  requirements: any
+) {
+  const formattedType = filingType.replace('_', ' ').toUpperCase();
+  const date = new Date().toISOString().split('T')[0];
+  
+  const html = `
+    <h2>${jurisdiction.toUpperCase()} ${formattedType} Filing</h2>
+    <p><strong>To:</strong> ${requirements.agency}</p>
+    <p><strong>Reference:</strong> ${referenceNumber}</p>
+    <p><strong>Date:</strong> ${date}</p>
+    <p><strong>Urgency:</strong> ${urgency.toUpperCase()}</p>
+    
+    <hr>
+    
+    <h3>Filing Details</h3>
+    <p><strong>Document Title:</strong> ${document.title || 'Untitled Document'}</p>
+    <p><strong>Filing Type:</strong> ${formattedType}</p>
+    <p><strong>Jurisdiction:</strong> ${jurisdiction.toUpperCase()}</p>
+    ${document.description ? `<p><strong>Description:</strong> ${document.description}</p>` : ''}
+    
+    <h3>Required Forms and Fees</h3>
+    <p><strong>Forms:</strong> ${requirements.forms?.join(', ') || 'Standard application'}</p>
+    <p><strong>Estimated Fee:</strong> $${getFee(filingType, urgency, requirements)}</p>
+    
+    <h3>Supporting Documentation</h3>
+    <p>Please find the required documentation attached to this email.</p>
+    
+    <h3>Processing Information</h3>
+    <p><strong>Expected Processing Time:</strong> ${urgency === 'expedited' ? requirements.expedited_time : requirements.processing_time}</p>
+    <p><strong>Contact for Questions:</strong> filings@tsmo.com</p>
+    
+    <hr>
+    
+    <p>Please confirm receipt of this filing and provide any additional requirements or next steps.</p>
+    
+    <p><em>This filing was submitted via TSMO Government Filing System. For questions, contact filings@tsmo.com</em></p>
+  `;
+
+  const text = `${jurisdiction.toUpperCase()} ${formattedType} Filing
+
+Reference: ${referenceNumber}
+Date: ${date}
+Agency: ${requirements.agency}
+
+Document Title: ${document.title || 'Untitled Document'}
+Filing Type: ${formattedType}
+Urgency: ${urgency.toUpperCase()}
+
+Required Forms: ${requirements.forms?.join(', ') || 'Standard application'}
+Estimated Fee: $${getFee(filingType, urgency, requirements)}
+Expected Processing: ${urgency === 'expedited' ? requirements.expedited_time : requirements.processing_time}
+
+Please find supporting documentation attached. Confirm receipt and provide next steps.
+
+Contact: filings@tsmo.com
+`;
+
+  return { html, text };
+}
+
+function getFee(filingType: string, urgency: string, requirements: any): number {
+  const fees = requirements.fees || {};
+  
+  if (urgency === 'expedited') {
+    return fees.expedited || fees.fast_track || fees.standard || 100;
+  }
+  
+  return fees.basic || fees.standard || fees.teas_plus || 100;
 }
 
 function calculateResponseDate(processingTime: string): string {

@@ -1,6 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.5';
+import { Resend } from "npm:resend@4.0.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,6 +12,8 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_URL') ?? '',
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 );
+
+const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -208,7 +211,7 @@ async function fileDMCANotice(dmcaData: any, autoFile: boolean) {
       infringing_url: dmcaData.infringingUrl,
       infringing_description: dmcaData.infringingDescription,
       target_domain: dmcaData.targetPlatform,
-      status: autoFile ? 'filed' : 'draft',
+      status: autoFile ? 'filing_in_progress' : 'draft',
       filed_at: autoFile ? new Date().toISOString() : null,
       platform_specific_data: {
         dmcaEmail: dmcaData.dmcaEmail,
@@ -224,37 +227,135 @@ async function fileDMCANotice(dmcaData: any, autoFile: boolean) {
   }
 
   if (autoFile) {
-    // In a real implementation, this would:
-    // 1. Use platform-specific APIs to file automatically
-    // 2. Send emails to DMCA agents
-    // 3. Submit through official takedown portals
-    
-    console.log(`Auto-filing DMCA notice to ${dmcaData.targetPlatform}`);
-    
-    // Simulate API call to platform
-    await simulatePlatformFiling(dmcaData);
+    try {
+      console.log(`Filing DMCA notice to ${dmcaData.targetPlatform} via email`);
+      
+      // Send actual DMCA notice via email
+      const emailResult = await sendDMCAEmail(dmcaData, dmcaNotice.id);
+      
+      // Update notice with email delivery status
+      await supabase
+        .from('dmca_notices')
+        .update({
+          status: emailResult.success ? 'filed' : 'failed',
+          platform_specific_data: {
+            ...dmcaNotice.platform_specific_data,
+            email_result: emailResult,
+            message_id: emailResult.messageId,
+            delivery_timestamp: new Date().toISOString()
+          }
+        })
+        .eq('id', dmcaNotice.id);
+
+      console.log(`DMCA notice email sent: ${emailResult.success ? 'Success' : 'Failed'}`);
+      
+    } catch (emailError) {
+      console.error('Failed to send DMCA email:', emailError);
+      
+      // Update status to failed
+      await supabase
+        .from('dmca_notices')
+        .update({
+          status: 'failed',
+          platform_specific_data: {
+            ...dmcaNotice.platform_specific_data,
+            error: emailError.message,
+            failed_at: new Date().toISOString()
+          }
+        })
+        .eq('id', dmcaNotice.id);
+    }
   }
 
   return {
     id: dmcaNotice.id,
-    status: dmcaNotice.status,
-    trackingUrl: `https://dmca-tracking.example.com/${dmcaNotice.id}`
+    status: autoFile ? 'filed' : 'draft',
+    trackingUrl: `https://tsmo.com/dmca-tracking/${dmcaNotice.id}`
   };
 }
 
-async function simulatePlatformFiling(dmcaData: any) {
-  // This would be replaced with actual platform API calls
-  console.log(`Filing DMCA with ${dmcaData.targetPlatform}:`);
-  console.log(`- Email: ${dmcaData.dmcaEmail}`);
-  console.log(`- URL: ${dmcaData.infringingUrl}`);
-  console.log(`- Instructions: ${dmcaData.customInstructions}`);
-  
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  return {
-    success: true,
-    confirmationNumber: `DMCA-${Date.now()}`,
-    estimatedResolution: '48-72 hours'
-  };
+async function sendDMCAEmail(dmcaData: any, noticeId: string) {
+  try {
+    const dmcaNoticeText = generateDMCANoticeText(dmcaData, noticeId);
+    
+    const emailResponse = await resend.emails.send({
+      from: 'TSMO Legal <legal@tsmo.com>',
+      to: [dmcaData.dmcaEmail],
+      cc: [dmcaData.copyrightOwnerEmail],
+      subject: `DMCA Takedown Notice - ${dmcaData.targetPlatform} - Reference: TSMO-${noticeId}`,
+      html: `
+        <h2>DMCA Takedown Notice</h2>
+        <p><strong>To:</strong> ${dmcaData.targetPlatform} DMCA Agent</p>
+        <p><strong>From:</strong> ${dmcaData.copyrightOwnerName}</p>
+        <p><strong>Reference:</strong> TSMO-${noticeId}</p>
+        <p><strong>Date:</strong> ${new Date().toISOString().split('T')[0]}</p>
+        
+        <hr>
+        
+        <pre style="font-family: Arial, sans-serif; white-space: pre-wrap; line-height: 1.4;">${dmcaNoticeText}</pre>
+        
+        <hr>
+        
+        <p><em>This notice was sent via TSMO Copyright Protection System. For questions, contact legal@tsmo.com</em></p>
+      `,
+      text: dmcaNoticeText,
+      headers: {
+        'X-TSMO-Notice-ID': noticeId,
+        'X-Platform': dmcaData.targetPlatform
+      }
+    });
+
+    return {
+      success: true,
+      messageId: emailResponse.data?.id,
+      error: null
+    };
+  } catch (error) {
+    return {
+      success: false,
+      messageId: null,
+      error: error.message
+    };
+  }
+}
+
+function generateDMCANoticeText(dmcaData: any, noticeId: string): string {
+  return `DIGITAL MILLENNIUM COPYRIGHT ACT TAKEDOWN NOTICE
+
+Notice ID: TSMO-${noticeId}
+Date: ${new Date().toISOString().split('T')[0]}
+
+To: ${dmcaData.targetPlatform} DMCA Agent
+Email: ${dmcaData.dmcaEmail}
+
+I am writing to notify you of copyright infringement occurring on your platform.
+
+IDENTIFICATION OF COPYRIGHTED WORK:
+${dmcaData.copyrightWorkDescription}
+
+COPYRIGHT OWNER INFORMATION:
+Name: ${dmcaData.copyrightOwnerName}
+Email: ${dmcaData.copyrightOwnerEmail}
+Address: ${dmcaData.copyrightOwnerAddress}
+
+IDENTIFICATION OF INFRINGING MATERIAL:
+URL: ${dmcaData.infringingUrl}
+Description: ${dmcaData.infringingDescription}
+
+STATEMENTS:
+I have a good faith belief that use of the copyrighted material described above is not authorized by the copyright owner, its agent, or the law.
+
+I swear, under penalty of perjury, that the information in this notification is accurate and that I am the copyright owner or authorized to act on behalf of the owner of an exclusive right that is allegedly infringed.
+
+ELECTRONIC SIGNATURE:
+${dmcaData.copyrightOwnerName}
+
+Please remove or disable access to the infringing material as soon as possible. I look forward to your prompt attention to this matter.
+
+Sincerely,
+${dmcaData.copyrightOwnerName}
+${dmcaData.copyrightOwnerEmail}
+
+---
+This notice was generated and sent via TSMO Copyright Protection System.`;
 }

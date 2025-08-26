@@ -119,7 +119,6 @@ const GovernmentFilingAdmin: React.FC = () => {
       if (tracking) updateData.tracking_number = tracking;
       if (status === 'filed' || status === 'completed') {
         updateData.filed_at = new Date().toISOString();
-        // In a real app, you'd get the admin user ID
         updateData.filed_by = 'admin';
       }
 
@@ -160,6 +159,42 @@ const GovernmentFilingAdmin: React.FC = () => {
       toast({
         title: "Error",
         description: "Failed to update filing status",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const sendActualFiling = async (requestId: string) => {
+    try {
+      const request = filingRequests.find(r => r.id === requestId);
+      if (!request) throw new Error('Request not found');
+
+      // Call government filing automation with actual filing
+      const { data, error } = await supabase.functions.invoke('government-filing-automation', {
+        body: {
+          documentId: request.id,
+          filingType: request.filing_type,
+          jurisdiction: request.filing_jurisdiction,
+          urgency: request.urgency_level,
+          autoFile: true
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Filing Sent",
+        description: `Government filing has been sent via email. Reference: ${data.referenceNumber}`,
+      });
+
+      // Update local status
+      await updateFilingStatus(requestId, 'filed', 'Filed via automated system', data.referenceNumber);
+      
+    } catch (error) {
+      console.error('Error sending filing:', error);
+      toast({
+        title: "Filing Failed",
+        description: "Failed to send filing to government agency",
         variant: "destructive"
       });
     }
@@ -459,6 +494,16 @@ const GovernmentFilingAdmin: React.FC = () => {
                                 <CheckCircle className="h-4 w-4 mr-2" />
                                 Update Filing
                               </Button>
+                              
+                              {selectedRequest.filing_status === 'received' && selectedRequest.payment_status === 'paid' && (
+                                <Button
+                                  onClick={() => sendActualFiling(selectedRequest.id)}
+                                  variant="destructive"
+                                >
+                                  <FileText className="h-4 w-4 mr-2" />
+                                  Send Filing Now
+                                </Button>
+                              )}
                             </div>
                           </div>
                         </div>

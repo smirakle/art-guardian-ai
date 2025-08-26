@@ -56,8 +56,8 @@ export function DMCAFormDialog({ matchId, sourceUrl, sourceTitle }: DMCAFormDial
       if (error) throw error;
 
       toast({
-        title: "DMCA Notice Filed",
-        description: "Your DMCA takedown notice has been successfully filed and sent to the website operator.",
+        title: "DMCA Notice Filed & Sent",
+        description: "Your DMCA takedown notice has been filed and sent via email to the platform's DMCA agent. You'll receive a confirmation email shortly.",
       });
 
       setOpen(false);
@@ -98,6 +98,9 @@ export function DMCAFormDialog({ matchId, sourceUrl, sourceTitle }: DMCAFormDial
             <FileText className="w-5 h-5" />
             File DMCA Takedown Notice
           </DialogTitle>
+          <div className="text-sm text-green-600 bg-green-50 p-2 rounded">
+            ✓ Live Filing: This will send a real DMCA notice via email to the platform's copyright agent
+          </div>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -215,7 +218,7 @@ export function DMCAFormDialog({ matchId, sourceUrl, sourceTitle }: DMCAFormDial
             </Button>
             <Button type="submit" disabled={isSubmitting} className="flex items-center gap-2">
               <Send className="w-4 h-4" />
-              {isSubmitting ? "Filing..." : "File DMCA Notice"}
+              {isSubmitting ? "Sending Notice..." : "Send DMCA Notice Now"}
             </Button>
           </div>
         </form>
