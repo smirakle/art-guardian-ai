@@ -39,25 +39,40 @@ serve(async (req) => {
 
     console.log(`Sending ${alertType} alert notification to ${userEmail} for alert ${alertId}`);
 
-    // Get alert details
-    const { data: alert, error: alertError } = await supabase
-      .from('monitoring_alerts')
-      .select(`
-        *,
-        copyright_matches:match_id (
+    let alert = null;
+    
+    // Handle test notifications differently
+    if (alertType === 'test_notification' || alertId.startsWith('test-alert-')) {
+      alert = {
+        id: alertId,
+        title: 'Test Security Alert',
+        message: 'This is a test email notification from TSMO to verify your email alert settings are working properly.',
+        threat_level: 'low',
+        copyright_matches: null
+      };
+    } else {
+      // Get real alert details
+      const { data: alertData, error: alertError } = await supabase
+        .from('monitoring_alerts')
+        .select(`
           *,
-          artwork:artwork_id (*)
-        )
-      `)
-      .eq('id', alertId)
-      .single();
+          copyright_matches:match_id (
+            *,
+            artwork:artwork_id (*)
+          )
+        `)
+        .eq('id', alertId)
+        .single();
 
-    if (alertError || !alert) {
-      console.error('Error fetching alert details:', alertError);
-      return new Response(
-        JSON.stringify({ error: "Alert not found" }),
-        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      if (alertError || !alertData) {
+        console.error('Error fetching alert details:', alertError);
+        return new Response(
+          JSON.stringify({ error: "Alert not found" }),
+          { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      alert = alertData;
     }
 
     // Generate email content based on alert type
@@ -140,6 +155,12 @@ function generateEmailContent(alert: any, alertType: string, userName: string) {
   
   // Customize content based on alert type
   switch (alertType) {
+    case 'test_notification':
+      subject = `✅ TSMO Test Notification - Email Settings Working`;
+      urgencyLevel = "Test";
+      actionRequired = "No Action Required";
+      bgColor = "#10b981"; // Green for test
+      break;
     case 'high_confidence_match':
     case 'high_threat':
       subject = `🚨 HIGH PRIORITY: Copyright Violation Detected`;
