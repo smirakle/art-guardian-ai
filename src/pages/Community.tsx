@@ -1548,7 +1548,11 @@ The global creative economy offers tremendous opportunities for artists willing 
                 <CardTitle className="text-lg">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button className="w-full justify-start" variant="outline">
+                <Button 
+                  className="w-full justify-start" 
+                  variant="outline"
+                  onClick={() => navigate('/contact')}
+                >
                   <AlertTriangle className="w-4 h-4 mr-2" />
                   Report IP Theft
                 </Button>
