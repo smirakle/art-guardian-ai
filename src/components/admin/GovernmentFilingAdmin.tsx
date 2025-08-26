@@ -7,7 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Download, Eye, Edit, FileText, Clock, DollarSign, User, Building2, CheckCircle, XCircle } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Download, Eye, Edit, FileText, Clock, DollarSign, User, Building2, CheckCircle, XCircle, Activity } from 'lucide-react';
+import FilingDeliveryMonitor from './FilingDeliveryMonitor';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -265,6 +267,15 @@ const GovernmentFilingAdmin: React.FC = () => {
           </Badge>
         </div>
       </div>
+
+      {/* Tabs */}
+      <Tabs defaultValue="requests" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="requests">Filing Requests</TabsTrigger>
+          <TabsTrigger value="delivery">Delivery Monitor</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="requests" className="space-y-6">
 
       {/* Filters */}
       <div className="flex gap-4">
@@ -528,6 +539,12 @@ const GovernmentFilingAdmin: React.FC = () => {
           </CardContent>
         </Card>
       )}
+        </TabsContent>
+
+        <TabsContent value="delivery">
+          <FilingDeliveryMonitor />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

@@ -148,7 +148,9 @@ async function getFilingRequirements(filingType: string, jurisdiction: string) {
         processing_time: '3-5 months',
         expedited_time: '5-15 business days',
         api_endpoint: 'https://www.copyright.gov/eco/',
-        contact: 'copyright@loc.gov'
+        contact: 'copyright@loc.gov',
+        verified: true,
+        last_verified: '2024-01-15'
       },
       'trademark_application': {
         agency: 'USPTO',
@@ -158,7 +160,9 @@ async function getFilingRequirements(filingType: string, jurisdiction: string) {
         processing_time: '12-18 months',
         expedited_time: '6-8 months',
         api_endpoint: 'https://tsdr.uspto.gov/',
-        contact: 'TrademarkAssistanceCenter@uspto.gov'
+        contact: 'TrademarkAssistanceCenter@uspto.gov',
+        verified: true,
+        last_verified: '2024-01-15'
       },
       'dmca_filing': {
         agency: 'Copyright Office',
@@ -167,7 +171,9 @@ async function getFilingRequirements(filingType: string, jurisdiction: string) {
         documents: ['agent_designation', 'contact_info'],
         processing_time: '1-2 weeks',
         api_endpoint: 'https://dmca.copyright.gov/',
-        contact: 'dmca@copyright.gov'
+        contact: 'dmca@copyright.gov',
+        verified: true,
+        last_verified: '2024-01-15'
       }
     },
     'EU': {
@@ -196,14 +202,37 @@ async function getFilingRequirements(filingType: string, jurisdiction: string) {
     }
   };
 
-  return requirements[jurisdiction]?.[filingType] || {
-    agency: 'Local Government Authority',
-    forms: ['Standard Application'],
-    fees: { standard: 100 },
-    documents: ['application', 'supporting_documents'],
-    processing_time: '2-6 months',
-    contact: 'info@government.local'
-  };
+  const requirement = requirements[jurisdiction]?.[filingType];
+  
+  if (!requirement) {
+    return {
+      agency: 'Local Government Authority',
+      forms: ['Standard Application'],
+      fees: { standard: 100 },
+      documents: ['application', 'supporting_documents'],
+      processing_time: '2-6 months',
+      contact: 'info@government.local',
+      verified: false,
+      last_verified: null
+    };
+  }
+
+  // Validate contact information
+  if (!requirement.verified || isContactStale(requirement.last_verified)) {
+    console.warn(`Warning: Contact information for ${jurisdiction} ${filingType} may be outdated`);
+  }
+
+  return requirement;
+}
+
+function isContactStale(lastVerified: string | null): boolean {
+  if (!lastVerified) return true;
+  
+  const verificationDate = new Date(lastVerified);
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+  
+  return verificationDate < sixMonthsAgo;
 }
 
 async function validateForFiling(document: any, requirements: any) {
@@ -330,7 +359,17 @@ async function sendGovernmentFilingEmail(
   referenceNumber: string,
   requirements: any
 ) {
-  try {
+  const maxRetries = 3;
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`Sending filing email (attempt ${attempt}/${maxRetries})`);
+      
+      // Validate contact before sending
+      if (!requirements.verified) {
+        console.warn(`Contact not verified for ${jurisdiction} ${filingType}`);
+      }
     // Fetch supporting documents from storage
     const attachments = [];
     if (document.file_path) {
@@ -379,21 +418,35 @@ async function sendGovernmentFilingEmail(
       }
     });
 
-    console.log(`Government filing email sent successfully: ${emailResponse.data?.id}`);
+      console.log(`Government filing email sent successfully: ${emailResponse.data?.id}`);
 
-    return {
-      success: true,
-      messageId: emailResponse.data?.id,
-      error: null
-    };
-  } catch (error) {
-    console.error('Failed to send government filing email:', error);
-    return {
-      success: false,
-      messageId: null,
-      error: error.message
-    };
+      return {
+        success: true,
+        messageId: emailResponse.data?.id,
+        error: null,
+        attempt: attempt
+      };
+    } catch (error) {
+      console.error(`Attempt ${attempt} failed to send government filing email:`, error);
+      lastError = error;
+      
+      if (attempt < maxRetries) {
+        // Wait before retry (exponential backoff)
+        const waitTime = Math.pow(2, attempt) * 1000;
+        console.log(`Waiting ${waitTime}ms before retry...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+      }
+    }
   }
+
+  // All attempts failed
+  console.error('All attempts to send government filing email failed:', lastError);
+  return {
+    success: false,
+    messageId: null,
+    error: lastError?.message || 'Failed to send after multiple attempts',
+    attempts: maxRetries
+  };
 }
 
 function generateFilingEmailContent(

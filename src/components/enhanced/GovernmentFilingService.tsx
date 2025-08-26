@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import ComplianceNotice from '@/components/legal/ComplianceNotice';
 
 const filingFormSchema = z.object({
   filingType: z.string().min(1, 'Filing type is required'),
@@ -239,8 +240,28 @@ const GovernmentFilingService: React.FC<GovernmentFilingServiceProps> = ({ userS
       <Alert className="border-green-200 bg-green-50">
         <CheckCircle className="h-4 w-4 text-green-600" />
         <AlertDescription className="text-green-800">
-          <strong>Live Service:</strong> Government filings are now processed and sent via secure email to the appropriate agencies. 
+          <strong>Live Service:</strong> Government filings are processed and sent via secure email to the appropriate agencies. 
           All documents are filed with real government authorities and you will receive confirmation emails.
+        </AlertDescription>
+      </Alert>
+
+      {/* Legal Disclaimers */}
+      <Alert className="border-amber-200 bg-amber-50">
+        <AlertTriangle className="h-4 w-4 text-amber-600" />
+        <AlertDescription className="text-amber-800">
+          <strong>Important Legal Notice:</strong> This service provides filing assistance only. We are not attorneys and do not provide legal advice. 
+          For complex matters, consult with a qualified attorney. By using this service, you acknowledge that government filing requirements 
+          may vary and additional steps may be required beyond our automated process.
+        </AlertDescription>
+      </Alert>
+
+      {/* Professional Liability Disclaimer */}
+      <Alert className="border-blue-200 bg-blue-50">
+        <Building2 className="h-4 w-4 text-blue-600" />
+        <AlertDescription className="text-blue-800">
+          <strong>Service Limitations:</strong> While we maintain professional liability coverage, all filings are subject to government 
+          processing requirements and timelines beyond our control. We guarantee delivery to the appropriate agency but cannot guarantee 
+          government approval or processing outcomes.
         </AlertDescription>
       </Alert>
       {/* Service Header */}
@@ -464,6 +485,19 @@ const GovernmentFilingService: React.FC<GovernmentFilingServiceProps> = ({ userS
                 placeholder="Any specific requirements or special instructions for filing"
                 rows={3}
               />
+            </div>
+
+            {/* Terms and Conditions */}
+            <div className="bg-muted p-4 rounded-lg text-sm">
+              <h4 className="font-semibold mb-2">Terms and Conditions</h4>
+              <ul className="space-y-1 text-muted-foreground">
+                <li>• By proceeding, you agree to our government filing terms of service</li>
+                <li>• Filing fees are non-refundable once payment is processed</li>
+                <li>• We guarantee delivery to the appropriate government agency</li>
+                <li>• Government processing times and outcomes are not guaranteed</li>
+                <li>• Additional government fees may apply beyond our service fee</li>
+                <li>• We are not responsible for government rejections due to incomplete documentation</li>
+              </ul>
             </div>
 
             {/* Submit Button */}
