@@ -82,6 +82,36 @@ serve(async (req) => {
       )
     }
 
+    // Get user details for email notification
+    const { data: userProfile, error: userError } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('user_id', userId)
+      .single()
+
+    const { data: { user }, error: authError } = await supabase.auth.admin.getUserById(userId)
+    
+    if (!authError && user?.email) {
+      // Send email notification in background
+      console.log(`Triggering email notification for alert ${alert.id}`)
+      
+      try {
+        await supabase.functions.invoke('send-alert-notification', {
+          body: {
+            alertId: alert.id,
+            alertType: alertType,
+            userId: userId,
+            userEmail: user.email,
+            userName: userProfile?.full_name || user.user_metadata?.full_name || 'User'
+          }
+        })
+        console.log('Email notification triggered successfully')
+      } catch (emailError) {
+        console.error('Failed to trigger email notification:', emailError)
+        // Don't fail the alert creation if email fails
+      }
+    }
+
     return new Response(
       JSON.stringify({ success: true, alert }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
