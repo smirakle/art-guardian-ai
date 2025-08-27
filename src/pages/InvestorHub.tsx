@@ -101,11 +101,11 @@ const InvestorHub = () => {
           <CardContent className="pt-0">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold text-primary">$2M</div>
-                <div className="text-xs text-muted-foreground">Series A Target</div>
+                <div className="text-2xl font-bold text-primary">$500K</div>
+                <div className="text-xs text-muted-foreground">Seed Round Target</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-primary">$4M</div>
+                <div className="text-2xl font-bold text-primary">$2M</div>
                 <div className="text-xs text-muted-foreground">Pre-Money Valuation</div>
               </div>
               <div>
@@ -113,8 +113,8 @@ const InvestorHub = () => {
                 <div className="text-xs text-muted-foreground">Total Addressable Market</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-green-600">$450K</div>
-                <div className="text-xs text-muted-foreground">ARR Run Rate</div>
+                <div className="text-2xl font-bold text-green-600">Q2 2025</div>
+                <div className="text-xs text-muted-foreground">Revenue Target Launch</div>
               </div>
             </div>
           </CardContent>
