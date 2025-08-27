@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,16 +15,91 @@ import {
   Plus,
   Eye,
   Calendar,
-  MapPin
+  MapPin,
+  ArrowRight,
+  Zap,
+  Globe,
+  Lock,
+  Users,
+  Play,
+  ChevronRight,
+  FileText,
+  Scale,
+  Building,
+  Heart,
+  ExternalLink,
+  Bot,
+  FileImage,
+  EyeOff,
+  Fingerprint,
+  BadgeCheck,
+  CheckCircle,
+  Star
 } from 'lucide-react';
 
 const MobileHomePage = () => {
+  const [activeFeature, setActiveFeature] = useState(0);
+
+  const heroStats = [
+    { label: 'Creators Protected', value: '15K+', icon: Users, color: 'text-blue-500' },
+    { label: 'Revenue Recovered', value: '$2.4M', icon: TrendingUp, color: 'text-green-500' },
+    { label: 'Violations Detected', value: '50K+', icon: AlertTriangle, color: 'text-red-500' },
+    { label: 'Monitoring', value: '24/7', icon: Shield, color: 'text-purple-500' }
+  ];
+
+  const protectionFeatures = [
+    {
+      icon: EyeOff,
+      title: 'Invisible Art Shield',
+      description: 'Prevents AI from learning your style while keeping artwork unchanged',
+      badge: 'StyleCloak Tech',
+      color: 'from-blue-500 to-blue-600'
+    },
+    {
+      icon: Fingerprint,
+      title: 'Smart Detection',
+      description: 'Finds copies anywhere online, even when modified or filtered',
+      badge: 'Multi-Modal AI',
+      color: 'from-green-500 to-green-600'
+    },
+    {
+      icon: BadgeCheck,
+      title: 'Blockchain Proof',
+      description: 'Immutable certificates proving ownership and creation date',
+      badge: 'Permanent Record',
+      color: 'from-purple-500 to-purple-600'
+    }
+  ];
+
+  const howItWorks = [
+    {
+      step: '1',
+      title: 'Upload & Protect',
+      description: 'Upload artwork and apply invisible protection layers'
+    },
+    {
+      step: '2', 
+      title: '24/7 AI Monitoring',
+      description: 'AI scans internet, social media, and marketplaces'
+    },
+    {
+      step: '3',
+      title: 'Instant Detection',
+      description: 'Get notified immediately with detailed evidence'
+    },
+    {
+      step: '4',
+      title: 'Automated Response',
+      description: 'Automatic takedown notices and legal documentation'
+    }
+  ];
+
   const recentAlerts = [
     {
       id: 1,
       type: 'violation',
-      title: 'Art found on unauthorized site',
-      description: 'Digital painting detected on marketplace',
+      title: 'Art found on marketplace',
+      description: 'Digital painting detected on unauthorized site',
       time: '2 hours ago',
       severity: 'high'
     },
@@ -38,15 +113,8 @@ const MobileHomePage = () => {
     }
   ];
 
-  const quickStats = [
-    { label: 'Protected', value: '24', icon: Shield, color: 'text-green-500' },
-    { label: 'Violations', value: '3', icon: AlertTriangle, color: 'text-red-500' },
-    { label: 'This Month', value: '12', icon: TrendingUp, color: 'text-blue-500' },
-    { label: 'Uploaded', value: '156', icon: ImageIcon, color: 'text-purple-500' }
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/30">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
       {/* Mobile Status Bar */}
       <div className="bg-black text-white text-xs px-4 py-1 flex justify-between items-center">
         <span>9:41</span>
@@ -88,41 +156,135 @@ const MobileHomePage = () => {
       </div>
 
       <div className="p-4 space-y-6">
-        {/* Quick Stats */}
+        {/* Hero Section - Mobile Version */}
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-primary/10 to-accent/10">
+          <CardContent className="p-6 text-center">
+            <Badge variant="secondary" className="mb-4 px-3 py-1 animate-pulse">
+              💰 Stop Losing Money to Content Thieves
+            </Badge>
+            <h1 className="text-2xl font-bold mb-3 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Protect Your Art.
+            </h1>
+            <h2 className="text-xl font-bold mb-4 text-foreground">
+              Keep What's Yours.
+            </h2>
+            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+              Advanced AI-powered protection for digital artists. Monitor, verify, and secure your creative work with blockchain technology.
+            </p>
+            <div className="grid grid-cols-2 gap-2 mb-6">
+              <Button size="sm" className="bg-gradient-to-r from-primary to-accent">
+                Start Free Protection
+                <ArrowRight className="ml-1 h-3 w-3" />
+              </Button>
+              <Button variant="outline" size="sm">
+                <Play className="mr-1 h-3 w-3" />
+                See Demo
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Hero Stats - Mobile Grid */}
         <div className="grid grid-cols-2 gap-3">
-          {quickStats.map((stat, index) => (
+          {heroStats.map((stat, index) => (
             <Card key={index} className="border-0 shadow-sm bg-white/80 backdrop-blur-sm">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-2xl font-bold">{stat.value}</p>
+                    <p className="text-lg font-bold text-primary">{stat.value}</p>
                     <p className="text-xs text-muted-foreground">{stat.label}</p>
                   </div>
-                  <stat.icon className={`h-5 w-5 ${stat.color}`} />
+                  <stat.icon className={`h-4 w-4 ${stat.color}`} />
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {/* Quick Actions */}
+        {/* Problem Showcase - Mobile */}
         <Card className="border-0 shadow-sm bg-white/80 backdrop-blur-sm">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
-              <Plus className="h-5 w-5 text-primary" />
-              Quick Actions
+              <AlertTriangle className="h-5 w-5 text-red-500" />
+              Art Theft Problems
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" className="h-auto flex-col py-4 gap-2">
-                <Upload className="h-6 w-6 text-primary" />
-                <span className="text-sm">Upload Art</span>
-              </Button>
-              <Button variant="outline" className="h-auto flex-col py-4 gap-2">
-                <Search className="h-6 w-6 text-primary" />
-                <span className="text-sm">Search Web</span>
-              </Button>
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-center gap-2 mb-1">
+                <Bot className="h-4 w-4 text-red-600" />
+                <span className="font-medium text-red-700 text-sm">AI Art Theft</span>
+              </div>
+              <p className="text-xs text-red-600">AI models stealing your style without permission</p>
+            </div>
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-center gap-2 mb-1">
+                <FileImage className="h-4 w-4 text-red-600" />
+                <span className="font-medium text-red-700 text-sm">Fake Products</span>
+              </div>
+              <p className="text-xs text-red-600">Unauthorized merchandise using your artwork</p>
+            </div>
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-center gap-2 mb-1">
+                <Search className="h-4 w-4 text-red-600" />
+                <span className="font-medium text-red-700 text-sm">Art Copying</span>
+              </div>
+              <p className="text-xs text-red-600">Direct copying and unauthorized distribution</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* How It Works - Mobile */}
+        <Card className="border-0 shadow-sm bg-white/80 backdrop-blur-sm">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Shield className="h-5 w-5 text-primary" />
+              How We Protect You
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {howItWorks.map((step, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center shrink-0">
+                  <span className="text-white font-bold text-sm">{step.step}</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-sm mb-1">{step.title}</h3>
+                  <p className="text-xs text-muted-foreground">{step.description}</p>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Protection Features - Mobile Carousel */}
+        <Card className="border-0 shadow-sm bg-white/80 backdrop-blur-sm">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Shield className="h-5 w-5 text-primary" />
+              Protection Features
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {protectionFeatures.map((feature, index) => (
+                <div key={index} className="p-4 border rounded-lg bg-gradient-to-r from-muted/30 to-background">
+                  <div className="flex items-start gap-3">
+                    <div className={`w-10 h-10 bg-gradient-to-r ${feature.color} rounded-lg flex items-center justify-center shrink-0`}>
+                      <feature.icon className="h-5 w-5 text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 className="font-medium text-sm">{feature.title}</h3>
+                        <Badge variant="secondary" className="text-xs px-2 py-0">
+                          {feature.badge}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{feature.description}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -162,67 +324,29 @@ const MobileHomePage = () => {
           </CardContent>
         </Card>
 
-        {/* Portfolio Overview */}
+        {/* Quick Actions */}
         <Card className="border-0 shadow-sm bg-white/80 backdrop-blur-sm">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
-              <ImageIcon className="h-5 w-5 text-primary" />
-              Your Portfolio
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-3 gap-2">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="aspect-square bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg relative overflow-hidden">
-                  <div className="absolute inset-2 bg-white/20 backdrop-blur-sm rounded border border-white/30"></div>
-                  <Badge 
-                    variant={i <= 2 ? "destructive" : "secondary"} 
-                    className="absolute top-1 right-1 text-[8px] px-1 py-0"
-                  >
-                    {i <= 2 ? "Alert" : "Safe"}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-            <Button variant="outline" className="w-full mt-4">
-              View All Artwork
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Recent Scans */}
-        <Card className="border-0 shadow-sm bg-white/80 backdrop-blur-sm">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              Recent Scans
+              <Plus className="h-5 w-5 text-primary" />
+              Quick Actions
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <div>
-                  <p className="font-medium text-sm">Web Monitoring</p>
-                  <p className="text-xs text-muted-foreground">Scanning 847 sites</p>
-                </div>
-              </div>
-              <Badge variant="secondary" className="text-xs">
-                Active
-              </Badge>
+            <div className="grid grid-cols-2 gap-3">
+              <Button variant="outline" className="h-auto flex-col py-4 gap-2">
+                <Upload className="h-6 w-6 text-primary" />
+                <span className="text-sm">Upload Art</span>
+              </Button>
+              <Button variant="outline" className="h-auto flex-col py-4 gap-2">
+                <Search className="h-6 w-6 text-primary" />
+                <span className="text-sm">Search Web</span>
+              </Button>
             </div>
-            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-              <div className="flex items-center gap-3">
-                <Calendar className="h-4 w-4 text-blue-500" />
-                <div>
-                  <p className="font-medium text-sm">Daily Scan</p>
-                  <p className="text-xs text-muted-foreground">Last run: 2 hours ago</p>
-                </div>
-              </div>
-              <Badge variant="outline" className="text-xs">
-                Complete
-              </Badge>
-            </div>
+            <Button className="w-full" variant="default">
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Get Full Protection
+            </Button>
           </CardContent>
         </Card>
       </div>
