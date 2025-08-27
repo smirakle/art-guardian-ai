@@ -13,6 +13,7 @@ import { useMaintenanceMode } from "@/lib/maintenance";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { BlockchainProvider } from "@/contexts/BlockchainContext";
+import Home from "./pages/Home";
 import Index from "./pages/Index";
 import AboutTsmo from "./pages/AboutTsmo";
 import FAQ from "./pages/FAQ";
@@ -95,7 +96,8 @@ const App = () => {
                   </header>
                   <div className="p-4">
                     <Routes>
-                      <Route path="/" element={<Index />} />
+                      <Route path="/" element={<Home />} />
+                      <Route path="/platform" element={<Index />} />
                       <Route path="/dashboard" element={<Dashboard />} />
                       <Route path="/about-tsmo" element={<AboutTsmo />} />
                       <Route path="/faq" element={<FAQ />} />
