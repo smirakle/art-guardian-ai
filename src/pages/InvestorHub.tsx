@@ -101,12 +101,12 @@ const InvestorHub = () => {
           <CardContent className="pt-0">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold text-primary">$500K</div>
+                <div className="text-2xl font-bold text-primary">$2M</div>
                 <div className="text-xs text-muted-foreground">Series A Target</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-primary">$3.5M</div>
-                <div className="text-xs text-muted-foreground">Current Valuation</div>
+                <div className="text-2xl font-bold text-primary">$8M</div>
+                <div className="text-xs text-muted-foreground">Pre-Money Valuation</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-green-600">$15.7B</div>
