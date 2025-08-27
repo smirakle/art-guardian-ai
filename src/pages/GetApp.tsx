@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Smartphone, Download, QrCode, Shield, Star, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { MobileContainer } from '@/components/mobile/MobileContainer';
 
 const GetApp = () => {
   const { toast } = useToast();
@@ -277,6 +278,9 @@ const GetApp = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Mobile Experience Preview */}
+        <MobileContainer />
       </div>
     </div>
   );
