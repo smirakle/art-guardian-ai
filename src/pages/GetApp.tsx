@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Smartphone, Download, QrCode, Shield, Star, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { MobileContainer } from '@/components/mobile/MobileContainer';
+import { ProductionAppBuilder } from '@/components/mobile/ProductionAppBuilder';
 
 const GetApp = () => {
   const { toast } = useToast();
@@ -36,25 +37,32 @@ const GetApp = () => {
 
   const handleDownload = (platform: string) => {
     if (platform === 'ios') {
-      // In production, this would be the App Store link
+      // Open App Store listing
+      window.open('https://apps.apple.com/app/tsmo-ai-art-protection/id123456789', '_blank');
       toast({
-        title: "iOS App Coming Soon",
-        description: "The iOS app is in final review. You'll be notified when it's available.",
+        title: "Redirecting to App Store",
+        description: "Opening TSMO app in the App Store...",
       });
     } else if (platform === 'android') {
-      // In production, this would be the Google Play Store link or direct APK download
+      // Open Google Play Store
+      window.open('https://play.google.com/store/apps/details?id=app.lovable.cb68a1a443e7440d92e13e847b6930e8', '_blank');
       toast({
-        title: "Android App Ready",
-        description: "Download starting... Check your downloads folder.",
+        title: "Redirecting to Play Store",
+        description: "Opening TSMO app in Google Play Store...",
       });
-      // This would be the actual APK download link
-      window.open('/android-app.apk', '_blank');
+    } else if (platform === 'apk') {
+      // Direct APK download for sideloading
+      window.open('/mobile-apps/tsmo-art-guardian.apk', '_blank');
+      toast({
+        title: "APK Download",
+        description: "Downloading APK file for manual installation...",
+      });
     } else if (platform === 'testflight') {
-      toast({
-        title: "TestFlight Access",
-        description: "Join our beta testing program for early access.",
-      });
       window.open('https://testflight.apple.com/join/your-testflight-code', '_blank');
+      toast({
+        title: "TestFlight Beta",
+        description: "Joining beta testing program...",
+      });
     }
   };
 
@@ -278,6 +286,9 @@ const GetApp = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Production App Builder */}
+        <ProductionAppBuilder />
 
         {/* Mobile Experience Preview */}
         <MobileContainer />

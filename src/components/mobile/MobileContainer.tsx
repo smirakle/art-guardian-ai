@@ -50,8 +50,9 @@ export const MobileContainer = () => {
   ];
 
   const downloadLinks = {
-    ios: "https://apps.apple.com/app/tsmo-art-guardian",
-    android: "https://play.google.com/store/apps/details?id=com.tsmo.artguardian"
+    ios: "https://apps.apple.com/app/tsmo-ai-art-protection/id123456789", // Replace with actual App Store ID
+    android: "https://play.google.com/store/apps/details?id=app.lovable.cb68a1a443e7440d92e13e847b6930e8",
+    apk: "/mobile-apps/tsmo-art-guardian.apk" // Direct APK download for testing
   };
 
   return (
