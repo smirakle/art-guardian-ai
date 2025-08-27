@@ -1026,6 +1026,48 @@ export type Database = {
           },
         ]
       }
+      copyright_scan_results: {
+        Row: {
+          ai_analysis: string | null
+          created_at: string
+          id: string
+          image_url: string
+          results: Json
+          scan_completed_at: string
+          search_engines: string[]
+          threat_level: string
+          total_matches: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_analysis?: string | null
+          created_at?: string
+          id?: string
+          image_url: string
+          results?: Json
+          scan_completed_at?: string
+          search_engines?: string[]
+          threat_level?: string
+          total_matches?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_analysis?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string
+          results?: Json
+          scan_completed_at?: string
+          search_engines?: string[]
+          threat_level?: string
+          total_matches?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       custom_integrations: {
         Row: {
           api_key: string
@@ -1598,6 +1640,45 @@ export type Database = {
           is_active?: boolean
           name?: string
           subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      enterprise_ai_analyses: {
+        Row: {
+          analyses: Json
+          analysis_type: string
+          created_at: string
+          id: string
+          image_url: string
+          overall_risk: string
+          processed_at: string
+          risk_factors: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          analyses?: Json
+          analysis_type?: string
+          created_at?: string
+          id?: string
+          image_url: string
+          overall_risk?: string
+          processed_at?: string
+          risk_factors?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          analyses?: Json
+          analysis_type?: string
+          created_at?: string
+          id?: string
+          image_url?: string
+          overall_risk?: string
+          processed_at?: string
+          risk_factors?: string[] | null
           updated_at?: string
           user_id?: string
         }
