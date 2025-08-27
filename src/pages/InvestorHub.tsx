@@ -85,10 +85,10 @@ const InvestorHub = () => {
               <p className="text-sm text-muted-foreground">
                 We launched a new Image Forgery Detection tool with ELA, metadata, invisible watermark checks, and AI tamper assessment.
               </p>
-              <Button variant="secondary" size="sm" className="gap-2" onClick={() => (window.location.href = '/forgery-detection')}>
-                <Shield className="h-4 w-4" />
-                View Feature
-              </Button>
+            <Button variant="secondary" size="sm" className="gap-2" onClick={() => window.open('/forgery-detection', '_blank')}>
+              <Shield className="h-4 w-4" />
+              View Feature
+            </Button>
             </div>
           </CardContent>
         </Card>
@@ -189,10 +189,10 @@ const InvestorHub = () => {
             </div>
 
             <div className="mt-4 flex justify-center gap-2">
-              <Button className="gap-2" onClick={() => (window.location.href = '/pricing')}>
+              <Button className="gap-2" onClick={() => window.open('/pricing', '_blank')}>
                 View Full Pricing
               </Button>
-              <Button variant="outline" className="gap-2" onClick={() => (window.location.href = '/contact')}>
+              <Button variant="outline" className="gap-2" onClick={() => window.open('/contact', '_blank')}>
                 <Users className="h-4 w-4" />
                 Contact Sales
               </Button>
