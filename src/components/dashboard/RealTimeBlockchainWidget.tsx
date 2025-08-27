@@ -170,7 +170,7 @@ export const RealTimeBlockchainWidget = () => {
       if (error) throw error;
 
       if (stuckArtworks && stuckArtworks.length > 0) {
-        console.log('Found stuck registrations:', stuckArtworks.length);
+        // Found stuck registrations, processing auto-retry
         
         // Retry each stuck registration
         for (const artwork of stuckArtworks) {
@@ -196,7 +196,7 @@ export const RealTimeBlockchainWidget = () => {
           filter: `user_id=eq.${user!.id}`
         },
         (payload) => {
-          console.log('Blockchain certificate update:', payload);
+          // Blockchain certificate updated
           loadBlockchainData();
           
           if (payload.eventType === 'INSERT') {
@@ -368,7 +368,7 @@ export const RealTimeBlockchainWidget = () => {
 
   const downloadCertificate = async (cert: BlockchainCertificate) => {
     try {
-      console.log('Starting certificate download for:', cert.certificate_id);
+      // Starting certificate download
       const certData = cert.certificate_data as any;
       const network = certData?.network || 'polygon';
       
@@ -494,7 +494,7 @@ export const RealTimeBlockchainWidget = () => {
       // Generate filename
       const fileName = `TSMO_Certificate_${cert.certificate_id}_${new Date().toISOString().split('T')[0]}.pdf`;
       
-      console.log('Saving PDF with filename:', fileName);
+      // Saving PDF certificate
       
       // Save the PDF
       pdf.save(fileName);

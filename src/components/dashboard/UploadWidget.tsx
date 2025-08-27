@@ -333,7 +333,7 @@ export const UploadWidget = ({ onUploadComplete }: UploadWidgetProps) => {
                 description: description || null,
                 category: category || 'digital',
                 filePaths: [fileName],
-                userEmail: user?.email || 'unknown@example.com',
+                userEmail: user?.email,
                 userId: user?.id
               }
             });
@@ -564,7 +564,7 @@ export const UploadWidget = ({ onUploadComplete }: UploadWidgetProps) => {
                   id="url-input"
                   value={urlInput}
                   onChange={(e) => setUrlInput(e.target.value)}
-                  placeholder="https://example.com/content"
+                  placeholder="https://instagram.com/post/... or https://tiktok.com/@user/video/..."
                   onKeyPress={(e) => e.key === 'Enter' && addUrl()}
                 />
                 <Button onClick={addUrl}>

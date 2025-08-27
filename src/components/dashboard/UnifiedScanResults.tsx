@@ -196,13 +196,7 @@ export const UnifiedScanResults = () => {
         .order('detected_at', { ascending: false })
         .limit(20);
 
-      console.log('Fetched scan data:', {
-        artworkIds: artworkIds.length,
-        monitoring: monitoringScans.length,
-        copyright: copyrightMatches.length,
-        web: webScans?.length || 0,
-        deepfake: deepfakeMatches?.length || 0
-      });
+      // Scan data fetched successfully
       // Transform data to unified format
       const monitoring: ScanResult[] = monitoringScans.map(scan => ({
         id: scan.id,

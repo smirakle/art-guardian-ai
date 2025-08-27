@@ -6,7 +6,7 @@ import { ProfileTargetManager } from '@/components/profile-monitoring/ProfileTar
 import { MultiPlatformScanner } from '@/components/profile-monitoring/MultiPlatformScanner';
 import { ImpersonationAlerts } from '@/components/profile-monitoring/ImpersonationAlerts';
 import { ProfileRiskAnalyzer } from '@/components/profile-monitoring/ProfileRiskAnalyzer';
-import { ComingSoon } from '@/components/ComingSoon';
+
 
 export default function ProfileMonitoring() {
   return (
@@ -75,11 +75,43 @@ export default function ProfileMonitoring() {
           </TabsContent>
 
           <TabsContent value="reports">
-            <ComingSoon 
-              title="Monitoring Reports" 
-              description="Comprehensive reports and analytics on your profile monitoring activities."
-              icon={<Globe className="w-12 h-12 text-muted-foreground" />}
-            />
+            <div className="space-y-6">
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="bg-card rounded-lg p-6 border">
+                  <h3 className="text-lg font-semibold mb-2">Monitoring Summary</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Your profile monitoring activities and detected threats
+                  </p>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm">Active Targets</span>
+                      <span className="text-sm font-medium">View in Dashboard</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Scans Today</span>
+                      <span className="text-sm font-medium">Check Scanner</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-card rounded-lg p-6 border">
+                  <h3 className="text-lg font-semibold mb-2">Risk Analysis</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Current risk levels and recommendations
+                  </p>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm">Risk Level</span>
+                      <span className="text-sm font-medium">View Analysis</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Alerts</span>
+                      <span className="text-sm font-medium">Check Alerts</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

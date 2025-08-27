@@ -75,7 +75,7 @@ export const RealTimeMonitoringWidget = () => {
       });
 
       if (statusResponse && !statusResponse.active) {
-        console.log('Auto-starting continuous monitoring...');
+        // Auto-starting continuous monitoring
         await supabase.functions.invoke('generate-realtime-data', {
           body: { action: 'auto-start' }
         });

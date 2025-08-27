@@ -126,6 +126,11 @@ export const ProductionDashboard = () => {
       });
     } catch (error) {
       console.error('Error loading dashboard stats:', error);
+      toast({
+        title: "Failed to load dashboard data",
+        description: "Please refresh the page or try again later.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }

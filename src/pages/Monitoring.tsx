@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Activity, AlertTriangle, FileText, Users, Brain } from "lucide-react";
 import CopyrightMatches from "@/components/monitoring/CopyrightMatches";
 import MonitoringDashboard from "@/components/MonitoringDashboard";
@@ -11,7 +11,7 @@ import SocialMediaMonitoringResults from "@/components/monitoring/SocialMediaMon
 import FakeAccountDetector from "@/components/FakeAccountDetector";
 import SocialMediaAccountManager from "@/components/SocialMediaAccountManager";
 import FeatureGuard from "@/components/FeatureGuard";
-import { ComingSoon } from "@/components/ComingSoon";
+
 
 export default function Monitoring() {
   return (
@@ -93,19 +93,46 @@ export default function Monitoring() {
           </TabsContent>
 
           <TabsContent value="social" className="space-y-6">
-            <ComingSoon 
-              title="Social Media Monitoring" 
-              description="Advanced social media monitoring and content protection across all major platforms is under development."
-              icon={<Users className="w-12 h-12 text-muted-foreground" />}
-            />
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  Social Media Monitoring
+                </CardTitle>
+                <CardDescription>
+                  Monitor and protect your content across social media platforms
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <SocialMediaAccountManager />
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Social Media Detections</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <SocialMediaMonitoringResults />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="deepfakes" className="space-y-6">
-            <ComingSoon 
-              title="Deepfake Detection" 
-              description="AI-powered deepfake detection and monitoring technology is being developed to protect against synthetic media threats."
-              icon={<Brain className="w-12 h-12 text-muted-foreground" />}
-            />
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Brain className="w-5 h-5" />
+                  Deepfake Detection
+                </CardTitle>
+                <CardDescription>
+                  AI-powered deepfake detection and monitoring
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FakeAccountDetector />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="dmca" className="space-y-6">
