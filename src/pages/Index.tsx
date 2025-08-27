@@ -50,6 +50,7 @@ import MonitoringFlow from "@/components/MonitoringFlow";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import OnboardingTour from "@/components/OnboardingTour";
 import DemoEnvironment from "@/components/investor/DemoEnvironment";
+import MobileAppCTA from "@/components/MobileAppCTA";
 
 const Index = () => {
   const { toast } = useToast();
@@ -293,6 +294,9 @@ const Index = () => {
               <div className="text-sm text-muted-foreground">Monitoring</div>
             </Card>
           </div>
+
+          {/* Mobile App CTA */}
+          <MobileAppCTA variant="hero" className="mb-8" />
 
           {/* Problem Showcase */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">

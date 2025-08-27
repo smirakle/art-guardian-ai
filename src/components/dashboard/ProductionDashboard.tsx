@@ -33,6 +33,7 @@ import { WhiteLabelManager } from '@/components/WhiteLabelManager';
 import FeatureGuard from '@/components/FeatureGuard';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import RealTimeImageAnalysis from '@/components/RealTimeImageAnalysis';
+import MobileAppCTA from '@/components/MobileAppCTA';
 import SocialMediaAccountManager from '@/components/SocialMediaAccountManager';
 import { ComprehensiveWebScanner } from '@/components/ComprehensiveWebScanner';
 import { AIProtectionStatusWidget } from '@/components/dashboard/AIProtectionStatusWidget';
@@ -392,8 +393,12 @@ export const ProductionDashboard = () => {
                 <CardContent>
                   <RealTimeDeepfakeMonitor />
                 </CardContent>
-              </Card>
-            </div>
+                </Card>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <MobileAppCTA variant="dashboard" />
+              </div>
 
             <Card>
               <CardHeader>

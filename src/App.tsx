@@ -17,7 +17,6 @@ import Index from "./pages/Index";
 import AboutTsmo from "./pages/AboutTsmo";
 import FAQ from "./pages/FAQ";
 import Upload from "./pages/Upload";
-
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
 import Checkout from "./pages/Checkout";
@@ -52,6 +51,7 @@ import { PartnerPricingManager } from "./components/partner/PartnerPricingManage
 import { PartnerSuccessPage } from "./components/partner/PartnerSuccessPage";
 import EmailMarketing from "./pages/EmailMarketing";
 import TaxManagement from "./pages/TaxManagement";
+import GetApp from "./pages/GetApp";
 
 const queryClient = new QueryClient();
 
@@ -143,6 +143,7 @@ const App = () => {
               </ProtectedRoute>
             } />
             
+            <Route path="/get-app" element={<GetApp />} />
             <Route path="/certificate/:certificateId" element={<Certificate />} />
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />
