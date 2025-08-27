@@ -52,21 +52,10 @@ const CustomerGetApp = () => {
   };
 
   const handleDirectDownload = (platform: string) => {
-    if (platform === 'ios') {
-      // Download IPA file directly from Supabase storage
-      window.open('https://utneaqmbyjwxaqrrarpc.supabase.co/storage/v1/object/public/mobile-apps/tsmo-ios.ipa', '_blank');
-      toast({
-        title: "Downloading IPA",
-        description: "Direct download started. You may need to trust the developer profile in Settings.",
-      });
-    } else if (platform === 'android') {
-      // Download APK file directly from Supabase storage
-      window.open('https://utneaqmbyjwxaqrrarpc.supabase.co/storage/v1/object/public/mobile-apps/tsmo-android.apk', '_blank');
-      toast({
-        title: "Downloading APK",
-        description: "Direct download started. You may need to enable 'Install from unknown sources'.",
-      });
-    }
+    toast({
+      title: "Direct Download Not Available",
+      description: "App files are still being prepared. Please use the store links or check back later.",
+    });
   };
 
   const handleQRDownload = () => {
@@ -152,9 +141,9 @@ const CustomerGetApp = () => {
                     <Download className="w-4 h-4" />
                   </Button>
                 </div>
-                <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                  <p className="text-xs text-green-700 dark:text-green-400 text-center">
-                    ✓ Direct IPA download available
+                <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                  <p className="text-xs text-yellow-700 dark:text-yellow-400 text-center">
+                    ⏳ Direct download coming soon
                   </p>
                 </div>
               </div>
@@ -211,9 +200,9 @@ const CustomerGetApp = () => {
                     <Download className="w-4 h-4" />
                   </Button>
                 </div>
-                <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                  <p className="text-xs text-green-700 dark:text-green-400 text-center">
-                    ✓ Direct APK download available
+                <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                  <p className="text-xs text-yellow-700 dark:text-yellow-400 text-center">
+                    ⏳ Direct download coming soon
                   </p>
                 </div>
               </div>
