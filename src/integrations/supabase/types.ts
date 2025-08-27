@@ -3110,6 +3110,48 @@ export type Database = {
         }
         Relationships: []
       }
+      operating_costs: {
+        Row: {
+          annual_amount: number | null
+          category: string
+          created_at: string
+          currency: string
+          description: string | null
+          id: string
+          is_active: boolean
+          is_variable: boolean
+          monthly_amount: number
+          subcategory: string | null
+          updated_at: string
+        }
+        Insert: {
+          annual_amount?: number | null
+          category: string
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_variable?: boolean
+          monthly_amount: number
+          subcategory?: string | null
+          updated_at?: string
+        }
+        Update: {
+          annual_amount?: number | null
+          category?: string
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_variable?: boolean
+          monthly_amount?: number
+          subcategory?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       partner_pricing_tiers: {
         Row: {
           api_calls_included: number
@@ -5858,6 +5900,16 @@ export type Database = {
       get_template_download_count: {
         Args: { template_id_param: string }
         Returns: number
+      }
+      get_total_operating_costs: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          cost_breakdown: Json
+          fixed_monthly: number
+          total_annual: number
+          total_monthly: number
+          variable_monthly: number
+        }[]
       }
       get_user_dashboard_stats: {
         Args: Record<PropertyKey, never>

@@ -10,6 +10,7 @@ import { useMaintenanceMode } from "@/lib/maintenance";
 import { supabase } from "@/integrations/supabase/client";
 import { CopyrightDiagnostics } from "./CopyrightDiagnostics";
 import { EnhancedCopyrightDiagnostics } from "./EnhancedCopyrightDiagnostics";
+import OperatingCostsWidget from "./OperatingCostsWidget";
 
 import { 
   Shield, 
@@ -367,8 +368,10 @@ const AdminDashboard = () => {
               </Card>
             </div>
 
-            {/* System Health and Active Alerts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* System Health, Operating Costs, and Active Alerts */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <OperatingCostsWidget />
+              
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
