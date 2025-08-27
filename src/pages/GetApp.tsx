@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Smartphone, Download, QrCode, Shield, Star, CheckCircle } from 'lucide-react';
+import { Smartphone, Download, QrCode, Shield, Star, CheckCircle, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { MobileContainer } from '@/components/mobile/MobileContainer';
 import { ProductionAppBuilder } from '@/components/mobile/ProductionAppBuilder';
+import { ComingSoon } from '@/components/ComingSoon';
 
 const GetApp = () => {
   const { toast } = useToast();
@@ -127,11 +128,11 @@ const GetApp = () => {
                 <div className="flex gap-2 pt-4">
                   <Button 
                     className="flex-1" 
-                    onClick={() => handleDownload('ios')}
-                    disabled={!isIOS}
+                    disabled
+                    variant="outline"
                   >
-                    <Download className="w-4 h-4 mr-2" />
-                    App Store
+                    <Clock className="w-4 h-4 mr-2" />
+                    Coming Soon
                   </Button>
                   <Button 
                     variant="outline" 
@@ -140,6 +141,11 @@ const GetApp = () => {
                   >
                     <Star className="w-4 h-4" />
                   </Button>
+                </div>
+                <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+                  <p className="text-xs text-muted-foreground text-center">
+                    App Store submission in progress
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -180,10 +186,11 @@ const GetApp = () => {
                 <div className="flex gap-2 pt-4">
                   <Button 
                     className="flex-1" 
-                    onClick={() => handleDownload('android')}
+                    disabled
+                    variant="outline"
                   >
-                    <Download className="w-4 h-4 mr-2" />
-                    Download APK
+                    <Clock className="w-4 h-4 mr-2" />
+                    Coming Soon
                   </Button>
                   <Button 
                     variant="outline" 
@@ -192,6 +199,11 @@ const GetApp = () => {
                   >
                     <QrCode className="w-4 h-4" />
                   </Button>
+                </div>
+                <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+                  <p className="text-xs text-muted-foreground text-center">
+                    Google Play Console submission in progress
+                  </p>
                 </div>
               </div>
             </CardContent>
