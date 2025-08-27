@@ -80,7 +80,7 @@ serve(async (req) => {
 
     // Send email notification
     const emailResponse = await resend.emails.send({
-      from: "TSMO Alerts <alerts@tsmo.ai>",
+      from: "TSMO Alerts <onboarding@resend.dev>",
       to: [userEmail],
       subject: emailContent.subject,
       html: emailContent.html,
