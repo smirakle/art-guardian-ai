@@ -56,9 +56,9 @@ const InvestorHub = () => {
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Comprehensive investment materials for qualified investors and strategic partners
           </p>
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 max-w-2xl mx-auto">
-            <p className="text-sm text-blue-800 font-medium">
-              🚀 MVP Live: Full featured platform with paying customers and growing user base
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 max-w-2xl mx-auto">
+            <p className="text-sm text-yellow-800 font-medium">
+              ⚠️ Beta Testing Phase: Platform in development. No current revenue or user traction.
             </p>
           </div>
         </div>
@@ -101,11 +101,11 @@ const InvestorHub = () => {
           <CardContent className="pt-0">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold text-primary">$500K</div>
+                <div className="text-2xl font-bold text-primary">$250K</div>
                 <div className="text-xs text-muted-foreground">Seed Round Target</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-primary">$2M</div>
+                <div className="text-2xl font-bold text-primary">$750K</div>
                 <div className="text-xs text-muted-foreground">Pre-Money Valuation</div>
               </div>
               <div>
@@ -113,8 +113,8 @@ const InvestorHub = () => {
                 <div className="text-xs text-muted-foreground">Total Addressable Market</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-green-600">Q2 2025</div>
-                <div className="text-xs text-muted-foreground">Revenue Target Launch</div>
+                <div className="text-2xl font-bold text-green-600">Q3 2025</div>
+                <div className="text-xs text-muted-foreground">Target Go-to-Market</div>
               </div>
             </div>
           </CardContent>
