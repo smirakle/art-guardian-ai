@@ -105,7 +105,7 @@ const InvestorHub = () => {
                 <div className="text-xs text-muted-foreground">Series A Target</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-primary">$8M</div>
+                <div className="text-2xl font-bold text-primary">$4M</div>
                 <div className="text-xs text-muted-foreground">Pre-Money Valuation</div>
               </div>
               <div>
