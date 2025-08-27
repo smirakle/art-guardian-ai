@@ -16,7 +16,7 @@ import {
   TrendingUp,
   DollarSign
 } from 'lucide-react';
-import IPGuardrailDocumentation from '@/components/enterprise/IPGuardrailDocumentation';
+import ComprehensiveAPIDocumentation from '@/components/enterprise/ComprehensiveAPIDocumentation';
 import AdminProtectedPatentDocs from '@/components/AdminProtectedPatentDocs';
 
 const InvestorHub = () => {
@@ -258,7 +258,7 @@ const InvestorHub = () => {
           </TabsContent>
 
           <TabsContent value="api">
-            <IPGuardrailDocumentation />
+            <ComprehensiveAPIDocumentation />
           </TabsContent>
         </Tabs>
 
