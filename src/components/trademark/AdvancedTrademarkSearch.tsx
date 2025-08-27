@@ -1,19 +1,14 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Slider } from "@/components/ui/slider";
-import { Search, Globe, Brain, Image, Shield, Zap } from "lucide-react";
-
-interface AdvancedSearchProps {
-  onSearch: (params: SearchParameters) => void;
-  isSearching: boolean;
-}
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Slider } from '@/components/ui/slider';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Brain, Globe, Search, Settings, Upload, Volume2 } from 'lucide-react';
 
 interface SearchParameters {
   query: string;
@@ -27,273 +22,303 @@ interface SearchParameters {
   searchDepth: 'surface' | 'deep' | 'comprehensive';
 }
 
-const jurisdictions = [
-  { id: 'us', name: 'United States (USPTO)', flag: '🇺🇸' },
-  { id: 'eu', name: 'European Union (EUIPO)', flag: '🇪🇺' },
-  { id: 'wipo', name: 'WIPO Madrid Protocol', flag: '🌍' },
-  { id: 'ca', name: 'Canada (CIPO)', flag: '🇨🇦' },
-  { id: 'uk', name: 'United Kingdom (UKIPO)', flag: '🇬🇧' },
-  { id: 'jp', name: 'Japan (JPO)', flag: '🇯🇵' },
-  { id: 'cn', name: 'China (CNIPA)', flag: '🇨🇳' },
-  { id: 'au', name: 'Australia (IP Australia)', flag: '🇦🇺' }
-];
+interface AdvancedTrademarkSearchProps {
+  onSearch: (params: SearchParameters) => void;
+  isSearching: boolean;
+}
 
-const niceClassifications = [
-  { id: '1', name: 'Class 1: Chemicals' },
-  { id: '9', name: 'Class 9: Scientific instruments, computers' },
-  { id: '25', name: 'Class 25: Clothing, footwear, headgear' },
-  { id: '35', name: 'Class 35: Advertising, business management' },
-  { id: '41', name: 'Class 41: Education, entertainment' },
-  { id: '42', name: 'Class 42: Scientific and technological services' },
-  { id: '45', name: 'Class 45: Legal services' }
-];
-
-const platforms = [
-  { id: 'uspto', name: 'USPTO Database', icon: '🏛️' },
-  { id: 'google', name: 'Google Search', icon: '🔍' },
-  { id: 'amazon', name: 'Amazon Marketplace', icon: '📦' },
-  { id: 'social', name: 'Social Media', icon: '📱' },
-  { id: 'domains', name: 'Domain Registries', icon: '🌐' },
-  { id: 'marketplaces', name: 'E-commerce Sites', icon: '🛒' },
-  { id: 'apps', name: 'App Stores', icon: '📲' },
-  { id: 'news', name: 'News & Media', icon: '📰' }
-];
-
-export const AdvancedTrademarkSearch: React.FC<AdvancedSearchProps> = ({
-  onSearch,
-  isSearching
-}) => {
+const AdvancedTrademarkSearch: React.FC<AdvancedTrademarkSearchProps> = ({ onSearch, isSearching }) => {
   const [searchParams, setSearchParams] = useState<SearchParameters>({
     query: '',
     searchType: 'text',
-    jurisdictions: ['us'],
+    jurisdictions: ['US'],
     classifications: [],
-    similarityThreshold: 80,
-    platforms: ['uspto', 'google', 'amazon'],
+    similarityThreshold: 0.7,
+    platforms: [],
     includeExpired: false,
     fuzzyMatching: true,
-    searchDepth: 'comprehensive'
+    searchDepth: 'deep'
   });
+
+  const jurisdictions = [
+    { value: 'US', label: 'United States' },
+    { value: 'EU', label: 'European Union' },
+    { value: 'UK', label: 'United Kingdom' },
+    { value: 'CA', label: 'Canada' },
+    { value: 'AU', label: 'Australia' },
+    { value: 'JP', label: 'Japan' },
+    { value: 'KR', label: 'South Korea' },
+    { value: 'CN', label: 'China' },
+    { value: 'IN', label: 'India' },
+    { value: 'BR', label: 'Brazil' }
+  ];
+
+  const platforms = [
+    { value: 'USPTO', label: 'USPTO Database' },
+    { value: 'EUIPO', label: 'EUIPO Database' },
+    { value: 'WIPO', label: 'WIPO Global Brand Database' },
+    { value: 'Amazon', label: 'Amazon Marketplace' },
+    { value: 'eBay', label: 'eBay Marketplace' },
+    { value: 'Alibaba', label: 'Alibaba Platform' },
+    { value: 'Social Media', label: 'Social Media Platforms' },
+    { value: 'Domain Names', label: 'Domain Registrations' },
+    { value: 'App Stores', label: 'Mobile App Stores' }
+  ];
+
+  const trademarkClasses = [
+    { value: '1', label: 'Class 1: Chemicals' },
+    { value: '9', label: 'Class 9: Scientific/Computer' },
+    { value: '25', label: 'Class 25: Clothing' },
+    { value: '35', label: 'Class 35: Advertising/Business' },
+    { value: '42', label: 'Class 42: Scientific/Technology' }
+  ];
+
+  const handleJurisdictionToggle = (jurisdiction: string) => {
+    setSearchParams(prev => ({
+      ...prev,
+      jurisdictions: prev.jurisdictions.includes(jurisdiction)
+        ? prev.jurisdictions.filter(j => j !== jurisdiction)
+        : [...prev.jurisdictions, jurisdiction]
+    }));
+  };
+
+  const handlePlatformToggle = (platform: string) => {
+    setSearchParams(prev => ({
+      ...prev,
+      platforms: prev.platforms.includes(platform)
+        ? prev.platforms.filter(p => p !== platform)
+        : [...prev.platforms, platform]
+    }));
+  };
+
+  const handleClassificationToggle = (classification: string) => {
+    setSearchParams(prev => ({
+      ...prev,
+      classifications: prev.classifications.includes(classification)
+        ? prev.classifications.filter(c => c !== classification)
+        : [...prev.classifications, classification]
+    }));
+  };
 
   const handleSearch = () => {
     if (!searchParams.query.trim()) return;
     onSearch(searchParams);
   };
 
-  const updateSearchParams = (updates: Partial<SearchParameters>) => {
-    setSearchParams(prev => ({ ...prev, ...updates }));
-  };
-
-  const toggleJurisdiction = (jurisdictionId: string) => {
-    const current = searchParams.jurisdictions;
-    const updated = current.includes(jurisdictionId)
-      ? current.filter(id => id !== jurisdictionId)
-      : [...current, jurisdictionId];
-    updateSearchParams({ jurisdictions: updated });
-  };
-
-  const togglePlatform = (platformId: string) => {
-    const current = searchParams.platforms;
-    const updated = current.includes(platformId)
-      ? current.filter(id => id !== platformId)
-      : [...current, platformId];
-    updateSearchParams({ platforms: updated });
-  };
-
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Brain className="h-5 w-5 text-primary" />
-          AI-Powered Trademark Search
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Search Query */}
-        <div className="space-y-2">
-          <Label htmlFor="search-query">Trademark Query</Label>
-          <Input
-            id="search-query"
-            placeholder="Enter trademark name, logo description, or upload image..."
-            value={searchParams.query}
-            onChange={(e) => updateSearchParams({ query: e.target.value })}
-            className="text-lg"
-          />
-        </div>
+    <div className="space-y-6">
+      <Card className="border-2 border-primary/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Brain className="h-5 w-5 text-primary" />
+            AI-Powered Trademark Search
+          </CardTitle>
+          <CardDescription>
+            Advanced trademark monitoring with AI similarity detection across global databases and platforms
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <Tabs value={searchParams.searchType} onValueChange={(value) => setSearchParams(prev => ({ ...prev, searchType: value as any }))}>
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="text" className="flex items-center gap-2">
+                <Search className="h-4 w-4" />
+                Text
+              </TabsTrigger>
+              <TabsTrigger value="image" className="flex items-center gap-2">
+                <Upload className="h-4 w-4" />
+                Image
+              </TabsTrigger>
+              <TabsTrigger value="phonetic" className="flex items-center gap-2">
+                <Volume2 className="h-4 w-4" />
+                Phonetic
+              </TabsTrigger>
+              <TabsTrigger value="semantic" className="flex items-center gap-2">
+                <Brain className="h-4 w-4" />
+                Semantic
+              </TabsTrigger>
+            </TabsList>
 
-        {/* Search Type */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          {[
-            { type: 'text', icon: Search, label: 'Text Search' },
-            { type: 'image', icon: Image, label: 'Image Search' },
-            { type: 'phonetic', icon: Zap, label: 'Phonetic' },
-            { type: 'semantic', icon: Brain, label: 'AI Semantic' }
-          ].map(({ type, icon: Icon, label }) => (
-            <Button
-              key={type}
-              variant={searchParams.searchType === type ? "default" : "outline"}
-              onClick={() => updateSearchParams({ searchType: type as any })}
-              className="flex flex-col gap-1 h-auto py-3"
-            >
-              <Icon className="h-4 w-4" />
-              <span className="text-xs">{label}</span>
-            </Button>
-          ))}
-        </div>
-
-        {/* Similarity Threshold */}
-        <div className="space-y-3">
-          <div className="flex justify-between">
-            <Label>Similarity Threshold</Label>
-            <Badge variant="outline">{searchParams.similarityThreshold}%</Badge>
-          </div>
-          <Slider
-            value={[searchParams.similarityThreshold]}
-            onValueChange={([value]) => updateSearchParams({ similarityThreshold: value })}
-            max={100}
-            min={50}
-            step={5}
-            className="w-full"
-          />
-          <div className="flex justify-between text-xs text-muted-foreground">
-            <span>Loose Match (50%)</span>
-            <span>Exact Match (100%)</span>
-          </div>
-        </div>
-
-        {/* Jurisdictions */}
-        <div className="space-y-3">
-          <Label>Search Jurisdictions</Label>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {jurisdictions.map((jurisdiction) => (
-              <div
-                key={jurisdiction.id}
-                className={`flex items-center space-x-2 p-2 rounded-lg border cursor-pointer transition-colors ${
-                  searchParams.jurisdictions.includes(jurisdiction.id)
-                    ? 'bg-primary/10 border-primary'
-                    : 'hover:bg-muted'
-                }`}
-                onClick={() => toggleJurisdiction(jurisdiction.id)}
-              >
-                <Checkbox
-                  checked={searchParams.jurisdictions.includes(jurisdiction.id)}
+            <TabsContent value="text" className="space-y-4">
+              <div>
+                <Label htmlFor="query">Trademark Search Query</Label>
+                <Input
+                  id="query"
+                  placeholder="Enter trademark name, slogan, or brand identifier..."
+                  value={searchParams.query}
+                  onChange={(e) => setSearchParams(prev => ({ ...prev, query: e.target.value }))}
+                  className="mt-1"
                 />
-                <span className="text-lg">{jurisdiction.flag}</span>
-                <span className="text-sm font-medium truncate">{jurisdiction.name.split(' ')[0]}</span>
               </div>
-            ))}
-          </div>
-        </div>
+            </TabsContent>
 
-        {/* Platform Coverage */}
-        <div className="space-y-3">
-          <Label>Search Platforms</Label>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-            {platforms.map((platform) => (
-              <div
-                key={platform.id}
-                className={`flex items-center space-x-2 p-2 rounded-lg border cursor-pointer transition-colors ${
-                  searchParams.platforms.includes(platform.id)
-                    ? 'bg-primary/10 border-primary'
-                    : 'hover:bg-muted'
-                }`}
-                onClick={() => togglePlatform(platform.id)}
-              >
-                <Checkbox
-                  checked={searchParams.platforms.includes(platform.id)}
+            <TabsContent value="image" className="space-y-4">
+              <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
+                <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <p className="text-sm text-muted-foreground">Upload trademark logo or image for visual similarity search</p>
+                <Button variant="outline" className="mt-4">Choose Image</Button>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="phonetic" className="space-y-4">
+              <div>
+                <Label htmlFor="phonetic-query">Phonetic Search</Label>
+                <Input
+                  id="phonetic-query"
+                  placeholder="Enter trademark for sound-alike matches..."
+                  value={searchParams.query}
+                  onChange={(e) => setSearchParams(prev => ({ ...prev, query: e.target.value }))}
+                  className="mt-1"
                 />
-                <span>{platform.icon}</span>
-                <span className="text-sm font-medium">{platform.name}</span>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Finds trademarks that sound similar when spoken
+                </p>
               </div>
-            ))}
+            </TabsContent>
+
+            <TabsContent value="semantic" className="space-y-4">
+              <div>
+                <Label htmlFor="semantic-query">Semantic Search</Label>
+                <Input
+                  id="semantic-query"
+                  placeholder="Enter trademark for meaning-based matches..."
+                  value={searchParams.query}
+                  onChange={(e) => setSearchParams(prev => ({ ...prev, query: e.target.value }))}
+                  className="mt-1"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  AI-powered search for trademarks with similar meanings or concepts
+                </p>
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <Label className="text-base font-medium">Jurisdictions</Label>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                {jurisdictions.map((jurisdiction) => (
+                  <div key={jurisdiction.value} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={jurisdiction.value}
+                      checked={searchParams.jurisdictions.includes(jurisdiction.value)}
+                      onCheckedChange={() => handleJurisdictionToggle(jurisdiction.value)}
+                    />
+                    <Label htmlFor={jurisdiction.value} className="text-sm">
+                      {jurisdiction.label}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-base font-medium">Search Platforms</Label>
+              <div className="space-y-2 mt-2">
+                {platforms.map((platform) => (
+                  <div key={platform.value} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={platform.value}
+                      checked={searchParams.platforms.includes(platform.value)}
+                      onCheckedChange={() => handlePlatformToggle(platform.value)}
+                    />
+                    <Label htmlFor={platform.value} className="text-sm">
+                      {platform.label}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Search Depth */}
-        <div className="space-y-3">
-          <Label>Search Depth & Intelligence</Label>
-          <Select
-            value={searchParams.searchDepth}
-            onValueChange={(value) => updateSearchParams({ searchDepth: value as any })}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="surface">
-                <div className="flex items-center gap-2">
-                  <Search className="h-4 w-4" />
-                  <span>Surface Scan (Fast)</span>
-                </div>
-              </SelectItem>
-              <SelectItem value="deep">
-                <div className="flex items-center gap-2">
-                  <Globe className="h-4 w-4" />
-                  <span>Deep Analysis (Thorough)</span>
-                </div>
-              </SelectItem>
-              <SelectItem value="comprehensive">
-                <div className="flex items-center gap-2">
-                  <Brain className="h-4 w-4" />
-                  <span>AI Comprehensive (Best)</span>
-                </div>
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+          <div>
+            <Label className="text-base font-medium">Trademark Classifications</Label>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {trademarkClasses.map((cls) => (
+                <Badge
+                  key={cls.value}
+                  variant={searchParams.classifications.includes(cls.value) ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => handleClassificationToggle(cls.value)}
+                >
+                  {cls.label}
+                </Badge>
+              ))}
+            </div>
+          </div>
 
-        {/* Advanced Options */}
-        <div className="space-y-3 pt-4 border-t">
-          <Label>Advanced Options</Label>
-          <div className="flex flex-wrap gap-4">
+          <div className="space-y-4">
+            <div>
+              <Label className="text-base font-medium">
+                Similarity Threshold: {Math.round(searchParams.similarityThreshold * 100)}%
+              </Label>
+              <Slider
+                value={[searchParams.similarityThreshold]}
+                onValueChange={(value) => setSearchParams(prev => ({ ...prev, similarityThreshold: value[0] }))}
+                max={1}
+                min={0.1}
+                step={0.05}
+                className="mt-2"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Higher threshold = more exact matches, Lower threshold = broader search
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="search-depth">Search Depth</Label>
+              <Select value={searchParams.searchDepth} onValueChange={(value) => setSearchParams(prev => ({ ...prev, searchDepth: value as any }))}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="surface">Surface - Quick scan</SelectItem>
+                  <SelectItem value="deep">Deep - Comprehensive analysis</SelectItem>
+                  <SelectItem value="comprehensive">Comprehensive - Full spectrum search</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-2">
               <Checkbox
+                id="fuzzy-matching"
                 checked={searchParams.fuzzyMatching}
-                onCheckedChange={(checked) => updateSearchParams({ fuzzyMatching: !!checked })}
+                onCheckedChange={(checked) => setSearchParams(prev => ({ ...prev, fuzzyMatching: checked as boolean }))}
               />
-              <Label className="text-sm">Fuzzy Matching</Label>
+              <Label htmlFor="fuzzy-matching">Enable fuzzy matching</Label>
             </div>
+
             <div className="flex items-center space-x-2">
               <Checkbox
+                id="include-expired"
                 checked={searchParams.includeExpired}
-                onCheckedChange={(checked) => updateSearchParams({ includeExpired: !!checked })}
+                onCheckedChange={(checked) => setSearchParams(prev => ({ ...prev, includeExpired: checked as boolean }))}
               />
-              <Label className="text-sm">Include Expired</Label>
+              <Label htmlFor="include-expired">Include expired trademarks</Label>
             </div>
           </div>
-        </div>
 
-        {/* Search Button */}
-        <Button 
-          onClick={handleSearch}
-          disabled={isSearching || !searchParams.query.trim()}
-          className="w-full h-12 text-lg"
-        >
-          {isSearching ? (
-            <>
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-              Analyzing with AI...
-            </>
-          ) : (
-            <>
-              <Shield className="mr-2 h-5 w-5" />
-              Start Advanced Search
-            </>
-          )}
-        </Button>
-
-        {/* Search Progress */}
-        {isSearching && (
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Search Progress</span>
-              <span>Scanning platforms...</span>
-            </div>
-            <Progress value={65} className="h-2" />
-          </div>
-        )}
-      </CardContent>
-    </Card>
+          <Button 
+            onClick={handleSearch} 
+            disabled={!searchParams.query.trim() || isSearching}
+            className="w-full h-12 text-lg"
+          >
+            {isSearching ? (
+              <>
+                <Settings className="mr-2 h-5 w-5 animate-spin" />
+                Scanning Trademarks...
+              </>
+            ) : (
+              <>
+                <Search className="mr-2 h-5 w-5" />
+                Start AI Trademark Search
+              </>
+            )}
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
