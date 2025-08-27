@@ -6,6 +6,7 @@ import { Smartphone, Download, QrCode, Shield, Star, CheckCircle, Clock } from '
 import { useToast } from '@/hooks/use-toast';
 import MobileNotificationCenter from '@/components/mobile/MobileNotificationCenter';
 import MobileUploadManager from '@/components/mobile/MobileUploadManager';
+import QRCode from '@/components/QRCode';
 
 const CustomerGetApp = () => {
   const { toast } = useToast();
@@ -258,9 +259,11 @@ const CustomerGetApp = () => {
           </CardHeader>
           <CardContent>
             <div className="bg-white p-4 rounded-lg inline-block mb-4">
-              <div className="w-32 h-32 bg-black/10 rounded flex items-center justify-center">
-                <QrCode className="w-16 h-16 text-muted-foreground" />
-              </div>
+              <QRCode 
+                value="https://tsmo.app/get-app" 
+                size={128}
+                className="mx-auto"
+              />
             </div>
             <p className="text-sm text-muted-foreground mb-4">
               Open your camera app and point it at the QR code above
