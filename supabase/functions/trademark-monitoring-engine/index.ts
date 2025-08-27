@@ -58,7 +58,7 @@ serve(async (req) => {
           platforms_scanned: platforms,
           jurisdictions_covered: jurisdictions,
           similarity_threshold,
-          fuzzy_matching_enabled: fuzzy_matching,
+          fuzzy_matching: fuzzy_matching,
           total_results_found: scanResults.total_matches,
           high_risk_matches: scanResults.high_risk_matches,
           scan_metadata: {
