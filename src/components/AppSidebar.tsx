@@ -39,7 +39,6 @@ export function AppSidebar() {
 
   const mainNavItems = [
     { path: "/", label: t('nav.home'), icon: Home },
-    { path: "/platform", label: "Full Platform", icon: Activity },
     { path: "/dashboard", label: "Dashboard", icon: Home },
     { path: "/upload", label: "Image Monitoring Systems", icon: Monitor },
     { path: "/forgery-detection", label: "Forgery Detection", icon: Search },
