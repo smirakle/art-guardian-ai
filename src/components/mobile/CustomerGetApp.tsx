@@ -119,11 +119,11 @@ const CustomerGetApp = () => {
                 <div className="flex gap-2 pt-4">
                   <Button 
                     className="flex-1" 
-                    disabled
-                    variant="outline"
+                    onClick={() => handleDownload('ios')}
+                    variant="default"
                   >
-                    <Clock className="w-4 h-4 mr-2" />
-                    Coming Soon
+                    <Download className="w-4 h-4 mr-2" />
+                    Download from App Store
                   </Button>
                   <Button 
                     variant="outline" 
@@ -133,9 +133,9 @@ const CustomerGetApp = () => {
                     <Star className="w-4 h-4" />
                   </Button>
                 </div>
-                <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-                  <p className="text-xs text-muted-foreground text-center">
-                    App Store submission in progress
+                <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                  <p className="text-xs text-green-700 dark:text-green-400 text-center">
+                    ✓ Available on App Store
                   </p>
                 </div>
               </div>
@@ -177,11 +177,11 @@ const CustomerGetApp = () => {
                 <div className="flex gap-2 pt-4">
                   <Button 
                     className="flex-1" 
-                    disabled
-                    variant="outline"
+                    onClick={() => handleDownload('android')}
+                    variant="default"
                   >
-                    <Clock className="w-4 h-4 mr-2" />
-                    Coming Soon
+                    <Download className="w-4 h-4 mr-2" />
+                    Download from Play Store
                   </Button>
                   <Button 
                     variant="outline" 
@@ -191,9 +191,9 @@ const CustomerGetApp = () => {
                     <QrCode className="w-4 h-4" />
                   </Button>
                 </div>
-                <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-                  <p className="text-xs text-muted-foreground text-center">
-                    Google Play Console submission in progress
+                <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                  <p className="text-xs text-green-700 dark:text-green-400 text-center">
+                    ✓ Available on Google Play
                   </p>
                 </div>
               </div>
