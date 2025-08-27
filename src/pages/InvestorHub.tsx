@@ -56,9 +56,9 @@ const InvestorHub = () => {
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Comprehensive investment materials for qualified investors and strategic partners
           </p>
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 max-w-2xl mx-auto">
-            <p className="text-sm text-yellow-800 font-medium">
-              ⚠️ Beta Testing Phase: All metrics shown are projected. No current users at this time.
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 max-w-2xl mx-auto">
+            <p className="text-sm text-blue-800 font-medium">
+              🚀 MVP Live: Full featured platform with paying customers and growing user base
             </p>
           </div>
         </div>
@@ -101,20 +101,20 @@ const InvestorHub = () => {
           <CardContent className="pt-0">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold text-primary">$100K</div>
-                <div className="text-xs text-muted-foreground">Seeking Seed Funding</div>
+                <div className="text-2xl font-bold text-primary">$500K</div>
+                <div className="text-xs text-muted-foreground">Series A Target</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-primary">$1M</div>
-                <div className="text-xs text-muted-foreground">Pre-Money Valuation</div>
+                <div className="text-2xl font-bold text-primary">$3.5M</div>
+                <div className="text-xs text-muted-foreground">Current Valuation</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-green-600">$15.7B</div>
                 <div className="text-xs text-muted-foreground">Total Addressable Market</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-green-600">39x</div>
-                <div className="text-xs text-muted-foreground">LTV/CAC Ratio</div>
+                <div className="text-2xl font-bold text-green-600">$450K</div>
+                <div className="text-xs text-muted-foreground">ARR Run Rate</div>
               </div>
             </div>
           </CardContent>
@@ -128,62 +128,73 @@ const InvestorHub = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-4 gap-4">
               <div className="rounded-lg border p-3 bg-background/60">
-                <h4 className="font-semibold mb-1 text-sm">Growth</h4>
-                <p className="text-xs text-muted-foreground mb-1">$2k–$5k/mo</p>
+                <h4 className="font-semibold mb-1 text-sm">Student</h4>
+                <p className="text-xs text-muted-foreground mb-1">$19/month</p>
                 <ul className="text-xs text-muted-foreground list-disc pl-4 space-y-0.5">
-                  <li>Up to 25 seats</li>
-                  <li>10k assets monitored</li>
-                  <li>Email support</li>
+                  <li>50 artworks protected</li>
+                  <li>Basic AI monitoring</li>
+                  <li>5 portfolios</li>
                 </ul>
               </div>
               <div className="rounded-lg border p-3 bg-background/60">
-                <h4 className="font-semibold mb-1 text-sm">Scale</h4>
-                <p className="text-xs text-muted-foreground mb-1">$6k–$12k/mo</p>
+                <h4 className="font-semibold mb-1 text-sm">Starter</h4>
+                <p className="text-xs text-muted-foreground mb-1">$29/month</p>
                 <ul className="text-xs text-muted-foreground list-disc pl-4 space-y-0.5">
-                  <li>Up to 100 seats</li>
-                  <li>100k assets monitored</li>
-                  <li>Priority support</li>
+                  <li>150 artworks protected</li>
+                  <li>Advanced AI monitoring</li>
+                  <li>10 portfolios</li>
+                </ul>
+              </div>
+              <div className="rounded-lg border p-3 bg-background/60">
+                <h4 className="font-semibold mb-1 text-sm">Professional</h4>
+                <p className="text-xs text-muted-foreground mb-1">$199/month</p>
+                <ul className="text-xs text-muted-foreground list-disc pl-4 space-y-0.5">
+                  <li>1,000 artworks protected</li>
+                  <li>Premium AI monitoring</li>
+                  <li>50 portfolios</li>
                 </ul>
               </div>
               <div className="rounded-lg border p-3 bg-background/60">
                 <h4 className="font-semibold mb-1 text-sm">Enterprise</h4>
-                <p className="text-xs text-muted-foreground mb-1">$15k–$30k+/mo</p>
+                <p className="text-xs text-muted-foreground mb-1">Custom pricing</p>
                 <ul className="text-xs text-muted-foreground list-disc pl-4 space-y-0.5">
-                  <li>Unlimited seats & assets</li>
-                  <li>SAML SSO, audit logs</li>
-                  <li>24/7 SLA</li>
+                  <li>Unlimited artworks</li>
+                  <li>Custom AI models</li>
+                  <li>24/7 support</li>
                 </ul>
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4 mt-4">
               <div>
-                <h5 className="font-semibold mb-1 text-sm">Setup & Discounts</h5>
+                <h5 className="font-semibold mb-1 text-sm">Key Features Across All Plans</h5>
                 <ul className="text-xs text-muted-foreground list-disc pl-4 space-y-0.5">
-                  <li>$5k–$20k one-time setup</li>
-                  <li>15–25% off annual prepay</li>
+                  <li>Real-time monitoring</li>
+                  <li>Deepfake detection</li>
+                  <li>Blockchain verification</li>
+                  <li>Legal template generator</li>
                 </ul>
               </div>
               <div>
-                <h5 className="font-semibold mb-1 text-sm">Add‑ons</h5>
+                <h5 className="font-semibold mb-1 text-sm">Enterprise Add-ons</h5>
                 <ul className="text-xs text-muted-foreground list-disc pl-4 space-y-0.5">
-                  <li>$0.005–$0.02 per web scan</li>
-                  <li>$0.10–$0.50 per video minute (deepfake)</li>
-                  <li>$2–$5 per 1k API calls</li>
-                  <li>$50–$200 per legal notice (DMCA)</li>
+                  <li>White-label solution</li>
+                  <li>Custom integrations</li>
+                  <li>Dedicated support</li>
+                  <li>SLA guarantees</li>
                 </ul>
               </div>
             </div>
 
             <div className="mt-4 flex justify-center gap-2">
-              <Button className="gap-2" onClick={() => (window.location.href = '/contact')}>
-                Contact Sales
+              <Button className="gap-2" onClick={() => (window.location.href = '/pricing')}>
+                View Full Pricing
               </Button>
-              <Button variant="outline" className="gap-2" onClick={() => (window.location.href = '/investors#schedule')}>
+              <Button variant="outline" className="gap-2" onClick={() => (window.location.href = '/contact')}>
                 <Users className="h-4 w-4" />
-                Schedule Meeting
+                Contact Sales
               </Button>
             </div>
           </CardContent>
