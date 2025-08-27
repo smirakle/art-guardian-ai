@@ -3167,49 +3167,105 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_subscription_usage: {
+        Row: {
+          api_calls_count: number
+          created_at: string
+          endpoint_usage: Json | null
+          id: string
+          subscription_id: string
+          updated_at: string
+          usage_date: string
+        }
+        Insert: {
+          api_calls_count?: number
+          created_at?: string
+          endpoint_usage?: Json | null
+          id?: string
+          subscription_id: string
+          updated_at?: string
+          usage_date?: string
+        }
+        Update: {
+          api_calls_count?: number
+          created_at?: string
+          endpoint_usage?: Json | null
+          id?: string
+          subscription_id?: string
+          updated_at?: string
+          usage_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_subscription_usage_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "partner_subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       partner_subscriptions: {
         Row: {
           api_calls_reset_at: string
           api_calls_used: number
+          billing_cycle: string | null
+          cancelled_at: string | null
           created_at: string
           current_period_end: string
           current_period_start: string
           id: string
           metadata: Json | null
+          next_billing_date: string | null
           organization_id: string | null
           status: string
+          stripe_customer_id: string | null
+          stripe_session_id: string | null
           stripe_subscription_id: string | null
           tier_id: string
+          trial_end: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           api_calls_reset_at?: string
           api_calls_used?: number
+          billing_cycle?: string | null
+          cancelled_at?: string | null
           created_at?: string
           current_period_end: string
           current_period_start?: string
           id?: string
           metadata?: Json | null
+          next_billing_date?: string | null
           organization_id?: string | null
           status?: string
+          stripe_customer_id?: string | null
+          stripe_session_id?: string | null
           stripe_subscription_id?: string | null
           tier_id: string
+          trial_end?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           api_calls_reset_at?: string
           api_calls_used?: number
+          billing_cycle?: string | null
+          cancelled_at?: string | null
           created_at?: string
           current_period_end?: string
           current_period_start?: string
           id?: string
           metadata?: Json | null
+          next_billing_date?: string | null
           organization_id?: string | null
           status?: string
+          stripe_customer_id?: string | null
+          stripe_session_id?: string | null
           stripe_subscription_id?: string | null
           tier_id?: string
+          trial_end?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -5833,6 +5889,8 @@ export type Database = {
           api_calls_included: number
           api_calls_remaining: number
           api_calls_used: number
+          billing_cycle: string
+          current_period_end: string
           custom_branding: boolean
           custom_integrations: boolean
           dedicated_support: boolean
@@ -5841,7 +5899,9 @@ export type Database = {
           max_organizations: number
           max_users_per_org: number
           monthly_price: number
+          next_billing_date: string
           rate_limit_per_hour: number
+          stripe_subscription_id: string
           subscription_status: string
           tier_name: string
           white_label_included: boolean
@@ -5951,6 +6011,14 @@ export type Database = {
           ttl_seconds_param?: number
         }
         Returns: undefined
+      }
+      track_partner_api_usage: {
+        Args: {
+          calls_count_param?: number
+          endpoint_param?: string
+          user_id_param: string
+        }
+        Returns: boolean
       }
       track_template_usage: {
         Args: {

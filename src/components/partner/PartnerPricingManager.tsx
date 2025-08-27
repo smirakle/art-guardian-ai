@@ -60,6 +60,10 @@ interface UserPartnerSubscription {
   subscription_status: string;
   api_calls_used: number;
   api_calls_remaining: number;
+  billing_cycle: string;
+  current_period_end: string;
+  next_billing_date: string;
+  stripe_subscription_id: string;
 }
 
 export const PartnerPricingManager: React.FC = () => {
@@ -68,6 +72,7 @@ export const PartnerPricingManager: React.FC = () => {
   const [partnerTiers, setPartnerTiers] = useState<PartnerTier[]>([]);
   const [currentSubscription, setCurrentSubscription] = useState<UserPartnerSubscription | null>(null);
   const [loading, setLoading] = useState(true);
+  const [processingPayment, setProcessingPayment] = useState<string | null>(null);
 
   const loadPartnerTiers = useCallback(async () => {
     try {
@@ -166,6 +171,63 @@ export const PartnerPricingManager: React.FC = () => {
     return iconMap[feature] || <CheckCircle className="w-4 h-4" />;
   };
 
+  const handleSubscribe = async (tierId: string, billingCycle: 'monthly' | 'yearly' = 'monthly') => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to subscribe to a partner plan",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setProcessingPayment(tierId);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('create-partner-subscription', {
+        body: { tier_id: tierId, billing_cycle: billingCycle }
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        // Open Stripe checkout in a new tab
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Failed to create subscription:', error);
+      toast({
+        title: "Error",
+        description: "Failed to initiate subscription. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setProcessingPayment(null);
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase.functions.invoke('partner-customer-portal');
+
+      if (error) throw error;
+
+      if (data?.url) {
+        // Open customer portal in a new tab
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Failed to open customer portal:', error);
+      toast({
+        title: "Error",
+        description: "Failed to open subscription management. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -237,6 +299,27 @@ export const PartnerPricingManager: React.FC = () => {
                 <div className="text-center p-3 bg-background/50 rounded-lg">
                   <div className="text-2xl font-bold text-primary">{currentSubscription.max_domains}</div>
                   <div className="text-sm text-muted-foreground">Custom Domains</div>
+                </div>
+              </div>
+              
+              {/* Billing Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div className="text-center p-3 bg-background/50 rounded-lg">
+                  <div className="text-lg font-semibold text-primary">
+                    {currentSubscription.billing_cycle === 'yearly' ? 'Annual' : 'Monthly'} Billing
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Next bill: {currentSubscription.current_period_end ? 
+                      new Date(currentSubscription.current_period_end).toLocaleDateString() : 'N/A'}
+                  </div>
+                </div>
+                <div className="text-center p-3 bg-background/50 rounded-lg">
+                  <div className="text-lg font-semibold text-primary">
+                    {currentSubscription.subscription_status === 'active' ? '✅ Active' : 
+                     currentSubscription.subscription_status === 'past_due' ? '⚠️ Past Due' : 
+                     currentSubscription.subscription_status}
+                  </div>
+                  <div className="text-sm text-muted-foreground">Subscription Status</div>
                 </div>
               </div>
               
@@ -352,27 +435,69 @@ export const PartnerPricingManager: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Action Button */}
-                  <Button 
-                    className={`w-full ${
-                      currentSubscription?.tier_name === tier.tier_name 
-                        ? 'bg-green-600 hover:bg-green-700' 
-                        : ''
-                    }`}
-                    disabled={currentSubscription?.tier_name === tier.tier_name}
-                  >
+                  {/* Action Buttons */}
+                  <div className="space-y-3">
                     {currentSubscription?.tier_name === tier.tier_name ? (
-                      <>
-                        <CheckCircle className="w-4 h-4 mr-2" />
-                        Current Plan
-                      </>
+                      <div className="space-y-2">
+                        <Button 
+                          className="w-full bg-green-600 hover:bg-green-700"
+                          disabled
+                        >
+                          <CheckCircle className="w-4 h-4 mr-2" />
+                          Current Plan
+                        </Button>
+                        <Button 
+                          variant="outline"
+                          className="w-full"
+                          onClick={handleManageSubscription}
+                        >
+                          <Settings className="w-4 h-4 mr-2" />
+                          Manage Subscription
+                        </Button>
+                      </div>
                     ) : (
-                      <>
-                        Get Started
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </>
+                      <div className="space-y-2">
+                        <Button 
+                          className="w-full"
+                          onClick={() => handleSubscribe(tier.id, 'monthly')}
+                          disabled={processingPayment === tier.id}
+                        >
+                          {processingPayment === tier.id ? (
+                            <>
+                              <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                              Processing...
+                            </>
+                          ) : (
+                            <>
+                              Subscribe Monthly
+                              <ArrowRight className="w-4 h-4 ml-2" />
+                            </>
+                          )}
+                        </Button>
+                        
+                        {tier.monthly_price > 99900 && ( // Show yearly option for higher tiers
+                          <Button 
+                            variant="outline"
+                            className="w-full"
+                            onClick={() => handleSubscribe(tier.id, 'yearly')}
+                            disabled={processingPayment === tier.id}
+                          >
+                            {processingPayment === tier.id ? (
+                              <>
+                                <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                                Processing...
+                              </>
+                            ) : (
+                              <>
+                                Subscribe Yearly (20% Off)
+                                <ArrowRight className="w-4 h-4 ml-2" />
+                              </>
+                            )}
+                          </Button>
+                        )}
+                      </div>
                     )}
-                  </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
