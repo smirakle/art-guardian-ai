@@ -40,6 +40,7 @@ import SocialMediaMonitoringResults from '@/components/monitoring/SocialMediaMon
 import RealTimeDeepfakeMonitor from '@/components/RealTimeDeepfakeMonitor';
 import { ProductionOptimizations } from '@/components/ProductionOptimizations';
 import { EmailNotificationSettings } from '@/components/EmailNotificationSettings';
+import { StorageWidget } from '@/components/storage/StorageWidget';
 
 interface DashboardStats {
   protectedArtworks: number;
@@ -235,7 +236,7 @@ export const ProductionDashboard = () => {
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <Card className="border-0 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Protected Content</CardTitle>
@@ -283,6 +284,8 @@ export const ProductionDashboard = () => {
               <Progress value={stats.protectionScore} className="mt-2 h-2" />
             </CardContent>
           </Card>
+
+          <StorageWidget />
         </div>
 
         {/* AI Protection Status */}

@@ -4600,6 +4600,78 @@ export type Database = {
           },
         ]
       }
+      storage_addons: {
+        Row: {
+          addon_type: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          monthly_price_cents: number
+          storage_amount_gb: number
+          stripe_price_id: string | null
+          stripe_product_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          addon_type: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          monthly_price_cents: number
+          storage_amount_gb: number
+          stripe_price_id?: string | null
+          stripe_product_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          addon_type?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          monthly_price_cents?: number
+          storage_amount_gb?: number
+          stripe_price_id?: string | null
+          stripe_product_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      storage_transactions: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json | null
+          storage_delta_bytes: number
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          storage_delta_bytes?: number
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          storage_delta_bytes?: number
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           billing_cycle: string
@@ -5443,6 +5515,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_storage_usage: {
+        Row: {
+          artwork_count: number
+          created_at: string
+          id: string
+          last_calculated_at: string
+          storage_limit_bytes: number
+          storage_used_bytes: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          artwork_count?: number
+          created_at?: string
+          id?: string
+          last_calculated_at?: string
+          storage_limit_bytes?: number
+          storage_used_bytes?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          artwork_count?: number
+          created_at?: string
+          id?: string
+          last_calculated_at?: string
+          storage_limit_bytes?: number
+          storage_used_bytes?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       wallet_connections: {
         Row: {
           blockchain: string
@@ -5813,6 +5918,10 @@ export type Database = {
           schedule_type: string
         }
         Returns: string
+      }
+      calculate_user_storage_usage: {
+        Args: { user_id_param: string }
+        Returns: undefined
       }
       check_ai_protection_rate_limit: {
         Args: {
