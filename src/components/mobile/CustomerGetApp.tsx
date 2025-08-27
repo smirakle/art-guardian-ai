@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Smartphone, Download, QrCode, Shield, Star, CheckCircle, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import MobileNotificationCenter from '@/components/mobile/MobileNotificationCenter';
+import MobileUploadManager from '@/components/mobile/MobileUploadManager';
 
 const CustomerGetApp = () => {
   const { toast } = useToast();
@@ -259,6 +261,12 @@ const CustomerGetApp = () => {
             </Button>
           </CardContent>
         </Card>
+
+        {/* Mobile Features */}
+        <div className="grid md:grid-cols-2 gap-6 mb-12">
+          <MobileUploadManager />
+          <MobileNotificationCenter />
+        </div>
 
         {/* System Requirements */}
         <Card className="mb-8">

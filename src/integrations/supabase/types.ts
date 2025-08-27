@@ -2803,6 +2803,135 @@ export type Database = {
           },
         ]
       }
+      mobile_app_settings: {
+        Row: {
+          auto_sync_enabled: boolean
+          biometric_auth_enabled: boolean
+          created_at: string
+          id: string
+          language_preference: string
+          offline_mode_enabled: boolean
+          push_notifications_enabled: boolean
+          theme_preference: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auto_sync_enabled?: boolean
+          biometric_auth_enabled?: boolean
+          created_at?: string
+          id?: string
+          language_preference?: string
+          offline_mode_enabled?: boolean
+          push_notifications_enabled?: boolean
+          theme_preference?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auto_sync_enabled?: boolean
+          biometric_auth_enabled?: boolean
+          created_at?: string
+          id?: string
+          language_preference?: string
+          offline_mode_enabled?: boolean
+          push_notifications_enabled?: boolean
+          theme_preference?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      mobile_app_usage: {
+        Row: {
+          app_version: string | null
+          crash_reports: Json | null
+          created_at: string
+          device_info: Json | null
+          features_used: string[] | null
+          id: string
+          platform: string
+          session_end: string | null
+          session_start: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          app_version?: string | null
+          crash_reports?: Json | null
+          created_at?: string
+          device_info?: Json | null
+          features_used?: string[] | null
+          id?: string
+          platform: string
+          session_end?: string | null
+          session_start?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          app_version?: string | null
+          crash_reports?: Json | null
+          created_at?: string
+          device_info?: Json | null
+          features_used?: string[] | null
+          id?: string
+          platform?: string
+          session_end?: string | null
+          session_start?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      mobile_notifications: {
+        Row: {
+          body: string
+          created_at: string
+          data: Json | null
+          delivered_at: string | null
+          id: string
+          platform: string | null
+          push_token: string | null
+          read_at: string | null
+          sent_at: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          data?: Json | null
+          delivered_at?: string | null
+          id?: string
+          platform?: string | null
+          push_token?: string | null
+          read_at?: string | null
+          sent_at?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          data?: Json | null
+          delivered_at?: string | null
+          id?: string
+          platform?: string | null
+          push_token?: string | null
+          read_at?: string | null
+          sent_at?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       monitored_platforms: {
         Row: {
           api_endpoint: string | null

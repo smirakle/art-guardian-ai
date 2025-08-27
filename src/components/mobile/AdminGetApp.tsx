@@ -19,7 +19,10 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { MobileContainer } from '@/components/mobile/MobileContainer';
-import { ProductionAppBuilder } from '@/components/mobile/ProductionAppBuilder';
+import ProductionAppConfigurator from '@/components/mobile/ProductionAppConfigurator';
+import MobileSettingsManager from '@/components/mobile/MobileSettingsManager';
+import MobileUploadManager from '@/components/mobile/MobileUploadManager';
+import MobileNotificationCenter from '@/components/mobile/MobileNotificationCenter';
 
 const AdminGetApp = () => {
   const { toast } = useToast();
@@ -90,11 +93,12 @@ const AdminGetApp = () => {
         </div>
 
         <Tabs defaultValue="store-management" className="mb-12">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="store-management">App Stores</TabsTrigger>
             <TabsTrigger value="testing">Testing Builds</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="deployment">Deployment</TabsTrigger>
+            <TabsTrigger value="settings">Mobile Settings</TabsTrigger>
           </TabsList>
 
           <TabsContent value="store-management" className="space-y-6">
@@ -318,8 +322,19 @@ const AdminGetApp = () => {
           </TabsContent>
 
           <TabsContent value="deployment">
-            {/* Production App Builder */}
-            <ProductionAppBuilder />
+            <ProductionAppConfigurator />
+          </TabsContent>
+
+          <TabsContent value="settings" className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-6">
+                <MobileSettingsManager />
+              </div>
+              <div className="space-y-6">
+                <MobileUploadManager />
+                <MobileNotificationCenter />
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
 
