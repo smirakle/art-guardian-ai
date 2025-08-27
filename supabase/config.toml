@@ -124,3 +124,9 @@ verify_jwt = true
 [functions.ai-image-detector]
 verify_jwt = false
 
+[functions.mobile-usage-tracker]
+verify_jwt = false
+
+[functions.mobile-push-notifications]
+verify_jwt = false
+

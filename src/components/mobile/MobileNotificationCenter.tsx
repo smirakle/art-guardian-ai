@@ -35,51 +35,90 @@ const MobileNotificationCenter = () => {
   const loadNotifications = async () => {
     if (!user) return;
     
-    const { data, error } = await supabase
-      .from('mobile_notifications')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(20);
+    try {
+      const { data, error } = await supabase
+        .from('mobile_notifications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20);
 
-    if (data) {
-      setNotifications(data);
+      if (error) {
+        console.error('Error loading notifications:', error);
+        toast({
+          title: "Error Loading Notifications",
+          description: "Failed to load notifications. Please try again.",
+          variant: "destructive"
+        });
+      } else if (data) {
+        setNotifications(data);
+      }
+    } catch (error) {
+      console.error('Unexpected error loading notifications:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const markAsRead = async (notificationId: string) => {
-    const { error } = await supabase
-      .from('mobile_notifications')
-      .update({ 
-        read_at: new Date().toISOString(),
-        status: 'read'
-      })
-      .eq('id', notificationId);
+    try {
+      const { error } = await supabase
+        .from('mobile_notifications')
+        .update({ 
+          read_at: new Date().toISOString(),
+          status: 'read'
+        })
+        .eq('id', notificationId);
 
-    if (!error) {
-      setNotifications(prev => 
-        prev.map(n => 
-          n.id === notificationId 
-            ? { ...n, read_at: new Date().toISOString(), status: 'read' }
-            : n
-        )
-      );
+      if (error) {
+        console.error('Error marking notification as read:', error);
+        toast({
+          title: "Error",
+          description: "Failed to mark notification as read.",
+          variant: "destructive"
+        });
+      } else {
+        setNotifications(prev => 
+          prev.map(n => 
+            n.id === notificationId 
+              ? { ...n, read_at: new Date().toISOString(), status: 'read' }
+              : n
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error);
     }
   };
 
   const deleteNotification = async (notificationId: string) => {
-    const { error } = await supabase
-      .from('mobile_notifications')
-      .delete()
-      .eq('id', notificationId);
+    try {
+      const { error } = await supabase
+        .from('mobile_notifications')
+        .delete()
+        .eq('id', notificationId);
 
-    if (!error) {
-      setNotifications(prev => prev.filter(n => n.id !== notificationId));
-      toast({
-        title: "Notification Deleted",
-        description: "The notification has been removed",
-      });
+      if (error) {
+        console.error('Error deleting notification:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete notification.",
+          variant: "destructive"
+        });
+      } else {
+        setNotifications(prev => prev.filter(n => n.id !== notificationId));
+        toast({
+          title: "Notification Deleted",
+          description: "The notification has been removed",
+        });
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error);
     }
   };
 

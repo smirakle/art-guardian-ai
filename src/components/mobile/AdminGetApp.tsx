@@ -18,14 +18,17 @@ import {
   TestTube
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 import { MobileContainer } from '@/components/mobile/MobileContainer';
 import ProductionAppConfigurator from '@/components/mobile/ProductionAppConfigurator';
 import MobileSettingsManager from '@/components/mobile/MobileSettingsManager';
 import MobileUploadManager from '@/components/mobile/MobileUploadManager';
 import MobileNotificationCenter from '@/components/mobile/MobileNotificationCenter';
+import { sendPushNotification } from '@/lib/mobileHelpers';
 
 const AdminGetApp = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [userAgent, setUserAgent] = useState('');
   const [isIOS, setIsIOS] = useState(false);
   const [isAndroid, setIsAndroid] = useState(false);
@@ -73,6 +76,40 @@ const AdminGetApp = () => {
       title: `${action} Initiated`,
       description: `${action} process has been started.`,
     });
+  };
+
+  const handleSendTestPush = async () => {
+    if (!user) return;
+    
+    try {
+      const result = await sendPushNotification({
+        user_ids: [user.id],
+        title: "Test Push Notification",
+        body: "This is a test notification from the admin panel.",
+        platform: "admin-test",
+        data: { test: true, timestamp: new Date().toISOString() }
+      });
+
+      if (result.success) {
+        toast({
+          title: "Test Push Sent",
+          description: "Test notification has been sent successfully.",
+        });
+      } else {
+        toast({
+          title: "Push Failed",
+          description: "Failed to send test notification.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Error sending test push:', error);
+      toast({
+        title: "Error",
+        description: "An error occurred while sending the test notification.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -332,6 +369,22 @@ const AdminGetApp = () => {
               </div>
               <div className="space-y-6">
                 <MobileUploadManager />
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <TestTube className="w-5 h-5" />
+                      Test Push Notifications
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Button 
+                      onClick={handleSendTestPush}
+                      className="w-full"
+                    >
+                      Send Test Push
+                    </Button>
+                  </CardContent>
+                </Card>
                 <MobileNotificationCenter />
               </div>
             </div>
