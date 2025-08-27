@@ -16,11 +16,12 @@ import {
 import { MobileUpload } from "./MobileUpload";
 import { MobileCommunity } from "./MobileCommunity";
 import { MobileDashboard } from "./MobileDashboard";
+import MobileHomePage from "./MobileHomePage";
 import { useAuth } from "@/contexts/AuthContext";
 
 export const MobileContainer = () => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState("home");
 
   const features = [
     {
@@ -140,7 +141,11 @@ export const MobileContainer = () => {
         </CardHeader>
         <CardContent className="p-0">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 m-4 mb-0">
+            <TabsList className="grid w-full grid-cols-4 m-4 mb-0">
+              <TabsTrigger value="home" className="text-xs">
+                <Smartphone className="w-4 h-4 mr-1" />
+                Home
+              </TabsTrigger>
               <TabsTrigger value="dashboard" className="text-xs">
                 <BarChart3 className="w-4 h-4 mr-1" />
                 Dashboard
@@ -163,6 +168,10 @@ export const MobileContainer = () => {
 
               {/* Mobile Content */}
               <div className="bg-background min-h-[600px] max-h-[600px] overflow-y-auto">
+                <TabsContent value="home" className="m-0">
+                  <MobileHomePage />
+                </TabsContent>
+
                 <TabsContent value="dashboard" className="m-0">
                   {user ? (
                     <MobileDashboard />
@@ -194,6 +203,14 @@ export const MobileContainer = () => {
 
               {/* Mobile Navigation Bar Mockup */}
               <div className="h-12 bg-background border-t flex items-center justify-around rounded-b-2xl">
+                <Button
+                  variant={activeTab === "home" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setActiveTab("home")}
+                  className="h-8"
+                >
+                  <Smartphone className="w-4 h-4" />
+                </Button>
                 <Button
                   variant={activeTab === "dashboard" ? "default" : "ghost"}
                   size="sm"
