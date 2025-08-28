@@ -182,11 +182,6 @@ export default function DMCACenter() {
             Manage your DMCA takedown notices and track their status
           </p>
         </div>
-        <DMCAFormDialog 
-          matchId="" 
-          sourceUrl="" 
-          sourceTitle=""
-        />
       </div>
 
       {/* Rate Limit Status */}
