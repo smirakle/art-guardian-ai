@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -118,6 +118,9 @@ export function DMCAFormDialog({ matchId, sourceUrl, sourceTitle }: DMCAFormDial
             <FileText className="w-5 h-5" />
             File DMCA Takedown Notice
           </DialogTitle>
+          <DialogDescription>
+            Submit a formal DMCA takedown notice to request removal of infringing content. This will send a real legal notice via email to the platform's copyright agent.
+          </DialogDescription>
           <div className="text-sm text-green-600 bg-green-50 p-2 rounded">
             ✓ Live Filing: This will send a real DMCA notice via email to the platform's copyright agent
           </div>
