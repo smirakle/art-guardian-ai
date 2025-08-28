@@ -52,6 +52,7 @@ import { PartnerSuccessPage } from "./components/partner/PartnerSuccessPage";
 import EmailMarketing from "./pages/EmailMarketing";
 import TaxManagement from "./pages/TaxManagement";
 import GetApp from "./pages/GetApp";
+import DMCACenter from "./pages/DMCACenter";
 
 const queryClient = new QueryClient();
 
@@ -144,6 +145,7 @@ const App = () => {
             } />
             
             <Route path="/get-app" element={<GetApp />} />
+            <Route path="/dmca-center" element={<DMCACenter />} />
             <Route path="/certificate/:certificateId" element={<Certificate />} />
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />

@@ -44,6 +44,26 @@ export function DMCAFormDialog({ matchId, sourceUrl, sourceTitle }: DMCAFormDial
     setIsSubmitting(true);
 
     try {
+      // Check rate limit first
+      const { data: rateLimitData, error: rateLimitError } = await supabase.functions.invoke('filing-rate-limiter', {
+        body: {
+          userId: formData.copyrightOwnerEmail,
+          filingType: 'dmca_filing',
+          action: 'check'
+        }
+      });
+
+      if (rateLimitError) {
+        console.warn('Rate limit check failed, proceeding anyway:', rateLimitError);
+      } else if (rateLimitData && !rateLimitData.allowed) {
+        toast({
+          title: "Rate Limit Exceeded",
+          description: rateLimitData.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
       // Call edge function to process DMCA filing
       const { data, error } = await supabase.functions.invoke('file-dmca-notice', {
         body: {
