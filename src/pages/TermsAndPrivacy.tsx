@@ -201,6 +201,81 @@ const TermsAndPrivacy = () => {
             </CardContent>
           </Card>
 
+          <Separator />
+
+          {/* Copyright & DMCA Policy */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl">Copyright & DMCA Policy</CardTitle>
+              <CardDescription>
+                Our intellectual property rights and DMCA compliance procedures
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <section>
+                <h3 className="text-xl font-semibold mb-3">1. Copyright Notice</h3>
+                <p className="text-muted-foreground leading-relaxed mb-3">
+                  All content, software, documentation, and materials on the TSMO Platform are protected by copyright law and are the exclusive property of TSMO Platform. This includes but is not limited to:
+                </p>
+                <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                  <li>Source code, algorithms, and software architecture</li>
+                  <li>User interface designs and graphics</li>
+                  <li>Documentation, tutorials, and help materials</li>
+                  <li>Logos, trademarks, and brand elements</li>
+                  <li>Database structures and proprietary data</li>
+                </ul>
+              </section>
+
+              <section>
+                <h3 className="text-xl font-semibold mb-3">2. All Rights Reserved License</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  This software is proprietary and confidential. All rights are reserved by TSMO Platform. Any use, reproduction, distribution, or modification of this software without explicit written permission is strictly prohibited and may result in severe civil and criminal penalties.
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-xl font-semibold mb-3">3. DMCA Compliance</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  TSMO Platform respects intellectual property rights and complies with the Digital Millennium Copyright Act (DMCA). If you believe your copyrighted work has been infringed upon, please file a DMCA notice through our <a href="/dmca-center" className="text-primary hover:underline">DMCA Center</a>.
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-xl font-semibold mb-3">4. Registered DMCA Agent</h3>
+                <div className="bg-muted p-4 rounded-lg">
+                  <p className="font-medium">DMCA Agent: Legal Department</p>
+                  <p className="text-muted-foreground">Email: dmca@tsmo.platform</p>
+                  <p className="text-muted-foreground">
+                    Address: TSMO Platform DMCA Agent<br />
+                    123 Innovation Drive<br />
+                    Tech City, TC 12345<br />
+                    United States
+                  </p>
+                </div>
+              </section>
+
+              <section>
+                <h3 className="text-xl font-semibold mb-3">5. Enforcement Policy</h3>
+                <p className="text-muted-foreground leading-relaxed mb-3">
+                  TSMO Platform actively monitors for unauthorized use of our intellectual property and will pursue all available legal remedies against infringers, including but not limited to:
+                </p>
+                <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                  <li>Cease and desist notifications</li>
+                  <li>DMCA takedown requests</li>
+                  <li>Civil litigation for damages</li>
+                  <li>Criminal prosecution where applicable</li>
+                </ul>
+              </section>
+
+              <section>
+                <h3 className="text-xl font-semibold mb-3">6. Licensing Inquiries</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  For authorized licensing of TSMO Platform technology or content, please contact our legal department at <a href="mailto:legal@tsmo.platform" className="text-primary hover:underline">legal@tsmo.platform</a> with detailed information about your intended use.
+                </p>
+              </section>
+            </CardContent>
+          </Card>
+
           {/* Contact Information */}
           <Card>
             <CardHeader>
@@ -210,18 +285,28 @@ const TermsAndPrivacy = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                <p className="text-muted-foreground">
-                  <strong>Email:</strong> shirleena.cunningham@tsmowatch.com
-                </p>
-                <p className="text-muted-foreground">
-                  <strong>Privacy Officer:</strong> shirleena.cunningham@tsmowatch.com
-                </p>
-                <p className="text-muted-foreground">
-                  <strong>Address:</strong> TSMO Legal Department<br />
-                  [Your Company Address]<br />
-                  [City, State, ZIP Code]
-                </p>
+              <div className="space-y-4">
+                <div>
+                  <p className="font-medium">Legal Department</p>
+                  <p className="text-muted-foreground">legal@tsmo.platform</p>
+                </div>
+                <div>
+                  <p className="font-medium">DMCA Agent</p>
+                  <p className="text-muted-foreground">dmca@tsmo.platform</p>
+                </div>
+                <div>
+                  <p className="font-medium">Privacy Officer</p>
+                  <p className="text-muted-foreground">shirleena.cunningham@tsmowatch.com</p>
+                </div>
+                <div>
+                  <p className="font-medium">Mailing Address</p>
+                  <p className="text-muted-foreground">
+                    TSMO Platform Legal Department<br />
+                    123 Innovation Drive<br />
+                    Tech City, TC 12345<br />
+                    United States
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>

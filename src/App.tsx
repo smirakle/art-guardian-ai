@@ -53,6 +53,7 @@ import EmailMarketing from "./pages/EmailMarketing";
 import TaxManagement from "./pages/TaxManagement";
 import GetApp from "./pages/GetApp";
 import DMCACenter from "./pages/DMCACenter";
+import { CopyrightFooter } from "./components/CopyrightFooter";
 
 const queryClient = new QueryClient();
 
@@ -90,11 +91,11 @@ const App = () => {
             <SidebarProvider>
               <div className="min-h-screen flex w-full">
                 <AppSidebar />
-                <main className="flex-1">
+                <main className="flex-1 flex flex-col">
                   <header className="h-12 flex items-center border-b bg-background/95 backdrop-blur-sm">
                     <SidebarTrigger className="ml-4" />
                   </header>
-                  <div className="p-4">
+                   <div className="p-4 flex-1">
                     <Routes>
                       <Route path="/" element={<Index />} />
                       <Route path="/dashboard" element={<Dashboard />} />
@@ -150,7 +151,8 @@ const App = () => {
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />
                     </Routes>
-                  </div>
+                   </div>
+                   <CopyrightFooter />
                 </main>
               </div>
             </SidebarProvider>
