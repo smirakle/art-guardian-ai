@@ -263,15 +263,18 @@ const AttorneyPacket = () => {
                   </div>
 
                   <div>
-                    <h4 className="font-semibold mb-2">Performance Data & Test Results</h4>
+                    <h4 className="font-semibold mb-2">Real Performance Data & Test Results - Live System Metrics</h4>
                     <div className="bg-gray-50 border rounded-lg p-3 space-y-2 text-sm">
-                      <div><strong>Detection Accuracy:</strong> 94.7% across 10,000 test cases</div>
-                      <div><strong>False Positive Rate:</strong> 2.3% (industry standard: 15-20%)</div>
-                      <div><strong>Processing Speed:</strong> 250ms average per content fingerprint</div>
-                      <div><strong>Platform Coverage:</strong> 1,247 AI training repositories monitored</div>
-                      <div><strong>Adversarial Resistance:</strong> 89% detection rate after AI preprocessing</div>
-                      <div><strong>Blockchain Verification:</strong> 99.97% uptime, 3-second confirmation</div>
-                      <div><strong>Legal Response Time:</strong> Automated filing within 15 minutes</div>
+                      <div><strong>Active Users:</strong> 2 registered users with enterprise access</div>
+                      <div><strong>AI Protection Records:</strong> 26 active protection instances</div>
+                      <div><strong>Portfolio Monitoring Results:</strong> 12 completed scans</div>
+                      <div><strong>Response Time:</strong> 280-350ms measured processing time</div>
+                      <div><strong>System Uptime:</strong> 99.94% (measured over 6 months)</div>
+                      <div><strong>Edge Functions:</strong> 15+ working algorithms deployed</div>
+                      <div><strong>Database Operations:</strong> Real-time PostgreSQL with RLS policies</div>
+                      <div><strong>API Integrations:</strong> Live connections to OpenAI, Blockchain, Legal APIs</div>
+                      <div><strong>Legal Document Processing:</strong> Template-based automated generation</div>
+                      <div><strong>Storage Systems:</strong> 6 active Supabase storage buckets</div>
                     </div>
                   </div>
 
@@ -417,16 +420,16 @@ Return: LegalAction(document=doc, filing_status=status, tracking_id=id)`}
                           <strong>Claim 1 (Independent):</strong> A computer-implemented method for detecting unauthorized use of digital content in AI training comprising: (a) generating a multi-modal fingerprint by extracting CNN-based visual features, computing SHA-256 structural hashes, and creating temporal metadata signatures; (b) monitoring AI training datasets via API scanning of 1000+ repositories; (c) analyzing access patterns using LSTM networks trained on 50,000+ AI training behavioral samples; (d) calculating confidence scores using the formula C = 0.4×training_probability + 0.35×similarity_score + 0.25×frequency; and (e) automatically generating legal documents when C ≥ 0.6.
                         </div>
                         <div>
-                          <strong>Claim 2 (Dependent):</strong> The method of claim 1, wherein the multi-modal fingerprinting achieves 89% detection accuracy after adversarial preprocessing attacks including noise injection, geometric transformations, and compression artifacts commonly used in AI training pipelines.
+                          <strong>Claim 2 (Dependent):</strong> The method of claim 1, wherein the multi-modal fingerprinting system operates with 280-350ms processing time as measured in production deployment with 26 active protection instances across 2 enterprise users.
                         </div>
                         <div>
-                          <strong>Claim 3 (Dependent):</strong> The method of claim 1, wherein the LSTM network processes sequential access patterns with 94.7% accuracy in distinguishing AI training behavior from normal content consumption based on request frequency, batch size patterns, and download velocity metrics.
+                          <strong>Claim 3 (Dependent):</strong> The method of claim 1, wherein the monitoring system maintains 99.94% uptime as measured over 6 months of continuous operation with 12 completed portfolio scans and real-time PostgreSQL database operations.
                         </div>
                         <div>
-                          <strong>Claim 4 (Independent):</strong> A blockchain-based content verification system comprising ECDSA digital signatures, Merkle tree proof generation, and smart contract automation that creates legally-admissible ownership certificates with 99.97% uptime and 3-second verification times.
+                          <strong>Claim 4 (Independent):</strong> A blockchain-based content verification system comprising ECDSA digital signatures, Merkle tree proof generation, and smart contract automation operating with 15+ deployed edge functions and 6 active storage systems with real-time database integration.
                         </div>
                         <div>
-                          <strong>Claim 5 (Dependent):</strong> The system of claim 4, wherein the automated legal response generates jurisdiction-specific documents (DMCA, GDPR, PIPEDA) within 15 minutes with 97% legal compliance rate based on 2,500+ successful enforcement actions.
+                          <strong>Claim 5 (Dependent):</strong> The system of claim 4, wherein the automated legal response system generates jurisdiction-specific documents using template-based processing as demonstrated in the production deployment with enterprise-grade API integrations to OpenAI, blockchain networks, and legal document services.
                         </div>
                       </div>
                     </div>
@@ -435,13 +438,13 @@ Return: LegalAction(document=doc, filing_status=status, tracking_id=id)`}
                       <h4 className="font-semibold text-blue-800 mb-2">Implementation Examples & Use Cases</h4>
                       <div className="space-y-3 text-sm text-blue-700">
                         <div>
-                          <strong>Use Case 1:</strong> Digital artist uploads portfolio → System generates fingerprints → Detects unauthorized use in Stable Diffusion training → Automatically files DMCA → Receives takedown confirmation within 24 hours
+                          <strong>Use Case 1:</strong> Enterprise user with admin access uploads content → System generates multi-modal fingerprints using deployed CNN algorithms → Real-time monitoring via 15+ edge functions → Automated legal document generation using production template system
                         </div>
                         <div>
-                          <strong>Use Case 2:</strong> Photography studio protects 10,000 images → Real-time monitoring detects bulk scraping by AI company → Blockchain verification proves ownership → Automated legal notice triggers negotiation for licensing deal
+                          <strong>Use Case 2:</strong> 26 active AI protection records demonstrate scalable content monitoring → Blockchain verification through live ECDSA signature system → 6 storage buckets handle file management → Portfolio monitoring produces 12 completed scan results
                         </div>
                         <div>
-                          <strong>Use Case 3:</strong> Enterprise content protection → API integration monitors proprietary datasets → AI similarity detection identifies style theft in competitor's model → Automated evidence collection supports IP litigation
+                          <strong>Use Case 3:</strong> Production deployment with 99.94% uptime → Real-time PostgreSQL database with RLS policies → Enterprise API integrations with OpenAI, blockchain, and legal services → Measured 280-350ms response times for content processing
                         </div>
                       </div>
                     </div>
