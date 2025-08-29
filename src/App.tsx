@@ -47,6 +47,7 @@ import Roadmap from "./pages/Roadmap";
 import CreatorMarkets from "./pages/CreatorMarkets";
 import ForgeryDetection from "./pages/ForgeryDetection";
 import TermsAndPrivacy from "./pages/TermsAndPrivacy";
+import AttorneyPacket from "./pages/AttorneyPacket";
 import { PartnerPricingManager } from "./components/partner/PartnerPricingManager";
 import { PartnerSuccessPage } from "./components/partner/PartnerSuccessPage";
 import EmailMarketing from "./pages/EmailMarketing";
@@ -134,6 +135,7 @@ const App = () => {
             <Route path="/forgery-detection" element={<ForgeryDetection />} />
             <Route path="/roadmap" element={<Roadmap />} />
             <Route path="/terms-and-privacy" element={<TermsAndPrivacy />} />
+            <Route path="/attorney-packet" element={<AttorneyPacket />} />
             <Route path="/email-marketing" element={
               <ProtectedRoute requiredRole="admin">
                 <EmailMarketing />
