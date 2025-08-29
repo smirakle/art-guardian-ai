@@ -12,6 +12,7 @@ import InventorInformationForm from '@/components/patent/InventorInformationForm
 import PriorArtCollector from '@/components/patent/PriorArtCollector';
 import PatentClaimsEditor from '@/components/patent/PatentClaimsEditor';
 import USPTOFormsGenerator from '@/components/patent/USPTOFormsGenerator';
+import FormulaDisplay from '@/components/FormulaDisplay';
 import { InventorInfo, PriorArt, PatentClaim, ApplicationInfo } from '@/types/patent';
 
 const AttorneyPacket = () => {
@@ -236,6 +237,43 @@ const AttorneyPacket = () => {
                     <p className="text-sm text-muted-foreground">
                       A comprehensive system that combines advanced image fingerprinting, real-time dataset monitoring, blockchain verification, and automated legal enforcement to protect digital content from unauthorized AI training use.
                     </p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="font-semibold mb-2">Core Mathematical Framework</h4>
+                    
+                    <FormulaDisplay
+                      title="Fingerprint Similarity Function"
+                      formula="S(F1, F2) = Σ(wi * similarity_i(F1_i, F2_i))"
+                      description="Calculates similarity between content fingerprints for AI training detection"
+                      variables={[
+                        { symbol: "F1, F2", description: "Content fingerprints being compared" },
+                        { symbol: "wi", description: "Feature weights optimized for AI training detection" },
+                        { symbol: "similarity_i", description: "Similarity function for feature i" }
+                      ]}
+                    />
+
+                    <FormulaDisplay
+                      title="Training Pattern Classifier"
+                      formula="P(training|pattern) = softmax(W * φ(pattern) + b)"
+                      description="Probability that a pattern indicates AI training usage"
+                      variables={[
+                        { symbol: "W", description: "Weight matrix learned from training data" },
+                        { symbol: "φ(pattern)", description: "Feature transform of access pattern" },
+                        { symbol: "b", description: "Bias term" }
+                      ]}
+                    />
+
+                    <FormulaDisplay
+                      title="Confidence Aggregation"
+                      formula="Final_Score = Ensemble([CNN_score, LSTM_score, Similarity_score])"
+                      description="Combines multiple detection methods for final confidence score"
+                      variables={[
+                        { symbol: "CNN_score", description: "Convolutional neural network detection score" },
+                        { symbol: "LSTM_score", description: "Long short-term memory network score" },
+                        { symbol: "Similarity_score", description: "Fingerprint similarity score" }
+                      ]}
+                    />
                   </div>
                 </div>
               </CardContent>
