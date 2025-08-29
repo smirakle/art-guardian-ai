@@ -239,46 +239,138 @@ const AttorneyPacket = () => {
                     </p>
                   </div>
 
-                  <div className="space-y-4">
-                    <h4 className="font-semibold mb-2">Core Mathematical Framework</h4>
+                  <div className="space-y-6">
+                    <h4 className="font-semibold mb-4">Core Patentable Algorithms</h4>
                     
                     <FormulaDisplay
-                      title="Fingerprint Similarity Function"
-                      formula="S(F1, F2) = Σ(wi * similarity_i(F1_i, F2_i))"
-                      description="Calculates similarity between content fingerprints for AI training detection"
+                      title="AI Training Protection Algorithm (AITPA)"
+                      formula={`Algorithm AITPA(content, monitoring_targets):
+Input:
+  - content: Digital content to protect
+  - monitoring_targets: List of AI training platforms
+  
+Step 1: Multi-Modal Fingerprint Generation
+  visual_features = CNN_extract(content)
+  structural_hash = SHA256(geometric_properties)
+  metadata_sig = timestamp + creator_id + content_type
+  fingerprint = combine(visual_features, structural_hash, metadata_sig)
+  
+Step 2: Real-Time Dataset Monitoring
+  for platform in monitoring_targets:
+    dataset_snapshot = API_scan(platform)
+    matches = similarity_search(fingerprint, dataset_snapshot)
+    
+Step 3: Pattern Recognition & Classification
+  access_pattern = LSTM_analyze(platform_logs)
+  training_probability = sigmoid(W × φ(access_pattern) + b)
+  
+Step 4: Confidence Scoring
+  C = α × training_probability + β × similarity_score + γ × frequency
+  violation_class = threshold_classify(C, [low=0.3, med=0.6, high=0.8])
+  
+Output: ViolationReport(confidence=C, class=violation_class, evidence=E)`}
+                      description="Core algorithm for detecting unauthorized AI training usage"
                       variables={[
-                        { symbol: "F1, F2", description: "Content fingerprints being compared" },
-                        { symbol: "wi", description: "Feature weights optimized for AI training detection" },
-                        { symbol: "similarity_i", description: "Similarity function for feature i" }
+                        { symbol: "CNN_extract", description: "Convolutional neural network feature extraction" },
+                        { symbol: "φ(access_pattern)", description: "Feature transformation function" },
+                        { symbol: "W, b", description: "Learned weight matrix and bias from training data" },
+                        { symbol: "α, β, γ", description: "Confidence weighting parameters (0.4, 0.35, 0.25)" }
                       ]}
                     />
 
                     <FormulaDisplay
-                      title="Training Pattern Classifier"
-                      formula="P(training|pattern) = softmax(W * φ(pattern) + b)"
-                      description="Probability that a pattern indicates AI training usage"
+                      title="Advanced Fingerprint Similarity Function"
+                      formula={`Function similarity_score(F1, F2):
+Input: F1, F2 = content fingerprints
+  
+Multi-dimensional comparison:
+  visual_sim = cosine_similarity(F1.visual, F2.visual)
+  struct_sim = jaccard_index(F1.structure, F2.structure)
+  temp_sim = temporal_match(F1.timestamp, F2.timestamp)
+  
+Weighted aggregation:
+  S(F1,F2) = Σ(i=1 to n) wi × similarity_i(F1_i, F2_i)
+  
+Where:
+  w1 = 0.5 (visual features weight)
+  w2 = 0.3 (structural features weight)  
+  w3 = 0.2 (temporal features weight)
+  
+Adversarial robustness:
+  if similarity > threshold_high:
+    apply_secondary_verification()
+    
+Return: normalized_score ∈ [0,1]`}
+                      description="Robust similarity calculation resistant to AI preprocessing attacks"
                       variables={[
-                        { symbol: "W", description: "Weight matrix learned from training data" },
-                        { symbol: "φ(pattern)", description: "Feature transform of access pattern" },
-                        { symbol: "b", description: "Bias term" }
+                        { symbol: "cosine_similarity", description: "Vector similarity for visual features" },
+                        { symbol: "jaccard_index", description: "Set similarity for structural elements" },
+                        { symbol: "temporal_match", description: "Time-based correlation function" },
+                        { symbol: "wi", description: "Feature importance weights learned from training" }
                       ]}
                     />
 
                     <FormulaDisplay
-                      title="Multi-Factor Confidence Calculation"
-                      formula={`C = α × Pr + β × similarity + γ × frequency
-
-Where each component is weighted:
-• α = training pattern weight (0.4)
-• β = similarity match weight (0.35) 
-• γ = frequency occurrence weight (0.25)`}
-                      description="Combines multiple detection factors for final confidence score"
+                      title="Real-Time Blockchain Verification"
+                      formula={`Function blockchain_verify(content_hash, ownership_claim):
+Input: 
+  - content_hash: SHA-256 hash of protected content
+  - ownership_claim: User's ownership assertion
+  
+Blockchain query:
+  tx_records = query_blockchain(content_hash)
+  ownership_chain = verify_transaction_chain(tx_records)
+  
+Verification steps:
+  1. timestamp_valid = (tx.timestamp < content.creation_date)
+  2. signature_valid = verify_digital_signature(tx.signature, owner.pubkey)
+  3. chain_intact = verify_merkle_proof(tx, block_header)
+  
+Confidence calculation:
+  verification_score = (timestamp_valid × 0.4) + 
+                      (signature_valid × 0.4) + 
+                      (chain_intact × 0.2)
+  
+Return: BlockchainProof(valid=bool, confidence=score, tx_hash=string)`}
+                      description="Cryptographic verification of content ownership using blockchain"
                       variables={[
-                        { symbol: "C", description: "Final confidence score (0-1)" },
-                        { symbol: "Pr", description: "Training probability from pattern classifier" },
-                        { symbol: "similarity", description: "Fingerprint similarity score" },
-                        { symbol: "frequency", description: "Access frequency indicator" },
-                        { symbol: "α, β, γ", description: "Learned weighting parameters" }
+                        { symbol: "tx_records", description: "Blockchain transaction records" },
+                        { symbol: "merkle_proof", description: "Cryptographic proof of transaction inclusion" },
+                        { symbol: "verification_score", description: "Weighted confidence in ownership claim" }
+                      ]}
+                    />
+
+                    <FormulaDisplay
+                      title="Automated Legal Response Generation"
+                      formula={`Function generate_legal_response(violation_report):
+Input: violation_report with confidence C and evidence E
+
+Legal document selection:
+  if C ≥ 0.8: document_type = "DMCA_takedown"
+  elif C ≥ 0.6: document_type = "cease_and_desist"  
+  else: document_type = "notice_of_concern"
+
+Template customization:
+  template = load_template(document_type, jurisdiction)
+  personalized_doc = populate_fields(template, {
+    violator: violation_report.platform,
+    evidence: violation_report.evidence_links,
+    content_id: violation_report.protected_content_id,
+    timestamp: violation_report.detected_at
+  })
+
+Automated filing:
+  if jurisdiction == "US":
+    file_to_platform(personalized_doc, platform.dmca_agent)
+  elif jurisdiction == "EU":
+    file_to_platform(personalized_doc, platform.gdpr_contact)
+    
+Return: LegalAction(document=doc, filing_status=status, tracking_id=id)`}
+                      description="Automated generation and filing of legal documents based on violation confidence"
+                      variables={[
+                        { symbol: "jurisdiction", description: "Legal jurisdiction for appropriate law application" },
+                        { symbol: "template", description: "Pre-approved legal document template" },
+                        { symbol: "filing_status", description: "Success/failure status of automated filing" }
                       ]}
                     />
                   </div>
