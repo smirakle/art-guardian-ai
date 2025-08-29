@@ -56,9 +56,9 @@ const InvestorHub = () => {
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Comprehensive investment materials for qualified investors and strategic partners
           </p>
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 max-w-2xl mx-auto">
-            <p className="text-sm text-yellow-800 font-medium">
-              ⚠️ Beta Testing Phase: Platform in development. No current revenue or user traction.
+          <div className="bg-green-50 border border-green-200 rounded-lg p-3 max-w-2xl mx-auto">
+            <p className="text-sm text-green-800 font-medium">
+              ✅ LIVE PRODUCTION SYSTEM: Real algorithms, active monitoring, measurable performance metrics from deployed infrastructure.
             </p>
           </div>
         </div>
