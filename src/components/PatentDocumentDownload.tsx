@@ -165,7 +165,8 @@ const PatentDocumentDownload = () => {
     addText('   • Determine training probability: Pr = Sigmoid(A * weight_matrix)');
     
     addText('Step 3: Confidence Scoring and Classification');
-    addText('   • Multi-factor confidence: C = α*Pr + β*similarity + γ*frequency');
+    addText('   • Multi-factor confidence calculation:');
+    addText('     C = α×Pr + β×similarity + γ×frequency');
     addText('   • Classification: Class = Threshold_Function(C, [low, medium, high])');
     addText('   • Evidence aggregation: E = Collect_Evidence(matches, metadata)');
     

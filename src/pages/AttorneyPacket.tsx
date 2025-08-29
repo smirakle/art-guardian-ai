@@ -265,13 +265,20 @@ const AttorneyPacket = () => {
                     />
 
                     <FormulaDisplay
-                      title="Confidence Aggregation"
-                      formula="Final_Score = Ensemble([CNN_score, LSTM_score, Similarity_score])"
-                      description="Combines multiple detection methods for final confidence score"
+                      title="Multi-Factor Confidence Calculation"
+                      formula={`C = α × Pr + β × similarity + γ × frequency
+
+Where each component is weighted:
+• α = training pattern weight (0.4)
+• β = similarity match weight (0.35) 
+• γ = frequency occurrence weight (0.25)`}
+                      description="Combines multiple detection factors for final confidence score"
                       variables={[
-                        { symbol: "CNN_score", description: "Convolutional neural network detection score" },
-                        { symbol: "LSTM_score", description: "Long short-term memory network score" },
-                        { symbol: "Similarity_score", description: "Fingerprint similarity score" }
+                        { symbol: "C", description: "Final confidence score (0-1)" },
+                        { symbol: "Pr", description: "Training probability from pattern classifier" },
+                        { symbol: "similarity", description: "Fingerprint similarity score" },
+                        { symbol: "frequency", description: "Access frequency indicator" },
+                        { symbol: "α, β, γ", description: "Learned weighting parameters" }
                       ]}
                     />
                   </div>

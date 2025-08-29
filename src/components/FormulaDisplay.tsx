@@ -20,9 +20,9 @@ const FormulaDisplay = ({ title, formula, description, variables }: FormulaDispl
         )}
         
         <div className="bg-white rounded-lg p-3 border border-blue-100 overflow-x-auto">
-          <code className="text-sm font-mono text-blue-800 whitespace-nowrap">
+          <div className="text-sm font-mono text-blue-800 break-all whitespace-pre-wrap">
             {formula}
-          </code>
+          </div>
         </div>
         
         {description && (

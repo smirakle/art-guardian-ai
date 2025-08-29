@@ -94,8 +94,10 @@ const ComprehensivePatentDocument = () => {
     addText('• Behavioral fingerprint analysis for dataset composition changes');
     
     addText('3. Confidence Scoring and Classification:', 11, true);
-    addText('• Multi-factor confidence calculation: C = α×Pr + β×similarity + γ×frequency');
-    addText('• Threshold-based classification: Class = ThresholdFunction(C, [low, medium, high])');
+    addText('• Multi-factor confidence calculation:');
+    addText('  C = α×Pr + β×similarity + γ×frequency');
+    addText('• Threshold-based classification:');
+    addText('  Class = ThresholdFunction(C, [low, medium, high])');
     addText('• Evidence aggregation and verification linkage');
     addText('• Real-time threat level assessment');
     
@@ -104,8 +106,9 @@ const ComprehensivePatentDocument = () => {
     addText('• Generating multi-modal fingerprints of protected digital content');
     addText('• Monitoring AI training repositories using real-time scanning algorithms');
     addText('• Analyzing access patterns using LSTM neural networks');
-    addText('• Calculating confidence scores using mathematical formula C = α×Pr + β×similarity + γ×frequency');
-    addText('• Classifying violations using threshold-based classification algorithms');
+    addText('• Calculating confidence scores using formula:');
+    addText('  C = α×Pr + β×similarity + γ×frequency');
+    addText('• Classifying violations using threshold-based classification');
     addText('• Generating evidence packages with source verification');
     
     addText('Claim 2: The method of claim 1, wherein fingerprint generation comprises CNN-based visual feature extraction combined with geometric structural analysis.');
