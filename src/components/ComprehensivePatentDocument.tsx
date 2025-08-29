@@ -81,25 +81,22 @@ const ComprehensivePatentDocument = () => {
     addText('The invention comprises the following novel technical elements:');
     
     addText('1. Multi-Modal Fingerprinting Process:', 11, true);
-    addText('• Visual feature extraction using CNN layers trained on AI training detection');
-    addText('• Structural hash generation based on geometric composition analysis');
-    addText('• Temporal signature creation including metadata timestamps');
-    addText('• Adversarial robustness transformations to resist preprocessing bypasses');
-    addText('• Mathematical formula: F = Combine(CNN(visual), Hash(structure), Time(metadata))');
+    addText('• visual_features = CNN_extract(content)');
+    addText('• structural_hash = SHA256(geometric_properties)');
+    addText('• metadata_sig = timestamp + creator_id + content_type');
+    addText('• fingerprint = combine(visual_features, structural_hash, metadata_sig)');
     
     addText('2. AI Training Pattern Recognition Engine:', 11, true);
-    addText('• LSTM network for sequential access pattern analysis');
-    addText('• Anomaly detection algorithm: A = AnomalyDetector(patterns, baseline)');
-    addText('• Training probability calculation: Pr = Sigmoid(A × weight_matrix)');
-    addText('• Behavioral fingerprint analysis for dataset composition changes');
+    addText('• access_pattern = LSTM_analyze(platform_logs)');
+    addText('• training_probability = sigmoid(W × φ(access_pattern) + b)');
+    addText('• Multi-dimensional similarity comparison using cosine and Jaccard metrics');
+    addText('• Real-time dataset monitoring with API scanning');
     
     addText('3. Confidence Scoring and Classification:', 11, true);
-    addText('• Multi-factor confidence calculation:');
-    addText('  C = α×Pr + β×similarity + γ×frequency');
-    addText('• Threshold-based classification:');
-    addText('  Class = ThresholdFunction(C, [low, medium, high])');
-    addText('• Evidence aggregation and verification linkage');
-    addText('• Real-time threat level assessment');
+    addText('• C = α × training_probability + β × similarity_score + γ × frequency');
+    addText('• violation_class = threshold_classify(C, [low=0.3, med=0.6, high=0.8])');
+    addText('• Weighted aggregation: S(F1,F2) = Σ(wi × similarity_i(F1_i, F2_i))');
+    addText('• Evidence aggregation and blockchain verification integration');
     
     addText('Claims for Patent Application 1:', 11, true);
     addText('Claim 1: A computer-implemented method for detecting unauthorized AI training use comprising:');

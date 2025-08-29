@@ -146,47 +146,60 @@ const PatentDocumentDownload = () => {
     addText('DETAILED AI TRAINING PROTECTION ALGORITHM (AITPA)', 14, true);
     addText('Core Algorithm Specification:', 12, true);
     
-    addText('Algorithm Input:', 11, true);
-    addText('• Protected content fingerprint array F = [f1, f2, ..., fn]');
-    addText('• Dataset monitoring targets T = {t1, t2, ..., tm}');
-    addText('• Historical training patterns H = {h1, h2, ..., hk}');
-    addText('• Real-time access logs L = {l1, l2, ..., lp}');
+    addText('Algorithm AITPA(content, monitoring_targets):', 11, true);
+    addText('Input:');
+    addText('• content: Digital content to protect');
+    addText('• monitoring_targets: List of AI training platforms');
     
-    addText('Algorithm Processing Steps:', 11, true);
-    addText('Step 1: Multi-dimensional Feature Extraction');
-    addText('   • Extract visual features using CNN layers: V = CNN(content)');
-    addText('   • Generate structural hash: S = Hash(geometry, composition)');
-    addText('   • Create temporal signature: T = Timestamp + metadata');
-    addText('   • Combine features: F = Combine(V, S, T)');
+    addText('Step 1: Multi-Modal Fingerprint Generation');
+    addText('   visual_features = CNN_extract(content)');
+    addText('   structural_hash = SHA256(geometric_properties)');
+    addText('   metadata_sig = timestamp + creator_id + content_type');
+    addText('   fingerprint = combine(visual_features, structural_hash, metadata_sig)');
     
-    addText('Step 2: AI Training Pattern Recognition');
-    addText('   • Apply LSTM network for sequence analysis: P = LSTM(access_patterns)');
-    addText('   • Calculate anomaly score: A = Anomaly_Detector(P, baseline)');
-    addText('   • Determine training probability: Pr = Sigmoid(A * weight_matrix)');
+    addText('Step 2: Real-Time Dataset Monitoring');
+    addText('   for platform in monitoring_targets:');
+    addText('     dataset_snapshot = API_scan(platform)');
+    addText('     matches = similarity_search(fingerprint, dataset_snapshot)');
     
-    addText('Step 3: Confidence Scoring and Classification');
-    addText('   • Multi-factor confidence calculation:');
-    addText('     C = α×Pr + β×similarity + γ×frequency');
-    addText('   • Classification: Class = Threshold_Function(C, [low, medium, high])');
-    addText('   • Evidence aggregation: E = Collect_Evidence(matches, metadata)');
+    addText('Step 3: Pattern Recognition & Classification');
+    addText('   access_pattern = LSTM_analyze(platform_logs)');
+    addText('   training_probability = sigmoid(W × φ(access_pattern) + b)');
     
-    addText('Algorithm Output:', 11, true);
-    addText('• Violation probability score (0-1)');
-    addText('• Classification level (low/medium/high risk)');
-    addText('• Evidence package with source links');
-    addText('• Recommended response actions');
+    addText('Step 4: Confidence Scoring');
+    addText('   C = α × training_probability + β × similarity_score + γ × frequency');
+    addText('   violation_class = threshold_classify(C, [low=0.3, med=0.6, high=0.8])');
     
-    addText('Novel Mathematical Framework:', 12, true);
-    addText('Fingerprint Similarity Function:');
-    addText('   S(F1, F2) = Σ(wi * similarity_i(F1_i, F2_i))');
-    addText('   where wi = feature weights optimized for AI training detection');
+    addText('Output: ViolationReport(confidence=C, class=violation_class, evidence=E)');
     
-    addText('Training Pattern Classifier:');
-    addText('   P(training|pattern) = softmax(W * φ(pattern) + b)');
-    addText('   where φ(pattern) = feature_transform(access_pattern)');
+    addText('Advanced Fingerprint Similarity Function:', 12, true);
+    addText('Function similarity_score(F1, F2):');
+    addText('Multi-dimensional comparison:');
+    addText('   visual_sim = cosine_similarity(F1.visual, F2.visual)');
+    addText('   struct_sim = jaccard_index(F1.structure, F2.structure)');
+    addText('   temp_sim = temporal_match(F1.timestamp, F2.timestamp)');
+    addText('Weighted aggregation:');
+    addText('   S(F1,F2) = Σ(i=1 to n) wi × similarity_i(F1_i, F2_i)');
+    addText('Where: w1=0.5 (visual), w2=0.3 (structural), w3=0.2 (temporal)');
     
-    addText('Confidence Aggregation:');
-    addText('   Final_Score = Ensemble([CNN_score, LSTM_score, Similarity_score])');
+    addText('Real-Time Blockchain Verification:', 12, true);
+    addText('Function blockchain_verify(content_hash, ownership_claim):');
+    addText('Blockchain query:');
+    addText('   tx_records = query_blockchain(content_hash)');
+    addText('   ownership_chain = verify_transaction_chain(tx_records)');
+    addText('Verification steps:');
+    addText('   timestamp_valid = (tx.timestamp < content.creation_date)');
+    addText('   signature_valid = verify_digital_signature(tx.signature, owner.pubkey)');
+    addText('   chain_intact = verify_merkle_proof(tx, block_header)');
+    addText('Confidence: verification_score = timestamp_valid×0.4 + signature_valid×0.4 + chain_intact×0.2');
+    
+    addText('Automated Legal Response Generation:', 12, true);
+    addText('Function generate_legal_response(violation_report):');
+    addText('Legal document selection:');
+    addText('   if C ≥ 0.8: document_type = "DMCA_takedown"');
+    addText('   elif C ≥ 0.6: document_type = "cease_and_desist"');
+    addText('   else: document_type = "notice_of_concern"');
+    addText('Template customization and automated filing based on jurisdiction');
     yPosition += 15;
 
     // Claims Definitions
