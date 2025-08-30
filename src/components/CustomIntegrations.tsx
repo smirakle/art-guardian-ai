@@ -329,169 +329,306 @@ export const CustomIntegrations: React.FC = () => {
 
   return (
     <FeatureGuard feature="enterprise_integrations" fallbackTitle="Enterprise Integrations" fallbackDescription="Custom integrations and APIs for enterprise customers">
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold">Custom Integrations</h2>
-            <p className="text-muted-foreground">
-              Manage your enterprise integrations and API connections
-            </p>
+      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/20">
+        {/* Hero Section */}
+        <div className="relative px-6 py-12 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-b border-border/50">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Settings className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                      Integrations Hub
+                    </h1>
+                    <p className="text-lg text-muted-foreground mt-1">
+                      Connect your favorite tools and automate your workflow
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 text-sm">
+                  <Badge variant="secondary" className="gap-1.5">
+                    <Activity className="h-3 w-3" />
+                    {integrations.filter(i => i.status === 'active').length} Active
+                  </Badge>
+                  <Badge variant="outline" className="gap-1.5">
+                    <Shield className="h-3 w-3" />
+                    Enterprise Grade
+                  </Badge>
+                </div>
+              </div>
+              <Button 
+                onClick={() => setShowCreateForm(true)}
+                size="lg"
+                className="self-start md:self-center bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                <Plus className="h-5 w-5 mr-2" />
+                Create Integration
+              </Button>
+            </div>
           </div>
-          <Button onClick={() => setShowCreateForm(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            New Integration
-          </Button>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-4">
-            <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="creative">Creative Tools</TabsTrigger>
-              <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
-              <TabsTrigger value="api">API Access</TabsTrigger>
-              <TabsTrigger value="exports">Data Exports</TabsTrigger>
-            </TabsList>
+        <div className="max-w-6xl mx-auto px-6 py-8">
 
-          <TabsContent value="overview" className="space-y-4">
+        <Tabs defaultValue="overview" className="space-y-6">
+          <div className="flex justify-center">
+            <TabsList className="grid grid-cols-3 md:grid-cols-5 bg-muted/50 p-1 rounded-lg backdrop-blur-sm">
+              <TabsTrigger value="overview" className="data-[state=active]:bg-background data-[state=active]:shadow-md">
+                Overview
+              </TabsTrigger>
+              <TabsTrigger value="creative" className="data-[state=active]:bg-background data-[state=active]:shadow-md">
+                <span className="hidden sm:inline">Creative Tools</span>
+                <span className="sm:hidden">Creative</span>
+              </TabsTrigger>
+              <TabsTrigger value="webhooks" className="data-[state=active]:bg-background data-[state=active]:shadow-md">
+                Webhooks
+              </TabsTrigger>
+              <TabsTrigger value="api" className="data-[state=active]:bg-background data-[state=active]:shadow-md">
+                <span className="hidden sm:inline">API Access</span>
+                <span className="sm:hidden">API</span>
+              </TabsTrigger>
+              <TabsTrigger value="exports" className="data-[state=active]:bg-background data-[state=active]:shadow-md">
+                <span className="hidden sm:inline">Data Exports</span>
+                <span className="sm:hidden">Exports</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
+
+          <TabsContent value="overview" className="space-y-6">
+            {/* Stats Cards */}
             <div className="grid gap-4 md:grid-cols-3">
-              <Card>
+              <Card className="bg-gradient-to-br from-green-500/10 via-background to-background border-green-500/20">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Active Integrations</CardTitle>
-                  <Activity className="h-4 w-4 text-muted-foreground" />
+                  <div className="h-8 w-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                    <Activity className="h-4 w-4 text-green-600" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">
+                  <div className="text-3xl font-bold text-green-600">
                     {integrations.filter(i => i.status === 'active').length}
                   </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Working integrations
+                  </p>
                 </CardContent>
               </Card>
               
-              <Card>
+              <Card className="bg-gradient-to-br from-blue-500/10 via-background to-background border-blue-500/20">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Integrations</CardTitle>
-                  <Settings className="h-4 w-4 text-muted-foreground" />
+                  <div className="h-8 w-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+                    <Settings className="h-4 w-4 text-blue-600" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{integrations.length}</div>
+                  <div className="text-3xl font-bold text-blue-600">{integrations.length}</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Total configured
+                  </p>
                 </CardContent>
               </Card>
               
-              <Card>
+              <Card className="bg-gradient-to-br from-purple-500/10 via-background to-background border-purple-500/20">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Security Status</CardTitle>
-                  <Shield className="h-4 w-4 text-muted-foreground" />
+                  <div className="h-8 w-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+                    <Shield className="h-4 w-4 text-purple-600" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-green-600">Secure</div>
+                  <div className="text-3xl font-bold text-purple-600">Secure</div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    All connections encrypted
+                  </p>
                 </CardContent>
               </Card>
             </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Integration List</CardTitle>
+            {/* Integration Cards Grid */}
+            <Card className="overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-muted/50 to-transparent">
+                <CardTitle className="flex items-center gap-2">
+                  <Settings className="h-5 w-5" />
+                  Your Integrations
+                </CardTitle>
                 <CardDescription>
-                  Manage all your custom integrations from here
+                  Manage and monitor all your custom integrations
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {integrations.map((integration) => (
-                    <div
-                      key={integration.id}
-                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 cursor-pointer"
-                      onClick={() => setSelectedIntegration(integration)}
+              <CardContent className="p-0">
+                {integrations.length === 0 ? (
+                  <div className="text-center py-16 px-6">
+                    <div className="h-20 w-20 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mx-auto mb-6">
+                      <Settings className="h-10 w-10 text-primary/60" />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2">No integrations yet</h3>
+                    <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                      Get started by creating your first integration. Connect external services, set up webhooks, or configure API access.
+                    </p>
+                    <Button 
+                      onClick={() => setShowCreateForm(true)}
+                      size="lg"
+                      className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary"
                     >
-                      <div className="flex items-center space-x-4">
-                        {getTypeIcon(integration.type)}
-                        <div>
-                          <div className="font-medium">{integration.name}</div>
-                          <div className="text-sm text-muted-foreground flex items-center space-x-2">
-                            <Badge variant="outline">{integration.type}</Badge>
-                            <span className="flex items-center space-x-1">
-                              {getStatusIcon(integration.status)}
-                              <span>{integration.status}</span>
-                            </span>
+                      <Plus className="h-5 w-5 mr-2" />
+                      Create Your First Integration
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="p-6 space-y-4">
+                    {integrations.map((integration) => (
+                      <Card
+                        key={integration.id}
+                        className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/30"
+                        onClick={() => setSelectedIntegration(integration)}
+                      >
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-4">
+                              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center group-hover:from-primary/30 group-hover:to-primary/20 transition-colors">
+                                {getTypeIcon(integration.type)}
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-2">
+                                  <h3 className="font-semibold text-lg">{integration.name}</h3>
+                                  <Badge 
+                                    variant={integration.status === 'active' ? 'default' : 'secondary'}
+                                    className="capitalize"
+                                  >
+                                    {integration.status}
+                                  </Badge>
+                                </div>
+                                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                  <span className="flex items-center gap-1">
+                                    <Badge variant="outline" className="text-xs">
+                                      {integration.type}
+                                    </Badge>
+                                  </span>
+                                  <span className="flex items-center gap-1">
+                                    {getStatusIcon(integration.status)}
+                                    <span>Last used: {integration.last_used ? new Date(integration.last_used).toLocaleDateString() : 'Never'}</span>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Button
+                                variant={integration.status === 'active' ? 'outline' : 'default'}
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleIntegrationStatus(integration.id, integration.status);
+                                }}
+                                className="transition-colors"
+                              >
+                                {integration.status === 'active' ? 'Disable' : 'Enable'}
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteIntegration(integration.id);
+                                }}
+                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleIntegrationStatus(integration.id, integration.status);
-                          }}
-                        >
-                          {integration.status === 'active' ? 'Disable' : 'Enable'}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteIntegration(integration.id);
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {integrations.length === 0 && (
-                    <div className="text-center py-12">
-                      <Settings className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-medium">No integrations yet</h3>
-                      <p className="text-muted-foreground mb-4">
-                        Create your first custom integration to get started
-                      </p>
-                      <Button onClick={() => setShowCreateForm(true)}>
-                        <Plus className="h-4 w-4 mr-2" />
-                        Create Integration
-                      </Button>
-                    </div>
-                  )}
-                </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="creative" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Creative Tools Integrations</CardTitle>
+          <TabsContent value="creative" className="space-y-6">
+            <Card className="overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-orange-500/10 via-background to-background">
+                <CardTitle className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-full bg-orange-500/20 flex items-center justify-center">
+                    <ExternalLink className="h-4 w-4 text-orange-600" />
+                  </div>
+                  Creative Tools Integrations
+                </CardTitle>
                 <CardDescription>
-                  Connect Adobe Creative Cloud (UXP) and Buffer to enable one-click protection and scheduled sharing.
+                  Connect Adobe Creative Cloud and Buffer to streamline your creative workflow with automated protection and social sharing.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="grid gap-4 md:grid-cols-2">
-                <div className="p-4 border rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <div className="font-medium flex items-center gap-2">
-                        Adobe Creative Cloud (Photoshop/Illustrator UXP)
-                        {connections['adobe'] === 'active' && <Badge variant="outline">Connected</Badge>}
+              <CardContent className="p-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  {/* Adobe Creative Cloud Card */}
+                  <Card className="group hover:shadow-lg transition-all duration-300 border-orange-200/50 hover:border-orange-300/70">
+                    <CardContent className="p-6">
+                      <div className="flex items-start gap-4">
+                        <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-red-500/20 to-orange-500/20 flex items-center justify-center flex-shrink-0">
+                          <svg className="h-8 w-8 text-red-600" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M13.5 3H7.5C6.67 3 6 3.67 6 4.5V19.5C6 20.33 6.67 21 7.5 21H16.5C17.33 21 18 20.33 18 19.5V8L13.5 3ZM16.5 19.5H7.5V4.5H13V8.5H16.5V19.5Z"/>
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h3 className="font-semibold">Adobe Creative Cloud</h3>
+                            {connections['adobe'] === 'active' && (
+                              <Badge variant="default" className="bg-green-500/10 text-green-700 border-green-500/20">
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                Connected
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            Enable one-click protection directly from Photoshop and Illustrator with UXP plugin support.
+                          </p>
+                          <Button 
+                            onClick={() => handleConnect('adobe')}
+                            className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
+                          >
+                            {connections['adobe'] === 'active' ? 'Reconnect Adobe' : 'Connect Adobe'}
+                          </Button>
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground">Authorize access to enable in-app one-click protection</div>
-                    </div>
-                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <Button onClick={() => handleConnect('adobe')}>
-                    {connections['adobe'] === 'active' ? 'Reconnect Adobe' : 'Connect Adobe'}
-                  </Button>
-                </div>
+                    </CardContent>
+                  </Card>
 
-                <div className="p-4 border rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <div className="font-medium">Buffer</div>
-                      <div className="text-sm text-muted-foreground">Schedule protected posts to social platforms</div>
-                    </div>
-                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <Button onClick={() => handleConnect('buffer')}>Connect Buffer</Button>
+                  {/* Buffer Card */}
+                  <Card className="group hover:shadow-lg transition-all duration-300 border-blue-200/50 hover:border-blue-300/70">
+                    <CardContent className="p-6">
+                      <div className="flex items-start gap-4">
+                        <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                          <svg className="h-8 w-8 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.5 4H5.5C4.12 4 3 5.12 3 6.5V17.5C3 18.88 4.12 20 5.5 20H18.5C19.88 20 21 18.88 21 17.5V6.5C21 5.12 19.88 4 18.5 4ZM19.5 17.5C19.5 18.05 19.05 18.5 18.5 18.5H5.5C4.95 18.5 4.5 18.05 4.5 17.5V6.5C4.5 5.95 4.95 5.5 5.5 5.5H18.5C19.05 5.5 19.5 5.95 19.5 6.5V17.5Z"/>
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h3 className="font-semibold">Buffer</h3>
+                            {connections['buffer'] === 'active' && (
+                              <Badge variant="default" className="bg-green-500/10 text-green-700 border-green-500/20">
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                Connected
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            Schedule and publish your protected content across all your social media platforms automatically.
+                          </p>
+                          <Button 
+                            onClick={() => handleConnect('buffer')}
+                            className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
+                          >
+                            {connections['buffer'] === 'active' ? 'Reconnect Buffer' : 'Connect Buffer'}
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               </CardContent>
             </Card>
@@ -527,6 +664,7 @@ export const CustomIntegrations: React.FC = () => {
             </Alert>
           </TabsContent>
         </Tabs>
+        </div>
 
         {/* Create Integration Modal */}
         {showCreateForm && (
