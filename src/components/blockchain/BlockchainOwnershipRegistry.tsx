@@ -10,20 +10,23 @@ import { Shield, Hash, Clock, FileText, ExternalLink, Verified } from 'lucide-re
 
 interface OwnershipRecord {
   id: string;
-  transaction_hash: string;
+  user_id: string;
+  owner_address: string;
+  artwork_id: string | null;
+  title: string | null;
+  description: string | null;
+  fingerprint: string;
   blockchain: string;
-  contract_address: string | null;
-  token_id: number | null;
-  owner_address: string | null;
-  metadata_uri: string | null;
-  created_at: string;
-  is_valid: boolean;
+  chain_id: number;
+  transaction_hash: string | null;
   block_number: number | null;
-  block_timestamp: string | null;
-  gas_used: number | null;
-  gas_price: number | null;
-  verification_timestamp: string;
-  verification_metadata: any;
+  contract_address: string | null;
+  metadata_uri: string | null;
+  proof_hash: string | null;
+  status: string;
+  registered_at: string;
+  updated_at: string;
+  [key: string]: any; // Allow additional properties from the database
 }
 
 export function BlockchainOwnershipRegistry() {
@@ -41,18 +44,15 @@ export function BlockchainOwnershipRegistry() {
   const fetchOwnershipRecords = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('blockchain_verifications')
-        .select(`
-          *,
-          artwork:artwork_id (
-            id,
-            title,
-            image_url
-          )
-        `)
-        .eq('owner_address', address?.toLowerCase())
-        .order('created_at', { ascending: false });
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await (supabase as any)
+        .from('blockchain_ownership_registry')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('registered_at', { ascending: false });
 
       if (error) throw error;
       setOwnershipRecords(data || []);
@@ -111,11 +111,13 @@ export function BlockchainOwnershipRegistry() {
     }
   };
 
-  const getVerificationStatusBadge = (isValid: boolean) => {
-    if (isValid) {
+  const getVerificationStatusBadge = (status: string) => {
+    if (status === 'confirmed') {
       return <Badge variant="default" className="bg-emerald-500"><Verified className="w-3 h-3 mr-1" />Verified</Badge>;
-    } else {
+    } else if (status === 'pending') {
       return <Badge variant="secondary"><Clock className="w-3 h-3 mr-1" />Pending</Badge>;
+    } else {
+      return <Badge variant="destructive">Failed</Badge>;
     }
   };
 
@@ -160,7 +162,7 @@ export function BlockchainOwnershipRegistry() {
             </div>
             <div className="text-center p-4 border rounded-lg">
               <div className="text-2xl font-bold text-emerald-500">
-                {ownershipRecords.filter(r => r.is_valid).length}
+                {ownershipRecords.filter(r => r.status === 'confirmed').length}
               </div>
               <div className="text-sm text-muted-foreground">Verified Proofs</div>
             </div>
@@ -199,11 +201,11 @@ export function BlockchainOwnershipRegistry() {
                       <FileText className="w-6 h-6" />
                     </div>
                     <div>
-                      <h3 className="font-semibold">Ownership Record</h3>
-                      <p className="text-sm text-muted-foreground">#{record.token_id}</p>
+                      <h3 className="font-semibold">{record.title || 'Ownership Record'}</h3>
+                      <p className="text-sm text-muted-foreground">{record.blockchain.toUpperCase()}</p>
                     </div>
                   </div>
-                  {getVerificationStatusBadge(record.is_valid)}
+                  {getVerificationStatusBadge(record.status)}
                 </div>
 
                 <Separator className="my-4" />
@@ -243,15 +245,15 @@ export function BlockchainOwnershipRegistry() {
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium text-muted-foreground">Created</label>
-                      <p className="text-sm mt-1">{new Date(record.created_at).toLocaleDateString()}</p>
+                      <label className="text-sm font-medium text-muted-foreground">Registered</label>
+                      <p className="text-sm mt-1">{new Date(record.registered_at).toLocaleDateString()}</p>
                     </div>
 
-                    {record.verification_metadata && (
+                    {record.block_number && (
                       <div>
-                        <label className="text-sm font-medium text-muted-foreground">Verification Data</label>
+                        <label className="text-sm font-medium text-muted-foreground">Block Number</label>
                         <p className="text-sm font-mono mt-1">
-                          Block #{record.block_number}
+                          #{record.block_number}
                         </p>
                       </div>
                     )}
@@ -261,7 +263,7 @@ export function BlockchainOwnershipRegistry() {
                 <Separator className="my-4" />
 
                 <div className="flex gap-2">
-                  {!record.is_valid && (
+                  {record.status === 'pending' && (
                     <Button
                       onClick={() => verifyOwnership(record.id)}
                       disabled={verifying === record.id}
@@ -271,13 +273,25 @@ export function BlockchainOwnershipRegistry() {
                     </Button>
                   )}
                   
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => window.open(record.metadata_uri, '_blank')}
-                  >
-                    View Metadata
-                  </Button>
+                  {record.metadata_uri && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.open(record.metadata_uri, '_blank')}
+                    >
+                      View Metadata
+                    </Button>
+                  )}
+                  
+                  {record.transaction_hash && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.open(`https://etherscan.io/tx/${record.transaction_hash}`, '_blank')}
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>

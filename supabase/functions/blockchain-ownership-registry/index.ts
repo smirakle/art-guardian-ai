@@ -199,19 +199,19 @@ async function registerOwnership(supabase: any, params: BlockchainRegistrationRe
   // Store registration in database
   const registrationRecord = {
     user_id: params.user_id,
+    owner_address: params.owner_address || transaction.owner_address,
     artwork_id: params.artwork_id,
+    title: artwork.title,
+    description: artwork.description,
+    fingerprint: await hashObject(artwork),
     blockchain: blockchain,
+    chain_id: network.chain_id,
     transaction_hash: transaction.hash,
+    block_number: transaction.block_number,
     contract_address: transaction.contract_address,
-    token_id: transaction.token_id,
-    ownership_proof: ownershipProof,
-    metadata: params.metadata,
-    network_details: network,
-    gas_used: transaction.gas_used,
-    gas_price: transaction.gas_price,
-    confirmation_status: 'pending',
-    legal_enforceability: calculateLegalEnforceability(blockchain, params.metadata),
-    created_at: new Date().toISOString()
+    metadata_uri: transaction.metadata_uri,
+    proof_hash: ownershipProof.proof_hash,
+    status: 'confirmed'
   };
 
   const { data: registration, error } = await supabase
@@ -230,15 +230,16 @@ async function registerOwnership(supabase: any, params: BlockchainRegistrationRe
   
   // Store certificate
   await supabase
-    .from('ownership_certificates')
+    .from('blockchain_certificates')
     .insert({
-      registration_id: registration.id,
       user_id: params.user_id,
+      registration_id: registration.id,
+      certificate_number: `TSMO-${registration.id.substring(0, 8).toUpperCase()}`,
       certificate_data: certificate,
-      certificate_hash: await hashCertificate(certificate),
-      blockchain: blockchain,
-      is_legal_grade: true,
-      created_at: new Date().toISOString()
+      network: blockchain,
+      transaction_hash: transaction.hash,
+      ipfs_hash: transaction.metadata_uri,
+      status: 'active'
     });
 
   // Start monitoring for confirmation
@@ -443,8 +444,7 @@ async function verifyOwnership(supabase: any, params: any) {
   const { data: registration } = await supabase
     .from('blockchain_ownership_registry')
     .select('*')
-    .eq('transaction_hash', params.transaction_hash)
-    .or(`artwork_id.eq.${params.artwork_id},user_id.eq.${params.user_id}`)
+    .eq('id', params.record_id)
     .single();
 
   if (!registration) {
@@ -461,7 +461,7 @@ async function verifyOwnership(supabase: any, params: any) {
   
   // Get certificate
   const { data: certificate } = await supabase
-    .from('ownership_certificates')
+    .from('blockchain_certificates')
     .select('*')
     .eq('registration_id', registration.id)
     .single();
@@ -491,12 +491,11 @@ async function getOwnershipCertificate(supabase: any, params: any) {
   console.log('Generating ownership certificate');
   
   const { data: certificate } = await supabase
-    .from('ownership_certificates')
+    .from('blockchain_certificates')
     .select(`
       *,
-      blockchain_ownership_registry (
-        *,
-        artwork (title, description, file_url)
+      blockchain_ownership_registry!inner (
+        *
       )
     `)
     .eq('user_id', params.user_id)
@@ -700,11 +699,12 @@ async function createOwnershipTransaction(blockchain: string, proof: any, metada
   // Simulate blockchain transaction creation
   return {
     hash: `0x${generateRandomHash()}`,
+    owner_address: `0x${generateRandomAddress()}`,
     contract_address: `0x${generateRandomAddress()}`,
-    token_id: Math.floor(Math.random() * 1000000),
+    block_number: Math.floor(Math.random() * 1000000) + 18000000,
+    metadata_uri: `ipfs://${generateRandomHash()}`,
     gas_used: 150000 + Math.floor(Math.random() * 50000),
     gas_price: BLOCKCHAIN_NETWORKS[blockchain].gas_price_gwei,
-    block_number: Math.floor(Math.random() * 1000000) + 18000000,
     status: 'success'
   };
 }

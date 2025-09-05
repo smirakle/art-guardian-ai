@@ -52,35 +52,63 @@ serve(async (req) => {
 })
 
 async function initiateLegalAction(supabase: any, params: any) {
-  const { jurisdiction, case_type } = params
+  const { jurisdiction, case_type, user_id } = params
 
-  // Simulate legal action initiation
-  const mockCaseId = crypto.randomUUID()
-  
   // Find available legal professional in jurisdiction
   const { data: professionals } = await supabase
     .from('legal_professionals')
     .select('*')
     .contains('jurisdictions', [jurisdiction])
     .eq('accepts_new_clients', true)
+    .eq('verified_status', 'verified')
     .limit(1)
 
   const assignedProfessional = professionals?.[0]
 
-  return {
-    success: true,
-    case_id: mockCaseId,
-    jurisdiction,
-    case_type,
-    assigned_professional: assignedProfessional?.full_name,
+  // Create legal action record
+  const legalActionData = {
+    user_id: user_id,
+    jurisdiction: jurisdiction,
+    case_type: case_type,
+    professional_id: assignedProfessional?.id || null,
+    status: 'initiated',
     estimated_timeline: '2-4 weeks',
     estimated_cost: '$2,500 - $5,000',
-    next_steps: [
-      'Document collection and review',
-      'Legal strategy development',
-      'Initial filing preparation',
-      'Client consultation scheduling'
-    ]
+    metadata: {
+      next_steps: [
+        'Document collection and review',
+        'Legal strategy development',
+        'Initial filing preparation',
+        'Client consultation scheduling'
+      ],
+      priority: 'normal',
+      urgency: 'standard'
+    }
+  }
+
+  const { data: legalAction, error } = await supabase
+    .from('legal_actions')
+    .insert(legalActionData)
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Failed to create legal action:', error)
+    throw new Error('Failed to initiate legal action')
+  }
+
+  return {
+    success: true,
+    case_id: legalAction.id,
+    case_reference: `TSMO-${legalAction.id.substring(0, 8).toUpperCase()}`,
+    jurisdiction,
+    case_type,
+    assigned_professional: assignedProfessional?.full_name || 'Assigning professional...',
+    professional_contact: assignedProfessional?.email || null,
+    estimated_timeline: legalAction.estimated_timeline,
+    estimated_cost: legalAction.estimated_cost,
+    status: legalAction.status,
+    next_steps: legalActionData.metadata.next_steps
   }
 }
 

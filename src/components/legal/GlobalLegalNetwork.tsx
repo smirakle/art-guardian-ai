@@ -86,11 +86,15 @@ export function GlobalLegalNetwork() {
     try {
       setLoading(true);
 
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
       const { data, error } = await supabase.functions.invoke('global-legal-network', {
         body: {
           action: 'initiate_legal_action',
           jurisdiction: country,
-          case_type: caseType
+          case_type: caseType,
+          user_id: user.id
         }
       });
 

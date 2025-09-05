@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { BlockchainOwnershipRegistry } from '@/components/blockchain/BlockchainOwnershipRegistry';
 import { GlobalLegalNetwork } from '@/components/legal/GlobalLegalNetwork';
+import { CreatorEconomy } from '@/components/phase2/CreatorEconomy';
 import { Link2, Scale, Users, TrendingUp } from 'lucide-react';
 
 export default function Phase2Dashboard() {
@@ -76,58 +77,7 @@ export default function Phase2Dashboard() {
         </TabsContent>
 
         <TabsContent value="creator">
-          <Card>
-            <CardHeader>
-              <CardTitle>Creator Economy Integration</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="border rounded-lg p-4">
-                  <h4 className="font-semibold mb-2">Platform Integrations</h4>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="text-center p-3 border rounded">
-                      <p className="font-medium">OnlyFans</p>
-                      <p className="text-sm text-muted-foreground">Content Protection</p>
-                    </div>
-                    <div className="text-center p-3 border rounded">
-                      <p className="font-medium">Patreon</p>
-                      <p className="text-sm text-muted-foreground">Creator Monitoring</p>
-                    </div>
-                    <div className="text-center p-3 border rounded">
-                      <p className="font-medium">Instagram</p>
-                      <p className="text-sm text-muted-foreground">Image Tracking</p>
-                    </div>
-                    <div className="text-center p-3 border rounded">
-                      <p className="font-medium">TikTok</p>
-                      <p className="text-sm text-muted-foreground">Video Protection</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="border rounded-lg p-4">
-                  <h4 className="font-semibold mb-2">Creator Tools</h4>
-                  <ul className="space-y-2">
-                    <li className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <span className="text-sm">Automated content monitoring across platforms</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <span className="text-sm">Revenue protection and theft detection</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <span className="text-sm">Cross-platform watermarking and attribution</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <span className="text-sm">Direct takedown request automation</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <CreatorEconomy />
         </TabsContent>
       </Tabs>
 
