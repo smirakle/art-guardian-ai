@@ -1,4 +1,4 @@
-import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search, Briefcase, UserCheck, Copyright, TrendingUp, Key, DollarSign, Send, Gavel } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search, Briefcase, UserCheck, Copyright, TrendingUp, Key, DollarSign, Send, Gavel, Zap } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
@@ -40,6 +40,7 @@ export function AppSidebar() {
   const mainNavItems = [
     { path: "/", label: t('nav.home'), icon: Home },
     { path: "/dashboard", label: "Dashboard", icon: Home },
+    { path: "/phase3", label: "Phase 3: Next-Gen AI", icon: Zap },
     { path: "/upload", label: "Image Monitoring Systems", icon: Monitor },
     { path: "/forgery-detection", label: "Forgery Detection", icon: Search },
     { path: "/community", label: t('nav.community'), icon: Users },
