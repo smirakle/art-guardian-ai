@@ -98,6 +98,48 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_auto_responses: {
+        Row: {
+          confidence_score: number
+          created_at: string
+          generated_content: string
+          id: string
+          platform: string
+          response_type: string
+          sent_at: string | null
+          status: string
+          threat_count: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          confidence_score: number
+          created_at?: string
+          generated_content: string
+          id?: string
+          platform: string
+          response_type: string
+          sent_at?: string | null
+          status?: string
+          threat_count?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          confidence_score?: number
+          created_at?: string
+          generated_content?: string
+          id?: string
+          platform?: string
+          response_type?: string
+          sent_at?: string | null
+          status?: string
+          threat_count?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_document_tracers: {
         Row: {
           checksum: string | null
@@ -133,6 +175,96 @@ export type Database = {
           tracer_payload?: string
           tracer_type?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ai_monitoring_agents: {
+        Row: {
+          auto_response: boolean
+          created_at: string
+          deployed_at: string
+          id: string
+          last_scan: string | null
+          platform_id: string
+          platform_name: string
+          predictive_analytics: boolean
+          scan_frequency: number
+          status: string
+          success_rate: number | null
+          threat_threshold: number
+          threats_detected: number | null
+          total_scans: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auto_response?: boolean
+          created_at?: string
+          deployed_at?: string
+          id?: string
+          last_scan?: string | null
+          platform_id: string
+          platform_name: string
+          predictive_analytics?: boolean
+          scan_frequency?: number
+          status?: string
+          success_rate?: number | null
+          threat_threshold?: number
+          threats_detected?: number | null
+          total_scans?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auto_response?: boolean
+          created_at?: string
+          deployed_at?: string
+          id?: string
+          last_scan?: string | null
+          platform_id?: string
+          platform_name?: string
+          predictive_analytics?: boolean
+          scan_frequency?: number
+          status?: string
+          success_rate?: number | null
+          threat_threshold?: number
+          threats_detected?: number | null
+          total_scans?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ai_predictive_analyses: {
+        Row: {
+          analysis_type: string
+          confidence_score: number
+          created_at: string
+          generated_at: string
+          id: string
+          insights: string
+          prediction_horizon: string
+          user_id: string
+        }
+        Insert: {
+          analysis_type: string
+          confidence_score: number
+          created_at?: string
+          generated_at?: string
+          id?: string
+          insights: string
+          prediction_horizon: string
+          user_id: string
+        }
+        Update: {
+          analysis_type?: string
+          confidence_score?: number
+          created_at?: string
+          generated_at?: string
+          id?: string
+          insights?: string
+          prediction_horizon?: string
           user_id?: string
         }
         Relationships: []
@@ -409,6 +541,48 @@ export type Database = {
           updated_at?: string
           user_id?: string
           word_count?: number
+        }
+        Relationships: []
+      }
+      ai_threat_detections: {
+        Row: {
+          agent_id: string
+          artwork_id: string | null
+          auto_response_generated: boolean | null
+          confidence_score: number
+          created_at: string
+          detected_at: string
+          id: string
+          platform: string
+          threat_data: Json
+          threat_level: string
+          user_id: string
+        }
+        Insert: {
+          agent_id: string
+          artwork_id?: string | null
+          auto_response_generated?: boolean | null
+          confidence_score: number
+          created_at?: string
+          detected_at?: string
+          id?: string
+          platform: string
+          threat_data?: Json
+          threat_level: string
+          user_id: string
+        }
+        Update: {
+          agent_id?: string
+          artwork_id?: string | null
+          auto_response_generated?: boolean | null
+          confidence_score?: number
+          created_at?: string
+          detected_at?: string
+          id?: string
+          platform?: string
+          threat_data?: Json
+          threat_level?: string
+          user_id?: string
         }
         Relationships: []
       }
