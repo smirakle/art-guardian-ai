@@ -37,6 +37,7 @@ import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AIProtectionSettings from "./pages/AIProtectionSettings";
 import AITrainingProtection from "./pages/AITrainingProtection";
+import Phase3Dashboard from "./pages/Phase3Dashboard";
 import { CustomIntegrations } from "./components/CustomIntegrations";
 import { EnterpriseAPIAccess } from "./components/EnterpriseAPIAccess";
 import ProfileMonitoring from "./pages/ProfileMonitoring";
@@ -121,8 +122,9 @@ const App = () => {
                       <Route path="/legal-templates" element={<LegalTemplatesPage />} />
                        <Route path="/pricing" element={<Pricing />} />
                        <Route path="/sla-status" element={<SLAStatus />} />
-                         <Route path="/ai-protection-settings" element={<AIProtectionSettings />} />
-                         <Route path="/ai-training-protection" element={<AITrainingProtection />} />
+                          <Route path="/ai-protection-settings" element={<AIProtectionSettings />} />
+                          <Route path="/ai-training-protection" element={<AITrainingProtection />} />
+                          <Route path="/phase3" element={<Phase3Dashboard />} />
                         <Route path="/custom-integrations" element={<CustomIntegrations />} />
                         <Route path="/enterprise-api" element={<EnterpriseAPIAccess />} />
             <Route path="/profile-monitoring" element={<ProfileMonitoring />} />
