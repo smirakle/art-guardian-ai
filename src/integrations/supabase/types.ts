@@ -140,6 +140,62 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_detection_results: {
+        Row: {
+          ai_model_used: string
+          artwork_id: string | null
+          automated_actions: Json | null
+          confidence_score: number
+          created_at: string
+          detection_metadata: Json
+          detection_type: string
+          id: string
+          source_platforms: string[] | null
+          status: string
+          threat_level: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_model_used: string
+          artwork_id?: string | null
+          automated_actions?: Json | null
+          confidence_score?: number
+          created_at?: string
+          detection_metadata?: Json
+          detection_type: string
+          id?: string
+          source_platforms?: string[] | null
+          status?: string
+          threat_level?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_model_used?: string
+          artwork_id?: string | null
+          automated_actions?: Json | null
+          confidence_score?: number
+          created_at?: string
+          detection_metadata?: Json
+          detection_type?: string
+          id?: string
+          source_platforms?: string[] | null
+          status?: string
+          threat_level?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_detection_results_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artwork"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_document_tracers: {
         Row: {
           checksum: string | null
@@ -868,6 +924,120 @@ export type Database = {
         }
         Relationships: []
       }
+      blockchain_licenses: {
+        Row: {
+          artwork_id: string | null
+          automated_compliance: boolean | null
+          blockchain: string
+          created_at: string
+          document_hash: string
+          duration: string | null
+          exclusivity: string | null
+          id: string
+          legal_document: string
+          license_terms: Json
+          royalty_rate: number | null
+          smart_contract_enabled: boolean | null
+          status: string | null
+          territory: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          artwork_id?: string | null
+          automated_compliance?: boolean | null
+          blockchain: string
+          created_at?: string
+          document_hash: string
+          duration?: string | null
+          exclusivity?: string | null
+          id?: string
+          legal_document: string
+          license_terms?: Json
+          royalty_rate?: number | null
+          smart_contract_enabled?: boolean | null
+          status?: string | null
+          territory?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          artwork_id?: string | null
+          automated_compliance?: boolean | null
+          blockchain?: string
+          created_at?: string
+          document_hash?: string
+          duration?: string | null
+          exclusivity?: string | null
+          id?: string
+          legal_document?: string
+          license_terms?: Json
+          royalty_rate?: number | null
+          smart_contract_enabled?: boolean | null
+          status?: string | null
+          territory?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      blockchain_ownership_registry: {
+        Row: {
+          artwork_id: string | null
+          blockchain: string
+          confirmation_status: string | null
+          contract_address: string | null
+          created_at: string
+          gas_price: number | null
+          gas_used: number | null
+          id: string
+          legal_enforceability: number | null
+          metadata: Json | null
+          network_details: Json | null
+          ownership_proof: Json
+          token_id: number | null
+          transaction_hash: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          artwork_id?: string | null
+          blockchain: string
+          confirmation_status?: string | null
+          contract_address?: string | null
+          created_at?: string
+          gas_price?: number | null
+          gas_used?: number | null
+          id?: string
+          legal_enforceability?: number | null
+          metadata?: Json | null
+          network_details?: Json | null
+          ownership_proof?: Json
+          token_id?: number | null
+          transaction_hash: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          artwork_id?: string | null
+          blockchain?: string
+          confirmation_status?: string | null
+          contract_address?: string | null
+          created_at?: string
+          gas_price?: number | null
+          gas_used?: number | null
+          id?: string
+          legal_enforceability?: number | null
+          metadata?: Json | null
+          network_details?: Json | null
+          ownership_proof?: Json
+          token_id?: number | null
+          transaction_hash?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       blockchain_verifications: {
         Row: {
           block_number: number | null
@@ -1238,6 +1408,48 @@ export type Database = {
           threat_level?: string
           total_matches?: number
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      cross_chain_registrations: {
+        Row: {
+          artwork_id: string | null
+          bridge_fee: number | null
+          bridge_status: string | null
+          confirmation_time: number | null
+          created_at: string
+          id: string
+          source_blockchain: string
+          source_transaction: string
+          target_blockchain: string
+          target_transaction: string
+          user_id: string
+        }
+        Insert: {
+          artwork_id?: string | null
+          bridge_fee?: number | null
+          bridge_status?: string | null
+          confirmation_time?: number | null
+          created_at?: string
+          id?: string
+          source_blockchain: string
+          source_transaction: string
+          target_blockchain: string
+          target_transaction: string
+          user_id: string
+        }
+        Update: {
+          artwork_id?: string | null
+          bridge_fee?: number | null
+          bridge_status?: string | null
+          confirmation_time?: number | null
+          created_at?: string
+          id?: string
+          source_blockchain?: string
+          source_transaction?: string
+          target_blockchain?: string
+          target_transaction?: string
           user_id?: string
         }
         Relationships: []
@@ -2654,6 +2866,51 @@ export type Database = {
         }
         Relationships: []
       }
+      legal_documents: {
+        Row: {
+          artwork_id: string | null
+          blockchain: string
+          blockchain_verified: boolean | null
+          created_at: string
+          document_types: string[]
+          documents: Json
+          id: string
+          international_validity: boolean | null
+          legal_status: string | null
+          transaction_hash: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          artwork_id?: string | null
+          blockchain: string
+          blockchain_verified?: boolean | null
+          created_at?: string
+          document_types?: string[]
+          documents?: Json
+          id?: string
+          international_validity?: boolean | null
+          legal_status?: string | null
+          transaction_hash?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          artwork_id?: string | null
+          blockchain?: string
+          blockchain_verified?: boolean | null
+          created_at?: string
+          document_types?: string[]
+          documents?: Json
+          id?: string
+          international_validity?: boolean | null
+          legal_status?: string | null
+          transaction_hash?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       legal_notifications: {
         Row: {
           action_url: string | null
@@ -3413,6 +3670,59 @@ export type Database = {
         }
         Relationships: []
       }
+      one_click_protections: {
+        Row: {
+          artwork_id: string | null
+          automation_settings: Json | null
+          created_at: string
+          id: string
+          infringing_urls: string[] | null
+          legal_documents: Json | null
+          protection_type: string
+          results: Json | null
+          status: string
+          target_platforms: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          artwork_id?: string | null
+          automation_settings?: Json | null
+          created_at?: string
+          id?: string
+          infringing_urls?: string[] | null
+          legal_documents?: Json | null
+          protection_type: string
+          results?: Json | null
+          status?: string
+          target_platforms?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          artwork_id?: string | null
+          automation_settings?: Json | null
+          created_at?: string
+          id?: string
+          infringing_urls?: string[] | null
+          legal_documents?: Json | null
+          protection_type?: string
+          results?: Json | null
+          status?: string
+          target_platforms?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "one_click_protections_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artwork"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       operating_costs: {
         Row: {
           annual_amount: number | null
@@ -3452,6 +3762,45 @@ export type Database = {
           monthly_amount?: number
           subcategory?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      ownership_certificates: {
+        Row: {
+          blockchain: string
+          certificate_data: Json
+          certificate_hash: string
+          court_admissible: boolean | null
+          created_at: string
+          id: string
+          international_validity: boolean | null
+          is_legal_grade: boolean | null
+          registration_id: string
+          user_id: string
+        }
+        Insert: {
+          blockchain: string
+          certificate_data?: Json
+          certificate_hash: string
+          court_admissible?: boolean | null
+          created_at?: string
+          id?: string
+          international_validity?: boolean | null
+          is_legal_grade?: boolean | null
+          registration_id: string
+          user_id: string
+        }
+        Update: {
+          blockchain?: string
+          certificate_data?: Json
+          certificate_hash?: string
+          court_admissible?: boolean | null
+          created_at?: string
+          id?: string
+          international_validity?: boolean | null
+          is_legal_grade?: boolean | null
+          registration_id?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -4507,6 +4856,57 @@ export type Database = {
         }
         Relationships: []
       }
+      realtime_monitoring_sessions: {
+        Row: {
+          created_at: string
+          detections_count: number | null
+          ended_at: string | null
+          high_threat_count: number | null
+          id: string
+          image_fingerprints: string[] | null
+          keywords_monitored: string[] | null
+          platforms_monitored: string[] | null
+          session_metadata: Json | null
+          session_type: string
+          started_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          detections_count?: number | null
+          ended_at?: string | null
+          high_threat_count?: number | null
+          id?: string
+          image_fingerprints?: string[] | null
+          keywords_monitored?: string[] | null
+          platforms_monitored?: string[] | null
+          session_metadata?: Json | null
+          session_type: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          detections_count?: number | null
+          ended_at?: string | null
+          high_threat_count?: number | null
+          id?: string
+          image_fingerprints?: string[] | null
+          keywords_monitored?: string[] | null
+          platforms_monitored?: string[] | null
+          session_metadata?: Json | null
+          session_type?: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       realtime_monitoring_stats: {
         Row: {
           dark_web_scans: number
@@ -4741,6 +5141,69 @@ export type Database = {
           status?: string
           transaction_fee?: number | null
           transaction_hash?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      smart_contracts: {
+        Row: {
+          artwork_id: string | null
+          blockchain: string
+          commercial_use_allowed: boolean | null
+          contract_abi: Json | null
+          contract_address: string
+          contract_features: string[] | null
+          contract_type: string
+          created_at: string
+          deployment_cost: number | null
+          deployment_hash: string
+          gas_used: number | null
+          id: string
+          royalty_percentage: number | null
+          status: string | null
+          template_name: string
+          transfer_restrictions: boolean | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          artwork_id?: string | null
+          blockchain: string
+          commercial_use_allowed?: boolean | null
+          contract_abi?: Json | null
+          contract_address: string
+          contract_features?: string[] | null
+          contract_type: string
+          created_at?: string
+          deployment_cost?: number | null
+          deployment_hash: string
+          gas_used?: number | null
+          id?: string
+          royalty_percentage?: number | null
+          status?: string | null
+          template_name: string
+          transfer_restrictions?: boolean | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          artwork_id?: string | null
+          blockchain?: string
+          commercial_use_allowed?: boolean | null
+          contract_abi?: Json | null
+          contract_address?: string
+          contract_features?: string[] | null
+          contract_type?: string
+          created_at?: string
+          deployment_cost?: number | null
+          deployment_hash?: string
+          gas_used?: number | null
+          id?: string
+          royalty_percentage?: number | null
+          status?: string | null
+          template_name?: string
+          transfer_restrictions?: boolean | null
           updated_at?: string
           user_id?: string
         }

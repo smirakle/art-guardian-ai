@@ -2,7 +2,9 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Shield, Upload, Search, Eye, TrendingUp } from 'lucide-react';
+import { Shield, Upload, Search, Eye, TrendingUp, Brain, Zap } from 'lucide-react';
+import { AIDetectionDashboard } from '@/components/phase1/AIDetectionDashboard';
+import { OneClickProtection } from '@/components/phase1/OneClickProtection';
 
 export default function Phase1Dashboard() {
   return (
@@ -49,8 +51,16 @@ export default function Phase1Dashboard() {
         </Card>
       </div>
 
-      <Tabs defaultValue="monitoring" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+      <Tabs defaultValue="ai-detection" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="ai-detection" className="flex items-center gap-2">
+            <Brain className="h-4 w-4" />
+            AI Detection
+          </TabsTrigger>
+          <TabsTrigger value="protection" className="flex items-center gap-2">
+            <Zap className="h-4 w-4" />
+            One-Click Protection
+          </TabsTrigger>
           <TabsTrigger value="monitoring" className="flex items-center gap-2">
             <Upload className="h-4 w-4" />
             Image Monitoring
@@ -59,11 +69,15 @@ export default function Phase1Dashboard() {
             <Eye className="h-4 w-4" />
             Deepfake Detection
           </TabsTrigger>
-          <TabsTrigger value="forgery" className="flex items-center gap-2">
-            <Search className="h-4 w-4" />
-            Forgery Detection
-          </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="ai-detection">
+          <AIDetectionDashboard />
+        </TabsContent>
+
+        <TabsContent value="protection">
+          <OneClickProtection />
+        </TabsContent>
 
         <TabsContent value="monitoring">
           <Card>
