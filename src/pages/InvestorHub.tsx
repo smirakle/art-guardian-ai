@@ -7,6 +7,7 @@ import ExecutiveSummary from '@/components/investor/ExecutiveSummary';
 import InvestorDataRoom from '@/components/investor/InvestorDataRoom';
 import DemoEnvironment from '@/components/investor/DemoEnvironment';
 import Roadmap from '@/components/investor/Roadmap';
+import FoundingPartnerBriefDownload from '@/components/investor/FoundingPartnerBriefDownload';
 import { 
   Users, 
   FileText, 
@@ -116,6 +117,42 @@ const InvestorHub = () => {
                 <div className="text-2xl font-bold text-green-600">Q3 2025</div>
                 <div className="text-xs text-muted-foreground">Target Go-to-Market</div>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Founding Partner Brief Download */}
+        <Card className="mb-4 border-accent/30 bg-gradient-to-r from-accent/10 to-primary/10">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-center text-lg flex items-center justify-center gap-2">
+              <FileText className="h-4 w-4 text-accent" />
+              Founding Partner Brief
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="text-center space-y-3">
+              <p className="text-sm text-muted-foreground">
+                Comprehensive brief with live metrics, technology overview, and investment details for qualified founding partners.
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center py-3">
+                <div>
+                  <div className="text-lg font-bold text-accent">Live Data</div>
+                  <div className="text-xs text-muted-foreground">Real-time metrics</div>
+                </div>
+                <div>
+                  <div className="text-lg font-bold text-accent">Tech Stack</div>
+                  <div className="text-xs text-muted-foreground">Full architecture</div>
+                </div>
+                <div>
+                  <div className="text-lg font-bold text-accent">Financials</div>
+                  <div className="text-xs text-muted-foreground">Current traction</div>
+                </div>
+                <div>
+                  <div className="text-lg font-bold text-accent">Legal IP</div>
+                  <div className="text-xs text-muted-foreground">Patents & assets</div>
+                </div>
+              </div>
+              <FoundingPartnerBriefDownload />
             </div>
           </CardContent>
         </Card>
