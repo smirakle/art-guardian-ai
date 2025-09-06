@@ -1,19 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { FoundingPartnerBriefGenerator } from '@/lib/foundingPartnerBrief';
-import { Download, Lock, Loader2, Shield } from 'lucide-react';
+import { Download, Lock, Loader2, Shield, Crown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAnalytics } from '@/hooks/useAnalytics';
 
 const FoundingPartnerBriefDownload = () => {
   const [loading, setLoading] = useState(false);
   const [accessRequested, setAccessRequested] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [checkingRole, setCheckingRole] = useState(true);
   const { toast } = useToast();
   const { track } = useAnalytics();
 
+  useEffect(() => {
+    checkAdminRole();
+  }, []);
+
+  const checkAdminRole = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: roleData } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id)
+          .eq('role', 'admin')
+          .maybeSingle();
+        
+        setIsAdmin(!!roleData);
+      }
+    } catch (error) {
+      console.error('Error checking admin role:', error);
+    } finally {
+      setCheckingRole(false);
+    }
+  };
+
   const handleDownload = async () => {
-    if (!accessRequested) {
+    // Admin users can download directly
+    if (!isAdmin && !accessRequested) {
       setAccessRequested(true);
       toast({
         title: "Access Required",
@@ -51,12 +78,13 @@ const FoundingPartnerBriefDownload = () => {
         location: 'investor_hub',
         metrics_timestamp: generatedAt,
         user_count: metrics.traction.totalUsers,
-        protected_assets: metrics.traction.protectedAssets
+        protected_assets: metrics.traction.protectedAssets,
+        admin_download: isAdmin
       });
 
       toast({
         title: "Brief Downloaded",
-        description: "The Founding Partner Brief has been downloaded with live metrics.",
+        description: isAdmin ? "Admin brief downloaded with live metrics." : "The Founding Partner Brief has been downloaded with live metrics.",
         variant: "default"
       });
 
@@ -86,6 +114,43 @@ const FoundingPartnerBriefDownload = () => {
       location: 'investor_hub'
     });
   };
+
+  if (checkingRole) {
+    return (
+      <div className="space-y-3">
+        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Checking access permissions...
+        </div>
+      </div>
+    );
+  }
+
+  if (isAdmin) {
+    return (
+      <div className="space-y-3">
+        <div className="flex items-center justify-center gap-2 text-sm text-accent">
+          <Crown className="h-4 w-4" />
+          Admin Access - Full Brief Available
+        </div>
+        <Button 
+          onClick={handleDownload}
+          disabled={loading}
+          className="gap-2"
+        >
+          {loading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Download className="h-4 w-4" />
+          )}
+          Download Admin Brief
+        </Button>
+        <p className="text-xs text-muted-foreground text-center">
+          Full administrative access with live operational metrics
+        </p>
+      </div>
+    );
+  }
 
   if (!accessRequested) {
     return (
