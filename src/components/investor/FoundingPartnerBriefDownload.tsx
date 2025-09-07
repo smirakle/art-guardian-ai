@@ -58,10 +58,20 @@ const FoundingPartnerBriefDownload = () => {
     setLoading(true);
     
     try {
+      console.log('Invoking investor-brief-metrics function...');
+      
       // Fetch live metrics from edge function
-      const { data, error } = await supabase.functions.invoke('investor-brief-metrics');
+      const { data, error } = await supabase.functions.invoke('investor-brief-metrics', {
+        body: {},
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('Function response:', { data, error });
       
       if (error) {
+        console.error('Function error:', error);
         throw error;
       }
 
