@@ -75,6 +75,10 @@ const FoundingPartnerBriefDownload = () => {
         throw error;
       }
 
+      if (!data || !data.metrics) {
+        throw new Error('Invalid response from metrics function');
+      }
+
       const metrics = data.metrics;
       const generatedAt = data.generatedAt;
 
