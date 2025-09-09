@@ -4,8 +4,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { BlockchainOwnershipRegistry } from '@/components/blockchain/BlockchainOwnershipRegistry';
 import { GlobalLegalNetwork } from '@/components/legal/GlobalLegalNetwork';
+import { RealTimeLegalDashboard } from '@/components/legal/RealTimeLegalDashboard';
 import { CreatorEconomy } from '@/components/phase2/CreatorEconomy';
-import { Link2, Scale, Users, TrendingUp } from 'lucide-react';
+import { Link2, Scale, Users, TrendingUp, MessageCircle } from 'lucide-react';
 
 export default function Phase2Dashboard() {
   return (
@@ -36,7 +37,7 @@ export default function Phase2Dashboard() {
             <Scale className="h-12 w-12 mx-auto mb-4 text-green-500" />
             <h3 className="text-xl font-semibold mb-2">Global Legal Network</h3>
             <p className="text-sm text-muted-foreground">
-              25+ country legal action capability with verified IP attorneys
+              Real-time case management with 25+ country legal action capability
             </p>
           </CardContent>
         </Card>
@@ -53,7 +54,7 @@ export default function Phase2Dashboard() {
       </div>
 
       <Tabs defaultValue="blockchain" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="blockchain" className="flex items-center gap-2">
             <Link2 className="h-4 w-4" />
             Blockchain Registry
@@ -61,6 +62,10 @@ export default function Phase2Dashboard() {
           <TabsTrigger value="legal" className="flex items-center gap-2">
             <Scale className="h-4 w-4" />
             Legal Network
+          </TabsTrigger>
+          <TabsTrigger value="realtime" className="flex items-center gap-2">
+            <MessageCircle className="h-4 w-4" />
+            Real-Time Legal
           </TabsTrigger>
           <TabsTrigger value="creator" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
@@ -74,6 +79,10 @@ export default function Phase2Dashboard() {
 
         <TabsContent value="legal">
           <GlobalLegalNetwork />
+        </TabsContent>
+
+        <TabsContent value="realtime">
+          <RealTimeLegalDashboard />
         </TabsContent>
 
         <TabsContent value="creator">

@@ -2538,6 +2538,83 @@ export type Database = {
         }
         Relationships: []
       }
+      legal_cases: {
+        Row: {
+          actual_cost: number | null
+          case_type: string
+          communication_log: Json | null
+          created_at: string
+          description: string | null
+          documents: Json | null
+          estimated_cost: number | null
+          estimated_timeline: string | null
+          id: string
+          jurisdiction: string
+          next_action: string | null
+          next_action_due: string | null
+          priority: string
+          professional_id: string | null
+          resolved_at: string | null
+          status: string
+          time_spent_hours: number | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          actual_cost?: number | null
+          case_type: string
+          communication_log?: Json | null
+          created_at?: string
+          description?: string | null
+          documents?: Json | null
+          estimated_cost?: number | null
+          estimated_timeline?: string | null
+          id?: string
+          jurisdiction: string
+          next_action?: string | null
+          next_action_due?: string | null
+          priority?: string
+          professional_id?: string | null
+          resolved_at?: string | null
+          status?: string
+          time_spent_hours?: number | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          actual_cost?: number | null
+          case_type?: string
+          communication_log?: Json | null
+          created_at?: string
+          description?: string | null
+          documents?: Json | null
+          estimated_cost?: number | null
+          estimated_timeline?: string | null
+          id?: string
+          jurisdiction?: string
+          next_action?: string | null
+          next_action_due?: string | null
+          priority?: string
+          professional_id?: string | null
+          resolved_at?: string | null
+          status?: string
+          time_spent_hours?: number | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_cases_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "legal_professionals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       legal_compliance_tracking: {
         Row: {
           compliance_type: string
@@ -2910,6 +2987,62 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      legal_messages: {
+        Row: {
+          case_id: string
+          content: string
+          created_at: string
+          file_name: string | null
+          file_url: string | null
+          id: string
+          is_encrypted: boolean
+          is_read: boolean
+          message_type: string
+          metadata: Json | null
+          sender_id: string
+          sender_type: string
+          updated_at: string
+        }
+        Insert: {
+          case_id: string
+          content: string
+          created_at?: string
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          is_encrypted?: boolean
+          is_read?: boolean
+          message_type?: string
+          metadata?: Json | null
+          sender_id: string
+          sender_type: string
+          updated_at?: string
+        }
+        Update: {
+          case_id?: string
+          content?: string
+          created_at?: string
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          is_encrypted?: boolean
+          is_read?: boolean
+          message_type?: string
+          metadata?: Json | null
+          sender_id?: string
+          sender_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_messages_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "legal_cases"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       legal_notifications: {
         Row: {
@@ -6958,6 +7091,10 @@ export type Database = {
       trigger_scheduled_scans: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      update_case_status: {
+        Args: { case_id_param: string; message?: string; new_status: string }
+        Returns: boolean
       }
       user_has_feature: {
         Args: { feature_name: string }
