@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import ComprehensiveAPIDocumentation from '@/components/enterprise/ComprehensiveAPIDocumentation';
 import AdminProtectedPatentDocs from '@/components/AdminProtectedPatentDocs';
+import AITPAPatentDocument from '@/components/patent/AITPAPatentDocument';
 
 const InvestorHub = () => {
   useEffect(() => {
@@ -279,7 +280,10 @@ const InvestorHub = () => {
           </TabsContent>
 
           <TabsContent value="patents">
-            <AdminProtectedPatentDocs />
+            <div className="space-y-6">
+              <AITPAPatentDocument />
+              <AdminProtectedPatentDocs />
+            </div>
           </TabsContent>
 
           <TabsContent value="roadmap">
