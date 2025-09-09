@@ -20,7 +20,7 @@ const AITPAPatentDocument = () => {
       }
       
       doc.setFontSize(fontSize);
-      doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+      doc.setFont('times', isBold ? 'bold' : 'normal');
       
       const lines = doc.splitTextToSize(text, 170 - indent);
       lines.forEach((line: string) => {
