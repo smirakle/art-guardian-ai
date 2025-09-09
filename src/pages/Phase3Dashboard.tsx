@@ -3,9 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { MultiModalAIProtection } from '@/components/multi-modal/MultiModalAIProtection';
-import { IPInsurancePartnership } from '@/components/insurance/IPInsurancePartnership';
-import { CommunityIntelligence } from '@/components/community/CommunityIntelligence';
-import { Shield, Users, Zap, TrendingUp } from 'lucide-react';
+import { Zap, TrendingUp } from 'lucide-react';
 
 export default function Phase3Dashboard() {
   return (
@@ -13,14 +11,14 @@ export default function Phase3Dashboard() {
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold mb-4">Phase 3: Technological Superiority</h1>
         <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-          Advanced multi-modal AI protection, insurance partnerships, and community-driven intelligence network
+          Advanced multi-modal AI protection with voice, video, and 3D content detection
         </p>
         <Badge className="mt-4 bg-gradient-to-r from-purple-500 to-blue-500">
           Next-Generation Protection
         </Badge>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 gap-6 mb-8 max-w-md mx-auto">
         <Card>
           <CardContent className="pt-6 text-center">
             <Zap className="h-12 w-12 mx-auto mb-4 text-yellow-500" />
@@ -30,56 +28,11 @@ export default function Phase3Dashboard() {
             </p>
           </CardContent>
         </Card>
-        
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <Shield className="h-12 w-12 mx-auto mb-4 text-green-500" />
-            <h3 className="text-xl font-semibold mb-2">Insurance Partners</h3>
-            <p className="text-sm text-muted-foreground">
-              Comprehensive IP insurance coverage from trusted providers
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <Users className="h-12 w-12 mx-auto mb-4 text-blue-500" />
-            <h3 className="text-xl font-semibold mb-2">Community Intelligence</h3>
-            <p className="text-sm text-muted-foreground">
-              Crowdsourced threat detection and verification network
-            </p>
-          </CardContent>
-        </Card>
       </div>
 
-      <Tabs defaultValue="multimodal" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="multimodal" className="flex items-center gap-2">
-            <Zap className="h-4 w-4" />
-            Multi-Modal AI
-          </TabsTrigger>
-          <TabsTrigger value="insurance" className="flex items-center gap-2">
-            <Shield className="h-4 w-4" />
-            Insurance Partners
-          </TabsTrigger>
-          <TabsTrigger value="community" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            Community Intelligence
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="multimodal">
-          <MultiModalAIProtection />
-        </TabsContent>
-
-        <TabsContent value="insurance">
-          <IPInsurancePartnership />
-        </TabsContent>
-
-        <TabsContent value="community">
-          <CommunityIntelligence />
-        </TabsContent>
-      </Tabs>
+      <div className="space-y-6">
+        <MultiModalAIProtection />
+      </div>
 
       <Card className="mt-8">
         <CardHeader>
@@ -89,18 +42,10 @@ export default function Phase3Dashboard() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-md mx-auto">
             <div className="text-center">
               <p className="text-3xl font-bold text-green-500">✓</p>
               <p className="text-sm text-muted-foreground">Multi-Modal AI Protection</p>
-            </div>
-            <div className="text-center">
-              <p className="text-3xl font-bold text-green-500">✓</p>
-              <p className="text-sm text-muted-foreground">Insurance Partnerships</p>
-            </div>
-            <div className="text-center">
-              <p className="text-3xl font-bold text-green-500">✓</p>
-              <p className="text-sm text-muted-foreground">Community Intelligence</p>
             </div>
             <div className="text-center">
               <p className="text-3xl font-bold text-blue-500">100%</p>
