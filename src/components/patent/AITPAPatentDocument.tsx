@@ -58,7 +58,7 @@ const AITPAPatentDocument = () => {
     addText(`Document Generated: ${new Date().toLocaleDateString()}`, 10);
     addText(`Application Number: [TO BE ASSIGNED]`, 10);
     addText(`Filing Date: ${new Date().toLocaleDateString()}`, 10);
-    addText(`Inventor(s): [TO BE COMPLETED]`, 10);
+    addText(`Inventor(s): Shirleena Cunningham`, 10);
     addText(`Assignee: TSMO Technologies, Inc.`, 10);
     yPosition += 15;
 
