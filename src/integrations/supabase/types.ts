@@ -6891,6 +6891,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      generate_secure_api_key: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_all_template_download_counts: {
         Args: Record<PropertyKey, never>
         Returns: {
