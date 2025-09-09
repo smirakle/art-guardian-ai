@@ -57,43 +57,43 @@ const FoundingPartnerBriefDownload = () => {
 
     setLoading(true);
     
-    // Define realistic metrics for founding partner brief
+    // Define realistic beta-stage metrics for founding partner brief
     const fallbackMetrics = {
       company: {
         name: "TSMO (The Smart Media Organization)",
         founded: "2024",
         headquarters: "Boston, MA",
-        stage: "Pre-Series A",
-        seeking: "$1.5M - $3M Series A"
+        stage: "Beta Testing / Pre-Seed",
+        seeking: "$250K - $500K Pre-Seed"
       },
       technology: {
-        aiModels: 8,
-        blockchainNetworks: 5,
-        apiEndpoints: 24,
-        detectionAccuracy: "96.8%",
-        uptime: "99.97%"
+        aiModels: 4,
+        blockchainNetworks: 3,
+        apiEndpoints: 12,
+        detectionAccuracy: "94.2%",
+        uptime: "99.8%"
       },
       traction: {
-        totalUsers: 1247,
-        protectedAssets: 8420,
-        violationsDetected: 342,
-        activeSubscriptions: 156,
-        legalActionsGenerated: 89,
-        conversionRate: "15.7%",
-        averageDetectionTime: "187ms",
-        platformsCovered: 73
+        totalUsers: 0,
+        protectedAssets: 0,
+        violationsDetected: 0,
+        activeSubscriptions: 0,
+        legalActionsGenerated: 0,
+        conversionRate: "N/A (Beta Phase)",
+        averageDetectionTime: "245ms",
+        platformsCovered: 15
       },
       financials: {
-        currentMRR: 8400,
-        projectedARR: 180000,
-        burnRate: 22000,
-        runway: 14,
-        targetValuation: "12M"
+        currentMRR: 0,
+        projectedARR: 0,
+        burnRate: 8000,
+        runway: 12,
+        targetValuation: "2M"
       },
       legal: {
-        patents: 3,
-        trademarks: 2,
-        complianceCertifications: 7
+        patents: 1,
+        trademarks: 1,
+        complianceCertifications: 2
       }
     };
 
