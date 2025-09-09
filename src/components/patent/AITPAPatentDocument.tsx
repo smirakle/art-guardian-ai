@@ -14,14 +14,7 @@ const AITPAPatentDocument = () => {
     const margin = 20;
     const lineHeight = 7;
 
-    // Load and embed fonts (using built-in fonts that are fully embedded)
-    try {
-      // Use Times Roman - a fully embedded font in jsPDF
-      doc.addFont('Times-Roman', 'times', 'normal');
-      doc.addFont('Times-Bold', 'times', 'bold');
-    } catch (error) {
-      console.log('Using default embedded fonts');
-    }
+    // Use only built-in embedded fonts - no need to add custom fonts
 
     const addText = (text: string, fontSize = 10, isBold = false, indent = 0) => {
       if (yPosition > pageHeight - 30) {
@@ -30,7 +23,7 @@ const AITPAPatentDocument = () => {
       }
       
       doc.setFontSize(fontSize);
-      // Use only embedded fonts - Times is fully embedded in jsPDF
+      // Use built-in embedded fonts
       doc.setFont('times', isBold ? 'bold' : 'normal');
       
       const lines = doc.splitTextToSize(text, 170 - indent);
