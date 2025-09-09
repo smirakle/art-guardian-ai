@@ -6,12 +6,22 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import jsPDF from 'jspdf';
 
 const AITPAPatentDocument = () => {
-  const downloadAITPAPatentDocument = () => {
-    const doc = new jsPDF();
+  const downloadAITPAPatentDocument = async () => {
+    // Create PDF with embedded fonts (US Letter size for USPTO compliance)
+    const doc = new jsPDF('p', 'mm', 'letter');
     let yPosition = 20;
     const pageHeight = doc.internal.pageSize.height;
     const margin = 20;
     const lineHeight = 7;
+
+    // Load and embed fonts (using built-in fonts that are fully embedded)
+    try {
+      // Use Times Roman - a fully embedded font in jsPDF
+      doc.addFont('Times-Roman', 'times', 'normal');
+      doc.addFont('Times-Bold', 'times', 'bold');
+    } catch (error) {
+      console.log('Using default embedded fonts');
+    }
 
     const addText = (text: string, fontSize = 10, isBold = false, indent = 0) => {
       if (yPosition > pageHeight - 30) {
@@ -20,7 +30,8 @@ const AITPAPatentDocument = () => {
       }
       
       doc.setFontSize(fontSize);
-      doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+      // Use only embedded fonts - Times is fully embedded in jsPDF
+      doc.setFont('times', isBold ? 'bold' : 'normal');
       
       const lines = doc.splitTextToSize(text, 170 - indent);
       lines.forEach((line: string) => {

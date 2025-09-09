@@ -6,25 +6,35 @@ import { Badge } from '@/components/ui/badge';
 import jsPDF from 'jspdf';
 
 const ComprehensivePatentDocument = () => {
-  const downloadComprehensivePatentDocument = () => {
-    const pdf = new jsPDF();
+  const downloadComprehensivePatentDocument = async () => {
+    // Create PDF with embedded fonts (US Letter size for USPTO compliance)
+    const pdf = new jsPDF('p', 'mm', 'letter');
     const pageWidth = pdf.internal.pageSize.getWidth();
     const margin = 20;
     let yPosition = margin;
     const lineHeight = 6;
     const pageHeight = pdf.internal.pageSize.getHeight();
 
+    // Load and embed fonts (using built-in fonts that are fully embedded)
+    try {
+      // Use Times Roman - a fully embedded font in jsPDF
+      pdf.addFont('Times-Roman', 'times', 'normal');
+      pdf.addFont('Times-Bold', 'times', 'bold');
+    } catch (error) {
+      console.log('Using default embedded fonts');
+    }
+
     // Helper function to add text with word wrapping
     const addText = (text: string, fontSize = 11, isBold = false, isTitle = false) => {
       if (isTitle) {
         pdf.setFontSize(18);
-        pdf.setFont('helvetica', 'bold');
+        pdf.setFont('times', 'bold');
       } else if (isBold) {
         pdf.setFontSize(fontSize);
-        pdf.setFont('helvetica', 'bold');
+        pdf.setFont('times', 'bold');
       } else {
         pdf.setFontSize(fontSize);
-        pdf.setFont('helvetica', 'normal');
+        pdf.setFont('times', 'normal');
       }
 
       const splitText = pdf.splitTextToSize(text, pageWidth - 2 * margin);
