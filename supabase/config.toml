@@ -84,9 +84,6 @@ verify_jwt = false
 [functions.real-blockchain-registration]
 verify_jwt = false
 
-[functions.real-nft-minting]
-verify_jwt = false
-
 [functions.blockchain-verification]
 verify_jwt = false
 
