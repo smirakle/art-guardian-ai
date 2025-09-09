@@ -19,22 +19,31 @@ export type Database = {
           created_at: string | null
           expires_at: string | null
           id: string
+          ip_address: unknown | null
           is_active: boolean | null
           session_token: string
+          session_token_hash: string | null
+          user_agent: string | null
         }
         Insert: {
           created_at?: string | null
           expires_at?: string | null
           id?: string
+          ip_address?: unknown | null
           is_active?: boolean | null
           session_token: string
+          session_token_hash?: string | null
+          user_agent?: string | null
         }
         Update: {
           created_at?: string | null
           expires_at?: string | null
           id?: string
+          ip_address?: unknown | null
           is_active?: boolean | null
           session_token?: string
+          session_token_hash?: string | null
+          user_agent?: string | null
         }
         Relationships: []
       }
@@ -6994,7 +7003,19 @@ export type Database = {
         }
         Returns: boolean
       }
+      hash_session_token: {
+        Args: { token: string }
+        Returns: string
+      }
+      invalidate_admin_sessions_by_ip: {
+        Args: { ip_param: unknown }
+        Returns: undefined
+      }
       is_valid_admin_session: {
+        Args: { session_token: string }
+        Returns: boolean
+      }
+      is_valid_hashed_admin_session: {
         Args: { session_token: string }
         Returns: boolean
       }

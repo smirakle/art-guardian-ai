@@ -118,13 +118,17 @@ serve(async (req) => {
 
       // Generate a secure session token
       const sessionToken = crypto.randomUUID();
+      const clientIp = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '0.0.0.0';
+      const userAgent = req.headers.get('user-agent') || '';
       
-      // Store the session in the database
+      // Store the session in the database with hashed token
       const { error: sessionError } = await supabase
         .from('admin_sessions')
         .insert({
-          session_token: sessionToken,
-          expires_at: new Date(Date.now() + 60 * 60 * 1000) // 1 hour expiry
+          session_token_hash: await supabase.rpc('hash_session_token', { token: sessionToken }),
+          expires_at: new Date(Date.now() + 60 * 60 * 1000), // 1 hour expiry
+          ip_address: clientIp,
+          user_agent: userAgent
         });
 
       if (sessionError) {
@@ -154,16 +158,13 @@ serve(async (req) => {
       );
 
     } else if (validatedData.action === 'disable_maintenance') {
-      // Validate the session token
-      const { data: session, error: sessionError } = await supabase
-        .from('admin_sessions')
-        .select('*')
-        .eq('session_token', validatedData.sessionToken)
-        .eq('is_active', true)
-        .gt('expires_at', new Date().toISOString())
-        .single();
+      // Validate the hashed session token
+      const isValidSession = await supabase.rpc('is_valid_hashed_admin_session', {
+        session_token: validatedData.sessionToken
+      });
 
-      if (sessionError || !session) {
+      if (!isValidSession.data) {
+
         await logSecurityEvent(supabase, 'maintenance_disable_denied', 
           { error: 'Invalid or expired session token' }, req);
         
@@ -176,11 +177,11 @@ serve(async (req) => {
         );
       }
 
-      // Deactivate the session
+      // Deactivate all sessions with this token hash
       await supabase
         .from('admin_sessions')
         .update({ is_active: false })
-        .eq('id', session.id);
+        .eq('session_token_hash', await supabase.rpc('hash_session_token', { token: validatedData.sessionToken }));
 
       await logSecurityEvent(supabase, 'maintenance_mode_disabled', 
         { sessionToken: validatedData.sessionToken?.substring(0, 8) + '...' }, req);

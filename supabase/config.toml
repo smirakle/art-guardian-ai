@@ -13,25 +13,25 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.enterprise-api-v1]
-verify_jwt = false
+verify_jwt = true
 
 [functions.schedule-meeting]
-verify_jwt = false
+verify_jwt = true
 
 [functions.process-monitoring-scan]
-verify_jwt = false
+verify_jwt = true
 
 [functions.real-image-search]
-verify_jwt = false
+verify_jwt = true
 
 [functions.real-social-media-monitor]
-verify_jwt = false
+verify_jwt = true
 
 [functions.real-youtube-monitor]
-verify_jwt = false
+verify_jwt = true
 
 [functions.fake-account-mass-scanner]
-verify_jwt = false
+verify_jwt = true
 
 [functions.send-contact-email]
 verify_jwt = false
@@ -40,7 +40,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.analyze-article-content]
-verify_jwt = false
+verify_jwt = true
 
 [functions.admin-maintenance-auth]
 verify_jwt = true
@@ -61,37 +61,37 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.real-nft-minting]
-verify_jwt = false
+verify_jwt = true
 
 [functions.portfolio-realtime-data]
-verify_jwt = false
+verify_jwt = true
 
 [functions.advanced-visual-analysis]
-verify_jwt = false
+verify_jwt = true
 
 [functions.google-vision-analysis]
-verify_jwt = false
+verify_jwt = true
 
 [functions.legal-document-generator]
-verify_jwt = false
+verify_jwt = true
 
 [functions.government-filing-automation]
-verify_jwt = false
+verify_jwt = true
 
 [functions.international-compliance-checker]
-verify_jwt = false
+verify_jwt = true
 
 [functions.real-blockchain-registration]
-verify_jwt = false
+verify_jwt = true
 
 [functions.blockchain-verification]
 verify_jwt = false
 
 [functions.automated-dmca-filing]
-verify_jwt = false
+verify_jwt = true
 
 [functions.real-time-monitoring-engine]
-verify_jwt = false
+verify_jwt = true
 
 [functions.real-legal-document-processor]
 verify_jwt = true
@@ -100,7 +100,7 @@ verify_jwt = true
 verify_jwt = false
 
 [functions.one-click-protect]
-verify_jwt = false
+verify_jwt = true
 
 [functions.automated-licensing]
 verify_jwt = true
@@ -112,6 +112,9 @@ verify_jwt = true
 verify_jwt = true
 
 # New functions
+[functions.secure-enterprise-api]
+verify_jwt = true
+
 [functions.ip-guardrail]
 verify_jwt = false
 
