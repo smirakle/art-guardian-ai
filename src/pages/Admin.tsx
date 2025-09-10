@@ -23,21 +23,23 @@ import GovernmentDefenseMonitoring from "@/components/admin/GovernmentDefenseMon
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="flex w-full overflow-x-auto whitespace-nowrap gap-1 px-2">
-              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-              <TabsTrigger value="users">Users</TabsTrigger>
-              <TabsTrigger value="enhanced-users">Enhanced Users</TabsTrigger>
-              <TabsTrigger value="realtime">Real-Time</TabsTrigger>
-              <TabsTrigger value="data">Data Export</TabsTrigger>
-              <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
-              <TabsTrigger value="security">Security</TabsTrigger>
-              <TabsTrigger value="gov-defense">Gov/Defense</TabsTrigger>
-              <TabsTrigger value="system">System</TabsTrigger>
-              <TabsTrigger value="blockchain">Blockchain</TabsTrigger>
-              <TabsTrigger value="ai-training">AI Training</TabsTrigger>
-              <TabsTrigger value="live-feed">Live Feed</TabsTrigger>
-            </TabsList>
+            <div className="w-full overflow-x-auto">
+              <TabsList className="flex w-max min-w-full gap-1 px-2 py-1">
+                <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+                <TabsTrigger value="users">Users</TabsTrigger>
+                <TabsTrigger value="enhanced-users">Enhanced Users</TabsTrigger>
+                <TabsTrigger value="realtime">Real-Time</TabsTrigger>
+                <TabsTrigger value="data">Data Export</TabsTrigger>
+                <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
+                <TabsTrigger value="analytics">Analytics</TabsTrigger>
+                <TabsTrigger value="security">Security</TabsTrigger>
+                <TabsTrigger value="gov-defense">Gov/Defense</TabsTrigger>
+                <TabsTrigger value="system">System</TabsTrigger>
+                <TabsTrigger value="blockchain">Blockchain</TabsTrigger>
+                <TabsTrigger value="ai-training">AI Training</TabsTrigger>
+                <TabsTrigger value="live-feed">Live Feed</TabsTrigger>
+              </TabsList>
+            </div>
 
             <TabsContent value="dashboard" className="space-y-6">
               <AdminDashboard />
