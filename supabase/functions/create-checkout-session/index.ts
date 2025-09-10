@@ -139,30 +139,51 @@ serve(async (req) => {
       },
     };
 
-    // Handle promotional code
-    if (promoCode && promoCode.toLowerCase() === 'freemonth') {
+    // Handle promotional codes
+    if (promoCode) {
+      const code = promoCode.toLowerCase();
       logStep("Applying promotional code", { promoCode });
       
-      // Create or retrieve coupon for one month free
       let coupon;
-      try {
-        coupon = await stripe.coupons.retrieve('one-month-free');
-        logStep("Found existing coupon");
-      } catch (error) {
-        // Create the coupon if it doesn't exist
-        coupon = await stripe.coupons.create({
-          id: 'one-month-free',
-          name: 'One Month Free',
-          duration: 'once',
-          amount_off: billingCycle === 'monthly' ? amount : Math.floor(amount / 12), // One month's worth
-          currency: 'usd',
-        });
-        logStep("Created new coupon", { couponId: coupon.id });
+      if (code === 'freemonth') {
+        // Create or retrieve coupon for one month free
+        try {
+          coupon = await stripe.coupons.retrieve('one-month-free');
+          logStep("Found existing coupon");
+        } catch (error) {
+          // Create the coupon if it doesn't exist
+          coupon = await stripe.coupons.create({
+            id: 'one-month-free',
+            name: 'One Month Free',
+            duration: 'once',
+            amount_off: billingCycle === 'monthly' ? amount : Math.floor(amount / 12), // One month's worth
+            currency: 'usd',
+          });
+          logStep("Created new coupon", { couponId: coupon.id });
+        }
+      } else if (code === 'betatester') {
+        // Create or retrieve coupon for two months free
+        try {
+          coupon = await stripe.coupons.retrieve('two-months-free');
+          logStep("Found existing BETATESTER coupon");
+        } catch (error) {
+          // Create the coupon if it doesn't exist
+          coupon = await stripe.coupons.create({
+            id: 'two-months-free',
+            name: 'Two Months Free - Beta Tester',
+            duration: 'once',
+            amount_off: billingCycle === 'monthly' ? amount * 2 : Math.floor(amount / 6), // Two months' worth
+            currency: 'usd',
+          });
+          logStep("Created new BETATESTER coupon", { couponId: coupon.id });
+        }
       }
       
-      sessionConfig.discounts = [{
-        coupon: coupon.id,
-      }];
+      if (coupon) {
+        sessionConfig.discounts = [{
+          coupon: coupon.id,
+        }];
+      }
     }
 
     const session = await stripe.checkout.sessions.create(sessionConfig);
