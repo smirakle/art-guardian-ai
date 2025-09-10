@@ -145,6 +145,56 @@ const Checkout = () => {
     setIsAuthProcessing(false);
   };
 
+  const handleBetaActivation = async () => {
+    if (isProcessing) return;
+    
+    setIsProcessing(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('activate-beta-access', {
+        body: {
+          promoCode: promoCode
+        }
+      });
+
+      if (error) {
+        console.error('Beta activation error:', error);
+        toast({
+          title: "Beta Activation Failed",
+          description: error.message || "Failed to activate beta access",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data?.success) {
+        toast({
+          title: "Beta Access Activated!",
+          description: "Welcome to your free 60-day trial.",
+        });
+        // Redirect to success page
+        setTimeout(() => {
+          window.location.href = "/success?beta=true";
+        }, 2000);
+      } else {
+        toast({
+          title: "Beta Activation Failed",
+          description: data?.error || "Failed to activate beta access",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Beta activation error:', error);
+      toast({
+        title: "Beta Activation Failed",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
@@ -823,8 +873,8 @@ const Checkout = () => {
                     </div>
                     
                     <Button 
-                      type="submit" 
-                      onClick={handleSubmit}
+                      type="button" 
+                      onClick={handleBetaActivation}
                       className="w-full bg-gradient-to-r from-primary to-accent text-lg py-6"
                       disabled={isProcessing}
                     >
