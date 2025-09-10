@@ -13,7 +13,7 @@ import LiveFeed from "@/components/LiveFeed";
 import BlockchainReadiness from "@/components/admin/BlockchainReadiness";
 import MonitoringReadiness from "@/components/admin/MonitoringReadiness";
 import AITPReadiness from "@/components/admin/AITPReadiness";
- 
+import GovernmentDefenseMonitoring from "@/components/admin/GovernmentDefenseMonitoring";
  const Admin = () => {
    const [activeTab, setActiveTab] = useState("dashboard");
    const [isMonitoring, setIsMonitoring] = useState(true);
@@ -23,7 +23,7 @@ import AITPReadiness from "@/components/admin/AITPReadiness";
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-12 overflow-x-auto whitespace-nowrap gap-1">
+            <TabsList className="grid w-full grid-cols-13 overflow-x-auto whitespace-nowrap gap-1">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
               <TabsTrigger value="enhanced-users">Enhanced Users</TabsTrigger>
@@ -32,6 +32,7 @@ import AITPReadiness from "@/components/admin/AITPReadiness";
               <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
               <TabsTrigger value="security">Security</TabsTrigger>
+              <TabsTrigger value="gov-defense">Gov/Defense</TabsTrigger>
               <TabsTrigger value="system">System</TabsTrigger>
               <TabsTrigger value="blockchain">Blockchain</TabsTrigger>
               <TabsTrigger value="ai-training">AI Training</TabsTrigger>
@@ -65,6 +66,10 @@ import AITPReadiness from "@/components/admin/AITPReadiness";
 
             <TabsContent value="security" className="space-y-6">
               <SecurityAuditLog />
+            </TabsContent>
+
+            <TabsContent value="gov-defense" className="space-y-6">
+              <GovernmentDefenseMonitoring />
             </TabsContent>
 
             <TabsContent value="data" className="space-y-6">
