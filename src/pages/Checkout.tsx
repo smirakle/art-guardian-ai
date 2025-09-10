@@ -39,6 +39,7 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState<"card" | "paypal">("card");
   const [socialMediaAddon, setSocialMediaAddon] = useState(false);
   const [deepfakeAddon, setDeepfakeAddon] = useState(false);
+  const [promoCode, setPromoCode] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAuthProcessing, setIsAuthProcessing] = useState(false);
   
@@ -167,6 +168,7 @@ const Checkout = () => {
           billingCycle,
           socialMediaAddon,
           deepfakeAddon,
+          promoCode: promoCode.trim() || undefined,
           stripeCustomerId: 'demo_customer_' + Date.now(), // Demo mode
           stripeSubscriptionId: 'demo_sub_' + Date.now() // Demo mode
         }
@@ -579,7 +581,35 @@ const Checkout = () => {
                       </div>
                     </div>
                   </div>
-                )}
+                 )}
+
+                {/* Promo Code Section */}
+                <div className="space-y-3">
+                  <Label htmlFor="promoCode" className="text-sm font-medium">
+                    Promo Code (Optional)
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="promoCode"
+                      placeholder="Enter promo code (e.g., BETATESTER)"
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value)}
+                      className="flex-1"
+                    />
+                  </div>
+                  {promoCode.toLowerCase() === 'betatester' && (
+                    <div className="text-sm text-green-600 flex items-center gap-2">
+                      <Check className="w-4 h-4" />
+                      2 months free applied!
+                    </div>
+                  )}
+                  {promoCode.toLowerCase() === 'freemonth' && (
+                    <div className="text-sm text-green-600 flex items-center gap-2">
+                      <Check className="w-4 h-4" />
+                      1 month free applied!
+                    </div>
+                  )}
+                </div>
 
                 <Separator />
 
