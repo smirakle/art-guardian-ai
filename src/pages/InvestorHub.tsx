@@ -20,6 +20,7 @@ import {
 import ComprehensiveAPIDocumentation from '@/components/enterprise/ComprehensiveAPIDocumentation';
 import AdminProtectedPatentDocs from '@/components/AdminProtectedPatentDocs';
 import AITPAPatentDocument from '@/components/patent/AITPAPatentDocument';
+import AdminOnly from '@/components/AdminOnly';
 
 const InvestorHub = () => {
   useEffect(() => {
@@ -280,10 +281,15 @@ const InvestorHub = () => {
           </TabsContent>
 
           <TabsContent value="patents">
-            <div className="space-y-6">
-              <AITPAPatentDocument />
-              <AdminProtectedPatentDocs />
-            </div>
+            <AdminOnly 
+              fallbackTitle="Patent Documentation Access Restricted" 
+              fallbackDescription="Patent documentation contains confidential intellectual property information and filing strategies. Access is restricted to administrators only."
+            >
+              <div className="space-y-6">
+                <AITPAPatentDocument />
+                <AdminProtectedPatentDocs />
+              </div>
+            </AdminOnly>
           </TabsContent>
 
           <TabsContent value="roadmap">
@@ -295,7 +301,12 @@ const InvestorHub = () => {
           </TabsContent>
 
           <TabsContent value="dataroom">
-            <InvestorDataRoom />
+            <AdminOnly 
+              fallbackTitle="Data Room Access Restricted" 
+              fallbackDescription="The data room contains confidential financial, legal, and technical documents intended for qualified investors and administrators only."
+            >
+              <InvestorDataRoom />
+            </AdminOnly>
           </TabsContent>
 
           <TabsContent value="api">

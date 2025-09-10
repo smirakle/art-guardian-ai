@@ -142,7 +142,11 @@ const App = () => {
             <Route path="/forgery-detection" element={<ForgeryDetection />} />
             <Route path="/roadmap" element={<Roadmap />} />
             <Route path="/terms-and-privacy" element={<TermsAndPrivacy />} />
-            <Route path="/attorney-packet" element={<AttorneyPacket />} />
+            <Route path="/attorney-packet" element={
+              <ProtectedRoute requiredRole="admin">
+                <AttorneyPacket />
+              </ProtectedRoute>
+            } />
             <Route path="/email-marketing" element={
               <ProtectedRoute requiredRole="admin">
                 <EmailMarketing />
@@ -156,7 +160,11 @@ const App = () => {
             
             <Route path="/get-app" element={<GetApp />} />
             <Route path="/dmca-center" element={<DMCACenter />} />
-            <Route path="/patent-generator" element={<USPTOPatentGenerator />} />
+            <Route path="/patent-generator" element={
+              <ProtectedRoute requiredRole="admin">
+                <USPTOPatentGenerator />
+              </ProtectedRoute>
+            } />
             <Route path="/certificate/:certificateId" element={<Certificate />} />
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />

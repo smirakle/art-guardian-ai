@@ -48,7 +48,7 @@ export function AppSidebar() {
     { path: "/community", label: t('nav.community'), icon: Users },
     { path: "/legal-templates", label: "Legal Templates", icon: FileText },
     { path: "/dmca-center", label: "DMCA Center", icon: Gavel },
-    { path: "/patent-generator", label: "USPTO Patent Generator", icon: FileCheck },
+    ...(role === 'admin' ? [{ path: "/patent-generator", label: "USPTO Patent Generator", icon: FileCheck }] : []),
     { path: "/faq", label: "FAQ", icon: HelpCircle },
     { path: "/roadmap", label: "Roadmap", icon: TrendingUp },
   ];
