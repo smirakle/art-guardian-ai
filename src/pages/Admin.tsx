@@ -14,6 +14,7 @@ import BlockchainReadiness from "@/components/admin/BlockchainReadiness";
 import MonitoringReadiness from "@/components/admin/MonitoringReadiness";
 import AITPReadiness from "@/components/admin/AITPReadiness";
 import GovernmentDefenseMonitoring from "@/components/admin/GovernmentDefenseMonitoring";
+import GovernmentApiPanel from "@/components/admin/GovernmentApiPanel";
  const Admin = () => {
    const [activeTab, setActiveTab] = useState("dashboard");
    const [isMonitoring, setIsMonitoring] = useState(true);
@@ -34,6 +35,7 @@ import GovernmentDefenseMonitoring from "@/components/admin/GovernmentDefenseMon
                 <TabsTrigger value="analytics" className="px-4 py-2 text-sm font-medium">Analytics</TabsTrigger>
                 <TabsTrigger value="security" className="px-4 py-2 text-sm font-medium">Security</TabsTrigger>
                 <TabsTrigger value="gov-defense" className="px-4 py-2 text-sm font-medium bg-primary/10 border border-primary/20">Gov/Defense</TabsTrigger>
+                <TabsTrigger value="gov-api" className="px-4 py-2 text-sm font-medium">Gov API</TabsTrigger>
                 <TabsTrigger value="system" className="px-4 py-2 text-sm font-medium">System</TabsTrigger>
                 <TabsTrigger value="blockchain" className="px-4 py-2 text-sm font-medium">Blockchain</TabsTrigger>
                 <TabsTrigger value="ai-training" className="px-4 py-2 text-sm font-medium">AI Training</TabsTrigger>
@@ -72,6 +74,10 @@ import GovernmentDefenseMonitoring from "@/components/admin/GovernmentDefenseMon
 
             <TabsContent value="gov-defense" className="space-y-6">
               <GovernmentDefenseMonitoring />
+            </TabsContent>
+
+            <TabsContent value="gov-api" className="space-y-6">
+              <GovernmentApiPanel />
             </TabsContent>
 
             <TabsContent value="data" className="space-y-6">
