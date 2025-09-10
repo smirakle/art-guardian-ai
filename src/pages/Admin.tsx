@@ -23,21 +23,21 @@ import GovernmentDefenseMonitoring from "@/components/admin/GovernmentDefenseMon
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <div className="w-full overflow-x-auto">
-              <TabsList className="flex w-max min-w-full gap-1 px-2 py-1">
-                <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-                <TabsTrigger value="users">Users</TabsTrigger>
-                <TabsTrigger value="enhanced-users">Enhanced Users</TabsTrigger>
-                <TabsTrigger value="realtime">Real-Time</TabsTrigger>
-                <TabsTrigger value="data">Data Export</TabsTrigger>
-                <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
-                <TabsTrigger value="analytics">Analytics</TabsTrigger>
-                <TabsTrigger value="security">Security</TabsTrigger>
-                <TabsTrigger value="gov-defense">Gov/Defense</TabsTrigger>
-                <TabsTrigger value="system">System</TabsTrigger>
-                <TabsTrigger value="blockchain">Blockchain</TabsTrigger>
-                <TabsTrigger value="ai-training">AI Training</TabsTrigger>
-                <TabsTrigger value="live-feed">Live Feed</TabsTrigger>
+            <div className="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
+              <TabsList className="flex w-max min-w-full gap-2 px-4 py-2 bg-muted/50 backdrop-blur-sm border border-border/50 rounded-lg shadow-sm">
+                <TabsTrigger value="dashboard" className="px-4 py-2 text-sm font-medium">Dashboard</TabsTrigger>
+                <TabsTrigger value="users" className="px-4 py-2 text-sm font-medium">Users</TabsTrigger>
+                <TabsTrigger value="enhanced-users" className="px-4 py-2 text-sm font-medium">Enhanced Users</TabsTrigger>
+                <TabsTrigger value="realtime" className="px-4 py-2 text-sm font-medium">Real-Time</TabsTrigger>
+                <TabsTrigger value="data" className="px-4 py-2 text-sm font-medium">Data Export</TabsTrigger>
+                <TabsTrigger value="monitoring" className="px-4 py-2 text-sm font-medium">Monitoring</TabsTrigger>
+                <TabsTrigger value="analytics" className="px-4 py-2 text-sm font-medium">Analytics</TabsTrigger>
+                <TabsTrigger value="security" className="px-4 py-2 text-sm font-medium">Security</TabsTrigger>
+                <TabsTrigger value="gov-defense" className="px-4 py-2 text-sm font-medium bg-primary/10 border border-primary/20">Gov/Defense</TabsTrigger>
+                <TabsTrigger value="system" className="px-4 py-2 text-sm font-medium">System</TabsTrigger>
+                <TabsTrigger value="blockchain" className="px-4 py-2 text-sm font-medium">Blockchain</TabsTrigger>
+                <TabsTrigger value="ai-training" className="px-4 py-2 text-sm font-medium">AI Training</TabsTrigger>
+                <TabsTrigger value="live-feed" className="px-4 py-2 text-sm font-medium">Live Feed</TabsTrigger>
               </TabsList>
             </div>
 
