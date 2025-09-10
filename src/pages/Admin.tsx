@@ -23,7 +23,7 @@ import GovernmentDefenseMonitoring from "@/components/admin/GovernmentDefenseMon
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-13 overflow-x-auto whitespace-nowrap gap-1">
+            <TabsList className="flex w-full overflow-x-auto whitespace-nowrap gap-1 px-2">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
               <TabsTrigger value="enhanced-users">Enhanced Users</TabsTrigger>
