@@ -63,6 +63,7 @@ import MilitaryThermoelectric from "./pages/solutions/MilitaryThermoelectric";
 import GlobalThermoelectric from "./pages/solutions/GlobalThermoelectric";
 import RTGsSiGe from "./pages/solutions/RTGsSiGe";
 import ScientificResearch from "./pages/solutions/ScientificResearch";
+import DefenseTechnology from "./pages/solutions/DefenseTechnology";
 
 const queryClient = new QueryClient();
 
@@ -176,6 +177,7 @@ const App = () => {
             <Route path="/solutions/global-thermoelectric" element={<GlobalThermoelectric />} />
             <Route path="/solutions/rtgs-sige" element={<RTGsSiGe />} />
             <Route path="/solutions/scientific-research" element={<ScientificResearch />} />
+            <Route path="/solutions/defense-technology" element={<DefenseTechnology />} />
             
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />
