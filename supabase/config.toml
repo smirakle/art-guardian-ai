@@ -139,3 +139,6 @@ verify_jwt = false
 [functions.production-health-monitor]
 verify_jwt = false
 
+[functions.gov-defense-cyber-ip-api]
+verify_jwt = true
+

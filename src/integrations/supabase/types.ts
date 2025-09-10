@@ -2084,6 +2084,7 @@ export type Database = {
           api_key: string
           created_at: string
           expires_at: string | null
+          gov_defense_enabled: boolean | null
           id: string
           is_active: boolean
           key_name: string
@@ -2099,6 +2100,7 @@ export type Database = {
           api_key: string
           created_at?: string
           expires_at?: string | null
+          gov_defense_enabled?: boolean | null
           id?: string
           is_active?: boolean
           key_name: string
@@ -2114,6 +2116,7 @@ export type Database = {
           api_key?: string
           created_at?: string
           expires_at?: string | null
+          gov_defense_enabled?: boolean | null
           id?: string
           is_active?: boolean
           key_name?: string
@@ -2346,6 +2349,175 @@ export type Database = {
         }
         Relationships: []
       }
+      gov_defense_ip_monitoring: {
+        Row: {
+          alert_threshold: string
+          asset_id: string
+          asset_type: string
+          classification: string
+          compliance_framework: string | null
+          created_at: string
+          findings_count: number | null
+          id: string
+          last_scan_at: string | null
+          metadata: Json | null
+          monitoring_scope: string[] | null
+          monitoring_status: string | null
+          session_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alert_threshold: string
+          asset_id: string
+          asset_type: string
+          classification: string
+          compliance_framework?: string | null
+          created_at?: string
+          findings_count?: number | null
+          id?: string
+          last_scan_at?: string | null
+          metadata?: Json | null
+          monitoring_scope?: string[] | null
+          monitoring_status?: string | null
+          session_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alert_threshold?: string
+          asset_id?: string
+          asset_type?: string
+          classification?: string
+          compliance_framework?: string | null
+          created_at?: string
+          findings_count?: number | null
+          id?: string
+          last_scan_at?: string | null
+          metadata?: Json | null
+          monitoring_scope?: string[] | null
+          monitoring_status?: string | null
+          session_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gov_defense_ip_monitoring_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "gov_defense_monitoring_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gov_defense_monitoring_sessions: {
+        Row: {
+          alert_threshold: string | null
+          callback_url: string | null
+          classification_level: string | null
+          compliance_framework: string | null
+          created_at: string
+          id: string
+          ip_assets: Json | null
+          metadata: Json | null
+          monitoring_duration_hours: number | null
+          priority: string | null
+          session_type: string
+          status: string
+          targets: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alert_threshold?: string | null
+          callback_url?: string | null
+          classification_level?: string | null
+          compliance_framework?: string | null
+          created_at?: string
+          id?: string
+          ip_assets?: Json | null
+          metadata?: Json | null
+          monitoring_duration_hours?: number | null
+          priority?: string | null
+          session_type: string
+          status?: string
+          targets?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alert_threshold?: string | null
+          callback_url?: string | null
+          classification_level?: string | null
+          compliance_framework?: string | null
+          created_at?: string
+          id?: string
+          ip_assets?: Json | null
+          metadata?: Json | null
+          monitoring_duration_hours?: number | null
+          priority?: string | null
+          session_type?: string
+          status?: string
+          targets?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      gov_defense_security_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          alert_type: string
+          created_at: string
+          description: string
+          id: string
+          is_acknowledged: boolean | null
+          metadata: Json | null
+          session_id: string | null
+          severity: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type: string
+          created_at?: string
+          description: string
+          id?: string
+          is_acknowledged?: boolean | null
+          metadata?: Json | null
+          session_id?: string | null
+          severity: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type?: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_acknowledged?: boolean | null
+          metadata?: Json | null
+          session_id?: string | null
+          severity?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gov_defense_security_alerts_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "gov_defense_monitoring_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       government_filing_requests: {
         Row: {
           additional_instructions: string | null
@@ -2427,6 +2599,48 @@ export type Database = {
           updated_at?: string
           urgency_level?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      industry_verticals: {
+        Row: {
+          compliance_requirements: Json | null
+          created_at: string
+          description: string | null
+          export_controlled: boolean | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          requires_security_clearance: boolean | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          compliance_requirements?: Json | null
+          created_at?: string
+          description?: string | null
+          export_controlled?: boolean | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          requires_security_clearance?: boolean | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          compliance_requirements?: Json | null
+          created_at?: string
+          description?: string | null
+          export_controlled?: boolean | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          requires_security_clearance?: boolean | null
+          slug?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -4655,9 +4869,13 @@ export type Database = {
       portfolios: {
         Row: {
           alert_settings: Json | null
+          compliance_notes: string | null
           created_at: string
+          data_classification: string | null
           description: string | null
+          export_control_notice: boolean | null
           id: string
+          industry_id: string | null
           is_active: boolean
           monitoring_enabled: boolean
           monitoring_frequency: string | null
@@ -4670,9 +4888,13 @@ export type Database = {
         }
         Insert: {
           alert_settings?: Json | null
+          compliance_notes?: string | null
           created_at?: string
+          data_classification?: string | null
           description?: string | null
+          export_control_notice?: boolean | null
           id?: string
+          industry_id?: string | null
           is_active?: boolean
           monitoring_enabled?: boolean
           monitoring_frequency?: string | null
@@ -4685,9 +4907,13 @@ export type Database = {
         }
         Update: {
           alert_settings?: Json | null
+          compliance_notes?: string | null
           created_at?: string
+          data_classification?: string | null
           description?: string | null
+          export_control_notice?: boolean | null
           id?: string
+          industry_id?: string | null
           is_active?: boolean
           monitoring_enabled?: boolean
           monitoring_frequency?: string | null
@@ -4698,7 +4924,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "portfolios_industry_id_fkey"
+            columns: ["industry_id"]
+            isOneToOne: false
+            referencedRelation: "industry_verticals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profile_impersonation_alerts: {
         Row: {
@@ -6294,6 +6528,47 @@ export type Database = {
         }
         Relationships: []
       }
+      user_industries: {
+        Row: {
+          attestation_completed: boolean | null
+          created_at: string
+          id: string
+          industry_id: string
+          is_primary: boolean | null
+          security_clearance_level: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attestation_completed?: boolean | null
+          created_at?: string
+          id?: string
+          industry_id: string
+          is_primary?: boolean | null
+          security_clearance_level?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attestation_completed?: boolean | null
+          created_at?: string
+          id?: string
+          industry_id?: string
+          is_primary?: boolean | null
+          security_clearance_level?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_industries_industry_id_fkey"
+            columns: ["industry_id"]
+            isOneToOne: false
+            referencedRelation: "industry_verticals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_integrations: {
         Row: {
           access_token: string
@@ -6978,6 +7253,15 @@ export type Database = {
           subscription_status: string
           tier_name: string
           white_label_included: boolean
+        }[]
+      }
+      get_user_primary_industry: {
+        Args: { user_id_param: string }
+        Returns: {
+          export_controlled: boolean
+          industry_name: string
+          industry_slug: string
+          requires_clearance: boolean
         }[]
       }
       get_user_subscription: {
