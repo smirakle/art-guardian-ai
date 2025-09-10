@@ -2518,6 +2518,197 @@ export type Database = {
           },
         ]
       }
+      government_agencies: {
+        Row: {
+          address: Json | null
+          agency_code: string
+          agency_name: string
+          authorization_document_url: string | null
+          authorized_personnel: Json | null
+          contact_email: string
+          contact_phone: string | null
+          created_at: string
+          department: string
+          id: string
+          is_active: boolean
+          is_verified: boolean
+          security_clearance_level: string
+          updated_at: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          address?: Json | null
+          agency_code: string
+          agency_name: string
+          authorization_document_url?: string | null
+          authorized_personnel?: Json | null
+          contact_email: string
+          contact_phone?: string | null
+          created_at?: string
+          department: string
+          id?: string
+          is_active?: boolean
+          is_verified?: boolean
+          security_clearance_level?: string
+          updated_at?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          address?: Json | null
+          agency_code?: string
+          agency_name?: string
+          authorization_document_url?: string | null
+          authorized_personnel?: Json | null
+          contact_email?: string
+          contact_phone?: string | null
+          created_at?: string
+          department?: string
+          id?: string
+          is_active?: boolean
+          is_verified?: boolean
+          security_clearance_level?: string
+          updated_at?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: []
+      }
+      government_api_keys: {
+        Row: {
+          agency_id: string
+          api_key: string
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          ip_whitelist: Json | null
+          is_active: boolean
+          key_name: string
+          last_used_at: string | null
+          permissions: Json
+          purpose: string | null
+          rate_limit_requests: number
+          rate_limit_window_minutes: number
+          security_classification: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          api_key: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          ip_whitelist?: Json | null
+          is_active?: boolean
+          key_name: string
+          last_used_at?: string | null
+          permissions?: Json
+          purpose?: string | null
+          rate_limit_requests?: number
+          rate_limit_window_minutes?: number
+          security_classification?: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          api_key?: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          ip_whitelist?: Json | null
+          is_active?: boolean
+          key_name?: string
+          last_used_at?: string | null
+          permissions?: Json
+          purpose?: string | null
+          rate_limit_requests?: number
+          rate_limit_window_minutes?: number
+          security_classification?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "government_api_keys_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "government_agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      government_api_usage: {
+        Row: {
+          agency_id: string
+          api_key_id: string
+          classification_level: string | null
+          created_at: string
+          endpoint: string
+          id: string
+          ip_address: unknown | null
+          metadata: Json | null
+          method: string
+          operation_type: string | null
+          request_size_bytes: number | null
+          response_size_bytes: number | null
+          response_time_ms: number | null
+          status_code: number
+          user_agent: string | null
+        }
+        Insert: {
+          agency_id: string
+          api_key_id: string
+          classification_level?: string | null
+          created_at?: string
+          endpoint: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          method: string
+          operation_type?: string | null
+          request_size_bytes?: number | null
+          response_size_bytes?: number | null
+          response_time_ms?: number | null
+          status_code: number
+          user_agent?: string | null
+        }
+        Update: {
+          agency_id?: string
+          api_key_id?: string
+          classification_level?: string | null
+          created_at?: string
+          endpoint?: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          method?: string
+          operation_type?: string | null
+          request_size_bytes?: number | null
+          response_size_bytes?: number | null
+          response_time_ms?: number | null
+          status_code?: number
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "government_api_usage_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "government_agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "government_api_usage_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "government_api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       government_filing_requests: {
         Row: {
           additional_instructions: string | null
@@ -7166,6 +7357,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      generate_government_api_key: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       generate_secure_api_key: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -7420,6 +7615,10 @@ export type Database = {
       validate_admin_token: {
         Args: { token_hash: string }
         Returns: boolean
+      }
+      validate_government_api_key: {
+        Args: { api_key_param: string; required_permission?: string }
+        Returns: Json
       }
     }
     Enums: {

@@ -8,6 +8,7 @@ import LiveActivityFeed from "./LiveActivityFeed";
 import NetworkMonitoring from "./NetworkMonitoring";
 import ApiKeyTestingPanel from "./ApiKeyTestingPanel";
 import GovernmentDefenseMonitoring from "./GovernmentDefenseMonitoring";
+import GovernmentApiPanel from "./GovernmentApiPanel";
 
 const AdminPanel: React.FC = () => {
   return (
@@ -21,6 +22,7 @@ const AdminPanel: React.FC = () => {
             <TabsTrigger value="network">Network</TabsTrigger>
             <TabsTrigger value="api-keys">API Keys</TabsTrigger>
             <TabsTrigger value="gov-defense">Gov/Defense</TabsTrigger>
+            <TabsTrigger value="gov-api">Gov API</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="security">Security</TabsTrigger>
           </TabsList>
@@ -54,6 +56,10 @@ const AdminPanel: React.FC = () => {
           
           <TabsContent value="gov-defense">
             <GovernmentDefenseMonitoring />
+          </TabsContent>
+          
+          <TabsContent value="gov-api">
+            <GovernmentApiPanel />
           </TabsContent>
           
           <TabsContent value="users">
