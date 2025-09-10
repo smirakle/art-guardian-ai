@@ -2640,6 +2640,33 @@ export type Database = {
           },
         ]
       }
+      government_api_rate_limits: {
+        Row: {
+          created_at: string
+          id: string
+          rate_limit_key: string
+          request_count: number
+          updated_at: string
+          window_start: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          rate_limit_key: string
+          request_count?: number
+          updated_at?: string
+          window_start: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          rate_limit_key?: string
+          request_count?: number
+          updated_at?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       government_api_usage: {
         Row: {
           agency_id: string
@@ -2790,6 +2817,66 @@ export type Database = {
           updated_at?: string
           urgency_level?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      government_security_configs: {
+        Row: {
+          agency_id: string
+          created_at: string
+          data_classification_required: boolean
+          id: string
+          ip_allowlist: string[] | null
+          rate_limit_per_hour: number
+          require_mfa: boolean
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          data_classification_required?: boolean
+          id?: string
+          ip_allowlist?: string[] | null
+          rate_limit_per_hour?: number
+          require_mfa?: boolean
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          data_classification_required?: boolean
+          id?: string
+          ip_allowlist?: string[] | null
+          rate_limit_per_hour?: number
+          require_mfa?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      government_security_events: {
+        Row: {
+          created_at: string
+          description: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          severity: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          severity: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          severity?: string
         }
         Relationships: []
       }
@@ -5619,6 +5706,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      security_alerts: {
+        Row: {
+          client_info: Json | null
+          created_at: string
+          description: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          client_info?: Json | null
+          created_at?: string
+          description: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          client_info?: Json | null
+          created_at?: string
+          description?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       security_audit_log: {
         Row: {
