@@ -15,7 +15,7 @@ const AdminPanel: React.FC = () => {
     <div className="min-h-screen bg-background pt-20 pb-12">
       <div className="container mx-auto px-4">
         <Tabs defaultValue="dashboard" className="w-full">
-          <TabsList className="grid w-full grid-cols-8">
+          <TabsList className="flex w-full overflow-x-auto">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="metrics">Metrics</TabsTrigger>
             <TabsTrigger value="activity">Live Feed</TabsTrigger>
