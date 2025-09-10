@@ -6,50 +6,50 @@ import { Link } from "react-router-dom";
 const industries = [
   {
     icon: Palette,
-    title: "Creative & Media",
-    description: "Digital art, photography, video content, and creative works protection",
+    title: "Creative & Media IP",
+    description: "Intellectual property protection for digital artists, content creators, and media companies against unauthorized use and AI training",
     slug: "creative-media",
-    features: ["AI Detection", "Portfolio Monitoring", "DMCA Protection"],
+    features: ["Copyright Registration", "AI Training Prevention", "Content Licensing Management"],
     classification: "standard"
   },
   {
     icon: Shield,
-    title: "Military Thermoelectric Materials",
-    description: "Defense applications for thermoelectric materials and energy conversion systems",
+    title: "Defense Technology IP",
+    description: "Classified intellectual property protection for military contractors and defense technology with export control compliance",
     slug: "military-thermoelectric",
-    features: ["Export Control Compliance", "Security Clearance Support", "ITAR/EAR Attestation"],
+    features: ["ITAR/EAR Compliance", "Security Clearance Verification", "Export Control Documentation"],
     classification: "export-controlled"
   },
   {
     icon: Zap,
-    title: "Global Thermoelectric Modules", 
-    description: "Commercial and industrial thermoelectric module development and deployment",
+    title: "Industrial Innovation IP", 
+    description: "Global intellectual property protection for manufacturing innovations, trade secrets, and industrial processes",
     slug: "global-thermoelectric",
-    features: ["International IP Protection", "Manufacturing Security", "Supply Chain Monitoring"],
+    features: ["Patent Portfolio Management", "Trade Secret Protection", "International Filing Strategy"],
     classification: "commercial"
   },
   {
     icon: Atom,
-    title: "RTGs & SiGe Applications",
-    description: "Radioisotope Thermoelectric Generators and Silicon Germanium applications",
+    title: "Nuclear Technology IP",
+    description: "Specialized IP protection for nuclear materials, radioisotope technologies, and critical energy infrastructure",
     slug: "rtgs-sige",
-    features: ["Nuclear Security Compliance", "DOE Coordination", "Critical Infrastructure Protection"],
+    features: ["Nuclear Regulatory Compliance", "Critical Infrastructure Security", "DOE Coordination"],
     classification: "export-controlled"
   },
   {
     icon: Microscope,
-    title: "Scientific Research",
-    description: "Academic and research institution IP protection and collaboration",
+    title: "Research & Academic IP",
+    description: "Intellectual property protection for universities, research institutions, and scientific publications",
     slug: "scientific-research", 
-    features: ["Research Publication Security", "Grant Compliance", "Collaborative Protection"],
+    features: ["Research Data Protection", "Publication IP Rights", "Grant Compliance Management"],
     classification: "academic"
   },
   {
     icon: Building,
-    title: "Government Defense",
-    description: "Government and defense contractor intellectual property protection",
+    title: "Government Contractor IP",
+    description: "Federal contractor intellectual property protection with government compliance and security requirements",
     slug: "government-defense",
-    features: ["FedRAMP Compliance", "NIST Framework", "Contractor Protection"],
+    features: ["Government Rights Management", "Security Classification", "Contract IP Compliance"],
     classification: "government"
   }
 ];
