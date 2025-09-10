@@ -1,5 +1,11 @@
 project_id = "utneaqmbyjwxaqrrarpc"
 
+[functions.security-alert-handler]
+verify_jwt = false
+
+[functions.enhanced-government-api-gateway]
+verify_jwt = false
+
 [functions.email-analytics]
 verify_jwt = true
 

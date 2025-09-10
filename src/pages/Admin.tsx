@@ -15,6 +15,7 @@ import MonitoringReadiness from "@/components/admin/MonitoringReadiness";
 import AITPReadiness from "@/components/admin/AITPReadiness";
 import GovernmentDefenseMonitoring from "@/components/admin/GovernmentDefenseMonitoring";
 import GovernmentApiPanel from "@/components/admin/GovernmentApiPanel";
+import AdminMFAEnforcement from "@/components/security/AdminMFAEnforcement";
  const Admin = () => {
    const [activeTab, setActiveTab] = useState("dashboard");
    const [isMonitoring, setIsMonitoring] = useState(true);
@@ -69,6 +70,7 @@ import GovernmentApiPanel from "@/components/admin/GovernmentApiPanel";
             </TabsContent>
 
             <TabsContent value="security" className="space-y-6">
+              <AdminMFAEnforcement />
               <SecurityAuditLog />
             </TabsContent>
 

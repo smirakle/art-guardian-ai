@@ -13,6 +13,7 @@ import { useMaintenanceMode } from "@/lib/maintenance";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { BlockchainProvider } from "@/contexts/BlockchainContext";
+import SecurityHeaders from "@/components/security/SecurityHeaders";
 import Index from "./pages/Index";
 import AboutTsmo from "./pages/AboutTsmo";
 import FAQ from "./pages/FAQ";
@@ -91,6 +92,7 @@ const App = () => {
           <AuthProvider>
             <SubscriptionProvider>
               <BlockchainProvider>
+            <SecurityHeaders />
             <Toaster />
             <Sonner />
             <SidebarProvider>
