@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import LeaveReview from '@/components/LeaveReview';
+import { IndustriesSection } from '@/components/IndustriesSection';
 
 
 import { 
@@ -1684,6 +1685,9 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Industries Section */}
+      <IndustriesSection />
+      
       {/* Leave a Review Section */}
       <LeaveReview />
 

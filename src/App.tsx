@@ -59,6 +59,9 @@ import GetApp from "./pages/GetApp";
 import DMCACenter from "./pages/DMCACenter";
 import USPTOPatentGenerator from "./components/patent/USPTOPatentGenerator";
 import { CopyrightFooter } from "./components/CopyrightFooter";
+import MilitaryThermoelectric from "./pages/solutions/MilitaryThermoelectric";
+import GlobalThermoelectric from "./pages/solutions/GlobalThermoelectric";
+import RTGsSiGe from "./pages/solutions/RTGsSiGe";
 
 const queryClient = new QueryClient();
 
@@ -166,6 +169,12 @@ const App = () => {
               </ProtectedRoute>
             } />
             <Route path="/certificate/:certificateId" element={<Certificate />} />
+            
+            {/* Solution Pages */}
+            <Route path="/solutions/military-thermoelectric" element={<MilitaryThermoelectric />} />
+            <Route path="/solutions/global-thermoelectric" element={<GlobalThermoelectric />} />
+            <Route path="/solutions/rtgs-sige" element={<RTGsSiGe />} />
+            
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />
                     </Routes>

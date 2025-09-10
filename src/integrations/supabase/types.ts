@@ -2430,6 +2430,48 @@ export type Database = {
         }
         Relationships: []
       }
+      industry_verticals: {
+        Row: {
+          compliance_requirements: Json | null
+          created_at: string
+          description: string | null
+          export_controlled: boolean | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          requires_security_clearance: boolean | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          compliance_requirements?: Json | null
+          created_at?: string
+          description?: string | null
+          export_controlled?: boolean | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          requires_security_clearance?: boolean | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          compliance_requirements?: Json | null
+          created_at?: string
+          description?: string | null
+          export_controlled?: boolean | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          requires_security_clearance?: boolean | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ip_lawyers: {
         Row: {
           accepts_new_clients: boolean | null
@@ -4655,9 +4697,13 @@ export type Database = {
       portfolios: {
         Row: {
           alert_settings: Json | null
+          compliance_notes: string | null
           created_at: string
+          data_classification: string | null
           description: string | null
+          export_control_notice: boolean | null
           id: string
+          industry_id: string | null
           is_active: boolean
           monitoring_enabled: boolean
           monitoring_frequency: string | null
@@ -4670,9 +4716,13 @@ export type Database = {
         }
         Insert: {
           alert_settings?: Json | null
+          compliance_notes?: string | null
           created_at?: string
+          data_classification?: string | null
           description?: string | null
+          export_control_notice?: boolean | null
           id?: string
+          industry_id?: string | null
           is_active?: boolean
           monitoring_enabled?: boolean
           monitoring_frequency?: string | null
@@ -4685,9 +4735,13 @@ export type Database = {
         }
         Update: {
           alert_settings?: Json | null
+          compliance_notes?: string | null
           created_at?: string
+          data_classification?: string | null
           description?: string | null
+          export_control_notice?: boolean | null
           id?: string
+          industry_id?: string | null
           is_active?: boolean
           monitoring_enabled?: boolean
           monitoring_frequency?: string | null
@@ -4698,7 +4752,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "portfolios_industry_id_fkey"
+            columns: ["industry_id"]
+            isOneToOne: false
+            referencedRelation: "industry_verticals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profile_impersonation_alerts: {
         Row: {
@@ -6294,6 +6356,47 @@ export type Database = {
         }
         Relationships: []
       }
+      user_industries: {
+        Row: {
+          attestation_completed: boolean | null
+          created_at: string
+          id: string
+          industry_id: string
+          is_primary: boolean | null
+          security_clearance_level: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attestation_completed?: boolean | null
+          created_at?: string
+          id?: string
+          industry_id: string
+          is_primary?: boolean | null
+          security_clearance_level?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attestation_completed?: boolean | null
+          created_at?: string
+          id?: string
+          industry_id?: string
+          is_primary?: boolean | null
+          security_clearance_level?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_industries_industry_id_fkey"
+            columns: ["industry_id"]
+            isOneToOne: false
+            referencedRelation: "industry_verticals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_integrations: {
         Row: {
           access_token: string
@@ -6978,6 +7081,15 @@ export type Database = {
           subscription_status: string
           tier_name: string
           white_label_included: boolean
+        }[]
+      }
+      get_user_primary_industry: {
+        Args: { user_id_param: string }
+        Returns: {
+          export_controlled: boolean
+          industry_name: string
+          industry_slug: string
+          requires_clearance: boolean
         }[]
       }
       get_user_subscription: {
