@@ -62,6 +62,7 @@ import { CopyrightFooter } from "./components/CopyrightFooter";
 import MilitaryThermoelectric from "./pages/solutions/MilitaryThermoelectric";
 import GlobalThermoelectric from "./pages/solutions/GlobalThermoelectric";
 import RTGsSiGe from "./pages/solutions/RTGsSiGe";
+import ScientificResearch from "./pages/solutions/ScientificResearch";
 
 const queryClient = new QueryClient();
 
@@ -174,6 +175,7 @@ const App = () => {
             <Route path="/solutions/military-thermoelectric" element={<MilitaryThermoelectric />} />
             <Route path="/solutions/global-thermoelectric" element={<GlobalThermoelectric />} />
             <Route path="/solutions/rtgs-sige" element={<RTGsSiGe />} />
+            <Route path="/solutions/scientific-research" element={<ScientificResearch />} />
             
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />
