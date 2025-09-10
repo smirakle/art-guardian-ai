@@ -133,3 +133,5 @@ export function IndustriesSection() {
     </section>
   );
 }
+
+export default IndustriesSection;
