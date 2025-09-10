@@ -652,15 +652,16 @@ const Checkout = () => {
               </CardContent>
             </Card>
 
-            {/* Payment Form */}
-            <Card className="bg-card/50 backdrop-blur-sm border-border/50">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <CreditCard className="w-5 h-5 text-primary" />
-                  Payment Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+            {/* Payment Form - Hidden for BETATESTER promo */}
+            {promoCode.toLowerCase() !== 'betatester' && (
+              <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="w-5 h-5 text-primary" />
+                    Payment Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Payment Method */}
                   <div>
@@ -798,6 +799,51 @@ const Checkout = () => {
                 </form>
               </CardContent>
             </Card>
+            )}
+
+            {/* BETATESTER Special Access */}
+            {promoCode.toLowerCase() === 'betatester' && (
+              <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Star className="w-5 h-5 text-primary" />
+                    Beta Tester Access
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Check className="w-5 h-5 text-green-600" />
+                        <span className="font-medium text-green-800">Free Beta Access Approved!</span>
+                      </div>
+                      <p className="text-sm text-green-700">
+                        Get 2 months of free access to test all features. No payment required.
+                      </p>
+                    </div>
+                    
+                    <Button 
+                      type="submit" 
+                      onClick={handleSubmit}
+                      className="w-full bg-gradient-to-r from-primary to-accent text-lg py-6"
+                      disabled={isProcessing}
+                    >
+                      {isProcessing ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                          Activating Beta Access...
+                        </>
+                      ) : (
+                        <>
+                          Activate Free Beta Access
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
 
