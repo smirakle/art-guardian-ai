@@ -75,6 +75,7 @@ const getClassificationLabel = (classification: string) => {
 };
 
 export function IndustriesSection() {
+  console.log("🔥 IndustriesSection component is rendering!");
   return (
     <section className="py-24 bg-muted/30">
       <div className="container px-4 mx-auto">
