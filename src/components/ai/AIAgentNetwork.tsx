@@ -260,10 +260,20 @@ export const AIAgentNetwork = () => {
   };
 
   const deployAgents = async () => {
-    if (!user || !hasFeature('advanced_ai')) {
+    if (!user) {
       toast({
-        title: "Upgrade Required",
-        description: "AI Agent Network requires Professional plan or higher.",
+        title: "Authentication Required",
+        description: "Please log in to deploy AI agents.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if user has any agents configured
+    if (agentConfig.platforms.length === 0) {
+      toast({
+        title: "No Platforms Selected",
+        description: "Please select at least one platform to monitor in the Configuration tab.",
         variant: "destructive",
       });
       return;
@@ -446,7 +456,7 @@ export const AIAgentNetwork = () => {
           </Button>
           <Button
             onClick={deployAgents}
-            disabled={deploying || !hasFeature('advanced_ai')}
+            disabled={deploying}
             size="lg"
             className="bg-primary hover:bg-primary/90"
           >
@@ -455,7 +465,7 @@ export const AIAgentNetwork = () => {
             ) : (
               <PlayCircle className="w-4 h-4 mr-2" />
             )}
-            Deploy Agents
+            {agents.length > 0 ? 'Update Agents' : 'Create AI Agents'}
           </Button>
         </div>
       </div>
@@ -544,14 +554,27 @@ export const AIAgentNetwork = () => {
           <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
         </TabsList>
 
-        {/* Active Agents Tab */}
         <TabsContent value="agents" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Deployed AI Agents</CardTitle>
-              <CardDescription>
-                Autonomous agents monitoring platforms in real-time
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>AI Agent Management</CardTitle>
+                  <CardDescription>
+                    Create and manage autonomous AI agents for platform monitoring
+                  </CardDescription>
+                </div>
+                {agents.length === 0 && (
+                  <Button onClick={deployAgents} disabled={deploying || agentConfig.platforms.length === 0}>
+                    {deploying ? (
+                      <Activity className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <PlayCircle className="w-4 h-4 mr-2" />
+                    )}
+                    Create Your First Agent
+                  </Button>
+                )}
+              </div>
             </CardHeader>
             <CardContent>
               {agents.length > 0 ? (
@@ -581,21 +604,39 @@ export const AIAgentNetwork = () => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8">
-                  <Brain className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                  <h3 className="text-lg font-medium mb-2">No Agents Deployed</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Deploy AI agents to start autonomous monitoring
+                <div className="text-center py-12">
+                  <Brain className="w-16 h-16 text-primary mx-auto mb-4 opacity-50" />
+                  <h3 className="text-xl font-semibold mb-2">No AI Agents Created Yet</h3>
+                  <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                    Create your first AI agent to start monitoring platforms for threats, copyright violations, and unauthorized usage of your content.
                   </p>
-                  <Button onClick={deployAgents} disabled={!hasFeature('advanced_ai')}>
-                    Deploy Your First Agent
-                  </Button>
+                  <div className="space-y-4">
+                    <div className="text-sm text-muted-foreground">
+                      {agentConfig.platforms.length === 0 ? (
+                        <>First, go to the Configuration tab to select platforms to monitor</>
+                      ) : (
+                        <>Ready to deploy {agentConfig.platforms.length} agents</>
+                      )}
+                    </div>
+                    <Button 
+                      onClick={deployAgents} 
+                      size="lg" 
+                      disabled={deploying || agentConfig.platforms.length === 0}
+                      className="bg-primary hover:bg-primary/90"
+                    >
+                      {deploying ? (
+                        <Activity className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <PlayCircle className="w-4 h-4 mr-2" />
+                      )}
+                      Create AI Agents
+                    </Button>
+                  </div>
                 </div>
               )}
             </CardContent>
           </Card>
         </TabsContent>
-
         {/* Threat Detection Tab */}
         <TabsContent value="threats" className="space-y-4">
           <Card>
