@@ -470,6 +470,53 @@ export const AIAgentNetwork = () => {
         </div>
       </div>
 
+      {/* Quick Start Card - Show when no agents exist */}
+      {agents.length === 0 && (
+        <Card className="border-2 border-dashed border-primary/30 bg-primary/5">
+          <CardContent className="p-8">
+            <div className="text-center">
+              <Brain className="w-12 h-12 text-primary mx-auto mb-4" />
+              <h2 className="text-2xl font-bold mb-2">Get Started with AI Agents</h2>
+              <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+                Create autonomous AI agents to monitor platforms like Instagram, TikTok, YouTube, and more for threats, copyright violations, and unauthorized usage of your content.
+              </p>
+              <div className="flex justify-center gap-4">
+                <Button
+                  onClick={() => {
+                    // Switch to configuration tab
+                    const configTab = document.querySelector('[value="config"]') as HTMLElement;
+                    if (configTab) configTab.click();
+                  }}
+                  variant="outline"
+                  size="lg"
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Configure Platforms
+                </Button>
+                <Button
+                  onClick={deployAgents}
+                  disabled={deploying || agentConfig.platforms.length === 0}
+                  size="lg"
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  {deploying ? (
+                    <Activity className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <PlayCircle className="w-4 h-4 mr-2" />
+                  )}
+                  {agentConfig.platforms.length === 0 ? 'Select Platforms First' : `Create ${agentConfig.platforms.length} AI Agents`}
+                </Button>
+              </div>
+              {agentConfig.platforms.length === 0 && (
+                <p className="text-sm text-muted-foreground mt-4">
+                  💡 Tip: First select which platforms to monitor in the Configuration tab, then create your agents!
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Network Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
         <Card>
