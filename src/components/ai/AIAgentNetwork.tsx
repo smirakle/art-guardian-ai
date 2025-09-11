@@ -162,14 +162,25 @@ export const AIAgentNetwork = () => {
   const loadAgentData = async () => {
     if (!user) return;
 
+    console.log('Loading agent data for user:', user.id);
+    
     try {
-      const { data: agentData } = await supabase
+      const { data: agentData, error } = await supabase
         .from('ai_monitoring_agents')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
+      console.log('Agent data query result:', { agentData, error });
+
+      if (error) {
+        console.error('Error fetching agents:', error);
+        return;
+      }
+
       if (agentData) {
+        console.log('Raw agent data:', agentData);
+        
         // Map data to match interface
         const mappedAgents = agentData.map((agent: any): Agent => ({
           id: agent.id,
@@ -191,11 +202,14 @@ export const AIAgentNetwork = () => {
           predictive_analytics: agent.predictive_analytics
         }));
 
+        console.log('Mapped agents:', mappedAgents);
         setAgents(mappedAgents);
         
         // Calculate network stats
         const activeAgents = mappedAgents.filter(a => a.status === 'active');
         const platformsCovered = new Set(mappedAgents.map(a => a.platform_id)).size;
+        
+        console.log('Network stats:', { total: mappedAgents.length, active: activeAgents.length, platforms: platformsCovered });
         
         setNetworkStats(prev => ({
           ...prev,
@@ -260,7 +274,10 @@ export const AIAgentNetwork = () => {
   };
 
   const deployAgents = async () => {
+    console.log('deployAgents called', { user: !!user, platforms: agentConfig.platforms });
+    
     if (!user) {
+      console.log('No user authenticated');
       toast({
         title: "Authentication Required",
         description: "Please log in to deploy AI agents.",
@@ -271,6 +288,7 @@ export const AIAgentNetwork = () => {
 
     // Check if user has any agents configured
     if (agentConfig.platforms.length === 0) {
+      console.log('No platforms selected');
       toast({
         title: "No Platforms Selected",
         description: "Please select at least one platform to monitor in the Configuration tab.",
@@ -279,9 +297,11 @@ export const AIAgentNetwork = () => {
       return;
     }
 
+    console.log('Starting deployment with config:', agentConfig);
     setDeploying(true);
     
     try {
+      console.log('Invoking ai-agent-network function...');
       const { data, error } = await supabase.functions.invoke('ai-agent-network', {
         body: {
           action: 'deploy_agents',
@@ -290,18 +310,28 @@ export const AIAgentNetwork = () => {
         }
       });
 
-      if (error) throw error;
+      console.log('Function response:', { data, error });
 
-      if (data.error) {
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
+      }
+
+      if (data?.error) {
+        console.error('Function returned error:', data.error);
         throw new Error(data.error);
       }
 
+      console.log('Deployment successful:', data);
       toast({
         title: "AI Agents Deployed Successfully",
         description: `${data.deployed_agents} autonomous agents are now monitoring ${data.monitoring_coverage}.`,
       });
 
-      loadAgentData();
+      // Reload agent data to show new agents
+      console.log('Reloading agent data...');
+      await loadAgentData();
+      
     } catch (error) {
       console.error('Error deploying agents:', error);
       toast({
@@ -310,6 +340,7 @@ export const AIAgentNetwork = () => {
         variant: "destructive",
       });
     } finally {
+      console.log('Setting deploying to false');
       setDeploying(false);
     }
   };
