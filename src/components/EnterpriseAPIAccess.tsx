@@ -33,6 +33,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import DemoScriptDownload from '@/components/DemoScriptDownload';
+import EnterpriseDocumentationViewer from '@/components/enterprise/EnterpriseDocumentationViewer';
 
 interface APIKey {
   id: string;
@@ -442,7 +443,8 @@ export const EnterpriseAPIAccess: React.FC = () => {
           <TabsList>
             <TabsTrigger value="keys">API Keys</TabsTrigger>
             <TabsTrigger value="usage">Usage Analytics</TabsTrigger>
-            <TabsTrigger value="docs">Documentation</TabsTrigger>
+            <TabsTrigger value="docs">API Documentation</TabsTrigger>
+            <TabsTrigger value="enterprise-docs">Enterprise Docs</TabsTrigger>
             <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
             <TabsTrigger value="demo">Demo Script</TabsTrigger>
           </TabsList>
@@ -773,6 +775,10 @@ export const EnterpriseAPIAccess: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="enterprise-docs" className="space-y-4">
+            <EnterpriseDocumentationViewer />
           </TabsContent>
 
           <TabsContent value="demo" className="space-y-4">
