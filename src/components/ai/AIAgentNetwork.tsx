@@ -28,24 +28,44 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useSubscription } from '@/contexts/SubscriptionContext';
+import { AIAgentNetworkMonitoring } from './AIAgentNetworkMonitoring';
 
 interface Agent {
   id: string;
+  platform_id: string;
   platform_name: string;
   status: string;
   last_scan: string | null;
   threats_detected: number;
   success_rate: number;
   scan_frequency: number;
+  agent_config?: any;
+  performance_metrics?: any;
+  created_at: string;
+  updated_at?: string;
+  // Legacy fields for backward compatibility
+  auto_response?: boolean;
+  deployed_at?: string;
+  predictive_analytics?: boolean;
+  user_id: string;
 }
 
 interface ThreatDetection {
   id: string;
   platform: string;
+  threat_type?: string;
   threat_level: string;
   confidence_score: number;
   detected_at: string;
   threat_data: any;
+  source_url?: string;
+  status?: string;
+  // Legacy fields for backward compatibility
+  agent_id?: string;
+  artwork_id?: string;
+  auto_response_generated?: boolean;
+  created_at?: string;
+  user_id?: string;
 }
 
 interface AgentConfig {
@@ -98,7 +118,8 @@ export const AIAgentNetwork = () => {
     platforms_covered: 0,
     threats_detected_24h: 0,
     average_response_time: 0,
-    detection_accuracy: 0
+    detection_accuracy: 0,
+    uptime_percentage: 99.5
   });
 
   useEffect(() => {
@@ -149,18 +170,40 @@ export const AIAgentNetwork = () => {
         .order('created_at', { ascending: false });
 
       if (agentData) {
-        setAgents(agentData);
+        // Map data to match interface
+        const mappedAgents = agentData.map((agent: any): Agent => ({
+          id: agent.id,
+          platform_id: agent.platform_id,
+          platform_name: agent.platform_name,
+          status: agent.status,
+          last_scan: agent.last_scan,
+          threats_detected: agent.threats_detected || 0,
+          success_rate: agent.success_rate || 0,
+          scan_frequency: agent.scan_frequency || 60,
+          agent_config: agent.agent_config,
+          performance_metrics: agent.performance_metrics,
+          created_at: agent.created_at,
+          updated_at: agent.updated_at,
+          user_id: agent.user_id,
+          // Legacy field mappings
+          auto_response: agent.auto_response,
+          deployed_at: agent.deployed_at,
+          predictive_analytics: agent.predictive_analytics
+        }));
+
+        setAgents(mappedAgents);
         
         // Calculate network stats
-        const activeAgents = agentData.filter(a => a.status === 'active');
-        const platformsCovered = new Set(agentData.map(a => a.platform_id)).size;
+        const activeAgents = mappedAgents.filter(a => a.status === 'active');
+        const platformsCovered = new Set(mappedAgents.map(a => a.platform_id)).size;
         
         setNetworkStats(prev => ({
           ...prev,
-          total_agents: agentData.length,
+          total_agents: mappedAgents.length,
           active_agents: activeAgents.length,
           platforms_covered: platformsCovered,
-          detection_accuracy: agentData.reduce((sum, a) => sum + (a.success_rate || 0), 0) / Math.max(agentData.length, 1)
+          detection_accuracy: mappedAgents.reduce((sum, a) => sum + (a.success_rate || 0), 0) / Math.max(mappedAgents.length, 1),
+          uptime_percentage: calculateUptimePercentage(mappedAgents)
         }));
       }
     } catch (error) {
@@ -180,10 +223,29 @@ export const AIAgentNetwork = () => {
         .limit(20);
 
       if (threatData) {
-        setRecentThreats(threatData);
+        // Map data to match interface
+        const mappedThreats = threatData.map((threat: any): ThreatDetection => ({
+          id: threat.id,
+          platform: threat.platform,
+          threat_type: threat.threat_type,
+          threat_level: threat.threat_level,
+          confidence_score: threat.confidence_score,
+          detected_at: threat.detected_at,
+          threat_data: threat.threat_data,
+          source_url: threat.source_url,
+          status: threat.status,
+          // Legacy field mappings
+          agent_id: threat.agent_id,
+          artwork_id: threat.artwork_id,
+          auto_response_generated: threat.auto_response_generated,
+          created_at: threat.created_at,
+          user_id: threat.user_id
+        }));
+
+        setRecentThreats(mappedThreats);
         
         // Calculate 24h threats
-        const last24h = threatData.filter(t => 
+        const last24h = mappedThreats.filter(t => 
           new Date(t.detected_at) > new Date(Date.now() - 24 * 60 * 60 * 1000)
         );
         
@@ -220,6 +282,10 @@ export const AIAgentNetwork = () => {
 
       if (error) throw error;
 
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
       toast({
         title: "AI Agents Deployed Successfully",
         description: `${data.deployed_agents} autonomous agents are now monitoring ${data.monitoring_coverage}.`,
@@ -230,7 +296,7 @@ export const AIAgentNetwork = () => {
       console.error('Error deploying agents:', error);
       toast({
         title: "Deployment Failed",
-        description: "Failed to deploy AI agents. Please try again.",
+        description: error.message || "Failed to deploy AI agents. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -250,6 +316,10 @@ export const AIAgentNetwork = () => {
       });
 
       if (error) throw error;
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
 
       toast({
         title: "Platform Scan Complete",
@@ -334,6 +404,17 @@ export const AIAgentNetwork = () => {
       default:
         return 'default';
     }
+  };
+
+  const calculateUptimePercentage = (agents: Agent[]) => {
+    if (agents.length === 0) return 99.5;
+    
+    const totalUptime = agents.reduce((sum, agent) => {
+      const uptime = agent.performance_metrics?.uptime || 99.5;
+      return sum + uptime;
+    }, 0);
+    
+    return Math.round((totalUptime / agents.length) * 100) / 100;
   };
 
   return (
@@ -455,11 +536,12 @@ export const AIAgentNetwork = () => {
       </div>
 
       <Tabs defaultValue="agents" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="agents">Active Agents</TabsTrigger>
           <TabsTrigger value="threats">Threat Detection</TabsTrigger>
           <TabsTrigger value="config">Configuration</TabsTrigger>
           <TabsTrigger value="intelligence">Intelligence</TabsTrigger>
+          <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
         </TabsList>
 
         {/* Active Agents Tab */}
@@ -715,6 +797,11 @@ export const AIAgentNetwork = () => {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Monitoring Tab */}
+        <TabsContent value="monitoring" className="space-y-4">
+          <AIAgentNetworkMonitoring />
         </TabsContent>
       </Tabs>
     </div>
