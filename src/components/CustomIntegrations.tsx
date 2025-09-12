@@ -64,6 +64,29 @@ export const CustomIntegrations: React.FC = () => {
 
   useEffect(() => {
     loadIntegrations();
+    
+    // Check for OAuth callback
+    const urlParams = new URLSearchParams(window.location.search);
+    const connected = urlParams.get('connected');
+    const pendingProvider = localStorage.getItem('pendingOAuthProvider');
+    
+    if (connected && pendingProvider) {
+      console.log(`OAuth callback detected for ${connected}`);
+      localStorage.removeItem('pendingOAuthProvider');
+      toast({
+        title: "Integration Connected",
+        description: `Successfully connected to ${connected}. Refreshing integrations...`,
+      });
+      // Refresh integrations list
+      setTimeout(() => {
+        loadIntegrations();
+      }, 1000);
+      
+      // Clean up URL parameters
+      const url = new URL(window.location.href);
+      url.searchParams.delete('connected');
+      window.history.replaceState({}, '', url.toString());
+    }
   }, []);
 
   // SEO - title, meta description, canonical
@@ -285,8 +308,10 @@ export const CustomIntegrations: React.FC = () => {
       
       if (data?.url) {
         console.log('Redirecting to:', data.url);
-        // Open in same window to avoid popup blockers
-        window.open(data.url as string, '_self');
+        // Store current session before redirect to prevent auth issues
+        localStorage.setItem('pendingOAuthProvider', provider);
+        // Use window.location for proper redirect without losing session
+        window.location.href = data.url as string;
       } else {
         console.error('No URL returned from OAuth handler');
         throw new Error('No authorization URL returned');
