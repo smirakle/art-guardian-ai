@@ -133,19 +133,6 @@ export function AppSidebar() {
                   </SidebarMenuItem>
                 )}
 
-                {/* Custom Integrations for Enterprise */}
-                {subscription?.plan_id === 'enterprise' && (
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      onClick={() => navigate('/custom-integrations')}
-                      isActive={isActive('/custom-integrations')}
-                      className="flex items-center gap-2"
-                    >
-                      <Settings className="w-4 h-4" />
-                      {!collapsed && <span>Custom Integrations</span>}
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )}
 
                 {/* Enterprise API Access */}
                 {subscription?.plan_id === 'enterprise' && (
