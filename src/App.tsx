@@ -42,6 +42,7 @@ import Phase1Dashboard from "./pages/Phase1Dashboard";
 import Phase2Dashboard from "./pages/Phase2Dashboard";
 import Phase3Dashboard from "./pages/Phase3Dashboard";
 
+import CustomIntegrationsComingSoon from "./pages/CustomIntegrationsComingSoon";
 import { EnterpriseAPIAccess } from "./components/EnterpriseAPIAccess";
 import ProfileMonitoring from "./pages/ProfileMonitoring";
 import PortfolioMonitoring from "./pages/PortfolioMonitoring";
@@ -131,7 +132,8 @@ const App = () => {
                            <Route path="/ai-training-protection" element={<AITrainingProtection />} />
                            <Route path="/phase1" element={<Phase1Dashboard />} />
                            <Route path="/phase2" element={<Phase2Dashboard />} />
-                           <Route path="/phase3" element={<Phase3Dashboard />} />
+                            <Route path="/phase3" element={<Phase3Dashboard />} />
+                         <Route path="/custom-integrations" element={<CustomIntegrationsComingSoon />} />
                         
                         <Route path="/enterprise-api" element={<EnterpriseAPIAccess />} />
             <Route path="/profile-monitoring" element={<ProfileMonitoring />} />
