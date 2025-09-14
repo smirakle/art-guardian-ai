@@ -1,11 +1,7 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shield, Search, AlertTriangle, BarChart3, Users, Globe } from 'lucide-react';
-import { ProfileMonitoringDashboard } from '@/components/profile-monitoring/ProfileMonitoringDashboard';
-import { ProfileTargetManager } from '@/components/profile-monitoring/ProfileTargetManager';
-import { MultiPlatformScanner } from '@/components/profile-monitoring/MultiPlatformScanner';
-import { ImpersonationAlerts } from '@/components/profile-monitoring/ImpersonationAlerts';
-import { ProfileRiskAnalyzer } from '@/components/profile-monitoring/ProfileRiskAnalyzer';
+import { ComingSoon } from '@/components/ComingSoon';
 
 
 export default function ProfileMonitoring() {
@@ -55,63 +51,51 @@ export default function ProfileMonitoring() {
           </TabsList>
 
           <TabsContent value="dashboard">
-            <ProfileMonitoringDashboard />
+            <ComingSoon 
+              title="Profile Dashboard" 
+              description="Advanced profile monitoring dashboard with real-time threat detection and analytics coming soon."
+              icon={<BarChart3 className="w-12 h-12 text-muted-foreground" />}
+            />
           </TabsContent>
 
           <TabsContent value="targets">
-            <ProfileTargetManager />
+            <ComingSoon 
+              title="Target Management" 
+              description="Comprehensive target profile management and monitoring configuration coming soon."
+              icon={<Users className="w-12 h-12 text-muted-foreground" />}
+            />
           </TabsContent>
 
           <TabsContent value="scanner">
-            <MultiPlatformScanner />
+            <ComingSoon 
+              title="Multi-Platform Scanner" 
+              description="Advanced scanning across multiple platforms for profile impersonation detection coming soon."
+              icon={<Search className="w-12 h-12 text-muted-foreground" />}
+            />
           </TabsContent>
 
           <TabsContent value="alerts">
-            <ImpersonationAlerts />
+            <ComingSoon 
+              title="Impersonation Alerts" 
+              description="Real-time alert system for profile impersonation and unauthorized usage coming soon."
+              icon={<AlertTriangle className="w-12 h-12 text-muted-foreground" />}
+            />
           </TabsContent>
 
           <TabsContent value="risk">
-            <ProfileRiskAnalyzer />
+            <ComingSoon 
+              title="Risk Analysis" 
+              description="AI-powered risk assessment and threat analysis for profile security coming soon."
+              icon={<Shield className="w-12 h-12 text-muted-foreground" />}
+            />
           </TabsContent>
 
           <TabsContent value="reports">
-            <div className="space-y-6">
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="bg-card rounded-lg p-6 border">
-                  <h3 className="text-lg font-semibold mb-2">Monitoring Summary</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Your profile monitoring activities and detected threats
-                  </p>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm">Active Targets</span>
-                      <span className="text-sm font-medium">View in Dashboard</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm">Scans Today</span>
-                      <span className="text-sm font-medium">Check Scanner</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="bg-card rounded-lg p-6 border">
-                  <h3 className="text-lg font-semibold mb-2">Risk Analysis</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Current risk levels and recommendations
-                  </p>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm">Risk Level</span>
-                      <span className="text-sm font-medium">View Analysis</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm">Alerts</span>
-                      <span className="text-sm font-medium">Check Alerts</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ComingSoon 
+              title="Profile Reports" 
+              description="Comprehensive reporting and analytics for profile monitoring activities coming soon."
+              icon={<Globe className="w-12 h-12 text-muted-foreground" />}
+            />
           </TabsContent>
         </Tabs>
       </div>
