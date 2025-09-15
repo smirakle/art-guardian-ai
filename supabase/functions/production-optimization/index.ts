@@ -54,6 +54,9 @@ serve(async (req) => {
       case 'cache_operation':
         return await handleCacheOperation(supabase, data);
       
+      case 'track_event':
+        return await trackAnalyticsEvent(supabase, data);
+      
       default:
         throw new Error('Invalid action');
     }
@@ -321,6 +324,51 @@ async function handleCacheOperation(supabase: any, data: any) {
     JSON.stringify({ success: true }),
     { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
   );
+}
+
+async function trackAnalyticsEvent(supabase: any, data: any) {
+  try {
+    const { event, properties, userId, sessionId } = data;
+    
+    // Store the analytics event
+    const analyticsData = {
+      event_name: event,
+      properties: properties || {},
+      user_id: userId,
+      session_id: sessionId,
+      timestamp: new Date().toISOString(),
+      created_at: new Date().toISOString()
+    };
+
+    // Insert into analytics table (assuming it exists)
+    const { error } = await supabase
+      .from('analytics_events')
+      .insert(analyticsData);
+
+    if (error) {
+      console.error('Error storing analytics event:', error);
+      // Don't fail the request for analytics errors
+    }
+
+    return new Response(
+      JSON.stringify({ 
+        success: true, 
+        event_tracked: event,
+        timestamp: new Date().toISOString()
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  } catch (error) {
+    console.error('Error in trackAnalyticsEvent:', error);
+    return new Response(
+      JSON.stringify({ 
+        success: true, // Return success even on error to not break analytics
+        error: 'Analytics tracking failed',
+        timestamp: new Date().toISOString()
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
 }
 
 // Helper functions
