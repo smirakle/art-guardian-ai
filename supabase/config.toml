@@ -161,3 +161,6 @@ verify_jwt = true
 [functions.trademark-scheduler]
 verify_jwt = true
 
+[functions.admin-password-reset]
+verify_jwt = false
+
