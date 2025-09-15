@@ -451,6 +451,518 @@ const FAQ = () => {
       ]
     },
     {
+      title: "Multi-Modal AI Protection (Phase 3)",
+      items: [
+        {
+          question: "What is Multi-Modal AI Protection and how is it different from regular AI protection?",
+          answer: (
+            <div>
+              <p className="mb-3"><strong>Multi-Modal AI Protection</strong> represents the next generation of content protection, extending beyond simple image monitoring to protect voice, video, 3D content, and complex multimedia assets.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Multi-modal capabilities include:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• Voice Protection:</strong> Detects unauthorized use of voice clones, audio deepfakes, and speech synthesis</li>
+                  <li><strong>• Video Analysis:</strong> Monitors video content for deepfakes, unauthorized edits, and content theft</li>
+                  <li><strong>• 3D Content Protection:</strong> Protects 3D models, animations, and virtual assets from theft</li>
+                  <li><strong>• Audio-Visual Synchronization:</strong> Detects manipulated videos with mismatched audio tracks</li>
+                  <li><strong>• Biometric Protection:</strong> Protects facial features, gait patterns, and other identifying characteristics</li>
+                  <li><strong>• Cross-Modal Detection:</strong> Identifies when content is transformed across different media types</li>
+                  <li><strong>• Real-time Processing:</strong> Live analysis of streaming content and social media</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm">This advanced system provides comprehensive protection for creators working with video, audio, 3D assets, and complex multimedia content that traditional image-only protection cannot address.</p>
+            </div>
+          )
+        },
+        {
+          question: "How does voice and audio protection work?",
+          answer: (
+            <div>
+              <p className="mb-3">Our voice protection system uses advanced audio analysis and machine learning to detect unauthorized use of your voice across multiple platforms.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Audio protection features:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• Voice Fingerprinting:</strong> Creates unique audio signatures for your voice patterns</li>
+                  <li><strong>• Deepfake Audio Detection:</strong> Identifies AI-generated voice clones and synthetic speech</li>
+                  <li><strong>• Music and Sound Protection:</strong> Monitors for unauthorized use of original music and sound effects</li>
+                  <li><strong>• Cross-Platform Monitoring:</strong> Scans podcasts, YouTube, TikTok, and other audio platforms</li>
+                  <li><strong>• Real-time Alerts:</strong> Instant notifications when your voice is detected</li>
+                  <li><strong>• Quality Analysis:</strong> Determines if detected audio is original or synthetically generated</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm">This protection is essential for voice actors, musicians, podcasters, and content creators whose voice is part of their brand identity.</p>
+            </div>
+          )
+        },
+        {
+          question: "What is 3D content protection and who needs it?",
+          answer: (
+            <div>
+              <p className="mb-3">3D content protection monitors and protects three-dimensional assets including models, animations, virtual environments, and NFT collectibles.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">3D protection covers:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• 3D Models:</strong> Characters, objects, architectural designs, and product models</li>
+                  <li><strong>• Virtual Environments:</strong> Game worlds, VR spaces, and metaverse locations</li>
+                  <li><strong>• Animation Sequences:</strong> Character animations, motion capture data, and rigged models</li>
+                  <li><strong>• NFT Assets:</strong> 3D collectibles, avatar parts, and virtual goods</li>
+                  <li><strong>• Technical Blueprints:</strong> CAD files, engineering designs, and architectural plans</li>
+                  <li><strong>• Texture Maps:</strong> Surface materials, bump maps, and shader configurations</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm"><strong>Who needs this:</strong> Game developers, 3D artists, architects, product designers, NFT creators, VR/AR developers, and anyone creating 3D digital assets.</p>
+            </div>
+          )
+        }
+      ]
+    },
+    {
+      title: "Government API Gateway",
+      items: [
+        {
+          question: "What is the Government API Gateway and who can access it?",
+          answer: (
+            <div>
+              <p className="mb-3">The <strong>Government API Gateway</strong> provides secure, authenticated access to TSMO Watch's protection capabilities for government agencies, law enforcement, and regulatory bodies.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Access levels include:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• Federal Agencies:</strong> FBI, DHS, USPTO, Copyright Office</li>
+                  <li><strong>• Law Enforcement:</strong> Local and state police departments for investigations</li>
+                  <li><strong>• Regulatory Bodies:</strong> FTC, SEC, and industry-specific regulators</li>
+                  <li><strong>• International Cooperation:</strong> Interpol, Europol, and allied agencies</li>
+                  <li><strong>• Academic Research:</strong> Universities and research institutions (with approval)</li>
+                  <li><strong>• Court Systems:</strong> Digital forensics support for legal proceedings</li>
+                </ul>
+              </div>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Available services:</h4>
+                <ul className="ml-4 space-y-1 text-sm">
+                  <li>• Bulk content analysis for investigations</li>
+                  <li>• Real-time threat intelligence feeds</li>
+                  <li>• Deepfake detection for evidence verification</li>
+                  <li>• Copyright violation monitoring</li>
+                  <li>• Cross-platform tracking capabilities</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm"><strong>Security:</strong> All API access includes multi-factor authentication, IP allowlisting, rate limiting, and comprehensive audit logging.</p>
+            </div>
+          )
+        },
+        {
+          question: "How do government agencies get API access?",
+          answer: "Government agencies must complete a verification process including official request documentation, proof of authority, and security clearance verification. Contact our government relations team with your agency credentials and use case requirements. All requests undergo a thorough vetting process before API keys are issued."
+        },
+        {
+          question: "What security measures protect government API access?",
+          answer: (
+            <div>
+              <p className="mb-3">Government API access includes enterprise-grade security measures designed for sensitive operations:</p>
+              
+              <ul className="ml-4 space-y-2 text-sm">
+                <li><strong>• Multi-Factor Authentication:</strong> Required for all API key generation and usage</li>
+                <li><strong>• IP Allowlisting:</strong> Restrict access to pre-approved government IP ranges</li>
+                <li><strong>• Rate Limiting:</strong> Prevent abuse while allowing legitimate high-volume usage</li>
+                <li><strong>• Audit Logging:</strong> Comprehensive logs of all API calls for compliance</li>
+                <li><strong>• Encryption:</strong> TLS 1.3 encryption for all data transmission</li>
+                <li><strong>• Session Management:</strong> Automatic key rotation and session timeout</li>
+                <li><strong>• Monitoring:</strong> Real-time security event detection and alerting</li>
+              </ul>
+            </div>
+          )
+        }
+      ]
+    },
+    {
+      title: "Global Legal Network",
+      items: [
+        {
+          question: "What is the Global Legal Network and how does it help creators?",
+          answer: (
+            <div>
+              <p className="mb-3">The <strong>Global Legal Network</strong> connects creators with verified legal professionals worldwide who specialize in intellectual property, copyright law, and digital rights enforcement.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Network includes:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• IP Specialists:</strong> Lawyers focused on copyright, trademark, and patent law</li>
+                  <li><strong>• Digital Rights Experts:</strong> Attorneys experienced with online content protection</li>
+                  <li><strong>• International Law Firms:</strong> Global coverage for cross-border enforcement</li>
+                  <li><strong>• DMCA Specialists:</strong> Experts in takedown procedures and safe harbor law</li>
+                  <li><strong>• Litigation Partners:</strong> Trial lawyers for complex infringement cases</li>
+                  <li><strong>• Regulatory Advisors:</strong> Guidance on evolving AI and digital content laws</li>
+                </ul>
+              </div>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Services available:</h4>
+                <ul className="ml-4 space-y-1 text-sm">
+                  <li>• Immediate legal consultation for copyright violations</li>
+                  <li>• Automated legal action initiation</li>
+                  <li>• Cross-jurisdictional enforcement coordination</li>
+                  <li>• Settlement negotiation and litigation support</li>
+                  <li>• Preventive legal strategy development</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm">All network attorneys are verified, rated by previous clients, and specialized in digital content protection.</p>
+            </div>
+          )
+        },
+        {
+          question: "How do I access legal help through the network?",
+          answer: (
+            <div>
+              <p className="mb-3">Accessing legal help through our Global Legal Network is streamlined and efficient:</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Process:</h4>
+                <ol className="ml-4 space-y-2 text-sm list-decimal">
+                  <li><strong>Case Assessment:</strong> Our AI analyzes your copyright violation and recommends legal action</li>
+                  <li><strong>Jurisdiction Matching:</strong> System identifies the appropriate legal jurisdiction and specialties needed</li>
+                  <li><strong>Attorney Matching:</strong> Algorithm matches you with qualified attorneys in your area or the relevant jurisdiction</li>
+                  <li><strong>Instant Connection:</strong> Direct contact with pre-screened legal professionals</li>
+                  <li><strong>Case Initiation:</strong> Attorney can immediately begin work using our violation documentation</li>
+                  <li><strong>Progress Tracking:</strong> Monitor legal action progress through your dashboard</li>
+                </ol>
+              </div>
+              
+              <p className="text-sm">Most users connect with an attorney within 2-4 hours of initiating a legal action request.</p>
+            </div>
+          )
+        },
+        {
+          question: "What are the costs for using the Global Legal Network?",
+          answer: "Legal network access is included with Professional and Enterprise plans. Consultation fees and legal service costs vary by attorney and case complexity. Many attorneys offer contingency arrangements for strong copyright cases. Initial consultations are often discounted for TSMO Watch users, and we pre-negotiate favorable rates with network partners."
+        }
+      ]
+    },
+    {
+      title: "Production Legal Processor",
+      items: [
+        {
+          question: "What is the Production Legal Processor and how does it automate legal actions?",
+          answer: (
+            <div>
+              <p className="mb-3">The <strong>Production Legal Processor</strong> is an AI-powered system that automatically generates, customizes, and files legal documents when copyright violations are detected.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Automated capabilities:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• Document Generation:</strong> Creates DMCA takedowns, cease & desist letters, and copyright claims</li>
+                  <li><strong>• Legal Research:</strong> Analyzes relevant case law and precedents for your situation</li>
+                  <li><strong>• Jurisdiction Compliance:</strong> Ensures documents meet local legal requirements</li>
+                  <li><strong>• Evidence Compilation:</strong> Automatically gathers proof of violation and ownership</li>
+                  <li><strong>• Multi-Platform Filing:</strong> Submits takedown requests to appropriate platforms</li>
+                  <li><strong>• Follow-up Tracking:</strong> Monitors response times and escalates when necessary</li>
+                  <li><strong>• Legal Strategy AI:</strong> Recommends optimal enforcement approaches</li>
+                </ul>
+              </div>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Document types automated:</h4>
+                <ul className="ml-4 space-y-1 text-sm">
+                  <li>• DMCA takedown notices (platforms, hosts, search engines)</li>
+                  <li>• Cease and desist letters (direct to infringers)</li>
+                  <li>• Copyright infringement claims</li>
+                  <li>• Platform-specific violation reports</li>
+                  <li>• International copyright enforcement requests</li>
+                  <li>• Settlement demand letters</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm">The system reduces legal response time from days to hours and ensures consistent, professional legal communication.</p>
+            </div>
+          )
+        },
+        {
+          question: "How accurate is the AI-generated legal documentation?",
+          answer: (
+            <div>
+              <p className="mb-3">Our legal AI achieves 97% accuracy in document generation and is continuously supervised by qualified attorneys:</p>
+              
+              <ul className="ml-4 space-y-2 text-sm">
+                <li><strong>• Legal Review:</strong> All templates reviewed by IP law specialists</li>
+                <li><strong>• Precedent Database:</strong> Trained on 50,000+ successful legal documents</li>
+                <li><strong>• Jurisdiction Compliance:</strong> Automatically adapts to local legal requirements</li>
+                <li><strong>• Success Rate:</strong> 94% takedown success rate with AI-generated documents</li>
+                <li><strong>• Human Oversight:</strong> Complex cases automatically flagged for attorney review</li>
+                <li><strong>• Continuous Learning:</strong> System improves based on response outcomes</li>
+              </ul>
+              
+              <p className="mt-3 text-sm">For high-stakes cases, we recommend attorney review before filing, which is available through our Global Legal Network.</p>
+            </div>
+          )
+        },
+        {
+          question: "Can the system handle international copyright enforcement?",
+          answer: "Yes, the Production Legal Processor supports international enforcement across 150+ countries. It automatically adapts documents to comply with local copyright laws, treaties (Berne Convention, WIPO), and platform-specific requirements. The system includes templates for major international platforms and can coordinate with our Global Legal Network for complex cross-border cases."
+        }
+      ]
+    },
+    {
+      title: "Patent System & IP Portfolio",
+      items: [
+        {
+          question: "What patent protection does TSMO Watch provide for creators?",
+          answer: (
+            <div>
+              <p className="mb-3">TSMO Watch offers comprehensive <strong>Patent System & IP Portfolio</strong> services to help creators protect their innovations and build valuable intellectual property assets.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Services include:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• Patent Search & Analysis:</strong> Prior art research and patentability assessment</li>
+                  <li><strong>• USPTO Documentation:</strong> Professional patent application preparation</li>
+                  <li><strong>• Patent Claims Development:</strong> Technical claim writing and specification drafting</li>
+                  <li><strong>• IP Portfolio Management:</strong> Centralized tracking of all intellectual property assets</li>
+                  <li><strong>• Patent Monitoring:</strong> Watch for potential infringement of your patents</li>
+                  <li><strong>• Licensing Strategy:</strong> Develop monetization strategies for your IP portfolio</li>
+                  <li><strong>• Patent Valuation:</strong> Professional assessment of patent value for investment/sale</li>
+                </ul>
+              </div>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Patent types supported:</h4>
+                <ul className="ml-4 space-y-1 text-sm">
+                  <li>• Utility Patents (technical innovations, algorithms, processes)</li>
+                  <li>• Design Patents (visual designs, user interfaces, aesthetic elements)</li>
+                  <li>• Software Patents (AI models, protection algorithms, systems)</li>
+                  <li>• Business Method Patents (novel processes and workflows)</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm">Our patent system is designed for creators, inventors, and businesses who want to protect and monetize their technical innovations.</p>
+            </div>
+          )
+        },
+        {
+          question: "How does the Patent Attorney Packet Generator work?",
+          answer: (
+            <div>
+              <p className="mb-3">The Patent Attorney Packet Generator creates professional, USPTO-compliant patent applications ready for attorney review and filing:</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Generated documents include:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• Patent Application:</strong> Complete USPTO Form PTO/SB/01 with technical specifications</li>
+                  <li><strong>• Claims Document:</strong> Detailed independent and dependent claims</li>
+                  <li><strong>• Technical Drawings:</strong> Professional diagrams and flowcharts</li>
+                  <li><strong>• Prior Art Analysis:</strong> Comprehensive prior art search and comparison</li>
+                  <li><strong>• Inventor Information:</strong> Complete inventor declarations and assignments</li>
+                  <li><strong>• Filing Requirements:</strong> All necessary USPTO forms and fees calculation</li>
+                </ul>
+              </div>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Process:</h4>
+                <ol className="ml-4 space-y-1 text-sm list-decimal">
+                  <li>Input invention details and technical specifications</li>
+                  <li>AI analyzes patentability and generates claims</li>
+                  <li>System creates professional patent documentation</li>
+                  <li>Attorney-ready packet generated for review and filing</li>
+                </ol>
+              </div>
+              
+              <p className="text-sm">The generated packet saves inventors $5,000-15,000 in attorney preparation fees while ensuring professional quality.</p>
+            </div>
+          )
+        },
+        {
+          question: "What is TSMO Watch's own patent portfolio?",
+          answer: (
+            <div>
+              <p className="mb-3">TSMO Watch has developed a comprehensive patent portfolio protecting our core AI protection technologies:</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Key patents include:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• AITPA (AI Training Protection Algorithm):</strong> Multi-modal fingerprinting and AI-resistant protection methods</li>
+                  <li><strong>• Real-time Monitoring System:</strong> Distributed scanning architecture with blockchain verification</li>
+                  <li><strong>• Deepfake Detection Engine:</strong> Advanced neural network-based forgery identification</li>
+                  <li><strong>• Cross-Platform Integration:</strong> Unified API system for multi-platform content protection</li>
+                  <li><strong>• Automated Legal Response:</strong> AI-powered legal document generation and filing system</li>
+                </ul>
+              </div>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Patent portfolio value:</h4>
+                <ul className="ml-4 space-y-1 text-sm">
+                  <li>• 20-year protection period (expires 2044)</li>
+                  <li>• Estimated $25-50M addition to company valuation</li>
+                  <li>• International filing in US, EU, and Asia-Pacific</li>
+                  <li>• Defensive and offensive patent strategy</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm">Our patent portfolio establishes TSMO Watch as the leader in AI content protection technology and provides competitive advantages.</p>
+            </div>
+          )
+        }
+      ]
+    },
+    {
+      title: "Blockchain Registry & Verification",
+      items: [
+        {
+          question: "What is the Blockchain Registry and how does it work?",
+          answer: (
+            <div>
+              <p className="mb-3">The <strong>Blockchain Registry</strong> provides immutable, cryptographically-secured proof of ownership and creation for your digital assets using distributed ledger technology.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">How it works:</h4>
+                <ol className="ml-4 space-y-2 text-sm list-decimal">
+                  <li><strong>Content Analysis:</strong> System generates cryptographic fingerprints of your content</li>
+                  <li><strong>Blockchain Registration:</strong> Fingerprints and metadata recorded on multiple blockchains</li>
+                  <li><strong>Smart Contract Deployment:</strong> Automated smart contracts establish ownership and rights</li>
+                  <li><strong>Certificate Generation:</strong> Immutable ownership certificates with legal validity</li>
+                  <li><strong>Verification Network:</strong> Distributed nodes validate and maintain ownership records</li>
+                  <li><strong>Cross-Chain Sync:</strong> Ownership records synchronized across multiple blockchains</li>
+                </ol>
+              </div>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Supported blockchains:</h4>
+                <ul className="ml-4 space-y-1 text-sm">
+                  <li>• Ethereum (primary network for maximum compatibility)</li>
+                  <li>• Polygon (low-cost, high-speed transactions)</li>
+                  <li>• Arbitrum (Layer 2 scaling solution)</li>
+                  <li>• IPFS (decentralized content storage)</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm">Blockchain registration provides court-admissible proof of ownership and creation dates that cannot be forged or manipulated.</p>
+            </div>
+          )
+        },
+        {
+          question: "How much does blockchain registration cost?",
+          answer: (
+            <div>
+              <p className="mb-3">Blockchain registration costs vary based on network conditions and package options:</p>
+              
+              <ul className="ml-4 space-y-2 text-sm">
+                <li><strong>• Basic Registration:</strong> $5-15 per asset (single blockchain)</li>
+                <li><strong>• Multi-Chain Protection:</strong> $15-35 per asset (3+ blockchains)</li>
+                <li><strong>• Batch Registration:</strong> 30% discount for 10+ assets</li>
+                <li><strong>• Enterprise Packages:</strong> Custom pricing for large portfolios</li>
+                <li><strong>• Gas Optimization:</strong> Automatic batching reduces transaction costs</li>
+              </ul>
+              
+              <p className="mt-3 text-sm">Professional and Enterprise plan subscribers receive monthly blockchain registration credits and priority processing.</p>
+            </div>
+          )
+        },
+        {
+          question: "Is blockchain registration legally recognized?",
+          answer: "Yes, blockchain registration creates legally admissible evidence of ownership and creation dates. While laws vary by jurisdiction, blockchain records are increasingly recognized in courts worldwide as valid proof of intellectual property rights. Our blockchain certificates include proper legal documentation and comply with international digital evidence standards."
+        }
+      ]
+    },
+    {
+      title: "Enterprise Features & Edge Functions",
+      items: [
+        {
+          question: "What are Edge Functions and how do they enhance protection?",
+          answer: (
+            <div>
+              <p className="mb-3"><strong>Edge Functions</strong> are distributed computing nodes that provide real-time, high-performance content protection processing across global locations.</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Current deployments:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• 15+ Active Edge Functions:</strong> Real-time algorithms deployed across global CDN</li>
+                  <li><strong>• Multi-Modal Processing:</strong> Voice, video, image, and 3D content analysis</li>
+                  <li><strong>• Blockchain Integration:</strong> Smart contract automation and verification</li>
+                  <li><strong>• Legal Automation:</strong> Document generation and filing systems</li>
+                  <li><strong>• API Gateway:</strong> Secure government and enterprise API access</li>
+                  <li><strong>• Real-time Monitoring:</strong> Live scanning and threat detection</li>
+                </ul>
+              </div>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Performance benefits:</h4>
+                <ul className="ml-4 space-y-1 text-sm">
+                  <li>• 280-350ms average processing time for multi-modal analysis</li>
+                  <li>• 99.9% uptime with automatic failover</li>
+                  <li>• Global distribution for reduced latency</li>
+                  <li>• Scalable architecture handling 10M+ requests daily</li>
+                  <li>• Real-time response for critical threat detection</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm">Edge Functions enable enterprise-grade performance and reliability for mission-critical content protection.</p>
+            </div>
+          )
+        },
+        {
+          question: "What enterprise features are available for large organizations?",
+          answer: (
+            <div>
+              <p className="mb-3">TSMO Watch provides comprehensive enterprise features designed for large organizations, creative agencies, and studios:</p>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Enterprise capabilities:</h4>
+                <ul className="ml-4 space-y-2 text-sm">
+                  <li><strong>• Unlimited Portfolio Monitoring:</strong> Protect thousands of assets simultaneously</li>
+                  <li><strong>• Multi-User Management:</strong> Team accounts with role-based access control</li>
+                  <li><strong>• Custom API Integration:</strong> White-label solutions and workflow integration</li>
+                  <li><strong>• Dedicated Support:</strong> 24/7 priority support with dedicated account managers</li>
+                  <li><strong>• Advanced Analytics:</strong> Comprehensive reporting and threat intelligence</li>
+                  <li><strong>• Bulk Operations:</strong> Mass upload, batch processing, and automated workflows</li>
+                  <li><strong>• Custom Legal Templates:</strong> Organization-specific legal document templates</li>
+                  <li><strong>• Compliance Reporting:</strong> Automated compliance reports for audits and governance</li>
+                </ul>
+              </div>
+              
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2">Integration options:</h4>
+                <ul className="ml-4 space-y-1 text-sm">
+                  <li>• Adobe Creative Suite plugins</li>
+                  <li>• Content management system integrations</li>
+                  <li>• Social media management platform APIs</li>
+                  <li>• Digital asset management (DAM) systems</li>
+                  <li>• Custom webhook and notification systems</li>
+                </ul>
+              </div>
+              
+              <p className="text-sm">Enterprise features scale from 100 to 100,000+ protected assets with custom pricing and deployment options.</p>
+            </div>
+          )
+        },
+        {
+          question: "How does TSMO Watch ensure 99.9% uptime for enterprise clients?",
+          answer: (
+            <div>
+              <p className="mb-3">Our enterprise infrastructure includes multiple redundancy layers and monitoring systems:</p>
+              
+              <ul className="ml-4 space-y-2 text-sm">
+                <li><strong>• Multi-Region Deployment:</strong> Services deployed across 5+ geographic regions</li>
+                <li><strong>• Automatic Failover:</strong> Instant switching to backup systems during outages</li>
+                <li><strong>• Load Balancing:</strong> Intelligent traffic distribution for optimal performance</li>
+                <li><strong>• Real-time Monitoring:</strong> 24/7 system health monitoring with instant alerts</li>
+                <li><strong>• Database Replication:</strong> Multi-region database backups with instant recovery</li>
+                <li><strong>• Edge CDN:</strong> Global content delivery network for low-latency access</li>
+                <li><strong>• SLA Guarantees:</strong> Service level agreements with uptime credits</li>
+              </ul>
+              
+              <p className="mt-3 text-sm">Enterprise clients receive priority routing, dedicated resources, and guaranteed response times with financial SLA backing.</p>
+            </div>
+          )
+        }
+      ]
+    },
+    {
       title: "Technical & Integration",
       items: [
         {
