@@ -48,7 +48,7 @@ serve(async (req) => {
       financials: {
         currentMRR: 0,
         projectedARR: 0,
-        burnRate: 8000,
+        burnRate: 500,
         runway: 12,
         targetValuation: "2M"
       },
@@ -165,7 +165,7 @@ serve(async (req) => {
       financials: {
         currentMRR: 0,
         projectedARR: 0,
-        burnRate: 8000,
+        burnRate: 500,
         runway: 12,
         targetValuation: "2M"
       },
