@@ -61,7 +61,7 @@ const Auth: React.FC = () => {
 
     try {
       if (isLogin) {
-        const { error } = await signIn(email, password);
+        const { error } = await signIn(email.trim(), password.trim());
         if (!error) {
           navigate('/dashboard');
         }
