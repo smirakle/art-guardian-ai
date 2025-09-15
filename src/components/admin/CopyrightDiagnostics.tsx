@@ -86,33 +86,33 @@ export const CopyrightDiagnostics = () => {
       });
 
       const testImageUrl = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4';
+      let testArtwork = null;
       
-      // Create a test artwork record
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) {
-        throw new Error('User not authenticated');
-      }
+      try {
+        // Create a test artwork record
+        const { data: userData } = await supabase.auth.getUser();
+        if (!userData.user) {
+          throw new Error('User not authenticated');
+        }
 
-      const { data: testArtwork, error: artworkError } = await supabase
-        .from('artwork')
-        .insert({
-          user_id: userData.user.id,
-          title: 'Diagnostic Test Image',
-          description: 'Test image for copyright monitoring diagnostics',
-          category: 'photography',
-          file_paths: [testImageUrl],
-          status: 'active'
-        })
-        .select()
-        .single();
+        const { data: artworkData, error: artworkError } = await supabase
+          .from('artwork')
+          .insert({
+            user_id: userData.user.id,
+            title: 'Diagnostic Test Image',
+            description: 'Test image for copyright monitoring diagnostics',
+            category: 'photography',
+            file_paths: [testImageUrl],
+            status: 'active'
+          })
+          .select()
+          .single();
 
-      if (artworkError || !testArtwork) {
-        updateResult(1, {
-          status: 'error',
-          message: 'Failed to create test artwork',
-          details: artworkError
-        });
-      } else {
+        if (artworkError || !artworkData) {
+          throw new Error(`Failed to create test artwork: ${artworkError?.message || 'Unknown error'}`);
+        }
+
+        testArtwork = artworkData;
         const testStartTime = Date.now();
         
         // Call real-image-search with the test image
@@ -141,8 +141,21 @@ export const CopyrightDiagnostics = () => {
           });
         }
 
-        // Clean up test artwork
-        await supabase.from('artwork').delete().eq('id', testArtwork.id);
+      } catch (error) {
+        updateResult(1, {
+          status: 'error',
+          message: `Known image test failed: ${error.message}`,
+          details: error
+        });
+      } finally {
+        // Clean up test artwork if it was created
+        if (testArtwork?.id) {
+          try {
+            await supabase.from('artwork').delete().eq('id', testArtwork.id);
+          } catch (cleanupError) {
+            console.warn('Failed to cleanup test artwork:', cleanupError);
+          }
+        }
       }
 
       // Phase 3: Database Verification
@@ -192,26 +205,83 @@ export const CopyrightDiagnostics = () => {
       });
 
       const pipelineStartTime = Date.now();
-      
-      // Test the process-monitoring-scan function
-      const { data: pipelineData, error: pipelineError } = await supabase.functions.invoke('process-monitoring-scan', {
-        body: {
-          artworkId: testArtwork?.id || 'test-artwork-id'
-        }
-      });
+      let pipelineTestArtworkId = testArtwork?.id;
 
-      if (pipelineError) {
+      // If we don't have a test artwork from Phase 2, create one specifically for pipeline testing
+      if (!pipelineTestArtworkId) {
+        try {
+          const { data: userData } = await supabase.auth.getUser();
+          if (userData.user) {
+            const { data: pipelineArtwork } = await supabase
+              .from('artwork')
+              .insert({
+                user_id: userData.user.id,
+                title: 'Pipeline Test Image',
+                description: 'Test image for pipeline diagnostics',
+                category: 'photography',
+                file_paths: ['https://images.unsplash.com/photo-1506905925346-21bda4d32df4'],
+                status: 'active'
+              })
+              .select()
+              .single();
+            
+            pipelineTestArtworkId = pipelineArtwork?.id;
+          }
+        } catch (error) {
+          console.warn('Failed to create pipeline test artwork:', error);
+        }
+      }
+
+      try {
+        // Test the process-monitoring-scan function
+        const { data: pipelineData, error: pipelineError } = await supabase.functions.invoke('process-monitoring-scan', {
+          body: {
+            artworkId: pipelineTestArtworkId || 'fallback-test-id'
+          }
+        });
+
+        if (pipelineError) {
+          // Check if it's an API configuration issue vs pipeline issue
+          const isApiConfigError = pipelineError.message?.includes('API') || 
+                                 pipelineError.message?.includes('key') ||
+                                 pipelineError.message?.includes('disabled');
+
+          updateResult(3, {
+            status: isApiConfigError ? 'error' : 'error',
+            message: isApiConfigError 
+              ? 'Pipeline test failed due to API configuration issues' 
+              : 'Pipeline test failed',
+            details: {
+              ...pipelineError,
+              suggestion: isApiConfigError 
+                ? 'Check API keys configuration in edge function secrets'
+                : 'Review edge function logs for detailed error information'
+            },
+            duration: Date.now() - pipelineStartTime
+          });
+        } else {
+          updateResult(3, {
+            status: 'success',
+            message: `Pipeline test completed. Scanned ${pipelineData.sourcesScanned || 0} sources, found ${pipelineData.matchesFound || 0} matches`,
+            details: pipelineData,
+            duration: Date.now() - pipelineStartTime
+          });
+        }
+
+        // Cleanup pipeline test artwork if we created one
+        if (pipelineTestArtworkId && pipelineTestArtworkId !== testArtwork?.id) {
+          try {
+            await supabase.from('artwork').delete().eq('id', pipelineTestArtworkId);
+          } catch (cleanupError) {
+            console.warn('Failed to cleanup pipeline test artwork:', cleanupError);
+          }
+        }
+
+      } catch (error) {
         updateResult(3, {
           status: 'error',
-          message: 'Pipeline test failed',
-          details: pipelineError,
-          duration: Date.now() - pipelineStartTime
-        });
-      } else {
-        updateResult(3, {
-          status: 'success',
-          message: `Pipeline test completed. Scanned ${pipelineData.sourcesScanned || 0} sources, found ${pipelineData.matchesFound || 0} matches`,
-          details: pipelineData,
+          message: `Pipeline test error: ${error.message}`,
+          details: error,
           duration: Date.now() - pipelineStartTime
         });
       }

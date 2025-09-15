@@ -16,8 +16,8 @@ export default function Phase2Dashboard() {
         <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
           Blockchain ownership registry, global legal network, and creator economy integration
         </p>
-        <Badge className="mt-4 bg-gradient-to-r from-orange-500 to-yellow-500 text-background">
-          Coming Soon
+        <Badge className="mt-4 bg-gradient-to-r from-emerald-500 to-blue-500 text-background">
+          Active & Operational
         </Badge>
       </div>
 
@@ -112,7 +112,7 @@ export default function Phase2Dashboard() {
               <p className="text-sm text-muted-foreground">Creator Economy</p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold text-blue-500">100%</p>
+              <p className="text-3xl font-bold text-emerald-500">100%</p>
               <p className="text-sm text-muted-foreground">Phase 2 Complete</p>
             </div>
           </div>
