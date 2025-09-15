@@ -14,8 +14,8 @@ export default function Phase1Dashboard() {
         <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
           Essential IP protection tools including image monitoring, deepfake detection, and forgery identification
         </p>
-        <Badge className="mt-4 bg-gradient-to-r from-blue-500 to-purple-500">
-          Foundation Protection
+        <Badge className="mt-4 bg-gradient-to-r from-orange-500 to-yellow-500 text-background">
+          Coming Soon
         </Badge>
       </div>
 
