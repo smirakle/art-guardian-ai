@@ -40,51 +40,75 @@ const TrademarkMonitoring: React.FC = () => {
 
     setIsScanning(true);
     try {
-      // Create trademark record
-      const { data: trademark, error: trademarkError } = await supabase
-        .from('trademarks')
-        .insert({
-          user_id: user.id,
-          trademark_name: searchParams.query.trim(),
-          jurisdiction: searchParams.jurisdictions[0] || 'US',
-          status: 'monitoring',
-          description: `Advanced trademark monitoring for "${searchParams.query.trim()}"`,
-          trademark_class: searchParams.classifications
-        })
-        .select()
-        .single();
+      console.log('Starting real trademark search with params:', searchParams);
+      
+      // Perform real trademark search using multiple APIs
+      const { data: searchData, error: searchError } = await supabase.functions
+        .invoke('real-trademark-search', {
+          body: {
+            action: 'search',
+            query: searchParams.query.trim(),
+            jurisdictions: searchParams.jurisdictions || ['US'],
+            classifications: searchParams.classifications || [],
+            similarity_threshold: searchParams.similarityThreshold || 0.8,
+            platforms: searchParams.platforms || ['USPTO', 'EUIPO', 'WIPO'],
+            user_id: user.id
+          }
+        });
 
-      if (trademarkError) throw trademarkError;
+      if (searchError) {
+        console.error('Real search error:', searchError);
+        throw new Error(`Search failed: ${searchError.message}`);
+      }
 
-      // Start advanced monitoring scan
-      const { data, error } = await supabase.functions.invoke('trademark-monitoring-engine', {
-        body: {
-          action: 'scan_trademark',
-          trademark_id: trademark.id,
-          scan_type: searchParams.searchDepth,
-          platforms: searchParams.platforms,
-          search_terms: [searchParams.query.trim()],
-          jurisdictions: searchParams.jurisdictions,
-          similarity_threshold: searchParams.similarityThreshold,
-          fuzzy_matching: searchParams.fuzzyMatching,
-          include_expired: searchParams.includeExpired,
-          search_type: searchParams.searchType
-        }
-      });
+      console.log('Real search completed:', searchData);
 
-      if (error) throw error;
+      const totalMatches = searchData?.data?.total_matches || 0;
+      const highRiskMatches = searchData?.data?.high_risk_matches || 0;
+      const searchDuration = searchData?.data?.search_duration_ms || 0;
 
       toast({
-        title: "Advanced Search Started",
-        description: `AI-powered trademark analysis initiated for "${searchParams.query}"`,
+        title: "Real Trademark Search Completed",
+        description: `Found ${totalMatches} matches (${highRiskMatches} high-risk) in ${Math.round(searchDuration)}ms`,
       });
 
-      console.log('Advanced search results:', data);
+      // Create trademark record if high-risk matches found
+      if (highRiskMatches > 0) {
+        const { data: trademark, error: trademarkError } = await supabase
+          .from('trademarks')
+          .insert({
+            user_id: user.id,
+            trademark_name: searchParams.query.trim(),
+            jurisdiction: searchParams.jurisdictions[0] || 'US',
+            status: 'monitoring',
+            description: `Real search found ${highRiskMatches} high-risk conflicts`,
+            trademark_class: searchParams.classifications || []
+          })
+          .select()
+          .single();
+
+        if (!trademarkError && highRiskMatches >= 3) {
+          // Create high-priority alert for significant conflicts
+          await supabase.from('trademark_alerts').insert({
+            user_id: user.id,
+            trademark_id: trademark.id,
+            alert_type: 'high_risk_conflicts',
+            severity: 'critical',
+            title: 'Critical Trademark Conflicts Detected',
+            description: `Found ${highRiskMatches} high-risk conflicts for "${searchParams.query.trim()}". Immediate legal review recommended.`,
+            status: 'pending',
+            evidence_data: {
+              search_results: searchData?.data,
+              search_params: JSON.parse(JSON.stringify(searchParams))
+            }
+          });
+        }
+      }
     } catch (error) {
-      console.error('Search error:', error);
+      console.error('Real trademark search failed:', error);
       toast({
         title: "Search Failed",
-        description: "Failed to start advanced trademark search. Please try again.",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
         variant: "destructive"
       });
     } finally {
