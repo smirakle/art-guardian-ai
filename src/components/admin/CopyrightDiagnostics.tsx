@@ -206,13 +206,14 @@ export const CopyrightDiagnostics = () => {
 
       const pipelineStartTime = Date.now();
       let pipelineTestArtworkId = testArtwork?.id;
+      let shouldCleanupPipelineArtwork = false;
 
       // If we don't have a test artwork from Phase 2, create one specifically for pipeline testing
       if (!pipelineTestArtworkId) {
         try {
           const { data: userData } = await supabase.auth.getUser();
           if (userData.user) {
-            const { data: pipelineArtwork } = await supabase
+            const { data: pipelineArtwork, error: pipelineArtworkError } = await supabase
               .from('artwork')
               .insert({
                 user_id: userData.user.id,
@@ -225,37 +226,75 @@ export const CopyrightDiagnostics = () => {
               .select()
               .single();
             
+            if (pipelineArtworkError) {
+              throw new Error(`Failed to create pipeline test artwork: ${pipelineArtworkError.message}`);
+            }
+
             pipelineTestArtworkId = pipelineArtwork?.id;
+            shouldCleanupPipelineArtwork = true;
           }
         } catch (error) {
-          console.warn('Failed to create pipeline test artwork:', error);
+          updateResult(3, {
+            status: 'error',
+            message: `Pipeline test failed - could not create test artwork: ${error.message}`,
+            details: error,
+            duration: Date.now() - pipelineStartTime
+          });
+          return; // Exit early if we can't create test artwork
         }
       }
 
+      // Only proceed if we have a valid artwork ID
+      if (!pipelineTestArtworkId) {
+        updateResult(3, {
+          status: 'error',
+          message: 'Pipeline test skipped - no valid artwork ID available',
+          details: { 
+            reason: 'Could not create test artwork and Phase 2 did not provide a valid artwork ID',
+            suggestion: 'Ensure user authentication is working and database is accessible'
+          },
+          duration: Date.now() - pipelineStartTime
+        });
+        return;
+      }
+
       try {
-        // Test the process-monitoring-scan function
+        // Test the process-monitoring-scan function with a valid artwork ID
         const { data: pipelineData, error: pipelineError } = await supabase.functions.invoke('process-monitoring-scan', {
           body: {
-            artworkId: pipelineTestArtworkId || 'fallback-test-id'
+            artworkId: pipelineTestArtworkId
           }
         });
 
         if (pipelineError) {
-          // Check if it's an API configuration issue vs pipeline issue
+          // Categorize the error type for better user feedback
+          const isUuidError = pipelineError.message?.includes('uuid') || pipelineError.message?.includes('22P02');
           const isApiConfigError = pipelineError.message?.includes('API') || 
                                  pipelineError.message?.includes('key') ||
                                  pipelineError.message?.includes('disabled');
+          const isAuthError = pipelineError.message?.includes('auth') || pipelineError.message?.includes('unauthorized');
+
+          let errorMessage = 'Pipeline test failed';
+          let suggestion = 'Review edge function logs for detailed error information';
+
+          if (isUuidError) {
+            errorMessage = 'Pipeline test failed due to invalid artwork ID format';
+            suggestion = 'This indicates a database schema issue';
+          } else if (isApiConfigError) {
+            errorMessage = 'Pipeline test failed due to API configuration issues';
+            suggestion = 'Check API keys configuration in edge function secrets';
+          } else if (isAuthError) {
+            errorMessage = 'Pipeline test failed due to authentication issues';
+            suggestion = 'Verify user permissions and edge function authentication';
+          }
 
           updateResult(3, {
-            status: isApiConfigError ? 'error' : 'error',
-            message: isApiConfigError 
-              ? 'Pipeline test failed due to API configuration issues' 
-              : 'Pipeline test failed',
+            status: 'error',
+            message: errorMessage,
             details: {
               ...pipelineError,
-              suggestion: isApiConfigError 
-                ? 'Check API keys configuration in edge function secrets'
-                : 'Review edge function logs for detailed error information'
+              suggestion,
+              artwork_id_used: pipelineTestArtworkId
             },
             duration: Date.now() - pipelineStartTime
           });
@@ -268,22 +307,25 @@ export const CopyrightDiagnostics = () => {
           });
         }
 
+      } catch (error) {
+        updateResult(3, {
+          status: 'error',
+          message: `Pipeline test error: ${error.message}`,
+          details: {
+            error,
+            artwork_id_used: pipelineTestArtworkId
+          },
+          duration: Date.now() - pipelineStartTime
+        });
+      } finally {
         // Cleanup pipeline test artwork if we created one
-        if (pipelineTestArtworkId && pipelineTestArtworkId !== testArtwork?.id) {
+        if (shouldCleanupPipelineArtwork && pipelineTestArtworkId) {
           try {
             await supabase.from('artwork').delete().eq('id', pipelineTestArtworkId);
           } catch (cleanupError) {
             console.warn('Failed to cleanup pipeline test artwork:', cleanupError);
           }
         }
-
-      } catch (error) {
-        updateResult(3, {
-          status: 'error',
-          message: `Pipeline test error: ${error.message}`,
-          details: error,
-          duration: Date.now() - pipelineStartTime
-        });
       }
 
       toast.success('Diagnostic tests completed');

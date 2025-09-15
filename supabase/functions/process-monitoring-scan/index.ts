@@ -45,6 +45,43 @@ serve(async (req) => {
       )
     }
 
+    // Validate artwork ID format (should be a valid UUID)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(artworkId)) {
+      console.error('Invalid artwork ID format:', artworkId);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid artworkId format - must be a valid UUID',
+          provided_id: artworkId,
+          suggestion: 'Ensure a valid artwork record exists before running pipeline test'
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      )
+    }
+
+    console.log('Getting artwork details for:', artworkId);
+    // Get the artwork details first to validate it exists
+    const { data: artwork, error: artworkError } = await supabaseClient
+      .from('artwork')
+      .select('*')
+      .eq('id', artworkId)
+      .single()
+
+    if (artworkError || !artwork) {
+      console.error('Artwork error:', artworkError);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Artwork not found',
+          artwork_id: artworkId,
+          details: artworkError,
+          suggestion: 'Create a valid artwork record before running the monitoring scan'
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404 }
+      )
+    }
+
+    console.log('Found artwork:', artwork.title);
+
     // If no scanId provided, create one automatically
     let actualScanId = scanId;
     if (!scanId) {
@@ -64,28 +101,17 @@ serve(async (req) => {
       if (scanError || !newScan) {
         console.error('Error creating scan:', scanError);
         return new Response(
-          JSON.stringify({ error: 'Failed to create monitoring scan' }),
+          JSON.stringify({ 
+            error: 'Failed to create monitoring scan',
+            details: scanError,
+            artwork_id: artworkId
+          }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
         )
       }
       actualScanId = newScan.id;
       console.log('Created new scan with ID:', actualScanId);
     }
-
-    console.log('Getting artwork details for:', artworkId);
-    // Get the artwork details
-    const { data: artwork, error: artworkError } = await supabaseClient
-      .from('artwork')
-      .select('*')
-      .eq('id', artworkId)
-      .single()
-
-    if (artworkError || !artwork) {
-      console.error('Artwork error:', artworkError);
-      throw new Error('Artwork not found')
-    }
-
-    console.log('Found artwork:', artwork.title);
 
     // Update scan status to running
     console.log('Updating scan status to running...');
