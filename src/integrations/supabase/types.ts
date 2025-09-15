@@ -923,6 +923,45 @@ export type Database = {
         }
         Relationships: []
       }
+      backup_logs: {
+        Row: {
+          backup_location: string | null
+          backup_type: string
+          completed_at: string | null
+          created_at: string
+          error_message: string | null
+          file_size_bytes: number | null
+          id: string
+          metadata: Json | null
+          started_at: string
+          status: string
+        }
+        Insert: {
+          backup_location?: string | null
+          backup_type: string
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          file_size_bytes?: number | null
+          id?: string
+          metadata?: Json | null
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          backup_location?: string | null
+          backup_type?: string
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          file_size_bytes?: number | null
+          id?: string
+          metadata?: Json | null
+          started_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
       blockchain_certificates: {
         Row: {
           artwork_fingerprint: string
@@ -1537,6 +1576,36 @@ export type Database = {
           type?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      data_retention_policies: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          last_cleanup: string | null
+          retention_days: number
+          table_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          last_cleanup?: string | null
+          retention_days: number
+          table_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          last_cleanup?: string | null
+          retention_days?: number
+          table_name?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -2304,6 +2373,54 @@ export type Database = {
         }
         Relationships: []
       }
+      error_logs: {
+        Row: {
+          created_at: string
+          error_message: string
+          error_stack: string | null
+          id: string
+          ip_address: unknown | null
+          metadata: Json | null
+          request_path: string | null
+          resolved: boolean | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          error_message: string
+          error_stack?: string | null
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          request_path?: string | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          error_message?: string
+          error_stack?: string | null
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          request_path?: string | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       expert_advice: {
         Row: {
           advice: string
@@ -2380,6 +2497,42 @@ export type Database = {
           specialties?: string[] | null
           total_likes?: number
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      gdpr_consent_logs: {
+        Row: {
+          consent_given: boolean
+          consent_type: string
+          consent_version: string
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          metadata: Json | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          consent_given: boolean
+          consent_type: string
+          consent_version?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          consent_given?: boolean
+          consent_type?: string
+          consent_version?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          user_agent?: string | null
           user_id?: string
         }
         Relationships: []
@@ -5247,6 +5400,36 @@ export type Database = {
           },
         ]
       }
+      production_metrics: {
+        Row: {
+          created_at: string
+          id: string
+          labels: Json | null
+          metric_name: string
+          metric_type: string
+          metric_value: number
+          timestamp: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          labels?: Json | null
+          metric_name: string
+          metric_type?: string
+          metric_value: number
+          timestamp?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          labels?: Json | null
+          metric_name?: string
+          metric_type?: string
+          metric_value?: number
+          timestamp?: string
+        }
+        Relationships: []
+      }
       profile_impersonation_alerts: {
         Row: {
           alert_type: string
@@ -7703,6 +7886,17 @@ export type Database = {
         }
         Returns: undefined
       }
+      log_error: {
+        Args: {
+          error_message_param: string
+          error_stack_param?: string
+          metadata_param?: Json
+          request_path_param?: string
+          severity_param?: string
+          user_id_param?: string
+        }
+        Returns: string
+      }
       log_portfolio_monitoring_action: {
         Args: {
           action_param: string
@@ -7732,6 +7926,15 @@ export type Database = {
           metric_value_param: number
           portfolio_id_param?: string
           user_id_param?: string
+        }
+        Returns: undefined
+      }
+      record_production_metric: {
+        Args: {
+          labels_param?: Json
+          metric_name_param: string
+          metric_type_param?: string
+          metric_value_param: number
         }
         Returns: undefined
       }

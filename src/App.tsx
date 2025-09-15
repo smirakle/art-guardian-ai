@@ -53,6 +53,7 @@ import CreatorMarkets from "./pages/CreatorMarkets";
 import ForgeryDetection from "./pages/ForgeryDetection";
 import TermsAndPrivacy from "./pages/TermsAndPrivacy";
 import AttorneyPacket from "./pages/AttorneyPacket";
+import ProductionDashboard from "./components/production/ProductionDashboard";
 import { PartnerPricingManager } from "./components/partner/PartnerPricingManager";
 import { PartnerSuccessPage } from "./components/partner/PartnerSuccessPage";
 import EmailMarketing from "./pages/EmailMarketing";
@@ -142,6 +143,11 @@ const App = () => {
             <Route path="/markets" element={<CreatorMarkets />} />
             <Route path="/investors" element={<InvestorHub />} />
             <Route path="/partner-pricing" element={<PartnerPricingManager />} />
+            <Route path="/production" element={
+              <ProtectedRoute requiredRole="admin">
+                <ProductionDashboard />
+              </ProtectedRoute>
+            } />
             <Route path="/partner-success" element={<PartnerSuccessPage />} />
             <Route path="/forgery-detection" element={<ForgeryDetection />} />
             <Route path="/roadmap" element={<Roadmap />} />
