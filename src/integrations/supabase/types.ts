@@ -107,6 +107,42 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_agent_deployments: {
+        Row: {
+          agents_deployed: number | null
+          completed_at: string | null
+          config: Json | null
+          created_at: string
+          deployment_status: string
+          id: string
+          platforms_requested: string[]
+          started_at: string | null
+          user_id: string
+        }
+        Insert: {
+          agents_deployed?: number | null
+          completed_at?: string | null
+          config?: Json | null
+          created_at?: string
+          deployment_status?: string
+          id?: string
+          platforms_requested: string[]
+          started_at?: string | null
+          user_id: string
+        }
+        Update: {
+          agents_deployed?: number | null
+          completed_at?: string | null
+          config?: Json | null
+          created_at?: string
+          deployment_status?: string
+          id?: string
+          platforms_requested?: string[]
+          started_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_auto_responses: {
         Row: {
           confidence_score: number
@@ -246,56 +282,47 @@ export type Database = {
       }
       ai_monitoring_agents: {
         Row: {
-          auto_response: boolean
+          agent_config: Json | null
           created_at: string
-          deployed_at: string
           id: string
           last_scan: string | null
+          performance_metrics: Json | null
           platform_id: string
           platform_name: string
-          predictive_analytics: boolean
-          scan_frequency: number
+          scan_frequency: number | null
           status: string
           success_rate: number | null
-          threat_threshold: number
           threats_detected: number | null
-          total_scans: number | null
           updated_at: string
           user_id: string
         }
         Insert: {
-          auto_response?: boolean
+          agent_config?: Json | null
           created_at?: string
-          deployed_at?: string
           id?: string
           last_scan?: string | null
+          performance_metrics?: Json | null
           platform_id: string
           platform_name: string
-          predictive_analytics?: boolean
-          scan_frequency?: number
+          scan_frequency?: number | null
           status?: string
           success_rate?: number | null
-          threat_threshold?: number
           threats_detected?: number | null
-          total_scans?: number | null
           updated_at?: string
           user_id: string
         }
         Update: {
-          auto_response?: boolean
+          agent_config?: Json | null
           created_at?: string
-          deployed_at?: string
           id?: string
           last_scan?: string | null
+          performance_metrics?: Json | null
           platform_id?: string
           platform_name?: string
-          predictive_analytics?: boolean
-          scan_frequency?: number
+          scan_frequency?: number | null
           status?: string
           success_rate?: number | null
-          threat_threshold?: number
           threats_detected?: number | null
-          total_scans?: number | null
           updated_at?: string
           user_id?: string
         }
@@ -503,31 +530,28 @@ export type Database = {
       }
       ai_protection_rate_limits: {
         Row: {
-          created_at: string | null
+          created_at: string
           endpoint: string
           id: string
-          request_count: number | null
-          updated_at: string | null
+          request_count: number
           user_id: string
-          window_start: string | null
+          window_start: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           endpoint: string
           id?: string
-          request_count?: number | null
-          updated_at?: string | null
+          request_count?: number
           user_id: string
-          window_start?: string | null
+          window_start: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           endpoint?: string
           id?: string
-          request_count?: number | null
-          updated_at?: string | null
+          request_count?: number
           user_id?: string
-          window_start?: string | null
+          window_start?: string
         }
         Relationships: []
       }
@@ -611,45 +635,56 @@ export type Database = {
       }
       ai_threat_detections: {
         Row: {
-          agent_id: string
-          artwork_id: string | null
-          auto_response_generated: boolean | null
-          confidence_score: number
+          agent_id: string | null
+          confidence_score: number | null
           created_at: string
           detected_at: string
           id: string
           platform: string
-          threat_data: Json
+          source_url: string | null
+          status: string
+          threat_data: Json | null
           threat_level: string
+          threat_type: string
           user_id: string
         }
         Insert: {
-          agent_id: string
-          artwork_id?: string | null
-          auto_response_generated?: boolean | null
-          confidence_score: number
+          agent_id?: string | null
+          confidence_score?: number | null
           created_at?: string
           detected_at?: string
           id?: string
           platform: string
-          threat_data?: Json
+          source_url?: string | null
+          status?: string
+          threat_data?: Json | null
           threat_level: string
+          threat_type: string
           user_id: string
         }
         Update: {
-          agent_id?: string
-          artwork_id?: string | null
-          auto_response_generated?: boolean | null
-          confidence_score?: number
+          agent_id?: string | null
+          confidence_score?: number | null
           created_at?: string
           detected_at?: string
           id?: string
           platform?: string
-          threat_data?: Json
+          source_url?: string | null
+          status?: string
+          threat_data?: Json | null
           threat_level?: string
+          threat_type?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ai_threat_detections_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_monitoring_agents"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ai_training_enforcement_workflows: {
         Row: {
