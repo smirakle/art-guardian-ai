@@ -52,7 +52,7 @@ export class FoundingPartnerBriefGenerator {
 
     doc.setFontSize(18);
     doc.setTextColor(100, 100, 100);
-    doc.text("TSMO - The Smart Media Organization", 20, yPosition);
+    doc.text("TSMO Watch Technology", 20, yPosition);
     yPosition += 20;
 
     // Confidentiality notice
