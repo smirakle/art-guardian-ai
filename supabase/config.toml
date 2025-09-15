@@ -148,3 +148,16 @@ verify_jwt = false
 [functions.gov-defense-cyber-ip-api]
 verify_jwt = true
 
+# Real Trademark Monitoring Functions
+[functions.real-trademark-search]
+verify_jwt = true
+
+[functions.real-trademark-analytics]
+verify_jwt = true
+
+[functions.trademark-system-readiness]
+verify_jwt = true
+
+[functions.trademark-scheduler]
+verify_jwt = true
+

@@ -212,8 +212,9 @@ async function executeScheduledScan(supabase: any, schedule: any) {
       alert_type: 'scheduled_monitoring',
       severity: highRiskMatches >= 3 ? 'high' : 'medium',
       title: `Scheduled Monitoring Alert: ${schedule.search_query}`,
-      message: `Scheduled scan found ${highRiskMatches} high-risk matches for "${schedule.search_query}"`,
-      source_data: {
+      description: `Scheduled scan found ${highRiskMatches} high-risk matches for "${schedule.search_query}"`,
+      status: 'pending',
+      evidence_data: {
         search_results: searchData,
         schedule_info: {
           schedule_id: schedule.id,

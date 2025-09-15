@@ -114,7 +114,7 @@ serve(async (req) => {
         const testResponse = await fetch('https://api.tineye.com/rest/search/', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${Dino.env.get('TINEYE_API_KEY')}`,
+            'Authorization': `Bearer ${Deno.env.get('TINEYE_API_KEY')}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
