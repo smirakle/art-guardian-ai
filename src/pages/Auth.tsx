@@ -135,7 +135,7 @@ const Auth: React.FC = () => {
   // Temporary admin password reset function
   const resetAdminPassword = async () => {
     try {
-      const newPassword = 'admin123!'; // Temporary admin password
+      const newPassword = 'TradeMark2024!'; // New admin password
       
       const { data, error } = await supabase.functions.invoke('admin-password-reset', {
         body: {
