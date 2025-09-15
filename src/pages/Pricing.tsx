@@ -106,16 +106,18 @@ const Pricing = () => {
       color: 'from-blue-500 to-purple-600',
       features: [
         'Up to 50 artworks protected',
-        'Basic AI monitoring',
+        'Basic AI threat detection',
         'Portfolio monitoring (up to 5)',
-        'Email alerts',
+        'Email alerts & notifications',
         'Educational resources',
         'Community support',
-        'Mobile app access'
+        'Mobile app access',
+        'Basic watermark protection'
       ],
       limitations: [
         'Limited to personal use',
-        'Standard response time (48hrs)'
+        'Standard response time (48hrs)',
+        'No AI agent deployment'
       ],
       popular: false
     },
@@ -130,17 +132,20 @@ const Pricing = () => {
       color: 'from-green-500 to-emerald-600',
       features: [
         'Up to 150 artworks protected',
-        'Advanced AI monitoring',
+        'Advanced AI threat monitoring',
+        'AI agent deployment (up to 2 platforms)',
         'Portfolio monitoring (up to 10)',
         'Scheduled portfolio scans',
-        'Real-time alerts',
-        'Watermark protection',
-        'API access',
+        'Real-time alerts & notifications',
+        'Advanced watermark protection',
+        'Basic copyright scanning',
+        'API access (1,000 calls/month)',
         'Priority support'
       ],
       limitations: [
         'Commercial use allowed',
-        'Standard takedown assistance'
+        'Standard takedown assistance',
+        'Limited AI monitoring agents'
       ],
       popular: true
     },
@@ -155,15 +160,18 @@ const Pricing = () => {
       color: 'from-orange-500 to-red-600',
       features: [
         'Up to 1,000 artworks protected',
-        'Premium AI monitoring',
+        'Premium AI threat monitoring',
+        'AI agent deployment (up to 10 platforms)',
+        'Advanced AI predictive analysis',
         'Portfolio monitoring (up to 50)',
         'Advanced portfolio analytics',
-        'Scheduled & automated scans',
-        'Instant alerts & notifications',
-        'Advanced watermarking',
-        'Real-time deepfake detection',
-        'Blockchain verification',
+        'Automated AI response system',
+        'Real-time deepfake detection (included)',
+        'Advanced watermarking & protection',
+        'Blockchain verification & licensing',
+        'DMCA automation & legal tools',
         'White-label options',
+        'API access (10,000 calls/month)',
         'Dedicated account manager'
       ],
       limitations: [],
@@ -180,17 +188,21 @@ const Pricing = () => {
       color: 'from-purple-600 to-pink-600',
       features: [
         'Unlimited artworks protected',
-        'Unlimited portfolio monitoring',
-        'Enterprise portfolio management',
+        'Unlimited AI agent deployment',
         'Custom AI model training',
-        '24/7 monitoring & support',
+        'Advanced threat intelligence network',
+        'Multi-tier predictive analytics',
+        'Enterprise portfolio management',
+        '24/7 monitoring & automated response',
         'Advanced deepfake detection & prevention',
         'Advanced blockchain integration',
-        'Enterprise SSO',
-        'Custom integrations',
+        'Custom legal enforcement workflows',
+        'Enterprise SSO & admin controls',
+        'Custom integrations & APIs',
         'On-premise deployment options',
-        'SLA guarantees',
-        'Custom reporting & analytics'
+        'SLA guarantees (99.9% uptime)',
+        'Custom reporting & analytics dashboard',
+        'Dedicated security team'
       ],
       limitations: [],
       popular: false
