@@ -811,4 +811,3 @@ async function verifyOnBlockchain(blockchain: string, txHash: string) {
   };
 }
 
-async function enhanceC
