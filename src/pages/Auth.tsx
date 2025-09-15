@@ -132,34 +132,6 @@ const Auth: React.FC = () => {
     }
   };
 
-  // Temporary admin password reset function
-  const resetAdminPassword = async () => {
-    try {
-      const newPassword = 'TradeMark2024!'; // New admin password
-      
-      const { data, error } = await supabase.functions.invoke('admin-password-reset', {
-        body: {
-          action: 'reset_admin_password',
-          email: 'shc302@g.harvard.edu',
-          newPassword: newPassword
-        }
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Admin Password Reset",
-        description: `Admin password has been reset to: ${newPassword}`,
-      });
-    } catch (error) {
-      console.error('Password reset error:', error);
-      toast({
-        title: "Reset failed",
-        description: "Failed to reset admin password",
-        variant: "destructive",
-      });
-    }
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted/20 p-4">
@@ -242,16 +214,6 @@ const Auth: React.FC = () => {
 
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? 'Signing in...' : 'Sign In'}
-                </Button>
-
-                {/* Temporary Admin Reset Button */}
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={resetAdminPassword}
-                  className="w-full text-xs"
-                >
-                  Reset Admin Password (Temp)
                 </Button>
               </form>
             </TabsContent>
