@@ -24,48 +24,11 @@ serve(async (req) => {
 
     const { action, email, newPassword } = body
 
-    if (action === 'reset_admin_password' && email === 'shc302@g.harvard.edu') {
-      console.log('Processing admin password reset for:', email)
-      
-      const userId = 'a8743e75-d9b7-4b72-af64-e9c1c42f4236'
-      
-      // First, let's try to get the user directly
-      const { data: userData, error: userError } = await supabase.auth.admin.getUserById(userId)
-      
-      if (userError) {
-        console.error('Error getting user:', userError)
-        throw new Error(`Failed to get user: ${userError.message}`)
-      }
-
-      console.log('Found user:', userData.user?.email)
-
-      // Update the user's password using the admin API
-      const { data: updateData, error: updateError } = await supabase.auth.admin.updateUserById(
-        userId,
-        { 
-          password: newPassword,
-          email_confirm: true
-        }
-      )
-
-      if (updateError) {
-        console.error('Error updating password:', updateError)
-        throw new Error(`Failed to update password: ${updateError.message}`)
-      }
-
-      console.log('Password updated successfully')
-
-      return new Response(JSON.stringify({
-        success: true,
-        message: 'Admin password reset successfully',
-        user_id: userId
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      })
-    }
-
-    return new Response(JSON.stringify({ error: 'Invalid action or email' }), {
-      status: 400,
+    // SECURITY FIX: Remove hardcoded credentials - admin setup should be handled securely
+    return new Response(JSON.stringify({ 
+      error: 'This endpoint has been deprecated for security reasons. Please use proper admin user management through the application.' 
+    }), {
+      status: 410, // Gone
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     })
 

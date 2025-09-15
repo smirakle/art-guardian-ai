@@ -15,7 +15,7 @@ const SecurityHeaders = () => {
         font-src 'self' https://fonts.gstatic.com;
         img-src 'self' data: https: blob:;
         connect-src 'self' https://utneaqmbyjwxaqrrarpc.supabase.co wss://utneaqmbyjwxaqrrarpc.supabase.co;
-        frame-ancestors 'none';
+        frame-ancestors https://*.lovableproject.com;
         base-uri 'self';
         form-action 'self';
         upgrade-insecure-requests;
@@ -28,11 +28,8 @@ const SecurityHeaders = () => {
       noSniffMeta.content = 'nosniff';
       document.head.appendChild(noSniffMeta);
 
-      // X-Frame-Options
-      const frameOptionsMeta = document.createElement('meta');
-      frameOptionsMeta.httpEquiv = 'X-Frame-Options';
-      frameOptionsMeta.content = 'DENY';
-      document.head.appendChild(frameOptionsMeta);
+      // SECURITY FIX: Removed X-Frame-Options: DENY to maintain Lovable compatibility
+      // X-Frame-Options conflicts with iframe usage in Lovable editor
 
       // Referrer Policy
       const referrerMeta = document.createElement('meta');

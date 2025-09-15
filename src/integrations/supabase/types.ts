@@ -7601,6 +7601,14 @@ export type Database = {
           status: string
         }[]
       }
+      get_user_white_label_access: {
+        Args: { user_id_param: string }
+        Returns: {
+          is_owner: boolean
+          organization_id: string
+          role: string
+        }[]
+      }
       get_user_white_label_org: {
         Args: Record<PropertyKey, never>
         Returns: {
