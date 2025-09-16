@@ -139,7 +139,7 @@ const handler = async (req: Request): Promise<Response> => {
             
             <p style="color: #666; line-height: 1.6;">
               If you have any urgent questions or need to reschedule, please contact us at 
-              <a href="mailto:shirleena.cunningham@tsmowatch.com" style="color: #667eea;">shirleena.cunningham@tsmowatch.com</a>
+              <a href="mailto:shirleenacunningham@tsmowatch.com" style="color: #667eea;">shirleenacunningham@tsmowatch.com</a>
             </p>
             
             <p style="color: #666; line-height: 1.6;">
@@ -161,7 +161,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Confirmation email sent successfully:", confirmationEmail);
     const notificationEmail = await resend.emails.send({
       from: "TSMO Meeting System <onboarding@resend.dev>",
-      to: ["shirleena.cunningham@tsmowatch.com"],
+      to: ["shirleenacunningham@tsmowatch.com"],
       subject: `New Meeting Request: ${getMeetingTypeLabel(meetingData.meetingType)} - ${meetingData.name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">

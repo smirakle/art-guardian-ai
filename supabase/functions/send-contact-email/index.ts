@@ -105,7 +105,7 @@ serve(async (req: Request): Promise<Response> => {
     // Send email to shirleena.cunningham@tsmowatch.com
     const emailResponse = await resend.emails.send({
       from: "TSMO Contact Form <onboarding@resend.dev>",
-      to: ["shirleena.cunningham@tsmowatch.com"],
+      to: ["shirleenacunningham@tsmowatch.com"],
       subject: `New Contact Form Message: ${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -134,7 +134,7 @@ serve(async (req: Request): Promise<Response> => {
       `,
     });
 
-    console.log("Email sent successfully to shirleena.cunningham@tsmowatch.com:", emailResponse);
+    console.log("Email sent successfully to shirleenacunningham@tsmowatch.com:", emailResponse);
 
     // Send confirmation email to the user
     const confirmationResponse = await resend.emails.send({
