@@ -320,22 +320,22 @@ export const EmailAnalyticsDashboard = () => {
                 <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
                   <div className="flex items-center space-x-4">
                     <div className={`w-3 h-3 rounded-full ${
-                      item.reputationScore > 80 ? 'bg-green-500' : 
-                      item.reputationScore > 60 ? 'bg-yellow-500' : 'bg-red-500'
+                      item.reputation_score > 80 ? 'bg-green-500' : 
+                      item.reputation_score > 60 ? 'bg-yellow-500' : 'bg-red-500'
                     }`}></div>
                     <div>
                       <p className="font-medium">{item.domain}</p>
                       <p className="text-sm text-muted-foreground">
-                        Reputation: {item.reputationScore}/100
+                        Reputation: {item.reputation_score}/100
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="text-sm">
-                      <span className="text-green-600">{item.deliverabilityRate.toFixed(1)}%</span> delivered
+                      <span className="text-green-600">{item.deliverability_rate.toFixed(1)}%</span> delivered
                     </p>
                     <p className="text-sm">
-                      <span className="text-red-600">{item.bounceRate.toFixed(1)}%</span> bounced
+                      <span className="text-red-600">{item.bounce_rate.toFixed(1)}%</span> bounced
                     </p>
                   </div>
                 </div>

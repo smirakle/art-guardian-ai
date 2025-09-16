@@ -168,7 +168,7 @@ export const SubscriberManagement = () => {
         ...subscribers.map(sub => [
           sub.email,
           sub.status,
-          new Date(sub.subscribed_at).toLocaleDateString(),
+          new Date(sub.created_at).toLocaleDateString(),
           (sub.tags || []).join('; ')
         ])
       ].map(row => row.join(',')).join('\n');
@@ -529,7 +529,7 @@ export const SubscriberManagement = () => {
                             {subscriber.status}
                           </span>
                           <span className="text-sm text-muted-foreground">
-                            {new Date(subscriber.subscribed_at).toLocaleDateString()}
+                            {new Date(subscriber.created_at).toLocaleDateString()}
                           </span>
                         </div>
                       </div>
