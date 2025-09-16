@@ -747,6 +747,7 @@ export const EmailMarketingAutomation = () => {
         <TabsList>
           <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
           <TabsTrigger value="create">Create Campaign</TabsTrigger>
+          <TabsTrigger value="templates">Templates</TabsTrigger>
           <TabsTrigger value="subscribers">Subscribers</TabsTrigger>
           <TabsTrigger value="automation">Automation Rules</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -796,6 +797,24 @@ export const EmailMarketingAutomation = () => {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="templates">
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Email Templates</CardTitle>
+                <CardDescription>
+                  Manage your email templates for faster campaign creation
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground text-center py-8">
+                  Email templates will be available after database migration is complete.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
 
