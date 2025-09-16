@@ -29,6 +29,7 @@ interface PlanDetails {
   price: number;
   features: string[];
   badge?: string;
+  startupFee?: number;
 }
 
 const Checkout = () => {
@@ -65,9 +66,10 @@ const Checkout = () => {
     },
     professional: {
       name: "Professional",
-      price: 199,
-      features: ["Up to 500 artworks", "Advanced AI recognition", "Real-time monitoring", "Blockchain verification", "Deepfake detection included", "Automated DMCA", "Priority support"],
-      badge: "Most Popular"
+      price: 75,
+      features: ["Up to 500 artworks", "Advanced AI recognition", "Real-time monitoring", "Blockchain verification", "AI Training protection included", "Automated DMCA", "Priority support"],
+      badge: "Most Popular",
+      startupFee: 199
     }
   };
 
@@ -87,12 +89,16 @@ const Checkout = () => {
   
   // Add social media addon cost (available for all plans)
   const socialAddonCost = socialMediaAddon ? (billingCycle === "yearly" ? 1188 : 99) : 0;
-  const startupFee = socialMediaAddon ? 199 : 0;
+  const socialStartupFee = socialMediaAddon ? 199 : 0;
+  
+  // Professional plan startup fee
+  const planStartupFee = currentPlan.startupFee || 0;
   
   // Add deepfake addon cost (not available for professional plan as it's included)
   const deepfakeAddonCost = (deepfakeAddon && selectedPlan !== 'professional') ? (billingCycle === "yearly" ? 588 : 49) : 0;
   
   const finalPrice = basePrice + socialAddonCost + deepfakeAddonCost;
+  const totalStartupFee = socialStartupFee + planStartupFee;
 
   const handleAuthFormChange = (field: string, value: string) => {
     setAuthForm(prev => ({ ...prev, [field]: value }));
@@ -633,6 +639,23 @@ const Checkout = () => {
                   </div>
                  )}
 
+                {/* Professional Plan Startup Fee */}
+                {selectedPlan === 'professional' && (
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-medium text-orange-600">Professional Setup Fee</div>
+                      <div className="text-sm text-muted-foreground">
+                        One-time AI Training protection setup
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-medium text-orange-600">
+                        +$199 (one-time)
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Promo Code Section */}
                 <div className="space-y-3">
                   <Label htmlFor="promoCode" className="text-sm font-medium">
@@ -665,16 +688,22 @@ const Checkout = () => {
 
                 {/* Total */}
                 <div className="flex items-center justify-between text-lg font-bold">
-                  <span>Total {socialMediaAddon ? "(First Payment)" : ""}</span>
+                  <span>Total {(socialMediaAddon || selectedPlan === 'professional') ? "(First Payment)" : ""}</span>
                   <span>
-                    ${billingCycle === "yearly" ? Math.round(finalPrice + startupFee) : (finalPrice + startupFee)}
+                    ${billingCycle === "yearly" ? Math.round(finalPrice + totalStartupFee) : (finalPrice + totalStartupFee)}
                     {billingCycle === "yearly" ? "/year" : "/month"}
                   </span>
                 </div>
 
-                {socialMediaAddon && (
+                {(socialMediaAddon || selectedPlan === 'professional') && (
                   <div className="text-sm text-muted-foreground">
                     * Future payments will be ${billingCycle === "yearly" ? Math.round(finalPrice) : finalPrice}{billingCycle === "yearly" ? "/year" : "/month"} (without setup fee)
+                  </div>
+                )}
+
+                {selectedPlan === 'professional' && !socialMediaAddon && (
+                  <div className="text-sm text-muted-foreground">
+                    * Includes $199 one-time setup fee for AI Training protection
                   </div>
                 )}
 
