@@ -154,9 +154,10 @@ const Pricing = () => {
       name: 'Professional',
       icon: Zap,
       description: 'Complete art protection suite for established artists and agencies',
-      price: { monthly: 199, yearly: 1990 },
+      price: { monthly: 75, yearly: 750 },
+      startupFee: 199,
       originalPrice: { monthly: 249, yearly: 2490 },
-      discount: '20% OFF',
+      discount: '70% OFF',
       color: 'from-orange-500 to-red-600',
       features: [
         'Up to 1,000 artworks protected',
@@ -656,23 +657,28 @@ const Pricing = () => {
 
                 <CardContent className="space-y-6">
                   {/* Pricing */}
-                  <div className="text-center">
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <span className="text-4xl font-bold">
-                        {formatPrice(currentPrice)}
-                      </span>
-                      {typeof currentPrice === 'number' && (
-                        <span className="text-muted-foreground">
-                          /{billingCycle === 'monthly' ? 'mo' : 'yr'}
-                        </span>
-                      )}
-                    </div>
-                    {originalPrice && typeof originalPrice === 'number' && (
-                      <div className="text-sm text-muted-foreground line-through">
-                        Was ${originalPrice}/{billingCycle === 'monthly' ? 'mo' : 'yr'}
-                      </div>
-                    )}
-                  </div>
+                   <div className="text-center">
+                     <div className="flex items-center justify-center gap-2 mb-2">
+                       <span className="text-4xl font-bold">
+                         {formatPrice(currentPrice)}
+                       </span>
+                       {typeof currentPrice === 'number' && (
+                         <span className="text-muted-foreground">
+                           /{billingCycle === 'monthly' ? 'mo' : 'yr'}
+                         </span>
+                       )}
+                     </div>
+                     {plan.startupFee && (
+                       <div className="text-sm text-primary font-medium mb-1">
+                         + ${plan.startupFee} startup fee
+                       </div>
+                     )}
+                     {originalPrice && typeof originalPrice === 'number' && (
+                       <div className="text-sm text-muted-foreground line-through">
+                         Was ${originalPrice}/{billingCycle === 'monthly' ? 'mo' : 'yr'}
+                       </div>
+                     )}
+                   </div>
 
                    {/* Features */}
                    <div className="space-y-3">
