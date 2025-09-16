@@ -241,7 +241,9 @@ export const EmailMarketingAutomation = () => {
 
   const loadAutomationRules = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke('email-automation-rules');
+      const { data, error } = await supabase.functions.invoke('email-automation-rules', {
+        body: {} // Send empty object for GET request
+      });
       
       if (error) throw error;
       
@@ -675,7 +677,7 @@ export const EmailMarketingAutomation = () => {
             Create and manage automated email campaigns
           </p>
         </div>
-        <Badge variant="secondary">Beta Feature</Badge>
+        <Badge variant="outline">Production Ready</Badge>
       </div>
 
       {/* Analytics Overview */}
