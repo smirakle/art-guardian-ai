@@ -23,6 +23,7 @@ import Dashboard from "./pages/Dashboard";
 import Checkout from "./pages/Checkout";
 import Success from "./pages/Success";
 import Auth from "./pages/Auth";
+import B2BLogin from "./pages/B2BLogin";
 import Contact from "./pages/Contact";
 import DeepWebScan from "./components/DeepWebScan";
 import BlockchainVerification from "./components/BlockchainVerification";
@@ -111,6 +112,7 @@ const App = () => {
                       <Route path="/about-tsmo" element={<AboutTsmo />} />
                       <Route path="/faq" element={<FAQ />} />
                       <Route path="/auth" element={<Auth />} />
+                      <Route path="/b2b-login" element={<B2BLogin />} />
                       <Route path="/contact" element={<Contact />} />
                       <Route path="/upload" element={<Upload />} />
                       <Route path="/admin" element={
