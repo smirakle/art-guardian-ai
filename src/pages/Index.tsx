@@ -1270,7 +1270,7 @@ const Index = () => {
                       </div>
                     </div>
                     <div className="flex items-center justify-between text-sm p-2 bg-orange-50 rounded">
-                      <span>Deepfake Scanning</span>
+                      <span>AI Training Protection</span>
                       <div className="font-semibold">$49/month</div>
                     </div>
                   </div>
@@ -1352,7 +1352,7 @@ const Index = () => {
                       </div>
                     </div>
                     <div className="flex items-center justify-between text-sm p-2 bg-orange-50 rounded">
-                      <span>Deepfake Scanning</span>
+                      <span>AI Training Protection</span>
                       <div className="font-semibold">$49/month</div>
                     </div>
                   </div>
@@ -1445,7 +1445,7 @@ const Index = () => {
                       </div>
                     </div>
                     <div className="flex items-center justify-between text-sm p-2 bg-orange-50 rounded">
-                      <span>Deepfake Scanning</span>
+                      <span>AI Training Protection</span>
                       <div className="font-semibold">$49/month</div>
                     </div>
                   </div>

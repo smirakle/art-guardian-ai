@@ -20,7 +20,7 @@ const Pricing = () => {
   const [promoCode, setPromoCode] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [socialMediaAddon, setSocialMediaAddon] = useState<{[key: string]: boolean}>({});
-  const [deepfakeAddon, setDeepfakeAddon] = useState<{[key: string]: boolean}>({});
+  const [aiTrainingAddon, setAiTrainingAddon] = useState<{[key: string]: boolean}>({});
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -65,7 +65,7 @@ const Pricing = () => {
           email: formData.email,
           promoCode: promoCode.trim() || undefined,
           socialMediaAddon: socialMediaAddon[planId] || false,
-          deepfakeAddon: deepfakeAddon[planId] || false
+          aiTrainingAddon: aiTrainingAddon[planId] || false
         }
       });
 
@@ -166,7 +166,7 @@ const Pricing = () => {
         'Portfolio monitoring (up to 50)',
         'Advanced portfolio analytics',
         'Automated AI response system',
-        'Real-time deepfake detection (included)',
+        'AI Training protection (included)',
         'Advanced watermarking & protection',
         'Blockchain verification & licensing',
         'DMCA automation & legal tools',
@@ -194,7 +194,7 @@ const Pricing = () => {
         'Multi-tier predictive analytics',
         'Enterprise portfolio management',
         '24/7 monitoring & automated response',
-        'Advanced deepfake detection & prevention',
+        'Advanced AI Training protection & prevention',
         'Advanced blockchain integration',
         'Custom legal enforcement workflows',
         'Enterprise SSO & admin controls',
@@ -529,9 +529,9 @@ const Pricing = () => {
               <span className="font-semibold">+$100/mo + $199 setup fee</span>
             </div>
           )}
-          {deepfakeAddon[plan.id] && (
+          {aiTrainingAddon[plan.id] && (
             <div className="flex justify-between items-center mt-2">
-              <span className="text-sm">Deepfake Scanning</span>
+              <span className="text-sm">AI Training Protection</span>
               <span className="font-semibold">+$49/mo</span>
             </div>
           )}
@@ -541,7 +541,7 @@ const Pricing = () => {
                 plan.originalPrice[billingCycle] - plan.price[billingCycle] : 0}!
             </div>
           )}
-          {(socialMediaAddon[plan.id] || deepfakeAddon[plan.id]) && (
+          {(socialMediaAddon[plan.id] || aiTrainingAddon[plan.id]) && (
             <div className="border-t mt-2 pt-2">
               <div className="flex justify-between items-center font-bold">
                 <span>Total</span>
@@ -549,7 +549,7 @@ const Pricing = () => {
                   {typeof plan.price[billingCycle] === 'number' 
                     ? `$${plan.price[billingCycle] + 
                         (socialMediaAddon[plan.id] ? (billingCycle === 'monthly' ? 100 : 1200) : 0) +
-                        (deepfakeAddon[plan.id] ? (billingCycle === 'monthly' ? 49 : 588) : 0)
+                        (aiTrainingAddon[plan.id] ? (billingCycle === 'monthly' ? 49 : 588) : 0)
                       }/${billingCycle === 'monthly' ? 'mo' : 'yr'}`
                     : 'Custom'
                   }
@@ -721,28 +721,28 @@ const Pricing = () => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Shield className="w-4 h-4 text-primary" />
-                          <span className="text-sm font-medium">Advanced Deepfake Scanning</span>
+                          <span className="text-sm font-medium">AI Training Protection</span>
                         </div>
                         <label className="flex items-center cursor-pointer">
                           <input
                             type="checkbox"
-                            checked={deepfakeAddon[plan.id] || false}
-                            onChange={(e) => setDeepfakeAddon(prev => ({ ...prev, [plan.id]: e.target.checked }))}
+                            checked={aiTrainingAddon[plan.id] || false}
+                            onChange={(e) => setAiTrainingAddon(prev => ({ ...prev, [plan.id]: e.target.checked }))}
                             className="sr-only"
                           />
-                          <div className={`w-11 h-6 bg-gray-200 rounded-full relative transition-colors ${deepfakeAddon[plan.id] ? 'bg-primary' : ''}`}>
-                            <div className={`absolute w-4 h-4 bg-white rounded-full top-1 transition-transform ${deepfakeAddon[plan.id] ? 'translate-x-6' : 'translate-x-1'}`} />
+                          <div className={`w-11 h-6 bg-gray-200 rounded-full relative transition-colors ${aiTrainingAddon[plan.id] ? 'bg-primary' : ''}`}>
+                            <div className={`absolute w-4 h-4 bg-white rounded-full top-1 transition-transform ${aiTrainingAddon[plan.id] ? 'translate-x-6' : 'translate-x-1'}`} />
                           </div>
                         </label>
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        Enhanced AI-powered deepfake detection across social media and web platforms. +$49/month
+                        Advanced protection against AI training data harvesting and unauthorized use. +$49/month
                       </div>
-                      {deepfakeAddon[plan.id] && (
-                        <div className="bg-primary/10 p-2 rounded text-xs text-primary">
-                          ✓ Deepfake Scanning: +$49/month
-                        </div>
-                      )}
+                       {aiTrainingAddon[plan.id] && (
+                         <div className="bg-primary/10 p-2 rounded text-xs text-primary">
+                           ✓ AI Training Protection: +$49/month
+                         </div>
+                       )}
                      </div>
                      )}
 
