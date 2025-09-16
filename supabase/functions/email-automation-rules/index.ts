@@ -73,7 +73,25 @@ const handler = async (req: Request): Promise<Response> => {
 
     } else if (req.method === 'POST') {
       // Create new automation rule
-      const { name, description, triggerEvent, triggerConditions, campaignId, delayMinutes }: CreateRuleRequest = await req.json();
+      const body = await req.text();
+      if (!body.trim()) {
+        return new Response(JSON.stringify({ error: 'Request body is required' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      let requestData;
+      try {
+        requestData = JSON.parse(body);
+      } catch (error) {
+        return new Response(JSON.stringify({ error: 'Invalid JSON in request body' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      const { name, description, triggerEvent, triggerConditions, campaignId, delayMinutes }: CreateRuleRequest = requestData;
 
       if (!name || !triggerEvent || !campaignId) {
         return new Response(JSON.stringify({ error: 'Missing required fields' }), {
@@ -132,7 +150,25 @@ const handler = async (req: Request): Promise<Response> => {
 
     } else if (req.method === 'PUT') {
       // Update automation rule (toggle active/inactive)
-      const { ruleId, isActive } = await req.json();
+      const body = await req.text();
+      if (!body.trim()) {
+        return new Response(JSON.stringify({ error: 'Request body is required' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      let requestData;
+      try {
+        requestData = JSON.parse(body);
+      } catch (error) {
+        return new Response(JSON.stringify({ error: 'Invalid JSON in request body' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      const { ruleId, isActive } = requestData;
 
       if (!ruleId) {
         return new Response(JSON.stringify({ error: 'Rule ID is required' }), {

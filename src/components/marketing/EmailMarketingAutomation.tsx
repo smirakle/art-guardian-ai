@@ -141,6 +141,43 @@ export const EmailMarketingAutomation = () => {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error('Not authenticated');
 
+      // Check if subscriber already exists
+      const { data: existing } = await supabase
+        .from('email_subscribers')
+        .select('id, status')
+        .eq('user_id', userData.user.id)
+        .eq('email', email)
+        .single();
+
+      if (existing) {
+        if (existing.status === 'unsubscribed') {
+          // Reactivate existing subscriber
+          const { data, error } = await supabase
+            .from('email_subscribers')
+            .update({
+              status: 'subscribed',
+              first_name: firstName,
+              last_name: lastName
+            })
+            .eq('id', existing.id)
+            .select()
+            .single();
+
+          if (error) throw error;
+          
+          setSubscribers(prev => 
+            prev.map(sub => sub.id === existing.id ? data : sub)
+          );
+          toast({
+            title: "Success",
+            description: "Subscriber reactivated successfully"
+          });
+          return data;
+        } else {
+          throw new Error('Email already subscribed');
+        }
+      }
+
       const { data, error } = await supabase
         .from('email_subscribers')
         .insert({
