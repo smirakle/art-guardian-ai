@@ -50,7 +50,7 @@ export default function BetaStatusBanner() {
                   <span className="text-sm font-medium">TSMO Watch</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Full production features • Enterprise-grade security • 99.9% uptime
+                  Phase 2 & 3 Active • Phase 1 Coming Soon • Enterprise Security
                 </p>
               </div>
             </div>
@@ -59,20 +59,20 @@ export default function BetaStatusBanner() {
           <div className="hidden md:flex items-center gap-6">
             <div className="flex items-center gap-4 text-xs">
               <div className="flex items-center gap-1">
-                <Shield className="w-3 h-3 text-green-600" />
-                <span>Production Ready</span>
+                <CheckCircle className="w-3 h-3 text-green-600" />
+                <span>Blockchain Registry</span>
               </div>
               <div className="flex items-center gap-1">
                 <CheckCircle className="w-3 h-3 text-green-600" />
-                <span>Security Hardened</span>
+                <span>Legal Network</span>
               </div>
               <div className="flex items-center gap-1">
-                <Zap className="w-3 h-3 text-blue-600" />
-                <span>Full AI Features</span>
+                <CheckCircle className="w-3 h-3 text-green-600" />
+                <span>Multi-Modal AI</span>
               </div>
               <div className="flex items-center gap-1">
-                <Users className="w-3 h-3 text-purple-600" />
-                <span>Multi-tier Access</span>
+                <AlertTriangle className="w-3 h-3 text-orange-600" />
+                <span>Core Protection Soon</span>
               </div>
             </div>
 
@@ -112,16 +112,16 @@ export default function BetaStatusBanner() {
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
-                <Shield className="w-3 h-3 text-green-600" />
-                <span>Secure</span>
+                <CheckCircle className="w-3 h-3 text-green-600" />
+                <span>Blockchain</span>
               </div>
               <div className="flex items-center gap-1">
                 <CheckCircle className="w-3 h-3 text-green-600" />
-                <span>Ready</span>
+                <span>Legal</span>
               </div>
               <div className="flex items-center gap-1">
-                <Zap className="w-3 h-3 text-blue-600" />
-                <span>AI-Powered</span>
+                <CheckCircle className="w-3 h-3 text-green-600" />
+                <span>Multi-Modal</span>
               </div>
             </div>
             <Button 
