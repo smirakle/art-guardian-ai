@@ -379,9 +379,9 @@ const Index = () => {
               </CardHeader>
               <CardContent className="text-center">
                 <p className="text-muted-foreground mb-4">
-                  Invisible protection that prevents AI from learning your artistic style while keeping your artwork visually unchanged.
+                  Market-ready invisible protection that prevents AI from learning your artistic style while keeping your artwork visually unchanged.
                 </p>
-                <Badge variant="secondary">StyleCloak Technology</Badge>
+                <Badge variant="default" className="bg-green-600 text-white">StyleCloak - Market Ready</Badge>
               </CardContent>
             </Card>
 
@@ -524,6 +524,13 @@ const Index = () => {
                     </div>
                     <p className="text-sm text-green-700">Organize and manage your protected works</p>
                   </div>
+                  <div className="bg-white/80 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Bot className="h-5 w-5 text-green-600" />
+                      <span className="font-semibold text-green-800">AI Training Protection</span>
+                    </div>
+                    <p className="text-sm text-green-700">StyleCloak anti-training technology - Market Ready</p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -561,10 +568,10 @@ const Index = () => {
                   </div>
                   <div className="bg-white/80 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <Bot className="h-5 w-5 text-orange-600" />
-                      <span className="font-semibold text-orange-800">AI Training Protection</span>
+                      <Scale className="h-5 w-5 text-orange-600" />
+                      <span className="font-semibold text-orange-800">Advanced Legal Tools</span>
                     </div>
-                    <p className="text-sm text-orange-700">StyleCloak anti-training technology</p>
+                    <p className="text-sm text-orange-700">Enhanced DMCA and international takedown support</p>
                   </div>
                 </div>
               </CardContent>
