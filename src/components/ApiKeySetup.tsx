@@ -5,35 +5,29 @@ import { ExternalLink, Key, CheckCircle } from "lucide-react";
 const ApiKeySetup = () => {
   const apiKeys = [
     {
-      name: "Google Custom Search API",
-      secretName: "GOOGLE_CUSTOM_SEARCH_API_KEY",
-      description: "For Google reverse image search",
-      url: "https://developers.google.com/custom-search/v1/introduction",
-      additionalSecret: "GOOGLE_SEARCH_ENGINE_ID"
-    },
-    {
-      name: "Bing Visual Search API",
-      secretName: "BING_VISUAL_SEARCH_API_KEY",
-      description: "For Bing reverse image search",
-      url: "https://www.microsoft.com/en-us/bing/apis/bing-visual-search-api"
+      name: "OpenAI API",
+      secretName: "OPENAI_API_KEY",
+      description: "🔥 Primary AI-powered image analysis - REQUIRED for core functionality",
+      url: "https://platform.openai.com/api-keys",
+      required: true
     },
     {
       name: "TinEye API",
       secretName: "TINEYE_API_KEY",
-      description: "For TinEye reverse image search",
+      description: "Enhanced reverse image search capabilities (optional)",
       url: "https://services.tineye.com/developers",
       additionalSecret: "TINEYE_API_SECRET"
     },
     {
-      name: "OpenAI API",
-      secretName: "OPENAI_API_KEY",
-      description: "For computer vision and image analysis",
-      url: "https://platform.openai.com/api-keys"
+      name: "Bing Visual Search API",
+      secretName: "BING_VISUAL_SEARCH_API_KEY",
+      description: "Additional reverse image search coverage (optional)",
+      url: "https://www.microsoft.com/en-us/bing/apis/bing-visual-search-api"
     },
     {
       name: "SerpAPI",
       secretName: "SERPAPI_KEY",
-      description: "For Yahoo and additional search engines",
+      description: "Multi-engine search for comprehensive coverage (optional)",
       url: "https://serpapi.com/"
     }
   ];
