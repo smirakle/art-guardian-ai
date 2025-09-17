@@ -531,6 +531,13 @@ const Index = () => {
                     </div>
                     <p className="text-sm text-green-700">StyleCloak anti-training technology - Market Ready</p>
                   </div>
+                  <div className="bg-white/80 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Globe className="h-5 w-5 text-green-600" />
+                      <span className="font-semibold text-green-800">Real-time Scanning</span>
+                    </div>
+                    <p className="text-sm text-green-700">Instant detection across all platforms - Market Ready</p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -554,10 +561,10 @@ const Index = () => {
                   </div>
                   <div className="bg-white/80 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <Globe className="h-5 w-5 text-orange-600" />
-                      <span className="font-semibold text-orange-800">Real-time Scanning</span>
+                      <Building className="h-5 w-5 text-orange-600" />
+                      <span className="font-semibold text-orange-800">Enterprise Dashboard</span>
                     </div>
-                    <p className="text-sm text-orange-700">Instant detection across all platforms</p>
+                    <p className="text-sm text-orange-700">Advanced analytics and team management tools</p>
                   </div>
                   <div className="bg-white/80 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
