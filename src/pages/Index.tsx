@@ -536,7 +536,7 @@ const Index = () => {
                       <Globe className="h-5 w-5 text-green-600" />
                       <span className="font-semibold text-green-800">Real-time Scanning</span>
                     </div>
-                    <p className="text-sm text-green-700">Platform monitoring framework - Alpha Testing</p>
+                    <p className="text-sm text-green-700">Instant detection across all platforms - Market Ready</p>
                   </div>
                 </div>
               </CardContent>

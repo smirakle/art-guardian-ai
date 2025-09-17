@@ -5352,6 +5352,48 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_api_configs: {
+        Row: {
+          api_key_configured: boolean
+          created_at: string
+          current_usage: number | null
+          error_message: string | null
+          id: string
+          is_configured: boolean
+          last_rate_limit_reset: string | null
+          platform_name: string
+          rate_limit_per_hour: number | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          api_key_configured?: boolean
+          created_at?: string
+          current_usage?: number | null
+          error_message?: string | null
+          id?: string
+          is_configured?: boolean
+          last_rate_limit_reset?: string | null
+          platform_name: string
+          rate_limit_per_hour?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          api_key_configured?: boolean
+          created_at?: string
+          current_usage?: number | null
+          error_message?: string | null
+          id?: string
+          is_configured?: boolean
+          last_rate_limit_reset?: string | null
+          platform_name?: string
+          rate_limit_per_hour?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       portfolio_alerts: {
         Row: {
           alert_type: string
@@ -6252,6 +6294,59 @@ export type Database = {
         }
         Relationships: []
       }
+      realtime_matches: {
+        Row: {
+          artwork_id: string
+          confidence_score: number
+          created_at: string
+          detected_at: string
+          id: string
+          match_type: string
+          metadata: Json | null
+          platform: string
+          session_id: string
+          source_domain: string | null
+          source_url: string
+          threat_level: string
+        }
+        Insert: {
+          artwork_id: string
+          confidence_score: number
+          created_at?: string
+          detected_at?: string
+          id?: string
+          match_type: string
+          metadata?: Json | null
+          platform: string
+          session_id: string
+          source_domain?: string | null
+          source_url: string
+          threat_level: string
+        }
+        Update: {
+          artwork_id?: string
+          confidence_score?: number
+          created_at?: string
+          detected_at?: string
+          id?: string
+          match_type?: string
+          metadata?: Json | null
+          platform?: string
+          session_id?: string
+          source_domain?: string | null
+          source_url?: string
+          threat_level?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "realtime_matches_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "realtime_scan_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       realtime_monitoring_sessions: {
         Row: {
           created_at: string
@@ -6341,6 +6436,101 @@ export type Database = {
           timestamp?: string
         }
         Relationships: []
+      }
+      realtime_scan_sessions: {
+        Row: {
+          artwork_count: number
+          completed_at: string | null
+          created_at: string
+          error_message: string | null
+          id: string
+          platforms: string[]
+          platforms_scanned: number
+          priority: string
+          scan_type: string
+          started_at: string | null
+          status: string
+          total_matches: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          artwork_count?: number
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          platforms?: string[]
+          platforms_scanned?: number
+          priority?: string
+          scan_type: string
+          started_at?: string | null
+          status?: string
+          total_matches?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          artwork_count?: number
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          platforms?: string[]
+          platforms_scanned?: number
+          priority?: string
+          scan_type?: string
+          started_at?: string | null
+          status?: string
+          total_matches?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      realtime_scan_updates: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          high_threats: number
+          id: string
+          matches_found: number
+          platform: string
+          scan_duration_ms: number | null
+          scan_timestamp: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          high_threats?: number
+          id?: string
+          matches_found?: number
+          platform: string
+          scan_duration_ms?: number | null
+          scan_timestamp?: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          high_threats?: number
+          id?: string
+          matches_found?: number
+          platform?: string
+          scan_duration_ms?: number | null
+          scan_timestamp?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "realtime_scan_updates_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "realtime_scan_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       scan_execution_log: {
         Row: {
