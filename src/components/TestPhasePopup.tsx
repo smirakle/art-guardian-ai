@@ -53,7 +53,7 @@ export const TestPhasePopup = ({
                 TSMO Test Phase
               </DialogTitle>
               <DialogDescription className="text-base mt-2">
-                TSMO Watch is in Production Beta with Phase 2 (Blockchain) and Phase 3 (Multi-Modal AI) fully operational. Phase 1 (Core Protection) coming soon. Please test active features and share your feedback.
+                TSMO is currently in the TEST phase. Please review the site and complete this form to provide your feedback. On the bottom of the form, please state what kind of artist you are and how long you have been producing artwork.
               </DialogDescription>
             </div>
             <Button

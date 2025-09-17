@@ -475,13 +475,13 @@ const Index = () => {
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <Badge variant="outline" className="text-yellow-700 border-yellow-300 mb-6 px-4 py-2 text-lg">
-              🚀 Production Beta - Phase 2 & 3 Active
+              🚀 Beta Testing Phase - Join Early Access
             </Badge>
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-yellow-800">
               Platform Development Status
             </h2>
             <p className="text-xl text-yellow-700 max-w-3xl mx-auto">
-              Phase 2 (Blockchain) and Phase 3 (Multi-Modal AI) are fully operational. Phase 1 (Core Protection) launching soon.
+              Core protection features are live and working. Advanced automation features are being rolled out weekly.
             </p>
           </div>
           
@@ -498,31 +498,31 @@ const Index = () => {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="bg-white/80 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <Link2 className="h-5 w-5 text-green-600" />
-                      <span className="font-semibold text-green-800">Blockchain Registry</span>
+                      <Upload className="h-5 w-5 text-green-600" />
+                      <span className="font-semibold text-green-800">Image Protection</span>
                     </div>
-                    <p className="text-sm text-green-700">Immutable ownership certificates with smart contracts</p>
+                    <p className="text-sm text-green-700">Upload and analyze artwork with AI protection layers</p>
                   </div>
                   <div className="bg-white/80 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <Scale className="h-5 w-5 text-green-600" />
-                      <span className="font-semibold text-green-800">Legal Network</span>
+                      <Eye className="h-5 w-5 text-green-600" />
+                      <span className="font-semibold text-green-800">Monitoring System</span>
                     </div>
-                    <p className="text-sm text-green-700">Global legal action in 25+ countries</p>
+                    <p className="text-sm text-green-700">Track violations across major platforms</p>
                   </div>
                   <div className="bg-white/80 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <Zap className="h-5 w-5 text-green-600" />
-                      <span className="font-semibold text-green-800">Multi-Modal AI</span>
+                      <FileText className="h-5 w-5 text-green-600" />
+                      <span className="font-semibold text-green-800">Legal Templates</span>
                     </div>
-                    <p className="text-sm text-green-700">Voice, video, and 3D content protection</p>
+                    <p className="text-sm text-green-700">DMCA and takedown notice templates</p>
                   </div>
                   <div className="bg-white/80 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
                       <Users className="h-5 w-5 text-green-600" />
-                      <span className="font-semibold text-green-800">Creator Economy</span>
+                      <span className="font-semibold text-green-800">Portfolio Management</span>
                     </div>
-                    <p className="text-sm text-green-700">OnlyFans, Patreon, Instagram integrations</p>
+                    <p className="text-sm text-green-700">Organize and manage your protected works</p>
                   </div>
                 </div>
               </CardContent>
@@ -533,38 +533,38 @@ const Index = () => {
                 <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Activity className="h-8 w-8 text-white" />
                 </div>
-                <CardTitle className="text-2xl text-orange-800">🔧 Phase 1 Coming Soon</CardTitle>
-                <CardDescription className="text-orange-700">Core protection features launching next</CardDescription>
+                <CardTitle className="text-2xl text-orange-800">🔧 Coming Soon</CardTitle>
+                <CardDescription className="text-orange-700">Rolling out in the next 30 days</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="bg-white/80 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <Upload className="h-5 w-5 text-orange-600" />
-                      <span className="font-semibold text-orange-800">Image Monitoring</span>
-                    </div>
-                    <p className="text-sm text-orange-700">Upload and monitor images across the web</p>
-                  </div>
-                  <div className="bg-white/80 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Eye className="h-5 w-5 text-orange-600" />
-                      <span className="font-semibold text-orange-800">Deepfake Detection</span>
-                    </div>
-                    <p className="text-sm text-orange-700">AI detection of manipulated content</p>
-                  </div>
-                  <div className="bg-white/80 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Search className="h-5 w-5 text-orange-600" />
-                      <span className="font-semibold text-orange-800">Forgery Detection</span>
-                    </div>
-                    <p className="text-sm text-orange-700">Detect forged documents and content</p>
-                  </div>
-                  <div className="bg-white/80 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
                       <Zap className="h-5 w-5 text-orange-600" />
                       <span className="font-semibold text-orange-800">Auto Takedowns</span>
                     </div>
-                    <p className="text-sm text-orange-700">Automated DMCA filing and reporting</p>
+                    <p className="text-sm text-orange-700">Automated DMCA filing and platform reporting</p>
+                  </div>
+                  <div className="bg-white/80 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Globe className="h-5 w-5 text-orange-600" />
+                      <span className="font-semibold text-orange-800">Real-time Scanning</span>
+                    </div>
+                    <p className="text-sm text-orange-700">Instant detection across all platforms</p>
+                  </div>
+                  <div className="bg-white/80 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Lock className="h-5 w-5 text-orange-600" />
+                      <span className="font-semibold text-orange-800">Blockchain Registry</span>
+                    </div>
+                    <p className="text-sm text-orange-700">Immutable ownership certificates</p>
+                  </div>
+                  <div className="bg-white/80 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Bot className="h-5 w-5 text-orange-600" />
+                      <span className="font-semibold text-orange-800">AI Training Protection</span>
+                    </div>
+                    <p className="text-sm text-orange-700">StyleCloak anti-training technology</p>
                   </div>
                 </div>
               </CardContent>
