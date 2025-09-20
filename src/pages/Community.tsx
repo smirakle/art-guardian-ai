@@ -124,36 +124,36 @@ const Community = () => {
           type: "article",
           url: "https://www.copyright.gov/what-is-copyright/"
         },
-        {
-          title: "Understanding Fair Use",
-          description: "Learn the four factors of fair use and how they apply to artistic works",
-          type: "video",
-          url: "https://www.youtube.com/watch?v=1Jwo5qc78QU"
-        },
-        {
-          title: "Work for Hire vs. Independent Contractor",
-          description: "Essential knowledge for artists working with clients and employers",
-          type: "guide",
-          url: "https://www.copyright.gov/circs/circ09.pdf"
-        }
+         {
+           title: "Understanding Fair Use",
+           description: "Learn the four factors of fair use and how they apply to artistic works",
+           type: "video",
+           url: "https://www.copyright.gov/fair-use/"
+         },
+         {
+           title: "Work for Hire vs. Independent Contractor",
+           description: "Essential knowledge for artists working with clients and employers",
+           type: "guide",
+           url: "https://www.nolo.com/legal-encyclopedia/work-made-hire-rule.html"
+         }
       ]
     },
     {
       category: "Digital Protection Strategies",
       icon: Shield,
       resources: [
-        {
-          title: "Digital Watermarking Best Practices",
-          description: "How to effectively watermark your digital artwork without compromising aesthetics",
-          type: "tutorial",
-          url: "https://helpx.adobe.com/photoshop/using/add-watermarks-images.html"
-        },
-        {
-          title: "Online Portfolio Security",
-          description: "Protecting your work when sharing online - resolution, metadata, and licensing",
-          type: "checklist",
-          url: "https://www.adobe.com/creativecloud/business/teams/resources/how-to-protect-your-creative-work.html"
-        },
+         {
+           title: "Digital Watermarking Best Practices",
+           description: "How to effectively watermark your digital artwork without compromising aesthetics",
+           type: "tutorial",
+           url: "https://www.canva.com/learn/how-to-watermark-photos/"
+         },
+         {
+           title: "Online Portfolio Security",
+           description: "Protecting your work when sharing online - resolution, metadata, and licensing",
+           type: "checklist",
+           url: "https://blog.format.com/how-to-protect-your-photography-online/"
+         },
         {
           title: "Social Media Copyright Protection",
           description: "Understanding platform policies and protecting your work on social media",
