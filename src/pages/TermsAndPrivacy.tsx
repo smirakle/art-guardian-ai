@@ -30,7 +30,7 @@ const TermsAndPrivacy = () => {
               <section>
                 <h3 className="text-xl font-semibold mb-3">1. Acceptance of Terms</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  By accessing and using TSMO (The Social Media Oracle) platform, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
+                  By accessing and using TSMO Technology, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
                 </p>
               </section>
 
