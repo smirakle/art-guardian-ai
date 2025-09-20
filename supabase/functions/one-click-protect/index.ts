@@ -43,12 +43,23 @@ serve(async (req) => {
       return json({ error: 'Unauthorized' }, 401)
     }
 
-    // Basic payload
-    const { title, source, file_url, metadata } = body
-    const notifTitle = title || 'One-Click Protection Initiated'
-    const notifMsg = source
-      ? `Protection requested from ${source}${file_url ? ` for ${file_url}` : ''}`
-      : 'Protection request received from extension.'
+    // Handle both extension payload and case management payload
+    const { title, source, file_url, metadata, caseId, protectionTypes, targetPlatforms, infringingUrls, customMessage, automationSettings } = body
+    
+    let notifTitle: string
+    let notifMsg: string
+    
+    if (caseId) {
+      // Case management payload
+      notifTitle = 'Protection Actions Initiated'
+      notifMsg = `${protectionTypes?.length || 0} protection actions started for case ${caseId}`
+    } else {
+      // Extension payload
+      notifTitle = title || 'One-Click Protection Initiated'
+      notifMsg = source
+        ? `Protection requested from ${source}${file_url ? ` for ${file_url}` : ''}`
+        : 'Protection request received from extension.'
+    }
 
     // Create high-level notification so the user sees immediate feedback
     await supabase.rpc('create_ai_protection_notification', {
@@ -66,9 +77,16 @@ serve(async (req) => {
     await supabase.rpc('log_ai_protection_action', {
       user_id_param: userId,
       action_param: 'one_click_protect',
-      resource_type_param: 'extension',
-      resource_id_param: file_url ?? null,
-      details_param: {
+      resource_type_param: caseId ? 'case_management' : 'extension',
+      resource_id_param: caseId ?? file_url ?? null,
+      details_param: caseId ? {
+        caseId,
+        protectionTypes,
+        targetPlatforms,
+        infringingUrls,
+        customMessage,
+        automationSettings
+      } : {
         source: source ?? 'unknown',
         file_url: file_url ?? null,
         metadata: metadata ?? {},
