@@ -146,19 +146,19 @@ const Community = () => {
           title: "Digital Watermarking Best Practices",
           description: "How to effectively watermark your digital artwork without compromising aesthetics",
           type: "tutorial",
-          url: "#"
+          url: "https://helpx.adobe.com/photoshop/using/add-watermarks-images.html"
         },
         {
           title: "Online Portfolio Security",
           description: "Protecting your work when sharing online - resolution, metadata, and licensing",
           type: "checklist",
-          url: "#"
+          url: "https://www.adobe.com/creativecloud/business/teams/resources/how-to-protect-your-creative-work.html"
         },
         {
           title: "Social Media Copyright Protection",
           description: "Understanding platform policies and protecting your work on social media",
           type: "guide",
-          url: "#"
+          url: "https://blog.hootsuite.com/social-media-copyright/"
         }
       ]
     },
@@ -176,13 +176,13 @@ const Community = () => {
           title: "Cease & Desist Letters",
           description: "When and how to send cease and desist letters for copyright infringement",
           type: "template",
-          url: "#"
+          url: "https://www.nolo.com/legal-encyclopedia/cease-desist-letter-stop-copyright-infringement-30063.html"
         },
         {
           title: "Working with IP Attorneys",
           description: "What to expect when hiring legal help for copyright issues",
           type: "guide",
-          url: "#"
+          url: "https://www.americanbar.org/groups/intellectual_property_law/resources/consumer_guide/"
         }
       ]
     },
