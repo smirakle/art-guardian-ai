@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import { useCommunity } from "@/hooks/useCommunity";
 import { formatDistanceToNow } from "date-fns";
+import { ComingSoon } from "@/components/ComingSoon";
 
 const Community = () => {
   const { posts, expertAdvice, loading, createPost, toggleLike, getStats } = useCommunity();
@@ -1383,177 +1384,27 @@ The global creative economy offers tremendous opportunities for artists willing 
               </TabsContent>
 
               <TabsContent value="experts" className="space-y-6">
-                {expertAdvice.length === 0 ? (
-                  <Card>
-                    <CardContent className="pt-6 text-center">
-                      <Star className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                      <h3 className="text-lg font-semibold mb-2">No expert advice yet</h3>
-                      <p className="text-muted-foreground">
-                        Expert advice will appear here as our community grows.
-                      </p>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  expertAdvice.map((advice) => (
-                    <Card key={advice.id}>
-                      <CardHeader>
-                        <div className="flex items-center gap-3">
-                          <Avatar>
-                            <AvatarFallback>
-                              {advice.expert_profiles?.expert_name?.[0] || 'E'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <h3 className="font-semibold">
-                              {advice.expert_profiles?.expert_name || 'Expert'}
-                              {advice.expert_profiles?.is_verified && (
-                                <Star className="w-4 h-4 inline ml-1 text-yellow-500" />
-                              )}
-                            </h3>
-                            <p className="text-sm text-muted-foreground">
-                              {advice.expert_profiles?.role || 'Expert'}
-                            </p>
-                          </div>
-                          <Badge className="ml-auto">{advice.category}</Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground mb-4">
-                          "{advice.advice}"
-                        </blockquote>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <ThumbsUp className="w-4 h-4" />
-                          {advice.likes_count} found this helpful
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))
-                )}
+                <ComingSoon 
+                  title="Expert Advice"
+                  description="Connect with verified IP law experts and industry professionals who will provide personalized guidance for your creative protection needs."
+                  icon={<Star className="w-12 h-12 text-muted-foreground" />}
+                />
               </TabsContent>
 
               <TabsContent value="education" className="space-y-6">
-                {educationalResources.map((category, categoryIndex) => {
-                  const Icon = category.icon;
-                  return (
-                    <Card key={categoryIndex}>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <Icon className="w-5 h-5 text-primary" />
-                          {category.category}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        {category.resources.map((resource, resourceIndex) => {
-                          const getTypeIcon = (type: string) => {
-                            switch (type) {
-                              case 'video': return Video;
-                              case 'guide': 
-                              case 'tutorial': 
-                              case 'course': return BookOpen;
-                              case 'template':
-                              case 'templates':
-                              case 'checklist': return Download;
-                              default: return FileText;
-                            }
-                          };
-                          const TypeIcon = getTypeIcon(resource.type);
-                          
-                          return (
-                            <div key={resourceIndex} className="flex items-start gap-3 p-4 border border-border rounded-lg hover:bg-secondary/50 transition-colors">
-                              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                                <TypeIcon className="w-5 h-5 text-primary" />
-                              </div>
-                              <div className="flex-1">
-                                <div className="flex items-start justify-between mb-2">
-                                  <h4 className="font-medium">{resource.title}</h4>
-                                  <Badge variant="secondary" className="text-xs">
-                                    {resource.type}
-                                  </Badge>
-                                </div>
-                                <p className="text-sm text-muted-foreground mb-3">{resource.description}</p>
-                                 <Button
-                                   variant="outline"
-                                   size="sm"
-                                   onClick={() => {
-                                     if (resource.url === 'internal-guide') {
-                                       navigate('/legal-templates');
-                                     } else if (resource.url !== '#') {
-                                       try {
-                                         const newWindow = window.open(resource.url, '_blank', 'noopener,noreferrer');
-                                         if (!newWindow) {
-                                           // Fallback if popup blocked
-                                           window.location.href = resource.url;
-                                         }
-                                       } catch (error) {
-                                         // Final fallback
-                                         window.location.href = resource.url;
-                                       }
-                                     }
-                                   }}
-                                   className="text-xs"
-                                   disabled={resource.url === '#'}
-                                 >
-                                  <ExternalLink className="w-3 h-3 mr-1" />
-                                  {resource.url === '#' ? 'Coming Soon' : resource.url === 'internal-guide' ? 'View Templates' : 'Access Resource'}
-                                </Button>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </CardContent>
-                    </Card>
-                  );
-                })}
+                <ComingSoon 
+                  title="Educational Resources"
+                  description="Comprehensive learning materials covering copyright law, digital protection strategies, licensing, and legal action guidance will be available soon."
+                  icon={<GraduationCap className="w-12 h-12 text-muted-foreground" />}
+                />
               </TabsContent>
 
               <TabsContent value="legal" className="space-y-6">
-                {legalResources.map((category, categoryIndex) => {
-                  const Icon = category.icon;
-                  return (
-                    <Card key={categoryIndex}>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <Icon className="w-5 h-5 text-primary" />
-                          {category.category}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        {category.resources.map((resource, resourceIndex) => (
-                          <div key={resourceIndex} className="flex items-start gap-3 p-3 border border-border rounded-lg hover:bg-secondary/50 transition-colors">
-                            <div className="flex-1">
-                              <h4 className="font-medium mb-1">{resource.title}</h4>
-                              <p className="text-sm text-muted-foreground mb-2">{resource.description}</p>
-                               <Button
-                                 variant="outline"
-                                 size="sm"
-                                 onClick={() => {
-                                   if (resource.url === 'internal-guide') {
-                                     navigate('/legal-templates');
-                                   } else {
-                                     try {
-                                       const newWindow = window.open(resource.url, '_blank', 'noopener,noreferrer');
-                                       if (!newWindow) {
-                                         // Fallback if popup blocked
-                                         window.location.href = resource.url;
-                                       }
-                                     } catch (error) {
-                                       // Final fallback
-                                       window.location.href = resource.url;
-                                     }
-                                   }
-                                 }}
-                                 className="text-xs"
-                               >
-                                <ExternalLink className="w-3 h-3 mr-1" />
-                                {resource.url === 'internal-guide' ? 'View Templates' : 'Visit Resource'}
-                              </Button>
-                            </div>
-                          </div>
-                        ))}
-                      </CardContent>
-                    </Card>
-                  );
-                })}
+                <ComingSoon 
+                  title="Legal Resources"
+                  description="Access to legal templates, pro bono services, and comprehensive guides for copyright registration and intellectual property protection."
+                  icon={<Scale className="w-12 h-12 text-muted-foreground" />}
+                />
               </TabsContent>
             </Tabs>
           </div>
