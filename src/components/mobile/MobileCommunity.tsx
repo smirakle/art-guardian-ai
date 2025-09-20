@@ -40,15 +40,6 @@ export const MobileCommunity = () => {
 
   const handleSubmitPost = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please log in to create a post",
-        variant: "destructive"
-      });
-      return;
-    }
 
     if (!newPost.title.trim() || !newPost.content.trim()) {
       toast({
@@ -133,16 +124,14 @@ export const MobileCommunity = () => {
           </div>
 
           {/* Create Post Button */}
-          {user && (
-            <Button
-              onClick={() => setShowCreateForm(!showCreateForm)}
-              className="w-full mb-4"
-              variant={showCreateForm ? "secondary" : "default"}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              {showCreateForm ? "Cancel" : "Create Post"}
-            </Button>
-          )}
+          <Button
+            onClick={() => setShowCreateForm(!showCreateForm)}
+            className="w-full mb-4"
+            variant={showCreateForm ? "secondary" : "default"}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            {showCreateForm ? "Cancel" : "Create Post"}
+          </Button>
 
           {/* Create Post Form */}
           {showCreateForm && (
@@ -215,7 +204,7 @@ export const MobileCommunity = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-sm font-medium truncate">
-                          {post.profiles?.full_name || post.profiles?.username || 'Anonymous'}
+                          {post.user_id ? (post.profiles?.full_name || post.profiles?.username || 'User') : 'Anonymous'}
                         </span>
                         <Badge variant="secondary" className="text-xs">
                           {post.category}

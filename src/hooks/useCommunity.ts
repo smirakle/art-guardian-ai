@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 export interface CommunityPost {
   id: string;
-  user_id: string;
+  user_id: string | null;
   title: string;
   content: string;
   category: string;
@@ -70,12 +70,12 @@ export const useCommunity = () => {
 
       if (error) throw error;
 
-      // Get profiles for all posts
-      const userIds = data?.map(post => post.user_id) || [];
-      const { data: profilesData } = await supabase
+      // Get profiles for all posts (excluding null user_ids)
+      const userIds = data?.map(post => post.user_id).filter(id => id !== null) || [];
+      const { data: profilesData } = userIds.length > 0 ? await supabase
         .from('profiles')
         .select('user_id, full_name, username')
-        .in('user_id', userIds);
+        .in('user_id', userIds) : { data: [] };
 
       // Get user likes if authenticated
       let userLikes: string[] = [];
@@ -135,19 +135,10 @@ export const useCommunity = () => {
   };
 
   const createPost = async (title: string, content: string, category: string) => {
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please log in to create a post",
-        variant: "destructive"
-      });
-      return false;
-    }
-
     try {
       const { data, error } = await supabase
         .from('community_posts')
-        .insert({ title, content, category, user_id: user.id })
+        .insert({ title, content, category, user_id: user?.id || null })
         .select()
         .single();
 
@@ -169,9 +160,9 @@ export const useCommunity = () => {
   const toggleLike = async (postId: string) => {
     if (!user) {
       toast({
-        title: "Authentication Required",
-        description: "Please log in to like posts",
-        variant: "destructive"
+        title: "Sign in to Like",
+        description: "Create an account to like posts and track your activity",
+        variant: "default"
       });
       return;
     }
