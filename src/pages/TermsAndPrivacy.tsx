@@ -243,13 +243,10 @@ const TermsAndPrivacy = () => {
               <section>
                 <h3 className="text-xl font-semibold mb-3">4. Registered DMCA Agent</h3>
                 <div className="bg-muted p-4 rounded-lg">
-                  <p className="font-medium">DMCA Agent: Legal Department</p>
-                  <p className="text-muted-foreground">Email: dmca@tsmo.platform</p>
+                  <p className="font-medium">DMCA Agent: Coming Soon</p>
+                  <p className="text-muted-foreground">Email: Coming Soon</p>
                   <p className="text-muted-foreground">
-                    Address: TSMO Platform DMCA Agent<br />
-                    123 Innovation Drive<br />
-                    Tech City, TC 12345<br />
-                    United States
+                    Address: Coming Soon
                   </p>
                 </div>
               </section>
@@ -292,7 +289,7 @@ const TermsAndPrivacy = () => {
                 </div>
                 <div>
                   <p className="font-medium">DMCA Agent</p>
-                  <p className="text-muted-foreground">dmca@tsmo.platform</p>
+                  <p className="text-muted-foreground">Coming Soon</p>
                 </div>
                 <div>
                   <p className="font-medium">Privacy Officer</p>
