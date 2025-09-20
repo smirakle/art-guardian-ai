@@ -268,7 +268,7 @@ const DemoScriptDownload = () => {
           <CardTitle className="text-2xl">Demo Video Script</CardTitle>
         </div>
         <CardDescription>
-          Professional 5-minute TSMO platform demonstration script
+          Professional 5-minute TSMO Technology demonstration script
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">

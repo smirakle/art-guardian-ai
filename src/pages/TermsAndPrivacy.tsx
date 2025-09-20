@@ -10,7 +10,7 @@ const TermsAndPrivacy = () => {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-4">Terms of Service & Privacy Policy</h1>
           <p className="text-lg text-muted-foreground">
-            Your rights and responsibilities when using TSMO platform
+            Your rights and responsibilities when using TSMO Technology
           </p>
           <Badge variant="secondary" className="mt-2">
             Last Updated: {new Date().toLocaleDateString()}
@@ -37,12 +37,12 @@ const TermsAndPrivacy = () => {
               <section>
                 <h3 className="text-xl font-semibold mb-3">2. Use License</h3>
                 <p className="text-muted-foreground leading-relaxed mb-3">
-                  Permission is granted to temporarily use TSMO platform for personal and commercial use. This is the grant of a license, not a transfer of title, and under this license you may not:
+                  Permission is granted to temporarily use TSMO Technology for personal and commercial use. This is the grant of a license, not a transfer of title, and under this license you may not:
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                   <li>Modify or copy the materials</li>
                   <li>Use the materials for any commercial purpose or for any public display</li>
-                  <li>Attempt to reverse engineer any software contained on TSMO platform</li>
+                  <li>Attempt to reverse engineer any software contained on TSMO Technology</li>
                   <li>Remove any copyright or other proprietary notations from the materials</li>
                 </ul>
               </section>
@@ -77,14 +77,14 @@ const TermsAndPrivacy = () => {
               <section>
                 <h3 className="text-xl font-semibold mb-3">6. Disclaimer</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  The materials on TSMO platform are provided on an 'as is' basis. TSMO makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.
+                  The materials on TSMO Technology are provided on an 'as is' basis. TSMO makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.
                 </p>
               </section>
 
               <section>
                 <h3 className="text-xl font-semibold mb-3">7. Limitations</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  In no event shall TSMO or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on TSMO platform, even if TSMO or its authorized representative has been notified orally or in writing of the possibility of such damage.
+                  In no event shall TSMO or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on TSMO Technology, even if TSMO or its authorized representative has been notified orally or in writing of the possibility of such damage.
                 </p>
               </section>
             </CardContent>
@@ -215,7 +215,7 @@ const TermsAndPrivacy = () => {
               <section>
                 <h3 className="text-xl font-semibold mb-3">1. Copyright Notice</h3>
                 <p className="text-muted-foreground leading-relaxed mb-3">
-                  All content, software, documentation, and materials on the TSMO Platform are protected by copyright law and are the exclusive property of TSMO Platform. This includes but is not limited to:
+                  All content, software, documentation, and materials on the TSMO Technology are protected by copyright law and are the exclusive property of TSMO Technology. This includes but is not limited to:
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                   <li>Source code, algorithms, and software architecture</li>
@@ -229,14 +229,14 @@ const TermsAndPrivacy = () => {
               <section>
                 <h3 className="text-xl font-semibold mb-3">2. All Rights Reserved License</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  This software is proprietary and confidential. All rights are reserved by TSMO Platform. Any use, reproduction, distribution, or modification of this software without explicit written permission is strictly prohibited and may result in severe civil and criminal penalties.
+                  This software is proprietary and confidential. All rights are reserved by TSMO Technology. Any use, reproduction, distribution, or modification of this software without explicit written permission is strictly prohibited and may result in severe civil and criminal penalties.
                 </p>
               </section>
 
               <section>
                 <h3 className="text-xl font-semibold mb-3">3. DMCA Compliance</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  TSMO Platform respects intellectual property rights and complies with the Digital Millennium Copyright Act (DMCA). If you believe your copyrighted work has been infringed upon, please file a DMCA notice through our <a href="/dmca-center" className="text-primary hover:underline">DMCA Center</a>.
+                  TSMO Technology respects intellectual property rights and complies with the Digital Millennium Copyright Act (DMCA). If you believe your copyrighted work has been infringed upon, please file a DMCA notice through our <a href="/dmca-center" className="text-primary hover:underline">DMCA Center</a>.
                 </p>
               </section>
 
@@ -254,7 +254,7 @@ const TermsAndPrivacy = () => {
               <section>
                 <h3 className="text-xl font-semibold mb-3">5. Enforcement Policy</h3>
                 <p className="text-muted-foreground leading-relaxed mb-3">
-                  TSMO Platform actively monitors for unauthorized use of our intellectual property and will pursue all available legal remedies against infringers, including but not limited to:
+                  TSMO Technology actively monitors for unauthorized use of our intellectual property and will pursue all available legal remedies against infringers, including but not limited to:
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-muted-foreground">
                   <li>Cease and desist notifications</li>
@@ -267,7 +267,7 @@ const TermsAndPrivacy = () => {
               <section>
                 <h3 className="text-xl font-semibold mb-3">6. Licensing Inquiries</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  For authorized licensing of TSMO Platform technology or content, please contact our legal department at <a href="mailto:shirleenacunningham@tsmowatch.com" className="text-primary hover:underline">shirleenacunningham@tsmowatch.com</a> with detailed information about your intended use.
+                  For authorized licensing of TSMO Technology or content, please contact our legal department at <a href="mailto:shirleenacunningham@tsmowatch.com" className="text-primary hover:underline">shirleenacunningham@tsmowatch.com</a> with detailed information about your intended use.
                 </p>
               </section>
             </CardContent>
@@ -298,7 +298,7 @@ const TermsAndPrivacy = () => {
                 <div>
                   <p className="font-medium">Mailing Address</p>
                   <p className="text-muted-foreground">
-                    TSMO Platform Legal Department<br />
+                     TSMO Technology Legal Department<br />
                     123 Innovation Drive<br />
                     Tech City, TC 12345<br />
                     United States

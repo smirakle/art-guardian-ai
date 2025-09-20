@@ -330,7 +330,7 @@ const MeetingScheduler = () => {
             <CardContent className="p-4">
               <h4 className="font-semibold mb-2">Meeting Types:</h4>
               <div className="space-y-1 text-sm text-muted-foreground">
-                <div><strong>Product Demo:</strong> 30-45 min live demonstration of TSMO platform</div>
+                <div><strong>Product Demo:</strong> 30-45 min live demonstration of TSMO Technology</div>
                 <div><strong>Investor Meeting:</strong> 60 min comprehensive presentation with Q&A</div>
                 <div><strong>Partnership:</strong> 45 min discussion about potential collaborations</div>
                 <div><strong>Enterprise Consultation:</strong> 60 min tailored enterprise solution review</div>

@@ -25,7 +25,7 @@ const DemoEnvironment = () => {
   const [scanProgress, setScanProgress] = useState(0);
 
   const demoSteps = [
-    { title: "Upload Protected Content", description: "Artist uploads their artwork to TSMO platform" },
+    { title: "Upload Protected Content", description: "Artist uploads their artwork to TSMO Technology" },
     { title: "AI Fingerprinting", description: "Our AI creates unique fingerprints for protection" },
     { title: "Real-time Monitoring", description: "System scans 70+ platforms continuously" },
     { title: "Violation Detection", description: "Unauthorized use detected on multiple platforms" },

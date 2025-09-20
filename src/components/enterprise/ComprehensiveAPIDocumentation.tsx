@@ -577,7 +577,7 @@ export default function ComprehensiveAPIDocumentation() {
           <Card>
             <CardHeader>
               <CardTitle>API Authentication</CardTitle>
-              <CardDescription>Secure access to the TSMO platform</CardDescription>
+              <CardDescription>Secure access to the TSMO Technology</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid md:grid-cols-2 gap-6">
@@ -1102,7 +1102,7 @@ curl -X POST ${baseUrl}/advanced-blockchain-registration \\
                 <h4 className="font-semibold">White-label Solutions</h4>
                 <div className="bg-muted/30 p-4 rounded-lg">
                   <p className="text-sm text-muted-foreground mb-3">
-                    Complete white-label deployment of the TSMO platform under your brand:
+                    Complete white-label deployment of the TSMO Technology under your brand:
                   </p>
                   <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
                     <li>Custom domain and SSL certificates</li>
