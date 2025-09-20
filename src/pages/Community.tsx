@@ -1471,19 +1471,28 @@ The global creative economy offers tremendous opportunities for artists willing 
                                   </Badge>
                                 </div>
                                 <p className="text-sm text-muted-foreground mb-3">{resource.description}</p>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => {
-                                    if (resource.url === 'internal-guide') {
-                                      navigate('/legal-templates');
-                                    } else if (resource.url !== '#') {
-                                      window.open(resource.url, '_blank');
-                                    }
-                                  }}
-                                  className="text-xs"
-                                  disabled={resource.url === '#'}
-                                >
+                                 <Button
+                                   variant="outline"
+                                   size="sm"
+                                   onClick={() => {
+                                     if (resource.url === 'internal-guide') {
+                                       navigate('/legal-templates');
+                                     } else if (resource.url !== '#') {
+                                       try {
+                                         const newWindow = window.open(resource.url, '_blank', 'noopener,noreferrer');
+                                         if (!newWindow) {
+                                           // Fallback if popup blocked
+                                           window.location.href = resource.url;
+                                         }
+                                       } catch (error) {
+                                         // Final fallback
+                                         window.location.href = resource.url;
+                                       }
+                                     }
+                                   }}
+                                   className="text-xs"
+                                   disabled={resource.url === '#'}
+                                 >
                                   <ExternalLink className="w-3 h-3 mr-1" />
                                   {resource.url === '#' ? 'Coming Soon' : resource.url === 'internal-guide' ? 'View Templates' : 'Access Resource'}
                                 </Button>
@@ -1514,18 +1523,27 @@ The global creative economy offers tremendous opportunities for artists willing 
                             <div className="flex-1">
                               <h4 className="font-medium mb-1">{resource.title}</h4>
                               <p className="text-sm text-muted-foreground mb-2">{resource.description}</p>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                  if (resource.url === 'internal-guide') {
-                                    navigate('/legal-templates');
-                                  } else {
-                                    window.open(resource.url, '_blank');
-                                  }
-                                }}
-                                className="text-xs"
-                              >
+                               <Button
+                                 variant="outline"
+                                 size="sm"
+                                 onClick={() => {
+                                   if (resource.url === 'internal-guide') {
+                                     navigate('/legal-templates');
+                                   } else {
+                                     try {
+                                       const newWindow = window.open(resource.url, '_blank', 'noopener,noreferrer');
+                                       if (!newWindow) {
+                                         // Fallback if popup blocked
+                                         window.location.href = resource.url;
+                                       }
+                                     } catch (error) {
+                                       // Final fallback
+                                       window.location.href = resource.url;
+                                     }
+                                   }
+                                 }}
+                                 className="text-xs"
+                               >
                                 <ExternalLink className="w-3 h-3 mr-1" />
                                 {resource.url === 'internal-guide' ? 'View Templates' : 'Visit Resource'}
                               </Button>
@@ -1589,26 +1607,44 @@ The global creative economy offers tremendous opportunities for artists willing 
                 <CardTitle className="text-lg">Featured Resources</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="border border-border rounded-lg p-3 hover:bg-secondary/50 transition-colors cursor-pointer"
-                     onClick={() => window.open('https://www.copyright.gov/help/faq/faq-general.html', '_blank')}>
-                  <h4 className="font-medium mb-1 flex items-center gap-2">
-                    IP Protection Checklist
-                    <ExternalLink className="w-3 h-3 text-muted-foreground" />
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    Essential steps every artist should take
-                  </p>
-                </div>
-                <div className="border border-border rounded-lg p-3 hover:bg-secondary/50 transition-colors cursor-pointer"
-                     onClick={() => window.open('https://www.copyright.gov/registration/', '_blank')}>
-                  <h4 className="font-medium mb-1 flex items-center gap-2">
-                    Copyright Registration
-                    <ExternalLink className="w-3 h-3 text-muted-foreground" />
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    Step-by-step legal protection process
-                  </p>
-                </div>
+                 <div className="border border-border rounded-lg p-3 hover:bg-secondary/50 transition-colors cursor-pointer"
+                      onClick={() => {
+                        try {
+                          const newWindow = window.open('https://www.copyright.gov/help/faq/faq-general.html', '_blank', 'noopener,noreferrer');
+                          if (!newWindow) {
+                            window.location.href = 'https://www.copyright.gov/help/faq/faq-general.html';
+                          }
+                        } catch (error) {
+                          window.location.href = 'https://www.copyright.gov/help/faq/faq-general.html';
+                        }
+                      }}>
+                   <h4 className="font-medium mb-1 flex items-center gap-2">
+                     IP Protection Checklist
+                     <ExternalLink className="w-3 h-3 text-muted-foreground" />
+                   </h4>
+                   <p className="text-sm text-muted-foreground">
+                     Essential steps every artist should take
+                   </p>
+                 </div>
+                 <div className="border border-border rounded-lg p-3 hover:bg-secondary/50 transition-colors cursor-pointer"
+                      onClick={() => {
+                        try {
+                          const newWindow = window.open('https://www.copyright.gov/registration/', '_blank', 'noopener,noreferrer');
+                          if (!newWindow) {
+                            window.location.href = 'https://www.copyright.gov/registration/';
+                          }
+                        } catch (error) {
+                          window.location.href = 'https://www.copyright.gov/registration/';
+                        }
+                      }}>
+                   <h4 className="font-medium mb-1 flex items-center gap-2">
+                     Copyright Registration
+                     <ExternalLink className="w-3 h-3 text-muted-foreground" />
+                   </h4>
+                   <p className="text-sm text-muted-foreground">
+                     Step-by-step legal protection process
+                   </p>
+                 </div>
               </CardContent>
             </Card>
 

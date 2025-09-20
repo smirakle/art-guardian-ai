@@ -15,9 +15,12 @@ const SecurityHeaders = () => {
         font-src 'self' https://fonts.gstatic.com;
         img-src 'self' data: https: blob:;
         connect-src 'self' https://utneaqmbyjwxaqrrarpc.supabase.co wss://utneaqmbyjwxaqrrarpc.supabase.co;
+        child-src https:;
+        frame-src https:;
         frame-ancestors https://*.lovableproject.com;
         base-uri 'self';
-        form-action 'self';
+        form-action 'self' https:;
+        navigate-to https:;
         upgrade-insecure-requests;
       `.replace(/\s+/g, ' ').trim();
       document.head.appendChild(cspMeta);
