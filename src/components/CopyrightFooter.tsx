@@ -10,7 +10,7 @@ export const CopyrightFooter = () => {
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
             <p className="text-sm text-muted-foreground">
-              © {currentYear} TSMO Platform. All rights reserved.
+              © {currentYear} TSMO Technology. All rights reserved.
             </p>
             <div className="flex items-center space-x-4 text-xs text-muted-foreground">
               <span>Proprietary & Confidential</span>
@@ -41,7 +41,7 @@ export const CopyrightFooter = () => {
         </div>
         <div className="mt-4 pt-4 border-t text-center">
           <p className="text-xs text-muted-foreground">
-            This software is proprietary to TSMO Platform. Unauthorized reproduction, distribution, or use is strictly prohibited.
+            This software is proprietary to TSMO Technology. Unauthorized reproduction, distribution, or use is strictly prohibited.
             <br />
             For licensing inquiries: <a href="mailto:legal@tsmo.platform" className="hover:text-foreground transition-colors">legal@tsmo.platform</a>
           </p>
