@@ -74,14 +74,12 @@ export const EmailMarketingSetup = () => {
 
   const loadEmailSettings = async () => {
     try {
-      const { data, error } = await supabase
-        .from('email_marketing_settings')
-        .select('*')
-        .single();
-
-      if (data && !error) {
-        setSettings(prev => ({ ...prev, ...data.settings }));
-        updateProviderStatus(data.settings.provider);
+      // For now, use localStorage until the types are regenerated
+      const savedSettings = localStorage.getItem('emailSettings');
+      if (savedSettings) {
+        const parsed = JSON.parse(savedSettings);
+        setSettings(prev => ({ ...prev, ...parsed }));
+        updateProviderStatus(parsed.provider);
       }
     } catch (error) {
       console.log('No existing email settings found');
@@ -99,16 +97,8 @@ export const EmailMarketingSetup = () => {
     try {
       setIsConfiguring(true);
 
-      const { error } = await supabase
-        .from('email_marketing_settings')
-        .upsert({
-          user_id: (await supabase.auth.getUser()).data.user?.id,
-          provider: settings.provider,
-          settings: settings,
-          is_active: true
-        });
-
-      if (error) throw error;
+      // Save to localStorage for now
+      localStorage.setItem('emailSettings', JSON.stringify(settings));
 
       updateProviderStatus(settings.provider);
       

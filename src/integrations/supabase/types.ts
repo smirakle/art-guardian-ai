@@ -2371,6 +2371,93 @@ export type Database = {
           },
         ]
       }
+      email_marketing_campaigns: {
+        Row: {
+          bounce_count: number | null
+          campaign_data: Json | null
+          click_count: number | null
+          content: string
+          created_at: string
+          id: string
+          name: string
+          open_count: number | null
+          recipient_count: number | null
+          scheduled_at: string | null
+          sent_at: string | null
+          status: string
+          subject: string
+          unsubscribe_count: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bounce_count?: number | null
+          campaign_data?: Json | null
+          click_count?: number | null
+          content: string
+          created_at?: string
+          id?: string
+          name: string
+          open_count?: number | null
+          recipient_count?: number | null
+          scheduled_at?: string | null
+          sent_at?: string | null
+          status?: string
+          subject: string
+          unsubscribe_count?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bounce_count?: number | null
+          campaign_data?: Json | null
+          click_count?: number | null
+          content?: string
+          created_at?: string
+          id?: string
+          name?: string
+          open_count?: number | null
+          recipient_count?: number | null
+          scheduled_at?: string | null
+          sent_at?: string | null
+          status?: string
+          subject?: string
+          unsubscribe_count?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      email_marketing_settings: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          provider: string
+          settings: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          provider: string
+          settings?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          provider?: string
+          settings?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       email_notification_preferences: {
         Row: {
           copyright_alerts_enabled: boolean
