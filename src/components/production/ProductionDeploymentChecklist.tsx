@@ -475,7 +475,14 @@ export const ProductionDeploymentChecklist = () => {
                 <p className="text-muted-foreground">
                   All checklist items have been completed. Your application is ready for production deployment.
                 </p>
-                <Button size="lg" className="bg-green-600 hover:bg-green-700">
+                <Button 
+                  size="lg" 
+                  className="bg-green-600 hover:bg-green-700"
+                  onClick={() => {
+                    // In a real app, this would trigger actual deployment
+                    window.open('https://docs.lovable.dev/features/deployment', '_blank');
+                  }}
+                >
                   Deploy to Production
                 </Button>
               </>
