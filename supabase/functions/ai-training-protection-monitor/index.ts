@@ -266,28 +266,26 @@ async function scanWebForUnauthorizedUse(protectedFile: any, intelligence: Threa
     }
 
     // Also check against our real-time intelligence data
-      
-      const suspiciousMatches = intelligence.realTimeData.suspiciousActivity.filter(activity => 
-        activity.suspicious_indicators.some((indicator: string) => 
-          indicator.includes('dataset') || indicator.includes('training') || indicator.includes('images')
-        )
-      );
+    const suspiciousMatches = intelligence.realTimeData.suspiciousActivity.filter(activity => 
+      activity.suspicious_indicators.some((indicator: string) => 
+        indicator.includes('dataset') || indicator.includes('training') || indicator.includes('images')
+      )
+    );
 
-      for (const match of suspiciousMatches) {
-        violations.push({
-          violation_type: 'unauthorized_dataset_inclusion',
-          source_url: match.url,
-          source_domain: new URL(match.url).hostname,
-          confidence_score: calculateConfidenceScore(match, protectedFile),
-          evidence_data: {
-            detection_method: 'web_scraping',
-            suspicious_indicators: match.suspicious_indicators,
-            match_type: 'content_analysis',
-            timestamp: new Date().toISOString(),
-            source_description: match.description
-          }
-        });
-      }
+    for (const match of suspiciousMatches) {
+      violations.push({
+        violation_type: 'unauthorized_dataset_inclusion',
+        source_url: match.url,
+        source_domain: new URL(match.url).hostname,
+        confidence_score: calculateConfidenceScore(match, protectedFile),
+        evidence_data: {
+          detection_method: 'web_scraping',
+          suspicious_indicators: match.suspicious_indicators,
+          match_type: 'content_analysis',
+          timestamp: new Date().toISOString(),
+          source_description: match.description
+        }
+      });
     }
   } catch (error) {
     console.error('Error in web scanning:', error);
