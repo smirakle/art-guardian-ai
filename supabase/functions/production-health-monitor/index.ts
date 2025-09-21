@@ -29,7 +29,17 @@ serve(async (req) => {
       }
     );
 
-    const { action } = await req.json();
+    let action = 'full_health_check'; // Default action
+    
+    // Try to parse JSON if request has body
+    if (req.headers.get('content-type')?.includes('application/json')) {
+      try {
+        const body = await req.json();
+        action = body.action || 'full_health_check';
+      } catch (error) {
+        console.log('No JSON body provided, using default action');
+      }
+    }
     
     if (action === 'full_health_check') {
       const healthChecks: HealthCheckResult[] = [];
