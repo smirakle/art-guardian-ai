@@ -8,6 +8,6 @@ No part of this Software may be reproduced, distributed, transmitted, displayed,
 
 The Software is provided for evaluation purposes only. Any commercial use, modification, distribution, or reverse engineering of the Software is strictly prohibited without explicit written consent from TSMO Technology.
 
-For licensing inquiries, please contact: shirleenacunningham@tsmowatch.com
+For licensing inquiries, please contact: shirleena.cuningham@tsmowatch.com
 
 DISCLAIMER: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL TSMO TECHNOLOGY BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

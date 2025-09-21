@@ -171,7 +171,7 @@ const FoundingPartnerBriefDownload = () => {
 
   const handleRequestAccess = () => {
     setAccessRequested(true);
-    window.open('mailto:shirleenacunningham@tsmowatch.com?subject=Founding Partner Brief Access Request&body=I would like to request access to the TSMO Founding Partner Brief.', '_blank');
+    window.open('mailto:shirleena.cuningham@tsmowatch.com?subject=Founding Partner Brief Access Request&body=I would like to request access to the TSMO Founding Partner Brief.', '_blank');
     
     track('founding_partner_brief_access_email', {
       location: 'investor_hub'

@@ -43,7 +43,7 @@ export const CopyrightFooter = () => {
           <p className="text-xs text-muted-foreground">
             This software is proprietary to TSMO Technology. Unauthorized reproduction, distribution, or use is strictly prohibited.
             <br />
-            For licensing inquiries: <a href="mailto:shirleenacunningham@tsmowatch.com" className="hover:text-foreground transition-colors">shirleenacunningham@tsmowatch.com</a>
+            For licensing inquiries: <a href="mailto:shirleena.cuningham@tsmowatch.com" className="hover:text-foreground transition-colors">shirleena.cuningham@tsmowatch.com</a>
           </p>
         </div>
       </div>
