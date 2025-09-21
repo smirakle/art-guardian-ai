@@ -95,10 +95,10 @@ const Contact = () => {
                   <Mail className="h-12 w-12 text-primary" />
                 </div>
                 <a 
-                  href="mailto:shirleena.cuningham@tsmowatch.com"
+                  href="mailto:shirleena.cunningham@tsmowatch.com"
                   className="text-lg font-semibold text-primary hover:text-primary/80 transition-colors"
                 >
-                  shirleena.cuningham@tsmowatch.com
+                  shirleena.cunningham@tsmowatch.com
                 </a>
                 <p className="text-muted-foreground mt-4">
                   Click to open your email client and send us a message

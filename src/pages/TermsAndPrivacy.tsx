@@ -267,7 +267,7 @@ const TermsAndPrivacy = () => {
               <section>
                 <h3 className="text-xl font-semibold mb-3">6. Licensing Inquiries</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  For authorized licensing of TSMO Technology or content, please contact our legal department at <a href="mailto:shirleena.cuningham@tsmowatch.com" className="text-primary hover:underline">shirleena.cuningham@tsmowatch.com</a> with detailed information about your intended use.
+                  For authorized licensing of TSMO Technology or content, please contact our legal department at <a href="mailto:shirleena.cunningham@tsmowatch.com" className="text-primary hover:underline">shirleena.cunningham@tsmowatch.com</a> with detailed information about your intended use.
                 </p>
               </section>
             </CardContent>
@@ -285,7 +285,7 @@ const TermsAndPrivacy = () => {
               <div className="space-y-4">
                 <div>
                   <p className="font-medium">Legal Department</p>
-                  <p className="text-muted-foreground">shirleena.cuningham@tsmowatch.com</p>
+                  <p className="text-muted-foreground">shirleena.cunningham@tsmowatch.com</p>
                 </div>
                 <div>
                   <p className="font-medium">DMCA Agent</p>

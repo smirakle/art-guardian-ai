@@ -122,7 +122,7 @@ serve(async (req: Request): Promise<Response> => {
     // Send email to sales team
     const salesEmailResponse = await resend.emails.send({
       from: "TSMO Sales <noreply@tsmowatch.com>", // Use your verified domain
-      to: ["shirleena.cuningham@tsmowatch.com"],
+      to: ["shirleena.cunningham@tsmowatch.com"],
       subject: `New Sales Inquiry - ${inquiryData.interestedPlan} Plan`,
       html: `
         <h2>New Sales Inquiry</h2>
