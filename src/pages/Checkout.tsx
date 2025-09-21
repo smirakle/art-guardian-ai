@@ -55,18 +55,18 @@ const Checkout = () => {
     student: {
       name: "Student",
       price: 19,
-      features: ["Up to 25 artworks", "Basic visual recognition", "Monthly reports", "Email support"],
+      features: ["Up to 1,000 artworks", "Basic visual recognition", "Monthly reports", "Email support"],
       badge: "Student Discount"
     },
     starter: {
       name: "Starter",
       price: 29,
-      features: ["Up to 50 artworks", "Basic visual recognition", "Weekly reports", "Email support"]
+      features: ["Up to 3,500 artworks", "Basic visual recognition", "Weekly reports", "Email support"]
     },
     professional: {
       name: "Professional",
       price: 199,
-      features: ["Up to 500 artworks", "Advanced AI recognition", "Real-time monitoring", "Blockchain verification", "Deepfake detection included", "Automated DMCA", "Priority support"],
+      features: ["Up to 250,000 artworks", "Advanced AI recognition", "Real-time monitoring", "Blockchain verification", "Deepfake detection included", "Automated DMCA", "Priority support"],
       badge: "Most Popular"
     }
   };

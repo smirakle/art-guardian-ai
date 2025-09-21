@@ -172,7 +172,7 @@ const InvestorHub = () => {
                 <h4 className="font-semibold mb-1 text-sm">Student</h4>
                 <p className="text-xs text-muted-foreground mb-1">$19/month</p>
                 <ul className="text-xs text-muted-foreground list-disc pl-4 space-y-0.5">
-                  <li>50 artworks protected</li>
+                  <li>1,000 artworks protected</li>
                   <li>Basic AI monitoring</li>
                   <li>5 portfolios</li>
                 </ul>
@@ -181,7 +181,7 @@ const InvestorHub = () => {
                 <h4 className="font-semibold mb-1 text-sm">Starter</h4>
                 <p className="text-xs text-muted-foreground mb-1">$29/month</p>
                 <ul className="text-xs text-muted-foreground list-disc pl-4 space-y-0.5">
-                  <li>150 artworks protected</li>
+                  <li>3,500 artworks protected</li>
                   <li>Advanced AI monitoring</li>
                   <li>10 portfolios</li>
                 </ul>

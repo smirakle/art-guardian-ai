@@ -105,7 +105,7 @@ const Pricing = () => {
       discount: '24% OFF',
       color: 'from-blue-500 to-purple-600',
       features: [
-        'Up to 50 artworks protected',
+        'Up to 1,000 artworks protected',
         'Basic AI threat detection',
         'Portfolio monitoring (up to 5)',
         'Email alerts & notifications',
@@ -131,7 +131,7 @@ const Pricing = () => {
       discount: '25% OFF',
       color: 'from-green-500 to-emerald-600',
       features: [
-        'Up to 150 artworks protected',
+        'Up to 3,500 artworks protected',
         'Advanced AI threat monitoring',
         'AI agent deployment (up to 2 platforms)',
         'Portfolio monitoring (up to 10)',
@@ -159,7 +159,7 @@ const Pricing = () => {
       discount: '20% OFF',
       color: 'from-orange-500 to-red-600',
       features: [
-        'Up to 1,000 artworks protected',
+        'Up to 250,000 artworks protected',
         'Premium AI threat monitoring',
         'AI agent deployment (up to 10 platforms)',
         'Advanced AI predictive analysis',
