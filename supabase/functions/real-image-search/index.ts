@@ -198,11 +198,63 @@ serve(async (req) => {
         apiStatus.tineye.error = 'HMAC authentication - assumed working if keys present';
       }
       
+      // Create test artwork and scan for demonstration purposes
+      let testArtworkCreated = false;
+      let testScanCreated = false;
+      
+      try {
+        // Create a test artwork entry
+        const { data: testArtwork, error: artworkError } = await supabaseClient
+          .from('artwork')
+          .insert({
+            title: 'API Test Artwork',
+            description: 'Test artwork created for API key testing',
+            file_url: 'https://via.placeholder.com/300x300.png?text=Test+Image',
+            file_size: 10000,
+            file_type: 'image/png',
+            status: 'active',
+            user_id: (await supabaseClient.auth.getUser()).data.user?.id || '00000000-0000-0000-0000-000000000000'
+          })
+          .select()
+          .single();
+          
+        if (testArtwork && !artworkError) {
+          testArtworkCreated = true;
+          console.log('Created test artwork:', testArtwork.id);
+          
+          // Create a test scan
+          const { data: testScan, error: scanError } = await supabaseClient
+            .from('monitoring_scans')
+            .insert({
+              artwork_id: testArtwork.id,
+              scan_type: 'api_test',
+              status: 'completed',
+              started_at: new Date().toISOString(),
+              completed_at: new Date().toISOString()
+            })
+            .select()
+            .single();
+            
+          if (testScan && !scanError) {
+            testScanCreated = true;
+            console.log('Created test scan:', testScan.id);
+          } else {
+            console.error('Failed to create test scan:', scanError);
+          }
+        } else {
+          console.error('Failed to create test artwork:', artworkError);
+        }
+      } catch (error) {
+        console.error('Error creating test data:', error);
+      }
+      
       return new Response(
         JSON.stringify({ 
           success: true, 
           apiStatus,
-          totalWorking: Object.values(apiStatus).filter(api => api.working).length
+          totalWorking: Object.values(apiStatus).filter(api => api.working).length,
+          testArtworkCreated,
+          testScanCreated
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
