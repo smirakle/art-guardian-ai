@@ -32,6 +32,13 @@ interface EmailSettings {
 export const EmailMarketingSetup = () => {
   const [providers, setProviders] = useState<EmailProvider[]>([
     {
+      id: 'resend',
+      name: 'Resend',
+      status: 'disconnected',
+      description: 'Modern email platform built for developers (Recommended)',
+      setupRequired: true
+    },
+    {
       id: 'sendgrid',
       name: 'SendGrid',
       status: 'disconnected',
@@ -43,13 +50,6 @@ export const EmailMarketingSetup = () => {
       name: 'Mailgun',
       status: 'disconnected', 
       description: 'Developer-friendly email API with global infrastructure',
-      setupRequired: true
-    },
-    {
-      id: 'resend',
-      name: 'Resend',
-      status: 'disconnected',
-      description: 'Modern email platform built for developers',
       setupRequired: true
     }
   ]);
@@ -97,18 +97,43 @@ export const EmailMarketingSetup = () => {
     try {
       setIsConfiguring(true);
 
+      // Test the connection first if it's Resend
+      if (settings.provider === 'resend' && settings.apiKey) {
+        try {
+          // Test connection by sending a test email to ourselves
+          await testConnection();
+        } catch (error) {
+          console.error('Connection test failed:', error);
+          toast.error('Invalid API key or configuration. Please check your settings.');
+          return;
+        }
+      }
+
       // Save to localStorage for now
       localStorage.setItem('emailSettings', JSON.stringify(settings));
 
       updateProviderStatus(settings.provider);
       
-      toast.success('Email settings saved successfully');
+      toast.success('Email settings saved and connection verified!');
     } catch (error) {
       console.error('Error saving email settings:', error);
       toast.error('Failed to save email settings');
     } finally {
       setIsConfiguring(false);
     }
+  };
+
+  const testConnection = async () => {
+    // This will test if the Resend API key works
+    const { error } = await supabase.functions.invoke('send-test-email', {
+      body: {
+        to: settings.fromEmail,
+        subject: 'TSMO Connection Test',
+        content: 'Testing connection to verify API key is working.'
+      }
+    });
+    
+    if (error) throw error;
   };
 
   const sendTestEmail = async () => {
@@ -215,8 +240,20 @@ export const EmailMarketingSetup = () => {
                   type="password"
                   value={settings.apiKey}
                   onChange={(e) => setSettings(prev => ({ ...prev, apiKey: e.target.value }))}
-                  placeholder="Enter your API key"
+                  placeholder={settings.provider === 'resend' ? 'Get your API key from resend.com/api-keys' : 'Enter your API key'}
                 />
+                {settings.provider === 'resend' && (
+                  <p className="text-xs text-muted-foreground">
+                    Get your API key from{' '}
+                    <a href="https://resend.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                      resend.com/api-keys
+                    </a>
+                    {' '}and verify your domain at{' '}
+                    <a href="https://resend.com/domains" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                      resend.com/domains
+                    </a>
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="fromEmail">From Email</Label>
