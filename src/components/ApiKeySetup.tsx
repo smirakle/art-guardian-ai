@@ -5,6 +5,14 @@ import { ExternalLink, Key, CheckCircle } from "lucide-react";
 const ApiKeySetup = () => {
   const apiKeys = [
     {
+      name: "Google Custom Search API",
+      secretName: "GOOGLE_CUSTOM_SEARCH_API_KEY",
+      description: "🔥 REQUIRED for reverse image search functionality",
+      url: "https://developers.google.com/custom-search/v1/introduction",
+      required: true,
+      additionalSecret: "GOOGLE_SEARCH_ENGINE_ID"
+    },
+    {
       name: "OpenAI API",
       secretName: "OPENAI_API_KEY",
       description: "🔥 Primary AI-powered image analysis - REQUIRED for core functionality",
