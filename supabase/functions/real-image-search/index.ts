@@ -91,25 +91,37 @@ serve(async (req) => {
       const startTime = Date.now();
       
       // Test Google API
+      console.log('Testing Google API - API Key present:', apiStatus.google.api_key);
+      console.log('Testing Google API - Search Engine ID present:', apiStatus.google.search_engine_id);
       if (apiStatus.google.api_key && apiStatus.google.search_engine_id) {
         try {
-          const testUrl = `https://www.googleapis.com/customsearch/v1?key=${Deno.env.get('GOOGLE_CUSTOM_SEARCH_API_KEY')}&cx=${Deno.env.get('GOOGLE_SEARCH_ENGINE_ID')}&q=test&num=1`;
+          const googleApiKey = Deno.env.get('GOOGLE_CUSTOM_SEARCH_API_KEY');
+          const googleEngineId = Deno.env.get('GOOGLE_SEARCH_ENGINE_ID');
+          console.log('Google API Key length:', googleApiKey?.length || 0);
+          console.log('Google Engine ID length:', googleEngineId?.length || 0);
+          
+          const testUrl = `https://www.googleapis.com/customsearch/v1?key=${googleApiKey}&cx=${googleEngineId}&q=test&num=1`;
+          console.log('Making Google API test request...');
           const response = await fetch(testUrl);
           const responseTime = Date.now() - startTime;
+          console.log('Google API response status:', response.status);
           
           if (response.ok) {
             const data = await response.json();
+            console.log('Google API test successful, data:', JSON.stringify(data).substring(0, 200));
             apiStatus.google.status = 'working';
             apiStatus.google.working = true;
             apiStatus.google.response_time = responseTime;
             apiStatus.google.quota = data.queries?.request?.[0]?.totalResults ? 'Available' : 'Limited';
           } else {
             const errorData = await response.text();
+            console.log('Google API test failed:', response.status, errorData);
             apiStatus.google.status = 'error';
             apiStatus.google.working = false;
             apiStatus.google.error = `HTTP ${response.status}: ${errorData.substring(0, 100)}`;
           }
         } catch (error) {
+          console.log('Google API test exception:', error);
           apiStatus.google.status = 'error';
           apiStatus.google.working = false;
           apiStatus.google.error = error.message;
