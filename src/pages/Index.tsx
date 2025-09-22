@@ -1403,7 +1403,7 @@ const Index = () => {
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Up to 1,000 artworks protected</span>
+                    <span className="text-sm">Up to 250,000 artworks protected</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Check className="h-4 w-4 text-green-500" />
