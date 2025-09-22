@@ -710,7 +710,7 @@ const Index = () => {
                     }, 100);
                   }}
                 >
-                  See Pricing: $19/month
+                  See Pricing: From $19/month + AI Training Protection $49/month
                 </Button>
               </div>
             </div>

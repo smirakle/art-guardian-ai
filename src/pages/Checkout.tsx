@@ -38,7 +38,7 @@ const Checkout = () => {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
   const [paymentMethod, setPaymentMethod] = useState<"card" | "paypal">("card");
   const [socialMediaAddon, setSocialMediaAddon] = useState(false);
-  const [deepfakeAddon, setDeepfakeAddon] = useState(false);
+  const [aiTrainingAddon, setAiTrainingAddon] = useState(false);
   const [promoCode, setPromoCode] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAuthProcessing, setIsAuthProcessing] = useState(false);
@@ -87,12 +87,14 @@ const Checkout = () => {
   
   // Add social media addon cost (available for all plans)
   const socialAddonCost = socialMediaAddon ? (billingCycle === "yearly" ? 1188 : 99) : 0;
-  const startupFee = socialMediaAddon ? 199 : 0;
+  const socialStartupFee = socialMediaAddon ? 199 : 0;
   
-  // Add deepfake addon cost (not available for professional plan as it's included)
-  const deepfakeAddonCost = (deepfakeAddon && selectedPlan !== 'professional') ? (billingCycle === "yearly" ? 588 : 49) : 0;
+  // Add AI training protection addon cost (available for all plans)
+  const aiTrainingAddonCost = aiTrainingAddon ? (billingCycle === "yearly" ? 588 : 49) : 0;
+  const aiTrainingStartupFee = aiTrainingAddon ? 100 : 0;
   
-  const finalPrice = basePrice + socialAddonCost + deepfakeAddonCost;
+  const finalPrice = basePrice + socialAddonCost + aiTrainingAddonCost;
+  const totalStartupFees = socialStartupFee + aiTrainingStartupFee;
 
   const handleAuthFormChange = (field: string, value: string) => {
     setAuthForm(prev => ({ ...prev, [field]: value }));
@@ -217,7 +219,7 @@ const Checkout = () => {
           planId: selectedPlan,
           billingCycle,
           socialMediaAddon,
-          deepfakeAddon,
+          aiTrainingAddon,
           promoCode: promoCode.trim() || undefined,
           stripeCustomerId: 'demo_customer_' + Date.now(), // Demo mode
           stripeSubscriptionId: 'demo_sub_' + Date.now() // Demo mode
@@ -350,44 +352,45 @@ const Checkout = () => {
                     </div>
                   </div>
 
-                  {/* Deepfake Monitoring Add-on */}
-                  {selectedPlan !== 'professional' && (
-                    <div className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors">
-                      <div className="flex items-center space-x-3">
-                        <Checkbox 
-                          id="deepfake-addon" 
-                          checked={deepfakeAddon}
-                          onCheckedChange={(checked) => setDeepfakeAddon(!!checked)}
-                        />
-                        <Label htmlFor="deepfake-addon" className="cursor-pointer">
-                          <div className="flex items-center gap-2">
-                            <UserX className="w-4 h-4 text-primary" />
-                            <div>
-                              <div className="font-medium">Deepfake Monitoring</div>
-                              <div className="text-xs text-muted-foreground">
-                                Advanced AI-powered deepfake detection and monitoring
-                              </div>
+                  {/* AI Training Protection Add-on */}
+                  <div className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors">
+                    <div className="flex items-center space-x-3">
+                      <Checkbox 
+                        id="aitraining-addon" 
+                        checked={aiTrainingAddon}
+                        onCheckedChange={(checked) => setAiTrainingAddon(!!checked)}
+                      />
+                      <Label htmlFor="aitraining-addon" className="cursor-pointer">
+                        <div className="flex items-center gap-2">
+                          <Shield className="w-4 h-4 text-primary" />
+                          <div>
+                            <div className="font-medium">AI Training Protection</div>
+                            <div className="text-xs text-muted-foreground">
+                              Advanced protection against AI training data harvesting
+                            </div>
+                            <div className="text-xs text-orange-600 font-medium">
+                              Includes $100 one-time setup fee
                             </div>
                           </div>
-                        </Label>
-                      </div>
-                      <div className="text-sm font-medium">
-                        +${billingCycle === "yearly" ? "588" : "49"}/{billingCycle === "yearly" ? "year" : "month"}
-                      </div>
+                        </div>
+                      </Label>
                     </div>
-                  )}
+                    <div className="text-sm font-medium">
+                      +${billingCycle === "yearly" ? "588" : "49"}/{billingCycle === "yearly" ? "year" : "month"}
+                    </div>
+                  </div>
 
                   {/* Professional Plan Notice */}
                   {selectedPlan === 'professional' && (
                     <div className="p-3 border rounded-lg bg-green-50 border-green-200">
                       <div className="flex items-center gap-2">
-                        <UserX className="w-4 h-4 text-green-600" />
+                        <Shield className="w-4 h-4 text-green-600" />
                         <div className="text-sm font-medium text-green-800">
-                          Deepfake monitoring included at no extra cost!
+                          AI Training Protection included at no extra cost!
                         </div>
                       </div>
                       <div className="text-xs text-green-600 mt-1">
-                        Social media monitoring available as add-on for +$99/month
+                        Social media monitoring and AI training protection available as add-ons
                       </div>
                     </div>
                   )}
@@ -612,13 +615,13 @@ const Checkout = () => {
                   </>
                 )}
 
-                {/* Deepfake Add-on Line Item */}
-                {deepfakeAddon && selectedPlan !== 'professional' && (
+                {/* AI Training Protection Add-on Line Item */}
+                {aiTrainingAddon && (
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="font-medium flex items-center gap-2">
-                        <UserX className="w-4 h-4 text-primary" />
-                        Deepfake Monitoring
+                        <Shield className="w-4 h-4 text-primary" />
+                        AI Training Protection
                       </div>
                       <div className="text-sm text-muted-foreground">
                         Monthly/Annual subscription
@@ -629,9 +632,12 @@ const Checkout = () => {
                         +${billingCycle === "yearly" ? "588" : "49"}
                         {billingCycle === "yearly" ? "/year" : "/month"}
                       </div>
+                      <div className="font-medium text-orange-600">
+                        +$100 (one-time)
+                      </div>
                     </div>
                   </div>
-                 )}
+                )}
 
                 {/* Promo Code Section */}
                 <div className="space-y-3">
@@ -665,16 +671,16 @@ const Checkout = () => {
 
                 {/* Total */}
                 <div className="flex items-center justify-between text-lg font-bold">
-                  <span>Total {socialMediaAddon ? "(First Payment)" : ""}</span>
+                  <span>Total {(socialMediaAddon || aiTrainingAddon) ? "(First Payment)" : ""}</span>
                   <span>
-                    ${billingCycle === "yearly" ? Math.round(finalPrice + startupFee) : (finalPrice + startupFee)}
+                    ${billingCycle === "yearly" ? Math.round(finalPrice + totalStartupFees) : (finalPrice + totalStartupFees)}
                     {billingCycle === "yearly" ? "/year" : "/month"}
                   </span>
                 </div>
 
-                {socialMediaAddon && (
+                {(socialMediaAddon || aiTrainingAddon) && (
                   <div className="text-sm text-muted-foreground">
-                    * Future payments will be ${billingCycle === "yearly" ? Math.round(finalPrice) : finalPrice}{billingCycle === "yearly" ? "/year" : "/month"} (without setup fee)
+                    * Future payments will be ${billingCycle === "yearly" ? Math.round(finalPrice) : finalPrice}{billingCycle === "yearly" ? "/year" : "/month"} (without setup fees)
                   </div>
                 )}
 
