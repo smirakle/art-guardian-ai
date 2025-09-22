@@ -710,13 +710,13 @@ const Pricing = () => {
                            </div>
                          </label>
                        </div>
-                       <div className="text-xs text-muted-foreground">
-                         Monitor unlimited social media profiles for impersonation and unauthorized use. +$100/month
-                       </div>
+                        <div className="text-xs text-muted-foreground">
+                          Monitor unlimited social media profiles for impersonation and unauthorized use. +$100/month (Coming Soon)
+                        </div>
                        {socialMediaAddon[plan.id] && (
-                         <div className="bg-primary/10 p-2 rounded text-xs text-primary">
-                           ✓ Social Media Monitoring: +$100/month
-                         </div>
+                          <div className="bg-primary/10 p-2 rounded text-xs text-primary">
+                            ✓ Social Media Monitoring: +$100/month (Coming Soon)
+                          </div>
                        )}
                       </div>
                     )}
