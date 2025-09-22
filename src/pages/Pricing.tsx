@@ -692,11 +692,12 @@ const Pricing = () => {
                    {/* Social Media Addon */}
                    {plan.id !== 'enterprise' && (
                      <div className="border-t pt-4 space-y-3">
-                       <div className="flex items-center justify-between">
-                         <div className="flex items-center gap-2">
-                           <Users className="w-4 h-4 text-primary" />
-                           <span className="text-sm font-medium">Social Media Profile Monitoring</span>
-                         </div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Users className="w-4 h-4 text-primary" />
+                            <span className="text-sm font-medium">Social Media Profile Monitoring</span>
+                            <Badge variant="outline" className="text-xs">Coming Soon</Badge>
+                          </div>
                          <label className="flex items-center cursor-pointer">
                            <input
                              type="checkbox"

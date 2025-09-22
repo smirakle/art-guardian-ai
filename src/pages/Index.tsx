@@ -1277,7 +1277,10 @@ const Index = () => {
                   <div className="text-sm font-semibold text-muted-foreground">Available Add-ons:</div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm p-2 bg-blue-50 rounded">
-                      <span>Social Media Monitoring</span>
+                      <div className="flex items-center gap-2">
+                        <span>Social Media Monitoring</span>
+                        <Badge variant="outline" className="text-xs">Coming Soon</Badge>
+                      </div>
                       <div className="text-right">
                         <div className="font-semibold">$100/month</div>
                         <div className="text-xs text-muted-foreground">$199 startup fee</div>
@@ -1359,7 +1362,10 @@ const Index = () => {
                   <div className="text-sm font-semibold text-muted-foreground">Available Add-ons:</div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm p-2 bg-blue-50 rounded">
-                      <span>Social Media Monitoring</span>
+                      <div className="flex items-center gap-2">
+                        <span>Social Media Monitoring</span>
+                        <Badge variant="outline" className="text-xs">Coming Soon</Badge>
+                      </div>
                       <div className="text-right">
                         <div className="font-semibold">$100/month</div>
                         <div className="text-xs text-muted-foreground">$199 startup fee</div>
@@ -1452,7 +1458,10 @@ const Index = () => {
                   <div className="text-sm font-semibold text-muted-foreground">Available Add-ons:</div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm p-2 bg-blue-50 rounded">
-                      <span>Social Media Monitoring</span>
+                      <div className="flex items-center gap-2">
+                        <span>Social Media Monitoring</span>
+                        <Badge variant="outline" className="text-xs">Coming Soon</Badge>
+                      </div>
                       <div className="text-right">
                         <div className="font-semibold">$100/month</div>
                         <div className="text-xs text-muted-foreground">$199 startup fee</div>
