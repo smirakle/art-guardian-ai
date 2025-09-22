@@ -863,13 +863,17 @@ export type Database = {
           blockchain_hash: string | null
           blockchain_registered_at: string | null
           category: string
+          compressed_file_size: number | null
           created_at: string
           description: string | null
           enable_blockchain: boolean | null
           enable_watermark: boolean | null
           file_paths: string[]
+          file_size: number | null
           id: string
           license_type: string | null
+          original_file_size: number | null
+          processing_status: string | null
           protection_record_id: string | null
           status: string | null
           tags: string[] | null
@@ -885,13 +889,17 @@ export type Database = {
           blockchain_hash?: string | null
           blockchain_registered_at?: string | null
           category: string
+          compressed_file_size?: number | null
           created_at?: string
           description?: string | null
           enable_blockchain?: boolean | null
           enable_watermark?: boolean | null
           file_paths: string[]
+          file_size?: number | null
           id?: string
           license_type?: string | null
+          original_file_size?: number | null
+          processing_status?: string | null
           protection_record_id?: string | null
           status?: string | null
           tags?: string[] | null
@@ -907,13 +915,17 @@ export type Database = {
           blockchain_hash?: string | null
           blockchain_registered_at?: string | null
           category?: string
+          compressed_file_size?: number | null
           created_at?: string
           description?: string | null
           enable_blockchain?: boolean | null
           enable_watermark?: boolean | null
           file_paths?: string[]
+          file_size?: number | null
           id?: string
           license_type?: string | null
+          original_file_size?: number | null
+          processing_status?: string | null
           protection_record_id?: string | null
           status?: string | null
           tags?: string[] | null
@@ -959,6 +971,57 @@ export type Database = {
           metadata?: Json | null
           started_at?: string
           status?: string
+        }
+        Relationships: []
+      }
+      batch_processing_queue: {
+        Row: {
+          batch_size: number
+          completed_at: string | null
+          created_at: string | null
+          error_message: string | null
+          id: string
+          items_processed: number | null
+          metadata: Json | null
+          operation_type: string
+          progress_percentage: number | null
+          started_at: string | null
+          status: string | null
+          total_items: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          batch_size?: number
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          items_processed?: number | null
+          metadata?: Json | null
+          operation_type: string
+          progress_percentage?: number | null
+          started_at?: string | null
+          status?: string | null
+          total_items: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          batch_size?: number
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          items_processed?: number | null
+          metadata?: Json | null
+          operation_type?: string
+          progress_percentage?: number | null
+          started_at?: string | null
+          status?: string | null
+          total_items?: number
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }

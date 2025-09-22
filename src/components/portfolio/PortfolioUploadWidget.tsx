@@ -179,7 +179,7 @@ export const PortfolioUploadWidget = ({
         f.id === fileId ? { ...f, status: 'processing', progress: 100 } : f
       ));
 
-      // Create artwork record
+      // Create artwork record with file size tracking
       const artworkData = {
         user_id: user!.id,
         title: artworkTitle || file.name,
@@ -188,6 +188,9 @@ export const PortfolioUploadWidget = ({
         tags: tags.length > 0 ? tags : null,
         license_type: licenseType || null,
         file_paths: [fileName],
+        file_size: file.size,
+        original_file_size: file.size,
+        processing_status: 'processing',
         enable_watermark: enableWatermark,
         enable_blockchain: enableBlockchain,
         status: 'completed' // Mark as completed for immediate portfolio addition

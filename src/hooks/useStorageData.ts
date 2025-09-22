@@ -22,11 +22,25 @@ export const useStorageData = () => {
 
   const fetchStorageData = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke('calculate-user-storage');
+      const startTime = performance.now();
+      const { data, error } = await supabase.functions.invoke('enhanced-storage-calculator');
+      const endTime = performance.now();
       
       if (error) throw error;
       
       setStorageData(data);
+      
+      // Record performance metric
+      await supabase.from('performance_metrics').insert({
+        metric_type: 'function',
+        metric_value: endTime - startTime,
+        metric_unit: 'ms',
+        source_component: 'calculate_storage_time',
+        additional_data: {
+          storage_used_gb: data?.storage_used_gb,
+          artwork_count: data?.artwork_count
+        }
+      });
     } catch (error) {
       console.error('Error fetching storage data:', error);
       toast({
