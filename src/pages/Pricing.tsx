@@ -560,6 +560,11 @@ const Pricing = () => {
                   *Plus $199 one-time setup fee for social media monitoring
                 </div>
               )}
+              {aiTrainingAddon[plan.id] && (
+                <div className="text-xs text-muted-foreground mt-1">
+                  *Plus $100 one-time setup fee for AI training protection
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -735,14 +740,14 @@ const Pricing = () => {
                           </div>
                         </label>
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        Advanced protection against AI training data harvesting and unauthorized use. +$49/month
-                      </div>
-                       {aiTrainingAddon[plan.id] && (
-                         <div className="bg-primary/10 p-2 rounded text-xs text-primary">
-                           ✓ AI Training Protection: +$49/month
-                         </div>
-                       )}
+                       <div className="text-xs text-muted-foreground">
+                         Advanced protection against AI training data harvesting and unauthorized use. +$49/month
+                       </div>
+                        {aiTrainingAddon[plan.id] && (
+                          <div className="bg-primary/10 p-2 rounded text-xs text-primary">
+                            ✓ AI Training Protection: +$49/month + $100 setup fee
+                          </div>
+                        )}
                      </div>
                      )}
 

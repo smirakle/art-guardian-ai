@@ -29,8 +29,8 @@ serve(async (req) => {
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
     logStep("Stripe key verified");
 
-    const { planId, billingCycle, email, promoCode, socialMediaAddon, deepfakeAddon } = await req.json();
-    logStep("Request data received", { planId, billingCycle, email, promoCode, socialMediaAddon, deepfakeAddon });
+    const { planId, billingCycle, email, promoCode, socialMediaAddon, deepfakeAddon, aiTrainingAddon } = await req.json();
+    logStep("Request data received", { planId, billingCycle, email, promoCode, socialMediaAddon, deepfakeAddon, aiTrainingAddon });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
@@ -58,7 +58,12 @@ serve(async (req) => {
       amount += billingCycle === 'monthly' ? 4900 : 58800; // $49/month or $588/year
     }
     
-    logStep("Plan pricing determined", { planId, billingCycle, amount, socialMediaAddon, deepfakeAddon });
+    // Add AI training protection addon if selected (available for all plans) with startup fee
+    if (aiTrainingAddon) {
+      amount += billingCycle === 'monthly' ? 4900 : 58800; // $49/month or $588/year
+    }
+    
+    logStep("Plan pricing determined", { planId, billingCycle, amount, socialMediaAddon, deepfakeAddon, aiTrainingAddon });
 
     // Check if customer already exists
     const customers = await stripe.customers.list({ email, limit: 1 });
@@ -124,6 +129,38 @@ serve(async (req) => {
       });
     }
 
+    // Add AI training protection addon as separate line item if selected (available for all plans)
+    if (aiTrainingAddon) {
+      // Add startup fee as one-time payment
+      lineItems.push({
+        price_data: {
+          currency: "usd",
+          product_data: { 
+            name: "AI Training Protection - Setup Fee",
+            description: "One-time setup fee for AI training protection monitoring"
+          },
+          unit_amount: 10000, // $100 startup fee
+        },
+        quantity: 1,
+      });
+      
+      // Add monthly recurring fee
+      lineItems.push({
+        price_data: {
+          currency: "usd",
+          product_data: { 
+            name: "AI Training Protection",
+            description: "Advanced AI training protection and monitoring across AI platforms"
+          },
+          unit_amount: billingCycle === 'monthly' ? 4900 : 58800, // $49/month or $588/year
+          recurring: { 
+            interval: billingCycle === 'monthly' ? 'month' : 'year' 
+          },
+        },
+        quantity: 1,
+      });
+    }
+
     const sessionConfig: any = {
       customer: customerId,
       customer_email: customerId ? undefined : email,
@@ -136,6 +173,7 @@ serve(async (req) => {
         billingCycle,
         socialMediaAddon: socialMediaAddon ? 'true' : 'false',
         deepfakeAddon: deepfakeAddon ? 'true' : 'false',
+        aiTrainingAddon: aiTrainingAddon ? 'true' : 'false',
       },
     };
 
