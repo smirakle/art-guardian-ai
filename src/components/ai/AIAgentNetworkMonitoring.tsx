@@ -79,66 +79,108 @@ export const AIAgentNetworkMonitoring = () => {
     if (user) {
       loadMonitoringData();
       
-      // Set up real-time subscriptions for instant updates
-      const agentsChannel = supabase
-        .channel('ai-agents-changes')
-        .on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'ai_monitoring_agents',
-            filter: `user_id=eq.${user.id}`,
-          },
-          () => {
-            console.log('AI agents data changed, reloading...');
-            loadMonitoringData();
-          }
-        )
-        .subscribe();
+      // Set up real-time subscriptions with reconnection handling
+      const setupRealtimeSubscriptions = () => {
+        const agentsChannel = supabase
+          .channel('ai-agents-changes')
+          .on(
+            'postgres_changes',
+            {
+              event: '*',
+              schema: 'public',
+              table: 'ai_monitoring_agents',
+              filter: `user_id=eq.${user.id}`,
+            },
+            () => {
+              console.log('AI agents data changed, reloading...');
+              loadMonitoringData();
+            }
+          )
+          .on('system', {}, (payload) => {
+            console.log('AI agents channel status:', payload);
+            if (payload.type === 'system' && payload.event === 'error') {
+              console.warn('AI agents channel error, attempting reconnection...');
+              setTimeout(() => agentsChannel.subscribe(), 5000);
+            }
+          })
+          .subscribe((status) => {
+            console.log('AI agents subscription status:', status);
+          });
 
-      const threatsChannel = supabase
-        .channel('threats-changes')
-        .on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'ai_threat_detections',
-            filter: `user_id=eq.${user.id}`,
-          },
-          () => {
-            console.log('Threat detections changed, reloading...');
-            loadMonitoringData();
-          }
-        )
-        .subscribe();
+        const threatsChannel = supabase
+          .channel('threats-changes')
+          .on(
+            'postgres_changes',
+            {
+              event: '*',
+              schema: 'public',
+              table: 'ai_threat_detections',
+              filter: `user_id=eq.${user.id}`,
+            },
+            () => {
+              console.log('Threat detections changed, reloading...');
+              loadMonitoringData();
+            }
+          )
+          .on('system', {}, (payload) => {
+            console.log('Threats channel status:', payload);
+            if (payload.type === 'system' && payload.event === 'error') {
+              console.warn('Threats channel error, attempting reconnection...');
+              setTimeout(() => threatsChannel.subscribe(), 5000);
+            }
+          })
+          .subscribe((status) => {
+            console.log('Threats subscription status:', status);
+          });
 
-      const notificationsChannel = supabase
-        .channel('notifications-changes')
-        .on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'ai_protection_notifications',
-            filter: `user_id=eq.${user.id}`,
-          },
-          () => {
-            console.log('Notifications changed, reloading...');
-            loadMonitoringData();
-          }
-        )
-        .subscribe();
+        const notificationsChannel = supabase
+          .channel('notifications-changes')
+          .on(
+            'postgres_changes',
+            {
+              event: '*',
+              schema: 'public',
+              table: 'ai_protection_notifications',
+              filter: `user_id=eq.${user.id}`,
+            },
+            () => {
+              console.log('Notifications changed, reloading...');
+              loadMonitoringData();
+            }
+          )
+          .on('system', {}, (payload) => {
+            console.log('Notifications channel status:', payload);
+            if (payload.type === 'system' && payload.event === 'error') {
+              console.warn('Notifications channel error, attempting reconnection...');
+              setTimeout(() => notificationsChannel.subscribe(), 5000);
+            }
+          })
+          .subscribe((status) => {
+            console.log('Notifications subscription status:', status);
+          });
 
+        return [agentsChannel, threatsChannel, notificationsChannel];
+      };
+
+      const channels = setupRealtimeSubscriptions();
+      
       // Fallback polling every 2 minutes for redundancy
       const interval = setInterval(loadMonitoringData, 120000);
       
+      // Heartbeat to detect connection issues
+      const heartbeat = setInterval(() => {
+        channels.forEach(channel => {
+          if (channel.state !== 'joined') {
+            console.warn(`Channel ${channel.topic} not connected, attempting reconnection...`);
+            channel.subscribe();
+          }
+        });
+      }, 30000);
+      
       return () => {
         clearInterval(interval);
-        supabase.removeChannel(agentsChannel);
-        supabase.removeChannel(threatsChannel);
-        supabase.removeChannel(notificationsChannel);
+        clearInterval(heartbeat);
+        channels.forEach(channel => supabase.removeChannel(channel));
       };
     }
   }, [user]);
