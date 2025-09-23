@@ -78,8 +78,68 @@ export const AIAgentNetworkMonitoring = () => {
   useEffect(() => {
     if (user) {
       loadMonitoringData();
-      const interval = setInterval(loadMonitoringData, 30000); // Update every 30 seconds
-      return () => clearInterval(interval);
+      
+      // Set up real-time subscriptions for instant updates
+      const agentsChannel = supabase
+        .channel('ai-agents-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'ai_monitoring_agents',
+            filter: `user_id=eq.${user.id}`,
+          },
+          () => {
+            console.log('AI agents data changed, reloading...');
+            loadMonitoringData();
+          }
+        )
+        .subscribe();
+
+      const threatsChannel = supabase
+        .channel('threats-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'ai_threat_detections',
+            filter: `user_id=eq.${user.id}`,
+          },
+          () => {
+            console.log('Threat detections changed, reloading...');
+            loadMonitoringData();
+          }
+        )
+        .subscribe();
+
+      const notificationsChannel = supabase
+        .channel('notifications-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'ai_protection_notifications',
+            filter: `user_id=eq.${user.id}`,
+          },
+          () => {
+            console.log('Notifications changed, reloading...');
+            loadMonitoringData();
+          }
+        )
+        .subscribe();
+
+      // Fallback polling every 2 minutes for redundancy
+      const interval = setInterval(loadMonitoringData, 120000);
+      
+      return () => {
+        clearInterval(interval);
+        supabase.removeChannel(agentsChannel);
+        supabase.removeChannel(threatsChannel);
+        supabase.removeChannel(notificationsChannel);
+      };
     }
   }, [user]);
 
