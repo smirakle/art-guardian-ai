@@ -23,6 +23,7 @@ import {
   Users,
   UserX
 } from "lucide-react";
+import { CheckoutTaxCalculation } from "@/components/billing/CheckoutTaxCalculation";
 
 interface PlanDetails {
   name: string;
@@ -42,6 +43,13 @@ const Checkout = () => {
   const [promoCode, setPromoCode] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAuthProcessing, setIsAuthProcessing] = useState(false);
+  const [taxCalculation, setTaxCalculation] = useState({
+    subtotal: 0,
+    tax_amount: 0,
+    total: 0,
+    tax_breakdown: [],
+    applicable_taxes: []
+  });
   
   // Auth form states
   const [authForm, setAuthForm] = useState({
@@ -93,11 +101,16 @@ const Checkout = () => {
   const aiTrainingAddonCost = aiTrainingAddon ? (billingCycle === "yearly" ? 588 : 49) : 0;
   const aiTrainingStartupFee = aiTrainingAddon ? 100 : 0;
   
-  const finalPrice = basePrice + socialAddonCost + aiTrainingAddonCost;
+  const subtotalPrice = basePrice + socialAddonCost + aiTrainingAddonCost;
   const totalStartupFees = socialStartupFee + aiTrainingStartupFee;
+  const finalPrice = taxCalculation.total > 0 ? taxCalculation.total + totalStartupFees : subtotalPrice + totalStartupFees;
 
   const handleAuthFormChange = (field: string, value: string) => {
     setAuthForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleTaxCalculated = (result: any) => {
+    setTaxCalculation(result);
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -667,22 +680,30 @@ const Checkout = () => {
                   )}
                 </div>
 
-                <Separator />
+                 <Separator />
 
-                {/* Total */}
-                <div className="flex items-center justify-between text-lg font-bold">
-                  <span>Total {(socialMediaAddon || aiTrainingAddon) ? "(First Payment)" : ""}</span>
-                  <span>
-                    ${billingCycle === "yearly" ? Math.round(finalPrice + totalStartupFees) : (finalPrice + totalStartupFees)}
-                    {billingCycle === "yearly" ? "/year" : "/month"}
-                  </span>
-                </div>
+                 {/* Tax Calculation */}
+                 <CheckoutTaxCalculation 
+                   subtotal={subtotalPrice + totalStartupFees}
+                   onTaxCalculated={handleTaxCalculated}
+                 />
 
-                {(socialMediaAddon || aiTrainingAddon) && (
-                  <div className="text-sm text-muted-foreground">
-                    * Future payments will be ${billingCycle === "yearly" ? Math.round(finalPrice) : finalPrice}{billingCycle === "yearly" ? "/year" : "/month"} (without setup fees)
-                  </div>
-                )}
+                 <Separator />
+
+                 {/* Total */}
+                 <div className="flex items-center justify-between text-lg font-bold">
+                   <span>Total {(socialMediaAddon || aiTrainingAddon) ? "(First Payment)" : ""}</span>
+                   <span>
+                     ${finalPrice + totalStartupFees}
+                     {billingCycle === "yearly" ? "/year" : "/month"}
+                   </span>
+                 </div>
+
+                 {(socialMediaAddon || aiTrainingAddon) && (
+                   <div className="text-sm text-muted-foreground">
+                     * Future payments will be ${taxCalculation.total > 0 ? taxCalculation.total : subtotalPrice}{billingCycle === "yearly" ? "/year" : "/month"} (without setup fees)
+                   </div>
+                 )}
 
                 <Separator />
 
