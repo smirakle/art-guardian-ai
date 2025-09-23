@@ -1,232 +1,446 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TSMO AI Art Protection - Settings</title>
-  <link rel="stylesheet" href="options.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TSMO AI Protection Settings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo svg {
+            width: 32px;
+            height: 32px;
+            fill: white;
+        }
+        
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1f2937;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: #6b7280;
+        }
+        
+        .settings-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title svg {
+            width: 20px;
+            height: 20px;
+            fill: #667eea;
+        }
+        
+        .setting-group {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .setting-group:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .setting-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .setting-label {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+        
+        .setting-description {
+            font-size: 14px;
+            color: #6b7280;
+            max-width: 400px;
+        }
+        
+        .setting-control {
+            flex-shrink: 0;
+        }
+        
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: #d1d5db;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .toggle.active {
+            background: #667eea;
+        }
+        
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .toggle.active::after {
+            transform: translateX(26px);
+        }
+        
+        .input-field {
+            padding: 10px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 200px;
+            transition: border-color 0.2s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+        
+        .status-message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .status-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .status-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+        
+        .auth-section {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 20px;
+        }
+        
+        .auth-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .auth-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+        
+        .auth-indicator.disconnected {
+            background: #ef4444;
+        }
+        
+        .footer-info {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .footer-info h3 {
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+        
+        .footer-info p {
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+        
+        .footer-links a:hover {
+            background: #f3f4f6;
+        }
+    </style>
 </head>
 <body>
-  <div class="options-container">
-    <header class="options-header">
-      <div class="header-content">
-        <div class="logo">
-          <img src="icons/icon48.png" alt="TSMO" class="logo-icon">
-          <div class="logo-text">
-            <h1>TSMO AI Art Protection</h1>
-            <span>Extension Settings</span>
-          </div>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.6 14.8,10V11.5C14.8,12.1 14.4,12.5 13.8,12.5H10.2C9.6,12.5 9.2,12.1 9.2,11.5V10C9.2,8.6 10.6,7 12,7M12,8.2C11.2,8.2 10.5,8.7 10.5,9.5V10.8H13.5V9.5C13.5,8.7 12.8,8.2 12,8.2Z"/>
+                </svg>
+            </div>
+            <h1 class="title">TSMO AI Protection Settings</h1>
+            <p class="subtitle">Configure your artwork protection preferences</p>
         </div>
-        <div class="header-actions">
-          <button id="save-btn" class="primary-btn">Save Changes</button>
-        </div>
-      </div>
-    </header>
-
-    <main class="options-main">
-      <div class="settings-grid">
-        <!-- General Settings -->
-        <section class="settings-section">
-          <h2>General Settings</h2>
-          <div class="setting-group">
-            <div class="setting-item">
-              <div class="setting-info">
-                <label for="extension-enabled">Enable Extension</label>
-                <p>Turn the TSMO extension on or off</p>
-              </div>
-              <label class="toggle">
-                <input type="checkbox" id="extension-enabled" checked>
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
+        
+        <div class="settings-panel">
+            <h2 class="section-title">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1"/>
+                </svg>
+                Protection Settings
+            </h2>
             
-            <div class="setting-item">
-              <div class="setting-info">
-                <label for="auto-detect">Auto-detect Artwork</label>
-                <p>Automatically identify and highlight protectable images</p>
-              </div>
-              <label class="toggle">
-                <input type="checkbox" id="auto-detect" checked>
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-            
-            <div class="setting-item">
-              <div class="setting-info">
-                <label for="show-overlays">Show Protection Overlays</label>
-                <p>Display protection buttons over detected images</p>
-              </div>
-              <label class="toggle">
-                <input type="checkbox" id="show-overlays" checked>
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-          </div>
-        </section>
-
-        <!-- Notifications -->
-        <section class="settings-section">
-          <h2>Notifications</h2>
-          <div class="setting-group">
-            <div class="setting-item">
-              <div class="setting-info">
-                <label for="show-notifications">Enable Notifications</label>
-                <p>Show browser notifications for protection actions</p>
-              </div>
-              <label class="toggle">
-                <input type="checkbox" id="show-notifications" checked>
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-            
-            <div class="setting-item">
-              <div class="setting-info">
-                <label for="success-notifications">Success Notifications</label>
-                <p>Notify when images are successfully protected</p>
-              </div>
-              <label class="toggle">
-                <input type="checkbox" id="success-notifications" checked>
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-            
-            <div class="setting-item">
-              <div class="setting-info">
-                <label for="error-notifications">Error Notifications</label>
-                <p>Notify when protection actions fail</p>
-              </div>
-              <label class="toggle">
-                <input type="checkbox" id="error-notifications" checked>
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-          </div>
-        </section>
-
-        <!-- Detection Settings -->
-        <section class="settings-section">
-          <h2>Detection Settings</h2>
-          <div class="setting-group">
-            <div class="setting-item">
-              <div class="setting-info">
-                <label for="min-image-size">Minimum Image Size</label>
-                <p>Only detect images larger than this size (pixels)</p>
-              </div>
-              <select id="min-image-size" class="setting-select">
-                <option value="50">50px</option>
-                <option value="100" selected>100px</option>
-                <option value="200">200px</option>
-                <option value="300">300px</option>
-                <option value="500">500px</option>
-              </select>
-            </div>
-            
-            <div class="setting-item">
-              <div class="setting-info">
-                <label for="skip-ui-elements">Skip UI Elements</label>
-                <p>Ignore icons, logos, and other interface elements</p>
-              </div>
-              <label class="toggle">
-                <input type="checkbox" id="skip-ui-elements" checked>
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-            
-            <div class="setting-item">
-              <div class="setting-info">
-                <label for="platform-detection">Enhanced Platform Detection</label>
-                <p>Special features for art platforms like ArtStation, DeviantArt</p>
-              </div>
-              <label class="toggle">
-                <input type="checkbox" id="platform-detection" checked>
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-          </div>
-        </section>
-
-        <!-- Account Settings -->
-        <section class="settings-section">
-          <h2>Account</h2>
-          <div class="setting-group">
-            <div class="account-info">
-              <div class="account-status">
-                <div class="status-indicator connected" id="connection-status"></div>
-                <div class="status-text">
-                  <span id="account-email">Not connected</span>
-                  <span class="status-label" id="account-status">Disconnected</span>
+            <div class="setting-group">
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">Auto-protect images</div>
+                        <div class="setting-description">Automatically protect images when you view them</div>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle" id="autoProtect"></div>
+                    </div>
                 </div>
-              </div>
-              <div class="account-actions">
-                <button id="connect-account-btn" class="secondary-btn">Connect Account</button>
-                <button id="disconnect-account-btn" class="danger-btn" style="display: none;">Disconnect</button>
-              </div>
-            </div>
-            
-            <div class="setting-item">
-              <div class="setting-info">
-                <label>API Usage</label>
-                <p>Monitor your protection request usage</p>
-              </div>
-              <div class="usage-stats">
-                <div class="usage-bar">
-                  <div class="usage-fill" id="usage-fill" style="width: 0%"></div>
+                
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">Show protection notifications</div>
+                        <div class="setting-description">Display notifications when images are protected</div>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle active" id="showNotifications"></div>
+                    </div>
                 </div>
-                <span class="usage-text" id="usage-text">0 / 100 requests today</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Advanced Settings -->
-        <section class="settings-section">
-          <h2>Advanced</h2>
-          <div class="setting-group">
-            <div class="setting-item">
-              <div class="setting-info">
-                <label for="debug-mode">Debug Mode</label>
-                <p>Enable detailed logging for troubleshooting</p>
-              </div>
-              <label class="toggle">
-                <input type="checkbox" id="debug-mode">
-                <span class="toggle-slider"></span>
-              </label>
+                
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">Protection overlay</div>
+                        <div class="setting-description">Show overlay on protected images</div>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle active" id="showOverlay"></div>
+                    </div>
+                </div>
             </div>
             
-            <div class="setting-item">
-              <div class="setting-info">
-                <label>Clear Data</label>
-                <p>Reset extension data and statistics</p>
-              </div>
-              <button id="clear-data-btn" class="danger-btn">Clear All Data</button>
+            <div class="setting-group">
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">Minimum image size (pixels)</div>
+                        <div class="setting-description">Only protect images larger than this size</div>
+                    </div>
+                    <div class="setting-control">
+                        <input type="number" class="input-field" id="minImageSize" value="200" min="50" max="2000">
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">Protection strength</div>
+                        <div class="setting-description">Higher values provide better protection but may affect image quality</div>
+                    </div>
+                    <div class="setting-control">
+                        <select class="input-field" id="protectionStrength">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-            
-            <div class="setting-item">
-              <div class="setting-info">
-                <label>Export Data</label>
-                <p>Download your protection history and settings</p>
-              </div>
-              <button id="export-data-btn" class="secondary-btn">Export Data</button>
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
-
-    <footer class="options-footer">
-      <div class="footer-content">
-        <div class="footer-links">
-          <a href="https://utneaqmbyjwxaqrrarpc.supabase.co" target="_blank">Dashboard</a>
-          <a href="#" id="privacy-link">Privacy Policy</a>
-          <a href="#" id="support-link">Support</a>
         </div>
+        
+        <div class="settings-panel">
+            <h2 class="section-title">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/>
+                </svg>
+                Account & Authentication
+            </h2>
+            
+            <div class="auth-section">
+                <div class="auth-status">
+                    <div class="auth-indicator disconnected" id="authIndicator"></div>
+                    <span id="authStatus">Not connected to TSMO account</span>
+                </div>
+                
+                <p>Connect your TSMO account to sync your protection settings and access advanced features.</p>
+                
+                <button class="btn" id="connectAccount">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M10,17V14H3V10H10V7L15,12L10,17M10,2H19A2,2 0 0,1 21,4V20A2,2 0 0,1 19,22H10A2,2 0 0,1 8,20V18H10V20H19V4H10V6H8V4A2,2 0 0,1 10,2Z"/>
+                    </svg>
+                    Connect Account
+                </button>
+            </div>
+            
+            <div id="statusMessage" class="status-message"></div>
+        </div>
+        
+        <div class="settings-panel">
+            <h2 class="section-title">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
+                </svg>
+                Advanced Options
+            </h2>
+            
+            <div class="setting-group">
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">Debug mode</div>
+                        <div class="setting-description">Enable detailed logging for troubleshooting</div>
+                    </div>
+                    <div class="setting-control">
+                        <div class="toggle" id="debugMode"></div>
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">Reset all settings</div>
+                        <div class="setting-description">Restore extension to default settings</div>
+                    </div>
+                    <div class="setting-control">
+                        <button class="btn" id="resetSettings" style="background: #ef4444;">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12,4C13.1,4 14,4.9 14,6C14,7.1 13.1,8 12,8C10.9,8 10,7.1 10,6C10,4.9 10.9,4 12,4M21,10.12H14.22C14.63,9.23 14.86,8.25 14.86,7.26C14.86,4.85 13.01,3 10.6,3C8.19,3 6.34,4.85 6.34,7.26C6.34,8.25 6.57,9.23 6.98,10.12H0.84C0.37,10.12 0,10.49 0,10.96V12C0,12.47 0.37,12.84 0.84,12.84H23.16C23.63,12.84 24,12.47 24,12V10.96C24,10.49 23.63,10.12 23.16,10.12H21M22.17,15H1.83C1.37,15 1,15.37 1,15.83V18.17C1,18.63 1.37,19 1.83,19H22.17C22.63,19 23,18.63 23,18.17V15.83C23,15.37 22.63,15 22.17,15Z"/>
+                            </svg>
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn" id="saveSettings">
+                <svg viewBox="0 0 24 24">
+                    <path d="M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z"/>
+                </svg>
+                Save Settings
+            </button>
+        </div>
+        
         <div class="footer-info">
-          <span>TSMO Extension v1.0.0</span>
+            <h3>Need Help?</h3>
+            <p>Get support and learn more about protecting your artwork with TSMO AI.</p>
+            <div class="footer-links">
+                <a href="#" id="openDashboard">Dashboard</a>
+                <a href="#" id="viewDocs">Documentation</a>
+                <a href="#" id="contactSupport">Support</a>
+                <a href="#" id="viewPrivacy">Privacy Policy</a>
+            </div>
         </div>
-      </div>
-    </footer>
-  </div>
-
-  <script src="options.js"></script>
+    </div>
+    
+    <script src="options.js"></script>
 </body>
 </html>
