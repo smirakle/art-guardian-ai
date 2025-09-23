@@ -73,7 +73,7 @@ export const CheckoutTaxCalculation: React.FC<CheckoutTaxCalculationProps> = ({
   }, [subtotal, customerLocation]);
 
   const calculateTax = () => {
-    if (!customerLocation) {
+    if (!customerLocation || customerLocation === 'none') {
       const result = {
         subtotal,
         tax_amount: 0,
@@ -132,7 +132,7 @@ export const CheckoutTaxCalculation: React.FC<CheckoutTaxCalculationProps> = ({
               <SelectValue placeholder="Select your location for tax calculation" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">No tax (International)</SelectItem>
+              <SelectItem value="none">No tax (International)</SelectItem>
               <SelectItem value="US-CA">California, USA</SelectItem>
               <SelectItem value="US-NY">New York, USA</SelectItem>
               <SelectItem value="US-TX">Texas, USA</SelectItem>
