@@ -175,9 +175,20 @@ const Checkout = () => {
     setIsProcessing(true);
     
     try {
+      // Get the current session to include the access token
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+      
+      if (!accessToken) {
+        throw new Error("No authentication token available");
+      }
+
       const { data, error } = await supabase.functions.invoke('activate-beta-access', {
         body: {
           promoCode: promoCode
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`
         }
       });
 
