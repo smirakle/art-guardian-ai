@@ -7229,6 +7229,7 @@ export type Database = {
           deepfake_addon: boolean
           id: string
           max_white_label_users: number | null
+          metadata: Json | null
           plan_id: string
           social_media_addon: boolean
           status: string
@@ -7247,6 +7248,7 @@ export type Database = {
           deepfake_addon?: boolean
           id?: string
           max_white_label_users?: number | null
+          metadata?: Json | null
           plan_id: string
           social_media_addon?: boolean
           status?: string
@@ -7265,6 +7267,7 @@ export type Database = {
           deepfake_addon?: boolean
           id?: string
           max_white_label_users?: number | null
+          metadata?: Json | null
           plan_id?: string
           social_media_addon?: boolean
           status?: string

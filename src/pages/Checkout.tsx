@@ -163,6 +163,15 @@ const Checkout = () => {
   const handleBetaActivation = async () => {
     if (isProcessing) return;
     
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in or create an account to activate beta access.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsProcessing(true);
     
     try {
