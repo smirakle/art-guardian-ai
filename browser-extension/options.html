@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TSMO AI Art Protection - Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="options-container">
+    <header class="options-header">
+      <div class="header-content">
+        <div class="logo">
+          <img src="icons/icon48.png" alt="TSMO" class="logo-icon">
+          <div class="logo-text">
+            <h1>TSMO AI Art Protection</h1>
+            <span>Extension Settings</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="save-btn" class="primary-btn">Save Changes</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="options-main">
+      <div class="settings-grid">
+        <!-- General Settings -->
+        <section class="settings-section">
+          <h2>General Settings</h2>
+          <div class="setting-group">
+            <div class="setting-item">
+              <div class="setting-info">
+                <label for="extension-enabled">Enable Extension</label>
+                <p>Turn the TSMO extension on or off</p>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="extension-enabled" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            
+            <div class="setting-item">
+              <div class="setting-info">
+                <label for="auto-detect">Auto-detect Artwork</label>
+                <p>Automatically identify and highlight protectable images</p>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="auto-detect" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            
+            <div class="setting-item">
+              <div class="setting-info">
+                <label for="show-overlays">Show Protection Overlays</label>
+                <p>Display protection buttons over detected images</p>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="show-overlays" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Notifications -->
+        <section class="settings-section">
+          <h2>Notifications</h2>
+          <div class="setting-group">
+            <div class="setting-item">
+              <div class="setting-info">
+                <label for="show-notifications">Enable Notifications</label>
+                <p>Show browser notifications for protection actions</p>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="show-notifications" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            
+            <div class="setting-item">
+              <div class="setting-info">
+                <label for="success-notifications">Success Notifications</label>
+                <p>Notify when images are successfully protected</p>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="success-notifications" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            
+            <div class="setting-item">
+              <div class="setting-info">
+                <label for="error-notifications">Error Notifications</label>
+                <p>Notify when protection actions fail</p>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="error-notifications" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Detection Settings -->
+        <section class="settings-section">
+          <h2>Detection Settings</h2>
+          <div class="setting-group">
+            <div class="setting-item">
+              <div class="setting-info">
+                <label for="min-image-size">Minimum Image Size</label>
+                <p>Only detect images larger than this size (pixels)</p>
+              </div>
+              <select id="min-image-size" class="setting-select">
+                <option value="50">50px</option>
+                <option value="100" selected>100px</option>
+                <option value="200">200px</option>
+                <option value="300">300px</option>
+                <option value="500">500px</option>
+              </select>
+            </div>
+            
+            <div class="setting-item">
+              <div class="setting-info">
+                <label for="skip-ui-elements">Skip UI Elements</label>
+                <p>Ignore icons, logos, and other interface elements</p>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="skip-ui-elements" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            
+            <div class="setting-item">
+              <div class="setting-info">
+                <label for="platform-detection">Enhanced Platform Detection</label>
+                <p>Special features for art platforms like ArtStation, DeviantArt</p>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="platform-detection" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Account Settings -->
+        <section class="settings-section">
+          <h2>Account</h2>
+          <div class="setting-group">
+            <div class="account-info">
+              <div class="account-status">
+                <div class="status-indicator connected" id="connection-status"></div>
+                <div class="status-text">
+                  <span id="account-email">Not connected</span>
+                  <span class="status-label" id="account-status">Disconnected</span>
+                </div>
+              </div>
+              <div class="account-actions">
+                <button id="connect-account-btn" class="secondary-btn">Connect Account</button>
+                <button id="disconnect-account-btn" class="danger-btn" style="display: none;">Disconnect</button>
+              </div>
+            </div>
+            
+            <div class="setting-item">
+              <div class="setting-info">
+                <label>API Usage</label>
+                <p>Monitor your protection request usage</p>
+              </div>
+              <div class="usage-stats">
+                <div class="usage-bar">
+                  <div class="usage-fill" id="usage-fill" style="width: 0%"></div>
+                </div>
+                <span class="usage-text" id="usage-text">0 / 100 requests today</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Advanced Settings -->
+        <section class="settings-section">
+          <h2>Advanced</h2>
+          <div class="setting-group">
+            <div class="setting-item">
+              <div class="setting-info">
+                <label for="debug-mode">Debug Mode</label>
+                <p>Enable detailed logging for troubleshooting</p>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="debug-mode">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            
+            <div class="setting-item">
+              <div class="setting-info">
+                <label>Clear Data</label>
+                <p>Reset extension data and statistics</p>
+              </div>
+              <button id="clear-data-btn" class="danger-btn">Clear All Data</button>
+            </div>
+            
+            <div class="setting-item">
+              <div class="setting-info">
+                <label>Export Data</label>
+                <p>Download your protection history and settings</p>
+              </div>
+              <button id="export-data-btn" class="secondary-btn">Export Data</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="options-footer">
+      <div class="footer-content">
+        <div class="footer-links">
+          <a href="https://utneaqmbyjwxaqrrarpc.supabase.co" target="_blank">Dashboard</a>
+          <a href="#" id="privacy-link">Privacy Policy</a>
+          <a href="#" id="support-link">Support</a>
+        </div>
+        <div class="footer-info">
+          <span>TSMO Extension v1.0.0</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
