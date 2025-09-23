@@ -8606,6 +8606,10 @@ export type Database = {
         Args: { cache_key_param: string }
         Returns: Json
       }
+      get_production_health: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       get_template_download_count: {
         Args: { template_id_param: string }
         Returns: number
@@ -8776,6 +8780,15 @@ export type Database = {
           user_id_param: string
         }
         Returns: undefined
+      }
+      log_production_metric: {
+        Args: {
+          metadata_param?: Json
+          metric_name_param: string
+          metric_type_param: string
+          metric_value_param: number
+        }
+        Returns: string
       }
       record_ai_protection_metric: {
         Args: {
