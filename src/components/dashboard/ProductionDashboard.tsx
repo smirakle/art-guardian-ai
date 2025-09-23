@@ -303,13 +303,17 @@ export const ProductionDashboard = () => {
         {/* Main Dashboard Content - Organized in Tabs */}
         <Tabs defaultValue="monitoring" className="space-y-6">
           <div className="flex items-center justify-between">
-            <TabsList className="grid w-full grid-cols-7 lg:w-auto lg:grid-cols-7">
+            <TabsList className="grid w-full grid-cols-8 lg:w-auto lg:grid-cols-8">
               <TabsTrigger value="monitoring" className="flex items-center gap-2">
                 <Activity className="w-4 h-4" />
                 <span className="hidden sm:inline">Monitoring</span>
               </TabsTrigger>
-              <TabsTrigger value="scanning" className="flex items-center gap-2">
+              <TabsTrigger value="extension" className="flex items-center gap-2">
                 <Globe className="w-4 h-4" />
+                <span className="hidden sm:inline">Extension</span>
+              </TabsTrigger>
+              <TabsTrigger value="scanning" className="flex items-center gap-2">
+                <Search className="w-4 h-4" />
                 <span className="hidden sm:inline">Scanning</span>
               </TabsTrigger>
               <TabsTrigger value="blockchain" className="flex items-center gap-2">
@@ -416,6 +420,204 @@ export const ProductionDashboard = () => {
                 <UnifiedScanResults />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Browser Extension Tab */}
+          <TabsContent value="extension" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Globe className="w-5 h-5" />
+                    Browser Extension
+                  </CardTitle>
+                  <CardDescription>
+                    Protect artwork while browsing with our browser extension
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-6">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center flex-shrink-0">
+                        <Shield className="w-6 h-6 text-primary-foreground" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold mb-2">One-Click Protection</h3>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          Right-click any image on the web to instantly protect it with TSMO AI protection. 
+                          Perfect for protecting your artwork on social media, portfolios, and art platforms.
+                        </p>
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                          <div className="flex items-center gap-2 text-sm">
+                            <div className="w-2 h-2 bg-green-500 rounded-full" />
+                            Auto-detect artwork
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <div className="w-2 h-2 bg-green-500 rounded-full" />
+                            Platform integration
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <div className="w-2 h-2 bg-green-500 rounded-full" />
+                            Real-time notifications
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <div className="w-2 h-2 bg-green-500 rounded-full" />
+                            Usage analytics
+                          </div>
+                        </div>
+                        <div className="flex gap-3">
+                          <Button 
+                            onClick={() => window.open('https://chrome.google.com/webstore', '_blank')}
+                            className="bg-primary hover:bg-primary/90"
+                          >
+                            <Globe className="w-4 h-4 mr-2" />
+                            Install for Chrome
+                          </Button>
+                          <Button 
+                            variant="outline"
+                            onClick={() => window.open('https://addons.mozilla.org', '_blank')}
+                          >
+                            Install for Firefox
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="font-medium">How it works:</h4>
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg">
+                        <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-medium">
+                          1
+                        </div>
+                        <div>
+                          <h5 className="font-medium mb-1">Install Extension</h5>
+                          <p className="text-sm text-muted-foreground">
+                            Download and install the TSMO extension from your browser's extension store
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg">
+                        <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-medium">
+                          2
+                        </div>
+                        <div>
+                          <h5 className="font-medium mb-1">Sign In</h5>
+                          <p className="text-sm text-muted-foreground">
+                            Connect your TSMO account to enable protection features
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg">
+                        <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-medium">
+                          3
+                        </div>
+                        <div>
+                          <h5 className="font-medium mb-1">Protect Anywhere</h5>
+                          <p className="text-sm text-muted-foreground">
+                            Right-click images or use the extension popup to protect artwork instantly
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <h5 className="font-medium text-amber-800 mb-1">Development Version</h5>
+                        <p className="text-sm text-amber-700">
+                          The extension is currently available as development files. Follow the manual installation 
+                          instructions in the browser-extension folder to install and test it.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="w-5 h-5" />
+                    Extension Analytics
+                  </CardTitle>
+                  <CardDescription>
+                    Track your browser extension usage and protection activity
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-primary/5 rounded-lg p-4 text-center">
+                      <div className="text-2xl font-bold text-primary mb-1">0</div>
+                      <div className="text-sm text-muted-foreground">Images Protected Today</div>
+                    </div>
+                    <div className="bg-secondary/5 rounded-lg p-4 text-center">
+                      <div className="text-2xl font-bold text-secondary mb-1">0</div>
+                      <div className="text-sm text-muted-foreground">Sites Monitored</div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="font-medium">Supported Platforms</h4>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full" />
+                        ArtStation
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full" />
+                        DeviantArt
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full" />
+                        Behance
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full" />
+                        Dribbble
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full" />
+                        Instagram
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full" />
+                        Pinterest
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full" />
+                        All websites
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full" />
+                        Social media
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <Globe className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <h5 className="font-medium text-blue-800 mb-1">Universal Protection</h5>
+                        <p className="text-sm text-blue-700">
+                          The extension works on any website, automatically detecting and offering 
+                          protection for artwork, illustrations, and creative content.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Button variant="outline" className="w-full">
+                    <Settings className="w-4 h-4 mr-2" />
+                    Extension Settings
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           {/* AI Agents Tab */}
