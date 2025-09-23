@@ -106,7 +106,7 @@ verify_jwt = true
 verify_jwt = false
 
 [functions.one-click-protect]
-verify_jwt = true
+verify_jwt = false
 
 [functions.automated-licensing]
 verify_jwt = true
