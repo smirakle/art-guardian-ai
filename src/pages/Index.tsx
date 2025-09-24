@@ -260,9 +260,9 @@ const Index = () => {
             <Button 
               size="lg" 
               className="w-full sm:w-auto px-10 py-5 text-xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg hover:shadow-xl transition-all duration-300"
-              onClick={() => navigate("/upload")}
+              onClick={() => navigate("/ai-protection-settings")}
             >
-              Start Free Protection
+              Start AI Training Protection
               <ArrowRight className="ml-2 h-6 w-6" />
             </Button>
             <Button 
