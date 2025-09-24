@@ -3,6 +3,7 @@ import { AITrainingSettings } from '@/components/AITrainingSettings';
 import StyleCloak from '@/components/ai-protection/StyleCloak';
 import { ProductionMetadataSettings } from '@/components/ai-protection/ProductionMetadataSettings';
 import { ProductionCrawlerBlockingSettings } from '@/components/ai-protection/ProductionCrawlerBlockingSettings';
+import { ProductionLikenessSettings } from '@/components/ai-protection/ProductionLikenessSettings';
 const AIProtectionSettings = () => {
   useEffect(() => {
     document.title = 'AI Training Protection Settings | Style Cloaking';
@@ -36,6 +37,10 @@ const AIProtectionSettings = () => {
         
         <div className="mt-8">
           <ProductionCrawlerBlockingSettings />
+        </div>
+        
+        <div className="mt-8">
+          <ProductionLikenessSettings />
         </div>
       </div>
     </div>
