@@ -44,6 +44,13 @@ export const ProductionCrawlerBlockingSettings: React.FC = () => {
     aiCrawlerBlocking: true
   });
 
+  const [isApplying, setIsApplying] = useState(false);
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [appliedSettings, setAppliedSettings] = useState<CrawlerBlockingOptions | null>(null);
+  const [generatedFiles, setGeneratedFiles] = useState<{
+    robotsTxt: string;
+    aiTxt: string;
+  } | null>(null);
   const [robotsTxt, setRobotsTxt] = useState('');
   const [aiTxt, setAiTxt] = useState('');
   const [securityHeaders, setSecurityHeaders] = useState<Record<string, string>>({});
@@ -107,6 +114,48 @@ export const ProductionCrawlerBlockingSettings: React.FC = () => {
         description: "Failed to test crawler detection.",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleApplySettings = async () => {
+    setIsApplying(true);
+    try {
+      setAppliedSettings(options);
+      generateFiles();
+      
+      toast({
+        title: "Settings Applied",
+        description: "Crawler blocking settings have been updated successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Failed to apply settings",
+        description: error instanceof Error ? error.message : "An error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
+  const handleDeployServerSide = async () => {
+    setIsDeploying(true);
+    try {
+      const deployed = await productionCrawlerBlocking.deployServerSideProtection(options);
+      setGeneratedFiles(deployed);
+      
+      toast({
+        title: "Server-side protection deployed",
+        description: "Crawler blocking is now active at the server level with real-time blocking.",
+      });
+    } catch (error) {
+      toast({
+        title: "Deployment failed",
+        description: error instanceof Error ? error.message : "Failed to deploy server-side protection",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeploying(false);
     }
   };
 
@@ -443,14 +492,52 @@ export const ProductionCrawlerBlockingSettings: React.FC = () => {
             </Card>
           </div>
 
+          <Separator />
+
+          {/* Action Buttons */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Settings className="h-4 w-4" />
+              <h3 className="text-lg font-semibold">Apply Protection</h3>
+            </div>
+            
+            <div className="space-y-4">
+              <Button
+                onClick={handleApplySettings}
+                disabled={isApplying}
+                className="w-full"
+              >
+                {isApplying ? "Applying Settings..." : "Apply Crawler Blocking"}
+              </Button>
+              
+              <Button
+                onClick={handleDeployServerSide}
+                disabled={isDeploying}
+                variant="outline"
+                className="w-full"
+              >
+                {isDeploying ? "Deploying..." : "Deploy Server-Side Protection"}
+              </Button>
+            </div>
+          </div>
+
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Production Deployment:</strong> These files and headers need to be implemented at the server level 
-              (nginx, Apache, CDN) for full effectiveness. The generated files provide the configuration needed 
-              for production deployment.
+              <strong>Server-Side Deployment:</strong> The edge function provides real-time blocking at the server level. 
+              Use the "Deploy Server-Side Protection" button to activate enterprise-grade protection with rate limiting, 
+              IP blocking, and automated robots.txt/ai.txt serving.
             </AlertDescription>
           </Alert>
+
+          {appliedSettings && (
+            <Alert>
+              <Check className="h-4 w-4" />
+              <AlertDescription>
+                <strong>Protection Active:</strong> Crawler blocking is currently active with {appliedSettings.blockingLevel} level protection.
+              </AlertDescription>
+            </Alert>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -66,9 +66,50 @@ export class ProductionCrawlerBlocking {
   }
 
   /**
-   * Analyze request to detect and block crawlers
+   * Analyze request to detect and block crawlers (server-side)
    */
   async analyzeCrawlerRequest(
+    userAgent: string,
+    ipAddress: string,
+    referrer: string,
+    requestHeaders: Record<string, string>,
+    options: CrawlerBlockingOptions
+  ): Promise<CrawlerBlockingResult> {
+    // Use server-side edge function for real-time blocking
+    try {
+      const response = await fetch(`https://utneaqmbyjwxaqrrarpc.supabase.co/functions/v1/crawler-protection`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': userAgent,
+          'X-Forwarded-For': ipAddress
+        },
+        body: JSON.stringify({ options })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server-side blocking failed: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return {
+        success: result.success,
+        blocked: result.blocked,
+        method: result.blocked ? 'server-side-blocking' : 'allowed',
+        timestamp: result.timestamp,
+        crawlerInfo: result.crawlerInfo
+      };
+    } catch (error) {
+      // Fallback to client-side detection if server-side fails
+      console.warn('Server-side blocking unavailable, falling back to client-side:', error);
+      return this.fallbackClientSideAnalysis(userAgent, ipAddress, referrer, requestHeaders, options);
+    }
+  }
+
+  /**
+   * Fallback client-side analysis when server-side is unavailable
+   */
+  private async fallbackClientSideAnalysis(
     userAgent: string,
     ipAddress: string,
     referrer: string,
@@ -116,6 +157,39 @@ export class ProductionCrawlerBlocking {
         timestamp,
         crawlerInfo: this.getDefaultDetection(),
         error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  /**
+   * Deploy server-side protection files
+   */
+  async deployServerSideProtection(options: CrawlerBlockingOptions): Promise<{ robotsTxt: string; aiTxt: string }> {
+    try {
+      // Get server-generated robots.txt
+      const robotsResponse = await fetch(`https://utneaqmbyjwxaqrrarpc.supabase.co/functions/v1/crawler-protection/robots.txt`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ options })
+      });
+
+      // Get server-generated ai.txt
+      const aiResponse = await fetch(`https://utneaqmbyjwxaqrrarpc.supabase.co/functions/v1/crawler-protection/ai.txt`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ options })
+      });
+
+      return {
+        robotsTxt: await robotsResponse.text(),
+        aiTxt: await aiResponse.text()
+      };
+    } catch (error) {
+      console.error('Server-side deployment failed:', error);
+      // Fallback to client-side generation
+      return {
+        robotsTxt: this.generateProductionRobotsTxt(options),
+        aiTxt: this.generateProductionAiTxt(options)
       };
     }
   }
