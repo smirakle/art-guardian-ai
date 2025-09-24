@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { AITrainingSettings } from '@/components/AITrainingSettings';
 import StyleCloak from '@/components/ai-protection/StyleCloak';
+import { ProductionMetadataSettings } from '@/components/ai-protection/ProductionMetadataSettings';
 const AIProtectionSettings = () => {
   useEffect(() => {
     document.title = 'AI Training Protection Settings | Style Cloaking';
@@ -26,6 +27,10 @@ const AIProtectionSettings = () => {
         
         <div className="mt-8">
           <StyleCloak />
+        </div>
+        
+        <div className="mt-8">
+          <ProductionMetadataSettings />
         </div>
       </div>
     </div>
