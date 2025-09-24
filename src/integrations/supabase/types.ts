@@ -1281,7 +1281,7 @@ export type Database = {
           id: string
           post_id: string
           updated_at: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           content: string
@@ -1289,7 +1289,7 @@ export type Database = {
           id?: string
           post_id: string
           updated_at?: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           content?: string
@@ -1297,7 +1297,7 @@ export type Database = {
           id?: string
           post_id?: string
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -1320,7 +1320,7 @@ export type Database = {
           likes_count: number
           title: string
           updated_at: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           category?: string
@@ -1332,7 +1332,7 @@ export type Database = {
           likes_count?: number
           title: string
           updated_at?: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           category?: string
@@ -1344,7 +1344,7 @@ export type Database = {
           likes_count?: number
           title?: string
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -1354,7 +1354,7 @@ export type Database = {
           created_at: string
           id: string
           post_id: string | null
-          user_id: string | null
+          user_id: string
           vote_type: string
         }
         Insert: {
@@ -1362,7 +1362,7 @@ export type Database = {
           created_at?: string
           id?: string
           post_id?: string | null
-          user_id?: string | null
+          user_id: string
           vote_type: string
         }
         Update: {
@@ -1370,7 +1370,7 @@ export type Database = {
           created_at?: string
           id?: string
           post_id?: string | null
-          user_id?: string | null
+          user_id?: string
           vote_type?: string
         }
         Relationships: [
