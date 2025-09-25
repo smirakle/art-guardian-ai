@@ -1,8 +1,8 @@
 import React from 'react';
-import { ProductionDashboard } from '@/components/dashboard/ProductionDashboard';
+import UnifiedDashboard from './UnifiedDashboard';
 
 const Dashboard = () => {
-  return <ProductionDashboard />;
+  return <UnifiedDashboard />;
 };
 
 export default Dashboard;
