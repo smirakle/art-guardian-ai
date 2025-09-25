@@ -37,17 +37,13 @@ import Pricing from "./pages/Pricing";
 import SLAStatus from "./pages/SLAStatus";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
-import AIProtectionSettings from "./pages/AIProtectionSettings";
-import AITrainingProtection from "./pages/AITrainingProtection";
-import Phase1Dashboard from "./pages/Phase1Dashboard";
-import Phase2Dashboard from "./pages/Phase2Dashboard";
-import Phase3Dashboard from "./pages/Phase3Dashboard";
+import ProtectionHub from "./pages/ProtectionHub";
+import MonitoringHub from "./pages/MonitoringHub";
+import UnifiedDashboard from "./pages/UnifiedDashboard";
 
 import CustomIntegrationsComingSoon from "./pages/CustomIntegrationsComingSoon";
 import { EnterpriseAPIAccess } from "./components/EnterpriseAPIAccess";
-import ProfileMonitoring from "./pages/ProfileMonitoring";
-import PortfolioMonitoring from "./pages/PortfolioMonitoring";
-import TrademarkMonitoring from "./pages/TrademarkMonitoring";
+// Legacy routes maintained for backward compatibility
 import InvestorHub from "./pages/InvestorHub";
 import Roadmap from "./pages/Roadmap";
 import CreatorMarkets from "./pages/CreatorMarkets";
@@ -108,7 +104,7 @@ const App = () => {
                    <div className="p-4 flex-1">
                     <Routes>
                       <Route path="/" element={<Index />} />
-                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/dashboard" element={<UnifiedDashboard />} />
                       <Route path="/about-tsmo" element={<AboutTsmo />} />
                       <Route path="/faq" element={<FAQ />} />
                       <Route path="/auth" element={<Auth />} />
@@ -131,17 +127,22 @@ const App = () => {
                       <Route path="/legal-templates" element={<LegalTemplatesPage />} />
                        <Route path="/pricing" element={<Pricing />} />
                        <Route path="/sla-status" element={<SLAStatus />} />
-                           <Route path="/ai-protection-settings" element={<AIProtectionSettings />} />
-                           <Route path="/ai-training-protection" element={<AITrainingProtection />} />
-                           <Route path="/phase1" element={<Phase1Dashboard />} />
-                           <Route path="/phase2" element={<Phase2Dashboard />} />
-                            <Route path="/phase3" element={<Phase3Dashboard />} />
+                            <Route path="/protection-hub" element={<ProtectionHub />} />
+                            <Route path="/monitoring-hub" element={<MonitoringHub />} />
+                            
+                            {/* Legacy redirects */}
+                            <Route path="/ai-protection-settings" element={<ProtectionHub />} />
+                            <Route path="/ai-training-protection" element={<ProtectionHub />} />
+                            <Route path="/phase1" element={<UnifiedDashboard />} />
+                            <Route path="/phase2" element={<UnifiedDashboard />} />
+                            <Route path="/phase3" element={<UnifiedDashboard />} />
                          <Route path="/custom-integrations" element={<CustomIntegrationsComingSoon />} />
                         
                         <Route path="/enterprise-api" element={<EnterpriseAPIAccess />} />
-            <Route path="/profile-monitoring" element={<ProfileMonitoring />} />
-            <Route path="/portfolio-monitoring" element={<PortfolioMonitoring />} />
-            <Route path="/trademark-monitoring" element={<TrademarkMonitoring />} />
+            {/* Legacy monitoring routes redirect to unified hub */}
+            <Route path="/profile-monitoring" element={<MonitoringHub />} />
+            <Route path="/portfolio-monitoring" element={<MonitoringHub />} />
+            <Route path="/trademark-monitoring" element={<MonitoringHub />} />
             <Route path="/markets" element={<CreatorMarkets />} />
             <Route path="/investors" element={<InvestorHub />} />
             <Route path="/partner-pricing" element={<PartnerPricingManager />} />
