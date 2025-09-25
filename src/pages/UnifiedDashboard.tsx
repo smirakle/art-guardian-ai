@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +18,9 @@ import {
   Settings,
   BarChart3
 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 // Import consolidated components
 import { ProductionDashboard } from '@/components/dashboard/ProductionDashboard';
@@ -29,8 +32,203 @@ import { RealTimeLegalDashboard } from '@/components/legal/RealTimeLegalDashboar
 import { CreatorEconomy } from '@/components/phase2/CreatorEconomy';
 import { MultiModalAIProtection } from '@/components/multi-modal/MultiModalAIProtection';
 
+interface DashboardStats {
+  protectedAssets: number;
+  activeScans: number;
+  threats: number;
+  blockchainRecords: number;
+  legalActions: number;
+  successRate: number;
+  recentActivity: Array<{
+    icon: string;
+    message: string;
+    timestamp: Date;
+  }>;
+}
+
 const UnifiedDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [stats, setStats] = useState<DashboardStats>({
+    protectedAssets: 0,
+    activeScans: 0,
+    threats: 0,
+    blockchainRecords: 0,
+    legalActions: 0,
+    successRate: 0,
+    recentActivity: []
+  });
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (user) {
+      loadRealDashboardData();
+    }
+  }, [user]);
+
+  const loadRealDashboardData = async () => {
+    try {
+      setLoading(true);
+
+      // Get user's artworks
+      const { data: artworkData, count: artworkCount } = await supabase
+        .from('artwork')
+        .select('*', { count: 'exact' })
+        .eq('user_id', user!.id);
+
+      // Get portfolios
+      const { data: portfolioData, count: portfolioCount } = await supabase
+        .from('portfolios')
+        .select('*', { count: 'exact' })
+        .eq('user_id', user!.id)
+        .eq('is_active', true);
+
+      // Get monitoring scans
+      const artworkIds = artworkData?.map(a => a.id) || [];
+      const { data: scanData } = await supabase
+        .from('monitoring_scans')
+        .select('*')
+        .in('artwork_id', artworkIds);
+
+      // Get copyright matches (threats)
+      const { data: matchData, count: matchCount } = await supabase
+        .from('copyright_matches')
+        .select('*', { count: 'exact' })
+        .in('artwork_id', artworkIds);
+
+      // Get blockchain certificates
+      const { data: blockchainData, count: blockchainCount } = await supabase
+        .from('blockchain_certificates')
+        .select('*', { count: 'exact' })
+        .eq('user_id', user!.id);
+
+      // Get legal documents
+      const { data: legalData, count: legalCount } = await supabase
+        .from('legal_documents')
+        .select('*', { count: 'exact' })
+        .eq('user_id', user!.id);
+
+      // Get AI training violations
+      const { data: violationData } = await supabase
+        .from('ai_training_violations')
+        .select('*')
+        .eq('user_id', user!.id)
+        .order('detected_at', { ascending: false })
+        .limit(5);
+
+      // Calculate active scans
+      const activeScans = scanData?.filter(scan => scan.status === 'running').length || 0;
+
+      // Calculate success rate
+      const totalScans = scanData?.length || 0;
+      const successfulScans = scanData?.filter(scan => scan.status === 'completed').length || 0;
+      const successRate = totalScans > 0 ? Math.round((successfulScans / totalScans) * 100) : 0;
+
+      // Build recent activity
+      const recentActivity = [];
+      
+      if (artworkData && artworkData.length > 0) {
+        const recentArtwork = artworkData.sort((a, b) => 
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )[0];
+        recentActivity.push({
+          icon: 'shield',
+          message: `Protected "${recentArtwork.title}"`,
+          timestamp: new Date(recentArtwork.created_at)
+        });
+      }
+
+      if (violationData && violationData.length > 0) {
+        recentActivity.push({
+          icon: 'alert',
+          message: 'AI training violation detected',
+          timestamp: new Date(violationData[0].detected_at)
+        });
+      }
+
+      if (blockchainData && blockchainData.length > 0) {
+        const recentBlockchain = blockchainData.sort((a, b) => 
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )[0];
+        recentActivity.push({
+          icon: 'link',
+          message: 'Blockchain record created',
+          timestamp: new Date(recentBlockchain.created_at)
+        });
+      }
+
+      if (legalData && legalData.length > 0) {
+        const recentLegal = legalData.sort((a, b) => 
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )[0];
+        recentActivity.push({
+          icon: 'scale',
+          message: 'Legal action initiated',
+          timestamp: new Date(recentLegal.created_at)
+        });
+      }
+
+      if (scanData && scanData.length > 0) {
+        const recentScan = scanData.sort((a, b) => 
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )[0];
+        recentActivity.push({
+          icon: 'eye',
+          message: 'Portfolio scan completed',
+          timestamp: new Date(recentScan.created_at)
+        });
+      }
+
+      setStats({
+        protectedAssets: (artworkCount || 0) + (portfolioCount || 0),
+        activeScans,
+        threats: matchCount || 0,
+        blockchainRecords: blockchainCount || 0,
+        legalActions: legalCount || 0,
+        successRate,
+        recentActivity: recentActivity.sort((a, b) => 
+          b.timestamp.getTime() - a.timestamp.getTime()
+        ).slice(0, 5)
+      });
+
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+      toast({
+        title: "Failed to load dashboard data",
+        description: "Please refresh the page or try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderActivityIcon = (iconType: string) => {
+    switch (iconType) {
+      case 'shield': return <Shield className="h-4 w-4 text-green-500" />;
+      case 'alert': return <AlertTriangle className="h-4 w-4 text-orange-500" />;
+      case 'link': return <Link2 className="h-4 w-4 text-blue-500" />;
+      case 'scale': return <Scale className="h-4 w-4 text-purple-500" />;
+      case 'eye': return <Eye className="h-4 w-4 text-indigo-500" />;
+      default: return <Activity className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 space-y-6">
+        <div className="animate-pulse space-y-8">
+          <div className="h-16 bg-muted rounded-lg" />
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+            {[1,2,3,4,5,6].map(i => (
+              <div key={i} className="h-32 bg-muted rounded-lg" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
@@ -58,42 +256,42 @@ const UnifiedDashboard = () => {
         <Card>
           <CardContent className="pt-6 text-center">
             <Shield className="h-8 w-8 mx-auto mb-2 text-green-500" />
-            <div className="text-2xl font-bold">1,247</div>
+            <div className="text-2xl font-bold">{stats.protectedAssets.toLocaleString()}</div>
             <p className="text-sm text-muted-foreground">Protected Assets</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6 text-center">
             <Activity className="h-8 w-8 mx-auto mb-2 text-blue-500" />
-            <div className="text-2xl font-bold">56</div>
+            <div className="text-2xl font-bold">{stats.activeScans}</div>
             <p className="text-sm text-muted-foreground">Active Scans</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6 text-center">
             <AlertTriangle className="h-8 w-8 mx-auto mb-2 text-orange-500" />
-            <div className="text-2xl font-bold">8</div>
+            <div className="text-2xl font-bold">{stats.threats}</div>
             <p className="text-sm text-muted-foreground">Threats</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6 text-center">
             <Link2 className="h-8 w-8 mx-auto mb-2 text-purple-500" />
-            <div className="text-2xl font-bold">342</div>
+            <div className="text-2xl font-bold">{stats.blockchainRecords}</div>
             <p className="text-sm text-muted-foreground">Blockchain Records</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6 text-center">
             <Scale className="h-8 w-8 mx-auto mb-2 text-indigo-500" />
-            <div className="text-2xl font-bold">12</div>
+            <div className="text-2xl font-bold">{stats.legalActions}</div>
             <p className="text-sm text-muted-foreground">Legal Actions</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6 text-center">
             <TrendingUp className="h-8 w-8 mx-auto mb-2 text-green-500" />
-            <div className="text-2xl font-bold">94.7%</div>
+            <div className="text-2xl font-bold">{stats.successRate}%</div>
             <p className="text-sm text-muted-foreground">Success Rate</p>
           </CardContent>
         </Card>
@@ -178,26 +376,22 @@ const UnifiedDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Shield className="h-4 w-4 text-green-500" />
-                    <span>3 new assets protected</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <AlertTriangle className="h-4 w-4 text-orange-500" />
-                    <span>AI training violation detected</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Link2 className="h-4 w-4 text-blue-500" />
-                    <span>Blockchain record created</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Scale className="h-4 w-4 text-purple-500" />
-                    <span>Legal action initiated</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Eye className="h-4 w-4 text-indigo-500" />
-                    <span>Portfolio scan completed</span>
-                  </div>
+                  {stats.recentActivity.length > 0 ? (
+                    stats.recentActivity.map((activity, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        {renderActivityIcon(activity.icon)}
+                        <span>{activity.message}</span>
+                        <span className="text-xs text-muted-foreground ml-auto">
+                          {activity.timestamp.toLocaleDateString()}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-4 text-muted-foreground">
+                      <p>No recent activity</p>
+                      <p className="text-xs mt-1">Upload content to start monitoring</p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
