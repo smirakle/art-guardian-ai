@@ -62,67 +62,117 @@ const UnifiedDashboard = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (user) {
+    console.log('UnifiedDashboard: useEffect triggered', { user: user?.id, loading });
+    if (user && !loading) {
       loadRealDashboardData();
+    } else if (!user) {
+      console.log('UnifiedDashboard: No user found, setting loading to false');
+      setLoading(false);
     }
   }, [user]);
 
   const loadRealDashboardData = async () => {
     try {
+      console.log('UnifiedDashboard: Starting to load dashboard data for user:', user!.id);
       setLoading(true);
 
       // Get user's artworks
-      const { data: artworkData, count: artworkCount } = await supabase
+      console.log('UnifiedDashboard: Fetching artwork data...');
+      const { data: artworkData, count: artworkCount, error: artworkError } = await supabase
         .from('artwork')
         .select('*', { count: 'exact' })
         .eq('user_id', user!.id);
 
+      if (artworkError) {
+        console.error('UnifiedDashboard: Error fetching artwork:', artworkError);
+        throw artworkError;
+      }
+      console.log('UnifiedDashboard: Artwork data fetched:', { count: artworkCount });
+
       // Get AI protection records
-      const { data: protectionData, count: protectionCount } = await supabase
+      console.log('UnifiedDashboard: Fetching AI protection records...');
+      const { data: protectionData, count: protectionCount, error: protectionError } = await supabase
         .from('ai_protection_records')
         .select('*', { count: 'exact' })
         .eq('user_id', user!.id)
         .eq('is_active', true);
 
+      if (protectionError) {
+        console.error('UnifiedDashboard: Error fetching protection records:', protectionError);
+      }
+      console.log('UnifiedDashboard: Protection data fetched:', { count: protectionCount });
+
       // Get copyright matches (threats)
       const artworkIds = artworkData?.map(a => a.id) || [];
-      const { data: matchData, count: matchCount } = await supabase
+      console.log('UnifiedDashboard: Fetching copyright matches for artworks:', artworkIds.length);
+      const { data: matchData, count: matchCount, error: matchError } = await supabase
         .from('copyright_matches')
         .select('*', { count: 'exact' })
         .in('artwork_id', artworkIds);
 
+      if (matchError) {
+        console.error('UnifiedDashboard: Error fetching copyright matches:', matchError);
+      }
+      console.log('UnifiedDashboard: Match data fetched:', { count: matchCount });
+
       // Get blockchain certificates
-      const { data: blockchainData, count: blockchainCount } = await supabase
+      console.log('UnifiedDashboard: Fetching blockchain certificates...');
+      const { data: blockchainData, count: blockchainCount, error: blockchainError } = await supabase
         .from('blockchain_certificates')
         .select('*', { count: 'exact' })
         .eq('user_id', user!.id);
 
+      if (blockchainError) {
+        console.error('UnifiedDashboard: Error fetching blockchain certificates:', blockchainError);
+      }
+      console.log('UnifiedDashboard: Blockchain data fetched:', { count: blockchainCount });
+
       // Get AI training violations
-      const { data: violationData } = await supabase
+      console.log('UnifiedDashboard: Fetching AI training violations...');
+      const { data: violationData, error: violationError } = await supabase
         .from('ai_training_violations')
         .select('*')
         .eq('user_id', user!.id)
         .order('detected_at', { ascending: false })
         .limit(5);
 
+      if (violationError) {
+        console.error('UnifiedDashboard: Error fetching violations:', violationError);
+      }
+
       // Get DMCA notices (legal actions)
-      const { data: dmcaData, count: dmcaCount } = await supabase
+      console.log('UnifiedDashboard: Fetching DMCA notices...');
+      const { data: dmcaData, count: dmcaCount, error: dmcaError } = await supabase
         .from('ai_protection_dmca_notices')
         .select('*', { count: 'exact' })
         .eq('user_id', user!.id);
 
+      if (dmcaError) {
+        console.error('UnifiedDashboard: Error fetching DMCA notices:', dmcaError);
+      }
+
       // Calculate active scans from AI monitoring agents
-      const { data: agentData } = await supabase
+      console.log('UnifiedDashboard: Fetching monitoring agents...');
+      const { data: agentData, error: agentError } = await supabase
         .from('ai_monitoring_agents')
         .select('*')
         .eq('user_id', user!.id)
         .eq('status', 'active');
 
+      if (agentError) {
+        console.error('UnifiedDashboard: Error fetching agents:', agentError);
+      }
+
       // Calculate success rate from threat detections
-      const { data: threatData } = await supabase
+      console.log('UnifiedDashboard: Fetching threat detections...');
+      const { data: threatData, error: threatError } = await supabase
         .from('ai_threat_detections')
         .select('*')
         .eq('user_id', user!.id);
+
+      if (threatError) {
+        console.error('UnifiedDashboard: Error fetching threats:', threatError);
+      }
 
       const totalThreats = threatData?.length || 0;
       const resolvedThreats = threatData?.filter(threat => threat.status === 'resolved').length || 0;
@@ -183,7 +233,7 @@ const UnifiedDashboard = () => {
         });
       }
 
-      setStats({
+      const finalStats = {
         protectedAssets: (artworkCount || 0) + (protectionCount || 0),
         activeScans: agentData?.length || 0,
         threats: matchCount || 0,
@@ -193,16 +243,31 @@ const UnifiedDashboard = () => {
         recentActivity: recentActivity.sort((a, b) => 
           b.timestamp.getTime() - a.timestamp.getTime()
         ).slice(0, 5)
-      });
+      };
+
+      console.log('UnifiedDashboard: Final stats calculated:', finalStats);
+      setStats(finalStats);
 
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
+      console.error('UnifiedDashboard: Error loading dashboard data:', error);
       toast({
         title: "Failed to load dashboard data",
         description: "Please refresh the page or try again later.",
         variant: "destructive",
       });
+      
+      // Set default stats even on error so the dashboard shows something
+      setStats({
+        protectedAssets: 0,
+        activeScans: 0,
+        threats: 0,
+        blockchainRecords: 0,
+        legalActions: 0,
+        successRate: 0,
+        recentActivity: []
+      });
     } finally {
+      console.log('UnifiedDashboard: Loading complete, setting loading to false');
       setLoading(false);
     }
   };
@@ -217,6 +282,19 @@ const UnifiedDashboard = () => {
       default: return <Activity className="h-4 w-4 text-gray-500" />;
     }
   };
+
+  // Show error state if user is not authenticated
+  if (!user && !loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 space-y-6">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-destructive mb-4">Authentication Required</h2>
+          <p className="text-muted-foreground mb-4">Please log in to access the dashboard.</p>
+          <Button onClick={() => window.location.href = '/auth'}>Go to Login</Button>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
