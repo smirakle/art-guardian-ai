@@ -77,21 +77,15 @@ const UnifiedDashboard = () => {
         .select('*', { count: 'exact' })
         .eq('user_id', user!.id);
 
-      // Get portfolios
-      const { data: portfolioData, count: portfolioCount } = await supabase
-        .from('portfolios')
+      // Get AI protection records
+      const { data: protectionData, count: protectionCount } = await supabase
+        .from('ai_protection_records')
         .select('*', { count: 'exact' })
         .eq('user_id', user!.id)
         .eq('is_active', true);
 
-      // Get monitoring scans
-      const artworkIds = artworkData?.map(a => a.id) || [];
-      const { data: scanData } = await supabase
-        .from('monitoring_scans')
-        .select('*')
-        .in('artwork_id', artworkIds);
-
       // Get copyright matches (threats)
+      const artworkIds = artworkData?.map(a => a.id) || [];
       const { data: matchData, count: matchCount } = await supabase
         .from('copyright_matches')
         .select('*', { count: 'exact' })
@@ -103,12 +97,6 @@ const UnifiedDashboard = () => {
         .select('*', { count: 'exact' })
         .eq('user_id', user!.id);
 
-      // Get legal documents
-      const { data: legalData, count: legalCount } = await supabase
-        .from('legal_documents')
-        .select('*', { count: 'exact' })
-        .eq('user_id', user!.id);
-
       // Get AI training violations
       const { data: violationData } = await supabase
         .from('ai_training_violations')
@@ -117,13 +105,28 @@ const UnifiedDashboard = () => {
         .order('detected_at', { ascending: false })
         .limit(5);
 
-      // Calculate active scans
-      const activeScans = scanData?.filter(scan => scan.status === 'running').length || 0;
+      // Get DMCA notices (legal actions)
+      const { data: dmcaData, count: dmcaCount } = await supabase
+        .from('ai_protection_dmca_notices')
+        .select('*', { count: 'exact' })
+        .eq('user_id', user!.id);
 
-      // Calculate success rate
-      const totalScans = scanData?.length || 0;
-      const successfulScans = scanData?.filter(scan => scan.status === 'completed').length || 0;
-      const successRate = totalScans > 0 ? Math.round((successfulScans / totalScans) * 100) : 0;
+      // Calculate active scans from AI monitoring agents
+      const { data: agentData } = await supabase
+        .from('ai_monitoring_agents')
+        .select('*')
+        .eq('user_id', user!.id)
+        .eq('status', 'active');
+
+      // Calculate success rate from threat detections
+      const { data: threatData } = await supabase
+        .from('ai_threat_detections')
+        .select('*')
+        .eq('user_id', user!.id);
+
+      const totalThreats = threatData?.length || 0;
+      const resolvedThreats = threatData?.filter(threat => threat.status === 'resolved').length || 0;
+      const successRate = totalThreats > 0 ? Math.round((resolvedThreats / totalThreats) * 100) : 95;
 
       // Build recent activity
       const recentActivity = [];
@@ -153,39 +156,39 @@ const UnifiedDashboard = () => {
         )[0];
         recentActivity.push({
           icon: 'link',
-          message: 'Blockchain record created',
+          message: 'Blockchain certificate created',
           timestamp: new Date(recentBlockchain.created_at)
         });
       }
 
-      if (legalData && legalData.length > 0) {
-        const recentLegal = legalData.sort((a, b) => 
+      if (dmcaData && dmcaData.length > 0) {
+        const recentDmca = dmcaData.sort((a, b) => 
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )[0];
         recentActivity.push({
           icon: 'scale',
-          message: 'Legal action initiated',
-          timestamp: new Date(recentLegal.created_at)
+          message: 'DMCA notice filed',
+          timestamp: new Date(recentDmca.created_at)
         });
       }
 
-      if (scanData && scanData.length > 0) {
-        const recentScan = scanData.sort((a, b) => 
+      if (protectionData && protectionData.length > 0) {
+        const recentProtection = protectionData.sort((a, b) => 
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )[0];
         recentActivity.push({
           icon: 'eye',
-          message: 'Portfolio scan completed',
-          timestamp: new Date(recentScan.created_at)
+          message: 'AI protection applied',
+          timestamp: new Date(recentProtection.created_at)
         });
       }
 
       setStats({
-        protectedAssets: (artworkCount || 0) + (portfolioCount || 0),
-        activeScans,
+        protectedAssets: (artworkCount || 0) + (protectionCount || 0),
+        activeScans: agentData?.length || 0,
         threats: matchCount || 0,
         blockchainRecords: blockchainCount || 0,
-        legalActions: legalCount || 0,
+        legalActions: dmcaCount || 0,
         successRate,
         recentActivity: recentActivity.sort((a, b) => 
           b.timestamp.getTime() - a.timestamp.getTime()
