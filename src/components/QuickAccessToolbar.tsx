@@ -53,11 +53,19 @@ const QuickAccessToolbar: React.FC = () => {
     },
     {
       id: 'monitoring',
-      label: 'Live Monitor',
+      label: 'Monitoring Hub',
       icon: Eye,
-      action: () => navigate('/monitoring'),
+      action: () => navigate('/monitoring-hub'),
       badge: 'Live',
       color: 'bg-purple-500 hover:bg-purple-600',
+      requiresAuth: true
+    },
+    {
+      id: 'protection',
+      label: 'Protection Hub',
+      icon: Zap,
+      action: () => navigate('/protection-hub'),
+      color: 'bg-red-500 hover:bg-red-600',
       requiresAuth: true
     },
     {
@@ -143,12 +151,12 @@ const QuickAccessToolbar: React.FC = () => {
                     {user && (
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => navigate('/dashboard?tab=settings')}
-                            className="flex-1"
-                          >
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate('/dashboard')}
+                          className="flex-1"
+                        >
                             <Settings className="w-3 h-3" />
                           </Button>
                         </TooltipTrigger>
