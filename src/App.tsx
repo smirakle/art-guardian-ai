@@ -43,6 +43,7 @@ import UnifiedDashboard from "./pages/UnifiedDashboard";
 
 import CustomIntegrationsComingSoon from "./pages/CustomIntegrationsComingSoon";
 import { EnterpriseAPIAccess } from "./components/EnterpriseAPIAccess";
+import Wallet from "./pages/Wallet";
 // Legacy routes maintained for backward compatibility
 import InvestorHub from "./pages/InvestorHub";
 import Roadmap from "./pages/Roadmap";
@@ -120,6 +121,7 @@ const App = () => {
                       <Route path="/success" element={<Success />} />
                       <Route path="/deep-scan" element={<DeepWebScan />} />
                       <Route path="/blockchain" element={<BlockchainVerification />} />
+                      <Route path="/wallet" element={<Wallet />} />
                       <Route path="/community" element={<Community />} />
                      <Route path="/deepfake-detection" element={<DeepfakeDetection />} />
                      <Route path="/deepfake-match/:matchId" element={<DeepfakeMatchDetails />} />
