@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Brain, Shield, Zap, AlertTriangle, CheckCircle, Eye } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { AdvancedAIAnalysis } from './AdvancedAIAnalysis';
 
 interface DetectionResult {
   id: string;
@@ -362,36 +363,7 @@ export function AIDetectionDashboard() {
         </TabsContent>
 
         <TabsContent value="analysis" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Advanced AI Analysis</CardTitle>
-              <CardDescription>
-                Deep learning analysis for sophisticated threat detection
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Alert>
-                <Brain className="h-4 w-4" />
-                <AlertDescription>
-                  Advanced deepfake and AI generation analysis will be available here. 
-                  Upload images or videos for comprehensive multi-modal analysis.
-                </AlertDescription>
-              </Alert>
-              
-              <Button 
-                className="mt-4" 
-                onClick={() => {
-                  toast({
-                    title: "Feature Coming Soon",
-                    description: "Advanced analysis dashboard is under development.",
-                  });
-                }}
-              >
-                <Brain className="h-4 w-4 mr-2" />
-                Run Deep Analysis
-              </Button>
-            </CardContent>
-          </Card>
+          <AdvancedAIAnalysis />
         </TabsContent>
       </Tabs>
     </div>
