@@ -47,7 +47,7 @@ interface NetworkStats {
   lastActivity: string;
 }
 
-export default function Wallet() {
+export default function WalletPage() {
   const { user } = useAuth();
   const { isConnected, address, chainId, balance, refreshBalance, switchNetwork, disconnectWallet } = useBlockchain();
   const [isRefreshing, setIsRefreshing] = useState(false);
