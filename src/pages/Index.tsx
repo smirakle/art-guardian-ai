@@ -15,7 +15,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import LeaveReview from '@/components/LeaveReview';
 import SmartOnboarding from '@/components/smart-onboarding/SmartOnboarding';
 import ContextualHelp from '@/components/help-system/ContextualHelp';
-import QuickActionsBar from '@/components/user-experience/QuickActionsBar';
+
 import SmartTooltips from '@/components/user-experience/SmartTooltips';
 
 
@@ -203,7 +203,7 @@ const Index = () => {
       {/* User Experience Enhancements */}
       <SmartOnboarding />
       <ContextualHelp />
-      <QuickActionsBar />
+      
       <SmartTooltips />
       
       {showOnboardingTour && (

@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import ContextualHelp from '@/components/help-system/ContextualHelp';
-import QuickActionsBar from '@/components/user-experience/QuickActionsBar';
+
 import SmartTooltips from '@/components/user-experience/SmartTooltips';
 import { 
   Shield, 
@@ -318,7 +318,7 @@ const UnifiedDashboard = () => {
     <div className="container mx-auto px-4 py-8 space-y-6">
       {/* User Experience Enhancements */}
       <ContextualHelp />
-      <QuickActionsBar />
+      
       <SmartTooltips />
       {/* Header */}
       <div className="text-center mb-8">
