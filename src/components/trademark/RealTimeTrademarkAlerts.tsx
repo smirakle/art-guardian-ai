@@ -49,45 +49,10 @@ interface LiveFeedItem {
   actionable: boolean;
 }
 
-const mockLiveFeed: LiveFeedItem[] = [
-  {
-    id: '1',
-    type: 'threat',
-    title: 'High similarity trademark application detected',
-    description: 'New USPTO application for "TechNova Solutions" filed - 95% similarity match',
-    severity: 'critical',
-    confidence: 95,
-    timestamp: '2 minutes ago',
-    source: 'USPTO',
-    actionable: true
-  },
-  {
-    id: '2',
-    type: 'domain',
-    title: 'Domain registration alert',
-    description: 'technova-solutions.com registered by unknown entity',
-    severity: 'high',
-    confidence: 87,
-    timestamp: '15 minutes ago',
-    source: 'Domain Monitor',
-    actionable: true
-  },
-  {
-    id: '3',
-    type: 'social',
-    title: 'Social media account created',
-    description: '@TechNovaOfficial Instagram account created with similar branding',
-    severity: 'medium',
-    confidence: 72,
-    timestamp: '1 hour ago',
-    source: 'Social Monitor',
-    actionable: false
-  }
-];
 
 export const RealTimeTrademarkAlerts: React.FC = () => {
   const [alerts, setAlerts] = useState<TrademarkAlert[]>([]);
-  const [liveFeed, setLiveFeed] = useState<LiveFeedItem[]>(mockLiveFeed);
+  const [liveFeed, setLiveFeed] = useState<LiveFeedItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('live');
   const [filterSeverity, setFilterSeverity] = useState('all');
@@ -98,8 +63,10 @@ export const RealTimeTrademarkAlerts: React.FC = () => {
   useEffect(() => {
     if (user) {
       fetchAlerts();
-      // Set up real-time subscription
-      const channel = supabase
+      fetchRecentActivity();
+      
+      // Set up real-time subscription for alerts
+      const alertsChannel = supabase
         .channel('trademark-alerts')
         .on(
           'postgres_changes',
@@ -113,6 +80,20 @@ export const RealTimeTrademarkAlerts: React.FC = () => {
             const newAlert = payload.new as TrademarkAlert;
             setAlerts(prev => [newAlert, ...prev]);
             
+            // Add to live feed
+            const liveFeedItem: LiveFeedItem = {
+              id: newAlert.id,
+              type: 'threat',
+              title: newAlert.title,
+              description: newAlert.description,
+              severity: newAlert.severity as any,
+              confidence: Math.round((newAlert.confidence_score || 0.8) * 100),
+              timestamp: 'just now',
+              source: newAlert.source_domain || 'System',
+              actionable: true
+            };
+            setLiveFeed(prev => [liveFeedItem, ...prev.slice(0, 9)]);
+            
             // Show toast notification for critical alerts
             if (newAlert.severity === 'critical' || newAlert.severity === 'high') {
               toast({
@@ -125,33 +106,120 @@ export const RealTimeTrademarkAlerts: React.FC = () => {
         )
         .subscribe();
 
+      // Set up real-time subscription for search results
+      const searchChannel = supabase
+        .channel('trademark-search-results')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'trademark_search_results',
+            filter: `user_id=eq.${user.id}`
+          },
+          (payload) => {
+            const searchResult = payload.new;
+            if (searchResult.confidence_score > 0.8 && searchResult.risk_level === 'high') {
+              const liveFeedItem: LiveFeedItem = {
+                id: searchResult.id,
+                type: 'registration',
+                title: 'New trademark search completed',
+                description: `Found high confidence match for "${searchResult.trademark_text}" (${Math.round(searchResult.confidence_score * 100)}% confidence)`,
+                severity: searchResult.confidence_score > 0.9 ? 'critical' : 'high',
+                confidence: Math.round(searchResult.confidence_score * 100),
+                timestamp: 'just now',
+                source: 'Search Engine',
+                actionable: true
+              };
+              setLiveFeed(prev => [liveFeedItem, ...prev.slice(0, 9)]);
+            }
+          }
+        )
+        .subscribe();
+
       return () => {
-        supabase.removeChannel(channel);
+        supabase.removeChannel(alertsChannel);
+        supabase.removeChannel(searchChannel);
       };
     }
   }, [user, toast]);
 
-  useEffect(() => {
-    // Simulate live feed updates
-    const interval = setInterval(() => {
-      if (Math.random() > 0.7) { // 30% chance of new item every 10 seconds
-        const newItem: LiveFeedItem = {
-          id: Date.now().toString(),
-          type: ['threat', 'registration', 'domain', 'social', 'marketplace'][Math.floor(Math.random() * 5)] as any,
-          title: 'Real-time monitoring detected new activity',
-          description: 'Automated system found potential trademark conflict',
-          severity: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as any,
-          confidence: Math.floor(Math.random() * 30) + 70,
-          timestamp: 'just now',
-          source: 'AI Monitor',
-          actionable: Math.random() > 0.5
-        };
-        setLiveFeed(prev => [newItem, ...prev.slice(0, 9)]);
-      }
-    }, 10000);
+  const fetchRecentActivity = async () => {
+    try {
+      // Fetch recent trademark monitoring activities
+      const { data: recentSearches } = await supabase
+        .from('trademark_search_results')
+        .select('*')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false })
+        .limit(5);
 
-    return () => clearInterval(interval);
-  }, []);
+      const { data: recentAlerts } = await supabase
+        .from('trademark_alerts')
+        .select('*')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      // Convert to live feed format
+      const feedItems: LiveFeedItem[] = [];
+      
+      if (recentSearches) {
+        recentSearches.forEach(search => {
+          // Use trademark_text and confidence_score to determine risk
+          const isHighRisk = search.confidence_score > 0.8 && search.risk_level === 'high';
+          if (isHighRisk) {
+            feedItems.push({
+              id: search.id,
+              type: 'registration',
+              title: 'Trademark search completed',
+              description: `Found potential match for "${search.trademark_text}" with ${Math.round(search.confidence_score * 100)}% confidence`,
+              severity: search.confidence_score > 0.9 ? 'critical' : 'high',
+              confidence: Math.round(search.confidence_score * 100),
+              timestamp: getRelativeTime(search.created_at),
+              source: 'Search Monitor',
+              actionable: true
+            });
+          }
+        });
+      }
+
+      if (recentAlerts) {
+        recentAlerts.forEach(alert => {
+          feedItems.push({
+            id: alert.id,
+            type: 'threat',
+            title: alert.title,
+            description: alert.description,
+            severity: alert.severity as any,
+            confidence: Math.round((alert.confidence_score || 0.8) * 100),
+            timestamp: getRelativeTime(alert.created_at),
+            source: alert.source_domain || 'System',
+            actionable: alert.status === 'pending'
+          });
+        });
+      }
+
+      // Sort by timestamp and limit
+      feedItems.sort((a, b) => new Date(b.timestamp === 'just now' ? Date.now() : b.timestamp).getTime() - 
+                              new Date(a.timestamp === 'just now' ? Date.now() : a.timestamp).getTime());
+      
+      setLiveFeed(feedItems.slice(0, 10));
+    } catch (error) {
+      console.error('Error fetching recent activity:', error);
+    }
+  };
+
+  const getRelativeTime = (dateString: string) => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+    
+    if (diffInMinutes < 1) return 'just now';
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+    return `${Math.floor(diffInMinutes / 1440)}d ago`;
+  };
 
   const fetchAlerts = async () => {
     try {
