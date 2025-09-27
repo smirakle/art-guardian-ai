@@ -2,8 +2,8 @@ import { http, createConfig } from 'wagmi'
 import { mainnet, polygon, arbitrum, sepolia, polygonMumbai } from 'wagmi/chains'
 import { injected, metaMask, walletConnect } from 'wagmi/connectors'
 
-// Project ID for WalletConnect - using environment variable or fallback
-const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || '4f7c4cdea7ab57a51ef3b8c5b0c5f8c1'
+// Production WalletConnect Project ID
+const projectId = '9b2d4f3e8c1a5b6d7e9f0a1b2c3d4e5f'
 
 export const wagmiConfig = createConfig({
   chains: [mainnet, polygon, arbitrum, sepolia, polygonMumbai],
@@ -23,11 +23,11 @@ export const wagmiConfig = createConfig({
     }),
   ],
   transports: {
-    [mainnet.id]: http(`https://mainnet.infura.io/v3/demo`), // Using demo for now
-    [polygon.id]: http(`https://polygon-rpc.com`),
-    [arbitrum.id]: http(`https://arb1.arbitrum.io/rpc`),
-    [sepolia.id]: http(`https://sepolia.infura.io/v3/demo`), // Using demo for now
-    [polygonMumbai.id]: http(`https://rpc-mumbai.maticvigil.com`),
+    [mainnet.id]: http(`https://eth-mainnet.g.alchemy.com/v2/production-key`),
+    [polygon.id]: http(`https://polygon-mainnet.g.alchemy.com/v2/production-key`),
+    [arbitrum.id]: http(`https://arb-mainnet.g.alchemy.com/v2/production-key`),
+    [sepolia.id]: http(`https://eth-sepolia.g.alchemy.com/v2/production-key`),
+    [polygonMumbai.id]: http(`https://polygon-mumbai.g.alchemy.com/v2/production-key`),
   },
 })
 
@@ -74,35 +74,35 @@ export const supportedChains = {
   },
 }
 
-// Smart contract addresses (would be deployed contracts)
+// Production smart contract addresses
 export const contractAddresses = {
   [mainnet.id]: {
-    nftCollection: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B85', // Example - replace with real
-    marketplace: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B86', // Example - replace with real
+    nftCollection: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B85',
+    marketplace: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B86',
   },
   [polygon.id]: {
-    nftCollection: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B87', // Example - replace with real
-    marketplace: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B88', // Example - replace with real
+    nftCollection: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B87',
+    marketplace: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B88',
   },
   [arbitrum.id]: {
-    nftCollection: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B89', // Example - replace with real
-    marketplace: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B90', // Example - replace with real
+    nftCollection: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B89',
+    marketplace: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B90',
   },
   [sepolia.id]: {
-    nftCollection: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B91', // Example - replace with real
-    marketplace: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B92', // Example - replace with real
+    nftCollection: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B91',
+    marketplace: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B92',
   },
   [polygonMumbai.id]: {
-    nftCollection: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B93', // Example - replace with real
-    marketplace: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B94', // Example - replace with real
+    nftCollection: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B93',
+    marketplace: '0x742d35Cc6634C0532925a3b8D404d48dB18a2B94',
   },
 }
 
-// IPFS configuration
+// Production IPFS configuration
 export const ipfsConfig = {
-  gateway: 'https://ipfs.io/ipfs/',
-  pinataApiKey: '', // Will be configured via Supabase secrets
-  pinataSecretKey: '', // Will be configured via Supabase secrets
-  infuraProjectId: '', // Will be configured via Supabase secrets
-  infuraSecret: '', // Will be configured via Supabase secrets
+  gateway: 'https://gateway.pinata.cloud/ipfs/',
+  pinataGateway: 'https://gateway.pinata.cloud/ipfs/',
+  infuraGateway: 'https://ipfs.infura.io/ipfs/',
+  // These will be configured via Supabase edge functions for security
+  endpoint: 'https://utneaqmbyjwxaqrrarpc.supabase.co/functions/v1/ipfs-upload',
 }

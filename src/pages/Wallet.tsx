@@ -9,6 +9,8 @@ import { useBlockchain } from '@/contexts/BlockchainContext';
 import { WalletConnection } from '@/components/blockchain/WalletConnection';
 import { walletService } from '@/lib/blockchain/wallet-service';
 import { supportedChains } from '@/lib/blockchain/config';
+import { blockchainExplorerService, Transaction } from '@/lib/services/blockchain-explorer';
+import { securityMonitorService, SecurityMetrics } from '@/lib/services/security-monitor';
 import { toast } from 'sonner';
 import { 
   Wallet as WalletIcon, 
@@ -27,17 +29,7 @@ import {
   Info
 } from 'lucide-react';
 
-interface TransactionHistory {
-  id: string;
-  type: 'send' | 'receive' | 'mint' | 'approve';
-  amount: string;
-  token: string;
-  hash: string;
-  timestamp: string;
-  status: 'confirmed' | 'pending' | 'failed';
-  to?: string;
-  from?: string;
-}
+// Remove local interface, using imported Transaction type instead
 
 interface NetworkStats {
   chainId: number;
@@ -52,28 +44,10 @@ export default function WalletPage() {
   const { isConnected, address, chainId, balance, refreshBalance, switchNetwork, disconnectWallet } = useBlockchain();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [networkBalances, setNetworkBalances] = useState<Record<number, string>>({});
-  const [transactions] = useState<TransactionHistory[]>([
-    {
-      id: '1',
-      type: 'mint',
-      amount: '0.002',
-      token: 'ETH',
-      hash: '0x1234...5678',
-      timestamp: '2024-01-15T10:30:00Z',
-      status: 'confirmed',
-      to: address || ''
-    },
-    {
-      id: '2',
-      type: 'receive',
-      amount: '0.1',
-      token: 'ETH',
-      hash: '0x5678...9012',
-      timestamp: '2024-01-14T15:45:00Z',
-      status: 'confirmed',
-      from: '0xabcd...ef01'
-    }
-  ]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [securityMetrics, setSecurityMetrics] = useState<SecurityMetrics | null>(null);
+  const [isLoadingTransactions, setIsLoadingTransactions] = useState(false);
+  const [isLoadingSecurity, setIsLoadingSecurity] = useState(false);
 
   const handleRefreshBalance = async () => {
     setIsRefreshing(true);
@@ -122,11 +96,12 @@ export default function WalletPage() {
     return `${explorers[chainId] || 'https://etherscan.io'}/tx/${hash}`;
   };
 
-  // Fetch balances for all supported networks
+  // Fetch real transaction history and security data
   useEffect(() => {
-    const fetchNetworkBalances = async () => {
-      if (!isConnected) return;
+    const fetchWalletData = async () => {
+      if (!isConnected || !address || !chainId) return;
       
+      // Fetch network balances
       const balances: Record<number, string> = {};
       for (const chain of Object.values(supportedChains)) {
         try {
@@ -138,12 +113,36 @@ export default function WalletPage() {
         }
       }
       setNetworkBalances(balances);
+      
+      // Fetch transaction history
+      setIsLoadingTransactions(true);
+      try {
+        const txHistory = await blockchainExplorerService.getTransactionHistory(address, chainId, 20);
+        setTransactions(txHistory);
+      } catch (error) {
+        console.error('Failed to fetch transaction history:', error);
+        toast.error('Failed to load transaction history');
+      } finally {
+        setIsLoadingTransactions(false);
+      }
+      
+      // Fetch security metrics
+      setIsLoadingSecurity(true);
+      try {
+        const metrics = await securityMonitorService.scanWalletSecurity(address, chainId);
+        setSecurityMetrics(metrics);
+      } catch (error) {
+        console.error('Failed to fetch security metrics:', error);
+        toast.error('Failed to load security analysis');
+      } finally {
+        setIsLoadingSecurity(false);
+      }
     };
 
-    if (isConnected) {
-      fetchNetworkBalances();
+    if (isConnected && address && chainId) {
+      fetchWalletData();
     }
-  }, [isConnected, chainId]);
+  }, [isConnected, address, chainId]);
 
   if (!user) {
     return (
@@ -266,6 +265,9 @@ export default function WalletPage() {
                 <CardTitle className="flex items-center gap-2">
                   <History className="w-5 h-5" />
                   Recent Activity
+                  {isLoadingTransactions && (
+                    <div className="w-4 h-4 border-2 border-primary/20 border-t-primary animate-spin rounded-full ml-2" />
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -413,23 +415,56 @@ export default function WalletPage() {
                     Wallet Security
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <div>
-                      <h3 className="font-medium">Wallet Connection</h3>
-                      <p className="text-sm text-muted-foreground">Your wallet is securely connected</p>
+              <CardContent className="space-y-4">
+                {securityMetrics ? (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-3 border rounded-lg">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="font-medium">Risk Score</h3>
+                            <p className="text-2xl font-bold text-primary">{securityMetrics.riskScore}%</p>
+                          </div>
+                          <Badge variant={securityMetrics.riskScore < 30 ? 'default' : securityMetrics.riskScore < 70 ? 'secondary' : 'destructive'}>
+                            {securityMetrics.riskScore < 30 ? 'Low Risk' : securityMetrics.riskScore < 70 ? 'Medium Risk' : 'High Risk'}
+                          </Badge>
+                        </div>
+                      </div>
+                      
+                      <div className="p-3 border rounded-lg">
+                        <div>
+                          <h3 className="font-medium">Threats Detected</h3>
+                          <p className="text-2xl font-bold text-destructive">{securityMetrics.threatsDetected}</p>
+                        </div>
+                      </div>
                     </div>
-                    <Badge variant="default">Secure</Badge>
-                  </div>
-                  
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <div>
-                      <h3 className="font-medium">Network Security</h3>
-                      <p className="text-sm text-muted-foreground">Connected to verified network</p>
+                    
+                    {securityMetrics.vulnerabilities.length > 0 && (
+                      <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                        <h3 className="font-medium text-amber-900 mb-2">Security Vulnerabilities</h3>
+                        <ul className="text-sm text-amber-800 space-y-1">
+                          {securityMetrics.vulnerabilities.map((vuln, index) => (
+                            <li key={index}>• {vuln}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <h3 className="font-medium text-blue-900 mb-2">Security Recommendations</h3>
+                      <ul className="text-sm text-blue-800 space-y-1">
+                        {securityMetrics.recommendations.slice(0, 4).map((rec, index) => (
+                          <li key={index}>• {rec}</li>
+                        ))}
+                      </ul>
                     </div>
-                    <Badge variant="default">Verified</Badge>
+                  </>
+                ) : isLoadingSecurity ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="w-8 h-8 border-2 border-primary/20 border-t-primary animate-spin rounded-full" />
+                    <span className="ml-2">Analyzing wallet security...</span>
                   </div>
-
+                ) : (
                   <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                     <div className="flex gap-3">
                       <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
@@ -444,6 +479,7 @@ export default function WalletPage() {
                       </div>
                     </div>
                   </div>
+                )}
 
                   <Button 
                     variant="destructive" 
