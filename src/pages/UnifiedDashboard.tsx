@@ -60,24 +60,28 @@ const UnifiedDashboard = () => {
     successRate: 0,
     recentActivity: []
   });
-  const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const [dataLoading, setDataLoading] = useState(false);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
-    console.log('UnifiedDashboard: useEffect triggered', { user: user?.id, loading });
-    if (user && !loading) {
+    console.log('UnifiedDashboard: useEffect triggered', { 
+      user: user?.id, 
+      authLoading, 
+      dataLoading, 
+      hasLoadedOnce 
+    });
+    
+    if (user && !authLoading && !hasLoadedOnce) {
       loadRealDashboardData();
-    } else if (!user) {
-      console.log('UnifiedDashboard: No user found, setting loading to false');
-      setLoading(false);
     }
-  }, [user]);
+  }, [user, authLoading, hasLoadedOnce]);
 
   const loadRealDashboardData = async () => {
     try {
       console.log('UnifiedDashboard: Starting to load dashboard data for user:', user!.id);
-      setLoading(true);
+      setDataLoading(true);
 
       // Get user's artworks
       console.log('UnifiedDashboard: Fetching artwork data...');
@@ -271,7 +275,8 @@ const UnifiedDashboard = () => {
       });
     } finally {
       console.log('UnifiedDashboard: Loading complete, setting loading to false');
-      setLoading(false);
+      setDataLoading(false);
+      setHasLoadedOnce(true);
     }
   };
 
@@ -287,7 +292,7 @@ const UnifiedDashboard = () => {
   };
 
   // Show error state if user is not authenticated
-  if (!user && !loading) {
+  if (!user && !authLoading) {
     return (
       <div className="container mx-auto px-4 py-8 space-y-6">
         <div className="text-center">
@@ -299,7 +304,8 @@ const UnifiedDashboard = () => {
     );
   }
 
-  if (loading) {
+  // Show loading while auth is loading or while data is loading for the first time
+  if (authLoading || (dataLoading && !hasLoadedOnce)) {
     return (
       <div className="container mx-auto px-4 py-8 space-y-6">
         <div className="animate-pulse space-y-8">
