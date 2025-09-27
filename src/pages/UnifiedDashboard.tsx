@@ -3,6 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import ContextualHelp from '@/components/help-system/ContextualHelp';
+import QuickActionsBar from '@/components/user-experience/QuickActionsBar';
+import SmartTooltips from '@/components/user-experience/SmartTooltips';
 import { 
   Shield, 
   TrendingUp, 
@@ -313,6 +316,10 @@ const UnifiedDashboard = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
+      {/* User Experience Enhancements */}
+      <ContextualHelp />
+      <QuickActionsBar />
+      <SmartTooltips />
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold mb-4">Unified Protection Dashboard</h1>
@@ -337,14 +344,18 @@ const UnifiedDashboard = () => {
         <Card>
           <CardContent className="pt-6 text-center">
             <Shield className="h-8 w-8 mx-auto mb-2 text-green-500" />
-            <div className="text-2xl font-bold">{stats.protectedAssets.toLocaleString()}</div>
+            <div className="text-2xl font-bold" data-tooltip="protection-status">
+              {stats.protectedAssets.toLocaleString()}
+            </div>
             <p className="text-sm text-muted-foreground">Protected Assets</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6 text-center">
             <Activity className="h-8 w-8 mx-auto mb-2 text-blue-500" />
-            <div className="text-2xl font-bold">{stats.activeScans}</div>
+            <div className="text-2xl font-bold" data-tooltip="monitoring">
+              {stats.activeScans}
+            </div>
             <p className="text-sm text-muted-foreground">Active Scans</p>
           </CardContent>
         </Card>

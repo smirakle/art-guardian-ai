@@ -11,7 +11,12 @@ import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import LeaveReview from '@/components/LeaveReview';
+import SmartOnboarding from '@/components/smart-onboarding/SmartOnboarding';
+import ContextualHelp from '@/components/help-system/ContextualHelp';
+import QuickActionsBar from '@/components/user-experience/QuickActionsBar';
+import SmartTooltips from '@/components/user-experience/SmartTooltips';
 
 
 import { 
@@ -56,6 +61,7 @@ import MobileAppCTA from "@/components/MobileAppCTA";
 const Index = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user } = useAuth();
   
   useEffect(() => {
     const title = 'TSMO | AI Art Protection & Forgery Detection';
@@ -194,6 +200,12 @@ const Index = () => {
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      {/* User Experience Enhancements */}
+      <SmartOnboarding />
+      <ContextualHelp />
+      <QuickActionsBar />
+      <SmartTooltips />
+      
       {showOnboardingTour && (
         <OnboardingTour startOpen onClose={() => setShowOnboardingTour(false)} />
       )}
@@ -261,6 +273,7 @@ const Index = () => {
               size="lg" 
               className="w-full sm:w-auto px-10 py-5 text-xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg hover:shadow-xl transition-all duration-300"
               onClick={() => navigate("/ai-protection-settings")}
+              data-tooltip="upload"
             >
               Start AI Training Protection
               <ArrowRight className="ml-2 h-6 w-6" />
