@@ -11,6 +11,9 @@ import { walletService } from '@/lib/blockchain/wallet-service';
 import { supportedChains } from '@/lib/blockchain/config';
 import { blockchainExplorerService, Transaction } from '@/lib/services/blockchain-explorer';
 import { securityMonitorService, SecurityMetrics } from '@/lib/services/security-monitor';
+import { hardwareWalletService, HardwareWallet } from '@/lib/services/hardware-wallet';
+import { portfolioTracker, PortfolioSummary } from '@/lib/services/portfolio-tracker';
+import { transactionManager, PendingTransaction } from '@/lib/services/transaction-manager';
 import { toast } from 'sonner';
 import { 
   Wallet as WalletIcon, 
@@ -26,7 +29,11 @@ import {
   ChevronRight,
   TrendingUp,
   AlertTriangle,
-  Info
+  Info,
+  HardDrive,
+  DollarSign,
+  Clock,
+  TrendingDown
 } from 'lucide-react';
 
 // Remove local interface, using imported Transaction type instead
@@ -48,6 +55,9 @@ export default function WalletPage() {
   const [securityMetrics, setSecurityMetrics] = useState<SecurityMetrics | null>(null);
   const [isLoadingTransactions, setIsLoadingTransactions] = useState(false);
   const [isLoadingSecurity, setIsLoadingSecurity] = useState(false);
+  const [hardwareWallets, setHardwareWallets] = useState<HardwareWallet[]>([]);
+  const [portfolioData, setPortfolioData] = useState<PortfolioSummary | null>(null);
+  const [pendingTransactions, setPendingTransactions] = useState<PendingTransaction[]>([]);
 
   const handleRefreshBalance = async () => {
     setIsRefreshing(true);
@@ -137,10 +147,39 @@ export default function WalletPage() {
       } finally {
         setIsLoadingSecurity(false);
       }
+      
+      // Fetch hardware wallets
+      try {
+        const wallets = await hardwareWalletService.detectWallets();
+        setHardwareWallets(wallets);
+      } catch (error) {
+        console.error('Failed to detect hardware wallets:', error);
+      }
+      
+      // Fetch portfolio data
+      try {
+        const portfolio = await portfolioTracker.getPortfolioSummary(address, [chainId]);
+        setPortfolioData(portfolio);
+      } catch (error) {
+        console.error('Failed to fetch portfolio:', error);
+      }
+      
+      // Fetch pending transactions
+      const pending = transactionManager.getPendingTransactions();
+      setPendingTransactions(pending);
     };
 
     if (isConnected && address && chainId) {
       fetchWalletData();
+      
+      // Set up real-time portfolio updates
+      const unsubscribe = portfolioTracker.subscribeToRealTimeUpdates(address, [chainId], (update) => {
+        setPortfolioData(update);
+      });
+      
+      return () => {
+        unsubscribe.then(unsub => unsub());
+      };
     }
   }, [isConnected, address, chainId]);
 
@@ -201,8 +240,10 @@ export default function WalletPage() {
 
       {isConnected ? (
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
+            <TabsTrigger value="hardware">Hardware</TabsTrigger>
             <TabsTrigger value="networks">Networks</TabsTrigger>
             <TabsTrigger value="history">History</TabsTrigger>
             <TabsTrigger value="security">Security</TabsTrigger>
@@ -305,6 +346,240 @@ export default function WalletPage() {
                       </div>
                     </div>
                   ))}
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Pending Transactions */}
+            {pendingTransactions.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Clock className="w-5 h-5" />
+                    Pending Transactions
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {pendingTransactions.slice(0, 5).map((tx) => (
+                      <div key={tx.id} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-3 h-3 rounded-full ${
+                            tx.status === 'confirmed' ? 'bg-green-500' :
+                            tx.status === 'failed' ? 'bg-red-500' :
+                            'bg-yellow-500 animate-pulse'
+                          }`} />
+                          <div>
+                            <p className="font-medium">{tx.type.toUpperCase()}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {tx.hash ? `${tx.hash.slice(0, 10)}...${tx.hash.slice(-8)}` : 'Pending...'}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <Badge variant={
+                            tx.status === 'confirmed' ? 'default' :
+                            tx.status === 'failed' ? 'destructive' :
+                            'secondary'
+                          }>
+                            {tx.status}
+                          </Badge>
+                          {tx.confirmations > 0 && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {tx.confirmations} confirmations
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="portfolio" className="space-y-6">
+            <div className="grid gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <DollarSign className="w-5 h-5" />
+                    Portfolio Summary
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {portfolioData ? (
+                    <div className="space-y-6">
+                      {/* Total Value */}
+                      <div className="text-center p-6 border rounded-lg">
+                        <div className="text-3xl font-bold mb-2">
+                          ${portfolioData.totalValueUsd.toLocaleString()}
+                        </div>
+                        <div className={`text-lg flex items-center justify-center gap-2 ${
+                          portfolioData.change24hPercent >= 0 ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                          {portfolioData.change24hPercent >= 0 ? (
+                            <TrendingUp className="h-5 w-5" />
+                          ) : (
+                            <TrendingDown className="h-5 w-5" />
+                          )}
+                          {portfolioData.change24hPercent.toFixed(2)}% (24h)
+                        </div>
+                      </div>
+
+                      {/* Token Holdings */}
+                      <div>
+                        <h3 className="text-lg font-semibold mb-4">Token Holdings</h3>
+                        <div className="space-y-3">
+                          {portfolioData.tokens.map((token, index) => (
+                            <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                                  {token.logoUrl ? (
+                                    <img src={token.logoUrl} alt={token.symbol} className="w-8 h-8 rounded-full" />
+                                  ) : (
+                                    <span className="text-sm font-bold">{token.symbol[0]}</span>
+                                  )}
+                                </div>
+                                <div>
+                                  <p className="font-medium">{token.name}</p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {parseFloat(token.balanceFormatted).toFixed(4)} {token.symbol}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <p className="font-medium">${token.valueUsd.toFixed(2)}</p>
+                                <p className={`text-sm ${(token.change24h || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                  {(token.change24h || 0).toFixed(2)}%
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* DeFi Positions */}
+                      {portfolioData.defiPositions.length > 0 && (
+                        <div>
+                          <h3 className="text-lg font-semibold mb-4">DeFi Positions</h3>
+                          <div className="space-y-3">
+                            {portfolioData.defiPositions.map((position, index) => (
+                              <div key={index} className="p-4 border rounded-lg">
+                                <div className="flex items-center justify-between mb-3">
+                                  <div>
+                                    <h4 className="font-medium">{position.protocol}</h4>
+                                    <p className="text-sm text-muted-foreground">{position.category}</p>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="font-medium">${position.totalValueUsd.toFixed(2)}</p>
+                                  </div>
+                                </div>
+                                <div className="space-y-2">
+                                  {position.positions.map((pos, posIndex) => (
+                                    <div key={posIndex} className="flex justify-between text-sm">
+                                      <span>{pos.type} {pos.token}</span>
+                                      <div className="text-right">
+                                        <span>${pos.valueUsd.toFixed(2)}</span>
+                                        {pos.apy && <span className="text-green-600 ml-2">{pos.apy}% APY</span>}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <DollarSign className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>Loading portfolio data...</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="hardware" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <HardDrive className="w-5 h-5" />
+                  Hardware Wallets
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {hardwareWallets.length > 0 ? (
+                    hardwareWallets.map((wallet, index) => (
+                      <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex items-center gap-4">
+                          <div className={`w-4 h-4 rounded-full ${wallet.isConnected ? 'bg-green-500' : 'bg-gray-400'}`} />
+                          <div>
+                            <h3 className="font-medium">{wallet.name}</h3>
+                            <p className="text-sm text-muted-foreground">
+                              {wallet.type.toUpperCase()} • Firmware: {wallet.firmware}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Supports {wallet.supportedChains.length} networks
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant={wallet.isConnected ? "secondary" : "default"}
+                            size="sm"
+                            onClick={async () => {
+                              if (wallet.isConnected) {
+                                await hardwareWalletService.disconnectWallet(wallet.id);
+                                // Refresh the list
+                                const wallets = await hardwareWalletService.detectWallets();
+                                setHardwareWallets(wallets);
+                              } else {
+                                const success = await hardwareWalletService.connectWallet(wallet.id);
+                                if (success) {
+                                  toast.success('Hardware wallet connected');
+                                  const wallets = await hardwareWalletService.detectWallets();
+                                  setHardwareWallets(wallets);
+                                } else {
+                                  toast.error('Failed to connect hardware wallet');
+                                }
+                              }
+                            }}
+                          >
+                            {wallet.isConnected ? 'Disconnect' : 'Connect'}
+                          </Button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-12">
+                      <HardDrive className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
+                      <h3 className="text-lg font-semibold mb-2">No Hardware Wallets Detected</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Connect your Ledger or Trezor device to get started with enhanced security.
+                      </p>
+                      <Button
+                        onClick={async () => {
+                          try {
+                            const wallets = await hardwareWalletService.detectWallets();
+                            setHardwareWallets(wallets);
+                            if (wallets.length === 0) {
+                              toast.info('No hardware wallets found. Make sure your device is connected and unlocked.');
+                            }
+                          } catch (error) {
+                            toast.error('Failed to detect hardware wallets');
+                          }
+                        }}
+                      >
+                        <RefreshCw className="w-4 h-4 mr-2" />
+                        Scan for Devices
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
