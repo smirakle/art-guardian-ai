@@ -1,64 +1,64 @@
-# 🎬 TSMO: The 2-Minute Copyright Protection Comedy Show!
-## *Because Protecting Your Art Should Be More Fun Than Creating It*
+# 🎬 TSMO: The 2-Minute AI Art Protection Tour!
+## *Because Your Creativity Deserves an AI Bodyguard*
 
 ---
 
-### 🎭 **OPENING: THE ARTISTIC EMERGENCY** *(0:00-0:20)*
+### 🎭 **OPENING: SIGN UP & GET STARTED** *(0:00-0:20)*
 
-**[NARRATOR - Slightly Panicked but Enthusiastic]**
-> "ARTISTS! Are you tired of your masterpieces wandering the internet like lost puppies? Well, grab your digital leash because TSMO is here to save the day! We're about to turn your copyright paranoia into pure profit!"
+**[NARRATOR - Enthusiastic Tech Friend]**
+> "ARTISTS! Ready to give your art superpowers? Welcome to TSMO - where signing up takes 30 seconds but protecting your creativity lasts forever!"
 
-**[Screen: TSMO Homepage with dramatic zoom]**
+**[Screen: TSMO Sign-up page with smooth transitions]**
 
-> "This is TSMO - where AI meets your artistic anxiety and makes beautiful, litigious babies together!"
-
----
-
-### 🚀 **THE UPLOAD MIRACLE** *(0:20-0:45)*
-
-**[NARRATOR - Infomercial Energy]**
-> "Step one: Upload your precious art baby! *drags file* Look at that buttery-smooth drag-and-drop! Our AI is now creating a digital fingerprint so detailed, it could identify your artwork in a police lineup!"
-
-**[AI processing animation]**
-
-> "Style Cloaking? Invisible watermarks? Your artwork just got more secret agent upgrades than a James Bond car! Take that, art thieves!"
+> "One click, one email, and BOOM! You're in the club! No credit card nonsense, no hidden fees - just pure artistic protection magic!"
 
 ---
 
-### 🕵️ **THE SURVEILLANCE SPECTACULAR** *(0:45-1:10)*
+### 📊 **THE UNIFIED DASHBOARD EXPERIENCE** *(0:20-0:45)*
 
-**[NARRATOR - Spy Movie Voice]**
-> "Welcome to your personal art surveillance headquarters! Our AI is currently stalking... I mean *monitoring*... 47 MILLION websites for your stolen goods! It's like having a really obsessive ex, but productive!"
+**[NARRATOR - Excited Tour Guide]**
+> "Meet your new command center! One dashboard to rule them all! Upload tracking, AI monitoring, portfolio insights - it's like having a crystal ball for your art career!"
 
-**[Dashboard animations]**
+**[Dashboard tour animation]**
 
-> "Green means good, yellow means suspicious, red means SOMEONE'S ABOUT TO MEET OUR LAWYERS! *evil laugh* And look - REAL-TIME ALERTS! It's like Christmas, but instead of presents, you get JUSTICE!"
+> "Look at those beautiful charts and graphs! Your art's performance, protection status, and AI training alerts all in one gorgeous interface. It's like Instagram for your intellectual property!"
 
 ---
 
-### ⚖️ **THE LEGAL SMACKDOWN** *(1:10-1:35)*
+### 🛡️ **PROTECTION HUB POWERS** *(0:45-1:10)*
 
 **[NARRATOR - Superhero Announcer]**
-> "Art thief detected? TIME FOR DIGITAL JUSTICE! One click sends a cease and desist letter so professionally terrifying, copyright infringers will voluntarily delete their browser history!"
+> "Welcome to the Protection Hub - your personal fortress of artistic solitude! Upload once, protect everywhere! Our AI creates invisible shields around your work faster than you can say 'style theft!'"
 
-**[DMCA takedown demo]**
+**[Protection Hub demo]**
 
-> "DMCA TAKEDOWN ACTIVATED! 🚀 Watch that stolen content disappear faster than your motivation on Monday morning! Auto-generated legal docs, blockchain evidence - we've got more receipts than Black Friday shoppers!"
+> "Multi-modal protection, style cloaking, watermarking - your art just got more security upgrades than a government database! Watch those protection layers stack up like a digital sandwich of safety!"
 
 ---
 
-### 💰 **THE MONEY MAKER FINALE** *(1:35-2:00)*
+### 🤖 **AI TRAINING MONITORING MAGIC** *(1:10-1:35)*
 
-**[NARRATOR - Game Show Energy]**
-> "But WAIT! Why just protect when you can PROFIT? Turn infringement into INCOME! Automatic licensing, custom pricing, real-time royalties! You're not just an artist anymore - you're a COPYRIGHT CAPITALIST!"
+**[NARRATOR - Detective Voice]**
+> "Plot twist! Our AI spies on OTHER AIs! We're monitoring training datasets, catching unauthorized usage, and sending alerts faster than gossip spreads in art school!"
 
-**[Revenue dashboard zoom]**
+**[AI monitoring dashboard]**
 
-> "Sleep peacefully knowing that while you dream of your next masterpiece, TSMO's AI army is marching across the internet, defending your creative honor AND your bank account!"
+> "Real-time detection across millions of training runs! Your portfolio is being watched 24/7 by our digital guardian angels. Sleep tight knowing no AI is stealing your style without you knowing!"
 
-**[Epic finale]**
+---
 
-> "So join TSMO today! Because at TSMO, we don't just stop art theft - WE MAKE IT IMPOSSIBLE! 🎨⚡"
+### 📈 **PORTFOLIO MONITORING FINALE** *(1:35-2:00)*
+
+**[NARRATOR - Proud Parent Energy]**
+> "Your portfolio isn't just protected - it's THRIVING! Track every piece, monitor every mention, analyze every trend! You're not just an artist anymore - you're a DATA-DRIVEN CREATIVE GENIUS!"
+
+**[Portfolio analytics zoom]**
+
+> "Join thousands of artists who've already discovered the future of art protection! Sign up today and give your creativity the AI-powered security it deserves!"
+
+**[Epic finale with signup call-to-action]**
+
+> "TSMO: Where your art meets its match... in PROTECTION! 🎨🤖✨"
 
 ---
 
