@@ -1,64 +1,87 @@
-# 🎬 TSMO: The 2-Minute AI Art Protection Tour!
-## *Because Your Creativity Deserves an AI Bodyguard*
+# 🎬 TSMO Commercial Script: "The AI Art Thief Nightmare"
+## *2-Minute Comedy Commercial That Converts*
 
 ---
 
-### 🎭 **OPENING: SIGN UP & GET STARTED** *(0:00-0:20)*
+### 🚨 **COLD OPEN - THE PROBLEM** *(0:00-0:15)*
 
-**[NARRATOR - Enthusiastic Tech Friend]**
-> "ARTISTS! Ready to give your art superpowers? Welcome to TSMO - where signing up takes 30 seconds but protecting your creativity lasts forever!"
+**[SCENE: Artist working late at night, soft music playing]**
 
-**[Screen: TSMO Sign-up page with smooth transitions]**
+**[NARRATOR - Dramatic Documentary Voice]**
+> "Meet Sarah. She just spent 47 hours perfecting this digital masterpiece..."
 
-> "One click, one email, and BOOM! You're in the club! No credit card nonsense, no hidden fees - just pure artistic protection magic!"
+**[SCENE: Computer screen shows beautiful artwork]**
 
----
+> "But while Sarah sleeps, somewhere in the digital darkness... AI models are FEASTING on her work like it's an all-you-can-eat buffet!"
 
-### 📊 **THE UNIFIED DASHBOARD EXPERIENCE** *(0:20-0:45)*
-
-**[NARRATOR - Excited Tour Guide]**
-> "Meet your new command center! One dashboard to rule them all! Upload tracking, AI monitoring, portfolio insights - it's like having a crystal ball for your art career!"
-
-**[Dashboard tour animation]**
-
-> "Look at those beautiful charts and graphs! Your art's performance, protection status, and AI training alerts all in one gorgeous interface. It's like Instagram for your intellectual property!"
+**[SCENE: Dramatic zoom on glowing computer servers with chomping sound effects]**
 
 ---
 
-### 🛡️ **PROTECTION HUB POWERS** *(0:45-1:10)*
+### 😱 **THE CHAOS UNFOLDS** *(0:15-0:30)*
 
-**[NARRATOR - Superhero Announcer]**
-> "Welcome to the Protection Hub - your personal fortress of artistic solitude! Upload once, protect everywhere! Our AI creates invisible shields around your work faster than you can say 'style theft!'"
+**[NARRATOR - Now slightly panicked]**
+> "By morning, Sarah's style has been cloned 50,000 times! Her unique artistic voice? Now available in bulk! Her years of practice? Reduced to a simple prompt!"
 
-**[Protection Hub demo]**
+**[SCENE: Split screen showing original art vs AI copies flooding social media]**
 
-> "Multi-modal protection, style cloaking, watermarking - your art just got more security upgrades than a government database! Watch those protection layers stack up like a digital sandwich of safety!"
+> "But wait! What's this? Sarah has... TSMO?!"
 
----
-
-### 🤖 **AI TRAINING MONITORING MAGIC** *(1:10-1:35)*
-
-**[NARRATOR - Detective Voice]**
-> "Plot twist! Our AI spies on OTHER AIs! We're monitoring training datasets, catching unauthorized usage, and sending alerts faster than gossip spreads in art school!"
-
-**[AI monitoring dashboard]**
-
-> "Real-time detection across millions of training runs! Your portfolio is being watched 24/7 by our digital guardian angels. Sleep tight knowing no AI is stealing your style without you knowing!"
+**[SCENE: Superhero cape sound effect, music switches to triumphant]**
 
 ---
 
-### 📈 **PORTFOLIO MONITORING FINALE** *(1:35-2:00)*
+### 🦸 **ENTER THE HERO** *(0:30-0:50)*
 
-**[NARRATOR - Proud Parent Energy]**
-> "Your portfolio isn't just protected - it's THRIVING! Track every piece, monitor every mention, analyze every trend! You're not just an artist anymore - you're a DATA-DRIVEN CREATIVE GENIUS!"
+**[NARRATOR - Now a superhero announcer]**
+> "TSMO: The AI bodyguard your art deserves! Sign up in literally 20 seconds - no credit card, no commitment, just pure digital protection!"
 
-**[Portfolio analytics zoom]**
+**[SCENE: Quick montage of super-fast signup process]**
 
-> "Join thousands of artists who've already discovered the future of art protection! Sign up today and give your creativity the AI-powered security it deserves!"
+> "Upload your art to the Protection Hub and watch our AI build an invisible fortress around your creativity! It's like having a bouncer for your brain!"
 
-**[Epic finale with signup call-to-action]**
+**[SCENE: Colorful protection shields appearing around artwork]**
 
-> "TSMO: Where your art meets its match... in PROTECTION! 🎨🤖✨"
+---
+
+### 🕵️ **THE SPY NETWORK** *(0:50-1:20)*
+
+**[NARRATOR - Spy movie voice]**
+> "But we don't stop there! Our AI Training Monitor is like having a private detective watching every AI model on the planet!"
+
+**[SCENE: Matrix-style code scrolling, zoom into monitoring dashboard]**
+
+> "Training dataset alert! Someone's trying to steal your style! BOOM - instant notification! Your art is being monitored 24/7 by our digital army!"
+
+**[SCENE: Alert notifications popping up dramatically]**
+
+> "And the Unified Dashboard? It's mission control for your creative empire! Track everything, see everything, control everything!"
+
+---
+
+### 💰 **THE CONVERSION CLOSER** *(1:20-1:50)*
+
+**[NARRATOR - Best friend energy]**
+> "Look, other artists are already sleeping peacefully while TSMO guards their creativity. You could join them... or you could stay up all night wondering if your art is safe!"
+
+**[SCENE: Split screen - stressed artist vs peaceful TSMO user]**
+
+> "Free account gets you started immediately! No strings attached! Just you, your art, and an AI bodyguard that never sleeps!"
+
+**[SCENE: Happy artists using TSMO, big green "FREE" badge]**
+
+---
+
+### 🚀 **EPIC FINALE** *(1:50-2:00)*
+
+**[NARRATOR - Movie trailer voice]**
+> "TSMO: Because your creativity fought too hard to give up without a fight!"
+
+**[SCENE: Epic montage of protected artwork with heroic music]**
+
+> "Sign up now and show AI who's boss! TSMO.com - Where artists fight back!"
+
+**[SCENE: Bold logo slam with signup button]**
 
 ---
 
