@@ -1,4 +1,4 @@
-import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search, Briefcase, UserCheck, Copyright, TrendingUp, Key, DollarSign, Send, Gavel, Zap, FileCheck, Wallet } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search, Briefcase, UserCheck, Copyright, TrendingUp, Key, DollarSign, Send, Gavel, Zap, FileCheck, Wallet, FileImage } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
@@ -57,6 +57,7 @@ export function AppSidebar() {
   const adminOnlyItems = [
     { path: "/email-marketing", label: "Email Marketing", icon: Send },
     { path: "/tax-management", label: "Tax Management", icon: DollarSign },
+    { path: "/marketing-flyer", label: "Marketing Flyer", icon: FileImage },
   ];
 
   const secondaryNavItems = [
