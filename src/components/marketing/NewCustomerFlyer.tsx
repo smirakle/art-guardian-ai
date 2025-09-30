@@ -157,9 +157,9 @@ export const NewCustomerFlyer: React.FC = () => {
         {/* Content */}
         <div className="relative z-10 h-full flex flex-col">
           {/* Attention-grabbing headline */}
-          <div className="px-8 pt-12 pb-6">
+          <div className="px-6 pt-8 pb-4">
             <h1 
-              className="text-6xl font-black leading-tight mb-6 tracking-tight"
+              className="text-5xl font-black leading-tight mb-4 tracking-tight"
               style={{
                 color: '#FFB800',
                 textShadow: '4px 4px 0px rgba(0,0,0,0.5), -2px -2px 0px rgba(255,255,255,0.1)',
@@ -176,24 +176,24 @@ export const NewCustomerFlyer: React.FC = () => {
           </div>
 
           {/* Visual icons for stolen art */}
-          <div className="px-8 flex justify-center gap-8 mb-8">
-            <div className="w-32 h-32 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg p-4 flex items-center justify-center border-4 border-black shadow-2xl transform -rotate-3">
-              <Shield className="w-20 h-20 text-white" />
+          <div className="px-6 flex justify-center gap-6 mb-4">
+            <div className="w-24 h-24 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg p-3 flex items-center justify-center border-4 border-black shadow-2xl transform -rotate-3">
+              <Shield className="w-16 h-16 text-white" />
             </div>
-            <div className="w-32 h-32 bg-gradient-to-br from-purple-400 to-pink-600 rounded-lg p-4 flex items-center justify-center border-4 border-black shadow-2xl transform rotate-2">
-              <Eye className="w-20 h-20 text-white" />
+            <div className="w-24 h-24 bg-gradient-to-br from-purple-400 to-pink-600 rounded-lg p-3 flex items-center justify-center border-4 border-black shadow-2xl transform rotate-2">
+              <Eye className="w-16 h-16 text-white" />
             </div>
           </div>
 
           {/* Main CTA */}
-          <div className="px-8 text-center mb-6">
-            <p className="text-3xl font-bold text-cyan-300 mb-2" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+          <div className="px-6 text-center mb-4">
+            <p className="text-2xl font-bold text-cyan-300 mb-1" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
               PROTECT IT WITH
             </p>
-            <div className="flex items-center justify-center gap-4 mb-2">
-              <img src={tsmoLogo} alt="TSMO" className="h-16 w-16 brightness-0 invert drop-shadow-2xl" />
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <img src={tsmoLogo} alt="TSMO" className="h-12 w-12 brightness-0 invert drop-shadow-2xl" />
               <h2 
-                className="text-5xl font-black text-white"
+                className="text-4xl font-black text-white"
                 style={{ 
                   textShadow: '3px 3px 0px rgba(0,0,0,0.8)',
                   letterSpacing: '0.05em'
@@ -205,58 +205,58 @@ export const NewCustomerFlyer: React.FC = () => {
           </div>
 
           {/* What You Get - Production Ready Features */}
-          <div className="px-8 mb-6">
-            <div className="bg-black/60 backdrop-blur-sm rounded-2xl p-6 border-4 border-cyan-400/50">
-              <h3 className="text-2xl font-black text-yellow-400 mb-4 text-center" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+          <div className="px-6 mb-4">
+            <div className="bg-black/60 backdrop-blur-sm rounded-xl p-4 border-4 border-cyan-400/50">
+              <h3 className="text-xl font-black text-yellow-400 mb-3 text-center" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
                 FULLY MARKET & PRODUCTION READY
               </h3>
               
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                    <CheckCircle className="h-5 w-5 text-white" />
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-4 w-4 text-white" />
                   </div>
-                  <span className="text-white font-bold text-sm">AI Training Dataset Protection</span>
+                  <span className="text-white font-bold text-xs">AI Training Dataset Protection</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
-                    <CheckCircle className="h-5 w-5 text-white" />
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-gradient-to-br from-purple-400 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-4 w-4 text-white" />
                   </div>
-                  <span className="text-white font-bold text-sm">Advanced Image Protection System</span>
+                  <span className="text-white font-bold text-xs">Advanced Image Protection System</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-full flex items-center justify-center flex-shrink-0">
-                    <CheckCircle className="h-5 w-5 text-white" />
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-4 w-4 text-white" />
                   </div>
-                  <span className="text-white font-bold text-sm">Real-Time Scanning & Monitoring</span>
+                  <span className="text-white font-bold text-xs">Real-Time Scanning & Monitoring</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
-                    <CheckCircle className="h-5 w-5 text-white" />
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-4 w-4 text-white" />
                   </div>
-                  <span className="text-white font-bold text-sm">Legal Templates & DMCA Support</span>
+                  <span className="text-white font-bold text-xs">Legal Templates & DMCA Support</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-pink-400 to-red-600 rounded-full flex items-center justify-center flex-shrink-0">
-                    <CheckCircle className="h-5 w-5 text-white" />
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-gradient-to-br from-pink-400 to-red-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-4 w-4 text-white" />
                   </div>
-                  <span className="text-white font-bold text-sm">24/7 Automated Monitoring System</span>
+                  <span className="text-white font-bold text-xs">24/7 Automated Monitoring System</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Footer CTA */}
-          <div className="mt-auto px-8 pb-10 text-center">
-            <div className="bg-gradient-to-r from-gray-900 to-black rounded-2xl p-6 border-4 border-white/20">
+          <div className="mt-auto px-6 pb-6 text-center">
+            <div className="bg-gradient-to-r from-gray-900 to-black rounded-xl p-4 border-4 border-white/20">
               <p 
-                className="text-4xl font-black text-white mb-2"
+                className="text-3xl font-black text-white mb-1"
                 style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}
               >
                 TSMOWATCH.COM
               </p>
               <p 
-                className="text-2xl font-black bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent"
+                className="text-xl font-black bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent"
                 style={{ textShadow: '0 0 20px rgba(255,255,255,0.3)' }}
               >
                 YOUR ART. OUR WATCH.
