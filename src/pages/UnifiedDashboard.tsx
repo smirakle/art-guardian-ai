@@ -24,6 +24,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { DashboardEmptyState } from '@/components/customer-success/DashboardEmptyState';
 
 // Import consolidated components
 import { ProductionDashboard } from '@/components/dashboard/ProductionDashboard';
@@ -320,12 +321,19 @@ const UnifiedDashboard = () => {
     );
   }
 
+  // Show empty state if user has no data
+  const hasAnyData = stats.protectedAssets > 0 || stats.threats > 0 || stats.blockchainRecords > 0;
+
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
       {/* User Experience Enhancements */}
       <ContextualHelp />
-      
       <SmartTooltips />
+      
+      {!hasAnyData ? (
+        <DashboardEmptyState />
+      ) : (
+        <>
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold mb-4">Unified Protection Dashboard</h1>
@@ -619,6 +627,8 @@ const UnifiedDashboard = () => {
           <ProductionDashboard />
         </TabsContent>
       </Tabs>
+      </>
+      )}
     </div>
   );
 };

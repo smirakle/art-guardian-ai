@@ -60,6 +60,9 @@ import GetApp from "./pages/GetApp";
 import DMCACenter from "./pages/DMCACenter";
 import USPTOPatentGenerator from "./components/patent/USPTOPatentGenerator";
 import { CopyrightFooter } from "./components/CopyrightFooter";
+import SmartOnboarding from "./components/smart-onboarding/SmartOnboarding";
+import { HelpWidget } from "./components/customer-success/HelpWidget";
+import { RealTimeNotifications } from "./components/customer-success/RealTimeNotifications";
 
 const queryClient = new QueryClient();
 
@@ -95,12 +98,15 @@ const App = () => {
             <SecurityHeaders />
             <Toaster />
             <Sonner />
+            <SmartOnboarding />
+            <HelpWidget />
             <SidebarProvider>
               <div className="min-h-screen flex w-full">
                 <AppSidebar />
                 <main className="flex-1 flex flex-col">
-                  <header className="h-12 flex items-center border-b bg-background/95 backdrop-blur-sm">
-                    <SidebarTrigger className="ml-4" />
+                  <header className="h-12 flex items-center justify-between border-b bg-background/95 backdrop-blur-sm px-4">
+                    <SidebarTrigger />
+                    <RealTimeNotifications />
                   </header>
                    <div className="p-4 flex-1">
                     <Routes>
