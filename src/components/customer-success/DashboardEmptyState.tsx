@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Upload, 
   Shield, 
@@ -9,9 +10,12 @@ import {
   Zap,
   ArrowRight,
   CheckCircle,
-  Sparkles
+  Sparkles,
+  PlayCircle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { DemoDataGenerator } from '@/components/demo/DemoDataGenerator';
+import { LiveDemoSimulation } from '@/components/demo/LiveDemoSimulation';
 
 interface Step {
   icon: React.ElementType;
@@ -67,12 +71,13 @@ const benefits = [
 
 export const DashboardEmptyState: React.FC = () => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('quick-start');
 
   return (
     <div className="space-y-8">
-      {/* Hero Section */}
+      {/* Header */}
       <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-background to-accent/5">
-        <CardHeader className="text-center space-y-4 pb-8">
+        <CardHeader className="text-center space-y-4 pb-4">
           <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
             <Sparkles className="h-8 w-8 text-white" />
           </div>
@@ -82,11 +87,32 @@ export const DashboardEmptyState: React.FC = () => {
             </Badge>
             <CardTitle className="text-3xl mb-2">Protect Your Creative Work</CardTitle>
             <CardDescription className="text-lg max-w-2xl mx-auto">
-              Get started in 3 simple steps. Your artwork deserves enterprise-level protection.
+              Choose how you want to get started - upload your work or explore with demo data
             </CardDescription>
           </div>
         </CardHeader>
-        <CardContent>
+      </Card>
+
+      {/* Tabs for Quick Start vs Demo */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
+          <TabsTrigger value="quick-start" className="flex items-center gap-2">
+            <Upload className="h-4 w-4" />
+            Quick Start
+          </TabsTrigger>
+          <TabsTrigger value="demo" className="flex items-center gap-2">
+            <PlayCircle className="h-4 w-4" />
+            Interactive Demo
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="quick-start" className="space-y-6">
+          <Card className="border-2 border-primary/20">
+            <CardHeader className="text-center space-y-4 pb-4">
+              <CardTitle className="text-lg">Get Started in 3 Simple Steps</CardTitle>
+              <CardDescription>Your artwork deserves enterprise-level protection</CardDescription>
+            </CardHeader>
+            <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {steps.map((step, index) => {
               const Icon = step.icon;
@@ -125,9 +151,9 @@ export const DashboardEmptyState: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Benefits Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+          {/* Benefits Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Zap className="h-5 w-5 text-yellow-500" />
@@ -180,10 +206,50 @@ export const DashboardEmptyState: React.FC = () => {
             >
               Get Started Now
               <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+              </Button>
+            </CardContent>
+          </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="demo" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <DemoDataGenerator />
+            <LiveDemoSimulation />
+          </div>
+
+          <Card className="bg-gradient-to-br from-blue-500/5 to-purple-500/5">
+            <CardHeader>
+              <CardTitle>Why Use Demo Mode?</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-medium text-sm">Explore Without Commitment</p>
+                    <p className="text-xs text-muted-foreground">Try all features before uploading real artwork</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-medium text-sm">See Real-Time Protection</p>
+                    <p className="text-xs text-muted-foreground">Watch how our AI detects and responds to threats</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-medium text-sm">Understanding the ROI</p>
+                    <p className="text-xs text-muted-foreground">See how much protection value you get</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
