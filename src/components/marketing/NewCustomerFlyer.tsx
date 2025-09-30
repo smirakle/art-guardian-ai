@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Shield, Eye, Gavel, CheckCircle, Printer, Download } from 'lucide-react';
-import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
+import tsmoLogo from "@/assets/tsmo-logo-full.png";
 import jsPDF from 'jspdf';
 import { useToast } from '@/hooks/use-toast';
 
