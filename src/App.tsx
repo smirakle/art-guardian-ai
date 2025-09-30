@@ -63,6 +63,8 @@ import { CopyrightFooter } from "./components/CopyrightFooter";
 import SmartOnboarding from "./components/smart-onboarding/SmartOnboarding";
 import { HelpWidget } from "./components/customer-success/HelpWidget";
 import { RealTimeNotifications } from "./components/customer-success/RealTimeNotifications";
+import MobileIntegration from "./pages/MobileIntegration";
+import AdvancedAnalytics from "./pages/AdvancedAnalytics";
 
 const queryClient = new QueryClient();
 
@@ -187,6 +189,8 @@ const App = () => {
               </ProtectedRoute>
             } />
             <Route path="/certificate/:certificateId" element={<Certificate />} />
+            <Route path="/mobile" element={<MobileIntegration />} />
+            <Route path="/analytics" element={<AdvancedAnalytics />} />
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />
                     </Routes>
