@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Shield, Eye, Gavel, CheckCircle, Printer, Download } from 'lucide-react';
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import { useToast } from '@/hooks/use-toast';
 
 export const NewCustomerFlyer: React.FC = () => {
@@ -13,32 +12,62 @@ export const NewCustomerFlyer: React.FC = () => {
     window.print();
   };
 
-  const handleDownload = async () => {
+  const handleDownload = () => {
     try {
       toast({
         title: "Generating PDF...",
         description: "Please wait while we create your flyer",
       });
 
-      const flyerElement = document.querySelector('.flyer-container') as HTMLElement;
-      if (!flyerElement) return;
-
-      // Capture the flyer as canvas
-      const canvas = await html2canvas(flyerElement, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff'
-      });
-
-      // Create PDF (5x7 inches at 72 DPI)
+      // Create PDF with text-based content (5x7 inches)
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'in',
         format: [5, 7]
       });
 
-      const imgData = canvas.toDataURL('image/png');
-      pdf.addImage(imgData, 'PNG', 0, 0, 5, 7);
+      // Add content to PDF
+      pdf.setFontSize(24);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Art Guardian AI', 0.5, 0.8);
+      
+      pdf.setFontSize(16);
+      pdf.text('Protect Your Creative Work with AI', 0.5, 1.2);
+      
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('Advanced copyright protection powered by artificial intelligence', 0.5, 1.5, { maxWidth: 4 });
+      
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Key Features:', 0.5, 2.2);
+      
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('• AI-Powered Protection - Detect unauthorized use', 0.7, 2.6, { maxWidth: 3.8 });
+      pdf.text('• 24/7 Monitoring - Real-time alerts', 0.7, 3.0, { maxWidth: 3.8 });
+      pdf.text('• Legal Support - Automated DMCA filing', 0.7, 3.4, { maxWidth: 3.8 });
+      
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('What You Get:', 0.5, 4.0);
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('✓ Unlimited artwork uploads', 0.7, 4.4);
+      pdf.text('✓ Blockchain verification certificates', 0.7, 4.7);
+      pdf.text('✓ Deepfake detection technology', 0.7, 5.0);
+      pdf.text('✓ Priority customer support', 0.7, 5.3);
+      pdf.text('✓ Mobile app access (iOS & Android)', 0.7, 5.6);
+      
+      pdf.setFillColor(255, 215, 0);
+      pdf.rect(0.5, 5.9, 4, 0.6, 'F');
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('LIMITED TIME: 50% OFF', 2.5, 6.3, { align: 'center' });
+      
+      pdf.setFontSize(12);
+      pdf.text('artguardian.ai', 2.5, 6.7, { align: 'center' });
       
       pdf.save('art-guardian-ai-flyer.pdf');
 
@@ -50,7 +79,7 @@ export const NewCustomerFlyer: React.FC = () => {
       console.error('PDF generation error:', error);
       toast({
         title: "Download Failed",
-        description: "There was an error generating the PDF",
+        description: "There was an error generating the PDF. Try printing instead.",
         variant: "destructive"
       });
     }
