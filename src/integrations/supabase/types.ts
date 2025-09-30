@@ -5055,6 +5055,54 @@ export type Database = {
         }
         Relationships: []
       }
+      moonpay_transactions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          crypto_amount: number | null
+          crypto_currency: string
+          currency: string
+          external_transaction_id: string
+          fiat_amount: number
+          fiat_currency: string
+          id: string
+          status: string
+          updated_at: string
+          user_id: string
+          wallet_address: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          crypto_amount?: number | null
+          crypto_currency: string
+          currency: string
+          external_transaction_id: string
+          fiat_amount: number
+          fiat_currency: string
+          id?: string
+          status: string
+          updated_at?: string
+          user_id: string
+          wallet_address: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          crypto_amount?: number | null
+          crypto_currency?: string
+          currency?: string
+          external_transaction_id?: string
+          fiat_amount?: number
+          fiat_currency?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
       nft_tokens: {
         Row: {
           artwork_id: string

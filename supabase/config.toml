@@ -167,3 +167,6 @@ verify_jwt = false
 [functions.crawler-protection]
 verify_jwt = false
 
+[functions.moonpay-webhook]
+verify_jwt = false
+

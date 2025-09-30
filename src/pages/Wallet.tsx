@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/contexts/AuthContext';
 import { useBlockchain } from '@/contexts/BlockchainContext';
 import { WalletConnection } from '@/components/blockchain/WalletConnection';
+import { FundsManager } from '@/components/wallet/FundsManager';
 import { walletService } from '@/lib/blockchain/wallet-service';
 import { supportedChains } from '@/lib/blockchain/config';
 import { blockchainExplorerService, Transaction } from '@/lib/services/blockchain-explorer';
@@ -299,6 +300,9 @@ export default function WalletPage() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Add Funds Section */}
+            <FundsManager onFundingComplete={handleRefreshBalance} />
 
             {/* Recent Activity */}
             <Card>
