@@ -65,6 +65,7 @@ import { HelpWidget } from "./components/customer-success/HelpWidget";
 import { RealTimeNotifications } from "./components/customer-success/RealTimeNotifications";
 import MobileIntegration from "./pages/MobileIntegration";
 import AdvancedAnalytics from "./pages/AdvancedAnalytics";
+import MarketingFlyer from "./pages/MarketingFlyer";
 
 const queryClient = new QueryClient();
 
@@ -191,6 +192,7 @@ const App = () => {
             <Route path="/certificate/:certificateId" element={<Certificate />} />
             <Route path="/mobile" element={<MobileIntegration />} />
             <Route path="/analytics" element={<AdvancedAnalytics />} />
+            <Route path="/marketing-flyer" element={<MarketingFlyer />} />
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />
                     </Routes>
