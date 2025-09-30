@@ -192,7 +192,11 @@ const App = () => {
             <Route path="/certificate/:certificateId" element={<Certificate />} />
             <Route path="/mobile" element={<MobileIntegration />} />
             <Route path="/analytics" element={<AdvancedAnalytics />} />
-            <Route path="/marketing-flyer" element={<MarketingFlyer />} />
+            <Route path="/marketing-flyer" element={
+              <ProtectedRoute requiredRole="admin">
+                <MarketingFlyer />
+              </ProtectedRoute>
+            } />
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />
                     </Routes>
