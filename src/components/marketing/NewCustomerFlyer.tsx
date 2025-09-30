@@ -103,172 +103,164 @@ export const NewCustomerFlyer: React.FC = () => {
         </Button>
       </div>
 
-      {/* 5x7 inch flyer container (700px × 1000px at 100dpi for screen, adjusts for print) */}
+      {/* 5x7 inch flyer container with graffiti brick wall style */}
       <div 
-        className="flyer-container bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 text-gray-900 shadow-2xl mx-auto relative overflow-hidden"
+        className="flyer-container relative shadow-2xl mx-auto overflow-hidden"
         style={{
           width: '700px',
           height: '1000px',
-          aspectRatio: '5/7'
+          aspectRatio: '5/7',
+          background: 'linear-gradient(135deg, #1a0933 0%, #2d1055 25%, #0f3460 50%, #5c2a9d 75%, #1a0933 100%)'
         }}
       >
-        {/* Decorative background pattern with TSMO logos */}
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-          <div className="absolute top-10 left-10 w-32 h-32">
-            <img src={tsmoLogo} alt="" className="w-full h-full object-contain" />
-          </div>
-          <div className="absolute top-1/3 right-16 w-24 h-24 rotate-45">
-            <img src={tsmoLogo} alt="" className="w-full h-full object-contain" />
-          </div>
-          <div className="absolute bottom-1/4 left-20 w-28 h-28 -rotate-12">
-            <img src={tsmoLogo} alt="" className="w-full h-full object-contain" />
-          </div>
-          <div className="absolute bottom-32 right-12 w-20 h-20 rotate-[30deg]">
-            <img src={tsmoLogo} alt="" className="w-full h-full object-contain" />
-          </div>
+        {/* Brick wall texture overlay */}
+        <div 
+          className="absolute inset-0 opacity-40"
+          style={{
+            backgroundImage: `repeating-linear-gradient(
+              0deg,
+              transparent,
+              transparent 35px,
+              rgba(0,0,0,0.3) 35px,
+              rgba(0,0,0,0.3) 38px
+            ),
+            repeating-linear-gradient(
+              90deg,
+              transparent,
+              transparent 60px,
+              rgba(0,0,0,0.3) 60px,
+              rgba(0,0,0,0.3) 63px
+            )`,
+            backgroundSize: '100% 38px, 63px 100%'
+          }}
+        />
+        
+        {/* Grunge texture and paint splatters */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-10 right-20 w-32 h-32 bg-cyan-400 rounded-full blur-3xl" />
+          <div className="absolute top-40 left-10 w-40 h-40 bg-purple-500 rounded-full blur-3xl" />
+          <div className="absolute bottom-40 right-16 w-36 h-36 bg-pink-500 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 left-24 w-28 h-28 bg-blue-400 rounded-full blur-3xl" />
         </div>
 
-        {/* Header with creative gradient and logo */}
-        <div className="relative bg-gradient-to-br from-primary via-purple-600 to-accent text-white px-8 pt-10 pb-16 overflow-hidden">
-          {/* Animated circles background */}
-          <div className="absolute top-0 left-0 w-full h-full opacity-20">
-            <div className="absolute -top-10 -right-10 w-48 h-48 border-8 border-white rounded-full animate-pulse" />
-            <div className="absolute top-1/2 -left-20 w-64 h-64 border-8 border-white rounded-full" />
-            <div className="absolute bottom-0 right-1/4 w-32 h-32 bg-white rounded-full blur-2xl" />
-          </div>
-          
-          {/* Large TSMO logo as header centerpiece */}
-          <div className="relative z-10 flex flex-col items-center text-center">
-            <div className="mb-6 relative">
-              <div className="absolute inset-0 bg-white/20 blur-3xl rounded-full" />
-              <img 
-                src={tsmoLogo} 
-                alt="TSMO Logo" 
-                className="h-24 w-24 relative z-10 drop-shadow-2xl brightness-0 invert"
-              />
-            </div>
-            
-            <h1 className="text-5xl font-black mb-4 leading-tight tracking-tight drop-shadow-lg">
-              Protect Your<br />Creative Work
+        {/* Paint drips */}
+        <div className="absolute top-0 left-1/4 w-2 h-32 bg-cyan-400 opacity-60 blur-sm" />
+        <div className="absolute top-0 right-1/3 w-3 h-40 bg-pink-500 opacity-50 blur-sm" />
+        
+        {/* TSMO logo watermarks */}
+        <div className="absolute inset-0 opacity-[0.08] pointer-events-none">
+          <img src={tsmoLogo} alt="" className="absolute top-20 left-16 w-28 h-28 object-contain -rotate-12" />
+          <img src={tsmoLogo} alt="" className="absolute top-1/2 right-12 w-32 h-32 object-contain rotate-45" />
+          <img src={tsmoLogo} alt="" className="absolute bottom-32 left-20 w-24 h-24 object-contain rotate-12" />
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 h-full flex flex-col">
+          {/* Attention-grabbing headline */}
+          <div className="px-8 pt-12 pb-6">
+            <h1 
+              className="text-6xl font-black leading-tight mb-6 tracking-tight"
+              style={{
+                color: '#FFB800',
+                textShadow: '4px 4px 0px rgba(0,0,0,0.5), -2px -2px 0px rgba(255,255,255,0.1)',
+                transform: 'rotate(-2deg)',
+                letterSpacing: '0.02em'
+              }}
+            >
+              DID SOMEONE
+              <br />
+              STEAL YOUR
+              <br />
+              ART?
             </h1>
-            
-            <div className="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full border-2 border-white/40">
-              <p className="text-lg font-bold">
-                AI-Powered Copyright Protection
+          </div>
+
+          {/* Visual icons for stolen art */}
+          <div className="px-8 flex justify-center gap-8 mb-8">
+            <div className="w-32 h-32 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg p-4 flex items-center justify-center border-4 border-black shadow-2xl transform -rotate-3">
+              <Shield className="w-20 h-20 text-white" />
+            </div>
+            <div className="w-32 h-32 bg-gradient-to-br from-purple-400 to-pink-600 rounded-lg p-4 flex items-center justify-center border-4 border-black shadow-2xl transform rotate-2">
+              <Eye className="w-20 h-20 text-white" />
+            </div>
+          </div>
+
+          {/* Main CTA */}
+          <div className="px-8 text-center mb-6">
+            <p className="text-3xl font-bold text-cyan-300 mb-2" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+              PROTECT IT WITH
+            </p>
+            <div className="flex items-center justify-center gap-4 mb-2">
+              <img src={tsmoLogo} alt="TSMO" className="h-16 w-16 brightness-0 invert drop-shadow-2xl" />
+              <h2 
+                className="text-5xl font-black text-white"
+                style={{ 
+                  textShadow: '3px 3px 0px rgba(0,0,0,0.8)',
+                  letterSpacing: '0.05em'
+                }}
+              >
+                TSMO WATCH
+              </h2>
+            </div>
+          </div>
+
+          {/* What You Get - Production Ready Features */}
+          <div className="px-8 mb-6">
+            <div className="bg-black/60 backdrop-blur-sm rounded-2xl p-6 border-4 border-cyan-400/50">
+              <h3 className="text-2xl font-black text-yellow-400 mb-4 text-center" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+                FULLY MARKET & PRODUCTION READY
+              </h3>
+              
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-5 w-5 text-white" />
+                  </div>
+                  <span className="text-white font-bold text-sm">AI Training Dataset Protection</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-5 w-5 text-white" />
+                  </div>
+                  <span className="text-white font-bold text-sm">Advanced Image Protection System</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-5 w-5 text-white" />
+                  </div>
+                  <span className="text-white font-bold text-sm">Real-Time Scanning & Monitoring</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-5 w-5 text-white" />
+                  </div>
+                  <span className="text-white font-bold text-sm">Legal Templates & DMCA Support</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-pink-400 to-red-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-5 w-5 text-white" />
+                  </div>
+                  <span className="text-white font-bold text-sm">24/7 Automated Monitoring System</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer CTA */}
+          <div className="mt-auto px-8 pb-10 text-center">
+            <div className="bg-gradient-to-r from-gray-900 to-black rounded-2xl p-6 border-4 border-white/20">
+              <p 
+                className="text-4xl font-black text-white mb-2"
+                style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}
+              >
+                TSMOWATCH.COM
               </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Main content */}
-        <div className="p-8 space-y-6">
-          {/* Key features */}
-          <div className="space-y-4">
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Shield className="h-6 w-6 text-blue-600" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-lg mb-1">AI-Powered Protection</h3>
-                <p className="text-sm text-gray-600">
-                  Detect unauthorized use of your artwork across the web and AI training datasets
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Eye className="h-6 w-6 text-purple-600" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-lg mb-1">24/7 Monitoring</h3>
-                <p className="text-sm text-gray-600">
-                  Real-time alerts when your content is used without permission
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
-                <Gavel className="h-6 w-6 text-pink-600" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-lg mb-1">Legal Support</h3>
-                <p className="text-sm text-gray-600">
-                  Automated DMCA filing and access to copyright attorneys
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* What you get */}
-          <div className="bg-gray-50 rounded-xl p-6 space-y-3">
-            <h3 className="font-bold text-xl mb-4 text-center">What You Get</h3>
-            
-            <div className="space-y-2">
-              <div className="flex items-center gap-3">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="text-sm font-medium">Unlimited artwork uploads</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="text-sm font-medium">Blockchain verification certificates</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="text-sm font-medium">Deepfake detection technology</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="text-sm font-medium">Priority customer support</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="text-sm font-medium">Mobile app access (iOS & Android)</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Special offer */}
-          <div className="bg-gradient-to-r from-yellow-400 to-orange-400 rounded-xl p-6 text-center">
-            <p className="text-2xl font-bold text-gray-900 mb-2">
-              LIMITED TIME OFFER
-            </p>
-            <p className="text-4xl font-black text-gray-900 mb-2">
-              50% OFF
-            </p>
-            <p className="text-sm font-medium text-gray-800">
-              First 3 months for new customers
-            </p>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 text-white p-8 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-grid-white/5" />
-          
-          <div className="relative z-10">
-            <div className="flex items-center justify-center gap-3 mb-3">
-              <img 
-                src={tsmoLogo} 
-                alt="TSMO" 
-                className="h-8 w-8 brightness-0 invert"
-              />
-              <p className="text-3xl font-black tracking-tight">
-                TSMO
+              <p 
+                className="text-2xl font-black bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent"
+                style={{ textShadow: '0 0 20px rgba(255,255,255,0.3)' }}
+              >
+                YOUR ART. OUR WATCH.
               </p>
-            </div>
-            
-            <p className="text-xl font-bold mb-2 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              artguardian.ai
-            </p>
-            
-            <p className="text-sm opacity-90 mb-4">
-              Join thousands of creators protecting their work
-            </p>
-            
-            <div className="inline-block bg-gradient-to-r from-primary to-accent text-white px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-shadow">
-              Get Started Today!
             </div>
           </div>
         </div>
