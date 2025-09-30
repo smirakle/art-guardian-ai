@@ -26,17 +26,21 @@ export const NewCustomerFlyer: React.FC = () => {
         format: [5, 7]
       });
 
-      // Add content to PDF
-      pdf.setFontSize(24);
+      // Add header with TSMO branding
+      pdf.setFontSize(32);
       pdf.setFont('helvetica', 'bold');
-      pdf.text('Art Guardian AI', 0.5, 0.8);
+      pdf.text('TSMO', 2.5, 0.7, { align: 'center' });
       
-      pdf.setFontSize(16);
-      pdf.text('Protect Your Creative Work with AI', 0.5, 1.2);
+      pdf.setFontSize(18);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Art Guardian AI', 2.5, 1.1, { align: 'center' });
       
-      pdf.setFontSize(12);
+      pdf.setFontSize(14);
       pdf.setFont('helvetica', 'normal');
-      pdf.text('Advanced copyright protection powered by artificial intelligence', 0.5, 1.5, { maxWidth: 4 });
+      pdf.text('Protect Your Creative Work with AI', 2.5, 1.4, { align: 'center' });
+      
+      pdf.setFontSize(10);
+      pdf.text('Advanced copyright protection powered by artificial intelligence', 0.5, 1.75, { maxWidth: 4, align: 'center' });
       
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
@@ -101,34 +105,58 @@ export const NewCustomerFlyer: React.FC = () => {
 
       {/* 5x7 inch flyer container (700px × 1000px at 100dpi for screen, adjusts for print) */}
       <div 
-        className="flyer-container bg-white text-gray-900 shadow-2xl mx-auto relative overflow-hidden"
+        className="flyer-container bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 text-gray-900 shadow-2xl mx-auto relative overflow-hidden"
         style={{
           width: '700px',
           height: '1000px',
           aspectRatio: '5/7'
         }}
       >
-        {/* Header with gradient background */}
-        <div className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 text-white p-8 pb-12">
-          <div className="absolute top-0 left-0 w-full h-full opacity-10">
-            <div className="absolute top-4 right-4 w-32 h-32 border-4 border-white rounded-full" />
-            <div className="absolute bottom-4 left-4 w-24 h-24 border-4 border-white rounded-full" />
+        {/* Decorative background pattern with TSMO logos */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+          <div className="absolute top-10 left-10 w-32 h-32">
+            <img src={tsmoLogo} alt="" className="w-full h-full object-contain" />
+          </div>
+          <div className="absolute top-1/3 right-16 w-24 h-24 rotate-45">
+            <img src={tsmoLogo} alt="" className="w-full h-full object-contain" />
+          </div>
+          <div className="absolute bottom-1/4 left-20 w-28 h-28 -rotate-12">
+            <img src={tsmoLogo} alt="" className="w-full h-full object-contain" />
+          </div>
+          <div className="absolute bottom-32 right-12 w-20 h-20 rotate-[30deg]">
+            <img src={tsmoLogo} alt="" className="w-full h-full object-contain" />
+          </div>
+        </div>
+
+        {/* Header with creative gradient and logo */}
+        <div className="relative bg-gradient-to-br from-primary via-purple-600 to-accent text-white px-8 pt-10 pb-16 overflow-hidden">
+          {/* Animated circles background */}
+          <div className="absolute top-0 left-0 w-full h-full opacity-20">
+            <div className="absolute -top-10 -right-10 w-48 h-48 border-8 border-white rounded-full animate-pulse" />
+            <div className="absolute top-1/2 -left-20 w-64 h-64 border-8 border-white rounded-full" />
+            <div className="absolute bottom-0 right-1/4 w-32 h-32 bg-white rounded-full blur-2xl" />
           </div>
           
-          <div className="relative z-10">
-            <img 
-              src={tsmoLogo} 
-              alt="TSMO Logo" 
-              className="h-16 mb-4 brightness-0 invert"
-            />
+          {/* Large TSMO logo as header centerpiece */}
+          <div className="relative z-10 flex flex-col items-center text-center">
+            <div className="mb-6 relative">
+              <div className="absolute inset-0 bg-white/20 blur-3xl rounded-full" />
+              <img 
+                src={tsmoLogo} 
+                alt="TSMO Logo" 
+                className="h-24 w-24 relative z-10 drop-shadow-2xl brightness-0 invert"
+              />
+            </div>
             
-            <h1 className="text-4xl font-bold mb-3 leading-tight">
-              Protect Your Creative Work with AI
+            <h1 className="text-5xl font-black mb-4 leading-tight tracking-tight drop-shadow-lg">
+              Protect Your<br />Creative Work
             </h1>
             
-            <p className="text-xl font-medium opacity-95">
-              Advanced copyright protection powered by artificial intelligence
-            </p>
+            <div className="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full border-2 border-white/40">
+              <p className="text-lg font-bold">
+                AI-Powered Copyright Protection
+              </p>
+            </div>
           </div>
         </div>
 
@@ -216,15 +244,32 @@ export const NewCustomerFlyer: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gray-900 text-white p-6 text-center">
-          <p className="text-2xl font-bold mb-2">
-            artguardian.ai
-          </p>
-          <p className="text-sm opacity-75 mb-3">
-            Join thousands of creators protecting their work
-          </p>
-          <div className="inline-block bg-white text-gray-900 px-6 py-2 rounded-full font-bold">
-            Sign up today!
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-gray-900 via-slate-800 to-gray-900 text-white p-8 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid-white/5" />
+          
+          <div className="relative z-10">
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <img 
+                src={tsmoLogo} 
+                alt="TSMO" 
+                className="h-8 w-8 brightness-0 invert"
+              />
+              <p className="text-3xl font-black tracking-tight">
+                TSMO
+              </p>
+            </div>
+            
+            <p className="text-xl font-bold mb-2 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              artguardian.ai
+            </p>
+            
+            <p className="text-sm opacity-90 mb-4">
+              Join thousands of creators protecting their work
+            </p>
+            
+            <div className="inline-block bg-gradient-to-r from-primary to-accent text-white px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-shadow">
+              Get Started Today!
+            </div>
           </div>
         </div>
       </div>
