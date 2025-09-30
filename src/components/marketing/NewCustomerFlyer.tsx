@@ -2,15 +2,58 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Shield, Eye, Gavel, CheckCircle, Printer, Download } from 'lucide-react';
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import { useToast } from '@/hooks/use-toast';
 
 export const NewCustomerFlyer: React.FC = () => {
+  const { toast } = useToast();
+
   const handlePrint = () => {
     window.print();
   };
 
-  const handleDownload = () => {
-    // In a real implementation, this would generate a PDF
-    window.print();
+  const handleDownload = async () => {
+    try {
+      toast({
+        title: "Generating PDF...",
+        description: "Please wait while we create your flyer",
+      });
+
+      const flyerElement = document.querySelector('.flyer-container') as HTMLElement;
+      if (!flyerElement) return;
+
+      // Capture the flyer as canvas
+      const canvas = await html2canvas(flyerElement, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      });
+
+      // Create PDF (5x7 inches at 72 DPI)
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'in',
+        format: [5, 7]
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      pdf.addImage(imgData, 'PNG', 0, 0, 5, 7);
+      
+      pdf.save('art-guardian-ai-flyer.pdf');
+
+      toast({
+        title: "PDF Downloaded",
+        description: "Your flyer has been saved successfully",
+      });
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      toast({
+        title: "Download Failed",
+        description: "There was an error generating the PDF",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
