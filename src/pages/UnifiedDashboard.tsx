@@ -557,7 +557,7 @@ const UnifiedDashboard = () => {
                 <div className="text-center space-y-4">
                   <div className="text-3xl font-bold text-green-500">94.7%</div>
                   <p className="text-sm text-muted-foreground">Detection Accuracy</p>
-                  <Button className="w-full">View Detection Dashboard</Button>
+                  <Button className="w-full" onClick={() => navigate('/protection-hub')}>View Detection Dashboard</Button>
                 </div>
               </CardContent>
             </Card>
