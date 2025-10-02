@@ -5,7 +5,6 @@ import { Badge } from '@/components/ui/badge';
 import { Smartphone, Download, QrCode, Shield, Star, CheckCircle, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import MobileNotificationCenter from '@/components/mobile/MobileNotificationCenter';
-import MobileUploadManager from '@/components/mobile/MobileUploadManager';
 import QRCode from '@/components/QRCode';
 
 const CustomerGetApp = () => {
@@ -276,7 +275,6 @@ const CustomerGetApp = () => {
 
         {/* Mobile Features */}
         <div className="grid md:grid-cols-2 gap-6 mb-12">
-          <MobileUploadManager />
           <MobileNotificationCenter />
         </div>
 

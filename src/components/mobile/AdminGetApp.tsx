@@ -22,7 +22,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { MobileContainer } from '@/components/mobile/MobileContainer';
 import ProductionAppConfigurator from '@/components/mobile/ProductionAppConfigurator';
 import MobileSettingsManager from '@/components/mobile/MobileSettingsManager';
-import MobileUploadManager from '@/components/mobile/MobileUploadManager';
 import MobileNotificationCenter from '@/components/mobile/MobileNotificationCenter';
 import { sendPushNotification } from '@/lib/mobileHelpers';
 
@@ -368,7 +367,6 @@ const AdminGetApp = () => {
                 <MobileSettingsManager />
               </div>
               <div className="space-y-6">
-                <MobileUploadManager />
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">

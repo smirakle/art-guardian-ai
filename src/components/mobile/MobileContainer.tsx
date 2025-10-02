@@ -13,7 +13,6 @@ import {
   ExternalLink,
   CheckCircle
 } from "lucide-react";
-import { MobileUpload } from "./MobileUpload";
 import { MobileCommunity } from "./MobileCommunity";
 import { MobileDashboard } from "./MobileDashboard";
 import MobileHomePage from "./MobileHomePage";
@@ -193,7 +192,9 @@ export const MobileContainer = () => {
                 </TabsContent>
 
                 <TabsContent value="upload" className="m-0">
-                  <MobileUpload />
+                  <div className="p-6 text-center text-muted-foreground">
+                    Upload functionality available in the main app
+                  </div>
                 </TabsContent>
 
                 <TabsContent value="community" className="m-0">
