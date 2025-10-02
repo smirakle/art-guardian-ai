@@ -13,10 +13,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import LeaveReview from '@/components/LeaveReview';
-import SmartOnboarding from '@/components/smart-onboarding/SmartOnboarding';
 import ContextualHelp from '@/components/help-system/ContextualHelp';
-
-import SmartTooltips from '@/components/user-experience/SmartTooltips';
 
 
 import { 
@@ -201,14 +198,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       {/* User Experience Enhancements */}
-      <SmartOnboarding />
       <ContextualHelp />
-      
-      <SmartTooltips />
-      
-      {showOnboardingTour && (
-        <OnboardingTour startOpen onClose={() => setShowOnboardingTour(false)} />
-      )}
       
       {/* Live Demo Modal */}
       <Dialog open={showLiveDemo} onOpenChange={setShowLiveDemo}>

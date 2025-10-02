@@ -5,8 +5,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import ContextualHelp from '@/components/help-system/ContextualHelp';
-
-import SmartTooltips from '@/components/user-experience/SmartTooltips';
 import { 
   Shield, 
   TrendingUp, 
@@ -330,7 +328,6 @@ const UnifiedDashboard = () => {
     <div className="container mx-auto px-4 py-8 space-y-6">
       {/* User Experience Enhancements */}
       <ContextualHelp />
-      <SmartTooltips />
       
       {!hasAnyData ? (
         <DashboardEmptyState />

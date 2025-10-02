@@ -10,7 +10,6 @@ import ImageAnalysisCard from "./visual-recognition/ImageAnalysisCard";
 import GoogleLensInterface from "./GoogleLensInterface";
 import RealTimeMonitoring from "./RealTimeMonitoring";
 import BlockchainVerification from "./BlockchainVerification";
-import UserGuidance from "./UserGuidance";
 import EnhancedMonitoringOverview from "./monitoring/EnhancedMonitoringOverview";
 
 import { watermarkService, InvisibleWatermark } from "@/lib/watermark";
@@ -577,13 +576,6 @@ const VisualRecognition = () => {
   return (
     <TooltipProvider>
       <div className="space-y-6">
-        {showGuidance && (
-          <UserGuidance 
-            currentStep={currentStep} 
-            onDismiss={() => setShowGuidance(false)}
-            showWelcome={images.length === 0}
-          />
-        )}
 
         <Tabs defaultValue="quick-analysis" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 h-auto overflow-x-auto scrollbar-hide"
