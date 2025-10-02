@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 import ContextualHelp from '@/components/help-system/ContextualHelp';
 
 import SmartTooltips from '@/components/user-experience/SmartTooltips';
@@ -51,6 +52,7 @@ interface DashboardStats {
 }
 
 const UnifiedDashboard = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState<DashboardStats>({
     protectedAssets: 0,
@@ -508,19 +510,19 @@ const UnifiedDashboard = () => {
                 <CardTitle>Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Button className="w-full" size="sm">
+                <Button className="w-full" size="sm" onClick={() => navigate('/upload')}>
                   <Upload className="h-3 w-3 mr-2" />
                   Upload & Protect
                 </Button>
-                <Button variant="outline" className="w-full" size="sm">
+                <Button variant="outline" className="w-full" size="sm" onClick={() => navigate('/monitoring-hub')}>
                   <Eye className="h-3 w-3 mr-2" />
                   Start Monitoring
                 </Button>
-                <Button variant="outline" className="w-full" size="sm">
+                <Button variant="outline" className="w-full" size="sm" onClick={() => navigate('/protection-hub')}>
                   <Brain className="h-3 w-3 mr-2" />
                   Configure AI Protection
                 </Button>
-                <Button variant="outline" className="w-full" size="sm">
+                <Button variant="outline" className="w-full" size="sm" onClick={() => navigate('/legal-templates')}>
                   <Scale className="h-3 w-3 mr-2" />
                   Legal Templates
                 </Button>
