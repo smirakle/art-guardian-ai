@@ -8,7 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 interface AITrainingProtectionProps {
-  fileType: 'image' | 'video' | 'audio' | 'document';
+  fileType: 'image' | 'video' | 'audio' | 'document' | '3d-model';
   fileName: string;
   file?: File;
   onProtectionApply: (protectionLevel: string, methods: string[]) => void;

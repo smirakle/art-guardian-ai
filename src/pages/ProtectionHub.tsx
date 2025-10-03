@@ -21,7 +21,7 @@ import {
 // Import existing components
 import { AIDetectionDashboard } from '@/components/phase1/AIDetectionDashboard';
 import { OneClickProtection } from '@/components/phase1/OneClickProtection';
-import { MultiModalAIProtection } from '@/components/multi-modal/MultiModalAIProtection';
+import VisualRecognition from '@/components/VisualRecognition';
 import StyleCloak from '@/components/ai-protection/StyleCloak';
 import { ProductionMetadataSettings } from '@/components/ai-protection/ProductionMetadataSettings';
 import { ProductionCrawlerBlockingSettings } from '@/components/ai-protection/ProductionCrawlerBlockingSettings';
@@ -193,7 +193,7 @@ const ProtectionHub = () => {
 
         {/* Multi-Modal Tab */}
         <TabsContent value="multi-modal" className="space-y-6">
-          <MultiModalAIProtection />
+          <VisualRecognition />
         </TabsContent>
 
         {/* Advanced Tab */}

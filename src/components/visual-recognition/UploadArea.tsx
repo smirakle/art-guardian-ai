@@ -20,7 +20,7 @@ interface UploadAreaProps {
 interface UploadedFile {
   file: File;
   needsProtection: boolean;
-  fileType: 'image' | 'video' | 'audio' | 'document';
+  fileType: 'image' | 'video' | 'audio' | 'document' | '3d-model';
 }
 
 const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, isEmpty }: UploadAreaProps) => {
@@ -31,10 +31,11 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
   const [showProtection, setShowProtection] = useState(false);
   const [currentFileIndex, setCurrentFileIndex] = useState(0);
 
-  const getFileType = (file: File): 'image' | 'video' | 'audio' | 'document' => {
+  const getFileType = (file: File): 'image' | 'video' | 'audio' | 'document' | '3d-model' => {
     if (file.type.startsWith('image/')) return 'image';
     if (file.type.startsWith('video/')) return 'video';
     if (file.type.startsWith('audio/')) return 'audio';
+    if (file.name.match(/\.(obj|fbx|gltf|glb|dae|3ds|blend)$/i)) return '3d-model';
     return 'document';
   };
 
@@ -164,7 +165,7 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
             <div>
               <h3 className="text-lg font-medium">No Content Uploaded</h3>
             <p className="text-sm text-muted-foreground">
-              Upload files, add links, or paste text content to start AI-powered copyright analysis and monitoring
+              Upload images, videos, audio, documents, or 3D models for AI-powered analysis and protection
             </p>
             </div>
             <div className="space-y-3 w-full">
@@ -203,14 +204,14 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
                 </Button>
               </div>
             </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.md,.rtf"
-              onChange={(e) => handleFileUpload(e.target.files)}
-              className="hidden"
-            />
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.md,.rtf,.obj,.fbx,.gltf,.glb,.dae,.3ds,.blend"
+                onChange={(e) => handleFileUpload(e.target.files)}
+                className="hidden"
+              />
           </div>
         </CardContent>
       </Card>
@@ -275,7 +276,7 @@ const UploadArea = ({ onFileUpload, onUrlUpload, onTextUpload, isInitializing, i
               ref={fileInputRef}
               type="file"
               multiple
-              accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.md,.rtf"
+              accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.md,.rtf,.obj,.fbx,.gltf,.glb,.dae,.3ds,.blend"
               onChange={(e) => handleFileUpload(e.target.files)}
               className="hidden"
             />

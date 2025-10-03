@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { MultiModalAIProtection } from '@/components/multi-modal/MultiModalAIProtection';
+import VisualRecognition from '@/components/VisualRecognition';
 import { Zap, TrendingUp } from 'lucide-react';
 
 export default function Phase3Dashboard() {
@@ -31,7 +31,7 @@ export default function Phase3Dashboard() {
       </div>
 
       <div className="space-y-6">
-        <MultiModalAIProtection />
+        <VisualRecognition />
       </div>
 
       <Card className="mt-8">

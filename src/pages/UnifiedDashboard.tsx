@@ -33,7 +33,7 @@ import { BlockchainOwnershipRegistry } from '@/components/blockchain/BlockchainO
 import { GlobalLegalNetwork } from '@/components/legal/GlobalLegalNetwork';
 import { RealTimeLegalDashboard } from '@/components/legal/RealTimeLegalDashboard';
 import { CreatorEconomy } from '@/components/phase2/CreatorEconomy';
-import { MultiModalAIProtection } from '@/components/multi-modal/MultiModalAIProtection';
+import VisualRecognition from '@/components/VisualRecognition';
 
 interface DashboardStats {
   protectedAssets: number;
@@ -605,7 +605,15 @@ const UnifiedDashboard = () => {
 
         {/* Phase 3: Advanced AI */}
         <TabsContent value="phase3" className="space-y-6">
-          <MultiModalAIProtection />
+          <Card>
+            <CardHeader>
+              <CardTitle>Upload & Protection</CardTitle>
+              <p className="text-muted-foreground">Upload any file type for AI-powered analysis and protection</p>
+            </CardHeader>
+            <CardContent>
+              <VisualRecognition />
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Legal Network */}
