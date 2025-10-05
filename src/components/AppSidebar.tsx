@@ -162,42 +162,6 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
 
-                {/* Profile Monitoring */}
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    onClick={() => navigate('/profile-monitoring')}
-                    isActive={isActive('/profile-monitoring')}
-                    className="flex items-center gap-2"
-                  >
-                    <UserCheck className="w-4 h-4" />
-                    {!collapsed && <span>Profile Monitoring</span>}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-
-                {/* Portfolio Monitoring */}
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    onClick={() => navigate('/portfolio-monitoring')}
-                    isActive={isActive('/portfolio-monitoring')}
-                    className="flex items-center gap-2"
-                  >
-                    <Briefcase className="w-4 h-4" />
-                    {!collapsed && <span>Portfolio Monitoring</span>}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-
-                {/* Trademark Monitoring */}
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    onClick={() => navigate('/trademark-monitoring')}
-                    isActive={isActive('/trademark-monitoring')}
-                    className="flex items-center gap-2"
-                  >
-                    <Copyright className="w-4 h-4" />
-                    {!collapsed && <span>Trademark Monitoring</span>}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-
                 {/* Investor Hub */}
                 <SidebarMenuItem>
                   <SidebarMenuButton
