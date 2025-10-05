@@ -116,42 +116,53 @@ const TrademarkMonitoring: React.FC = () => {
     }
   };
 
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background pt-20 pb-12">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center py-20">
+            <Shield className="h-20 w-20 mx-auto text-primary mb-6" />
+            <h1 className="text-4xl font-bold mb-4">Trademark Monitoring</h1>
+            <p className="text-xl text-muted-foreground mb-8">
+              Sign in to access advanced trademark monitoring and protection
+            </p>
+            <Button asChild size="lg">
+              <Link to="/login">Sign In to Continue</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background pt-20 pb-12">
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8">
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
-              Advanced Trademark Intelligence
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+              Trademark Intelligence Platform
             </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              AI-powered trademark monitoring, analysis, and protection across 200+ platforms and 50+ jurisdictions worldwide
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+              Monitor, analyze, and protect your trademarks with AI-powered real-time intelligence
             </p>
-            <div className="flex items-center justify-center gap-6 mt-6">
-              <div className="flex items-center gap-2 text-sm">
+            <div className="flex flex-wrap items-center justify-center gap-4 mt-6">
+              <div className="flex items-center gap-2 text-sm bg-primary/10 px-4 py-2 rounded-full">
                 <Brain className="h-4 w-4 text-primary" />
-                <span>AI-Powered Analysis</span>
+                <span className="font-medium">AI Analysis</span>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Globe className="h-4 w-4 text-primary" />
-                <span>Global Coverage</span>
+              <div className="flex items-center gap-2 text-sm bg-blue-500/10 px-4 py-2 rounded-full">
+                <Globe className="h-4 w-4 text-blue-500" />
+                <span className="font-medium">200+ Platforms</span>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Zap className="h-4 w-4 text-primary" />
-                <span>Real-Time Monitoring</span>
+              <div className="flex items-center gap-2 text-sm bg-green-500/10 px-4 py-2 rounded-full">
+                <Zap className="h-4 w-4 text-green-500" />
+                <span className="font-medium">Real-Time Alerts</span>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Shield className="h-4 w-4 text-primary" />
-                <span>Legal Automation</span>
+              <div className="flex items-center gap-2 text-sm bg-purple-500/10 px-4 py-2 rounded-full">
+                <Shield className="h-4 w-4 text-purple-500" />
+                <span className="font-medium">50+ Jurisdictions</span>
               </div>
-            </div>
-            <div className="mt-6 flex justify-center">
-              <Button asChild variant="secondary">
-                <Link to="/forgery-detection" aria-label="Go to Image Forgery Detection">
-                  <Search className="h-4 w-4" />
-                  Go to Forgery Detection
-                </Link>
-              </Button>
             </div>
           </div>
 

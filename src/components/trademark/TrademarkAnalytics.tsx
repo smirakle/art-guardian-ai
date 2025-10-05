@@ -246,8 +246,9 @@ export const TrademarkAnalytics: React.FC = () => {
 
   if (isLoading || !data) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="flex flex-col items-center justify-center p-12 space-y-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+        <p className="text-sm text-muted-foreground">Loading analytics data...</p>
       </div>
     );
   }

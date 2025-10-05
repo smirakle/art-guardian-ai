@@ -107,15 +107,22 @@ const AdvancedTrademarkSearch: React.FC<AdvancedTrademarkSearchProps> = ({ onSea
 
   return (
     <div className="space-y-6">
-      <Card className="border-2 border-primary/20">
+      <Card className="border border-primary/20">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Brain className="h-5 w-5 text-primary" />
-            AI-Powered Trademark Search
-          </CardTitle>
-          <CardDescription>
-            Advanced trademark monitoring with AI similarity detection across global databases and platforms
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Brain className="h-5 w-5 text-primary" />
+                Comprehensive Trademark Search
+              </CardTitle>
+              <CardDescription className="mt-2">
+                Search across USPTO, EUIPO, WIPO, and 200+ global platforms using AI-powered similarity detection
+              </CardDescription>
+            </div>
+            <Badge variant="outline" className="hidden md:flex">
+              AI-Powered
+            </Badge>
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
           <Tabs value={searchParams.searchType} onValueChange={(value) => setSearchParams(prev => ({ ...prev, searchType: value as any }))}>
@@ -299,23 +306,29 @@ const AdvancedTrademarkSearch: React.FC<AdvancedTrademarkSearchProps> = ({ onSea
             </div>
           </div>
 
-          <Button 
-            onClick={handleSearch} 
-            disabled={!searchParams.query.trim() || isSearching}
-            className="w-full h-12 text-lg"
-          >
-            {isSearching ? (
-              <>
-                <Settings className="mr-2 h-5 w-5 animate-spin" />
-                Scanning Trademarks...
-              </>
-            ) : (
-              <>
-                <Search className="mr-2 h-5 w-5" />
-                Start AI Trademark Search
-              </>
-            )}
-          </Button>
+          <div className="pt-2">
+            <Button 
+              onClick={handleSearch} 
+              disabled={!searchParams.query.trim() || isSearching}
+              className="w-full h-12 text-base font-semibold"
+              size="lg"
+            >
+              {isSearching ? (
+                <>
+                  <Settings className="mr-2 h-5 w-5 animate-spin" />
+                  Scanning Global Databases...
+                </>
+              ) : (
+                <>
+                  <Search className="mr-2 h-5 w-5" />
+                  Start Comprehensive Search
+                </>
+              )}
+            </Button>
+            <p className="text-xs text-center text-muted-foreground mt-3">
+              Searches across USPTO, EUIPO, WIPO, marketplaces, social media, and domain registrations
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
