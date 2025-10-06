@@ -31,10 +31,12 @@ import {
 import { useCommunity } from "@/hooks/useCommunity";
 import { formatDistanceToNow } from "date-fns";
 import { ComingSoon } from "@/components/ComingSoon";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Community = () => {
   const { posts, expertAdvice, loading, createPost, toggleLike, getStats } = useCommunity();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [newPost, setNewPost] = useState({ title: "", content: "", category: "strategy" });
   const [activeTab, setActiveTab] = useState("community");
 
@@ -1243,6 +1245,28 @@ The global creative economy offers tremendous opportunities for artists willing 
           </p>
         </div>
 
+        {/* Welcome Banner for Non-Authenticated Users */}
+        {!user && (
+          <Card className="mb-8 border-primary/20 bg-primary/5">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <MessageSquare className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
+                    Welcome to the Community!
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    Browse posts and expert advice from our community. Sign in to create posts, like content, and engage with other creators.
+                  </p>
+                  <Button onClick={() => navigate('/auth')} size="sm">
+                    Sign In to Post
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {displayStats.map((stat, index) => {
@@ -1345,40 +1369,53 @@ The global creative economy offers tremendous opportunities for artists willing 
                       Share Your Protection Strategy
                     </CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      Share your experiences, strategies, and questions with the community.
+                      {user ? 'Share your experiences, strategies, and questions with the community.' : 'Sign in to share your protection strategies with the community.'}
                     </p>
                   </CardHeader>
                   <CardContent>
-                    <form onSubmit={handleSubmitPost} className="space-y-4">
-                      <Input
-                        placeholder="Title of your strategy or experience"
-                        value={newPost.title}
-                        onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
-                        required
-                      />
-                      <Textarea
-                        placeholder="Share your protection strategy, success story, or ask for advice..."
-                        value={newPost.content}
-                        onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
-                        rows={6}
-                        required
-                      />
-                      <div className="flex gap-2">
-                        <select
-                          className="px-3 py-2 border border-input rounded-md bg-background text-sm"
-                          value={newPost.category}
-                          onChange={(e) => setNewPost({ ...newPost, category: e.target.value })}
-                        >
-                          <option value="strategy">Protection Strategy</option>
-                          <option value="success">Success Story</option>
-                          <option value="question">Ask for Help</option>
-                          <option value="resources">Resources</option>
-                        </select>
-                        <Button type="submit" className="ml-auto">
-                          Share with Community
+                    {user ? (
+                      <form onSubmit={handleSubmitPost} className="space-y-4">
+                        <Input
+                          placeholder="Title of your strategy or experience"
+                          value={newPost.title}
+                          onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
+                          required
+                        />
+                        <Textarea
+                          placeholder="Share your protection strategy, success story, or ask for advice..."
+                          value={newPost.content}
+                          onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
+                          rows={6}
+                          required
+                        />
+                        <div className="flex gap-2">
+                          <select
+                            className="px-3 py-2 border border-input rounded-md bg-background text-sm"
+                            value={newPost.category}
+                            onChange={(e) => setNewPost({ ...newPost, category: e.target.value })}
+                          >
+                            <option value="strategy">Protection Strategy</option>
+                            <option value="success">Success Story</option>
+                            <option value="question">Ask for Help</option>
+                            <option value="resources">Resources</option>
+                          </select>
+                          <Button type="submit" className="ml-auto">
+                            Share with Community
+                          </Button>
+                        </div>
+                      </form>
+                    ) : (
+                      <div className="text-center py-8">
+                        <MessageSquare className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                        <h3 className="text-lg font-semibold mb-2">Sign in to share</h3>
+                        <p className="text-muted-foreground mb-4">
+                          Create an account or sign in to share your protection strategies and engage with the community.
+                        </p>
+                        <Button onClick={() => navigate('/auth')}>
+                          Sign In
                         </Button>
                       </div>
-                    </form>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
