@@ -257,11 +257,11 @@ export class FoundingPartnerBriefGenerator {
     doc.text("Contact: investors@tsmo.com", 20, yPosition + 6);
     doc.text("This document contains forward-looking statements and proprietary information.", 20, yPosition + 12);
 
-    return doc.output('arraybuffer') as Uint8Array;
+    return new Uint8Array(doc.output('arraybuffer'));
   }
 
   static downloadBrief(blob: Uint8Array, filename: string = 'TSMO-Founding-Partner-Brief.pdf') {
-    const pdfBlob = new Blob([blob], { type: 'application/pdf' });
+    const pdfBlob = new Blob([blob as BlobPart], { type: 'application/pdf' });
     const url = URL.createObjectURL(pdfBlob);
     const link = document.createElement('a');
     link.href = url;

@@ -486,7 +486,7 @@ export class EnhancedRealWorldProtection {
         p.drawText(tracerPayload, { x: 10, y: 10 + (idx % 3), size: 0.5, color: rgb(1,1,1) });
       });
       const out = await pdfDoc.save();
-      const blob = new Blob([out], { type: 'application/pdf' });
+      const blob = new Blob([out as BlobPart], { type: 'application/pdf' });
       const textFingerprint = await this.hashBuffer(buf);
       return { blob, documentMethods: ['pdf_hidden_layer'], tracerPayload, docTracerChecksum, wordCount: 0, charCount: 0, textFingerprint, tracerType: 'pdf_hidden_layer' };
     }

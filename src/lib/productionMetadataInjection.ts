@@ -192,7 +192,7 @@ export class ProductionMetadataInjection {
           try {
             const exifBytes = this.buildExifBytes(exifData);
             const newJpeg = this.insertExifIntoJpeg(uint8Array, exifBytes);
-            resolve(new Blob([newJpeg], { type: file.type }));
+            resolve(new Blob([newJpeg as BlobPart], { type: file.type }));
           } catch (exifError) {
             console.warn('EXIF injection failed, falling back to alternative method:', exifError);
             resolve(file);
@@ -223,7 +223,7 @@ export class ProductionMetadataInjection {
           
           // Insert XMP into JPEG
           const newJpeg = this.insertXmpIntoJpeg(uint8Array, xmpBytes);
-          resolve(new Blob([newJpeg], { type: file.type }));
+          resolve(new Blob([newJpeg as BlobPart], { type: file.type }));
         } catch (error) {
           console.warn('XMP injection failed:', error);
           resolve(file);

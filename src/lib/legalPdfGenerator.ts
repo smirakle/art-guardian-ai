@@ -74,7 +74,7 @@ class LegalPDFGenerator {
     this.addComplianceInfo(data);
     this.addWatermark();
     
-    return this.doc.output('arraybuffer') as Uint8Array;
+    return new Uint8Array(this.doc.output('arraybuffer'));
   }
 
   private setupDocument(): void {
@@ -284,7 +284,7 @@ export const generateLegalPDF = (data: LegalDocumentData, settings?: Partial<Com
 
 export const downloadLegalPDF = (data: LegalDocumentData, filename?: string): void => {
   const pdfBytes = generateLegalPDF(data);
-  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+  const blob = new Blob([pdfBytes as BlobPart], { type: 'application/pdf' });
   const url = window.URL.createObjectURL(blob);
   
   const link = document.createElement('a');
