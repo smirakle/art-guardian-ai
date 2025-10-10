@@ -14,7 +14,7 @@ import {
   FileImage
 } from "lucide-react";
 import DeepfakeReporter from "@/components/DeepfakeReporter";
-import RealTimeDeepfakeMonitor from "@/components/RealTimeDeepfakeMonitor";
+import LiveDeepfakeMonitor from "@/components/deepfake/LiveDeepfakeMonitor";
 import RecentDeepfakeDetections from "@/components/RecentDeepfakeDetections";
 
 const DeepfakeDetection = () => {
@@ -120,7 +120,7 @@ const DeepfakeDetection = () => {
           </TabsContent>
 
           <TabsContent value="realtime" className="space-y-6">
-            <RealTimeDeepfakeMonitor />
+            <LiveDeepfakeMonitor />
           </TabsContent>
 
           <TabsContent value="matches" className="space-y-6">
