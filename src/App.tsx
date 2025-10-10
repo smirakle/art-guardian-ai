@@ -66,6 +66,10 @@ import { RealTimeNotifications } from "./components/customer-success/RealTimeNot
 import MobileIntegration from "./pages/MobileIntegration";
 import AdvancedAnalytics from "./pages/AdvancedAnalytics";
 import MarketingFlyer from "./pages/MarketingFlyer";
+import DocumentProtection from "./pages/DocumentProtection";
+import PortfolioMonitoringAdvanced from "./pages/PortfolioMonitoringAdvanced";
+import ThreatAlerts from "./pages/ThreatAlerts";
+import DMCAAutomation from "./pages/DMCAAutomation";
 
 const queryClient = new QueryClient();
 
@@ -197,6 +201,13 @@ const App = () => {
                 <MarketingFlyer />
               </ProtectedRoute>
             } />
+            
+            {/* Phase 3-6 Advanced Monitoring Features */}
+            <Route path="/document-protection" element={<DocumentProtection />} />
+            <Route path="/portfolio-monitoring-advanced" element={<PortfolioMonitoringAdvanced />} />
+            <Route path="/threat-alerts" element={<ThreatAlerts />} />
+            <Route path="/dmca-automation" element={<DMCAAutomation />} />
+            
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />
                     </Routes>

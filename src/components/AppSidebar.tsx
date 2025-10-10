@@ -1,4 +1,4 @@
-import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search, Briefcase, UserCheck, Copyright, TrendingUp, Key, DollarSign, Send, Gavel, Zap, FileCheck, Wallet, FileImage } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search, Briefcase, UserCheck, Copyright, TrendingUp, Key, DollarSign, Send, Gavel, Zap, FileCheck, Wallet, FileImage, FolderSearch, AlertTriangle, Lock as LockIcon } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
@@ -52,6 +52,14 @@ export function AppSidebar() {
     ...(role === 'admin' ? [{ path: "/patent-generator", label: "USPTO Patent Generator", icon: FileCheck }] : []),
     { path: "/faq", label: "FAQ", icon: HelpCircle },
     { path: "/roadmap", label: "Roadmap", icon: TrendingUp },
+  ];
+
+  // Advanced monitoring features (Phase 3-6)
+  const advancedMonitoringItems = [
+    { path: "/document-protection", label: "Document Protection", icon: Shield, requiresPlan: ['professional', 'enterprise'] },
+    { path: "/portfolio-monitoring-advanced", label: "Advanced Portfolio", icon: FolderSearch, requiresPlan: ['starter', 'professional', 'enterprise'] },
+    { path: "/threat-alerts", label: "Threat Alerts", icon: AlertTriangle, requiresPlan: ['professional', 'enterprise'] },
+    { path: "/dmca-automation", label: "DMCA Automation", icon: FileCheck, requiresPlan: ['professional', 'enterprise'] },
   ];
 
   const adminOnlyItems = [
@@ -173,6 +181,36 @@ export function AppSidebar() {
                     {!collapsed && <span>Investor Hub</span>}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          {/* Advanced Monitoring Features */}
+          <SidebarGroup>
+            <SidebarGroupLabel>Advanced Monitoring</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {advancedMonitoringItems.map((item) => {
+                  const Icon = item.icon;
+                  const hasAccess = item.requiresPlan.includes(subscription?.plan_id || '');
+                  return (
+                    <SidebarMenuItem key={item.path}>
+                      <SidebarMenuButton
+                        onClick={() => navigate(item.path)}
+                        isActive={isActive(item.path)}
+                        className={`flex items-center gap-2 ${!hasAccess ? 'opacity-50' : ''}`}
+                      >
+                        <Icon className="w-4 h-4" />
+                        {!collapsed && (
+                          <span className="flex items-center gap-2">
+                            {item.label}
+                            {!hasAccess && <LockIcon className="w-3 h-3" />}
+                          </span>
+                        )}
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
