@@ -686,6 +686,45 @@ export type Database = {
           },
         ]
       }
+      ai_training_datasets: {
+        Row: {
+          created_at: string | null
+          dataset_name: string
+          dataset_url: string
+          id: string
+          is_active: boolean | null
+          last_indexed: string | null
+          metadata: Json | null
+          platform: string
+          total_samples: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          dataset_name: string
+          dataset_url: string
+          id?: string
+          is_active?: boolean | null
+          last_indexed?: string | null
+          metadata?: Json | null
+          platform: string
+          total_samples?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          dataset_name?: string
+          dataset_url?: string
+          id?: string
+          is_active?: boolean | null
+          last_indexed?: string | null
+          metadata?: Json | null
+          platform?: string
+          total_samples?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       ai_training_enforcement_workflows: {
         Row: {
           certificate_hash: string | null
@@ -1851,6 +1890,62 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      document_protection_jobs: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          error_message: string | null
+          file_size: number
+          id: string
+          original_filename: string
+          progress_percentage: number | null
+          protection_level: string
+          protection_record_id: string | null
+          started_at: string | null
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          file_size: number
+          id?: string
+          original_filename: string
+          progress_percentage?: number | null
+          protection_level: string
+          protection_record_id?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          file_size?: number
+          id?: string
+          original_filename?: string
+          progress_percentage?: number | null
+          protection_level?: string
+          protection_record_id?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_protection_jobs_protection_record_id_fkey"
+            columns: ["protection_record_id"]
+            isOneToOne: false
+            referencedRelation: "ai_protection_records"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_ab_tests: {
         Row: {
@@ -8909,6 +9004,14 @@ export type Database = {
       update_case_status: {
         Args: { case_id_param: string; message?: string; new_status: string }
         Returns: boolean
+      }
+      update_protection_job_progress: {
+        Args: {
+          job_id_param: string
+          progress_param: number
+          status_param?: string
+        }
+        Returns: undefined
       }
       user_has_feature: {
         Args: { feature_name: string }

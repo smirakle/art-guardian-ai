@@ -32,101 +32,51 @@ export const useProtectedDocumentUpload = () => {
       } = await supabase.auth.getUser();
       if (!user) throw new Error("User not authenticated");
 
-      // Generate unique file path
-      const timestamp = Date.now();
-      const fileName = `${user.id}/${timestamp}-${file.name}`;
+      // Get file as data URL for edge function
+      const reader = new FileReader();
+      const fileDataPromise = new Promise<string>((resolve) => {
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      });
+      const fileData = await fileDataPromise;
 
-      // Upload document to Supabase Storage
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("protected-documents")
-        .upload(fileName, file, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+      // Call edge function to process document protection
+      const { data: processingResult, error: processingError } = await supabase.functions.invoke(
+        'process-document-protection',
+        {
+          body: {
+            file: {
+              name: file.name,
+              type: file.type,
+              size: file.size,
+              url: fileData
+            },
+            protectionLevel: options.protectionLevel,
+            enableTracers: options.enableTracers,
+            enableFingerprinting: options.enableFingerprinting
+          }
+        }
+      );
 
-      if (uploadError) throw uploadError;
+      if (processingError) throw processingError;
+      if (!processingResult.success) throw new Error(processingResult.error || 'Protection failed');
 
-      // Generate protection fingerprint
-      const arrayBuffer = await file.arrayBuffer();
-      const hashBuffer = await crypto.subtle.digest("SHA-256", arrayBuffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const fileFingerprint = hashArray
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("");
-
-      // Determine protection methods based on level
-      const protectionMethods = [];
-      if (options.protectionLevel === "basic") {
-        protectionMethods.push("basic_fingerprinting");
-      } else if (options.protectionLevel === "standard") {
-        protectionMethods.push("basic_fingerprinting", "metadata_embedding");
-      } else {
-        protectionMethods.push(
-          "basic_fingerprinting",
-          "metadata_embedding",
-          "invisible_tracers",
-          "pattern_injection"
-        );
-      }
-
-      // Extract document metadata
-      const wordCount = 0; // Placeholder - would need actual text extraction
-      const charCount = file.size;
-
-      // Generate protection ID
-      const protectionId = `DOC-${Date.now()}-${Math.random().toString(36).substring(7)}`;
-
-      // Create protection record
-      const { data: protectionRecord, error: protectionError } = await supabase
-        .from("ai_protection_records")
-        .insert({
-          user_id: user.id,
-          protection_id: protectionId,
-          content_type: "document",
-          original_filename: file.name,
-          file_fingerprint: fileFingerprint,
-          protection_level: options.protectionLevel,
-          protection_methods: protectionMethods,
-          protected_file_path: uploadData.path,
-          original_mime_type: file.type,
-          file_extension: file.name.split(".").pop() || "",
-          word_count: wordCount,
-          char_count: charCount,
-          document_methods: options.enableTracers
-            ? ["invisible_tracers"]
-            : [],
-        })
-        .select("id, protection_id")
-        .single();
-
-      if (protectionError) throw protectionError;
-
-      // Create document tracer if enabled
-      let tracerId: string | undefined;
-      if (options.enableTracers && protectionRecord) {
-        const tracerPayload = btoa(
-          JSON.stringify({
-            protection_id: protectionRecord.protection_id,
-            user_id: user.id,
-            timestamp: Date.now(),
-            fingerprint: fileFingerprint.substring(0, 16),
-          })
-        );
-
-        const { data: tracerData, error: tracerError } = await supabase
-          .from("ai_document_tracers")
-          .insert({
-            user_id: user.id,
-            protection_record_id: protectionRecord.id,
-            tracer_type: "invisible_marker",
-            tracer_payload: tracerPayload,
-            checksum: fileFingerprint.substring(0, 32),
-          })
-          .select("id")
+      // Optionally scan AI training datasets if maximum protection
+      if (options.protectionLevel === 'maximum' && processingResult.protectionRecordId) {
+        const { data: protectionRecord } = await supabase
+          .from('ai_protection_records')
+          .select('file_fingerprint')
+          .eq('id', processingResult.protectionRecordId)
           .single();
 
-        if (!tracerError && tracerData) {
-          tracerId = tracerData.id;
+        if (protectionRecord) {
+          // Trigger background scan (don't await to keep upload fast)
+          supabase.functions.invoke('scan-ai-training-datasets', {
+            body: {
+              protectionRecordId: processingResult.protectionRecordId,
+              fingerprint: protectionRecord.file_fingerprint
+            }
+          }).catch(err => console.error('Background scan error:', err));
         }
       }
 
@@ -137,9 +87,9 @@ export const useProtectedDocumentUpload = () => {
 
       return {
         success: true,
-        protectionRecordId: protectionRecord.id,
-        documentPath: uploadData.path,
-        tracerId,
+        protectionRecordId: processingResult.protectionRecordId,
+        documentPath: processingResult.documentPath,
+        tracerId: processingResult.tracerId,
       };
     } catch (error: any) {
       console.error("Document upload error:", error);
