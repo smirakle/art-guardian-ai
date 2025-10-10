@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -69,23 +69,50 @@ export function OneClickProtection() {
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
-  // Sample infringement cases (in real app, this would come from detection results)
-  const [cases] = useState<InfringementCase[]>([
-    {
-      id: '1',
-      imageUrl: '/placeholder.svg',
-      platforms: ['Instagram', 'Pinterest'],
-      infringingUrls: ['https://example.com/stolen1', 'https://example.com/stolen2'],
-      description: 'Unauthorized use of artwork on social media platforms'
-    },
-    {
-      id: '2',
-      imageUrl: '/placeholder.svg',
-      platforms: ['Google Images'],
-      infringingUrls: ['https://example.com/stolen3'],
-      description: 'AI-generated derivative found in search results'
-    }
-  ]);
+  const [cases, setCases] = useState<InfringementCase[]>([]);
+
+  // Load real infringement cases from copyright matches
+  useEffect(() => {
+    const loadInfringementCases = async () => {
+      try {
+        const { data: matches, error } = await supabase
+          .from('copyright_matches')
+          .select(`
+            id,
+            source_url,
+            source_domain,
+            source_title,
+            description,
+            threat_level,
+            artwork:artwork(
+              id,
+              file_paths
+            )
+          `)
+          .eq('dmca_filed', false)
+          .eq('is_authorized', false)
+          .order('detected_at', { ascending: false })
+          .limit(10);
+
+        if (error) throw error;
+
+        // Transform matches into infringement cases
+        const transformedCases = matches?.map((match: any) => ({
+          id: match.id,
+          imageUrl: match.artwork?.file_paths?.[0] || '/placeholder.svg',
+          platforms: [match.source_domain || 'Unknown Platform'],
+          infringingUrls: [match.source_url],
+          description: match.description || `${match.threat_level} threat detected on ${match.source_domain}`
+        })) || [];
+
+        setCases(transformedCases);
+      } catch (error) {
+        console.error('Error loading infringement cases:', error);
+      }
+    };
+
+    loadInfringementCases();
+  }, []);
 
   const handleProtectionAction = async () => {
     if (!selectedCase || selectedOptions.length === 0) {
