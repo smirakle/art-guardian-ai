@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -14,28 +14,55 @@ import {
   HelpCircle,
   ExternalLink,
   Minimize2,
-  Maximize2
+  Maximize2,
+  User,
+  Bot
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-
-interface Message {
-  id: string;
-  sender: 'user' | 'support';
-  text: string;
-  timestamp: Date;
-}
+import { useUserLiveChat } from '@/hooks/useUserLiveChat';
+import { formatDistanceToNow } from 'date-fns';
 
 export const HelpWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [view, setView] = useState<'menu' | 'chat' | 'contact'>('menu');
-  const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
+  const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { user } = useAuth();
+
+  const {
+    conversationId,
+    messages,
+    isAdminOnline,
+    loading,
+    initializeConversation,
+    sendMessage,
+    fetchMessages
+  } = useUserLiveChat();
+
+  // Initialize conversation when entering chat view
+  useEffect(() => {
+    if (view === 'chat' && user && !conversationId) {
+      initializeConversation();
+    }
+  }, [view, user, conversationId, initializeConversation]);
+
+  // Fetch messages when conversation is ready
+  useEffect(() => {
+    if (conversationId && view === 'chat') {
+      fetchMessages();
+    }
+  }, [conversationId, view, fetchMessages]);
+
+  // Auto-scroll to bottom
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   const quickHelp = [
     { icon: Book, label: 'Documentation', url: '/faq', color: 'text-blue-500' },
@@ -43,29 +70,11 @@ export const HelpWidget: React.FC = () => {
     { icon: HelpCircle, label: 'FAQ', url: '/faq', color: 'text-green-500' },
   ];
 
-  const handleSendMessage = () => {
-    if (!inputMessage.trim()) return;
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim() || !conversationId) return;
 
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      sender: 'user',
-      text: inputMessage,
-      timestamp: new Date()
-    };
-
-    setMessages([...messages, newMessage]);
+    await sendMessage(inputMessage.trim());
     setInputMessage('');
-
-    // Simulate support response
-    setTimeout(() => {
-      const supportMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        sender: 'support',
-        text: 'Thank you for reaching out! Our team will respond shortly. In the meantime, check our FAQ for quick answers.',
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, supportMessage]);
-    }, 1000);
   };
 
   const handleContactSubmit = async () => {
@@ -213,34 +222,65 @@ export const HelpWidget: React.FC = () => {
                 >
                   ←
                 </Button>
-                <div className="text-sm font-medium">Live Chat</div>
+                <div className="flex items-center justify-between flex-1">
+                  <div className="text-sm font-medium">Live Chat</div>
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${isAdminOnline ? 'bg-green-400' : 'bg-gray-400'}`} />
+                    <span className="text-xs text-muted-foreground">
+                      {isAdminOnline ? 'Online' : 'Offline'}
+                    </span>
+                  </div>
+                </div>
               </div>
               
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                {messages.length === 0 ? (
+              <div className="flex-1 overflow-y-auto p-4 space-y-3" ref={scrollRef}>
+                {loading && messages.length === 0 ? (
                   <div className="text-center text-muted-foreground text-sm py-8">
-                    Start a conversation with our support team
+                    Connecting to support...
+                  </div>
+                ) : messages.length === 0 ? (
+                  <div className="text-center text-muted-foreground text-sm py-8">
+                    <MessageCircle className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                    <p>Start a conversation with our support team</p>
+                    <p className="text-xs mt-2">
+                      {isAdminOnline ? 'An agent is available now!' : 'We\'ll respond soon'}
+                    </p>
                   </div>
                 ) : (
-                  messages.map(msg => (
-                    <div
-                      key={msg.id}
-                      className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
+                  messages.map(msg => {
+                    const isUser = msg.sender_type === 'user';
+                    const isBot = msg.sender_type === 'bot';
+                    
+                    return (
                       <div
-                        className={`max-w-[80%] rounded-lg p-3 ${
-                          msg.sender === 'user'
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted'
-                        }`}
+                        key={msg.id}
+                        className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
                       >
-                        <div className="text-sm">{msg.text}</div>
-                        <div className="text-xs opacity-70 mt-1">
-                          {msg.timestamp.toLocaleTimeString()}
+                        <div className={`max-w-[80%] space-y-1`}>
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            {isUser ? (
+                              <User className="w-3 h-3" />
+                            ) : (
+                              <Bot className="w-3 h-3" />
+                            )}
+                            <span>{isUser ? 'You' : isBot ? 'Bot' : 'Support'}</span>
+                            <span>
+                              {formatDistanceToNow(new Date(msg.created_at), { addSuffix: true })}
+                            </span>
+                          </div>
+                          <div
+                            className={`rounded-lg p-3 ${
+                              isUser
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-muted'
+                            }`}
+                          >
+                            <div className="text-sm whitespace-pre-wrap">{msg.message}</div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
 
@@ -249,11 +289,16 @@ export const HelpWidget: React.FC = () => {
                   <Input
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    placeholder="Type your message..."
+                    onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
+                    placeholder={conversationId ? "Type your message..." : "Connecting..."}
                     className="flex-1"
+                    disabled={!conversationId || loading}
                   />
-                  <Button onClick={handleSendMessage} size="icon">
+                  <Button 
+                    onClick={handleSendMessage} 
+                    size="icon"
+                    disabled={!inputMessage.trim() || !conversationId || loading}
+                  >
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
