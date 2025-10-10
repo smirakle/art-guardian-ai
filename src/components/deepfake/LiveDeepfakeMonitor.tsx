@@ -30,7 +30,7 @@ export default function LiveDeepfakeMonitor() {
   };
 
   const scanProgress = activeSession 
-    ? Math.min((activeSession.platforms_scanned / selectedPlatforms.length) * 100, 100)
+    ? Math.min((scanUpdates.length / selectedPlatforms.length) * 100, 100)
     : 0;
 
   return (
@@ -97,7 +97,7 @@ export default function LiveDeepfakeMonitor() {
             <CardContent className="pt-6">
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground">Platforms Scanned</p>
-                <p className="text-2xl font-bold">{activeSession.platforms_scanned}/{selectedPlatforms.length}</p>
+                <p className="text-2xl font-bold">{scanUpdates.length}/{selectedPlatforms.length}</p>
               </div>
             </CardContent>
           </Card>
@@ -210,7 +210,7 @@ export default function LiveDeepfakeMonitor() {
                         {update.matches_found} found
                       </Badge>
                     )}
-                    <Badge variant="outline" className="text-xs">{update.status}</Badge>
+                    <Badge variant="outline" className="text-xs">completed</Badge>
                   </div>
                 </div>
               ))}

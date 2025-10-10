@@ -76,11 +76,11 @@ export const useDeepfakeMonitoring = () => {
           console.log('Session updated:', updatedSession);
           setActiveSession(updatedSession);
           
-          if (updatedSession.status === 'completed') {
+          if (updatedSession.ended_at) {
             setIsMonitoring(false);
             toast({
               title: "✅ Deepfake Scan Complete",
-              description: `Found ${updatedSession.matches_found} potential deepfakes across ${updatedSession.platforms_scanned} platforms`,
+              description: `Found ${updatedSession.detections_count} potential deepfakes across ${updatedSession.platforms_monitored.length} platforms`,
             });
           }
         }
@@ -100,15 +100,19 @@ export const useDeepfakeMonitoring = () => {
       setLiveMatches([]);
       setScanUpdates([]);
 
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
       // Create monitoring session
       const { data: session, error: sessionError } = await supabase
         .from('realtime_monitoring_sessions')
-        .insert({
+        .insert([{
+          user_id: user.id,
           session_type: 'deepfake',
-          status: 'active',
-          platforms_requested: platforms,
-          started_at: new Date().toISOString()
-        })
+          detections_count: 0,
+          high_threat_count: 0
+        }])
         .select()
         .single();
 
@@ -148,8 +152,7 @@ export const useDeepfakeMonitoring = () => {
       await supabase
         .from('realtime_monitoring_sessions')
         .update({ 
-          status: 'stopped',
-          completed_at: new Date().toISOString()
+          ended_at: new Date().toISOString()
         })
         .eq('id', activeSession.id);
 

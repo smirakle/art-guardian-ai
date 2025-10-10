@@ -113,10 +113,9 @@ serve(async (req) => {
     await supabase
       .from('realtime_monitoring_sessions')
       .update({
-        status: 'completed',
-        matches_found: matchesFound,
-        platforms_scanned: platformsScanned,
-        completed_at: new Date().toISOString()
+        detections_count: matchesFound,
+        high_threat_count: matchesFound,
+        ended_at: new Date().toISOString()
       })
       .eq('id', sessionId);
 

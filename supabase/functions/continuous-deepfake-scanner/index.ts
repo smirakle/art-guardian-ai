@@ -20,12 +20,11 @@ serve(async (req) => {
 
     console.log('Continuous deepfake scanner triggered');
 
-    // Get all active monitoring sessions
+    // Get all active monitoring sessions (no ended_at)
     const { data: sessions, error: sessionsError } = await supabase
       .from('realtime_monitoring_sessions')
       .select('*')
-      .eq('status', 'active')
-      .eq('session_type', 'deepfake');
+      .is('ended_at', null);
 
     if (sessionsError) {
       console.error('Error fetching sessions:', sessionsError);
