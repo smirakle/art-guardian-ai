@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_online_status: {
+        Row: {
+          admin_id: string
+          current_conversations: Json | null
+          is_online: boolean
+          last_seen: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          admin_id: string
+          current_conversations?: Json | null
+          is_online?: boolean
+          last_seen?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          admin_id?: string
+          current_conversations?: Json | null
+          is_online?: boolean
+          last_seen?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       admin_sessions: {
         Row: {
           created_at: string | null
@@ -7421,6 +7445,86 @@ export type Database = {
           white_label_enabled?: boolean | null
         }
         Relationships: []
+      }
+      support_conversations: {
+        Row: {
+          assigned_to: string | null
+          created_at: string
+          id: string
+          last_message_at: string | null
+          metadata: Json | null
+          priority: string
+          status: string
+          subject: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          metadata?: Json | null
+          priority?: string
+          status?: string
+          subject?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          metadata?: Json | null
+          priority?: string
+          status?: string
+          subject?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      support_messages: {
+        Row: {
+          attachments: Json | null
+          conversation_id: string
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          sender_id: string
+          sender_type: string
+        }
+        Insert: {
+          attachments?: Json | null
+          conversation_id: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          sender_id: string
+          sender_type: string
+        }
+        Update: {
+          attachments?: Json | null
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          sender_id?: string
+          sender_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "support_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       system_optimizations: {
         Row: {

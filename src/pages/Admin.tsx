@@ -17,6 +17,7 @@ import GovernmentDefenseMonitoring from "@/components/admin/GovernmentDefenseMon
 import GovernmentApiPanel from "@/components/admin/GovernmentApiPanel";
 import AdminMFAEnforcement from "@/components/security/AdminMFAEnforcement";
 import EnhancedSecurityDashboard from "@/components/security/EnhancedSecurityDashboard";
+import AdminLiveChatDashboard from "@/components/admin/AdminLiveChatDashboard";
  const Admin = () => {
    const [activeTab, setActiveTab] = useState("dashboard");
    const [isMonitoring, setIsMonitoring] = useState(true);
@@ -41,6 +42,7 @@ import EnhancedSecurityDashboard from "@/components/security/EnhancedSecurityDas
                 <TabsTrigger value="system" className="px-4 py-2 text-sm font-medium">System</TabsTrigger>
                 <TabsTrigger value="blockchain" className="px-4 py-2 text-sm font-medium">Blockchain</TabsTrigger>
                 <TabsTrigger value="ai-training" className="px-4 py-2 text-sm font-medium">AI Training</TabsTrigger>
+                <TabsTrigger value="live-support" className="px-4 py-2 text-sm font-medium bg-green-500/10 border border-green-500/20">Live Support</TabsTrigger>
                 <TabsTrigger value="live-feed" className="px-4 py-2 text-sm font-medium">Live Feed</TabsTrigger>
               </TabsList>
             </div>
@@ -97,6 +99,10 @@ import EnhancedSecurityDashboard from "@/components/security/EnhancedSecurityDas
 
             <TabsContent value="ai-training" className="space-y-6">
               <AITPReadiness />
+            </TabsContent>
+
+            <TabsContent value="live-support" className="space-y-6">
+              <AdminLiveChatDashboard />
             </TabsContent>
  
             <TabsContent value="live-feed" className="space-y-6">
