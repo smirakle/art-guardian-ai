@@ -65,10 +65,10 @@ export const PortfolioUploadWidget = ({
   const [licenseType, setLicenseType] = useState("");
   const [enableWatermark, setEnableWatermark] = useState(true);
   const [enableBlockchain, setEnableBlockchain] = useState(false);
-  const [enableRealTimeAI, setEnableRealTimeAI] = useState(true);
+  const [enableRealTimeAI, setEnableRealTimeAI] = useState(false);
   const [enableSocialMediaScan, setEnableSocialMediaScan] = useState(false);
   const [enableDeepfakeDetection, setEnableDeepfakeDetection] = useState(false);
-  const [enableWebScanner, setEnableWebScanner] = useState(true);
+  const [enableWebScanner, setEnableWebScanner] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -596,15 +596,16 @@ export const PortfolioUploadWidget = ({
               </Label>
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 opacity-50">
               <Checkbox
                 id="realtime-ai"
-                checked={enableRealTimeAI}
-                onCheckedChange={(checked) => setEnableRealTimeAI(checked === true)}
+                checked={false}
+                disabled={true}
               />
-              <Label htmlFor="realtime-ai" className="flex items-center gap-2">
+              <Label htmlFor="realtime-ai" className="flex items-center gap-2 cursor-not-allowed">
                 <Brain className="w-4 h-4" />
                 Real-time AI Monitoring
+                <Badge variant="secondary" className="text-xs ml-2">Coming Soon</Badge>
               </Label>
             </div>
 
@@ -621,15 +622,16 @@ export const PortfolioUploadWidget = ({
               </Label>
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 opacity-50">
               <Checkbox
                 id="web-scanner"
-                checked={enableWebScanner}
-                onCheckedChange={(checked) => setEnableWebScanner(checked === true)}
+                checked={false}
+                disabled={true}
               />
-              <Label htmlFor="web-scanner" className="flex items-center gap-2">
+              <Label htmlFor="web-scanner" className="flex items-center gap-2 cursor-not-allowed">
                 <Globe className="w-4 h-4" />
                 Web Scanner
+                <Badge variant="secondary" className="text-xs ml-2">Coming Soon</Badge>
               </Label>
             </div>
 
