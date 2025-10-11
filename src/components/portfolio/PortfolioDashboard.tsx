@@ -48,6 +48,7 @@ export function PortfolioDashboard() {
     monitoring_coverage: 0
   });
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('overview');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -525,7 +526,11 @@ export function PortfolioDashboard() {
               <Eye className="w-4 h-4" />
               View All Threats
             </Button>
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-2"
+              onClick={() => setActiveTab('manage')}
+            >
               <Briefcase className="w-4 h-4" />
               Create Portfolio
             </Button>
