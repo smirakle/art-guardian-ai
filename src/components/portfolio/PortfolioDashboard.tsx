@@ -5,6 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Briefcase, Shield, AlertTriangle, TrendingUp, Eye, Activity, BarChart3, Bell, FileText, Upload, Folder, Monitor, Settings } from 'lucide-react';
 import { PortfolioUploadWidget } from './PortfolioUploadWidget';
 import { PortfolioManager } from './PortfolioManager';
@@ -48,7 +51,8 @@ export function PortfolioDashboard() {
     monitoring_coverage: 0
   });
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [newPortfolio, setNewPortfolio] = useState({ name: '', description: '' });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -443,6 +447,50 @@ export function PortfolioDashboard() {
     }
   };
 
+  const createPortfolio = async () => {
+    if (!newPortfolio.name) {
+      toast({
+        title: "Name Required",
+        description: "Please enter a portfolio name",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) return;
+
+      const { error } = await supabase
+        .from('portfolios')
+        .insert({
+          user_id: userData.user.id,
+          name: newPortfolio.name,
+          description: newPortfolio.description,
+          is_active: true,
+          monitoring_enabled: true
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Portfolio created successfully",
+      });
+      
+      setIsCreateDialogOpen(false);
+      setNewPortfolio({ name: '', description: '' });
+      fetchDashboardData();
+    } catch (error) {
+      console.error('Error creating portfolio:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create portfolio",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -529,7 +577,7 @@ export function PortfolioDashboard() {
             <Button 
               variant="outline" 
               className="flex items-center gap-2"
-              onClick={() => setActiveTab('manage')}
+              onClick={() => setIsCreateDialogOpen(true)}
             >
               <Briefcase className="w-4 h-4" />
               Create Portfolio
@@ -577,6 +625,44 @@ export function PortfolioDashboard() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Create Portfolio Dialog */}
+      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Portfolio</DialogTitle>
+            <DialogDescription>
+              Create a portfolio to organize and monitor your artworks
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium">Portfolio Name</label>
+              <Input
+                placeholder="e.g., Digital Art Collection"
+                value={newPortfolio.name}
+                onChange={(e) => setNewPortfolio({ ...newPortfolio, name: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Description (Optional)</label>
+              <Textarea
+                placeholder="Brief description of this portfolio"
+                value={newPortfolio.description}
+                onChange={(e) => setNewPortfolio({ ...newPortfolio, description: e.target.value })}
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={createPortfolio} disabled={!newPortfolio.name}>
+                Create Portfolio
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
