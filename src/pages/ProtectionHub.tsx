@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +31,7 @@ import { AITrainingSettings } from '@/components/AITrainingSettings';
 
 const ProtectionHub = () => {
   const [activeTab, setActiveTab] = useState('upload');
+  const navigate = useNavigate();
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
@@ -156,10 +158,7 @@ const ProtectionHub = () => {
                 </div>
                 <Button 
                   className="w-full mt-4"
-                  onClick={() => {
-                    const uploadTab = document.querySelector('[data-state="active"] input[type="file"]') as HTMLInputElement;
-                    if (uploadTab) uploadTab.click();
-                  }}
+                  onClick={() => navigate('/upload')}
                 >
                   <Upload className="h-4 w-4 mr-2" />
                   Start Upload
