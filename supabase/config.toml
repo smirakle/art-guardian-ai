@@ -173,3 +173,15 @@ verify_jwt = false
 [functions.ai-agent-network]
 verify_jwt = true
 
+[functions.deepfake-detection]
+verify_jwt = true
+
+[functions.realtime-ai-scan]
+verify_jwt = true
+
+[functions.web-scanner]
+verify_jwt = true
+
+[functions.social-media-scan]
+verify_jwt = true
+

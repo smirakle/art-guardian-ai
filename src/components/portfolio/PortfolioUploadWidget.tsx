@@ -245,30 +245,59 @@ export const PortfolioUploadWidget = ({
 
   const startComprehensiveScanning = async (artworkId: string, fileName: string, file: File) => {
     try {
+      console.log('Starting comprehensive scanning for:', artworkId);
+
       // 1. Real-time AI monitoring scan
       if (enableRealTimeAI) {
-        await supabase.from('monitoring_scans').insert({
+        const scanRecord = await supabase.from('monitoring_scans').insert({
           artwork_id: artworkId,
           scan_type: 'realtime-ai',
           status: 'running',
           started_at: new Date().toISOString(),
           total_sources: 5000
+        }).select().single();
+
+        // Call the real AI scanning function
+        supabase.functions.invoke('realtime-ai-scan', {
+          body: {
+            artworkId: artworkId,
+            filePath: fileName
+          }
+        }).then(result => {
+          console.log('Real-time AI scan completed:', result);
+        }).catch(error => {
+          console.error('Real-time AI scan error:', error);
         });
       }
 
       // 2. Deepfake detection
       if (enableDeepfakeDetection && file.type.startsWith('image/')) {
-        try {
-          await supabase.functions.invoke('deepfake-scan-upload', {
-            body: {
-              filePath: fileName,
-              fileName: file.name,
-              artworkId: artworkId
-            }
-          });
-        } catch (error) {
-          console.error('Deepfake detection failed:', error);
-        }
+        const scanRecord = await supabase.from('monitoring_scans').insert({
+          artwork_id: artworkId,
+          scan_type: 'deepfake',
+          status: 'running',
+          started_at: new Date().toISOString()
+        }).select().single();
+
+        // Call the real deepfake detection function
+        supabase.functions.invoke('deepfake-detection', {
+          body: {
+            filePath: fileName,
+            fileName: file.name,
+            artworkId: artworkId
+          }
+        }).then(result => {
+          console.log('Deepfake detection completed:', result);
+          if (result.data?.is_deepfake) {
+            toast({
+              title: "Deepfake Detected",
+              description: `Confidence: ${(result.data.confidence * 100).toFixed(0)}% - ${result.data.threat_level} risk`,
+              variant: "destructive",
+            });
+          }
+        }).catch(error => {
+          console.error('Deepfake detection error:', error);
+        });
       }
 
       // 3. Enhanced visual recognition
@@ -284,30 +313,69 @@ export const PortfolioUploadWidget = ({
 
       // 4. Web scanner
       if (enableWebScanner) {
-        await supabase.from('monitoring_scans').insert({
+        const scanRecord = await supabase.from('monitoring_scans').insert({
           artwork_id: artworkId,
           scan_type: 'comprehensive-web',
           status: 'running',
           started_at: new Date().toISOString(),
           total_sources: 10000
+        }).select().single();
+
+        // Get artwork title for web search
+        const { data: artwork } = await supabase
+          .from('artwork')
+          .select('title')
+          .eq('id', artworkId)
+          .single();
+
+        // Call the real web scanner function
+        supabase.functions.invoke('web-scanner', {
+          body: {
+            artworkId: artworkId,
+            title: artwork?.title || file.name
+          }
+        }).then(result => {
+          console.log('Web scan completed:', result);
+        }).catch(error => {
+          console.error('Web scan error:', error);
         });
       }
 
       // 5. Social media monitoring
       if (enableSocialMediaScan) {
-        await supabase.from('monitoring_scans').insert({
+        const scanRecord = await supabase.from('monitoring_scans').insert({
           artwork_id: artworkId,
           scan_type: 'social-media',
           status: 'running',
           started_at: new Date().toISOString(),
           total_sources: 1500
+        }).select().single();
+
+        // Get artwork details for social media search
+        const { data: artwork } = await supabase
+          .from('artwork')
+          .select('title, description')
+          .eq('id', artworkId)
+          .single();
+
+        // Call the real social media scanner function
+        supabase.functions.invoke('social-media-scan', {
+          body: {
+            artworkId: artworkId,
+            title: artwork?.title || file.name,
+            description: artwork?.description
+          }
+        }).then(result => {
+          console.log('Social media scan completed:', result);
+        }).catch(error => {
+          console.error('Social media scan error:', error);
         });
       }
 
       // 6. Advanced Blockchain Protection
       if (enableBlockchain) {
         try {
-          await supabase.functions.invoke('advanced-blockchain-registration', {
+          const blockchainResult = await supabase.functions.invoke('real-blockchain-registration', {
             body: {
               artworkId: artworkId,
               network: 'polygon',
@@ -322,8 +390,17 @@ export const PortfolioUploadWidget = ({
               realTimeProtection: true
             }
           });
+          
+          console.log('Blockchain registration result:', blockchainResult);
+          
+          if (blockchainResult.data?.success) {
+            toast({
+              title: "Blockchain Registration Started",
+              description: "Your artwork is being registered on the blockchain",
+            });
+          }
         } catch (error) {
-          console.error('Blockchain registration failed:', error);
+          console.error('Blockchain registration error:', error);
         }
       }
 
