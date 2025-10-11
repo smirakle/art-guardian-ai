@@ -38,10 +38,15 @@ export default function LiveDeepfakeMonitor() {
       {/* Control Panel */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Brain className="w-5 h-5 text-primary" />
-            Live Deepfake Monitoring
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Brain className="w-5 h-5 text-primary" />
+              <CardTitle className="flex items-center gap-2">
+                Live Deepfake Monitoring
+              </CardTitle>
+              <Badge variant="secondary">Coming Soon</Badge>
+            </div>
+          </div>
           <CardDescription>
             Real-time scanning for deepfakes across social media platforms
           </CardDescription>
@@ -66,12 +71,12 @@ export default function LiveDeepfakeMonitor() {
             </div>
 
             {isMonitoring ? (
-              <Button onClick={stopMonitoring} variant="destructive">
+              <Button onClick={stopMonitoring} variant="destructive" disabled>
                 <Square className="w-4 h-4 mr-2" />
                 Stop Monitoring
               </Button>
             ) : (
-              <Button onClick={handleStart} className="bg-gradient-to-r from-primary to-accent">
+              <Button onClick={handleStart} className="bg-gradient-to-r from-primary to-accent opacity-50 cursor-not-allowed" disabled>
                 <Play className="w-4 h-4 mr-2" />
                 Start Monitoring
               </Button>

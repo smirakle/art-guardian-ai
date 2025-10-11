@@ -59,10 +59,13 @@ const DeepfakeDetection = () => {
             <div className="p-3 bg-primary/10 rounded-lg">
               <Brain className="w-8 h-8 text-primary" />
             </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-                Advanced Deepfake Detection
-              </h1>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+                  Advanced Deepfake Detection
+                </h1>
+                <Badge variant="secondary" className="text-xs">Coming Soon</Badge>
+              </div>
               <p className="text-sm sm:text-base text-muted-foreground">
                 AI-powered detection of deepfakes, face swaps, and media manipulation across surface and dark web
               </p>

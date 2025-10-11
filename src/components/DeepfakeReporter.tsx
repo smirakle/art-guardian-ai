@@ -133,10 +133,15 @@ const DeepfakeReporter = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Brain className="w-5 h-5 text-primary" />
-            Deepfake & Media Manipulation Detector
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Brain className="w-5 h-5 text-primary" />
+              <CardTitle className="flex items-center gap-2">
+                Deepfake & Media Manipulation Detector
+              </CardTitle>
+              <Badge variant="secondary">Coming Soon</Badge>
+            </div>
+          </div>
           <CardDescription>
             Advanced AI analysis to detect deepfakes, face swaps, and manipulated content claiming false origins
           </CardDescription>
@@ -243,8 +248,8 @@ const DeepfakeReporter = () => {
 
           <Button 
             onClick={handleAnalyze} 
-            disabled={isAnalyzing || !imageUrl.trim()}
-            className="w-full bg-gradient-to-r from-primary to-accent"
+            disabled={true}
+            className="w-full bg-gradient-to-r from-primary to-accent opacity-50 cursor-not-allowed"
           >
             {isAnalyzing ? (
               <>
