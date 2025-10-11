@@ -8,7 +8,10 @@ import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Briefcase, Shield, AlertTriangle, TrendingUp, Eye, Activity, BarChart3, Bell, FileText, Upload, Folder, Monitor, Settings } from 'lucide-react';
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Briefcase, Shield, AlertTriangle, TrendingUp, Eye, Activity, BarChart3, Bell, FileText, Upload as UploadIcon, Folder, Monitor, Settings, Edit, Image } from 'lucide-react';
 import { PortfolioUploadWidget } from './PortfolioUploadWidget';
 import { PortfolioManager } from './PortfolioManager';
 import { PortfolioAnalytics } from './PortfolioAnalytics';
@@ -52,11 +55,17 @@ export function PortfolioDashboard() {
   });
   const [loading, setLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [isAddArtworkDialogOpen, setIsAddArtworkDialogOpen] = useState(false);
+  const [selectedPortfolio, setSelectedPortfolio] = useState<Portfolio | null>(null);
   const [newPortfolio, setNewPortfolio] = useState({ name: '', description: '' });
+  const [artworks, setArtworks] = useState<any[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
     fetchDashboardData();
+    fetchArtworks();
 
     // Set up real-time subscriptions
     const channel = supabase
@@ -447,6 +456,21 @@ export function PortfolioDashboard() {
     }
   };
 
+  const fetchArtworks = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('artwork')
+        .select('id, title, category, status')
+        .eq('status', 'completed')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setArtworks(data || []);
+    } catch (error) {
+      console.error('Error fetching artworks:', error);
+    }
+  };
+
   const createPortfolio = async () => {
     if (!newPortfolio.name) {
       toast({
@@ -486,6 +510,88 @@ export function PortfolioDashboard() {
       toast({
         title: "Error",
         description: "Failed to create portfolio",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const updatePortfolio = async () => {
+    if (!selectedPortfolio) return;
+
+    try {
+      const { error } = await supabase
+        .from('portfolios')
+        .update({
+          name: selectedPortfolio.name,
+          description: selectedPortfolio.description,
+          is_active: selectedPortfolio.is_active,
+          monitoring_enabled: selectedPortfolio.monitoring_enabled
+        })
+        .eq('id', selectedPortfolio.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Portfolio updated successfully",
+      });
+      
+      setIsEditDialogOpen(false);
+      setSelectedPortfolio(null);
+      fetchDashboardData();
+    } catch (error) {
+      console.error('Error updating portfolio:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update portfolio",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const addArtworkToPortfolio = async (artworkId: string) => {
+    if (!selectedPortfolio) return;
+
+    try {
+      const { data: existingItem, error: checkError } = await supabase
+        .from('portfolio_items')
+        .select('id')
+        .eq('portfolio_id', selectedPortfolio.id)
+        .eq('artwork_id', artworkId)
+        .eq('is_active', true)
+        .single();
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        throw checkError;
+      }
+
+      if (existingItem) {
+        toast({
+          title: "Already Added",
+          description: "This artwork is already in the portfolio",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { error } = await supabase
+        .from('portfolio_items')
+        .insert([{ portfolio_id: selectedPortfolio.id, artwork_id: artworkId }]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Artwork added to portfolio",
+      });
+      
+      setIsAddArtworkDialogOpen(false);
+      fetchDashboardData();
+    } catch (error: any) {
+      console.error('Error adding artwork:', error);
+      toast({
+        title: "Error",
+        description: error.code === '23505' ? "This artwork is already in the portfolio" : "Failed to add artwork to portfolio",
         variant: "destructive",
       });
     }
@@ -614,6 +720,36 @@ export function PortfolioDashboard() {
                   <Badge variant="outline">
                     {portfolio.is_active ? "Active" : "Inactive"}
                   </Badge>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedPortfolio(portfolio);
+                      setIsEditDialogOpen(true);
+                    }}
+                  >
+                    <Edit className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedPortfolio(portfolio);
+                      setIsAddArtworkDialogOpen(true);
+                    }}
+                  >
+                    <Image className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedPortfolio(portfolio);
+                      setIsUploadDialogOpen(true);
+                    }}
+                  >
+                    <UploadIcon className="w-4 h-4" />
+                  </Button>
                 </div>
               </div>
             ))}
@@ -637,16 +773,18 @@ export function PortfolioDashboard() {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium">Portfolio Name</label>
+              <Label htmlFor="name">Portfolio Name</Label>
               <Input
+                id="name"
                 placeholder="e.g., Digital Art Collection"
                 value={newPortfolio.name}
                 onChange={(e) => setNewPortfolio({ ...newPortfolio, name: e.target.value })}
               />
             </div>
             <div>
-              <label className="text-sm font-medium">Description (Optional)</label>
+              <Label htmlFor="description">Description (Optional)</Label>
               <Textarea
+                id="description"
                 placeholder="Brief description of this portfolio"
                 value={newPortfolio.description}
                 onChange={(e) => setNewPortfolio({ ...newPortfolio, description: e.target.value })}
@@ -660,6 +798,112 @@ export function PortfolioDashboard() {
                 Create Portfolio
               </Button>
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Portfolio Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Portfolio</DialogTitle>
+            <DialogDescription>Update portfolio details and settings</DialogDescription>
+          </DialogHeader>
+          {selectedPortfolio && (
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="edit-name">Portfolio Name</Label>
+                <Input
+                  id="edit-name"
+                  value={selectedPortfolio.name}
+                  onChange={(e) => setSelectedPortfolio({ ...selectedPortfolio, name: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-description">Description</Label>
+                <Textarea
+                  id="edit-description"
+                  value={selectedPortfolio.description}
+                  onChange={(e) => setSelectedPortfolio({ ...selectedPortfolio, description: e.target.value })}
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="edit-active"
+                  checked={selectedPortfolio.is_active}
+                  onCheckedChange={(checked) => setSelectedPortfolio({ ...selectedPortfolio, is_active: checked })}
+                />
+                <Label htmlFor="edit-active">Portfolio active</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="edit-monitoring"
+                  checked={selectedPortfolio.monitoring_enabled}
+                  onCheckedChange={(checked) => setSelectedPortfolio({ ...selectedPortfolio, monitoring_enabled: checked })}
+                />
+                <Label htmlFor="edit-monitoring">Enable monitoring</Label>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={updatePortfolio}>
+                  Update Portfolio
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Upload to Portfolio Dialog */}
+      <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Upload to Portfolio</DialogTitle>
+            <DialogDescription>Upload files directly to {selectedPortfolio?.name}</DialogDescription>
+          </DialogHeader>
+          {selectedPortfolio && (
+            <PortfolioUploadWidget
+              portfolioId={selectedPortfolio.id}
+              portfolioName={selectedPortfolio.name}
+              onUploadComplete={() => {
+                fetchDashboardData();
+                setIsUploadDialogOpen(false);
+              }}
+              onClose={() => setIsUploadDialogOpen(false)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Artwork Dialog */}
+      <Dialog open={isAddArtworkDialogOpen} onOpenChange={setIsAddArtworkDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Artwork to Portfolio</DialogTitle>
+            <DialogDescription>Select existing artworks to add to {selectedPortfolio?.name}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 max-h-96 overflow-y-auto">
+            {artworks.map((artwork) => (
+              <div key={artwork.id} className="flex items-center justify-between p-3 border rounded-lg">
+                <div>
+                  <h4 className="font-medium">{artwork.title}</h4>
+                  <p className="text-sm text-muted-foreground">{artwork.category}</p>
+                </div>
+                <Button
+                  size="sm"
+                  onClick={() => addArtworkToPortfolio(artwork.id)}
+                >
+                  Add
+                </Button>
+              </div>
+            ))}
+            {artworks.length === 0 && (
+              <p className="text-center text-muted-foreground py-4">
+                No artworks available. Upload artworks first.
+              </p>
+            )}
           </div>
         </DialogContent>
       </Dialog>
