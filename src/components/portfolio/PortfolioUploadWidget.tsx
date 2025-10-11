@@ -66,7 +66,7 @@ export const PortfolioUploadWidget = ({
   const [enableWatermark, setEnableWatermark] = useState(true);
   const [enableBlockchain, setEnableBlockchain] = useState(false);
   const [enableRealTimeAI, setEnableRealTimeAI] = useState(true);
-  const [enableSocialMediaScan, setEnableSocialMediaScan] = useState(true);
+  const [enableSocialMediaScan, setEnableSocialMediaScan] = useState(false);
   const [enableDeepfakeDetection, setEnableDeepfakeDetection] = useState(false);
   const [enableWebScanner, setEnableWebScanner] = useState(true);
 
@@ -633,15 +633,16 @@ export const PortfolioUploadWidget = ({
               </Label>
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 opacity-50">
               <Checkbox
                 id="social-media"
-                checked={enableSocialMediaScan}
-                onCheckedChange={(checked) => setEnableSocialMediaScan(checked === true)}
+                checked={false}
+                disabled={true}
               />
-              <Label htmlFor="social-media" className="flex items-center gap-2">
+              <Label htmlFor="social-media" className="flex items-center gap-2 cursor-not-allowed">
                 <Users className="w-4 h-4" />
                 Social Media Scan
+                <Badge variant="secondary" className="text-xs ml-2">Coming Soon</Badge>
               </Label>
             </div>
           </div>
