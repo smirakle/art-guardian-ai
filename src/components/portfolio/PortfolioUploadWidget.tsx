@@ -596,16 +596,15 @@ export const PortfolioUploadWidget = ({
               </Label>
             </div>
 
-            <div className="flex items-center space-x-2 opacity-50">
+            <div className="flex items-center space-x-2">
               <Checkbox
                 id="realtime-ai"
-                checked={false}
-                disabled={true}
+                checked={enableRealTimeAI}
+                onCheckedChange={(checked) => setEnableRealTimeAI(checked === true)}
               />
-              <Label htmlFor="realtime-ai" className="flex items-center gap-2 cursor-not-allowed">
+              <Label htmlFor="realtime-ai" className="flex items-center gap-2">
                 <Brain className="w-4 h-4" />
                 Real-time AI Monitoring
-                <Badge variant="secondary" className="text-xs ml-2">Coming Soon</Badge>
               </Label>
             </div>
 

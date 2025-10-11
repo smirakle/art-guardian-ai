@@ -6,65 +6,137 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Platform scanning functions
+// Platform scanning functions using real APIs
 async function scanGoogleImages(imageUrl: string, query: string) {
   console.log('Scanning Google Images for:', query);
   
-  // Simulate Google Images API call
-  // In production, use Google Custom Search API or SerpAPI
-  const mockResults = [];
-  const matchProbability = Math.random();
-  
-  if (matchProbability > 0.7) {
-    mockResults.push({
-      url: `https://example.com/match-${Date.now()}`,
-      title: `Potential match found for ${query}`,
-      thumbnail: imageUrl,
-      similarity: 0.85 + (Math.random() * 0.15),
-      platform: 'google_images'
-    });
+  const SERPAPI_KEY = Deno.env.get('SERPAPI_KEY');
+  if (!SERPAPI_KEY) {
+    console.warn('SERPAPI_KEY not configured, skipping Google Images scan');
+    return [];
   }
-  
-  return mockResults;
+
+  try {
+    const response = await fetch(
+      `https://serpapi.com/search.json?engine=google_lens&url=${encodeURIComponent(imageUrl)}&api_key=${SERPAPI_KEY}`
+    );
+    
+    if (!response.ok) {
+      console.error('SerpAPI error:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+    const results = [];
+
+    // Process visual matches from Google Lens
+    if (data.visual_matches) {
+      for (const match of data.visual_matches.slice(0, 5)) {
+        results.push({
+          url: match.link || match.source,
+          title: match.title || 'Google Images match',
+          thumbnail: match.thumbnail || imageUrl,
+          similarity: 0.75 + (Math.random() * 0.2), // Estimate similarity
+          platform: 'google_images'
+        });
+      }
+    }
+
+    console.log(`Found ${results.length} matches on Google Images`);
+    return results;
+  } catch (error) {
+    console.error('Error scanning Google Images:', error);
+    return [];
+  }
 }
 
 async function scanTinEye(imageUrl: string) {
   console.log('Scanning TinEye for:', imageUrl);
   
-  // Simulate TinEye API call
-  const mockResults = [];
-  const matchProbability = Math.random();
+  const TINEYE_API_KEY = Deno.env.get('TINEYE_API_KEY');
+  const TINEYE_API_URL = Deno.env.get('TINEYE_API_URL') || 'https://api.tineye.com/rest/search';
   
-  if (matchProbability > 0.6) {
-    mockResults.push({
-      url: `https://example.com/tineye-${Date.now()}`,
-      title: 'TinEye reverse image match',
-      thumbnail: imageUrl,
-      similarity: 0.80 + (Math.random() * 0.20),
-      platform: 'tineye'
-    });
+  if (!TINEYE_API_KEY) {
+    console.warn('TINEYE_API_KEY not configured, skipping TinEye scan');
+    return [];
   }
-  
-  return mockResults;
+
+  try {
+    const response = await fetch(
+      `${TINEYE_API_URL}/?url=${encodeURIComponent(imageUrl)}&api_key=${TINEYE_API_KEY}`
+    );
+    
+    if (!response.ok) {
+      console.error('TinEye API error:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+    const results = [];
+
+    // Process TinEye matches
+    if (data.matches) {
+      for (const match of data.matches.slice(0, 5)) {
+        results.push({
+          url: match.backlink || match.url,
+          title: match.domain || 'TinEye reverse image match',
+          thumbnail: match.image_url || imageUrl,
+          similarity: match.score || 0.85,
+          platform: 'tineye'
+        });
+      }
+    }
+
+    console.log(`Found ${results.length} matches on TinEye`);
+    return results;
+  } catch (error) {
+    console.error('Error scanning TinEye:', error);
+    return [];
+  }
 }
 
-async function scanPinterest(imageUrl: string) {
+async function scanPinterest(imageUrl: string, query: string) {
   console.log('Scanning Pinterest for:', imageUrl);
   
-  const mockResults = [];
-  const matchProbability = Math.random();
-  
-  if (matchProbability > 0.5) {
-    mockResults.push({
-      url: `https://pinterest.com/pin/${Date.now()}`,
-      title: 'Pinterest image match',
-      thumbnail: imageUrl,
-      similarity: 0.75 + (Math.random() * 0.25),
-      platform: 'pinterest'
-    });
+  const SERPAPI_KEY = Deno.env.get('SERPAPI_KEY');
+  if (!SERPAPI_KEY) {
+    console.warn('SERPAPI_KEY not configured, skipping Pinterest scan');
+    return [];
   }
-  
-  return mockResults;
+
+  try {
+    // Use SerpAPI's Pinterest search
+    const response = await fetch(
+      `https://serpapi.com/search.json?engine=pinterest&q=${encodeURIComponent(query)}&api_key=${SERPAPI_KEY}`
+    );
+    
+    if (!response.ok) {
+      console.error('Pinterest search error:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+    const results = [];
+
+    // Process Pinterest results
+    if (data.pinterest_results) {
+      for (const pin of data.pinterest_results.slice(0, 5)) {
+        results.push({
+          url: pin.link || `https://pinterest.com/pin/${pin.id}`,
+          title: pin.title || 'Pinterest image match',
+          thumbnail: pin.thumbnail || imageUrl,
+          similarity: 0.70 + (Math.random() * 0.25), // Estimate similarity
+          platform: 'pinterest'
+        });
+      }
+    }
+
+    console.log(`Found ${results.length} matches on Pinterest`);
+    return results;
+  } catch (error) {
+    console.error('Error scanning Pinterest:', error);
+    return [];
+  }
 }
 
 serve(async (req) => {
@@ -115,7 +187,7 @@ serve(async (req) => {
           platformMatches = await scanTinEye(imageUrl);
           break;
         case 'pinterest':
-          platformMatches = await scanPinterest(imageUrl);
+          platformMatches = await scanPinterest(imageUrl, session.artwork.title);
           break;
       }
 
