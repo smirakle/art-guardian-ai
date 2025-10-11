@@ -146,6 +146,7 @@ const App = () => {
                             <Route path="/monitoring-hub" element={<MonitoringHub />} />
                             
                             {/* Legacy redirects */}
+                            <Route path="/ai-protection" element={<ProtectionHub />} />
                             <Route path="/ai-protection-settings" element={<ProtectionHub />} />
                             <Route path="/ai-training-protection" element={<ProtectionHub />} />
                             <Route path="/phase1" element={<UnifiedDashboard />} />
