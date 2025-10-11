@@ -154,7 +154,13 @@ const ProtectionHub = () => {
                     <span className="text-sm">3D Models (OBJ, FBX)</span>
                   </div>
                 </div>
-                <Button className="w-full mt-4">
+                <Button 
+                  className="w-full mt-4"
+                  onClick={() => {
+                    const uploadTab = document.querySelector('[data-state="active"] input[type="file"]') as HTMLInputElement;
+                    if (uploadTab) uploadTab.click();
+                  }}
+                >
                   <Upload className="h-4 w-4 mr-2" />
                   Start Upload
                 </Button>
