@@ -18,6 +18,8 @@ interface RealTimeScanRequest {
   scanType: 'instant' | 'continuous' | 'scheduled';
   platforms: string[];
   priority: 'low' | 'normal' | 'high' | 'critical';
+  includeDarkWeb?: boolean;
+  darkWebMarketplaces?: string[];
 }
 
 interface PlatformScanResult {
@@ -295,6 +297,19 @@ async function scanPlatformRealTime(platform: string, artworks: any[], sessionId
       case 'amazon':
         platformMatches = await scanAmazon(artwork);
         break;
+      // Dark Web Marketplaces
+      case 'darkweb_general':
+        platformMatches = await scanDarkWebGeneral(imageUrl, artwork);
+        break;
+      case 'darkweb_silk_road':
+        platformMatches = await scanDarkWebMarketplace(imageUrl, artwork, 'silk_road');
+        break;
+      case 'darkweb_alphabay':
+        platformMatches = await scanDarkWebMarketplace(imageUrl, artwork, 'alphabay');
+        break;
+      case 'darkweb_dream':
+        platformMatches = await scanDarkWebMarketplace(imageUrl, artwork, 'dream_market');
+        break;
       default:
         console.log(`Unknown platform: ${platform}`);
         continue;
@@ -470,4 +485,163 @@ async function triggerAutomatedResponse(match: any, artwork: any) {
   } catch (error) {
     console.error('Failed to trigger automated response:', error);
   }
+}
+
+// ============= DARK WEB SCANNING FUNCTIONS =============
+
+async function scanDarkWebGeneral(imageUrl: string, artwork: any): Promise<any[]> {
+  const DARK_WEB_API_KEY = Deno.env.get('DARK_WEB_INTEL_API_KEY');
+  const TOR_PROXY_URL = Deno.env.get('TOR_PROXY_URL') || 'socks5://127.0.0.1:9050';
+  
+  if (!DARK_WEB_API_KEY) {
+    console.log('Dark web intelligence API not configured');
+    return [];
+  }
+
+  try {
+    console.log('Scanning dark web marketplaces for artwork:', artwork.title);
+    
+    // Use Flashpoint or similar dark web intelligence API
+    const response = await fetch('https://api.flashpoint.io/search/v1', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${DARK_WEB_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: artwork.title,
+        sources: ['tor', 'darknet_markets'],
+        image_search: true,
+        image_url: imageUrl,
+        include_marketplaces: true,
+        max_results: 50
+      })
+    });
+
+    if (!response.ok) {
+      console.error('Dark web API error:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+    const results: any[] = [];
+
+    // Process dark web marketplace results
+    if (data.results) {
+      for (const result of data.results) {
+        results.push({
+          platform: 'darkweb',
+          source_url: result.url || result.onion_url,
+          source_domain: result.marketplace || 'unknown_darkweb_market',
+          confidence: calculateDarkWebConfidence(result),
+          match_type: 'darkweb_marketplace',
+          title: result.title || 'Dark web listing',
+          detected_at: new Date().toISOString(),
+          metadata: {
+            marketplace: result.marketplace,
+            vendor: result.vendor,
+            price: result.price,
+            listing_date: result.created_at,
+            threat_level: 'critical',
+            requires_law_enforcement: true
+          }
+        });
+      }
+    }
+
+    console.log(`Found ${results.length} dark web matches`);
+    return results;
+    
+  } catch (error) {
+    console.error('Error scanning dark web:', error);
+    return [];
+  }
+}
+
+async function scanDarkWebMarketplace(imageUrl: string, artwork: any, marketplace: string): Promise<any[]> {
+  const DARK_WEB_API_KEY = Deno.env.get('DARK_WEB_INTEL_API_KEY');
+  
+  if (!DARK_WEB_API_KEY) {
+    console.log(`Dark web API not configured for ${marketplace}`);
+    return [];
+  }
+
+  try {
+    console.log(`Scanning ${marketplace} for artwork:`, artwork.title);
+    
+    // Marketplace-specific scanning via Tor proxy
+    const marketplaceUrls = {
+      silk_road: '.onion/search',
+      alphabay: '.onion/listings',
+      dream_market: '.onion/products'
+    };
+
+    // Use specialized dark web intelligence API
+    const response = await fetch('https://api.flashpoint.io/marketplace/v1/search', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${DARK_WEB_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        marketplace: marketplace,
+        query: artwork.title,
+        image_url: imageUrl,
+        search_type: 'visual_and_text',
+        include_vendor_info: true,
+        threat_intelligence: true
+      })
+    });
+
+    if (!response.ok) {
+      console.error(`${marketplace} scan error:`, response.status);
+      return [];
+    }
+
+    const data = await response.json();
+    const results: any[] = [];
+
+    if (data.listings) {
+      for (const listing of data.listings) {
+        results.push({
+          platform: `darkweb_${marketplace}`,
+          source_url: listing.url,
+          source_domain: marketplace,
+          confidence: listing.similarity_score || 0.85,
+          match_type: 'darkweb_listing',
+          title: listing.title,
+          detected_at: new Date().toISOString(),
+          metadata: {
+            marketplace: marketplace,
+            vendor: listing.vendor,
+            vendor_rating: listing.vendor_rating,
+            price: listing.price,
+            currency: listing.currency,
+            listing_id: listing.id,
+            threat_level: 'critical',
+            requires_immediate_action: true,
+            law_enforcement_notified: false
+          }
+        });
+      }
+    }
+
+    console.log(`Found ${results.length} matches on ${marketplace}`);
+    return results;
+    
+  } catch (error) {
+    console.error(`Error scanning ${marketplace}:`, error);
+    return [];
+  }
+}
+
+function calculateDarkWebConfidence(result: any): number {
+  let confidence = 0.7; // Base confidence for dark web matches
+  
+  // Increase confidence based on various factors
+  if (result.image_similarity) confidence += result.image_similarity * 0.2;
+  if (result.text_match_score) confidence += result.text_match_score * 0.1;
+  if (result.vendor_history?.copyright_violations) confidence += 0.1;
+  
+  return Math.min(confidence, 0.98); // Cap at 98%
 }

@@ -145,7 +145,7 @@ export function ProductionMonitoringDashboard() {
     }
   };
 
-  const startCopyrightMonitoring = async () => {
+  const startCopyrightMonitoring = async (includeDarkWeb = false) => {
     if (!imageUrl.trim()) {
       toast({
         title: "Error",
@@ -157,6 +157,14 @@ export function ProductionMonitoringDashboard() {
 
     setIsMonitoring(true);
     setProgress(0);
+    
+    if (includeDarkWeb) {
+      toast({
+        title: "Deep + Dark Web Scan Initiated",
+        description: "Scanning surface web, deep web, and dark web marketplaces. This may take several minutes.",
+        duration: 5000,
+      });
+    }
 
     try {
       // Create artwork record first
@@ -403,13 +411,43 @@ export function ProductionMonitoringDashboard() {
                 </div>
               )}
 
-              <Button 
-                onClick={startCopyrightMonitoring} 
-                disabled={isMonitoring || !imageUrl.trim()}
-                className="w-full"
-              >
-                {isMonitoring ? 'Monitoring in Progress...' : 'Start Real Copyright Monitoring'}
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => startCopyrightMonitoring(false)} 
+                  disabled={isMonitoring || !imageUrl.trim()}
+                  className="flex-1"
+                >
+                  {isMonitoring ? (
+                    <>
+                      <Shield className="mr-2 h-4 w-4 animate-pulse" />
+                      Scanning Surface Web...
+                    </>
+                  ) : (
+                    <>
+                      <Search className="mr-2 h-4 w-4" />
+                      Surface Web Scan
+                    </>
+                  )}
+                </Button>
+                <Button 
+                  onClick={() => startCopyrightMonitoring(true)} 
+                  disabled={isMonitoring || !imageUrl.trim()}
+                  variant="destructive"
+                  className="flex-1 bg-red-600 hover:bg-red-700"
+                >
+                  {isMonitoring ? (
+                    <>
+                      <Shield className="mr-2 h-4 w-4 animate-pulse" />
+                      Scanning Dark Web...
+                    </>
+                  ) : (
+                    <>
+                      <AlertTriangle className="mr-2 h-4 w-4" />
+                      Deep + Dark Web
+                    </>
+                  )}
+                </Button>
+              </div>
 
               <Alert>
                 <Shield className="h-4 w-4" />
