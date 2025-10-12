@@ -37,10 +37,23 @@ serve(async (req) => {
   }
 
   try {
-    const { artworkIds, userId, scanType, platforms, priority }: RealTimeScanRequest = await req.json();
+    const { artworkIds, userId, scanType, platforms, priority, includeDarkWeb, darkWebMarketplaces }: RealTimeScanRequest = await req.json();
     
     console.log(`Starting production real-time scanner for user ${userId}`);
     console.log(`Scan type: ${scanType}, Priority: ${priority}, Platforms: ${platforms.join(', ')}`);
+    
+    // Add dark web platforms if requested
+    let allPlatforms = [...platforms];
+    if (includeDarkWeb) {
+      console.log('Adding dark web marketplaces to scan');
+      if (darkWebMarketplaces && darkWebMarketplaces.length > 0) {
+        allPlatforms = [...allPlatforms, ...darkWebMarketplaces];
+      } else {
+        // Default dark web platforms
+        allPlatforms = [...allPlatforms, 'darkweb_general', 'darkweb_silk_road', 'darkweb_alphabay', 'darkweb_dream'];
+      }
+      console.log(`Total platforms including dark web: ${allPlatforms.join(', ')}`);
+    }
 
     // Check rate limits for production usage
     const rateLimitCheck = await checkRateLimit(userId, scanType, priority);
@@ -100,7 +113,7 @@ serve(async (req) => {
       id: crypto.randomUUID(),
       userId,
       artworkCount: artworks.length,
-      platforms,
+      platforms: allPlatforms,
       scanType,
       priority,
       startTime: new Date().toISOString(),
@@ -113,7 +126,7 @@ serve(async (req) => {
 
     // Start real-time scanning based on type
     if (scanType === 'instant') {
-      const results = await performInstantScan(artworks, platforms, scanSession.id);
+      const results = await performInstantScan(artworks, allPlatforms, scanSession.id);
       return new Response(JSON.stringify({
         success: true,
         scanId: scanSession.id,
@@ -124,7 +137,7 @@ serve(async (req) => {
       });
     } else {
       // Start background continuous/scheduled scanning
-      EdgeRuntime.waitUntil(performContinuousScanning(artworks, platforms, scanSession.id, scanType));
+      EdgeRuntime.waitUntil(performContinuousScanning(artworks, allPlatforms, scanSession.id, scanType));
       
       return new Response(JSON.stringify({
         success: true,
