@@ -184,11 +184,19 @@ export function ProductionMonitoringDashboard() {
         throw new Error('Failed to create artwork record');
       }
 
-      // Start real copyright monitoring
-      const { data, error } = await supabase.functions.invoke('real-copyright-monitor', {
+      // Define platforms to scan
+      const surfaceWebPlatforms = ['google_images', 'bing_images', 'tineye', 'pinterest'];
+      
+      // Start production real-time scanner with dark web support
+      const { data, error } = await supabase.functions.invoke('production-realtime-scanner', {
         body: {
-          artworkId: artwork.id,
-          imageUrl: imageUrl
+          artworkIds: [artwork.id],
+          userId: user?.id,
+          scanType: 'instant',
+          platforms: surfaceWebPlatforms,
+          priority: 'high',
+          includeDarkWeb: includeDarkWeb,
+          darkWebMarketplaces: includeDarkWeb ? ['darkweb_general', 'darkweb_silk_road', 'darkweb_alphabay', 'darkweb_dream'] : []
         }
       });
 
