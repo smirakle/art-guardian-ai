@@ -341,7 +341,20 @@ export function ProductionMonitoringDashboard() {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <Globe className="h-5 w-5 text-purple-500" />
+              <div>
+                <p className="text-sm text-muted-foreground">Active Sources</p>
+                <p className="text-2xl font-bold">25M+</p>
+                <p className="text-xs text-muted-foreground mt-1">Surface + Dark Web</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
