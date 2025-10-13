@@ -1337,6 +1337,175 @@ export type Database = {
         }
         Relationships: []
       }
+      cdn_cache_analytics: {
+        Row: {
+          asset_type: string | null
+          cache_hit: boolean | null
+          cache_status: string | null
+          cdn_config_id: string | null
+          created_at: string | null
+          edge_location: string | null
+          id: string
+          requested_at: string | null
+          size_bytes: number | null
+          user_country: string | null
+        }
+        Insert: {
+          asset_type?: string | null
+          cache_hit?: boolean | null
+          cache_status?: string | null
+          cdn_config_id?: string | null
+          created_at?: string | null
+          edge_location?: string | null
+          id?: string
+          requested_at?: string | null
+          size_bytes?: number | null
+          user_country?: string | null
+        }
+        Update: {
+          asset_type?: string | null
+          cache_hit?: boolean | null
+          cache_status?: string | null
+          cdn_config_id?: string | null
+          created_at?: string | null
+          edge_location?: string | null
+          id?: string
+          requested_at?: string | null
+          size_bytes?: number | null
+          user_country?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cdn_cache_analytics_cdn_config_id_fkey"
+            columns: ["cdn_config_id"]
+            isOneToOne: false
+            referencedRelation: "cdn_configurations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cdn_configurations: {
+        Row: {
+          cache_rules: Json | null
+          compression_enabled: boolean | null
+          configuration: Json | null
+          created_at: string | null
+          custom_headers: Json | null
+          domain: string
+          edge_locations: Json | null
+          http2_enabled: boolean | null
+          id: string
+          is_active: boolean | null
+          metadata: Json | null
+          minification_enabled: boolean | null
+          provider: string
+          ssl_enabled: boolean | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          cache_rules?: Json | null
+          compression_enabled?: boolean | null
+          configuration?: Json | null
+          created_at?: string | null
+          custom_headers?: Json | null
+          domain: string
+          edge_locations?: Json | null
+          http2_enabled?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          minification_enabled?: boolean | null
+          provider: string
+          ssl_enabled?: boolean | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          cache_rules?: Json | null
+          compression_enabled?: boolean | null
+          configuration?: Json | null
+          created_at?: string | null
+          custom_headers?: Json | null
+          domain?: string
+          edge_locations?: Json | null
+          http2_enabled?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          minification_enabled?: boolean | null
+          provider?: string
+          ssl_enabled?: boolean | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      cdn_performance_metrics: {
+        Row: {
+          bandwidth_bytes: number | null
+          cache_hit_ratio: number | null
+          cdn_config_id: string | null
+          created_at: string | null
+          domain: string
+          error_count: number | null
+          id: string
+          measured_at: string | null
+          metadata: Json | null
+          region: string | null
+          requests_count: number | null
+          response_time_ms: number | null
+          status_2xx: number | null
+          status_3xx: number | null
+          status_4xx: number | null
+          status_5xx: number | null
+        }
+        Insert: {
+          bandwidth_bytes?: number | null
+          cache_hit_ratio?: number | null
+          cdn_config_id?: string | null
+          created_at?: string | null
+          domain: string
+          error_count?: number | null
+          id?: string
+          measured_at?: string | null
+          metadata?: Json | null
+          region?: string | null
+          requests_count?: number | null
+          response_time_ms?: number | null
+          status_2xx?: number | null
+          status_3xx?: number | null
+          status_4xx?: number | null
+          status_5xx?: number | null
+        }
+        Update: {
+          bandwidth_bytes?: number | null
+          cache_hit_ratio?: number | null
+          cdn_config_id?: string | null
+          created_at?: string | null
+          domain?: string
+          error_count?: number | null
+          id?: string
+          measured_at?: string | null
+          metadata?: Json | null
+          region?: string | null
+          requests_count?: number | null
+          response_time_ms?: number | null
+          status_2xx?: number | null
+          status_3xx?: number | null
+          status_4xx?: number | null
+          status_5xx?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cdn_performance_metrics_cdn_config_id_fkey"
+            columns: ["cdn_config_id"]
+            isOneToOne: false
+            referencedRelation: "cdn_configurations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       community_comments: {
         Row: {
           content: string

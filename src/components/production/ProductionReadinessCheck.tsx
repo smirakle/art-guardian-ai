@@ -83,6 +83,17 @@ export const ProductionReadinessCheck: React.FC = () => {
   const performReadinessChecks = async (): Promise<ReadinessCheck[]> => {
     const checks: ReadinessCheck[] = [];
 
+    // Fetch CDN metrics
+    let cdnMetrics = null;
+    try {
+      const { data } = await supabase.functions.invoke('cdn-performance-monitor', {
+        body: { action: 'get_metrics' }
+      });
+      cdnMetrics = data;
+    } catch (error) {
+      console.error('Failed to fetch CDN metrics:', error);
+    }
+
     // Security Checks
     checks.push(
       {
@@ -167,10 +178,15 @@ export const ProductionReadinessCheck: React.FC = () => {
       },
       {
         name: "CDN Configuration",
-        status: "warning",
-        message: "CDN can be optimized for better global performance",
+        status: cdnMetrics?.configurations?.length > 0 ? "pass" : "warning",
+        message: cdnMetrics?.configurations?.length > 0 
+          ? `CDN active with ${cdnMetrics.metrics?.avgResponseTime || 0}ms avg response time`
+          : "CDN can be optimized for better global performance",
         category: "infrastructure",
-        priority: "low"
+        priority: "low",
+        details: cdnMetrics?.metrics 
+          ? `Cache hit ratio: ${cdnMetrics.metrics.avgCacheHitRatio}%, Uptime: ${cdnMetrics.metrics.uptime.toFixed(2)}%`
+          : undefined
       }
     );
 
