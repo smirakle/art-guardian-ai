@@ -28,6 +28,7 @@ interface CacheStats {
 
 export const useEnhancedCaching = <T = any>(config: CacheConfig) => {
   const cache = useRef<Map<string, CacheEntry<T>>>(new Map());
+  const metricsBuffer = useRef<Map<string, CacheEntry<T>>>(new Map());
   const [stats, setStats] = useState<CacheStats>({
     hitRate: 0,
     missRate: 0,
@@ -197,6 +198,11 @@ export const useEnhancedCaching = <T = any>(config: CacheConfig) => {
     }
     
     setStats(prev => ({ ...prev, cacheSize: totalSize }));
+    
+    // Buffer metrics for batch sync to backend
+    for (const [key, entry] of cache.current) {
+      metricsBuffer.current.set(key, entry);
+    }
   }, []);
 
   const saveToPersistentStorage = useCallback(() => {
@@ -221,7 +227,7 @@ export const useEnhancedCaching = <T = any>(config: CacheConfig) => {
     }
   }, [updateStats]);
 
-  // Cleanup expired entries periodically
+  // Cleanup expired entries and sync metrics periodically
   useEffect(() => {
     const interval = setInterval(() => {
       const now = Date.now();
@@ -242,7 +248,39 @@ export const useEnhancedCaching = <T = any>(config: CacheConfig) => {
       }
     }, 60000); // Check every minute
     
-    return () => clearInterval(interval);
+    // Sync metrics to backend every 5 minutes
+    const metricsInterval = setInterval(() => {
+      if (metricsBuffer.current.size > 0) {
+        const metrics = Array.from(metricsBuffer.current.entries()).map(([key, entry]) => ({
+          cache_key: key,
+          hit_count: entry.accessCount,
+          miss_count: 0,
+          size_bytes: entry.size,
+          ttl_seconds: Math.floor(entry.ttl / 1000),
+          last_accessed: new Date(entry.lastAccessed).toISOString()
+        }));
+        
+        // Send to backend cache manager
+        fetch('https://utneaqmbyjwxaqrrarpc.supabase.co/functions/v1/cache-manager', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
+          },
+          body: JSON.stringify({
+            action: 'update_metrics',
+            metrics
+          })
+        }).catch(err => console.warn('Failed to sync cache metrics:', err));
+        
+        metricsBuffer.current.clear();
+      }
+    }, 300000); // Sync every 5 minutes
+    
+    return () => {
+      clearInterval(interval);
+      clearInterval(metricsInterval);
+    };
   }, [config.enablePersistence, updateStats, saveToPersistentStorage]);
 
   return {
