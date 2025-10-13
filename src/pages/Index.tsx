@@ -1,29 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Separator } from '@/components/ui/separator';
-import { Progress } from '@/components/ui/progress';
-import { useToast } from '@/hooks/use-toast';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
-import LeaveReview from '@/components/LeaveReview';
-import ContextualHelp from '@/components/help-system/ContextualHelp';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
+import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import LeaveReview from "@/components/LeaveReview";
+import ContextualHelp from "@/components/help-system/ContextualHelp";
 
-
-import { 
-  Shield, 
-  Eye, 
-  Activity, 
-  Link2, 
-  Search, 
-  Check, 
-  Star, 
+import {
+  Shield,
+  Eye,
+  Activity,
+  Link2,
+  Search,
+  Check,
+  Star,
   ArrowRight,
   Zap,
   Globe,
@@ -45,9 +51,9 @@ import {
   Heart,
   ExternalLink,
   UserX,
-  Calendar
-} from 'lucide-react';
-import { ShieldCheck, EyeOff, Fingerprint, Code2, BadgeCheck } from 'lucide-react';
+  Calendar,
+} from "lucide-react";
+import { ShieldCheck, EyeOff, Fingerprint, Code2, BadgeCheck } from "lucide-react";
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import MonitoringFlow from "@/components/MonitoringFlow";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -59,27 +65,30 @@ const Index = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user } = useAuth();
-  
+
   useEffect(() => {
-    const title = 'TSMO | AI Art Protection & Forgery Detection';
+    const title = "TSMO | AI Art Protection & Forgery Detection";
     document.title = title;
 
     const setMeta = (name: string, content: string) => {
       let tag = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
       if (!tag) {
-        tag = document.createElement('meta');
+        tag = document.createElement("meta");
         tag.name = name;
         document.head.appendChild(tag);
       }
       tag.content = content;
     };
 
-    setMeta('description', 'Protect your art with AI monitoring, blockchain verification, and image forgery detection.');
+    setMeta(
+      "description",
+      "Protect your art with AI monitoring, blockchain verification, and image forgery detection.",
+    );
 
     let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
     if (!link) {
-      link = document.createElement('link');
-      link.rel = 'canonical';
+      link = document.createElement("link");
+      link.rel = "canonical";
       document.head.appendChild(link);
     }
     link.href = `${window.location.origin}/`;
@@ -87,20 +96,20 @@ const Index = () => {
     // Organization structured data
     let script = document.querySelector('script[data-ld="org"]') as HTMLScriptElement | null;
     if (!script) {
-      script = document.createElement('script');
-      script.type = 'application/ld+json';
-      script.setAttribute('data-ld', 'org');
+      script = document.createElement("script");
+      script.type = "application/ld+json";
+      script.setAttribute("data-ld", "org");
       document.head.appendChild(script);
     }
     script.text = JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'Organization',
-      name: 'TSMO',
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "TSMO",
       url: window.location.origin,
-      logo: window.location.origin + '/favicon.ico'
+      logo: window.location.origin + "/favicon.ico",
     });
   }, []);
-  
+
   const [demoStep, setDemoStep] = useState(0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showSalesDialog, setShowSalesDialog] = useState(false);
@@ -109,7 +118,7 @@ const Index = () => {
     email: "",
     company: "",
     interestedPlan: "",
-    message: ""
+    message: "",
   });
   const [isSendingSales, setIsSendingSales] = useState(false);
   const [showOnboardingTour, setShowOnboardingTour] = useState(false);
@@ -118,7 +127,7 @@ const Index = () => {
   const startDemo = () => {
     setIsAnalyzing(true);
     setDemoStep(1);
-    
+
     // Simulate analysis steps
     setTimeout(() => setDemoStep(2), 2000);
     setTimeout(() => setDemoStep(3), 4000);
@@ -136,7 +145,7 @@ const Index = () => {
 
   const handlePricingPlan = (plan: string) => {
     if (plan === "Contact Sales") {
-      setSalesFormData(prev => ({ ...prev, interestedPlan: "Enterprise" }));
+      setSalesFormData((prev) => ({ ...prev, interestedPlan: "Enterprise" }));
       setShowSalesDialog(true);
     } else {
       toast({
@@ -155,8 +164,8 @@ const Index = () => {
     setIsSendingSales(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('send-sales-inquiry', {
-        body: salesFormData
+      const { data, error } = await supabase.functions.invoke("send-sales-inquiry", {
+        body: salesFormData,
       });
 
       if (error) {
@@ -174,10 +183,10 @@ const Index = () => {
         email: "",
         company: "",
         interestedPlan: "",
-        message: ""
+        message: "",
       });
     } catch (error) {
-      console.error('Error sending sales inquiry:', error);
+      console.error("Error sending sales inquiry:", error);
       toast({
         title: "Error",
         description: "Failed to send sales inquiry. Please try again.",
@@ -194,12 +203,12 @@ const Index = () => {
       description: `Your 5-day ${plan} trial is now active. Check your email for setup instructions.`,
     });
   };
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       {/* User Experience Enhancements */}
       <ContextualHelp />
-      
+
       {/* Live Demo Modal */}
       <Dialog open={showLiveDemo} onOpenChange={setShowLiveDemo}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
@@ -216,13 +225,25 @@ const Index = () => {
       {/* Navigation Menu - Quick Access */}
       <div className="fixed top-20 right-4 z-40 bg-background/95 backdrop-blur-sm border rounded-lg p-2 shadow-lg">
         <div className="flex flex-col gap-1">
-          <Button variant="ghost" size="sm" onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}
+          >
             How It Works
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => document.getElementById('beta-status')?.scrollIntoView({ behavior: 'smooth' })}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => document.getElementById("beta-status")?.scrollIntoView({ behavior: "smooth" })}
+          >
             Beta Status
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}
+          >
             Pricing
           </Button>
         </div>
@@ -234,33 +255,37 @@ const Index = () => {
           <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm animate-pulse">
             💰 Stop Losing Money to Content Thieves
           </Badge>
-          
+
           {/* TSMO Logo - Reduced Size */}
           <div className="mb-8">
-            <img 
-              src={tsmoLogo} 
-              alt="TSMO Multimedia Creative Protection Logo" 
+            <img
+              src={tsmoLogo}
+              alt="TSMO Multimedia Creative Protection Logo"
               className="h-48 sm:h-64 md:h-80 mx-auto object-contain"
             />
           </div>
-          
+
           <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
-            Protect Your Art.<br />
+            Protect Your Art.
+            <br />
             <span className="text-foreground">Keep What's Yours.</span>
           </h1>
-          
+
           <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 max-w-4xl mx-auto leading-relaxed">
-            Advanced AI-powered protection for digital artists. Monitor, verify, and secure your creative work with blockchain technology and&nbsp;real-time&nbsp;threat&nbsp;detection.
+            Advanced AI-powered protection for digital artists. Monitor, verify, and secure your creative work with
+            blockchain technology and&nbsp;real-time&nbsp;threat&nbsp;detection.
           </p>
 
           <div className="mb-8 p-4 bg-primary/10 rounded-lg border border-primary/20">
-            <p className="text-primary font-semibold text-lg">Join 15,000+ creators who watch their art 24/7 and get thieves removed instantly.</p>
+            <p className="text-primary font-semibold text-lg">
+              Join 15,000+ creators who watch their art 24/7 and get thieves removed instantly.
+            </p>
           </div>
 
           {/* Action Buttons - Simplified */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="w-full sm:w-auto px-10 py-5 text-xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg hover:shadow-xl transition-all duration-300"
               onClick={() => navigate("/ai-protection-settings")}
               data-tooltip="upload"
@@ -268,9 +293,9 @@ const Index = () => {
               Start AI Training Protection
               <ArrowRight className="ml-2 h-6 w-6" />
             </Button>
-            <Button 
-              variant="outline" 
-              size="lg" 
+            <Button
+              variant="outline"
+              size="lg"
               className="w-full sm:w-auto px-10 py-5 text-xl border-2 border-primary hover:bg-primary/10"
               onClick={() => setShowLiveDemo(true)}
             >
@@ -335,7 +360,8 @@ const Index = () => {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">How We Protect You</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Our comprehensive protection system combines AI technology, blockchain verification, and legal automation to safeguard your creative work.
+              Our comprehensive protection system combines AI technology, blockchain verification, and legal automation
+              to safeguard your creative work.
             </p>
           </div>
 
@@ -346,28 +372,36 @@ const Index = () => {
                 1
               </div>
               <h3 className="text-xl font-semibold mb-3">Upload & Protect</h3>
-              <p className="text-muted-foreground">Upload your artwork and apply our invisible protection layers that don't affect image quality</p>
+              <p className="text-muted-foreground">
+                Upload your artwork and apply our invisible protection layers that don't affect image quality
+              </p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
                 2
               </div>
               <h3 className="text-xl font-semibold mb-3">24/7 AI Monitoring</h3>
-              <p className="text-muted-foreground">Our AI continuously scans the internet, social media, and marketplaces for unauthorized use</p>
+              <p className="text-muted-foreground">
+                Our AI continuously scans the internet, social media, and marketplaces for unauthorized use
+              </p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
                 3
               </div>
               <h3 className="text-xl font-semibold mb-3">Instant Detection</h3>
-              <p className="text-muted-foreground">Get notified immediately when violations are found, with detailed evidence and location data</p>
+              <p className="text-muted-foreground">
+                Get notified immediately when violations are found, with detailed evidence and location data
+              </p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
                 4
               </div>
               <h3 className="text-xl font-semibold mb-3">Automated Response</h3>
-              <p className="text-muted-foreground">Automatic takedown notices and legal documentation to protect your rights</p>
+              <p className="text-muted-foreground">
+                Automatic takedown notices and legal documentation to protect your rights
+              </p>
             </div>
           </div>
 
@@ -382,9 +416,12 @@ const Index = () => {
               </CardHeader>
               <CardContent className="text-center">
                 <p className="text-muted-foreground mb-4">
-                  Market-ready invisible protection that prevents AI from learning your artistic style while keeping your artwork visually unchanged.
+                  Market-ready invisible protection that prevents AI from learning your artistic style while keeping
+                  your artwork visually unchanged.
                 </p>
-                <Badge variant="default" className="bg-green-600 text-white">StyleCloak - Market Ready</Badge>
+                <Badge variant="default" className="bg-green-600 text-white">
+                  StyleCloak - Market Ready
+                </Badge>
               </CardContent>
             </Card>
 
@@ -474,20 +511,21 @@ const Index = () => {
       </section>
 
       {/* Beta Testing Status - Enhanced */}
-      <section id="beta-status" className="py-16 px-4 bg-gradient-to-r from-yellow-50 to-orange-50 border-y border-yellow-200">
+      <section
+        id="beta-status"
+        className="py-16 px-4 bg-gradient-to-r from-yellow-50 to-orange-50 border-y border-yellow-200"
+      >
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <Badge variant="outline" className="text-yellow-700 border-yellow-300 mb-6 px-4 py-2 text-lg">
               🚀 Beta Testing Phase - Join Early Access
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-yellow-800">
-              Platform Development Status
-            </h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-yellow-800">Platform Development Status</h2>
             <p className="text-xl text-yellow-700 max-w-3xl mx-auto">
               Core protection features are live and working. Advanced automation features are being rolled out weekly.
             </p>
           </div>
-          
+
           <div className="grid lg:grid-cols-2 gap-8 mb-12">
             <Card className="border-0 shadow-xl bg-gradient-to-br from-green-50 to-emerald-50">
               <CardHeader className="text-center pb-4">
@@ -544,7 +582,7 @@ const Index = () => {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card className="border-0 shadow-xl bg-gradient-to-br from-orange-50 to-red-50">
               <CardHeader className="text-center pb-4">
                 <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -587,10 +625,10 @@ const Index = () => {
               </CardContent>
             </Card>
           </div>
-          
+
           <div className="text-center">
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
+              <Button
                 size="lg"
                 className="bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 px-8"
                 onClick={() => navigate("/roadmap")}
@@ -598,8 +636,8 @@ const Index = () => {
                 <Calendar className="mr-2 h-5 w-5" />
                 View Development Roadmap
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="lg"
                 className="border-yellow-300 text-yellow-700 hover:bg-yellow-100 px-8"
                 onClick={() => navigate("/contact")}
@@ -609,25 +647,23 @@ const Index = () => {
               </Button>
             </div>
             <p className="mt-6 text-sm text-yellow-700 max-w-2xl mx-auto">
-              <strong>Beta Testers Get:</strong> Lifetime 50% discount on all plans, priority support, and direct input on feature development.
+              <strong>Beta Testers Get:</strong> Lifetime 50% discount on all plans, priority support, and direct input
+              on feature development.
             </p>
           </div>
         </div>
       </section>
 
-
       {/* Creator Problems & Solution */}
       <section className="bg-red-50 py-10 px-4">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold mb-3 text-red-800">
-              Stop Losing Money to Content Thieves
-            </h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-3 text-red-800">Stop Losing Money to Content Thieves</h2>
             <p className="text-base text-red-700 max-w-2xl mx-auto">
               Every minute your content isn't protected, you're losing revenue. Here's what's happening to creators.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
               <CardContent className="p-4 text-center">
@@ -637,7 +673,7 @@ const Index = () => {
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
               <CardContent className="p-4 text-center">
                 <div className="text-base font-bold text-red-600 mb-2">AI Training Theft</div>
@@ -646,7 +682,7 @@ const Index = () => {
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
               <CardContent className="p-4 text-center">
                 <div className="text-base font-bold text-red-600 mb-2">Merch Thieves</div>
@@ -655,7 +691,7 @@ const Index = () => {
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
               <CardContent className="p-4 text-center">
                 <div className="text-base font-bold text-red-600 mb-2">Impossible to Track</div>
@@ -664,7 +700,7 @@ const Index = () => {
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
               <CardContent className="p-4 text-center">
                 <div className="text-base font-bold text-red-600 mb-2">Legal Costs</div>
@@ -673,7 +709,7 @@ const Index = () => {
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
               <CardContent className="p-3 text-center">
                 <div className="text-sm font-bold text-red-600 mb-1">Time = Money</div>
@@ -683,7 +719,7 @@ const Index = () => {
               </CardContent>
             </Card>
           </div>
-          
+
           <div className="text-center mt-6 space-y-4">
             <div className="bg-white rounded-lg p-6 border-2 border-primary max-w-2xl mx-auto">
               <h3 className="text-xl font-bold text-primary mb-2">The Solution: TSMO Protection</h3>
@@ -691,24 +727,24 @@ const Index = () => {
                 Automated monitoring + AI detection + legal automation = Your content protected 24/7
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="bg-primary hover:bg-primary/90 text-white px-6 py-3"
                   onClick={() => navigate("/upload")}
                 >
                   Start Protection - FREE Trial
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="lg" 
+                <Button
+                  variant="outline"
+                  size="lg"
                   className="border-primary text-primary hover:bg-primary/10 px-6 py-3"
                   onClick={() => {
-                    navigate('/');
+                    navigate("/");
                     setTimeout(() => {
-                      const pricingSection = document.getElementById('pricing');
+                      const pricingSection = document.getElementById("pricing");
                       if (pricingSection) {
-                        pricingSection.scrollIntoView({ behavior: 'smooth' });
+                        pricingSection.scrollIntoView({ behavior: "smooth" });
                       }
                     }, 100);
                   }}
@@ -720,7 +756,7 @@ const Index = () => {
           </div>
         </div>
       </section>
-      
+
       {/* Stats Section */}
       <section className="bg-gray-50 py-16 px-4">
         <div className="container mx-auto max-w-4xl">
@@ -749,15 +785,13 @@ const Index = () => {
       <section className="py-20 px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Complete Art Protection Suite
-            </h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Complete Art Protection Suite</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              From AI-powered visual recognition to blockchain verification, 
-              we provide end-to-end protection for your digital artwork.
+              From AI-powered visual recognition to blockchain verification, we provide end-to-end protection for your
+              digital artwork.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader>
@@ -770,7 +804,7 @@ const Index = () => {
                 </CardDescription>
               </CardHeader>
             </Card>
-            
+
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader>
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
@@ -782,7 +816,7 @@ const Index = () => {
                 </CardDescription>
               </CardHeader>
             </Card>
-            
+
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader>
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
@@ -794,7 +828,7 @@ const Index = () => {
                 </CardDescription>
               </CardHeader>
             </Card>
-            
+
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader>
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
@@ -807,7 +841,7 @@ const Index = () => {
               </CardHeader>
             </Card>
           </div>
-          
+
           <div className="mt-16 grid md:grid-cols-3 gap-8">
             <div className="flex items-start space-x-4">
               <div className="w-8 h-8 bg-green-500/10 rounded-full flex items-center justify-center flex-shrink-0">
@@ -815,20 +849,24 @@ const Index = () => {
               </div>
               <div>
                 <h3 className="font-semibold mb-2">Instant Alerts</h3>
-                <p className="text-sm text-muted-foreground">Get notified immediately when your art is detected online</p>
+                <p className="text-sm text-muted-foreground">
+                  Get notified immediately when your art is detected online
+                </p>
               </div>
             </div>
-            
+
             <div className="flex items-start space-x-4">
               <div className="w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center flex-shrink-0">
                 <Globe className="h-4 w-4 text-blue-500" />
               </div>
               <div>
                 <h3 className="font-semibold mb-2">Global Coverage</h3>
-                <p className="text-sm text-muted-foreground">Monitor across all major platforms and marketplaces worldwide</p>
+                <p className="text-sm text-muted-foreground">
+                  Monitor across all major platforms and marketplaces worldwide
+                </p>
               </div>
             </div>
-            
+
             <div className="flex items-start space-x-4">
               <div className="w-8 h-8 bg-purple-500/10 rounded-full flex items-center justify-center flex-shrink-0">
                 <Lock className="h-4 w-4 text-purple-500" />
@@ -845,7 +883,9 @@ const Index = () => {
               </div>
               <div>
                 <h3 className="font-semibold mb-2">Trademark Intelligence</h3>
-                <p className="text-sm text-muted-foreground">AI-powered trademark monitoring and legal automation across global jurisdictions</p>
+                <p className="text-sm text-muted-foreground">
+                  AI-powered trademark monitoring and legal automation across global jurisdictions
+                </p>
               </div>
             </div>
           </div>
@@ -859,15 +899,13 @@ const Index = () => {
             <Badge variant="secondary" className="mb-4 px-4 py-2">
               🛡️ Advanced Protection Suite
             </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Four-Layer Defense System
-            </h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Four-Layer Defense System</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Comprehensive protection across AI training datasets, social media profiles, 
-              entire creative portfolios, and trademark intelligence with real-time monitoring and automated response.
+              Comprehensive protection across AI training datasets, social media profiles, entire creative portfolios,
+              and trademark intelligence with real-time monitoring and automated response.
             </p>
           </div>
-          
+
           <div className="grid lg:grid-cols-2 xl:grid-cols-4 gap-8">
             {/* AI Training Protection */}
             <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
@@ -900,7 +938,7 @@ const Index = () => {
                   </div>
                 </div>
                 <div className="pt-4">
-                  <Button 
+                  <Button
                     className="w-full bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700"
                     onClick={() => navigate("/ai-protection")}
                   >
@@ -919,7 +957,8 @@ const Index = () => {
                 </div>
                 <CardTitle className="text-2xl text-center mb-4">Profile Monitoring</CardTitle>
                 <CardDescription className="text-center text-base">
-                  Monitor for fake accounts, impersonation, and unauthorized use of your identity across social platforms.
+                  Monitor for fake accounts, impersonation, and unauthorized use of your identity across social
+                  platforms.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -942,7 +981,7 @@ const Index = () => {
                   </div>
                 </div>
                 <div className="pt-4">
-                  <Button 
+                  <Button
                     className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700"
                     onClick={() => navigate("/profile-monitoring")}
                   >
@@ -961,7 +1000,8 @@ const Index = () => {
                 </div>
                 <CardTitle className="text-2xl text-center mb-4">Portfolio Monitoring</CardTitle>
                 <CardDescription className="text-center text-base">
-                  Comprehensive protection for your entire creative portfolio with multi-platform scanning and analytics.
+                  Comprehensive protection for your entire creative portfolio with multi-platform scanning and
+                  analytics.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -984,7 +1024,7 @@ const Index = () => {
                   </div>
                 </div>
                 <div className="pt-4">
-                  <Button 
+                  <Button
                     className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700"
                     onClick={() => navigate("/portfolio-monitoring")}
                   >
@@ -1003,7 +1043,8 @@ const Index = () => {
                 </div>
                 <CardTitle className="text-2xl text-center mb-4">Trademark Intelligence</CardTitle>
                 <CardDescription className="text-center text-base">
-                  AI-powered trademark monitoring and legal automation across global jurisdictions for comprehensive IP protection.
+                  AI-powered trademark monitoring and legal automation across global jurisdictions for comprehensive IP
+                  protection.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -1025,9 +1066,9 @@ const Index = () => {
                     <span className="text-sm">Advanced analytics and portfolio management</span>
                   </div>
                 </div>
-                
+
                 <div className="pt-4">
-                  <Button 
+                  <Button
                     className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
                     onClick={() => navigate("/trademark-monitoring")}
                   >
@@ -1048,28 +1089,36 @@ const Index = () => {
                   1
                 </div>
                 <h4 className="font-semibold mb-2">Upload & Protect</h4>
-                <p className="text-sm text-muted-foreground">Upload your creative work and apply our multi-layer protection</p>
+                <p className="text-sm text-muted-foreground">
+                  Upload your creative work and apply our multi-layer protection
+                </p>
               </div>
               <div className="text-center">
                 <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
                   2
                 </div>
                 <h4 className="font-semibold mb-2">24/7 Scanning</h4>
-                <p className="text-sm text-muted-foreground">Our AI continuously monitors the web for unauthorized usage</p>
+                <p className="text-sm text-muted-foreground">
+                  Our AI continuously monitors the web for unauthorized usage
+                </p>
               </div>
               <div className="text-center">
                 <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
                   3
                 </div>
                 <h4 className="font-semibold mb-2">Instant Alerts</h4>
-                <p className="text-sm text-muted-foreground">Get notified immediately when potential theft is detected</p>
+                <p className="text-sm text-muted-foreground">
+                  Get notified immediately when potential theft is detected
+                </p>
               </div>
               <div className="text-center">
                 <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
                   4
                 </div>
                 <h4 className="font-semibold mb-2">Take Action</h4>
-                <p className="text-sm text-muted-foreground">Automated DMCA filing and legal support to protect your rights</p>
+                <p className="text-sm text-muted-foreground">
+                  Automated DMCA filing and legal support to protect your rights
+                </p>
               </div>
             </div>
           </div>
@@ -1080,14 +1129,12 @@ const Index = () => {
       <section className="py-20 px-4 bg-gray-50">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Legal Resources & Support
-            </h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Legal Resources & Support</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Access professional legal templates and connect with IP specialists to protect your creative work.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow p-6">
               <div className="text-center">
@@ -1102,11 +1149,7 @@ const Index = () => {
                   <div>$2.99 with membership</div>
                   <div>$9.99 without membership</div>
                 </div>
-                <Button 
-                  size="sm"
-                  className="w-full" 
-                  onClick={() => navigate("/legal-templates")}
-                >
+                <Button size="sm" className="w-full" onClick={() => navigate("/legal-templates")}>
                   Browse Templates
                 </Button>
               </div>
@@ -1125,12 +1168,7 @@ const Index = () => {
                   <div>Verified specialists</div>
                   <div>Free consultations available</div>
                 </div>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="w-full"
-                  onClick={() => navigate("/lawyers")}
-                >
+                <Button variant="outline" size="sm" className="w-full" onClick={() => navigate("/lawyers")}>
                   Find a Lawyer
                 </Button>
               </div>
@@ -1146,25 +1184,25 @@ const Index = () => {
                   Government copyright offices and intellectual property organizations.
                 </p>
                 <div className="space-y-2">
-                  <a 
-                    href="https://www.copyright.gov" 
-                    target="_blank" 
+                  <a
+                    href="https://www.copyright.gov"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
                   >
                     US Copyright Office <ExternalLink className="ml-1 h-3 w-3" />
                   </a>
-                  <a 
-                    href="https://www.wipo.int" 
-                    target="_blank" 
+                  <a
+                    href="https://www.wipo.int"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
                   >
                     WIPO <ExternalLink className="ml-1 h-3 w-3" />
                   </a>
-                  <a 
-                    href="https://euipo.europa.eu" 
-                    target="_blank" 
+                  <a
+                    href="https://euipo.europa.eu"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
                   >
@@ -1184,25 +1222,25 @@ const Index = () => {
                   Organizations providing legal aid and support for artists.
                 </p>
                 <div className="space-y-2">
-                  <a 
-                    href="https://www.vlaa.org" 
-                    target="_blank" 
+                  <a
+                    href="https://www.vlaa.org"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
                   >
                     Volunteer Lawyers for the Arts <ExternalLink className="ml-1 h-3 w-3" />
                   </a>
-                  <a 
-                    href="https://www.cala.org" 
-                    target="_blank" 
+                  <a
+                    href="https://www.cala.org"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
                   >
                     California Lawyers for the Arts <ExternalLink className="ml-1 h-3 w-3" />
                   </a>
-                  <a 
-                    href="https://www.legalaidnyc.org" 
-                    target="_blank" 
+                  <a
+                    href="https://www.legalaidnyc.org"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
                   >
@@ -1219,15 +1257,13 @@ const Index = () => {
       <section id="pricing" className="py-20 px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Choose Your Protection Plan
-            </h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Choose Your Protection Plan</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Comprehensive art protection with industry-leading features. 
-              Choose the plan that fits your creative journey.
+              Comprehensive art protection with industry-leading features. Choose the plan that fits your creative
+              journey.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-4 gap-6">
             {/* Student Plan */}
             <Card className="border-2 border-border hover:border-primary/50 transition-colors">
@@ -1274,7 +1310,7 @@ const Index = () => {
                     <span className="text-sm">Mobile app access</span>
                   </div>
                 </div>
-                
+
                 {/* Add-ons */}
                 <div className="border-t pt-4 space-y-3">
                   <div className="text-sm font-semibold text-muted-foreground">Available Add-ons:</div>
@@ -1282,7 +1318,9 @@ const Index = () => {
                     <div className="flex items-center justify-between text-sm p-2 bg-blue-50 rounded">
                       <div className="flex items-center gap-2">
                         <span>Social Media Monitoring</span>
-                        <Badge variant="outline" className="text-xs">Coming Soon</Badge>
+                        <Badge variant="outline" className="text-xs">
+                          Coming Soon
+                        </Badge>
                       </div>
                       <div className="text-right">
                         <div className="font-semibold">$100/month</div>
@@ -1295,16 +1333,12 @@ const Index = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
                   <div>• Limited to personal use</div>
                   <div>• Standard response time (48hrs)</div>
                 </div>
-                <Button 
-                  className="w-full" 
-                  variant="outline"
-                  onClick={() => handlePricingPlan("Student")}
-                >
+                <Button className="w-full" variant="outline" onClick={() => handlePricingPlan("Student")}>
                   Choose Student Plan
                 </Button>
               </CardContent>
@@ -1359,7 +1393,7 @@ const Index = () => {
                     <span className="text-sm">Priority support</span>
                   </div>
                 </div>
-                
+
                 {/* Add-ons */}
                 <div className="border-t pt-4 space-y-3">
                   <div className="text-sm font-semibold text-muted-foreground">Available Add-ons:</div>
@@ -1367,7 +1401,9 @@ const Index = () => {
                     <div className="flex items-center justify-between text-sm p-2 bg-blue-50 rounded">
                       <div className="flex items-center gap-2">
                         <span>Social Media Monitoring</span>
-                        <Badge variant="outline" className="text-xs">Coming Soon</Badge>
+                        <Badge variant="outline" className="text-xs">
+                          Coming Soon
+                        </Badge>
                       </div>
                       <div className="text-right">
                         <div className="font-semibold">$100/month</div>
@@ -1380,20 +1416,17 @@ const Index = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
                   <div>• Commercial use allowed</div>
                   <div>• Standard takedown assistance</div>
                 </div>
-                <Button 
-                  className="w-full bg-green-600 hover:bg-green-700"
-                  onClick={() => handlePricingPlan("Starter")}
-                >
+                <Button className="w-full bg-green-600 hover:bg-green-700" onClick={() => handlePricingPlan("Starter")}>
                   Choose Starter Plan
                 </Button>
               </CardContent>
             </Card>
-            
+
             {/* Professional Plan */}
             <Card className="border-2 border-border hover:border-primary/50 transition-colors">
               <CardHeader>
@@ -1403,8 +1436,8 @@ const Index = () => {
                   Complete art protection suite for established artists
                 </CardDescription>
                 <div className="text-center">
-                <div className="text-sm text-muted-foreground line-through">$249</div>
-                <div className="text-4xl font-bold">$199</div>
+                  <div className="text-sm text-muted-foreground line-through">$249</div>
+                  <div className="text-4xl font-bold">$199</div>
                   <div className="text-muted-foreground">/month</div>
                 </div>
               </CardHeader>
@@ -1455,7 +1488,7 @@ const Index = () => {
                     <span className="text-sm">Dedicated account manager</span>
                   </div>
                 </div>
-                
+
                 {/* Add-ons */}
                 <div className="border-t pt-4 space-y-3">
                   <div className="text-sm font-semibold text-muted-foreground">Available Add-ons:</div>
@@ -1463,7 +1496,9 @@ const Index = () => {
                     <div className="flex items-center justify-between text-sm p-2 bg-blue-50 rounded">
                       <div className="flex items-center gap-2">
                         <span>Social Media Monitoring</span>
-                        <Badge variant="outline" className="text-xs">Coming Soon</Badge>
+                        <Badge variant="outline" className="text-xs">
+                          Coming Soon
+                        </Badge>
                       </div>
                       <div className="text-right">
                         <div className="font-semibold">$100/month</div>
@@ -1476,15 +1511,12 @@ const Index = () => {
                     </div>
                   </div>
                 </div>
-                <Button 
-                  className="w-full"
-                  onClick={() => handlePricingPlan("Professional")}
-                >
+                <Button className="w-full" onClick={() => handlePricingPlan("Professional")}>
                   Choose Professional Plan
                 </Button>
               </CardContent>
             </Card>
-            
+
             {/* Enterprise Plan */}
             <Card className="border-2 border-border hover:border-primary/50 transition-colors">
               <CardHeader>
@@ -1541,22 +1573,18 @@ const Index = () => {
                     <span className="text-sm">SLA guarantees</span>
                   </div>
                 </div>
-                <Button 
-                  className="w-full" 
-                  variant="outline"
-                  onClick={() => handlePricingPlan("Contact Sales")}
-                >
+                <Button className="w-full" variant="outline" onClick={() => handlePricingPlan("Contact Sales")}>
                   Contact Sales
                 </Button>
               </CardContent>
             </Card>
           </div>
-          
+
           <div className="mt-16 text-center">
             <p className="text-muted-foreground mb-8">
               All plans include our core protection features. Upgrade or downgrade anytime.
             </p>
-            
+
             <div className="flex flex-wrap justify-center gap-6 text-sm">
               <div className="flex items-center space-x-2">
                 <Shield className="h-4 w-4 text-green-500" />
@@ -1579,37 +1607,29 @@ const Index = () => {
         </div>
       </section>
 
-
       {/* CTA Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-primary/5 to-accent/5">
         <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to Protect Your Creative Work?
-          </h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Protect Your Creative Work?</h2>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Join thousands of artists who trust TSMO to safeguard their digital creations. 
-            Start your protection journey today.
+            Join thousands of artists who trust TSMO to safeguard their digital creations. Start your protection journey
+            today.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="px-8 py-3 text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
               onClick={() => navigate("/upload")}
             >
               Start Protecting Now
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="px-8 py-3 text-lg"
-              onClick={() => navigate("/pricing")}
-            >
+            <Button variant="outline" size="lg" className="px-8 py-3 text-lg" onClick={() => navigate("/pricing")}>
               View Pricing Plans
             </Button>
           </div>
-          
+
           <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center mx-auto mb-3">
@@ -1639,7 +1659,6 @@ const Index = () => {
         </div>
       </section>
 
-
       {/* Sales Dialog */}
       <Dialog open={showSalesDialog} onOpenChange={setShowSalesDialog}>
         <DialogContent className="sm:max-w-[500px]">
@@ -1657,7 +1676,7 @@ const Index = () => {
                   id="name"
                   required
                   value={salesFormData.name}
-                  onChange={(e) => setSalesFormData(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) => setSalesFormData((prev) => ({ ...prev, name: e.target.value }))}
                   placeholder="Your full name"
                 />
               </div>
@@ -1668,7 +1687,7 @@ const Index = () => {
                   type="email"
                   required
                   value={salesFormData.email}
-                  onChange={(e) => setSalesFormData(prev => ({ ...prev, email: e.target.value }))}
+                  onChange={(e) => setSalesFormData((prev) => ({ ...prev, email: e.target.value }))}
                   placeholder="your@email.com"
                 />
               </div>
@@ -1678,7 +1697,7 @@ const Index = () => {
               <Input
                 id="company"
                 value={salesFormData.company}
-                onChange={(e) => setSalesFormData(prev => ({ ...prev, company: e.target.value }))}
+                onChange={(e) => setSalesFormData((prev) => ({ ...prev, company: e.target.value }))}
                 placeholder="Your company name (optional)"
               />
             </div>
@@ -1689,7 +1708,7 @@ const Index = () => {
                 required
                 rows={4}
                 value={salesFormData.message}
-                onChange={(e) => setSalesFormData(prev => ({ ...prev, message: e.target.value }))}
+                onChange={(e) => setSalesFormData((prev) => ({ ...prev, message: e.target.value }))}
                 placeholder="Tell us about your requirements and how many artworks you need to protect..."
               />
             </div>
@@ -1712,7 +1731,6 @@ const Index = () => {
 
       {/* Leave a Review Section */}
       <LeaveReview />
-
     </div>
   );
 };
