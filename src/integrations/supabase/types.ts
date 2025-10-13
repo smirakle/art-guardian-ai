@@ -7314,6 +7314,66 @@ export type Database = {
           },
         ]
       }
+      ssl_certificates: {
+        Row: {
+          certificate_chain: Json | null
+          cipher_suite: string | null
+          created_at: string | null
+          days_until_expiry: number | null
+          domain: string
+          error_message: string | null
+          id: string
+          is_valid: boolean | null
+          issuer: string | null
+          last_checked: string | null
+          metadata: Json | null
+          protocol_version: string | null
+          status: string | null
+          subject: string | null
+          updated_at: string | null
+          valid_from: string | null
+          valid_to: string | null
+        }
+        Insert: {
+          certificate_chain?: Json | null
+          cipher_suite?: string | null
+          created_at?: string | null
+          days_until_expiry?: number | null
+          domain: string
+          error_message?: string | null
+          id?: string
+          is_valid?: boolean | null
+          issuer?: string | null
+          last_checked?: string | null
+          metadata?: Json | null
+          protocol_version?: string | null
+          status?: string | null
+          subject?: string | null
+          updated_at?: string | null
+          valid_from?: string | null
+          valid_to?: string | null
+        }
+        Update: {
+          certificate_chain?: Json | null
+          cipher_suite?: string | null
+          created_at?: string | null
+          days_until_expiry?: number | null
+          domain?: string
+          error_message?: string | null
+          id?: string
+          is_valid?: boolean | null
+          issuer?: string | null
+          last_checked?: string | null
+          metadata?: Json | null
+          protocol_version?: string | null
+          status?: string | null
+          subject?: string | null
+          updated_at?: string | null
+          valid_from?: string | null
+          valid_to?: string | null
+        }
+        Relationships: []
+      }
       storage_addons: {
         Row: {
           addon_type: string

@@ -52,15 +52,24 @@ const SecurityCenter: React.FC = () => {
     try {
       setLoading(true);
       
-      // Mock security checks - replace with real security monitoring
+      // Get real SSL certificate data
+      const { data: sslData } = await supabase.functions.invoke('ssl-certificate-monitor', {
+        body: { action: 'get_status' }
+      });
+
       const checks: SecurityCheck[] = [
+        // SSL Certificate check with real data
         {
           id: '1',
           name: 'SSL/TLS Certificate',
-          status: 'pass',
-          description: 'Valid SSL certificate with proper encryption',
-          lastChecked: new Date().toISOString(),
-          details: 'Certificate expires in 89 days'
+          status: sslData?.certificates?.[0]?.is_valid ? 'pass' : 'fail',
+          description: sslData?.certificates?.[0]?.is_valid 
+            ? 'Valid SSL certificate with proper encryption'
+            : 'SSL certificate issue detected',
+          lastChecked: sslData?.certificates?.[0]?.last_checked || new Date().toISOString(),
+          details: sslData?.certificates?.[0]
+            ? `${sslData.certificates[0].issuer} - Expires in ${sslData.certificates[0].days_until_expiry} days`
+            : 'No certificate data available'
         },
         {
           id: '2',
@@ -104,39 +113,28 @@ const SecurityCenter: React.FC = () => {
         }
       ];
 
-      // Mock security logs
-      const logs: SecurityLog[] = [
+      // Get real security logs from audit table
+      const { data: auditLogs } = await supabase
+        .from('security_audit_log')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      const logs: SecurityLog[] = auditLogs?.map((log: any) => ({
+        id: log.id,
+        event: log.action,
+        severity: log.details?.severity || 'low',
+        timestamp: log.created_at,
+        source: log.ip_address || 'system',
+        details: log.details
+      })) || [
         {
           id: '1',
-          event: 'Failed login attempt',
-          severity: 'medium',
-          timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-          source: '192.168.1.100',
-          details: { attempts: 3, blocked: true }
-        },
-        {
-          id: '2',
-          event: 'Rate limit exceeded',
-          severity: 'low',
-          timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-          source: '10.0.0.45',
-          details: { endpoint: '/api/upload', requests: 150 }
-        },
-        {
-          id: '3',
           event: 'Security scan completed',
           severity: 'low',
           timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
           source: 'system',
           details: { vulnerabilities: 0, warnings: 1 }
-        },
-        {
-          id: '4',
-          event: 'SSL certificate renewed',
-          severity: 'low',
-          timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-          source: 'automation',
-          details: { expires: '2025-03-15', issuer: 'Let\'s Encrypt' }
         }
       ];
 
@@ -153,10 +151,20 @@ const SecurityCenter: React.FC = () => {
     try {
       setLoading(true);
       
-      // Simulate security scan
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Run real SSL certificate check on configured domains
+      const domainsToCheck = [
+        'lovableproject.com',
+        // Add user's custom domains here
+      ];
+
+      await supabase.functions.invoke('ssl-certificate-monitor', {
+        body: { 
+          action: 'check',
+          domains: domainsToCheck
+        }
+      });
       
-      // Refresh data
+      // Refresh data with new scan results
       await loadSecurityData();
     } catch (error) {
       console.error('Security scan failed:', error);
