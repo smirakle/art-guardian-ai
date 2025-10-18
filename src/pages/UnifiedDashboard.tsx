@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, lazy, Suspense } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -26,16 +26,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { DashboardEmptyState } from '@/components/customer-success/DashboardEmptyState';
+import { useQuery } from '@tanstack/react-query';
 
-// Import consolidated components
-import { ProductionDashboard } from '@/components/dashboard/ProductionDashboard';
-import { AIDetectionDashboard } from '@/components/phase1/AIDetectionDashboard';
-import { OneClickProtection } from '@/components/phase1/OneClickProtection';
-import { BlockchainOwnershipRegistry } from '@/components/blockchain/BlockchainOwnershipRegistry';
-import { GlobalLegalNetwork } from '@/components/legal/GlobalLegalNetwork';
-import { RealTimeLegalDashboard } from '@/components/legal/RealTimeLegalDashboard';
-import { CreatorEconomy } from '@/components/phase2/CreatorEconomy';
-import VisualRecognition from '@/components/VisualRecognition';
+// Lazy load tab components for better performance
+const ProductionDashboard = lazy(() => import('@/components/dashboard/ProductionDashboard').then(m => ({ default: m.ProductionDashboard })));
+const AIDetectionDashboard = lazy(() => import('@/components/phase1/AIDetectionDashboard').then(m => ({ default: m.AIDetectionDashboard })));
+const OneClickProtection = lazy(() => import('@/components/phase1/OneClickProtection').then(m => ({ default: m.OneClickProtection })));
+const BlockchainOwnershipRegistry = lazy(() => import('@/components/blockchain/BlockchainOwnershipRegistry').then(m => ({ default: m.BlockchainOwnershipRegistry })));
+const GlobalLegalNetwork = lazy(() => import('@/components/legal/GlobalLegalNetwork').then(m => ({ default: m.GlobalLegalNetwork })));
+const RealTimeLegalDashboard = lazy(() => import('@/components/legal/RealTimeLegalDashboard').then(m => ({ default: m.RealTimeLegalDashboard })));
+const CreatorEconomy = lazy(() => import('@/components/phase2/CreatorEconomy').then(m => ({ default: m.CreatorEconomy })));
+const VisualRecognition = lazy(() => import('@/components/VisualRecognition'));
 
 interface DashboardStats {
   protectedAssets: number;
@@ -54,234 +55,136 @@ interface DashboardStats {
 const UnifiedDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
-  const [stats, setStats] = useState<DashboardStats>({
-    protectedAssets: 0,
-    activeScans: 0,
-    threats: 0,
-    blockchainRecords: 0,
-    legalActions: 0,
-    successRate: 0,
-    recentActivity: []
-  });
-  const [dataLoading, setDataLoading] = useState(false);
-  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
 
-  useEffect(() => {
-    console.log('UnifiedDashboard: useEffect triggered', { 
-      user: user?.id, 
-      authLoading, 
-      dataLoading, 
-      hasLoadedOnce 
-    });
-    
-    if (user && !authLoading && !hasLoadedOnce) {
-      loadRealDashboardData();
-    }
-  }, [user, authLoading, hasLoadedOnce]);
+  // Optimized data fetching with React Query and parallel queries
+  const { data: stats, isLoading: dataLoading } = useQuery({
+    queryKey: ['dashboardStats', user?.id],
+    enabled: !!user && !authLoading,
+    staleTime: 30000, // Consider data fresh for 30 seconds
+    gcTime: 300000, // Keep in cache for 5 minutes (formerly cacheTime)
+    queryFn: async () => {
+      console.log('UnifiedDashboard: Starting parallel queries for user:', user!.id);
+      const startTime = performance.now();
 
-  const loadRealDashboardData = async () => {
-    try {
-      console.log('UnifiedDashboard: Starting to load dashboard data for user:', user!.id);
-      setDataLoading(true);
+      // Execute all queries in parallel for better performance
+      const [
+        artworkResult,
+        protectionResult,
+        blockchainResult,
+        violationResult,
+        dmcaResult,
+        agentResult,
+        threatResult
+      ] = await Promise.all([
+        // Only select needed fields instead of '*'
+        supabase
+          .from('artwork')
+          .select('id, title, created_at', { count: 'exact' })
+          .eq('user_id', user!.id)
+          .order('created_at', { ascending: false })
+          .limit(1), // Only need latest for activity
+        
+        supabase
+          .from('ai_protection_records')
+          .select('id, created_at', { count: 'exact' })
+          .eq('user_id', user!.id)
+          .eq('is_active', true)
+          .order('created_at', { ascending: false })
+          .limit(1),
+        
+        supabase
+          .from('blockchain_certificates')
+          .select('id, created_at', { count: 'exact' })
+          .eq('user_id', user!.id)
+          .order('created_at', { ascending: false })
+          .limit(1),
+        
+        supabase
+          .from('ai_training_violations')
+          .select('id, detected_at')
+          .eq('user_id', user!.id)
+          .order('detected_at', { ascending: false })
+          .limit(1),
+        
+        supabase
+          .from('ai_protection_dmca_notices')
+          .select('id, created_at', { count: 'exact' })
+          .eq('user_id', user!.id)
+          .order('created_at', { ascending: false })
+          .limit(1),
+        
+        supabase
+          .from('ai_monitoring_agents')
+          .select('id', { count: 'exact' })
+          .eq('user_id', user!.id)
+          .eq('status', 'active'),
+        
+        supabase
+          .from('ai_threat_detections')
+          .select('id, status')
+          .eq('user_id', user!.id)
+      ]);
 
-      // Get user's artworks
-      console.log('UnifiedDashboard: Fetching artwork data...');
-      const { data: artworkData, count: artworkCount, error: artworkError } = await supabase
-        .from('artwork')
-        .select('*', { count: 'exact' })
-        .eq('user_id', user!.id);
-
-      if (artworkError) {
-        console.error('UnifiedDashboard: Error fetching artwork:', artworkError);
-        throw artworkError;
-      }
-      console.log('UnifiedDashboard: Artwork data fetched:', { count: artworkCount });
-
-      // Get AI protection records
-      console.log('UnifiedDashboard: Fetching AI protection records...');
-      const { data: protectionData, count: protectionCount, error: protectionError } = await supabase
-        .from('ai_protection_records')
-        .select('*', { count: 'exact' })
-        .eq('user_id', user!.id)
-        .eq('is_active', true);
-
-      if (protectionError) {
-        console.error('UnifiedDashboard: Error fetching protection records:', protectionError);
-      }
-      console.log('UnifiedDashboard: Protection data fetched:', { count: protectionCount });
-
-      // Get copyright matches (threats)
-      const artworkIds = artworkData?.map(a => a.id) || [];
-      console.log('UnifiedDashboard: Fetching copyright matches for artworks:', artworkIds.length);
-      const { data: matchData, count: matchCount, error: matchError } = await supabase
+      // Get copyright matches separately since it depends on artwork IDs
+      const artworkIds = artworkResult.data?.map(a => a.id) || [];
+      const matchResult = artworkIds.length > 0 ? await supabase
         .from('copyright_matches')
-        .select('*', { count: 'exact' })
-        .in('artwork_id', artworkIds);
+        .select('id', { count: 'exact' })
+        .in('artwork_id', artworkIds) : { count: 0, data: [] };
 
-      if (matchError) {
-        console.error('UnifiedDashboard: Error fetching copyright matches:', matchError);
-      }
-      console.log('UnifiedDashboard: Match data fetched:', { count: matchCount });
+      const endTime = performance.now();
+      console.log(`Dashboard queries completed in ${Math.round(endTime - startTime)}ms`);
 
-      // Get blockchain certificates
-      console.log('UnifiedDashboard: Fetching blockchain certificates...');
-      const { data: blockchainData, count: blockchainCount, error: blockchainError } = await supabase
-        .from('blockchain_certificates')
-        .select('*', { count: 'exact' })
-        .eq('user_id', user!.id);
-
-      if (blockchainError) {
-        console.error('UnifiedDashboard: Error fetching blockchain certificates:', blockchainError);
-      }
-      console.log('UnifiedDashboard: Blockchain data fetched:', { count: blockchainCount });
-
-      // Get AI training violations
-      console.log('UnifiedDashboard: Fetching AI training violations...');
-      const { data: violationData, error: violationError } = await supabase
-        .from('ai_training_violations')
-        .select('*')
-        .eq('user_id', user!.id)
-        .order('detected_at', { ascending: false })
-        .limit(5);
-
-      if (violationError) {
-        console.error('UnifiedDashboard: Error fetching violations:', violationError);
-      }
-
-      // Get DMCA notices (legal actions)
-      console.log('UnifiedDashboard: Fetching DMCA notices...');
-      const { data: dmcaData, count: dmcaCount, error: dmcaError } = await supabase
-        .from('ai_protection_dmca_notices')
-        .select('*', { count: 'exact' })
-        .eq('user_id', user!.id);
-
-      if (dmcaError) {
-        console.error('UnifiedDashboard: Error fetching DMCA notices:', dmcaError);
-      }
-
-      // Calculate active scans from AI monitoring agents
-      console.log('UnifiedDashboard: Fetching monitoring agents...');
-      const { data: agentData, error: agentError } = await supabase
-        .from('ai_monitoring_agents')
-        .select('*')
-        .eq('user_id', user!.id)
-        .eq('status', 'active');
-
-      if (agentError) {
-        console.error('UnifiedDashboard: Error fetching agents:', agentError);
-      }
-
-      // Calculate success rate from threat detections
-      console.log('UnifiedDashboard: Fetching threat detections...');
-      const { data: threatData, error: threatError } = await supabase
-        .from('ai_threat_detections')
-        .select('*')
-        .eq('user_id', user!.id);
-
-      if (threatError) {
-        console.error('UnifiedDashboard: Error fetching threats:', threatError);
-      }
-
-      const totalThreats = threatData?.length || 0;
-      const resolvedThreats = threatData?.filter(threat => threat.status === 'resolved').length || 0;
+      // Calculate stats from results
+      const totalThreats = threatResult.data?.length || 0;
+      const resolvedThreats = threatResult.data?.filter(t => t.status === 'resolved').length || 0;
       const successRate = totalThreats > 0 ? Math.round((resolvedThreats / totalThreats) * 100) : 95;
 
-      // Build recent activity
-      const recentActivity = [];
-      
-      if (artworkData && artworkData.length > 0) {
-        const recentArtwork = artworkData.sort((a, b) => 
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        )[0];
-        recentActivity.push({
+      // Build recent activity efficiently
+      const recentActivity = [
+        artworkResult.data?.[0] && {
           icon: 'shield',
-          message: `Protected "${recentArtwork.title}"`,
-          timestamp: new Date(recentArtwork.created_at)
-        });
-      }
-
-      if (violationData && violationData.length > 0) {
-        recentActivity.push({
+          message: `Protected "${artworkResult.data[0].title}"`,
+          timestamp: new Date(artworkResult.data[0].created_at)
+        },
+        violationResult.data?.[0] && {
           icon: 'alert',
           message: 'AI training violation detected',
-          timestamp: new Date(violationData[0].detected_at)
-        });
-      }
-
-      if (blockchainData && blockchainData.length > 0) {
-        const recentBlockchain = blockchainData.sort((a, b) => 
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        )[0];
-        recentActivity.push({
+          timestamp: new Date(violationResult.data[0].detected_at)
+        },
+        blockchainResult.data?.[0] && {
           icon: 'link',
           message: 'Blockchain certificate created',
-          timestamp: new Date(recentBlockchain.created_at)
-        });
-      }
-
-      if (dmcaData && dmcaData.length > 0) {
-        const recentDmca = dmcaData.sort((a, b) => 
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        )[0];
-        recentActivity.push({
+          timestamp: new Date(blockchainResult.data[0].created_at)
+        },
+        dmcaResult.data?.[0] && {
           icon: 'scale',
           message: 'DMCA notice filed',
-          timestamp: new Date(recentDmca.created_at)
-        });
-      }
-
-      if (protectionData && protectionData.length > 0) {
-        const recentProtection = protectionData.sort((a, b) => 
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        )[0];
-        recentActivity.push({
+          timestamp: new Date(dmcaResult.data[0].created_at)
+        },
+        protectionResult.data?.[0] && {
           icon: 'eye',
           message: 'AI protection applied',
-          timestamp: new Date(recentProtection.created_at)
-        });
-      }
+          timestamp: new Date(protectionResult.data[0].created_at)
+        }
+      ]
+        .filter(Boolean)
+        .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+        .slice(0, 5);
 
-      const finalStats = {
-        protectedAssets: (artworkCount || 0) + (protectionCount || 0),
-        activeScans: agentData?.length || 0,
-        threats: matchCount || 0,
-        blockchainRecords: blockchainCount || 0,
-        legalActions: dmcaCount || 0,
+      return {
+        protectedAssets: (artworkResult.count || 0) + (protectionResult.count || 0),
+        activeScans: agentResult.count || 0,
+        threats: matchResult.count || 0,
+        blockchainRecords: blockchainResult.count || 0,
+        legalActions: dmcaResult.count || 0,
         successRate,
-        recentActivity: recentActivity.sort((a, b) => 
-          b.timestamp.getTime() - a.timestamp.getTime()
-        ).slice(0, 5)
+        recentActivity
       };
-
-      console.log('UnifiedDashboard: Final stats calculated:', finalStats);
-      setStats(finalStats);
-
-    } catch (error) {
-      console.error('UnifiedDashboard: Error loading dashboard data:', error);
-      toast({
-        title: "Failed to load dashboard data",
-        description: "Please refresh the page or try again later.",
-        variant: "destructive",
-      });
-      
-      // Set default stats even on error so the dashboard shows something
-      setStats({
-        protectedAssets: 0,
-        activeScans: 0,
-        threats: 0,
-        blockchainRecords: 0,
-        legalActions: 0,
-        successRate: 0,
-        recentActivity: []
-      });
-    } finally {
-      console.log('UnifiedDashboard: Loading complete, setting loading to false');
-      setDataLoading(false);
-      setHasLoadedOnce(true);
     }
-  };
+  });
 
   const renderActivityIcon = (iconType: string) => {
     switch (iconType) {
@@ -307,8 +210,8 @@ const UnifiedDashboard = () => {
     );
   }
 
-  // Show loading while auth is loading or while data is loading for the first time
-  if (authLoading || (dataLoading && !hasLoadedOnce)) {
+  // Show loading while auth is loading or data is loading
+  if (authLoading || dataLoading) {
     return (
       <div className="container mx-auto px-4 py-8 space-y-6">
         <div className="animate-pulse space-y-8">
@@ -323,8 +226,11 @@ const UnifiedDashboard = () => {
     );
   }
 
-  // Show empty state if user has no data
-  const hasAnyData = stats.protectedAssets > 0 || stats.threats > 0 || stats.blockchainRecords > 0;
+  // Memoize empty state check
+  const hasAnyData = useMemo(() => 
+    stats ? (stats.protectedAssets > 0 || stats.threats > 0 || stats.blockchainRecords > 0) : false,
+    [stats]
+  );
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
@@ -358,7 +264,7 @@ const UnifiedDashboard = () => {
           <CardContent className="pt-6 text-center">
             <Shield className="h-8 w-8 mx-auto mb-2 text-green-500" />
             <div className="text-2xl font-bold" data-tooltip="protection-status">
-              {stats.protectedAssets.toLocaleString()}
+              {stats?.protectedAssets.toLocaleString()}
             </div>
             <p className="text-sm text-muted-foreground">Protected Assets</p>
           </CardContent>
@@ -367,7 +273,7 @@ const UnifiedDashboard = () => {
           <CardContent className="pt-6 text-center">
             <Activity className="h-8 w-8 mx-auto mb-2 text-blue-500" />
             <div className="text-2xl font-bold" data-tooltip="monitoring">
-              {stats.activeScans}
+              {stats?.activeScans}
             </div>
             <p className="text-sm text-muted-foreground">Active Scans</p>
           </CardContent>
@@ -375,28 +281,28 @@ const UnifiedDashboard = () => {
         <Card>
           <CardContent className="pt-6 text-center">
             <AlertTriangle className="h-8 w-8 mx-auto mb-2 text-orange-500" />
-            <div className="text-2xl font-bold">{stats.threats}</div>
+            <div className="text-2xl font-bold">{stats?.threats}</div>
             <p className="text-sm text-muted-foreground">Threats</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6 text-center">
             <Link2 className="h-8 w-8 mx-auto mb-2 text-purple-500" />
-            <div className="text-2xl font-bold">{stats.blockchainRecords}</div>
+            <div className="text-2xl font-bold">{stats?.blockchainRecords}</div>
             <p className="text-sm text-muted-foreground">Blockchain Records</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6 text-center">
             <Scale className="h-8 w-8 mx-auto mb-2 text-indigo-500" />
-            <div className="text-2xl font-bold">{stats.legalActions}</div>
+            <div className="text-2xl font-bold">{stats?.legalActions}</div>
             <p className="text-sm text-muted-foreground">Legal Actions</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6 text-center">
             <TrendingUp className="h-8 w-8 mx-auto mb-2 text-green-500" />
-            <div className="text-2xl font-bold">{stats.successRate}%</div>
+            <div className="text-2xl font-bold">{stats?.successRate}%</div>
             <p className="text-sm text-muted-foreground">Success Rate</p>
           </CardContent>
         </Card>
@@ -434,7 +340,7 @@ const UnifiedDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm">
-                  {stats.recentActivity.length > 0 ? (
+                  {stats?.recentActivity && stats.recentActivity.length > 0 ? (
                     stats.recentActivity.map((activity, index) => (
                       <div key={index} className="flex items-center gap-2">
                         {renderActivityIcon(activity.icon)}
@@ -481,43 +387,49 @@ const UnifiedDashboard = () => {
           </div>
         </TabsContent>
 
-        {/* Protection Tab */}
+        {/* Protection Tab - Lazy loaded */}
         <TabsContent value="protection" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Upload className="h-5 w-5" />
-                  Upload & Protect
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <OneClickProtection />
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Brain className="h-5 w-5" />
-                  AI Detection
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <AIDetectionDashboard />
-              </CardContent>
-            </Card>
-          </div>
+          <Suspense fallback={<div className="animate-pulse h-64 bg-muted rounded-lg" />}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Upload className="h-5 w-5" />
+                    Upload & Protect
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <OneClickProtection />
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Brain className="h-5 w-5" />
+                    AI Detection
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <AIDetectionDashboard />
+                </CardContent>
+              </Card>
+            </div>
+          </Suspense>
         </TabsContent>
 
-        {/* Legal Network */}
+        {/* Legal Network - Lazy loaded */}
         <TabsContent value="legal" className="space-y-6">
-          <GlobalLegalNetwork />
+          <Suspense fallback={<div className="animate-pulse h-64 bg-muted rounded-lg" />}>
+            <GlobalLegalNetwork />
+          </Suspense>
         </TabsContent>
 
-        {/* Blockchain */}
+        {/* Blockchain - Lazy loaded */}
         <TabsContent value="blockchain" className="space-y-6">
-          <BlockchainOwnershipRegistry />
+          <Suspense fallback={<div className="animate-pulse h-64 bg-muted rounded-lg" />}>
+            <BlockchainOwnershipRegistry />
+          </Suspense>
         </TabsContent>
       </Tabs>
       </>
