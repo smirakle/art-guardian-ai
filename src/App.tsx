@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom";
 import { WagmiProvider } from 'wagmi'
 import { wagmiConfig } from '@/lib/blockchain/config'
+import { useRealUserMonitoring } from "@/hooks/useRealUserMonitoring";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import MaintenanceMode from "@/components/MaintenanceMode";
@@ -80,6 +81,9 @@ const queryClient = new QueryClient();
 const App = () => {
   // Use shared maintenance mode state
   const { isMaintenanceMode } = useMaintenanceMode();
+  
+  // Activate Real User Monitoring for all pages
+  const { trackUserAction } = useRealUserMonitoring();
 
   // If maintenance mode is enabled, show only the maintenance page
   if (isMaintenanceMode) {
