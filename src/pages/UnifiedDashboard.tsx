@@ -203,7 +203,29 @@ const UnifiedDashboard = () => {
     }
   };
 
-  // Conditional rendering after all hooks are called
+  // Show loading state immediately to improve LCP
+  if (authLoading || dataLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8 space-y-6">
+        <ContextualHelp />
+        <div className="mb-8">
+          <div className="h-10 w-64 bg-muted animate-pulse rounded" />
+          <div className="h-4 w-96 bg-muted animate-pulse rounded mt-2" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+          {[...Array(6)].map((_, i) => (
+            <Card key={i}>
+              <CardContent className="pt-6">
+                <div className="h-8 w-8 mx-auto mb-2 bg-muted animate-pulse rounded" />
+                <div className="h-6 w-12 mx-auto bg-muted animate-pulse rounded mb-2" />
+                <div className="h-4 w-20 mx-auto bg-muted animate-pulse rounded" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
