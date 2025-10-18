@@ -42,6 +42,7 @@ import MonitoringHub from "./pages/MonitoringHub";
 import UnifiedDashboard from "./pages/UnifiedDashboard";
 import Status from "./pages/Status";
 import AdminMonitoring from "./pages/AdminMonitoring";
+import IncidentManagement from "./pages/IncidentManagement";
 
 import CustomIntegrationsComingSoon from "./pages/CustomIntegrationsComingSoon";
 import { EnterpriseAPIAccess } from "./components/EnterpriseAPIAccess";
@@ -216,6 +217,11 @@ const App = () => {
             <Route path="/admin/monitoring" element={
               <ProtectedRoute requiredRole="admin">
                 <AdminMonitoring />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/incidents" element={
+              <ProtectedRoute requiredRole="admin">
+                <IncidentManagement />
               </ProtectedRoute>
             } />
             

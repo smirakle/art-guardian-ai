@@ -7,18 +7,21 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { SubscriptionProvider } from "./contexts/SubscriptionContext";
 import "./i18n";
 import { initSentry } from "./lib/sentry";
+import { ErrorBoundaryEnhanced } from "./components/ErrorBoundaryEnhanced";
 
 // Initialize Sentry
 initSentry();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <SubscriptionProvider>
-          <AppWithErrorBoundary />
-        </SubscriptionProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <ErrorBoundaryEnhanced>
+      <BrowserRouter>
+        <AuthProvider>
+          <SubscriptionProvider>
+            <AppWithErrorBoundary />
+          </SubscriptionProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorBoundaryEnhanced>
   </StrictMode>
 );

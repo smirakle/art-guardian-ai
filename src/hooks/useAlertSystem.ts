@@ -1,0 +1,88 @@
+import { useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+
+export type AlertSeverity = 'info' | 'warning' | 'error' | 'critical';
+
+export interface Alert {
+  title: string;
+  message: string;
+  severity: AlertSeverity;
+  source: string;
+  metadata?: Record<string, any>;
+}
+
+export const useAlertSystem = () => {
+  const { toast } = useToast();
+
+  const sendAlert = useCallback(async (alert: Alert) => {
+    try {
+      // Send to monitoring alerts endpoint
+      const { error } = await supabase.functions.invoke('monitoring-alerts', {
+        body: {
+          action: 'send_alert',
+          alert: {
+            ...alert,
+            timestamp: new Date().toISOString(),
+            user_id: (await supabase.auth.getUser()).data.user?.id,
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      // Show toast for critical and error alerts
+      if (alert.severity === 'critical' || alert.severity === 'error') {
+        toast({
+          title: alert.title,
+          description: alert.message,
+          variant: alert.severity === 'critical' ? 'destructive' : 'default',
+        });
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Failed to send alert:', error);
+      return false;
+    }
+  }, [toast]);
+
+  const sendPerformanceAlert = useCallback(async (metricName: string, value: number, threshold: number) => {
+    await sendAlert({
+      title: 'Performance Threshold Exceeded',
+      message: `${metricName} is ${value}ms (threshold: ${threshold}ms)`,
+      severity: value > threshold * 1.5 ? 'critical' : 'warning',
+      source: 'performance_monitor',
+      metadata: { metricName, value, threshold }
+    });
+  }, [sendAlert]);
+
+  const sendErrorAlert = useCallback(async (error: Error, context?: string) => {
+    await sendAlert({
+      title: 'Application Error',
+      message: error.message,
+      severity: 'error',
+      source: context || 'error_boundary',
+      metadata: {
+        stack: error.stack,
+        name: error.name,
+      }
+    });
+  }, [sendAlert]);
+
+  const sendSystemAlert = useCallback(async (message: string, severity: AlertSeverity = 'info') => {
+    await sendAlert({
+      title: 'System Alert',
+      message,
+      severity,
+      source: 'system',
+    });
+  }, [sendAlert]);
+
+  return {
+    sendAlert,
+    sendPerformanceAlert,
+    sendErrorAlert,
+    sendSystemAlert,
+  };
+};
