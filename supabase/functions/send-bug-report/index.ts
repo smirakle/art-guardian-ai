@@ -106,14 +106,14 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send email using Resend
     const emailResponse = await resend.emails.send({
-      from: "TSMO Bug Reports <onboarding@resend.dev>",
+      from: "TSMO Bug Reports <bugs@tsmowatch.com>",
       to: ["shirleena.cunningham@tsmowatch.com"],
       replyTo: userEmail !== 'Anonymous' ? userEmail : undefined,
       subject: `🐛 Bug Report: ${subject}`,
       html: emailHtml,
     });
 
-    logStep("Email sent successfully", { emailId: emailResponse.id });
+    logStep("Email sent successfully", emailResponse);
 
     return new Response(
       JSON.stringify({ 
