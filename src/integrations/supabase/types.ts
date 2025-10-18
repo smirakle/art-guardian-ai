@@ -7707,6 +7707,8 @@ export type Database = {
           max_white_label_users: number | null
           metadata: Json | null
           plan_id: string
+          promo_code_discount: number | null
+          promo_code_id: string | null
           social_media_addon: boolean
           status: string
           stripe_customer_id: string | null
@@ -7726,6 +7728,8 @@ export type Database = {
           max_white_label_users?: number | null
           metadata?: Json | null
           plan_id: string
+          promo_code_discount?: number | null
+          promo_code_id?: string | null
           social_media_addon?: boolean
           status?: string
           stripe_customer_id?: string | null
@@ -7745,6 +7749,8 @@ export type Database = {
           max_white_label_users?: number | null
           metadata?: Json | null
           plan_id?: string
+          promo_code_discount?: number | null
+          promo_code_id?: string | null
           social_media_addon?: boolean
           status?: string
           stripe_customer_id?: string | null
@@ -7753,7 +7759,15 @@ export type Database = {
           user_id?: string
           white_label_enabled?: boolean | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_promo_code_id_fkey"
+            columns: ["promo_code_id"]
+            isOneToOne: false
+            referencedRelation: "promo_codes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       support_conversations: {
         Row: {

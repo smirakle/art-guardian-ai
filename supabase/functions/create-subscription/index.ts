@@ -27,7 +27,10 @@ serve(async (req) => {
       socialMediaAddon = false,
       deepfakeAddon = false,
       stripeCustomerId,
-      stripeSubscriptionId 
+      stripeSubscriptionId,
+      promoCode,
+      lifetimeDiscount,
+      promoCodeId
     } = await req.json();
 
     if (!userId || !planId) {
@@ -62,6 +65,13 @@ serve(async (req) => {
         deepfake_addon: actualDeepfakeAddon,
         stripe_customer_id: stripeCustomerId,
         stripe_subscription_id: stripeSubscriptionId,
+        promo_code_discount: lifetimeDiscount ? parseInt(lifetimeDiscount) : 0,
+        promo_code_id: promoCodeId || null,
+        metadata: promoCode ? {
+          promo_code: promoCode,
+          promo_applied_at: new Date().toISOString(),
+          is_lifetime_discount: true
+        } : null,
         updated_at: new Date().toISOString()
       }, { 
         onConflict: 'user_id' 

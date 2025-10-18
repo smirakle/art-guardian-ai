@@ -32,6 +32,21 @@ serve(async (req) => {
     const { planId, billingCycle, email, promoCode, socialMediaAddon, deepfakeAddon, aiTrainingAddon, userId } = await req.json();
     logStep("Request data received", { planId, billingCycle, email, promoCode, socialMediaAddon, deepfakeAddon, aiTrainingAddon, userId });
 
+    // Validate BETA200 promo code for lifetime discount
+    let lifetimeDiscount = 0;
+    let promoCodeId = null;
+    if (promoCode && promoCode.toUpperCase() === 'BETA200') {
+      const { data: validation } = await supabaseClient.rpc('validate_promo_code', { 
+        code_param: promoCode.toUpperCase() 
+      });
+      
+      if (validation && validation.valid && validation.is_lifetime) {
+        lifetimeDiscount = validation.discount_percentage;
+        promoCodeId = validation.code_id;
+        logStep("Lifetime discount will be applied", { discount: lifetimeDiscount });
+      }
+    }
+
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
     // Define plan pricing
@@ -47,6 +62,13 @@ serve(async (req) => {
 
     const pricing = planPricing[planId as keyof typeof planPricing];
     let amount = pricing[billingCycle as keyof typeof pricing];
+    
+    // Apply lifetime discount if BETA200 promo code is valid
+    if (lifetimeDiscount > 0) {
+      const discountAmount = Math.floor(amount * (lifetimeDiscount / 100));
+      amount = amount - discountAmount;
+      logStep("Lifetime discount applied", { original: pricing[billingCycle as keyof typeof pricing], discounted: amount });
+    }
     
     // Add social media addon if selected (available for all plans)
     if (socialMediaAddon) {
@@ -174,6 +196,9 @@ serve(async (req) => {
         socialMediaAddon: socialMediaAddon ? 'true' : 'false',
         deepfakeAddon: deepfakeAddon ? 'true' : 'false',
         aiTrainingAddon: aiTrainingAddon ? 'true' : 'false',
+        promoCode: promoCode || '',
+        lifetimeDiscount: lifetimeDiscount.toString(),
+        promoCodeId: promoCodeId || '',
       },
     };
 
