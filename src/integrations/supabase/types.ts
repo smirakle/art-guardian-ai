@@ -6744,6 +6744,86 @@ export type Database = {
         }
         Relationships: []
       }
+      promo_code_redemptions: {
+        Row: {
+          created_at: string
+          id: string
+          metadata: Json | null
+          promo_code_id: string
+          redeemed_at: string
+          subscription_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          promo_code_id: string
+          redeemed_at?: string
+          subscription_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          promo_code_id?: string
+          redeemed_at?: string
+          subscription_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promo_code_redemptions_promo_code_id_fkey"
+            columns: ["promo_code_id"]
+            isOneToOne: false
+            referencedRelation: "promo_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      promo_codes: {
+        Row: {
+          code: string
+          created_at: string
+          current_uses: number
+          discount_percentage: number
+          id: string
+          is_active: boolean
+          is_lifetime: boolean
+          max_uses: number
+          updated_at: string
+          valid_from: string
+          valid_until: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          current_uses?: number
+          discount_percentage: number
+          id?: string
+          is_active?: boolean
+          is_lifetime?: boolean
+          max_uses: number
+          updated_at?: string
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          current_uses?: number
+          discount_percentage?: number
+          id?: string
+          is_active?: boolean
+          is_lifetime?: boolean
+          max_uses?: number
+          updated_at?: string
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Relationships: []
+      }
       realtime_analysis_results: {
         Row: {
           analysis_type: string
@@ -9298,6 +9378,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      redeem_promo_code: {
+        Args: { code_param: string; subscription_id_param?: string }
+        Returns: boolean
+      }
       schedule_compliance_reminder: {
         Args: {
           compliance_id_param: string
@@ -9364,6 +9448,10 @@ export type Database = {
       }
       validate_government_api_key: {
         Args: { api_key_param: string; required_permission?: string }
+        Returns: Json
+      }
+      validate_promo_code: {
+        Args: { code_param: string }
         Returns: Json
       }
     }

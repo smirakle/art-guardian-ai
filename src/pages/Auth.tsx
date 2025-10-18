@@ -21,6 +21,9 @@ const Auth: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [accountType, setAccountType] = useState<'free' | 'paid'>('free');
+  const [promoCode, setPromoCode] = useState('');
+  const [promoValidated, setPromoValidated] = useState(false);
+  const [promoDiscount, setPromoDiscount] = useState(0);
 
   const freeFeatures = [
     'Upload up to 5 artworks',
@@ -55,6 +58,37 @@ const Auth: React.FC = () => {
     }
   }, [user, navigate]);
 
+  const validatePromoCode = async () => {
+    if (!promoCode.trim()) return;
+    
+    try {
+      const { data, error } = await supabase.rpc('validate_promo_code', {
+        code_param: promoCode.toUpperCase()
+      });
+
+      if (error) throw error;
+
+      const result = data as { valid: boolean; discount_percentage?: number; error?: string };
+
+      if (result.valid && result.discount_percentage) {
+        setPromoValidated(true);
+        setPromoDiscount(result.discount_percentage);
+        toast({
+          title: "Promo code validated!",
+          description: `You'll get ${result.discount_percentage}% lifetime discount on all plans!`,
+        });
+      } else {
+        toast({
+          title: "Invalid promo code",
+          description: result.error || "This promo code is not valid",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Promo validation error:', error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -70,14 +104,22 @@ const Auth: React.FC = () => {
         const { error } = await signUp(email, password, {
           full_name: fullName,
           username: username,
-          account_type: 'free'
+          account_type: 'free',
+          promo_code: promoValidated ? promoCode.toUpperCase() : undefined
         });
         
         if (!error) {
-          toast({
-            title: "Account created successfully!",
-            description: "Check your email to verify your account, then you can start using TSMO for free.",
-          });
+          if (promoValidated) {
+            toast({
+              title: "Account created with promo code!",
+              description: `Check your email to verify. You have ${promoDiscount}% lifetime discount on all plans!`,
+            });
+          } else {
+            toast({
+              title: "Account created successfully!",
+              description: "Check your email to verify your account, then you can start using TSMO for free.",
+            });
+          }
         }
       }
     } catch (error) {
@@ -294,6 +336,41 @@ const Auth: React.FC = () => {
                       )}
                     </Button>
                   </div>
+                </div>
+
+                {/* Promo Code Field */}
+                <div className="space-y-2 pt-2 border-t">
+                  <Label htmlFor="promo-code" className="flex items-center gap-2">
+                    Promo Code <Badge variant="secondary" className="text-xs">Optional</Badge>
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="promo-code"
+                      type="text"
+                      placeholder="Enter BETA200 for 30% off"
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                      className="flex-1"
+                      disabled={promoValidated}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={validatePromoCode}
+                      disabled={!promoCode.trim() || promoValidated}
+                    >
+                      {promoValidated ? 'Applied' : 'Apply'}
+                    </Button>
+                  </div>
+                  {promoValidated && (
+                    <div className="text-sm text-green-600 font-medium flex items-center gap-1">
+                      <Check className="h-4 w-4" />
+                      {promoDiscount}% lifetime discount activated!
+                    </div>
+                  )}
+                  <p className="text-xs text-muted-foreground">
+                    Beta testers: First 200 signups get 30% off all plans forever!
+                  </p>
                 </div>
 
                 {/* Free Account Benefits */}
