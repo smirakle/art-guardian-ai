@@ -70,6 +70,7 @@ import DocumentProtection from "./pages/DocumentProtection";
 import PortfolioMonitoringAdvanced from "./pages/PortfolioMonitoringAdvanced";
 import ThreatAlerts from "./pages/ThreatAlerts";
 import DMCAAutomation from "./pages/DMCAAutomation";
+import HelpCenter from "./pages/HelpCenter";
 
 const queryClient = new QueryClient();
 
@@ -208,6 +209,7 @@ const App = () => {
             <Route path="/portfolio-monitoring-advanced" element={<PortfolioMonitoringAdvanced />} />
             <Route path="/threat-alerts" element={<ThreatAlerts />} />
             <Route path="/dmca-automation" element={<DMCAAutomation />} />
+            <Route path="/help" element={<HelpCenter />} />
             
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />

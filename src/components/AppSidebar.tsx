@@ -1,4 +1,4 @@
-import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search, Briefcase, UserCheck, Copyright, TrendingUp, Key, DollarSign, Send, Gavel, Zap, FileCheck, Wallet, FileImage, FolderSearch, AlertTriangle, Lock as LockIcon } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search, Briefcase, UserCheck, Copyright, TrendingUp, Key, DollarSign, Send, Gavel, Zap, FileCheck, Wallet, FileImage, FolderSearch, AlertTriangle, Lock as LockIcon, BookOpen } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
@@ -50,6 +50,7 @@ export function AppSidebar() {
     { path: "/legal-templates", label: "Legal Templates", icon: FileText },
     { path: "/dmca-center", label: "DMCA Center", icon: Gavel },
     ...(role === 'admin' ? [{ path: "/patent-generator", label: "USPTO Patent Generator", icon: FileCheck }] : []),
+    { path: "/help", label: "Help & Guides", icon: BookOpen },
     { path: "/faq", label: "FAQ", icon: HelpCircle },
     { path: "/roadmap", label: "Roadmap", icon: TrendingUp },
   ];
