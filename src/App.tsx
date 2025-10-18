@@ -41,6 +41,7 @@ import ProtectionHub from "./pages/ProtectionHub";
 import MonitoringHub from "./pages/MonitoringHub";
 import UnifiedDashboard from "./pages/UnifiedDashboard";
 import Status from "./pages/Status";
+import AdminMonitoring from "./pages/AdminMonitoring";
 
 import CustomIntegrationsComingSoon from "./pages/CustomIntegrationsComingSoon";
 import { EnterpriseAPIAccess } from "./components/EnterpriseAPIAccess";
@@ -212,6 +213,11 @@ const App = () => {
             <Route path="/dmca-automation" element={<DMCAAutomation />} />
             <Route path="/help" element={<HelpCenter />} />
             <Route path="/status" element={<Status />} />
+            <Route path="/admin/monitoring" element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminMonitoring />
+              </ProtectedRoute>
+            } />
             
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />
