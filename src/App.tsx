@@ -46,6 +46,7 @@ import AdminMonitoring from "./pages/AdminMonitoring";
 import IncidentManagement from "./pages/IncidentManagement";
 import RealTimeMonitoringDashboard from "./pages/RealTimeMonitoringDashboard";
 import MonitoringTest from "./pages/MonitoringTest";
+import ExternalServicesConfig from "./pages/ExternalServicesConfig";
 
 import CustomIntegrationsComingSoon from "./pages/CustomIntegrationsComingSoon";
 import { EnterpriseAPIAccess } from "./components/EnterpriseAPIAccess";
@@ -238,6 +239,11 @@ const App = () => {
             <Route path="/monitoring/test" element={
               <ProtectedRoute requiredRole="admin">
                 <MonitoringTest />
+              </ProtectedRoute>
+            } />
+            <Route path="/monitoring/external-services" element={
+              <ProtectedRoute requiredRole="admin">
+                <ExternalServicesConfig />
               </ProtectedRoute>
             } />
             
