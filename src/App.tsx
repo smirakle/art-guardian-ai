@@ -129,7 +129,7 @@ const App = () => {
                    <div className="p-4 flex-1">
                     <Routes>
                       <Route path="/" element={<Index />} />
-                      <Route path="/dashboard" element={<UnifiedDashboard />} />
+                      <Route path="/dashboard" element={<Dashboard />} />
                       <Route path="/about-tsmo" element={<AboutTsmo />} />
                       <Route path="/faq" element={<FAQ />} />
                       <Route path="/auth" element={<Auth />} />
