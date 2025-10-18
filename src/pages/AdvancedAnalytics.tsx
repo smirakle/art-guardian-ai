@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ROICalculator } from '@/components/analytics/ROICalculator';
 import { APIDocumentationPlayground } from '@/components/api/APIDocumentationPlayground';
 import { TrendingUp, Code, DollarSign } from 'lucide-react';
+import { BugReportButton } from '@/components/BugReportButton';
 
 export default function AdvancedAnalytics() {
   return (
@@ -34,6 +35,7 @@ export default function AdvancedAnalytics() {
           <APIDocumentationPlayground />
         </TabsContent>
       </Tabs>
+      <BugReportButton />
     </div>
   );
 }

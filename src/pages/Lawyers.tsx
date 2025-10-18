@@ -1,5 +1,6 @@
 import React from 'react';
 import IPLawyersDirectory from '@/components/IPLawyersDirectory';
+import { BugReportButton } from '@/components/BugReportButton';
 
 const Lawyers = () => {
   return (
@@ -7,6 +8,7 @@ const Lawyers = () => {
       <div className="container mx-auto px-4 py-8">
         <IPLawyersDirectory />
       </div>
+      <BugReportButton />
     </div>
   );
 };

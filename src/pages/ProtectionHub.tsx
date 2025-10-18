@@ -28,6 +28,7 @@ import { ProductionMetadataSettings } from '@/components/ai-protection/Productio
 import { ProductionCrawlerBlockingSettings } from '@/components/ai-protection/ProductionCrawlerBlockingSettings';
 import { ProductionLikenessSettings } from '@/components/ai-protection/ProductionLikenessSettings';
 import { AITrainingSettings } from '@/components/AITrainingSettings';
+import { BugReportButton } from '@/components/BugReportButton';
 
 const ProtectionHub = () => {
   const [activeTab, setActiveTab] = useState('upload');
@@ -294,6 +295,7 @@ const ProtectionHub = () => {
           </div>
         </TabsContent>
       </Tabs>
+      <BugReportButton />
     </div>
   );
 };

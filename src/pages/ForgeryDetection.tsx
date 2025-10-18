@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import ImageForgeryDetector from '@/components/forensics/ImageForgeryDetector';
 import AIImageDetector from '@/components/forensics/AIImageDetector';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { BugReportButton } from '@/components/BugReportButton';
 
 const ForgeryDetection: React.FC = () => {
   useEffect(() => {
@@ -59,6 +60,7 @@ const ForgeryDetection: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
+      <BugReportButton />
     </main>
   );
 };

@@ -1,8 +1,14 @@
 import React from 'react';
 import UnifiedDashboard from './UnifiedDashboard';
+import { BugReportButton } from '@/components/BugReportButton';
 
 const Dashboard = () => {
-  return <UnifiedDashboard />;
+  return (
+    <>
+      <UnifiedDashboard />
+      <BugReportButton />
+    </>
+  );
 };
 
 export default Dashboard;

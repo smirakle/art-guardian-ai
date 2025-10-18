@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Settings, Clock } from 'lucide-react';
+import { BugReportButton } from '@/components/BugReportButton';
 
 const CustomIntegrationsComingSoon = () => {
   return (
@@ -24,6 +25,7 @@ const CustomIntegrationsComingSoon = () => {
           </p>
         </CardContent>
       </Card>
+      <BugReportButton />
     </div>
   );
 };
