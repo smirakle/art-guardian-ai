@@ -29,7 +29,8 @@ export const MonitoringWrapper = ({
     if (componentName.includes('Admin') || componentName.includes('Critical')) {
       sendSystemAlert(`${componentName} loaded`, 'info');
     }
-  }, [componentName, activeBudgets, sendSystemAlert]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [componentName]);
 
   return <>{children}</>;
 };
