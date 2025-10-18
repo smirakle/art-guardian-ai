@@ -892,6 +892,347 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Pricing Section - Moved Up */}
+      <section id="pricing" className="py-20 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Choose Your Protection Plan</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Comprehensive art protection with industry-leading features. Choose the plan that fits your creative
+              journey.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-4 gap-6">
+            {/* Student Plan */}
+            <Card className="border-2 border-border hover:border-primary/50 transition-colors">
+              <CardHeader>
+                <Badge className="mx-auto mb-4 bg-blue-600">24% OFF</Badge>
+                <CardTitle className="text-center">Student</CardTitle>
+                <CardDescription className="text-center text-sm">
+                  Perfect for students and emerging artists
+                </CardDescription>
+                <div className="text-center">
+                  <div className="text-sm text-muted-foreground line-through">$25</div>
+                  <div className="text-4xl font-bold">$19</div>
+                  <div className="text-muted-foreground">/month</div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Up to 1,000 artworks protected</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Basic AI monitoring</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Portfolio monitoring (up to 5)</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Email alerts</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Educational resources</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Community support</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Mobile app access</span>
+                  </div>
+                </div>
+
+                {/* Add-ons */}
+                <div className="border-t pt-4 space-y-3">
+                  <div className="text-sm font-semibold text-muted-foreground">Available Add-ons:</div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm p-2 bg-blue-50 rounded">
+                      <div className="flex items-center gap-2">
+                        <span>Social Media Monitoring</span>
+                        <Badge variant="outline" className="text-xs">
+                          Coming Soon
+                        </Badge>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-semibold">$100/month</div>
+                        <div className="text-xs text-muted-foreground">$199 startup fee</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-sm p-2 bg-orange-50 rounded">
+                      <span>AI Training Protection</span>
+                      <div className="font-semibold">$49/month</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
+                  <div>• Limited to personal use</div>
+                  <div>• Standard response time (48hrs)</div>
+                </div>
+                <Button className="w-full" variant="outline" onClick={() => handlePricingPlan("Student")}>
+                  Choose Student Plan
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Starter Plan */}
+            <Card className="border-2 border-primary shadow-lg">
+              <CardHeader>
+                <Badge className="mx-auto mb-4 bg-green-600">25% OFF • POPULAR</Badge>
+                <CardTitle className="text-center">Starter</CardTitle>
+                <CardDescription className="text-center text-sm">
+                  Ideal for freelancers and small creators
+                </CardDescription>
+                <div className="text-center">
+                  <div className="text-sm text-muted-foreground line-through">$39</div>
+                  <div className="text-4xl font-bold">$29</div>
+                  <div className="text-muted-foreground">/month</div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Up to 3,500 artworks protected</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Advanced AI monitoring</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Portfolio monitoring (up to 10)</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Scheduled portfolio scans</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Real-time alerts</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Watermark protection</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">API access</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Priority support</span>
+                  </div>
+                </div>
+
+                {/* Add-ons */}
+                <div className="border-t pt-4 space-y-3">
+                  <div className="text-sm font-semibold text-muted-foreground">Available Add-ons:</div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm p-2 bg-blue-50 rounded">
+                      <div className="flex items-center gap-2">
+                        <span>Social Media Monitoring</span>
+                        <Badge variant="outline" className="text-xs">
+                          Coming Soon
+                        </Badge>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-semibold">$100/month</div>
+                        <div className="text-xs text-muted-foreground">$199 startup fee</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-sm p-2 bg-orange-50 rounded">
+                      <span>AI Training Protection</span>
+                      <div className="font-semibold">$49/month</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
+                  <div>• Commercial use allowed</div>
+                  <div>• Standard takedown assistance</div>
+                </div>
+                <Button className="w-full bg-green-600 hover:bg-green-700" onClick={() => handlePricingPlan("Starter")}>
+                  Choose Starter Plan
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Professional Plan */}
+            <Card className="border-2 border-border hover:border-primary/50 transition-colors">
+              <CardHeader>
+                <Badge className="mx-auto mb-4 bg-orange-600">20% OFF</Badge>
+                <CardTitle className="text-center">Professional</CardTitle>
+                <CardDescription className="text-center text-sm">
+                  Complete art protection suite for established artists
+                </CardDescription>
+                <div className="text-center">
+                  <div className="text-sm text-muted-foreground line-through">$249</div>
+                  <div className="text-4xl font-bold">$199</div>
+                  <div className="text-muted-foreground">/month</div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Up to 250,000 artworks protected</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Premium AI monitoring</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Portfolio monitoring (up to 50)</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Advanced portfolio analytics</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Scheduled & automated scans</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Instant alerts & notifications</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Advanced watermarking</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Real-time deepfake detection</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Blockchain verification</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">White-label options</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Dedicated account manager</span>
+                  </div>
+                </div>
+
+                {/* Add-ons */}
+                <div className="border-t pt-4 space-y-3">
+                  <div className="text-sm font-semibold text-muted-foreground">Available Add-ons:</div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm p-2 bg-blue-50 rounded">
+                      <div className="flex items-center gap-2">
+                        <span>Social Media Monitoring</span>
+                        <Badge variant="outline" className="text-xs">
+                          Coming Soon
+                        </Badge>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-semibold">$100/month</div>
+                        <div className="text-xs text-muted-foreground">$199 startup fee</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-sm p-2 bg-orange-50 rounded">
+                      <span>AI Training Protection</span>
+                      <div className="font-semibold">$49/month</div>
+                    </div>
+                  </div>
+                </div>
+                <Button className="w-full" onClick={() => handlePricingPlan("Professional")}>
+                  Choose Professional Plan
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Enterprise Plan */}
+            <Card className="border-2 border-border hover:border-primary/50 transition-colors">
+              <CardHeader>
+                <Badge className="mx-auto mb-4 bg-purple-600">CUSTOM</Badge>
+                <CardTitle className="text-center">Enterprise Custom</CardTitle>
+                <CardDescription className="text-center text-sm">
+                  Tailored solutions for large organizations
+                </CardDescription>
+                <div className="text-center">
+                  <div className="text-4xl font-bold">Custom</div>
+                  <div className="text-muted-foreground">Contact us</div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Unlimited artworks protected</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Unlimited portfolios</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Custom API integrations</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Full white-label solution</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">On-premise deployment option</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Dedicated infrastructure</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">24/7 priority support</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Legal team on retainer</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Custom SLA agreements</span>
+                  </div>
+                </div>
+                <Button className="w-full" variant="outline" onClick={() => handlePricingPlan("Contact Sales")}>
+                  Contact Sales
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="mt-12 text-center">
+            <p className="text-sm text-muted-foreground mb-4">
+              All plans include 5-day free trial • No credit card required • Cancel anytime
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Badge variant="secondary" className="px-4 py-2">
+                <Shield className="h-4 w-4 mr-2" />
+                Secure Payment
+              </Badge>
+              <Badge variant="secondary" className="px-4 py-2">
+                <BadgeCheck className="h-4 w-4 mr-2" />
+                Money-back Guarantee
+              </Badge>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Advanced Protection Features */}
       <section className="py-20 px-4 bg-gradient-to-br from-blue-50 to-purple-50">
         <div className="container mx-auto max-w-6xl">
@@ -1253,359 +1594,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Choose Your Protection Plan</h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Comprehensive art protection with industry-leading features. Choose the plan that fits your creative
-              journey.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-6">
-            {/* Student Plan */}
-            <Card className="border-2 border-border hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <Badge className="mx-auto mb-4 bg-blue-600">24% OFF</Badge>
-                <CardTitle className="text-center">Student</CardTitle>
-                <CardDescription className="text-center text-sm">
-                  Perfect for students and emerging artists
-                </CardDescription>
-                <div className="text-center">
-                  <div className="text-sm text-muted-foreground line-through">$25</div>
-                  <div className="text-4xl font-bold">$19</div>
-                  <div className="text-muted-foreground">/month</div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Up to 1,000 artworks protected</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Basic AI monitoring</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Portfolio monitoring (up to 5)</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Email alerts</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Educational resources</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Community support</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Mobile app access</span>
-                  </div>
-                </div>
-
-                {/* Add-ons */}
-                <div className="border-t pt-4 space-y-3">
-                  <div className="text-sm font-semibold text-muted-foreground">Available Add-ons:</div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm p-2 bg-blue-50 rounded">
-                      <div className="flex items-center gap-2">
-                        <span>Social Media Monitoring</span>
-                        <Badge variant="outline" className="text-xs">
-                          Coming Soon
-                        </Badge>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-semibold">$100/month</div>
-                        <div className="text-xs text-muted-foreground">$199 startup fee</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between text-sm p-2 bg-orange-50 rounded">
-                      <span>AI Training Protection</span>
-                      <div className="font-semibold">$49/month</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
-                  <div>• Limited to personal use</div>
-                  <div>• Standard response time (48hrs)</div>
-                </div>
-                <Button className="w-full" variant="outline" onClick={() => handlePricingPlan("Student")}>
-                  Choose Student Plan
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Starter Plan */}
-            <Card className="border-2 border-primary shadow-lg">
-              <CardHeader>
-                <Badge className="mx-auto mb-4 bg-green-600">25% OFF • POPULAR</Badge>
-                <CardTitle className="text-center">Starter</CardTitle>
-                <CardDescription className="text-center text-sm">
-                  Ideal for freelancers and small creators
-                </CardDescription>
-                <div className="text-center">
-                  <div className="text-sm text-muted-foreground line-through">$39</div>
-                  <div className="text-4xl font-bold">$29</div>
-                  <div className="text-muted-foreground">/month</div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Up to 3,500 artworks protected</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Advanced AI monitoring</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Portfolio monitoring (up to 10)</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Scheduled portfolio scans</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Real-time alerts</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Watermark protection</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">API access</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Priority support</span>
-                  </div>
-                </div>
-
-                {/* Add-ons */}
-                <div className="border-t pt-4 space-y-3">
-                  <div className="text-sm font-semibold text-muted-foreground">Available Add-ons:</div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm p-2 bg-blue-50 rounded">
-                      <div className="flex items-center gap-2">
-                        <span>Social Media Monitoring</span>
-                        <Badge variant="outline" className="text-xs">
-                          Coming Soon
-                        </Badge>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-semibold">$100/month</div>
-                        <div className="text-xs text-muted-foreground">$199 startup fee</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between text-sm p-2 bg-orange-50 rounded">
-                      <span>AI Training Protection</span>
-                      <div className="font-semibold">$49/month</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
-                  <div>• Commercial use allowed</div>
-                  <div>• Standard takedown assistance</div>
-                </div>
-                <Button className="w-full bg-green-600 hover:bg-green-700" onClick={() => handlePricingPlan("Starter")}>
-                  Choose Starter Plan
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Professional Plan */}
-            <Card className="border-2 border-border hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <Badge className="mx-auto mb-4 bg-orange-600">20% OFF</Badge>
-                <CardTitle className="text-center">Professional</CardTitle>
-                <CardDescription className="text-center text-sm">
-                  Complete art protection suite for established artists
-                </CardDescription>
-                <div className="text-center">
-                  <div className="text-sm text-muted-foreground line-through">$249</div>
-                  <div className="text-4xl font-bold">$199</div>
-                  <div className="text-muted-foreground">/month</div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Up to 250,000 artworks protected</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Premium AI monitoring</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Portfolio monitoring (up to 50)</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Advanced portfolio analytics</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Scheduled & automated scans</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Instant alerts & notifications</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Advanced watermarking</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Real-time deepfake detection</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Blockchain verification</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">White-label options</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Dedicated account manager</span>
-                  </div>
-                </div>
-
-                {/* Add-ons */}
-                <div className="border-t pt-4 space-y-3">
-                  <div className="text-sm font-semibold text-muted-foreground">Available Add-ons:</div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm p-2 bg-blue-50 rounded">
-                      <div className="flex items-center gap-2">
-                        <span>Social Media Monitoring</span>
-                        <Badge variant="outline" className="text-xs">
-                          Coming Soon
-                        </Badge>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-semibold">$100/month</div>
-                        <div className="text-xs text-muted-foreground">$199 startup fee</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between text-sm p-2 bg-orange-50 rounded">
-                      <span>AI Training Protection</span>
-                      <div className="font-semibold">$49/month</div>
-                    </div>
-                  </div>
-                </div>
-                <Button className="w-full" onClick={() => handlePricingPlan("Professional")}>
-                  Choose Professional Plan
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Enterprise Plan */}
-            <Card className="border-2 border-border hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <Badge className="mx-auto mb-4 bg-purple-600">CUSTOM</Badge>
-                <CardTitle className="text-center">Enterprise Custom</CardTitle>
-                <CardDescription className="text-center text-sm">
-                  Tailored solutions for large organizations
-                </CardDescription>
-                <div className="text-center">
-                  <div className="text-4xl font-bold">Custom</div>
-                  <div className="text-muted-foreground">Contact us</div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Unlimited artworks protected</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Unlimited portfolio monitoring</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Enterprise portfolio management</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Custom AI model training</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">24/7 monitoring & support</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Advanced deepfake detection</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Advanced blockchain integration</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Enterprise SSO</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Custom integrations</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">SLA guarantees</span>
-                  </div>
-                </div>
-                <Button className="w-full" variant="outline" onClick={() => handlePricingPlan("Contact Sales")}>
-                  Contact Sales
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="mt-16 text-center">
-            <p className="text-muted-foreground mb-8">
-              All plans include our core protection features. Upgrade or downgrade anytime.
-            </p>
-
-            <div className="flex flex-wrap justify-center gap-6 text-sm">
-              <div className="flex items-center space-x-2">
-                <Shield className="h-4 w-4 text-green-500" />
-                <span>Industry-leading security</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Globe className="h-4 w-4 text-blue-500" />
-                <span>Global monitoring network</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Lock className="h-4 w-4 text-purple-500" />
-                <span>Bank-level encryption</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Shield className="h-4 w-4 text-orange-500" />
-                <span>99.9% threat detection rate</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-primary/5 to-accent/5">
