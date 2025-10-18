@@ -6,6 +6,10 @@ import "./index.css";
 import { AuthProvider } from "./contexts/AuthContext";
 import { SubscriptionProvider } from "./contexts/SubscriptionContext";
 import "./i18n";
+import { initSentry } from "./lib/sentry";
+
+// Initialize Sentry
+initSentry();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
