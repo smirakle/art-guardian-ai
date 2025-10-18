@@ -15,6 +15,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { UserGuide } from '@/components/UserGuide';
+import { bugReportGuide } from '@/data/userGuides';
 
 export const BugReportButton: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -91,10 +93,19 @@ export const BugReportButton: React.FC = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Report a Bug</DialogTitle>
-          <DialogDescription>
-            Help us improve TSMO by reporting any issues you encounter.
-          </DialogDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <DialogTitle>Report a Bug</DialogTitle>
+              <DialogDescription>
+                Help us improve TSMO by reporting any issues you encounter.
+              </DialogDescription>
+            </div>
+            <UserGuide 
+              title={bugReportGuide.title}
+              description={bugReportGuide.description}
+              sections={bugReportGuide.sections}
+            />
+          </div>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">

@@ -34,6 +34,8 @@ import { supabase } from "@/integrations/supabase/client";
 import VisualRecognition from "@/components/VisualRecognition";
 import { AdvancedWatermarkProtection } from "@/components/AdvancedWatermarkProtection";
 import { WatermarkResult } from "@/lib/advancedWatermark";
+import { UserGuide } from "@/components/UserGuide";
+import { uploadGuide } from "@/data/userGuides";
 
 interface UploadedFile {
   id: string;
@@ -526,6 +528,11 @@ const Upload = () => {
             <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Upload & Protect
             </h1>
+            <UserGuide 
+              title={uploadGuide.title}
+              description={uploadGuide.description}
+              sections={uploadGuide.sections}
+            />
             </div>
             <p className="text-lg md:text-xl text-muted-foreground mb-4">
               Upload your creative work to start AI-powered protection

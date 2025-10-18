@@ -29,6 +29,8 @@ import { ProductionCrawlerBlockingSettings } from '@/components/ai-protection/Pr
 import { ProductionLikenessSettings } from '@/components/ai-protection/ProductionLikenessSettings';
 import { AITrainingSettings } from '@/components/AITrainingSettings';
 import { BugReportButton } from '@/components/BugReportButton';
+import { UserGuide } from '@/components/UserGuide';
+import { protectionHubGuide } from '@/data/userGuides';
 
 const ProtectionHub = () => {
   const [activeTab, setActiveTab] = useState('upload');
@@ -38,7 +40,14 @@ const ProtectionHub = () => {
     <div className="container mx-auto px-4 py-8 space-y-6">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold mb-4">Content Protection Hub</h1>
+        <div className="flex items-center justify-center gap-4 mb-4">
+          <h1 className="text-4xl font-bold">Content Protection Hub</h1>
+          <UserGuide 
+            title={protectionHubGuide.title}
+            description={protectionHubGuide.description}
+            sections={protectionHubGuide.sections}
+          />
+        </div>
         <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
           Comprehensive AI training protection, content upload, and monitoring all in one place
         </p>

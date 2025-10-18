@@ -24,6 +24,8 @@ import {
   UserX
 } from "lucide-react";
 import { CheckoutTaxCalculation } from "@/components/billing/CheckoutTaxCalculation";
+import { UserGuide } from "@/components/UserGuide";
+import { checkoutGuide } from "@/data/userGuides";
 
 interface PlanDetails {
   name: string;
@@ -288,9 +290,16 @@ const Checkout = () => {
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Complete Your Order
-          </h1>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Complete Your Order
+            </h1>
+            <UserGuide 
+              title={checkoutGuide.title}
+              description={checkoutGuide.description}
+              sections={checkoutGuide.sections}
+            />
+          </div>
           <p className="text-lg text-muted-foreground">
             Join thousands of artists protecting their creative work with TSMO
           </p>
