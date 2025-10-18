@@ -171,7 +171,7 @@ const UnifiedDashboard = () => {
         }
       ]
         .filter(Boolean)
-        .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+        .sort((a, b) => b!.timestamp.getTime() - a!.timestamp.getTime())
         .slice(0, 5);
 
       return {
@@ -186,6 +186,12 @@ const UnifiedDashboard = () => {
     }
   });
 
+  // Memoize empty state check - always called after all other hooks
+  const hasAnyData = useMemo(() => 
+    stats ? (stats.protectedAssets > 0 || stats.threats > 0 || stats.blockchainRecords > 0) : false,
+    [stats]
+  );
+
   const renderActivityIcon = (iconType: string) => {
     switch (iconType) {
       case 'shield': return <Shield className="h-4 w-4 text-green-500" />;
@@ -197,40 +203,7 @@ const UnifiedDashboard = () => {
     }
   };
 
-  // Show error state if user is not authenticated
-  if (!user && !authLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8 space-y-6">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-destructive mb-4">Authentication Required</h2>
-          <p className="text-muted-foreground mb-4">Please log in to access the dashboard.</p>
-          <Button onClick={() => window.location.href = '/auth'}>Go to Login</Button>
-        </div>
-      </div>
-    );
-  }
-
-  // Show loading while auth is loading or data is loading
-  if (authLoading || dataLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8 space-y-6">
-        <div className="animate-pulse space-y-8">
-          <div className="h-16 bg-muted rounded-lg" />
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-            {[1,2,3,4,5,6].map(i => (
-              <div key={i} className="h-32 bg-muted rounded-lg" />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Memoize empty state check
-  const hasAnyData = useMemo(() => 
-    stats ? (stats.protectedAssets > 0 || stats.threats > 0 || stats.blockchainRecords > 0) : false,
-    [stats]
-  );
+  // Conditional rendering after all hooks are called
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
