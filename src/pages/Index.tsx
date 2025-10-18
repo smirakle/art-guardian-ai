@@ -21,6 +21,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import LeaveReview from "@/components/LeaveReview";
 import ContextualHelp from "@/components/help-system/ContextualHelp";
+import { BugReportButton } from "@/components/BugReportButton";
 
 import {
   Shield,
@@ -1719,6 +1720,9 @@ const Index = () => {
 
       {/* Leave a Review Section */}
       <LeaveReview />
+
+      {/* Bug Report Button */}
+      <BugReportButton />
     </div>
   );
 };
