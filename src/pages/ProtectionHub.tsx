@@ -18,6 +18,7 @@ import {
   TrendingUp,
   Settings
 } from 'lucide-react';
+import { MonitoringWrapper } from '@/components/MonitoringWrapper';
 
 // Import existing components
 import { AIDetectionDashboard } from '@/components/phase1/AIDetectionDashboard';
@@ -37,7 +38,8 @@ const ProtectionHub = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
+    <MonitoringWrapper componentName="ProtectionHub" budgets={{ pageLoad: 2000, apiCall: 1000 }}>
+      <div className="container mx-auto px-4 py-8 space-y-6">
       {/* Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-4 mb-4">
@@ -305,7 +307,8 @@ const ProtectionHub = () => {
         </TabsContent>
       </Tabs>
       <BugReportButton />
-    </div>
+      </div>
+    </MonitoringWrapper>
   );
 };
 

@@ -29,6 +29,9 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePerformanceBudget } from "@/hooks/usePerformanceBudget";
+import { useMonitoredSupabaseCall } from "@/hooks/useMonitoredSupabaseCall";
+import { MonitoringWrapper } from "@/components/MonitoringWrapper";
 
 import { supabase } from "@/integrations/supabase/client";
 import VisualRecognition from "@/components/VisualRecognition";
@@ -50,6 +53,11 @@ interface UploadedFile {
 const Upload = () => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const { measureApiCall, measureDatabaseQuery } = usePerformanceBudget({
+    apiCall: 3000, // 3s for file uploads
+    databaseQuery: 500,
+  });
+  const { invokeFunction, query } = useMonitoredSupabaseCall();
   
   // Authentication is optional for viewing, required for protecting
   
