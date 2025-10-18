@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { UserGuide } from '@/components/UserGuide';
+import { monitoringHubGuide } from '@/data/userGuides';
 import { 
   Monitor, 
   Search, 
@@ -27,7 +29,14 @@ const MonitoringHub = () => {
     <div className="container mx-auto px-4 py-8 space-y-6">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold mb-4">Monitoring & Detection Hub</h1>
+        <div className="flex items-center justify-center gap-4 mb-4">
+          <h1 className="text-4xl font-bold">Monitoring & Detection Hub</h1>
+          <UserGuide 
+            title={monitoringHubGuide.title}
+            description={monitoringHubGuide.description}
+            sections={monitoringHubGuide.sections}
+          />
+        </div>
         <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
           Comprehensive monitoring across portfolios, profiles, trademarks, and content forgery detection
         </p>

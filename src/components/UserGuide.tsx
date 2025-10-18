@@ -98,7 +98,11 @@ export const UserGuide = ({ title, description, sections, variant = 'button' }: 
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button 
+          variant="default" 
+          size="sm" 
+          className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all"
+        >
           <HelpCircle className="h-4 w-4" />
           <span className="hidden sm:inline">User Guide</span>
         </Button>

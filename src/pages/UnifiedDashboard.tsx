@@ -5,6 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import ContextualHelp from '@/components/help-system/ContextualHelp';
+import { UserGuide } from '@/components/UserGuide';
+import { unifiedDashboardGuide } from '@/data/userGuides';
 import { 
   Shield, 
   TrendingUp, 
@@ -332,13 +334,22 @@ const UnifiedDashboard = () => {
       {!hasAnyData ? (
         <DashboardEmptyState />
       ) : (
-        <>
+          <>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Protection Dashboard</h1>
-        <p className="text-muted-foreground">
-          Monitor and manage your IP protection
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Protection Dashboard</h1>
+            <p className="text-muted-foreground">
+              Monitor and manage your IP protection
+            </p>
+          </div>
+          <UserGuide 
+            title={unifiedDashboardGuide.title}
+            description={unifiedDashboardGuide.description}
+            sections={unifiedDashboardGuide.sections}
+          />
+        </div>
       </div>
 
       {/* Key Metrics */}

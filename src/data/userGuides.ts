@@ -467,3 +467,285 @@ export const bugReportGuide = {
     }
   ]
 };
+
+export const monitoringHubGuide = {
+  title: "Monitoring & Detection Hub Guide",
+  description: "Comprehensive monitoring across all your digital assets",
+  sections: [
+    {
+      title: "Understanding the Monitoring Hub",
+      content: `
+        <p>The Monitoring Hub provides 24/7 surveillance of your protected content across multiple platforms and detection methods.</p>
+        <p><strong>Five monitoring types:</strong></p>
+        <ul>
+          <li><strong>Portfolio:</strong> Track your entire collection of protected works</li>
+          <li><strong>Profile:</strong> Monitor unauthorized use of your identity</li>
+          <li><strong>Trademark:</strong> Detect trademark violations</li>
+          <li><strong>Deepfake:</strong> Identify manipulated media using your likeness</li>
+          <li><strong>Forgery:</strong> Detect image manipulation and AI-generated copies</li>
+        </ul>
+      `,
+      tips: [
+        "Enable all monitoring types for complete protection",
+        "Check the hub daily for new detections",
+        "Configure alert preferences in Settings"
+      ]
+    },
+    {
+      title: "Portfolio Monitoring",
+      content: `
+        <p>Track all your protected artworks in one centralized dashboard.</p>
+        <p><strong>Features:</strong></p>
+        <ul>
+          <li>View all protected assets at a glance</li>
+          <li>Track protection status and violations</li>
+          <li>Quick access to certificates and proof</li>
+          <li>Bulk actions for multiple items</li>
+        </ul>
+        <p><strong>What's monitored:</strong></p>
+        <ul>
+          <li>Social media platforms</li>
+          <li>Stock photo websites</li>
+          <li>E-commerce marketplaces</li>
+          <li>AI training datasets</li>
+        </ul>
+      `,
+      tips: [
+        "Organize works with tags for easy filtering",
+        "Set up automated scans for critical pieces",
+        "Download reports monthly for records"
+      ]
+    },
+    {
+      title: "Deepfake Detection",
+      content: `
+        <p>Advanced AI-powered detection of manipulated media.</p>
+        <p><strong>Detection capabilities:</strong></p>
+        <ul>
+          <li>Face swap identification (98.7% accuracy)</li>
+          <li>Voice synthesis detection</li>
+          <li>Video manipulation analysis</li>
+          <li>Real-time platform scanning</li>
+        </ul>
+        <p><strong>How to use:</strong></p>
+        <ol>
+          <li>Click "Start Deepfake Scan"</li>
+          <li>Select platforms to monitor</li>
+          <li>Review detected matches</li>
+          <li>Take action on confirmed violations</li>
+        </ol>
+      `,
+      tips: [
+        "Enable real-time alerts for high-risk content",
+        "Scan weekly for comprehensive coverage",
+        "Report false positives to improve accuracy"
+      ]
+    },
+    {
+      title: "Image Forgery Analysis",
+      content: `
+        <p>Detect manipulation and AI-generated copies of your work.</p>
+        <p><strong>Analysis techniques:</strong></p>
+        <ul>
+          <li>Copy-move detection algorithms</li>
+          <li>EXIF metadata forensics</li>
+          <li>Compression artifact analysis</li>
+          <li>AI generation fingerprinting</li>
+        </ul>
+        <p><strong>What it detects:</strong></p>
+        <ul>
+          <li>Edited or manipulated versions</li>
+          <li>AI-upscaled copies</li>
+          <li>Style-transferred derivatives</li>
+          <li>Metadata tampering</li>
+        </ul>
+      `,
+      tips: [
+        "Use with blockchain verification for legal proof",
+        "Run analysis on suspicious matches",
+        "Keep detection reports for evidence"
+      ]
+    },
+    {
+      title: "Managing Alerts & Actions",
+      content: `
+        <p>Stay informed and take action on detected violations.</p>
+        <p><strong>Alert severity levels:</strong></p>
+        <ul>
+          <li>🔴 <strong>Critical:</strong> Exact copies or commercial misuse</li>
+          <li>🟡 <strong>Warning:</strong> Similar content or potential violation</li>
+          <li>🟢 <strong>Low Risk:</strong> Possible false positive</li>
+        </ul>
+        <p><strong>Available actions:</strong></p>
+        <ul>
+          <li>File automated DMCA takedown (Pro plan)</li>
+          <li>Send cease & desist notice</li>
+          <li>Whitelist legitimate uses</li>
+          <li>Generate evidence report</li>
+        </ul>
+      `,
+      tips: [
+        "Respond to critical alerts within 24 hours",
+        "Keep records of all takedown actions",
+        "Whitelist your own authorized platforms"
+      ]
+    }
+  ]
+};
+
+export const unifiedDashboardGuide = {
+  title: "Unified Dashboard Guide",
+  description: "Central command for all your protection activities",
+  sections: [
+    {
+      title: "Dashboard Overview",
+      content: `
+        <p>Your unified dashboard brings together all aspects of IP protection in one place.</p>
+        <p><strong>Key sections:</strong></p>
+        <ul>
+          <li><strong>Overview:</strong> Recent activity and quick actions</li>
+          <li><strong>Protection:</strong> AI detection and one-click protection tools</li>
+          <li><strong>Legal:</strong> DMCA notices and legal network access</li>
+          <li><strong>Blockchain:</strong> Ownership registry and certificates</li>
+        </ul>
+        <p>Each section provides real-time data and actionable insights.</p>
+      `,
+      tips: [
+        "Start your day by checking the Overview tab",
+        "Set up email digests for daily summaries",
+        "Use quick actions for common tasks"
+      ]
+    },
+    {
+      title: "Understanding Your Metrics",
+      content: `
+        <p>Six key metrics provide instant insight into your protection status:</p>
+        <p><strong>Protected Assets:</strong></p>
+        <ul>
+          <li>Total number of artworks and content under protection</li>
+          <li>Includes AI-protected, blockchain-registered items</li>
+        </ul>
+        <p><strong>Active Scans:</strong></p>
+        <ul>
+          <li>Currently running monitoring agents</li>
+          <li>Indicates continuous protection coverage</li>
+        </ul>
+        <p><strong>Threats:</strong></p>
+        <ul>
+          <li>Detected copyright violations</li>
+          <li>Requires your review and action</li>
+        </ul>
+        <p><strong>Success Rate:</strong></p>
+        <ul>
+          <li>Percentage of threats successfully resolved</li>
+          <li>Higher is better (95%+ is excellent)</li>
+        </ul>
+      `,
+      tips: [
+        "Aim for 100% active protection on valuable works",
+        "Address threats promptly to maintain high success rate",
+        "Monitor trends over time for insights"
+      ]
+    },
+    {
+      title: "Protection Tab Features",
+      content: `
+        <p>Access all protection tools in one place:</p>
+        <p><strong>AI Detection Dashboard:</strong></p>
+        <ul>
+          <li>View AI training violation alerts</li>
+          <li>Configure protection settings</li>
+          <li>Analyze detection patterns</li>
+        </ul>
+        <p><strong>One-Click Protection:</strong></p>
+        <ul>
+          <li>Apply multiple protections instantly</li>
+          <li>Watermark + AI shield + blockchain</li>
+          <li>Bulk protect entire collections</li>
+        </ul>
+        <p>Perfect for quickly securing new uploads.</p>
+      `,
+      tips: [
+        "Use one-click protection for time-sensitive uploads",
+        "Review AI detection settings monthly",
+        "Enable automatic protection for new uploads"
+      ]
+    },
+    {
+      title: "Legal Tab & DMCA Actions",
+      content: `
+        <p>Manage all legal aspects of copyright protection:</p>
+        <p><strong>Global Legal Network:</strong></p>
+        <ul>
+          <li>Access to 50+ legal jurisdictions</li>
+          <li>Automated DMCA notice generation</li>
+          <li>Track takedown success rates</li>
+        </ul>
+        <p><strong>DMCA Process:</strong></p>
+        <ol>
+          <li>Violation detected by monitoring</li>
+          <li>Review and confirm infringement</li>
+          <li>Generate DMCA notice automatically</li>
+          <li>Track platform response</li>
+          <li>Escalate if needed</li>
+        </ol>
+      `,
+      tips: [
+        "Professional plan includes automatic filing",
+        "Keep all DMCA records for future claims",
+        "Response time averages 24-72 hours"
+      ]
+    },
+    {
+      title: "Blockchain Tab & Certificates",
+      content: `
+        <p>Immutable proof of ownership and creation:</p>
+        <p><strong>Blockchain Registry:</strong></p>
+        <ul>
+          <li>Permanent record of your IP ownership</li>
+          <li>Timestamped creation proof</li>
+          <li>Legally recognized worldwide</li>
+          <li>Transferable ownership rights</li>
+        </ul>
+        <p><strong>Using certificates:</strong></p>
+        <ul>
+          <li>Download PDF certificates for legal cases</li>
+          <li>Share verification links with clients</li>
+          <li>Include in licensing agreements</li>
+          <li>Present as evidence in disputes</li>
+        </ul>
+      `,
+      tips: [
+        "Register important works immediately",
+        "Store certificates in multiple locations",
+        "Include blockchain proof in all legal filings"
+      ]
+    },
+    {
+      title: "Recent Activity & Quick Actions",
+      content: `
+        <p>Stay on top of your protection ecosystem:</p>
+        <p><strong>Recent Activity shows:</strong></p>
+        <ul>
+          <li>New artwork protections</li>
+          <li>Violation detections</li>
+          <li>Blockchain registrations</li>
+          <li>DMCA filings</li>
+          <li>AI protection activations</li>
+        </ul>
+        <p><strong>Quick Actions provide:</strong></p>
+        <ul>
+          <li>One-click upload & protect</li>
+          <li>Start new monitoring scans</li>
+          <li>Configure AI protection</li>
+          <li>Access analytics dashboard</li>
+        </ul>
+      `,
+      tips: [
+        "Check activity daily for important updates",
+        "Use quick actions to streamline workflow",
+        "Set up notifications for critical events"
+      ]
+    }
+  ]
+};
