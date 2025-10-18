@@ -73,6 +73,12 @@ serve(async (req) => {
 async function handleAlert(supabase: any, alert: Alert) {
   console.log('Processing alert:', alert.title, alert.severity);
 
+  // Only create alert if we have a user_id
+  if (!alert.user_id) {
+    console.warn('Alert skipped - no user_id provided:', alert.title);
+    return;
+  }
+
   // Store alert in advanced_alerts table
   const { error: insertError } = await supabase
     .from('advanced_alerts')
@@ -115,6 +121,7 @@ async function handleAlert(supabase: any, alert: Alert) {
 async function logWebVital(supabase: any, metric: any, page: string) {
   console.log('Logging web vital:', metric.name, metric.value);
 
+  // Store web vital in production_metrics
   await supabase.from('production_metrics').insert({
     metric_type: 'web_vital',
     metric_name: metric.name,
@@ -126,16 +133,23 @@ async function logWebVital(supabase: any, metric: any, page: string) {
     },
   });
 
-  // Alert on poor web vitals
-  if (metric.rating === 'poor') {
+  // Get current user if authenticated
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  // Only create alerts for poor web vitals if we have a user context
+  if (metric.rating === 'poor' && user?.id) {
     await handleAlert(supabase, {
       title: 'Poor Web Vital Detected',
       message: `${metric.name} is ${metric.value} (poor rating) on ${page}`,
       severity: 'warning',
       source: 'web_vitals',
+      user_id: user.id,
       metadata: metric,
       timestamp: new Date().toISOString(),
     });
+  } else if (metric.rating === 'poor') {
+    // Log poor web vital to metrics even without user context
+    console.log('Poor web vital detected (no user context):', metric.name, metric.value);
   }
 }
 
