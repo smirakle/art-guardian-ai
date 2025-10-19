@@ -8,52 +8,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import LeaveReview from "@/components/LeaveReview";
 import ContextualHelp from "@/components/help-system/ContextualHelp";
 import { BugReportButton } from "@/components/BugReportButton";
-
-import {
-  Shield,
-  Eye,
-  Activity,
-  Link2,
-  Search,
-  Check,
-  Star,
-  ArrowRight,
-  Zap,
-  Globe,
-  Lock,
-  TrendingUp,
-  Users,
-  Mail,
-  Phone,
-  MapPin,
-  FileImage,
-  Upload,
-  Scan,
-  Bot,
-  Play,
-  ChevronRight,
-  FileText,
-  Scale,
-  Building,
-  Heart,
-  ExternalLink,
-  UserX,
-  Calendar,
-} from "lucide-react";
+import { Shield, Eye, Activity, Link2, Search, Check, Star, ArrowRight, Zap, Globe, Lock, TrendingUp, Users, Mail, Phone, MapPin, FileImage, Upload, Scan, Bot, Play, ChevronRight, FileText, Scale, Building, Heart, ExternalLink, UserX, Calendar } from "lucide-react";
 import { ShieldCheck, EyeOff, Fingerprint, Code2, BadgeCheck } from "lucide-react";
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import MonitoringFlow from "@/components/MonitoringFlow";
@@ -61,16 +23,17 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import OnboardingTour from "@/components/OnboardingTour";
 import DemoEnvironment from "@/components/investor/DemoEnvironment";
 import MobileAppCTA from "@/components/MobileAppCTA";
-
 const Index = () => {
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const navigate = useNavigate();
-  const { user } = useAuth();
-
+  const {
+    user
+  } = useAuth();
   useEffect(() => {
     const title = "TSMO | AI Art Protection & Forgery Detection";
     document.title = title;
-
     const setMeta = (name: string, content: string) => {
       let tag = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
       if (!tag) {
@@ -80,12 +43,7 @@ const Index = () => {
       }
       tag.content = content;
     };
-
-    setMeta(
-      "description",
-      "Protect your art with AI monitoring, blockchain verification, and image forgery detection.",
-    );
-
+    setMeta("description", "Protect your art with AI monitoring, blockchain verification, and image forgery detection.");
     let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
     if (!link) {
       link = document.createElement("link");
@@ -107,10 +65,9 @@ const Index = () => {
       "@type": "Organization",
       name: "TSMO",
       url: window.location.origin,
-      logo: window.location.origin + "/favicon.ico",
+      logo: window.location.origin + "/favicon.ico"
     });
   }, []);
-
   const [demoStep, setDemoStep] = useState(0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showSalesDialog, setShowSalesDialog] = useState(false);
@@ -119,12 +76,11 @@ const Index = () => {
     email: "",
     company: "",
     interestedPlan: "",
-    message: "",
+    message: ""
   });
   const [isSendingSales, setIsSendingSales] = useState(false);
   const [showOnboardingTour, setShowOnboardingTour] = useState(false);
   const [showLiveDemo, setShowLiveDemo] = useState(false);
-
   const startDemo = () => {
     setIsAnalyzing(true);
     setDemoStep(1);
@@ -138,20 +94,21 @@ const Index = () => {
       setIsAnalyzing(false);
     }, 8000);
   };
-
   const resetDemo = () => {
     setDemoStep(0);
     setIsAnalyzing(false);
   };
-
   const handlePricingPlan = (plan: string) => {
     if (plan === "Contact Sales") {
-      setSalesFormData((prev) => ({ ...prev, interestedPlan: "Enterprise" }));
+      setSalesFormData(prev => ({
+        ...prev,
+        interestedPlan: "Enterprise"
+      }));
       setShowSalesDialog(true);
     } else {
       toast({
         title: `${plan} Plan Selected`,
-        description: "Redirecting to checkout...",
+        description: "Redirecting to checkout..."
       });
       // Navigate to checkout
       setTimeout(() => {
@@ -159,54 +116,49 @@ const Index = () => {
       }, 1500);
     }
   };
-
   const handleSalesInquiry = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSendingSales(true);
-
     try {
-      const { data, error } = await supabase.functions.invoke("send-sales-inquiry", {
-        body: salesFormData,
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke("send-sales-inquiry", {
+        body: salesFormData
       });
-
       if (error) {
         throw error;
       }
-
       toast({
         title: "Sales Inquiry Sent!",
-        description: "Thank you for your interest. Our sales team will contact you within 24 hours.",
+        description: "Thank you for your interest. Our sales team will contact you within 24 hours."
       });
-
       setShowSalesDialog(false);
       setSalesFormData({
         name: "",
         email: "",
         company: "",
         interestedPlan: "",
-        message: "",
+        message: ""
       });
     } catch (error) {
       console.error("Error sending sales inquiry:", error);
       toast({
         title: "Error",
         description: "Failed to send sales inquiry. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setIsSendingSales(false);
     }
   };
-
   const handleFreeTrial = (plan: string) => {
     toast({
       title: "Free Trial Started!",
-      description: `Your 5-day ${plan} trial is now active. Check your email for setup instructions.`,
+      description: `Your 5-day ${plan} trial is now active. Check your email for setup instructions.`
     });
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+  return <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       {/* User Experience Enhancements */}
       <ContextualHelp />
 
@@ -226,25 +178,19 @@ const Index = () => {
       {/* Navigation Menu - Quick Access */}
       <div className="fixed top-20 right-4 z-40 bg-background/95 backdrop-blur-sm border rounded-lg p-2 shadow-lg">
         <div className="flex flex-col gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}
-          >
+          <Button variant="ghost" size="sm" onClick={() => document.getElementById("how-it-works")?.scrollIntoView({
+          behavior: "smooth"
+        })}>
             How It Works
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => document.getElementById("beta-status")?.scrollIntoView({ behavior: "smooth" })}
-          >
+          <Button variant="ghost" size="sm" onClick={() => document.getElementById("beta-status")?.scrollIntoView({
+          behavior: "smooth"
+        })}>
             Beta Status
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}
-          >
+          <Button variant="ghost" size="sm" onClick={() => document.getElementById("pricing")?.scrollIntoView({
+          behavior: "smooth"
+        })}>
             Pricing
           </Button>
         </div>
@@ -253,17 +199,13 @@ const Index = () => {
       {/* Hero Section - Simplified */}
       <section className="pt-24 sm:pt-32 pb-16 px-4">
         <div className="container mx-auto text-center max-w-5xl">
-          <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm animate-pulse">
+          <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm animate-pulse bg-red-600">
             💰 Stop Losing Money to Content Thieves
           </Badge>
 
           {/* TSMO Logo - Reduced Size */}
           <div className="mb-8">
-            <img
-              src={tsmoLogo}
-              alt="TSMO Multimedia Creative Protection Logo"
-              className="h-48 sm:h-64 md:h-80 mx-auto object-contain"
-            />
+            <img src={tsmoLogo} alt="TSMO Multimedia Creative Protection Logo" className="h-48 sm:h-64 md:h-80 mx-auto object-contain" />
           </div>
 
           <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
@@ -285,21 +227,11 @@ const Index = () => {
 
           {/* Action Buttons - Simplified */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <Button
-              size="lg"
-              className="w-full sm:w-auto px-10 py-5 text-xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg hover:shadow-xl transition-all duration-300"
-              onClick={() => navigate("/ai-protection-settings")}
-              data-tooltip="upload"
-            >
+            <Button size="lg" className="w-full sm:w-auto px-10 py-5 text-xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg hover:shadow-xl transition-all duration-300" onClick={() => navigate("/ai-protection-settings")} data-tooltip="upload">
               Start AI Training Protection
               <ArrowRight className="ml-2 h-6 w-6" />
             </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="w-full sm:w-auto px-10 py-5 text-xl border-2 border-primary hover:bg-primary/10"
-              onClick={() => setShowLiveDemo(true)}
-            >
+            <Button variant="outline" size="lg" className="w-full sm:w-auto px-10 py-5 text-xl border-2 border-primary hover:bg-primary/10" onClick={() => setShowLiveDemo(true)}>
               <Activity className="mr-2 h-6 w-6" />
               See Live Demo
             </Button>
@@ -512,10 +444,7 @@ const Index = () => {
       </section>
 
       {/* Beta Testing Status - Enhanced */}
-      <section
-        id="beta-status"
-        className="py-16 px-4 bg-gradient-to-r from-yellow-50 to-orange-50 border-y border-yellow-200"
-      >
+      <section id="beta-status" className="py-16 px-4 bg-gradient-to-r from-yellow-50 to-orange-50 border-y border-yellow-200">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <Badge variant="outline" className="text-yellow-700 border-yellow-300 mb-6 px-4 py-2 text-lg">
@@ -629,20 +558,11 @@ const Index = () => {
 
           <div className="text-center">
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 px-8"
-                onClick={() => navigate("/roadmap")}
-              >
+              <Button size="lg" className="bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 px-8" onClick={() => navigate("/roadmap")}>
                 <Calendar className="mr-2 h-5 w-5" />
                 View Development Roadmap
               </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-yellow-300 text-yellow-700 hover:bg-yellow-100 px-8"
-                onClick={() => navigate("/contact")}
-              >
+              <Button variant="outline" size="lg" className="border-yellow-300 text-yellow-700 hover:bg-yellow-100 px-8" onClick={() => navigate("/contact")}>
                 <Mail className="mr-2 h-5 w-5" />
                 Report Issues & Feedback
               </Button>
@@ -728,28 +648,21 @@ const Index = () => {
                 Automated monitoring + AI detection + legal automation = Your content protected 24/7
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button
-                  size="lg"
-                  className="bg-primary hover:bg-primary/90 text-white px-6 py-3"
-                  onClick={() => navigate("/upload")}
-                >
+                <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-6 py-3" onClick={() => navigate("/upload")}>
                   Start Protection - FREE Trial
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-primary text-primary hover:bg-primary/10 px-6 py-3"
-                  onClick={() => {
-                    navigate("/");
-                    setTimeout(() => {
-                      const pricingSection = document.getElementById("pricing");
-                      if (pricingSection) {
-                        pricingSection.scrollIntoView({ behavior: "smooth" });
-                      }
-                    }, 100);
-                  }}
-                >
+                <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary/10 px-6 py-3" onClick={() => {
+                navigate("/");
+                setTimeout(() => {
+                  const pricingSection = document.getElementById("pricing");
+                  if (pricingSection) {
+                    pricingSection.scrollIntoView({
+                      behavior: "smooth"
+                    });
+                  }
+                }, 100);
+              }}>
                   See Pricing: From $19/month + AI Training Protection $49/month
                 </Button>
               </div>
@@ -1280,10 +1193,7 @@ const Index = () => {
                   </div>
                 </div>
                 <div className="pt-4">
-                  <Button
-                    className="w-full bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700"
-                    onClick={() => navigate("/ai-protection")}
-                  >
+                  <Button className="w-full bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700" onClick={() => navigate("/ai-protection")}>
                     Protect from AI Training
                     <Shield className="ml-2 h-4 w-4" />
                   </Button>
@@ -1323,10 +1233,7 @@ const Index = () => {
                   </div>
                 </div>
                 <div className="pt-4">
-                  <Button
-                    className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700"
-                    onClick={() => navigate("/profile-monitoring")}
-                  >
+                  <Button className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700" onClick={() => navigate("/profile-monitoring")}>
                     Monitor Your Profile
                     <Users className="ml-2 h-4 w-4" />
                   </Button>
@@ -1366,10 +1273,7 @@ const Index = () => {
                   </div>
                 </div>
                 <div className="pt-4">
-                  <Button
-                    className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700"
-                    onClick={() => navigate("/portfolio-monitoring")}
-                  >
+                  <Button className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700" onClick={() => navigate("/portfolio-monitoring")}>
                     Monitor Portfolio
                     <TrendingUp className="ml-2 h-4 w-4" />
                   </Button>
@@ -1410,10 +1314,7 @@ const Index = () => {
                 </div>
 
                 <div className="pt-4">
-                  <Button
-                    className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
-                    onClick={() => navigate("/trademark-monitoring")}
-                  >
+                  <Button className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700" onClick={() => navigate("/trademark-monitoring")}>
                     Monitor Trademarks
                     <Scale className="ml-2 h-4 w-4" />
                   </Button>
@@ -1526,28 +1427,13 @@ const Index = () => {
                   Government copyright offices and intellectual property organizations.
                 </p>
                 <div className="space-y-2">
-                  <a
-                    href="https://www.copyright.gov"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
-                  >
+                  <a href="https://www.copyright.gov" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors">
                     US Copyright Office <ExternalLink className="ml-1 h-3 w-3" />
                   </a>
-                  <a
-                    href="https://www.wipo.int"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
-                  >
+                  <a href="https://www.wipo.int" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors">
                     WIPO <ExternalLink className="ml-1 h-3 w-3" />
                   </a>
-                  <a
-                    href="https://euipo.europa.eu"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
-                  >
+                  <a href="https://euipo.europa.eu" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors">
                     EU Copyright <ExternalLink className="ml-1 h-3 w-3" />
                   </a>
                 </div>
@@ -1564,28 +1450,13 @@ const Index = () => {
                   Organizations providing legal aid and support for artists.
                 </p>
                 <div className="space-y-2">
-                  <a
-                    href="https://www.vlaa.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
-                  >
+                  <a href="https://www.vlaa.org" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors">
                     Volunteer Lawyers for the Arts <ExternalLink className="ml-1 h-3 w-3" />
                   </a>
-                  <a
-                    href="https://www.cala.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
-                  >
+                  <a href="https://www.cala.org" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors">
                     California Lawyers for the Arts <ExternalLink className="ml-1 h-3 w-3" />
                   </a>
-                  <a
-                    href="https://www.legalaidnyc.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors"
-                  >
+                  <a href="https://www.legalaidnyc.org" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors">
                     Legal Aid Society <ExternalLink className="ml-1 h-3 w-3" />
                   </a>
                 </div>
@@ -1606,11 +1477,7 @@ const Index = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button
-              size="lg"
-              className="px-8 py-3 text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
-              onClick={() => navigate("/upload")}
-            >
+            <Button size="lg" className="px-8 py-3 text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90" onClick={() => navigate("/upload")}>
               Start Protecting Now
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -1661,53 +1528,35 @@ const Index = () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="name">Name *</Label>
-                <Input
-                  id="name"
-                  required
-                  value={salesFormData.name}
-                  onChange={(e) => setSalesFormData((prev) => ({ ...prev, name: e.target.value }))}
-                  placeholder="Your full name"
-                />
+                <Input id="name" required value={salesFormData.name} onChange={e => setSalesFormData(prev => ({
+                ...prev,
+                name: e.target.value
+              }))} placeholder="Your full name" />
               </div>
               <div>
                 <Label htmlFor="email">Email *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  required
-                  value={salesFormData.email}
-                  onChange={(e) => setSalesFormData((prev) => ({ ...prev, email: e.target.value }))}
-                  placeholder="your@email.com"
-                />
+                <Input id="email" type="email" required value={salesFormData.email} onChange={e => setSalesFormData(prev => ({
+                ...prev,
+                email: e.target.value
+              }))} placeholder="your@email.com" />
               </div>
             </div>
             <div>
               <Label htmlFor="company">Company</Label>
-              <Input
-                id="company"
-                value={salesFormData.company}
-                onChange={(e) => setSalesFormData((prev) => ({ ...prev, company: e.target.value }))}
-                placeholder="Your company name (optional)"
-              />
+              <Input id="company" value={salesFormData.company} onChange={e => setSalesFormData(prev => ({
+              ...prev,
+              company: e.target.value
+            }))} placeholder="Your company name (optional)" />
             </div>
             <div>
               <Label htmlFor="message">Message *</Label>
-              <Textarea
-                id="message"
-                required
-                rows={4}
-                value={salesFormData.message}
-                onChange={(e) => setSalesFormData((prev) => ({ ...prev, message: e.target.value }))}
-                placeholder="Tell us about your requirements and how many artworks you need to protect..."
-              />
+              <Textarea id="message" required rows={4} value={salesFormData.message} onChange={e => setSalesFormData(prev => ({
+              ...prev,
+              message: e.target.value
+            }))} placeholder="Tell us about your requirements and how many artworks you need to protect..." />
             </div>
             <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowSalesDialog(false)}
-                disabled={isSendingSales}
-              >
+              <Button type="button" variant="outline" onClick={() => setShowSalesDialog(false)} disabled={isSendingSales}>
                 Cancel
               </Button>
               <Button type="submit" disabled={isSendingSales}>
@@ -1723,8 +1572,6 @@ const Index = () => {
 
       {/* Bug Report Button */}
       <BugReportButton />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
