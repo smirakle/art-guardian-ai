@@ -205,7 +205,7 @@ const Index = () => {
 
           {/* TSMO Logo - Reduced Size */}
           <div className="mb-8">
-            <img src={tsmoLogo} alt="TSMO Multimedia Creative Protection Logo" className="h-48 sm:h-64 md:h-80 mx-auto object-contain" />
+            <img src={tsmoLogo} alt="TSMO Multimedia Creative Protection Logo" className="h-72 sm:h-96 md:h-[30rem] mx-auto object-contain" />
           </div>
 
           <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight lg:text-6xl">
