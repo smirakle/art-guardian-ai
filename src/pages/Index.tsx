@@ -208,10 +208,10 @@ const Index = () => {
             <img src={tsmoLogo} alt="TSMO Multimedia Creative Protection Logo" className="h-48 sm:h-64 md:h-80 mx-auto object-contain" />
           </div>
 
-          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight lg:text-6xl">
             Protect Your Art.
             <br />
-            <span className="text-foreground">Keep What's Yours.</span>
+            <span className="font-normal text-neutral-700">Keep What's Yours.</span>
           </h1>
 
           <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 max-w-4xl mx-auto leading-relaxed">
