@@ -355,13 +355,28 @@ async function searchSerpAPI(imageUrl: string) {
     
     return data.image_results?.map((item: any) => {
       try {
-        const domain = item.source ? new URL(item.source).hostname : 'unknown';
+        // Handle cases where source might not be a full URL
+        let sourceUrl = item.source || item.link || '';
+        let domain = 'unknown';
+        
+        // Try to parse as URL, if it fails, treat as domain name
+        try {
+          if (sourceUrl.startsWith('http://') || sourceUrl.startsWith('https://')) {
+            domain = new URL(sourceUrl).hostname;
+          } else if (sourceUrl) {
+            // It's likely just a domain name
+            domain = sourceUrl;
+            sourceUrl = `https://${sourceUrl}`;
+          }
+        } catch {
+          domain = sourceUrl || 'unknown';
+        }
         
         return {
-          source_url: item.source,
+          source_url: sourceUrl,
           source_domain: domain,
-          source_title: item.title,
-          image_url: item.original,
+          source_title: item.title || 'Match found',
+          image_url: item.original || item.thumbnail,
           thumbnail_url: item.thumbnail,
           match_confidence: 90,
           match_type: 'exact',
