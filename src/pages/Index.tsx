@@ -214,7 +214,7 @@ const Index = () => {
             <span className="font-normal text-neutral-700">Keep What's Yours.</span>
           </h1>
 
-          <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-4xl mx-auto leading-relaxed md:text-xl">
             Advanced AI-powered protection for digital artists. Monitor, verify, and secure your creative work with
             blockchain technology and&nbsp;real-time&nbsp;threat&nbsp;detection.
           </p>
