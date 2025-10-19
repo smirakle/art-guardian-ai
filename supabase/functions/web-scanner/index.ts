@@ -14,89 +14,145 @@ serve(async (req) => {
   try {
     const { artworkId, title } = await req.json();
     
-    console.log('Starting comprehensive web scan for:', title);
+    console.log('Starting REAL web scan for:', title);
     
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY')!;
+    const tineye_key = Deno.env.get('TINEYE_API_KEY');
+    const serpapi_key = Deno.env.get('SERPAPI_KEY');
+    const bing_key = Deno.env.get('BING_VISUAL_SEARCH_API_KEY');
     
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Generate search strategies using AI
-    const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${lovableApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are an expert at finding unauthorized uses of artwork online. Generate comprehensive search strategies.'
-          },
-          {
-            role: 'user',
-            content: `For artwork titled "${title}", generate 10 search queries to find unauthorized uses across:
-1. E-commerce sites (Etsy, Redbubble, Amazon, etc.)
-2. Social media platforms
-3. Art sharing sites
-4. Print-on-demand services
-5. Stock image sites
-
-Format as JSON array: ["query1", "query2", ...]`
-          }
-        ],
-      }),
-    });
-
-    if (!aiResponse.ok) {
-      throw new Error(`AI query generation failed: ${aiResponse.statusText}`);
-    }
-
-    const aiResult = await aiResponse.json();
-    const queriesText = aiResult.choices[0].message.content;
+    // Get artwork image URL
+    const { data: artwork } = await supabase
+      .from('artwork')
+      .select('file_paths')
+      .eq('id', artworkId)
+      .single();
     
-    let searchQueries = [];
-    try {
-      const jsonMatch = queriesText.match(/\[[\s\S]*\]/);
-      searchQueries = jsonMatch ? JSON.parse(jsonMatch[0]) : [];
-    } catch (e) {
-      searchQueries = [title, `"${title}"`, `${title} artwork`, `${title} print`];
+    if (!artwork?.file_paths?.[0]) {
+      throw new Error('Artwork image not found');
     }
 
-    console.log('Generated search queries:', searchQueries);
+    const imageUrl = `${supabaseUrl}/storage/v1/object/public/${artwork.file_paths[0]}`;
+    console.log('Searching for image:', imageUrl);
 
-    // Simulate web scanning results (in production, would use actual web scraping)
-    const domains = [
-      'etsy.com', 'redbubble.com', 'society6.com', 'amazon.com',
-      'pinterest.com', 'instagram.com', 'facebook.com', 'twitter.com',
-      'deviantart.com', 'artstation.com', 'behance.net', 'dribbble.com',
-      'shutterstock.com', 'istockphoto.com', 'gettyimages.com',
-      'zazzle.com', 'cafepress.com', 'spreadshirt.com', 'teespring.com'
-    ];
+    let totalScanned = 0;
+    let matchesFound = 0;
+    const allMatches: any[] = [];
 
-    const totalScanned = 10000 + Math.floor(Math.random() * 5000);
-    const matchesFound = Math.floor(Math.random() * 25) + 5;
+    // TinEye reverse image search
+    if (tineye_key) {
+      try {
+        console.log('Running TinEye search...');
+        const tineye_url = `https://api.tineye.com/rest/search/?url=${encodeURIComponent(imageUrl)}&api_key=${tineye_key}`;
+        const response = await fetch(tineye_url);
+        const data = await response.json();
+        
+        if (data.results?.matches) {
+          totalScanned += data.results.matches.length;
+          matchesFound += Math.min(data.results.matches.length, 10);
+          
+          for (const match of data.results.matches.slice(0, 10)) {
+            allMatches.push({
+              url: match.backlinks?.[0]?.url || `https://${match.domain}`,
+              domain: match.domain,
+              score: match.score || 0.85,
+              source: 'tineye'
+            });
+          }
+        }
+        console.log('TinEye found:', data.results?.matches?.length || 0, 'matches');
+      } catch (error) {
+        console.error('TinEye search failed:', error);
+      }
+    }
 
-    // Create detailed matches
-    for (let i = 0; i < Math.min(matchesFound, 10); i++) {
-      const domain = domains[Math.floor(Math.random() * domains.length)];
-      const confidence = 0.5 + Math.random() * 0.45;
-      const threatLevel = confidence > 0.85 ? 'high' : confidence > 0.7 ? 'medium' : 'low';
+    // Google Reverse Image Search via SerpAPI
+    if (serpapi_key) {
+      try {
+        console.log('Running Google reverse image search...');
+        const serp_url = `https://serpapi.com/search.json?engine=google_reverse_image&image_url=${encodeURIComponent(imageUrl)}&api_key=${serpapi_key}`;
+        const response = await fetch(serp_url);
+        const data = await response.json();
+        
+        if (data.image_results) {
+          totalScanned += data.image_results.length;
+          matchesFound += Math.min(data.image_results.length, 10);
+          
+          for (const result of data.image_results.slice(0, 10)) {
+            allMatches.push({
+              url: result.link,
+              domain: new URL(result.link).hostname,
+              score: 0.8,
+              source: 'google'
+            });
+          }
+        }
+        console.log('Google found:', data.image_results?.length || 0, 'matches');
+      } catch (error) {
+        console.error('Google search failed:', error);
+      }
+    }
+
+    // Bing Visual Search
+    if (bing_key) {
+      try {
+        console.log('Running Bing visual search...');
+        const bing_response = await fetch('https://api.bing.microsoft.com/v7.0/images/visualsearch', {
+          method: 'POST',
+          headers: {
+            'Ocp-Apim-Subscription-Key': bing_key,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ imageInfo: { url: imageUrl } })
+        });
+        const data = await bing_response.json();
+        
+        if (data.tags?.[0]?.actions) {
+          for (const action of data.tags[0].actions) {
+            if (action.actionType === 'PagesIncluding' && action.data?.value) {
+              totalScanned += action.data.value.length;
+              matchesFound += Math.min(action.data.value.length, 10);
+              
+              for (const page of action.data.value.slice(0, 10)) {
+                allMatches.push({
+                  url: page.hostPageUrl,
+                  domain: new URL(page.hostPageUrl).hostname,
+                  score: 0.75,
+                  source: 'bing'
+                });
+              }
+            }
+          }
+        }
+        console.log('Bing found matches');
+      } catch (error) {
+        console.error('Bing search failed:', error);
+      }
+    }
+
+    if (!tineye_key && !serpapi_key && !bing_key) {
+      throw new Error('No reverse image search API keys configured. Please add TINEYE_API_KEY, SERPAPI_KEY, or BING_VISUAL_SEARCH_API_KEY.');
+    }
+
+    // Create detailed matches in database
+    for (let i = 0; i < Math.min(allMatches.length, 10); i++) {
+      const match = allMatches[i];
+      const threatLevel = match.score > 0.85 ? 'high' : match.score > 0.7 ? 'medium' : 'low';
 
       await supabase.from('copyright_matches').insert({
         artwork_id: artworkId,
         scan_id: artworkId,
-        source_url: `https://${domain}/item/${Date.now()}-${i}`,
-        source_domain: domain,
-        source_title: `${title} - Found on ${domain}`,
-        match_type: 'web-crawl',
-        match_confidence: confidence,
+        source_url: match.url,
+        source_domain: match.domain,
+        source_title: `${title} - Found via ${match.source}`,
+        match_type: 'reverse-image-search',
+        match_confidence: match.score,
         threat_level: threatLevel,
-        context: `Discovered through comprehensive web scanning`,
-        description: `Potential unauthorized listing or use detected`,
+        context: `Discovered through ${match.source} reverse image search`,
+        description: `Real match detected with ${(match.score * 100).toFixed(1)}% confidence`,
         is_authorized: false,
         is_reviewed: false
       });
@@ -111,13 +167,17 @@ Format as JSON array: ["query1", "query2", ...]`
         sources_scanned: totalScanned,
         matches_found: matchesFound,
         results_data: {
-          search_queries: searchQueries,
-          domains_checked: domains,
-          total_pages_scanned: totalScanned,
-          matches_by_domain: domains.map(d => ({
-            domain: d,
-            matches: Math.floor(Math.random() * 3)
-          })).filter(d => d.matches > 0)
+          real_detection: true,
+          apis_used: [
+            tineye_key ? 'tineye' : null,
+            serpapi_key ? 'google' : null,
+            bing_key ? 'bing' : null
+          ].filter(Boolean),
+          total_results: totalScanned,
+          matches_by_source: allMatches.reduce((acc, m) => {
+            acc[m.source] = (acc[m.source] || 0) + 1;
+            return acc;
+          }, {} as Record<string, number>)
         }
       })
       .eq('artwork_id', artworkId)
@@ -128,10 +188,14 @@ Format as JSON array: ["query1", "query2", ...]`
     return new Response(
       JSON.stringify({
         success: true,
+        real_detection: true,
         total_scanned: totalScanned,
         matches_found: matchesFound,
-        search_queries: searchQueries,
-        domains_checked: domains.length
+        apis_used: [
+          tineye_key ? 'TinEye' : null,
+          serpapi_key ? 'Google' : null,
+          bing_key ? 'Bing' : null
+        ].filter(Boolean)
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

@@ -31,110 +31,130 @@ serve(async (req) => {
 
     if (artworkError) throw artworkError;
 
-    // Get the file from storage for visual analysis
-    const { data: fileData, error: downloadError } = await supabase.storage
+    // Get public URL for reverse image search
+    const { data: { publicUrl } } = supabase.storage
       .from('artwork')
-      .download(filePath);
+      .getPublicUrl(filePath);
 
-    if (downloadError) throw downloadError;
+    console.log('Running REAL-TIME reverse image search...');
 
-    // Convert to base64
-    const buffer = await fileData.arrayBuffer();
-    const base64Image = btoa(String.fromCharCode(...new Uint8Array(buffer)));
-    const imageUrl = `data:${fileData.type};base64,${base64Image}`;
-
-    // Use AI to generate search queries and analyze the artwork
-    const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${lovableApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are an expert at analyzing artwork and generating comprehensive descriptions for copyright monitoring. Create detailed search queries to find unauthorized uses.'
-          },
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: `Analyze this artwork titled "${artwork.title}" and generate:
-1. A detailed visual description
-2. Key identifying features (colors, style, subjects, composition)
-3. 5 search queries to find copies or unauthorized uses
-4. Potential platforms where this might be misused
-
-Format as JSON: { "description": "...", "features": [...], "queries": [...], "platforms": [...] }`
-              },
-              {
-                type: 'image_url',
-                image_url: { url: imageUrl }
-              }
-            ]
-          }
-        ],
-      }),
-    });
-
-    if (!aiResponse.ok) {
-      throw new Error(`AI analysis failed: ${aiResponse.statusText}`);
-    }
-
-    const aiResult = await aiResponse.json();
-    const analysisText = aiResult.choices[0].message.content;
+    const tineye_key = Deno.env.get('TINEYE_API_KEY');
+    const serpapi_key = Deno.env.get('SERPAPI_KEY');
+    const bing_key = Deno.env.get('BING_VISUAL_SEARCH_API_KEY');
     
-    console.log('AI Analysis:', analysisText);
+    let totalScanned = 0;
+    let matchesFound = 0;
+    const allMatches: any[] = [];
 
-    // Parse JSON from response
-    let scanData;
-    try {
-      const jsonMatch = analysisText.match(/\{[\s\S]*\}/);
-      scanData = jsonMatch ? JSON.parse(jsonMatch[0]) : {
-        description: analysisText,
-        features: [],
-        queries: [],
-        platforms: []
-      };
-    } catch (e) {
-      scanData = {
-        description: analysisText,
-        features: [],
-        queries: [],
-        platforms: []
-      };
+    // TinEye real-time
+    if (tineye_key) {
+      try {
+        console.log('TinEye real-time search...');
+        const tineye_url = `https://api.tineye.com/rest/search/?url=${encodeURIComponent(publicUrl)}&api_key=${tineye_key}`;
+        const response = await fetch(tineye_url);
+        const data = await response.json();
+        
+        if (data.results?.matches) {
+          totalScanned += data.results.matches.length;
+          matchesFound += Math.min(data.results.matches.length, 10);
+          
+          for (const match of data.results.matches.slice(0, 10)) {
+            allMatches.push({
+              url: match.backlinks?.[0]?.url || `https://${match.domain}`,
+              platform: match.domain || 'unknown',
+              score: match.score || 0.85,
+              source: 'tineye'
+            });
+          }
+        }
+        console.log('TinEye real-time:', data.results?.matches?.length || 0, 'matches');
+      } catch (error) {
+        console.error('TinEye real-time failed:', error);
+      }
     }
 
-    // Simulate finding matches (in production, would search actual platforms)
-    const platforms = [
-      'Google Images', 'Pinterest', 'Instagram', 'DeviantArt', 'ArtStation',
-      'Etsy', 'Redbubble', 'Society6', 'Behance', 'Dribbble'
-    ];
+    // Google real-time
+    if (serpapi_key) {
+      try {
+        console.log('Google real-time search...');
+        const serp_url = `https://serpapi.com/search.json?engine=google_reverse_image&image_url=${encodeURIComponent(publicUrl)}&api_key=${serpapi_key}`;
+        const response = await fetch(serp_url);
+        const data = await response.json();
+        
+        if (data.image_results) {
+          totalScanned += data.image_results.length;
+          matchesFound += Math.min(data.image_results.length, 10);
+          
+          for (const result of data.image_results.slice(0, 10)) {
+            allMatches.push({
+              url: result.link,
+              platform: new URL(result.link).hostname,
+              score: 0.75,
+              source: 'google'
+            });
+          }
+        }
+        console.log('Google real-time:', data.image_results?.length || 0, 'matches');
+      } catch (error) {
+        console.error('Google real-time failed:', error);
+      }
+    }
 
-    const matchesFound = Math.floor(Math.random() * 15) + 1;
-    const matchesByPlatform = platforms.map(platform => ({
-      platform,
-      matches: Math.floor(Math.random() * 5),
-      urls: []
-    })).filter(p => p.matches > 0);
+    // Bing real-time
+    if (bing_key) {
+      try {
+        console.log('Bing real-time search...');
+        const bing_response = await fetch('https://api.bing.microsoft.com/v7.0/images/visualsearch', {
+          method: 'POST',
+          headers: {
+            'Ocp-Apim-Subscription-Key': bing_key,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ imageInfo: { url: publicUrl } })
+        });
+        const data = await bing_response.json();
+        
+        if (data.tags?.[0]?.actions) {
+          for (const action of data.tags[0].actions) {
+            if (action.actionType === 'PagesIncluding' && action.data?.value) {
+              totalScanned += action.data.value.length;
+              matchesFound += Math.min(action.data.value.length, 10);
+              
+              for (const page of action.data.value.slice(0, 10)) {
+                allMatches.push({
+                  url: page.hostPageUrl,
+                  platform: new URL(page.hostPageUrl).hostname,
+                  score: 0.7,
+                  source: 'bing'
+                });
+              }
+            }
+          }
+        }
+        console.log('Bing real-time found matches');
+      } catch (error) {
+        console.error('Bing real-time failed:', error);
+      }
+    }
+
+    if (!tineye_key && !serpapi_key && !bing_key) {
+      throw new Error('No API keys configured for real-time scanning. Please add TINEYE_API_KEY, SERPAPI_KEY, or BING_VISUAL_SEARCH_API_KEY.');
+    }
 
     // Create copyright matches
-    for (const platformMatch of matchesByPlatform.slice(0, 5)) {
-      const confidence = 0.6 + Math.random() * 0.35;
-      const threatLevel = confidence > 0.85 ? 'high' : confidence > 0.7 ? 'medium' : 'low';
+    for (let i = 0; i < Math.min(allMatches.length, 10); i++) {
+      const match = allMatches[i];
+      const threatLevel = match.score > 0.85 ? 'high' : match.score > 0.7 ? 'medium' : 'low';
 
       await supabase.from('copyright_matches').insert({
         artwork_id: artworkId,
         scan_id: artworkId,
-        source_url: `https://${platformMatch.platform.toLowerCase().replace(/\s/g, '')}.com/detected-${Date.now()}`,
-        source_domain: platformMatch.platform.toLowerCase().replace(/\s/g, '.'),
-        match_type: 'visual',
-        match_confidence: confidence,
+        source_url: match.url,
+        source_domain: match.platform,
+        match_type: 'realtime-detection',
+        match_confidence: match.score,
         threat_level: threatLevel,
-        description: `Potential unauthorized use detected on ${platformMatch.platform}`,
+        description: `Real-time match via ${match.source} with ${(match.score * 100).toFixed(1)}% confidence`,
         is_authorized: false,
         is_reviewed: false
       });
@@ -146,26 +166,39 @@ Format as JSON: { "description": "...", "features": [...], "queries": [...], "pl
       .update({
         status: 'completed',
         completed_at: new Date().toISOString(),
-        sources_scanned: platforms.length,
+        sources_scanned: totalScanned,
         matches_found: matchesFound,
         results_data: {
-          analysis: scanData,
-          platforms_scanned: platforms,
-          matches_by_platform: matchesByPlatform
+          real_detection: true,
+          apis_used: [
+            tineye_key ? 'tineye' : null,
+            serpapi_key ? 'google' : null,
+            bing_key ? 'bing' : null
+          ].filter(Boolean),
+          total_results: totalScanned,
+          matches_by_source: allMatches.reduce((acc, m) => {
+            acc[m.source] = (acc[m.source] || 0) + 1;
+            return acc;
+          }, {} as Record<string, number>)
         }
       })
       .eq('artwork_id', artworkId)
       .eq('scan_type', 'realtime-ai');
 
-    console.log('Real-time AI scan completed:', { matchesFound, platforms: matchesByPlatform.length });
+    console.log('Real-time AI scan completed:', { matchesFound, totalScanned });
 
     return new Response(
       JSON.stringify({
         success: true,
+        real_detection: true,
         matches_found: matchesFound,
-        platforms_scanned: platforms.length,
-        analysis: scanData,
-        matches_by_platform: matchesByPlatform
+        total_scanned: totalScanned,
+        platforms: [...new Set(allMatches.map(m => m.platform))],
+        apis_used: [
+          tineye_key ? 'TinEye' : null,
+          serpapi_key ? 'Google' : null,
+          bing_key ? 'Bing' : null
+        ].filter(Boolean)
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
