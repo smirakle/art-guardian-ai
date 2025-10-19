@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -14,9 +14,26 @@ export interface Alert {
 
 export const useAlertSystem = () => {
   const { toast } = useToast();
+  const shownAlerts = useRef<Set<string>>(new Set());
 
   const sendAlert = useCallback(async (alert: Alert) => {
     try {
+      // Create a unique key for this alert to prevent duplicates
+      const alertKey = `${alert.source}-${alert.title}-${alert.message}`;
+      
+      // Skip if we've already shown this exact alert
+      if (shownAlerts.current.has(alertKey)) {
+        return true;
+      }
+
+      // Mark this alert as shown
+      shownAlerts.current.add(alertKey);
+      
+      // Clear the alert from the set after 5 seconds to allow it to show again later
+      setTimeout(() => {
+        shownAlerts.current.delete(alertKey);
+      }, 5000);
+
       // Send to monitoring alerts endpoint
       const { error } = await supabase.functions.invoke('monitoring-alerts', {
         body: {
