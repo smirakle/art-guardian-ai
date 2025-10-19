@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { BugReportButton } from "@/components/BugReportButton";
 
 const ThreatAlerts = () => {
   const { subscription } = useSubscription();
@@ -35,6 +36,7 @@ const ThreatAlerts = () => {
             </Button>
           </CardContent>
         </Card>
+        <BugReportButton />
       </div>
     );
   }
@@ -48,6 +50,7 @@ const ThreatAlerts = () => {
         </p>
       </div>
       <RealtimeThreatAlertsDashboard />
+      <BugReportButton />
     </div>
   );
 };

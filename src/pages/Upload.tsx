@@ -39,6 +39,7 @@ import { AdvancedWatermarkProtection } from "@/components/AdvancedWatermarkProte
 import { WatermarkResult } from "@/lib/advancedWatermark";
 import { UserGuide } from "@/components/UserGuide";
 import { uploadGuide } from "@/data/userGuides";
+import { BugReportButton } from "@/components/BugReportButton";
 
 interface UploadedFile {
   id: string;
@@ -863,6 +864,7 @@ const Upload = () => {
           </TabsContent>
         </Tabs>
       </div>
+      <BugReportButton />
     </div>
   );
 };

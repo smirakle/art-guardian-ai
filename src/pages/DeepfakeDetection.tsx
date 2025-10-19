@@ -16,6 +16,7 @@ import {
 import DeepfakeReporter from "@/components/DeepfakeReporter";
 import LiveDeepfakeMonitor from "@/components/deepfake/LiveDeepfakeMonitor";
 import RecentDeepfakeDetections from "@/components/RecentDeepfakeDetections";
+import { BugReportButton } from "@/components/BugReportButton";
 
 const DeepfakeDetection = () => {
   const [activeTab, setActiveTab] = useState("detector");
@@ -333,6 +334,7 @@ const DeepfakeDetection = () => {
           </TabsContent>
         </Tabs>
       </div>
+      <BugReportButton />
     </div>
   );
 };

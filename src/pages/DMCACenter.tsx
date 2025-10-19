@@ -10,6 +10,7 @@ import { DMCAFormDialog } from "@/components/dmca/DMCAFormDialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import jsPDF from 'jspdf';
+import { BugReportButton } from "@/components/BugReportButton";
 
 interface DMCANotice {
   id: string;
@@ -407,6 +408,7 @@ export default function DMCACenter() {
           </div>
         </TabsContent>
       </Tabs>
+      <BugReportButton />
     </div>
   );
 }

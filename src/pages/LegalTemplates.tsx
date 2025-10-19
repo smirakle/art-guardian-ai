@@ -6,6 +6,7 @@ import GovernmentFilingService from '@/components/enhanced/GovernmentFilingServi
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useState, useEffect } from 'react';
+import { BugReportButton } from '@/components/BugReportButton';
 
 const LegalTemplatesPage = () => {
   const [userSubscription, setUserSubscription] = useState<any>(null);
@@ -59,6 +60,7 @@ const LegalTemplatesPage = () => {
           </TabsContent>
         </Tabs>
       </div>
+      <BugReportButton />
     </div>
   );
 };

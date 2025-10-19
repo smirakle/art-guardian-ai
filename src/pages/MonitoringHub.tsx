@@ -18,6 +18,7 @@ import {
   Shield,
   Activity
 } from 'lucide-react';
+import { BugReportButton } from '@/components/BugReportButton';
 
 // Import existing components
 import { PortfolioDashboard } from '@/components/portfolio/PortfolioDashboard';
@@ -288,6 +289,7 @@ const MonitoringHub = () => {
           </div>
         </CardContent>
       </Card>
+      <BugReportButton />
     </div>
   );
 };

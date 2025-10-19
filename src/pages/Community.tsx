@@ -32,6 +32,7 @@ import { useCommunity } from "@/hooks/useCommunity";
 import { formatDistanceToNow } from "date-fns";
 import { ComingSoon } from "@/components/ComingSoon";
 import { useAuth } from "@/contexts/AuthContext";
+import { BugReportButton } from "@/components/BugReportButton";
 
 const Community = () => {
   const { posts, expertAdvice, loading, createPost, toggleLike, getStats } = useCommunity();
@@ -1564,6 +1565,7 @@ The global creative economy offers tremendous opportunities for artists willing 
           </div>
         </div>
       </div>
+      <BugReportButton />
     </div>
   );
 };
