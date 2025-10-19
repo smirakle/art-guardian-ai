@@ -1874,6 +1874,39 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_api_usage: {
+        Row: {
+          created_at: string
+          daily_limit: number
+          id: string
+          request_count: number
+          service_type: string
+          updated_at: string
+          usage_date: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          daily_limit: number
+          id?: string
+          request_count?: number
+          service_type: string
+          updated_at?: string
+          usage_date?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          daily_limit?: number
+          id?: string
+          request_count?: number
+          service_type?: string
+          updated_at?: string
+          usage_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       data_retention_policies: {
         Row: {
           created_at: string
@@ -9097,6 +9130,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_daily_api_limit: {
+        Args: {
+          p_daily_limit: number
+          p_service_type: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
       check_enterprise_api_rate_limit: {
         Args: { api_key_param: string; endpoint_param?: string }
         Returns: boolean
@@ -9170,6 +9211,16 @@ export type Database = {
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["app_role"]
+      }
+      get_daily_usage_stats: {
+        Args: { p_user_id: string }
+        Returns: {
+          current_usage: number
+          daily_limit: number
+          remaining: number
+          reset_time: string
+          service_type: string
+        }[]
       }
       get_portfolio_limit: {
         Args: Record<PropertyKey, never>
