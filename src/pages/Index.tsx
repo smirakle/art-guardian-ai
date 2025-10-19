@@ -176,7 +176,7 @@ const Index = () => {
       </Dialog>
 
       {/* Navigation Menu - Quick Access */}
-      <div className="fixed top-20 right-4 z-40 bg-background/95 backdrop-blur-sm border rounded-lg p-2 shadow-lg">
+      <div className="fixed top-20 right-4 z-40 backdrop-blur-sm border p-2 shadow-lg rounded-lg bg-violet-50">
         <div className="flex flex-col gap-1">
           <Button variant="ghost" size="sm" onClick={() => document.getElementById("how-it-works")?.scrollIntoView({
           behavior: "smooth"
