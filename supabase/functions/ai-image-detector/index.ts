@@ -431,18 +431,13 @@ async function analyzeWithOpenAI(imageSource: string) {
   const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
   
   if (!openaiApiKey) {
-    console.log('OpenAI API key not available, using heuristic analysis only');
+    console.log('OpenAI API key not configured');
     return null;
   }
 
   try {
-    console.log('Calling OpenAI Vision API for AI generation detection...');
+    console.log('Calling OpenAI Vision API for AI detection...');
     
-    // Prepare image content for OpenAI Vision API
-    const imageContent = imageSource.startsWith('http') 
-      ? { type: "image_url", image_url: { url: imageSource } }
-      : { type: "image_url", image_url: { url: imageSource } };
-
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -453,78 +448,67 @@ async function analyzeWithOpenAI(imageSource: string) {
         model: 'gpt-4o',
         messages: [
           {
-            role: 'system',
-            content: `You are an expert forensic image analyst. Your task is to determine if an image was AI-generated or is a real photograph/artwork.
-
-IMPORTANT: Be CONSERVATIVE. Only mark as AI-generated if you find strong evidence. Many real photos have artifacts from compression, editing, or artistic techniques.
-
-AI-GENERATED INDICATORS (strong evidence needed):
-- Impossible anatomy (extra/missing fingers, distorted limbs, incorrect joint placement)
-- Nonsensical text or logos (garbled letters, fake text)
-- Blending artifacts (unnatural transitions between elements, especially faces)
-- Physically impossible lighting (multiple light sources that contradict shadows)
-- Repetitive AI patterns (copy-paste textures, synthetic smoothness)
-- Surreal elements that don't follow physics
-
-NOT AI INDICATORS (these are normal):
-- Artistic stylization (paintings, illustrations, digital art are not AI)
-- Photo editing effects (filters, color grading, HDR)
-- Compression artifacts (JPEG artifacts are common in real photos)
-- Perfect composition or symmetry (photographers can frame shots well)
-- High quality or sharpness (modern cameras are very good)
-- Digital medium (digital art ≠ AI art)
-
-RESPOND ONLY with valid JSON:
-{
-  "isAIGenerated": boolean,
-  "confidence": 0.0-1.0,
-  "reasoning": "clear technical explanation of your determination",
-  "specificIndicators": ["specific evidence found"],
-  "likelyModel": "suspected AI model (Stable Diffusion/MidJourney/DALL-E) or null"
-}`
-          },
-          {
             role: 'user',
             content: [
               {
                 type: 'text',
-                text: 'Please analyze this image for AI generation indicators.'
+                text: `You are an expert at detecting AI-generated images. Analyze this image carefully.
+
+ONLY mark as AI-generated if you see clear evidence like:
+- Impossible anatomy (wrong number of fingers, distorted faces/limbs)
+- Physically impossible elements (lighting that doesn't make sense, objects defying physics)
+- AI artifacts (blurred backgrounds blending into subjects, weird textures)
+- Nonsensical text or garbled letters
+- Clear AI generation patterns
+
+DO NOT mark as AI if it's just a normal photograph, even if high quality.
+
+Respond with ONLY valid JSON:
+{
+  "isAIGenerated": boolean,
+  "confidence": number (0.0-1.0),
+  "reasoning": "brief explanation",
+  "specificIndicators": ["list", "of", "specific", "evidence"],
+  "likelyModel": "AI model name or null"
+}`
               },
               {
                 type: 'image_url',
                 image_url: {
-                  url: imageSource.startsWith('data:') ? imageSource : imageSource,
+                  url: imageSource,
                   detail: 'high'
                 }
               }
             ]
           }
         ],
-        max_tokens: 1000
+        max_tokens: 800,
+        temperature: 0.2
       }),
     });
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('OpenAI API error:', response.status, errorText);
+      return null;
     }
 
     const data = await response.json();
     const content = data.choices[0].message.content;
+    console.log('OpenAI response:', content);
     
-    try {
-      return JSON.parse(content);
-    } catch {
-      // Fallback if JSON parsing fails
-      return {
-        isAIGenerated: content.toLowerCase().includes('ai') || content.toLowerCase().includes('generated'),
-        confidence: 0.6,
-        reasoning: content,
-        specificIndicators: [],
-        likelyModel: null
-      };
+    // Extract JSON from response
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const result = JSON.parse(jsonMatch[0]);
+      console.log('Parsed OpenAI result:', result);
+      return result;
     }
+    
+    console.error('Could not extract JSON from OpenAI response');
+    return null;
   } catch (error) {
-    console.error('OpenAI analysis failed:', error);
+    console.error('OpenAI analysis error:', error);
     return null;
   }
 }
@@ -578,59 +562,28 @@ function combineAnalyses(
     };
   }
   
-  // Fallback to heuristics only if OpenAI is not available (less reliable)
-  console.log('OpenAI not available, using heuristic analysis (less reliable)');
-  
-  const scores = [
-    { score: frequency.score, weight: 0.15 },
-    { score: pixel.score, weight: 0.2 },
-    { score: metadata.score, weight: 0.3 }, // Metadata is more reliable
-    { score: stylometric.score, weight: 0.15 },
-    { score: neural.score, weight: 0.2 }
-  ];
-  
-  let totalScore = 0;
-  let totalWeight = 0;
-  
-  scores.forEach(({ score, weight }) => {
-    totalScore += score * weight;
-    totalWeight += weight;
-  });
-  
-  const baseConfidence = totalScore / totalWeight;
-  
-  // Be more conservative without OpenAI - require higher threshold
-  const isAIGenerated = baseConfidence > 0.7;
-  const finalConfidence = baseConfidence;
-  
-  // Compile artifacts
-  const artifacts: string[] = [];
-  if (frequency.score > 0.3) artifacts.push(...frequency.patterns);
-  if (pixel.score > 0.5) artifacts.push(...pixel.anomalies);
-  if (metadata.score > 0.5) artifacts.push(...metadata.signatures);
-  if (stylometric.score > 0.5) artifacts.push(...stylometric.characteristics);
-  if (neural.score > 0.4) artifacts.push(...neural.artifacts);
-  if (openai?.specificIndicators) artifacts.push(...openai.specificIndicators);
+  // Without OpenAI, cannot reliably determine - return inconclusive
+  console.log('OpenAI not available - analysis unavailable');
   
   return {
-    isAIGenerated,
-    confidence: Math.round(finalConfidence * 100) / 100,
+    isAIGenerated: false,
+    confidence: 0,
     indicators: {
-      frequencyAnomalies: Math.round(frequency.score * 100) / 100,
-      pixelPatterns: Math.round(pixel.score * 100) / 100,
-      metadataSignatures: Math.round(metadata.score * 100) / 100,
-      stylometricAnalysis: Math.round(stylometric.score * 100) / 100,
-      neuralArtifacts: Math.round(neural.score * 100) / 100,
+      frequencyAnomalies: 0,
+      pixelPatterns: 0,
+      metadataSignatures: 0,
+      stylometricAnalysis: 0,
+      neuralArtifacts: 0,
     },
-    detectionMethod: openai ? 'hybrid_ai_statistical' : 'statistical_analysis',
-    aiModel,
-    generationConfidence: finalConfidence,
-    artifacts: [...new Set(artifacts)], // Remove duplicates
+    detectionMethod: 'analysis_unavailable',
+    aiModel: null,
+    generationConfidence: 0,
+    artifacts: ['AI detection requires OpenAI API key - please configure to enable accurate analysis'],
     technicalAnalysis: {
-      compressionArtifacts: frequency.score > 0.3,
-      noisePatterns: pixel.score > 0.4 ? 'synthetic' : 'natural',
-      colorSpace: metadata.score > 0.3 ? 'ai_optimized' : 'camera_standard',
-      frequencyDomain: frequency.score > 0.4 ? 'artificial_peaks' : 'natural_distribution'
+      compressionArtifacts: false,
+      noisePatterns: 'unknown',
+      colorSpace: 'unknown',
+      frequencyDomain: 'unknown'
     }
   };
 }
