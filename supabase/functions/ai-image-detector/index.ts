@@ -121,101 +121,63 @@ serve(async (req) => {
 });
 
 async function analyzeFrequencyDomain(imageSource: string) {
-  // Enhanced frequency domain analysis for AI generation artifacts
+  // Conservative frequency domain analysis - only flag obvious AI patterns
   try {
-    // Check for common AI generation signatures in frequency domain
+    // Most images will not have strong frequency anomalies
+    let anomalyScore = 0.05; // Start very low
+    
     const isDataUrl = imageSource.startsWith('data:');
-    const hasHighFrequencyArtifacts = isDataUrl && imageSource.includes('jpeg') && imageSource.length > 50000;
-    const hasCompressionInconsistencies = isDataUrl && (imageSource.includes('png') || imageSource.includes('webp'));
     
-    // AI-generated images often have specific frequency patterns
-    let anomalyScore = 0.1;
-    
-    if (hasHighFrequencyArtifacts) anomalyScore += 0.3;
-    if (hasCompressionInconsistencies) anomalyScore += 0.2;
-    
-    // Check for typical AI generation markers
-    if (imageSource.length > 100000) anomalyScore += 0.1; // Very high quality often indicates AI
-    if (imageSource.length < 20000) anomalyScore += 0.15; // Very compressed might hide artifacts
-    
-    anomalyScore = Math.min(anomalyScore, 0.9);
+    // Only flag truly unusual patterns
+    if (isDataUrl && imageSource.length > 500000) { // Only very large files
+      anomalyScore += 0.1;
+    }
     
     return {
-      score: anomalyScore,
-      patterns: anomalyScore > 0.3 ? ['high_frequency_artifacts', 'compression_inconsistencies'] : ['normal_spectrum'],
-      confidence: anomalyScore > 0.3 ? 0.8 : 0.4
+      score: Math.min(anomalyScore, 0.3), // Cap at low value
+      patterns: anomalyScore > 0.15 ? ['unusual_frequency'] : ['normal_spectrum'],
+      confidence: 0.3 // Low confidence for heuristics
     };
   } catch (error) {
     console.error('Frequency analysis error:', error);
     return {
-      score: 0.5,
+      score: 0.05,
       patterns: ['analysis_error'],
-      confidence: 0.2
+      confidence: 0.1
     };
   }
 }
 
 async function analyzePixelPatterns(imageSource: string) {
-  // Enhanced pixel pattern analysis for AI detection
+  // Conservative pixel pattern analysis - avoid false positives
   try {
-    let patternScore = 0.2;
+    let patternScore = 0.05; // Start very low
     const anomalies = [];
     
-    // Check image format and characteristics
     const isDataUrl = imageSource.startsWith('data:');
     
     if (isDataUrl) {
       const imageData = imageSource.split(',')[1];
       
-      // Check for patterns common in AI-generated images
-      // AI images often have specific base64 patterns
-      const base64Length = imageData.length;
-      const hasUnusualEncoding = base64Length % 4 !== 0;
-      
-      if (hasUnusualEncoding) {
-        patternScore += 0.2;
-        anomalies.push('unusual_encoding');
-      }
-      
-      // Check for metadata patterns (AI tools often embed specific metadata)
-      if (imageSource.includes('data:image/png')) {
-        patternScore += 0.1; // PNG often used by AI tools
-        anomalies.push('ai_preferred_format');
-      }
-      
-      // Check for perfect dimensions (AI often generates perfect squares/rectangles)
-      if (base64Length > 80000) { // Likely high resolution
-        patternScore += 0.15;
-        anomalies.push('high_resolution_pattern');
-      }
-      
-      // Look for repetitive patterns in base64 (can indicate AI generation)
-      const repetitivePattern = /(.{10,})\1{3,}/.test(imageData.substring(0, 1000));
+      // Only flag truly unusual patterns
+      const repetitivePattern = /(.{20,})\1{5,}/.test(imageData.substring(0, 1000)); // More strict
       if (repetitivePattern) {
-        patternScore += 0.3;
-        anomalies.push('repetitive_patterns');
+        patternScore += 0.2;
+        anomalies.push('highly_repetitive_patterns');
       }
     }
-    
-    // Additional heuristics
-    if (imageSource.length > 200000) { // Very large file
-      patternScore += 0.1;
-      anomalies.push('unusually_large');
-    }
-    
-    patternScore = Math.min(patternScore, 0.9);
     
     return {
-      score: patternScore,
-      anomalies: anomalies.length > 0 ? anomalies : ['natural_variance'],
-      confidence: patternScore > 0.5 ? 0.75 : 0.4
+      score: Math.min(patternScore, 0.3), // Cap at low value
+      anomalies: anomalies.length > 0 ? anomalies : ['normal_variance'],
+      confidence: 0.3 // Low confidence
     };
   } catch (error) {
     console.error('Pixel analysis error:', error);
     return {
-      score: 0.5,
+      score: 0.05,
       anomalies: ['analysis_error'],
-      confidence: 0.3
+      confidence: 0.1
     };
   }
 }
@@ -492,23 +454,34 @@ async function analyzeWithOpenAI(imageSource: string) {
         messages: [
           {
             role: 'system',
-            content: `You are an expert AI image detection specialist. Analyze the provided image to determine if it was generated by AI. Look for:
-            - Artificial artifacts and patterns (repetitive textures, unnatural smoothness)
-            - Unnatural lighting or shadows (impossible physics, inconsistent light sources)
-            - Perfect symmetries or unrealistic details (too perfect features)
-            - Telltale signs of GAN, diffusion models (Stable Diffusion, MidJourney, DALL-E artifacts)
-            - Inconsistencies in style or quality (mixed resolutions, blending issues)
-            - Anatomical errors (incorrect proportions, extra fingers/limbs)
-            - Text rendering issues (garbled or nonsensical text)
-            
-            Respond ONLY with valid JSON in this exact format:
-            {
-              "isAIGenerated": boolean,
-              "confidence": number (0-1),
-              "reasoning": "detailed technical explanation",
-              "specificIndicators": ["list", "of", "specific", "indicators", "found"],
-              "likelyModel": "suspected AI model if any"
-            }`
+            content: `You are an expert forensic image analyst. Your task is to determine if an image was AI-generated or is a real photograph/artwork.
+
+IMPORTANT: Be CONSERVATIVE. Only mark as AI-generated if you find strong evidence. Many real photos have artifacts from compression, editing, or artistic techniques.
+
+AI-GENERATED INDICATORS (strong evidence needed):
+- Impossible anatomy (extra/missing fingers, distorted limbs, incorrect joint placement)
+- Nonsensical text or logos (garbled letters, fake text)
+- Blending artifacts (unnatural transitions between elements, especially faces)
+- Physically impossible lighting (multiple light sources that contradict shadows)
+- Repetitive AI patterns (copy-paste textures, synthetic smoothness)
+- Surreal elements that don't follow physics
+
+NOT AI INDICATORS (these are normal):
+- Artistic stylization (paintings, illustrations, digital art are not AI)
+- Photo editing effects (filters, color grading, HDR)
+- Compression artifacts (JPEG artifacts are common in real photos)
+- Perfect composition or symmetry (photographers can frame shots well)
+- High quality or sharpness (modern cameras are very good)
+- Digital medium (digital art ≠ AI art)
+
+RESPOND ONLY with valid JSON:
+{
+  "isAIGenerated": boolean,
+  "confidence": 0.0-1.0,
+  "reasoning": "clear technical explanation of your determination",
+  "specificIndicators": ["specific evidence found"],
+  "likelyModel": "suspected AI model (Stable Diffusion/MidJourney/DALL-E) or null"
+}`
           },
           {
             role: 'user',
@@ -565,12 +538,54 @@ function combineAnalyses(
   openai: any
 ): AIDetectionResult {
   
-  // Calculate weighted scores
+  console.log('Combining analyses - OpenAI result:', openai);
+  
+  // If OpenAI analysis is available, trust it heavily (it's trained for this)
+  if (openai) {
+    const finalConfidence = openai.confidence;
+    const isAIGenerated = openai.isAIGenerated;
+    
+    console.log('Using OpenAI-dominant analysis:', { isAIGenerated, finalConfidence });
+    
+    // Compile artifacts from all sources
+    const artifacts: string[] = [];
+    if (openai.specificIndicators) artifacts.push(...openai.specificIndicators);
+    
+    // Only add heuristic artifacts if they strongly support OpenAI's conclusion
+    if (isAIGenerated && frequency.score > 0.6) artifacts.push(...frequency.patterns);
+    if (isAIGenerated && neural.score > 0.6) artifacts.push(...neural.artifacts);
+    
+    return {
+      isAIGenerated,
+      confidence: Math.round(finalConfidence * 100) / 100,
+      indicators: {
+        frequencyAnomalies: Math.round(frequency.score * 100) / 100,
+        pixelPatterns: Math.round(pixel.score * 100) / 100,
+        metadataSignatures: Math.round(metadata.score * 100) / 100,
+        stylometricAnalysis: Math.round(stylometric.score * 100) / 100,
+        neuralArtifacts: Math.round(neural.score * 100) / 100,
+      },
+      detectionMethod: 'openai_vision_primary',
+      aiModel: openai.likelyModel,
+      generationConfidence: finalConfidence,
+      artifacts,
+      technicalAnalysis: {
+        compressionArtifacts: frequency.score > 0.5,
+        noisePatterns: neural.score > 0.5 ? 'synthetic' : 'natural',
+        colorSpace: stylometric.score > 0.6 ? 'ai_optimized' : 'natural',
+        frequencyDomain: frequency.score > 0.5 ? 'artificial_peaks' : 'natural_distribution',
+      },
+    };
+  }
+  
+  // Fallback to heuristics only if OpenAI is not available (less reliable)
+  console.log('OpenAI not available, using heuristic analysis (less reliable)');
+  
   const scores = [
-    { score: frequency.score, weight: 0.2 },
-    { score: pixel.score, weight: 0.25 },
-    { score: metadata.score, weight: 0.15 },
-    { score: stylometric.score, weight: 0.2 },
+    { score: frequency.score, weight: 0.15 },
+    { score: pixel.score, weight: 0.2 },
+    { score: metadata.score, weight: 0.3 }, // Metadata is more reliable
+    { score: stylometric.score, weight: 0.15 },
     { score: neural.score, weight: 0.2 }
   ];
   
@@ -584,17 +599,9 @@ function combineAnalyses(
   
   const baseConfidence = totalScore / totalWeight;
   
-  // Incorporate OpenAI analysis if available
-  let finalConfidence = baseConfidence;
-  let isAIGenerated = baseConfidence > 0.5;
-  let aiModel: string | undefined;
-  
-  if (openai) {
-    // Give OpenAI analysis higher weight due to its sophistication
-    finalConfidence = (baseConfidence * 0.4) + (openai.confidence * 0.6);
-    isAIGenerated = openai.isAIGenerated || baseConfidence > 0.6;
-    aiModel = openai.likelyModel;
-  }
+  // Be more conservative without OpenAI - require higher threshold
+  const isAIGenerated = baseConfidence > 0.7;
+  const finalConfidence = baseConfidence;
   
   // Compile artifacts
   const artifacts: string[] = [];
