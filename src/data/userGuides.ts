@@ -3,114 +3,153 @@ export const uploadGuide = {
   description: "Learn how to upload and protect your artwork with TSMO",
   sections: [
     {
-      title: "Step 1: Select Your File",
+      title: "Step 1: Access the Upload Page",
       content: `
-        <p>Click the upload area or drag and drop your file to get started.</p>
+        <p><strong>Three ways to upload and protect:</strong></p>
+        <ol>
+          <li><strong>Upload Files Tab:</strong> Upload images, videos, audio, and documents</li>
+          <li><strong>Advanced Watermark Tab:</strong> Apply sophisticated watermarking</li>
+          <li><strong>Visual Analysis Tab:</strong> Analyze and recognize similar content</li>
+        </ol>
+        <p><strong>Free Access Available:</strong></p>
+        <p>You can upload and protect artwork without signing in. Sign in for full features like automatic monitoring and blockchain verification.</p>
         <p><strong>Supported formats:</strong></p>
         <ul>
-          <li>Images: JPG, PNG, GIF, WebP</li>
-          <li>Videos: MP4, MOV, AVI</li>
-          <li>Documents: PDF, DOCX (with Document Protection addon)</li>
-        </ul>
-        <p><strong>File size limits:</strong></p>
-        <ul>
-          <li>Free plan: Up to 50MB per file</li>
-          <li>Paid plans: Up to 500MB per file</li>
+          <li>Images: JPG, PNG, GIF, WebP and other image formats</li>
+          <li>Videos: MP4, MOV, AVI and other video formats</li>
+          <li>Audio: MP3, WAV and other audio formats</li>
+          <li>Documents: PDF, DOC, DOCX, TXT</li>
         </ul>
       `,
       tips: [
+        "No sign-in required for basic protection",
         "Higher resolution files provide better protection",
-        "Batch upload multiple files at once to save time",
-        "Check file size before uploading to avoid errors"
+        "You can upload multiple files at once"
       ]
     },
     {
-      title: "Step 2: Add Artwork Details",
+      title: "Step 2: Upload Your Content",
       content: `
-        <p>Fill in the required information about your artwork:</p>
-        <ul>
-          <li><strong>Title:</strong> Give your artwork a descriptive name</li>
-          <li><strong>Description:</strong> Add context about your work</li>
-          <li><strong>Category:</strong> Choose the most appropriate category</li>
-          <li><strong>Tags:</strong> Add searchable keywords (optional)</li>
-        </ul>
-        <p>This information helps with organization and copyright claims.</p>
-      `,
-      tips: [
-        "Be descriptive - it helps with legal documentation",
-        "Use consistent naming for series of works",
-        "Add creation date in description for copyright purposes"
-      ]
-    },
-    {
-      title: "Step 3: Choose Protection Options",
-      content: `
-        <p>Select the protection methods you want to apply:</p>
-        <ul>
-          <li><strong>Watermark:</strong> Visible mark on your image</li>
-          <li><strong>AI Protection:</strong> Invisible markers to prevent AI training</li>
-          <li><strong>Blockchain:</strong> Immutable proof of ownership</li>
-        </ul>
-        <p><strong>Protection levels:</strong></p>
-        <ul>
-          <li><em>Basic:</em> Watermark only</li>
-          <li><em>Standard:</em> Watermark + AI protection</li>
-          <li><em>Maximum:</em> All protections + blockchain</li>
-        </ul>
-      `,
-      tips: [
-        "AI Protection is recommended for all digital art",
-        "Blockchain provides legal proof of ownership",
-        "Combine multiple protections for maximum security"
-      ]
-    },
-    {
-      title: "Step 4: Upload & Process",
-      content: `
-        <p>Once you click "Upload", your file will be processed:</p>
+        <p><strong>Method 1: Upload Files</strong></p>
         <ol>
-          <li>File is uploaded to secure storage</li>
-          <li>Protection methods are applied</li>
-          <li>Metadata is recorded</li>
-          <li>Certificate is generated (if blockchain enabled)</li>
+          <li>Click the upload area or drag and drop files</li>
+          <li>Select one or multiple files from your device</li>
+          <li>Files will appear in the "Uploaded Files" list below</li>
         </ol>
-        <p><strong>Processing time:</strong></p>
+        <p><strong>Method 2: Add URLs (Articles & Content)</strong></p>
+        <ol>
+          <li>Find the "Add URLs" section below the file upload area</li>
+          <li>Enter any article or content URL you want to protect</li>
+          <li>Click the "+" button or press Enter to add</li>
+          <li>Add multiple URLs as needed</li>
+        </ol>
+        <p>URLs and files can be combined in the same protection request.</p>
+      `,
+      tips: [
+        "You can mix files and URLs in one protection batch",
+        "URLs can be articles, social media posts, or any web content",
+        "Remove items by clicking the X icon"
+      ]
+    },
+    {
+      title: "Step 3: Add Artwork Details",
+      content: `
+        <p>Fill in the required information about your content:</p>
         <ul>
-          <li>Images: 5-30 seconds</li>
-          <li>Videos: 1-5 minutes</li>
-          <li>Large files: Up to 10 minutes</li>
+          <li><strong>Title:</strong> Give your artwork a descriptive name (required)</li>
+          <li><strong>Description:</strong> Add context about your work (optional)</li>
+          <li><strong>Category:</strong> Choose from Photography, Digital Art, Video, Audio/Music, Writing, Design, or Other (required)</li>
+          <li><strong>Tags:</strong> Add searchable keywords by typing and pressing Enter or clicking "+" (optional)</li>
+          <li><strong>License Type:</strong> Select copyright license (optional)</li>
         </ul>
-        <p>You'll receive a notification when processing is complete.</p>
+        <p>This information helps with organization and copyright documentation.</p>
+      `,
+      tips: [
+        "Title and Category are required fields",
+        "Use descriptive titles for better legal documentation",
+        "Tags help organize your portfolio"
+      ]
+    },
+    {
+      title: "Step 4: Choose Protection Options",
+      content: `
+        <p><strong>Two protection methods available on Upload page:</strong></p>
+        <ul>
+          <li><strong>Enable Watermarking:</strong> Adds visible watermark to your images (checked by default)</li>
+          <li><strong>Blockchain Verification:</strong> Creates immutable proof of ownership (requires sign-in)</li>
+        </ul>
+        <p><strong>Additional AI Protection:</strong></p>
+        <p>For advanced AI training protection (style cloaking, adversarial patterns), visit the <strong>Protection Hub</strong> after uploading. The AI Protection tab there offers comprehensive defense against AI training.</p>
+        <p><strong>Advanced Watermarking:</strong></p>
+        <p>Click the "Advanced Watermark" tab at the top for sophisticated watermarking with custom positioning, transparency, and text options.</p>
+      `,
+      tips: [
+        "Watermarking is enabled by default",
+        "Blockchain requires authentication - sign in first",
+        "For AI style protection, use Protection Hub after upload"
+      ]
+    },
+    {
+      title: "Step 5: Start Protection",
+      content: `
+        <p>Once you've added content and filled in details:</p>
+        <ol>
+          <li>Review the number of items (files + URLs) shown on the button</li>
+          <li>Click "Start Protection" button at the bottom</li>
+          <li>Your content will be uploaded and secured</li>
+          <li>Files show status indicators:
+            <ul>
+              <li>Uploading (blue pulsing icon)</li>
+              <li>Processing & Securing (yellow pulsing shield)</li>
+              <li>Protected & Monitored (green checkmark)</li>
+            </ul>
+          </li>
+        </ol>
+        <p><strong>What happens automatically:</strong></p>
+        <ul>
+          <li>Files are uploaded to secure encrypted storage</li>
+          <li>Protection methods are applied as selected</li>
+          <li>Metadata is recorded in the database</li>
+          <li>Blockchain certificate is created (if enabled and signed in)</li>
+          <li><strong>Automatic monitoring scan is started</strong> (if signed in)</li>
+        </ul>
+        <p>You'll see notifications for each step completion.</p>
       `,
       tips: [
         "Don't close the browser during upload",
-        "Check your dashboard for processing status",
-        "Download your certificate once processing completes"
+        "Monitoring starts automatically if you're signed in",
+        "Protection typically completes in a few seconds"
       ]
     },
     {
       title: "What Happens Next?",
       content: `
-        <p>After upload, your artwork is:</p>
+        <p><strong>After upload, your content is:</strong></p>
         <ul>
           <li>✅ Stored securely in encrypted storage</li>
-          <li>✅ Protected against AI training (if enabled)</li>
-          <li>✅ Registered on blockchain (if enabled)</li>
-          <li>✅ Monitored for unauthorized use</li>
+          <li>✅ Protected with watermarks (if enabled)</li>
+          <li>✅ Registered on blockchain (if enabled and signed in)</li>
+          <li>✅ Being monitored automatically (if signed in)</li>
         </ul>
-        <p>You can view your protected artwork in the Dashboard.</p>
-        <p><strong>Next steps:</strong></p>
+        <p><strong>Where to go next:</strong></p>
         <ul>
-          <li>Download your protection certificate</li>
-          <li>Share your artwork safely</li>
-          <li>Monitor for copyright violations</li>
-          <li>Enable automatic DMCA takedowns</li>
+          <li><strong>Dashboard:</strong> View your protected content and monitoring status</li>
+          <li><strong>Protection Hub:</strong> Apply advanced AI training protection (style cloaking, adversarial patterns)</li>
+          <li><strong>Monitoring Hub:</strong> Check for threats and unauthorized uses</li>
+          <li><strong>Blockchain Tab:</strong> View and download your blockchain certificates (if blockchain was enabled)</li>
         </ul>
+        <p><strong>Recommended next steps:</strong></p>
+        <ol>
+          <li>Visit <strong>Protection Hub → AI Protection</strong> tab to enable style cloaking</li>
+          <li>Check the <strong>Dashboard</strong> to confirm protection is active</li>
+          <li>Enable monitoring alerts in your account settings</li>
+          <li>Download blockchain certificates from the Blockchain tab (if applicable)</li>
+        </ol>
       `,
       tips: [
-        "Save your certificate for legal purposes",
-        "Enable monitoring to track usage",
-        "Upgrade to Professional for automated protection"
+        "AI training protection is separate - apply it in Protection Hub",
+        "Monitoring scans run automatically if you're signed in",
+        "Check Dashboard regularly for protection status updates"
       ]
     }
   ]
