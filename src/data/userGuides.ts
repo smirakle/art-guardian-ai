@@ -123,90 +123,123 @@ export const dashboardGuide = {
     {
       title: "Understanding Your Dashboard",
       content: `
-        <p>Your dashboard shows all your protected artwork at a glance.</p>
-        <p><strong>Key metrics displayed:</strong></p>
+        <p>Your Unified Dashboard displays key protection metrics in real-time.</p>
+        <p><strong>Six key metrics displayed:</strong></p>
         <ul>
-          <li>Total protected artworks</li>
-          <li>Active monitoring scans</li>
-          <li>Detected threats</li>
-          <li>Protection score</li>
+          <li><strong>Protected Assets:</strong> Total number of artworks you've uploaded and protected</li>
+          <li><strong>Active Scans:</strong> Number of ongoing AI monitoring scans</li>
+          <li><strong>Threats:</strong> Detected violations requiring your attention</li>
+          <li><strong>Blockchain Records:</strong> Number of blockchain certificates created</li>
+          <li><strong>Legal Actions:</strong> DMCA notices filed and tracked</li>
+          <li><strong>Success Rate:</strong> Percentage of threats successfully resolved</li>
         </ul>
-        <p>Click any metric to see detailed information.</p>
-      `,
-      tips: [
-        "Check your dashboard daily for threat alerts",
-        "Higher protection scores mean better security",
-        "Green indicators mean everything is secure"
-      ]
-    },
-    {
-      title: "Managing Your Artwork",
-      content: `
-        <p>Each artwork card shows:</p>
+        <p><strong>Quick Actions sidebar includes:</strong></p>
         <ul>
-          <li>Thumbnail preview</li>
-          <li>Title and upload date</li>
-          <li>Protection status</li>
-          <li>Quick actions menu</li>
-        </ul>
-        <p><strong>Available actions:</strong></p>
-        <ul>
-          <li>View protection details</li>
-          <li>Download certificate</li>
-          <li>Update protection settings</li>
-          <li>Delete artwork</li>
+          <li>Upload & Protect - Go to upload page</li>
+          <li>Start Monitoring - Configure monitoring</li>
+          <li>Configure AI Protection - Set up AI training protection</li>
+          <li>Legal Templates - Access legal documents</li>
         </ul>
       `,
       tips: [
-        "Click artwork to see full details",
-        "Use filters to organize your collection",
-        "Sort by newest, oldest, or threat level"
+        "Check your dashboard daily for new threats",
+        "Higher success rate means effective violation resolution",
+        "Use Quick Actions for common tasks"
       ]
     },
     {
-      title: "Threat Detection",
+      title: "Dashboard Tabs",
       content: `
-        <p>When unauthorized use is detected:</p>
+        <p>The dashboard has multiple specialized tabs:</p>
         <ul>
-          <li>🔴 High threat: Exact or near-exact copies</li>
-          <li>🟡 Medium threat: Similar content</li>
-          <li>🟢 Low threat: Possible false positive</li>
+          <li><strong>Overview:</strong> Main metrics and recent activity (default view)</li>
+          <li><strong>Production:</strong> Production environment performance metrics</li>
+          <li><strong>AI Detection:</strong> AI-powered threat detection analytics</li>
+          <li><strong>Protection:</strong> One-click protection tools and settings</li>
+          <li><strong>Blockchain:</strong> Blockchain registry and certificate management</li>
+          <li><strong>Legal:</strong> Legal network, case management, and templates</li>
+          <li><strong>Creator:</strong> Creator economy features and licensing</li>
+          <li><strong>Recognition:</strong> Visual recognition tools and analysis</li>
         </ul>
-        <p><strong>What to do:</strong></p>
+        <p>Click any tab to access specialized features and detailed views.</p>
+      `,
+      tips: [
+        "Overview tab is your daily starting point",
+        "Use Blockchain tab to view and download certificates",
+        "Legal tab helps manage DMCA notices and cases"
+      ]
+    },
+    {
+      title: "Recent Activity Feed",
+      content: `
+        <p>The Recent Activity section shows your latest actions:</p>
+        <ul>
+          <li>Newly protected artworks</li>
+          <li>AI protection activations</li>
+          <li>Blockchain registrations</li>
+          <li>Violation detections</li>
+          <li>DMCA filings</li>
+          <li>Monitoring activations</li>
+        </ul>
+        <p>Each activity shows an icon, message, and timestamp for easy tracking.</p>
+      `,
+      tips: [
+        "Review recent activity to stay updated",
+        "Timestamps help track when actions occurred",
+        "Activity feed updates automatically"
+      ]
+    },
+    {
+      title: "Taking Action on Threats",
+      content: `
+        <p>When threats are detected in your dashboard:</p>
         <ol>
-          <li>Review the detected match</li>
-          <li>Verify if it's unauthorized</li>
-          <li>File DMCA takedown (automated with Pro plan)</li>
-          <li>Track resolution status</li>
+          <li>Check the "Threats" metric for the count</li>
+          <li>Click on threats to see detailed information</li>
+          <li>Review evidence and match details</li>
+          <li>Verify if it's truly unauthorized use</li>
+          <li>Take action:
+            <ul>
+              <li>File DMCA takedown notice via DMCA Center</li>
+              <li>Mark as false positive</li>
+              <li>Monitor without action</li>
+            </ul>
+          </li>
+          <li>Track resolution in Legal tab</li>
         </ol>
+        <p><strong>Professional Plan:</strong> Automated DMCA filing when violations detected.</p>
       `,
       tips: [
-        "Act quickly on high-threat detections",
-        "Keep records of all takedown notices",
-        "Professional plan includes automated responses"
+        "Act quickly on high-priority threats",
+        "Use DMCA Center (/dmca-center) for filing notices",
+        "Keep records of all actions taken"
       ]
     },
     {
-      title: "Certificates & Proof",
+      title: "Blockchain Certificates",
       content: `
-        <p>Your protection certificate includes:</p>
+        <p>Access blockchain certificates from your dashboard:</p>
+        <ol>
+          <li>Click the "Blockchain" tab</li>
+          <li>View all your blockchain-registered artworks</li>
+          <li>Click any certificate to view full details</li>
+          <li>Download certificate as JSON file</li>
+          <li>Share certificate URL for verification</li>
+        </ol>
+        <p><strong>Certificate contains:</strong></p>
         <ul>
-          <li>Blockchain transaction hash</li>
-          <li>Timestamp of registration</li>
-          <li>File fingerprint/hash</li>
-          <li>Your ownership details</li>
-        </ul>
-        <p>This serves as legal proof of:</p>
-        <ul>
-          <li>Ownership at specific date/time</li>
-          <li>Original file authenticity</li>
-          <li>Protection measures applied</li>
+          <li>Unique Certificate ID</li>
+          <li>Blockchain Hash (immutable proof)</li>
+          <li>Artwork Fingerprint</li>
+          <li>Ownership Proof</li>
+          <li>Registration Timestamp</li>
+          <li>Verification Status</li>
         </ul>
       `,
       tips: [
-        "Download and save certificates offline",
-        "Include certificates in copyright claims",
-        "Certificates are legally admissible evidence"
+        "Store certificate files securely offline",
+        "Certificates are legally admissible evidence",
+        "Use in copyright disputes and legal proceedings"
       ]
     }
   ]
