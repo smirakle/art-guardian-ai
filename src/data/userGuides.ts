@@ -611,16 +611,22 @@ export const homeGuide = {
         </ol>
         <p><strong>Step 2: Choose Your Plan</strong></p>
         <ul>
-          <li><strong>Free:</strong> 10 protected works, basic monitoring</li>
-          <li><strong>Starter ($19/mo):</strong> 100 works, AI protection, blockchain</li>
-          <li><strong>Professional ($49/mo):</strong> Unlimited works, automated takedowns</li>
+          <li><strong>Student ($19/mo):</strong> Up to 1,000 artworks, basic AI monitoring, portfolio monitoring (up to 5)</li>
+          <li><strong>Starter ($29/mo):</strong> Up to 3,500 artworks, advanced AI monitoring, portfolio monitoring (up to 10), API access</li>
+          <li><strong>Professional ($199/mo):</strong> Up to 250,000 artworks, premium AI monitoring, portfolio monitoring (up to 50), blockchain verification, white-label options</li>
+          <li><strong>Enterprise (Custom):</strong> Unlimited artworks, custom API integrations, 24/7 priority support, legal team on retainer</li>
         </ul>
-        <p>Start with the free plan and upgrade when needed.</p>
+        <p><strong>Add-ons available:</strong></p>
+        <ul>
+          <li>AI Training Protection: $49/month</li>
+          <li>Social Media Monitoring: $100/month + $199 startup fee (Coming Soon)</li>
+        </ul>
+        <p>All plans include a 5-day free trial. No credit card required.</p>
       `,
       tips: [
         "Use a strong password and enable 2FA",
         "Complete your profile for better legal documentation",
-        "Free tier is perfect for testing the platform"
+        "Student plan offers 24% off - perfect for emerging artists"
       ]
     },
     {
@@ -788,8 +794,8 @@ export const homeGuide = {
         </ul>
         <p><strong>Contact Support:</strong></p>
         <ul>
-          <li>Email: support@tsmo.app</li>
-          <li>Response time: 24-72 hours (free), 4-24 hours (paid)</li>
+          <li>Email: shirleena.cunningham@tsmowatch.com</li>
+          <li>Response time: 48 hours (Student), 24 hours (Starter/Professional), 4 hours priority (Enterprise)</li>
           <li>Include: Your username, affected artwork, screenshots</li>
         </ul>
       `,
