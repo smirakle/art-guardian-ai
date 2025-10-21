@@ -15,6 +15,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import LeaveReview from "@/components/LeaveReview";
 import ContextualHelp from "@/components/help-system/ContextualHelp";
 import { BugReportButton } from "@/components/BugReportButton";
+import { UserGuide } from "@/components/UserGuide";
+import { homeGuide } from "@/data/userGuides";
 import { Shield, Eye, Activity, Link2, Search, Check, Star, ArrowRight, Zap, Globe, Lock, TrendingUp, Users, Mail, Phone, MapPin, FileImage, Upload, Scan, Bot, Play, ChevronRight, FileText, Scale, Building, Heart, ExternalLink, UserX, Calendar } from "lucide-react";
 import { ShieldCheck, EyeOff, Fingerprint, Code2, BadgeCheck } from "lucide-react";
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
@@ -194,6 +196,15 @@ const Index = () => {
             Pricing
           </Button>
         </div>
+      </div>
+
+      {/* User Guide */}
+      <div className="fixed top-20 left-4 z-40">
+        <UserGuide 
+          title={homeGuide.title}
+          description={homeGuide.description}
+          sections={homeGuide.sections}
+        />
       </div>
 
       {/* Hero Section - Simplified */}

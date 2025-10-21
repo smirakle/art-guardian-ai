@@ -498,96 +498,38 @@ export const monitoringHubGuide = {
         <p><strong>Features:</strong></p>
         <ul>
           <li>View all protected assets at a glance</li>
-          <li>Track protection status and violations</li>
-          <li>Quick access to certificates and proof</li>
-          <li>Bulk actions for multiple items</li>
-        </ul>
-        <p><strong>What's monitored:</strong></p>
-        <ul>
-          <li>Social media platforms</li>
-          <li>Stock photo websites</li>
-          <li>E-commerce marketplaces</li>
-          <li>AI training datasets</li>
+          <li>Monitor protection status</li>
+          <li>Track detection history</li>
+          <li>Manage certificates</li>
         </ul>
       `,
       tips: [
-        "Organize works with tags for easy filtering",
-        "Set up automated scans for critical pieces",
-        "Download reports monthly for records"
+        "Organize works by project or category",
+        "Review protection status regularly",
+        "Update metadata as needed"
       ]
     },
     {
-      title: "Deepfake Detection",
+      title: "Taking Action on Detections",
       content: `
-        <p>Advanced AI-powered detection of manipulated media.</p>
-        <p><strong>Detection capabilities:</strong></p>
-        <ul>
-          <li>Face swap identification (98.7% accuracy)</li>
-          <li>Voice synthesis detection</li>
-          <li>Video manipulation analysis</li>
-          <li>Real-time platform scanning</li>
-        </ul>
-        <p><strong>How to use:</strong></p>
+        <p>When violations are detected:</p>
         <ol>
-          <li>Click "Start Deepfake Scan"</li>
-          <li>Select platforms to monitor</li>
-          <li>Review detected matches</li>
-          <li>Take action on confirmed violations</li>
+          <li>Review detection details and evidence</li>
+          <li>Verify unauthorized use</li>
+          <li>File DMCA takedown notice</li>
+          <li>Track resolution progress</li>
         </ol>
-      `,
-      tips: [
-        "Enable real-time alerts for high-risk content",
-        "Scan weekly for comprehensive coverage",
-        "Report false positives to improve accuracy"
-      ]
-    },
-    {
-      title: "Image Forgery Analysis",
-      content: `
-        <p>Detect manipulation and AI-generated copies of your work.</p>
-        <p><strong>Analysis techniques:</strong></p>
+        <p><strong>Automated actions (Pro plans):</strong></p>
         <ul>
-          <li>Copy-move detection algorithms</li>
-          <li>EXIF metadata forensics</li>
-          <li>Compression artifact analysis</li>
-          <li>AI generation fingerprinting</li>
-        </ul>
-        <p><strong>What it detects:</strong></p>
-        <ul>
-          <li>Edited or manipulated versions</li>
-          <li>AI-upscaled copies</li>
-          <li>Style-transferred derivatives</li>
-          <li>Metadata tampering</li>
+          <li>Automatic DMCA filing</li>
+          <li>Legal letter generation</li>
+          <li>Platform reporting</li>
         </ul>
       `,
       tips: [
-        "Use with blockchain verification for legal proof",
-        "Run analysis on suspicious matches",
-        "Keep detection reports for evidence"
-      ]
-    },
-    {
-      title: "Managing Alerts & Actions",
-      content: `
-        <p>Stay informed and take action on detected violations.</p>
-        <p><strong>Alert severity levels:</strong></p>
-        <ul>
-          <li>🔴 <strong>Critical:</strong> Exact copies or commercial misuse</li>
-          <li>🟡 <strong>Warning:</strong> Similar content or potential violation</li>
-          <li>🟢 <strong>Low Risk:</strong> Possible false positive</li>
-        </ul>
-        <p><strong>Available actions:</strong></p>
-        <ul>
-          <li>File automated DMCA takedown (Pro plan)</li>
-          <li>Send cease & desist notice</li>
-          <li>Whitelist legitimate uses</li>
-          <li>Generate evidence report</li>
-        </ul>
-      `,
-      tips: [
-        "Respond to critical alerts within 24 hours",
-        "Keep records of all takedown actions",
-        "Whitelist your own authorized platforms"
+        "Act quickly on commercial use violations",
+        "Document all evidence thoroughly",
+        "Upgrade to Pro for automated enforcement"
       ]
     }
   ]
@@ -595,156 +537,191 @@ export const monitoringHubGuide = {
 
 export const unifiedDashboardGuide = {
   title: "Unified Dashboard Guide",
-  description: "Central command for all your protection activities",
+  description: "Master your comprehensive protection dashboard",
   sections: [
     {
       title: "Dashboard Overview",
       content: `
-        <p>Your unified dashboard brings together all aspects of IP protection in one place.</p>
+        <p>The Unified Dashboard brings all your protection metrics together in one place.</p>
         <p><strong>Key sections:</strong></p>
         <ul>
-          <li><strong>Overview:</strong> Recent activity and quick actions</li>
-          <li><strong>Protection:</strong> AI detection and one-click protection tools</li>
-          <li><strong>Legal:</strong> DMCA notices and legal network access</li>
-          <li><strong>Blockchain:</strong> Ownership registry and certificates</li>
-        </ul>
-        <p>Each section provides real-time data and actionable insights.</p>
-      `,
-      tips: [
-        "Start your day by checking the Overview tab",
-        "Set up email digests for daily summaries",
-        "Use quick actions for common tasks"
-      ]
-    },
-    {
-      title: "Understanding Your Metrics",
-      content: `
-        <p>Six key metrics provide instant insight into your protection status:</p>
-        <p><strong>Protected Assets:</strong></p>
-        <ul>
-          <li>Total number of artworks and content under protection</li>
-          <li>Includes AI-protected, blockchain-registered items</li>
-        </ul>
-        <p><strong>Active Scans:</strong></p>
-        <ul>
-          <li>Currently running monitoring agents</li>
-          <li>Indicates continuous protection coverage</li>
-        </ul>
-        <p><strong>Threats:</strong></p>
-        <ul>
-          <li>Detected copyright violations</li>
-          <li>Requires your review and action</li>
-        </ul>
-        <p><strong>Success Rate:</strong></p>
-        <ul>
-          <li>Percentage of threats successfully resolved</li>
-          <li>Higher is better (95%+ is excellent)</li>
+          <li>Quick stats at a glance</li>
+          <li>Recent activity feed</li>
+          <li>Threat monitoring</li>
+          <li>Protection portfolio</li>
+          <li>Analytics and insights</li>
         </ul>
       `,
       tips: [
-        "Aim for 100% active protection on valuable works",
-        "Address threats promptly to maintain high success rate",
-        "Monitor trends over time for insights"
+        "Review your dashboard daily",
+        "Set up custom alerts for threats",
+        "Use filters to focus on specific content"
       ]
     },
     {
-      title: "Protection Tab Features",
+      title: "Managing Protections",
       content: `
-        <p>Access all protection tools in one place:</p>
-        <p><strong>AI Detection Dashboard:</strong></p>
+        <p>Control all your protections from one central location:</p>
         <ul>
-          <li>View AI training violation alerts</li>
-          <li>Configure protection settings</li>
-          <li>Analyze detection patterns</li>
+          <li>View protection status for all assets</li>
+          <li>Update protection settings</li>
+          <li>Download certificates</li>
+          <li>Monitor scan results</li>
         </ul>
-        <p><strong>One-Click Protection:</strong></p>
-        <ul>
-          <li>Apply multiple protections instantly</li>
-          <li>Watermark + AI shield + blockchain</li>
-          <li>Bulk protect entire collections</li>
-        </ul>
-        <p>Perfect for quickly securing new uploads.</p>
       `,
       tips: [
-        "Use one-click protection for time-sensitive uploads",
-        "Review AI detection settings monthly",
-        "Enable automatic protection for new uploads"
+        "Keep all protections up to date",
+        "Review certificate expiration dates",
+        "Enable automatic renewals"
       ]
     },
     {
-      title: "Legal Tab & DMCA Actions",
+      title: "Analytics & Insights",
       content: `
-        <p>Manage all legal aspects of copyright protection:</p>
-        <p><strong>Global Legal Network:</strong></p>
+        <p>Understand your protection performance:</p>
         <ul>
-          <li>Access to 50+ legal jurisdictions</li>
-          <li>Automated DMCA notice generation</li>
-          <li>Track takedown success rates</li>
+          <li>View trend charts and graphs</li>
+          <li>Track detection rates</li>
+          <li>Monitor response times</li>
+          <li>Export reports</li>
         </ul>
-        <p><strong>DMCA Process:</strong></p>
+      `,
+      tips: [
+        "Use analytics to improve protection strategy",
+        "Export monthly reports for records",
+        "Share insights with your team"
+      ]
+    }
+  ]
+};
+
+export const homeGuide = {
+  title: "How to Use TSMO",
+  description: "Complete guide to protecting your digital artwork and intellectual property",
+  sections: [
+    {
+      title: "Getting Started",
+      content: `
+        <p>TSMO (Trademark and Social Media Oversight) is your comprehensive protection platform for digital content.</p>
+        <p><strong>What you can protect:</strong></p>
+        <ul>
+          <li>Digital artwork and illustrations</li>
+          <li>Photography and visual content</li>
+          <li>Videos and multimedia</li>
+          <li>Brand identity and trademarks</li>
+          <li>Personal likeness and identity</li>
+        </ul>
+        <p><strong>How it works:</strong></p>
         <ol>
-          <li>Violation detected by monitoring</li>
-          <li>Review and confirm infringement</li>
-          <li>Generate DMCA notice automatically</li>
-          <li>Track platform response</li>
-          <li>Escalate if needed</li>
+          <li>Upload your content</li>
+          <li>Choose protection methods</li>
+          <li>Monitor for unauthorized use</li>
+          <li>Take action against violations</li>
         </ol>
       `,
       tips: [
-        "Professional plan includes automatic filing",
-        "Keep all DMCA records for future claims",
-        "Response time averages 24-72 hours"
+        "Start by uploading your most valuable content first",
+        "Enable all protection methods for maximum security",
+        "Set up monitoring alerts to stay informed"
       ]
     },
     {
-      title: "Blockchain Tab & Certificates",
+      title: "Protection Features",
       content: `
-        <p>Immutable proof of ownership and creation:</p>
-        <p><strong>Blockchain Registry:</strong></p>
-        <ul>
-          <li>Permanent record of your IP ownership</li>
-          <li>Timestamped creation proof</li>
-          <li>Legally recognized worldwide</li>
-          <li>Transferable ownership rights</li>
-        </ul>
-        <p><strong>Using certificates:</strong></p>
-        <ul>
-          <li>Download PDF certificates for legal cases</li>
-          <li>Share verification links with clients</li>
-          <li>Include in licensing agreements</li>
-          <li>Present as evidence in disputes</li>
-        </ul>
+        <p><strong>AI Training Protection:</strong></p>
+        <p>Prevent AI models from using your work in their training datasets with invisible markers.</p>
+        
+        <p><strong>Blockchain Registration:</strong></p>
+        <p>Create immutable proof of ownership with timestamped blockchain records.</p>
+        
+        <p><strong>Deepfake Detection:</strong></p>
+        <p>Monitor for manipulated media using your likeness across the internet.</p>
+        
+        <p><strong>Trademark Monitoring:</strong></p>
+        <p>Detect unauthorized use of your brand and trademarks in real-time.</p>
+        
+        <p><strong>Forgery Detection:</strong></p>
+        <p>Identify image manipulation and AI-generated copies of your work.</p>
       `,
       tips: [
-        "Register important works immediately",
-        "Store certificates in multiple locations",
-        "Include blockchain proof in all legal filings"
+        "Combine multiple protection methods for best results",
+        "Blockchain certificates are legally admissible evidence",
+        "Enable real-time alerts for critical content"
       ]
     },
     {
-      title: "Recent Activity & Quick Actions",
+      title: "Monitoring & Detection",
       content: `
-        <p>Stay on top of your protection ecosystem:</p>
-        <p><strong>Recent Activity shows:</strong></p>
+        <p>24/7 automated monitoring across:</p>
         <ul>
-          <li>New artwork protections</li>
-          <li>Violation detections</li>
-          <li>Blockchain registrations</li>
-          <li>DMCA filings</li>
-          <li>AI protection activations</li>
+          <li>Social media platforms</li>
+          <li>Image search engines</li>
+          <li>Stock photo websites</li>
+          <li>AI training datasets</li>
+          <li>E-commerce marketplaces</li>
         </ul>
-        <p><strong>Quick Actions provide:</strong></p>
+        <p><strong>Alert types:</strong></p>
         <ul>
-          <li>One-click upload & protect</li>
-          <li>Start new monitoring scans</li>
-          <li>Configure AI protection</li>
-          <li>Access analytics dashboard</li>
+          <li>🔴 High priority: Exact matches and commercial use</li>
+          <li>🟡 Medium priority: Similar content and potential violations</li>
+          <li>🟢 Low priority: Possible matches requiring review</li>
         </ul>
+        <p>Visit the Monitoring page to view all detections and take action.</p>
       `,
       tips: [
-        "Check activity daily for important updates",
-        "Use quick actions to streamline workflow",
-        "Set up notifications for critical events"
+        "Review alerts daily to catch violations early",
+        "Use automated DMCA takedowns with Pro plan",
+        "Whitelist legitimate uses to reduce false positives"
+      ]
+    },
+    {
+      title: "Taking Action",
+      content: `
+        <p><strong>When violations are detected:</strong></p>
+        <ol>
+          <li>Review the detection details</li>
+          <li>Verify it's unauthorized use</li>
+          <li>File DMCA takedown notice</li>
+          <li>Track resolution status</li>
+        </ol>
+        <p><strong>Legal support:</strong></p>
+        <ul>
+          <li>Download protection certificates</li>
+          <li>Access copyright claim templates</li>
+          <li>Connect with IP lawyers (Premium)</li>
+          <li>Get expert legal consultation</li>
+        </ul>
+        <p>Professional plans include automated DMCA filing for faster resolution.</p>
+      `,
+      tips: [
+        "Act quickly on high-priority violations",
+        "Keep all certificates and evidence organized",
+        "Document everything for potential legal action"
+      ]
+    },
+    {
+      title: "Community & Resources",
+      content: `
+        <p><strong>Join the TSMO Community:</strong></p>
+        <ul>
+          <li>Connect with other creators</li>
+          <li>Share protection strategies</li>
+          <li>Learn about licensing opportunities</li>
+          <li>Stay updated on copyright law</li>
+        </ul>
+        <p><strong>Additional resources:</strong></p>
+        <ul>
+          <li>Educational guides and tutorials</li>
+          <li>Legal resources and templates</li>
+          <li>Industry news and updates</li>
+          <li>Creator marketplace for licensing</li>
+        </ul>
+        <p>Visit the Community page to explore all available resources.</p>
+      `,
+      tips: [
+        "Learn from other creators' experiences",
+        "Stay informed about new threats",
+        "Explore licensing opportunities to monetize your work"
       ]
     }
   ]
