@@ -198,6 +198,15 @@ const Index = () => {
         </div>
       </div>
 
+      {/* How-To Guide */}
+      <div className="fixed top-20 left-4 z-40">
+        <UserGuide 
+          title={homeGuide.title}
+          description={homeGuide.description}
+          sections={homeGuide.sections}
+        />
+      </div>
+
 
       {/* Hero Section - Simplified */}
       <section className="pt-24 sm:pt-32 pb-16 px-4">
