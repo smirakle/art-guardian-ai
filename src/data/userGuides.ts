@@ -1586,6 +1586,66 @@ export const homeGuide = {
       ]
     },
     {
+      title: "How to Get the Most Out of TSMO",
+      content: `
+        <p><strong>Maximize Your Protection:</strong></p>
+        <ul>
+          <li><strong>Upload Everything:</strong> Protect all your work, not just final pieces - sketches, WIPs, and drafts prove your creative process</li>
+          <li><strong>Use Blockchain for Important Work:</strong> Always enable blockchain verification for high-value or commercial artwork</li>
+          <li><strong>Enable Multiple Monitoring Types:</strong> Combine Portfolio + Profile + Deepfake monitoring for comprehensive coverage</li>
+          <li><strong>Tag Thoroughly:</strong> Detailed tags and descriptions make monitoring more accurate and help in legal proceedings</li>
+        </ul>
+        <p><strong>Best Practices for Monitoring:</strong></p>
+        <ul>
+          <li><strong>Check Dashboard Daily:</strong> Review the Overview tab each day for new threats and alerts</li>
+          <li><strong>Act on Threats Immediately:</strong> File DMCA notices within 24-48 hours of detection for fastest results</li>
+          <li><strong>Configure Alert Preferences:</strong> Set email/SMS alerts to match your workflow (instant, daily digest, or weekly)</li>
+          <li><strong>Monitor Pre-emptively:</strong> Enable monitoring before publicly sharing work to catch violations early</li>
+        </ul>
+        <p><strong>Optimize Your Workflow:</strong></p>
+        <ul>
+          <li><strong>Batch Upload:</strong> Upload multiple files at once instead of one-by-one to save time</li>
+          <li><strong>Use Legal Templates:</strong> Pre-fill DMCA notices using templates to file faster when violations occur</li>
+          <li><strong>Export Monthly Reports:</strong> Download analytics reports for tax purposes and business records</li>
+          <li><strong>Set Up Portfolios:</strong> Organize artworks into portfolios (e.g., "Client Work", "Personal", "NFTs") for easier management</li>
+        </ul>
+        <p><strong>Advanced Tips:</strong></p>
+        <ul>
+          <li><strong>Verify Suspicious Images:</strong> Use Forgery Detection before purchasing or licensing artwork from others</li>
+          <li><strong>Share Certificates with Buyers:</strong> Include blockchain certificate URLs when selling work to prove authenticity</li>
+          <li><strong>Enable AI Protection for Public Work:</strong> If you share work on social media or portfolios, enable AI Training Protection</li>
+          <li><strong>Document Everything:</strong> Keep records of all DMCA notices, certificates, and violations for potential legal action</li>
+        </ul>
+        <p><strong>Professional/Enterprise Users:</strong></p>
+        <ul>
+          <li><strong>Use API Access:</strong> Integrate TSMO protection into your existing workflows (Starter plan and above)</li>
+          <li><strong>White-Label Options:</strong> Customize interface for client-facing use (Professional plan)</li>
+          <li><strong>Automated DMCA:</strong> Enable auto-filing for instant takedown requests (Professional plan)</li>
+          <li><strong>Priority Support:</strong> Take advantage of faster response times for urgent issues</li>
+        </ul>
+        <p><strong>Cost Optimization:</strong></p>
+        <ul>
+          <li><strong>Start with Student/Starter:</strong> Test features before upgrading to Professional</li>
+          <li><strong>Use Free Trial:</strong> 5-day trial with no credit card required on all plans</li>
+          <li><strong>Add-ons Only When Needed:</strong> Social Media Monitoring and AI Training Protection are optional - add when you need them</li>
+          <li><strong>Annual Billing:</strong> Contact sales for annual billing discounts (Enterprise plan)</li>
+        </ul>
+        <p><strong>Success Metrics to Track:</strong></p>
+        <ul>
+          <li><strong>Threat Detection Rate:</strong> Monitor how many violations are caught per month</li>
+          <li><strong>Resolution Success Rate:</strong> Track percentage of DMCA notices successfully resolved</li>
+          <li><strong>Response Time:</strong> Measure how quickly platforms respond to your takedown requests</li>
+          <li><strong>Protected Assets Growth:</strong> Keep adding work consistently to maintain comprehensive protection</li>
+        </ul>
+      `,
+      tips: [
+        "Enable all monitoring types for complete coverage across platforms",
+        "Document your creative process with WIP uploads - proves originality",
+        "Review analytics monthly to identify patterns in violations",
+        "Join the TSMO community to share experiences and learn best practices"
+      ]
+    },
+    {
       title: "Getting Help",
       content: `
         <p><strong>Help Center:</strong></p>
