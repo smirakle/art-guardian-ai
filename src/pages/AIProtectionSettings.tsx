@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { AITrainingSettings } from '@/components/AITrainingSettings';
-import StyleCloak from '@/components/ai-protection/StyleCloak';
 import { ProductionMetadataSettings } from '@/components/ai-protection/ProductionMetadataSettings';
 import { ProductionCrawlerBlockingSettings } from '@/components/ai-protection/ProductionCrawlerBlockingSettings';
 import { ProductionLikenessSettings } from '@/components/ai-protection/ProductionLikenessSettings';
@@ -9,7 +8,6 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 const AIProtectionSettings = () => {
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     'basic-settings': true,
-    'style-cloak': false,
     'metadata-protection': false,
     'crawler-blocking': false,
     'likeness-protection': false
@@ -60,28 +58,6 @@ const AIProtectionSettings = () => {
           {expandedSections['basic-settings'] && (
             <CardContent>
               <AITrainingSettings />
-            </CardContent>
-          )}
-        </Card>
-        
-        {/* Style Cloak */}
-        <Card className="mb-6">
-          <CardHeader 
-            className="cursor-pointer hover:bg-muted/50 transition-colors"
-            onClick={() => toggleSection('style-cloak')}
-          >
-            <CardTitle className="flex items-center justify-between">
-              <span>Enhanced Style Cloaking</span>
-              {expandedSections['style-cloak'] ? (
-                <ChevronDown className="h-5 w-5" />
-              ) : (
-                <ChevronRight className="h-5 w-5" />
-              )}
-            </CardTitle>
-          </CardHeader>
-          {expandedSections['style-cloak'] && (
-            <CardContent className="pt-0">
-              <StyleCloak />
             </CardContent>
           )}
         </Card>
