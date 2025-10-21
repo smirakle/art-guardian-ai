@@ -247,81 +247,174 @@ export const dashboardGuide = {
 
 export const protectionHubGuide = {
   title: "Protection Hub Guide",
-  description: "Advanced protection settings and monitoring",
+  description: "Advanced protection settings and AI defense tools",
   sections: [
     {
-      title: "AI Training Protection",
+      title: "What is the Protection Hub?",
       content: `
-        <p>Protect your artwork from being used in AI training datasets.</p>
-        <p><strong>How it works:</strong></p>
-        <ol>
-          <li>Invisible markers are embedded in your file</li>
-          <li>AI models cannot use marked files for training</li>
-          <li>Violations are automatically detected</li>
-          <li>DMCA notices sent to violators</li>
-        </ol>
-        <p><strong>Protection methods:</strong></p>
+        <p>The Content Protection Hub is your central control center for AI training protection and advanced defense tools.</p>
+        <p><strong>Six Main Tabs:</strong></p>
         <ul>
-          <li>Digital watermarking</li>
-          <li>Adversarial perturbations</li>
-          <li>Metadata poisoning</li>
+          <li><strong>Upload & Protect:</strong> Quick file upload with one-click protection</li>
+          <li><strong>AI Protection:</strong> Basic and enhanced AI training protection settings</li>
+          <li><strong>Detection:</strong> AI-powered detection dashboard and analytics</li>
+          <li><strong>Multi-Modal:</strong> Visual recognition and analysis tools</li>
+          <li><strong>Advanced:</strong> Metadata protection, crawler blocking, likeness recognition</li>
+          <li><strong>Overview:</strong> Protection status, recent activity, and quick actions</li>
         </ul>
+        <p><strong>Quick Stats at top:</strong> Protected Files, Active Scans, Threats Detected, Detection Rate</p>
       `,
       tips: [
-        "Enable for all digital artwork",
-        "Combine with blockchain for maximum protection",
-        "Regularly check for new violations"
+        "Start with Upload & Protect for quick protection",
+        "Use AI Protection tab to configure defense levels",
+        "Check Overview tab for current protection status"
       ]
     },
     {
-      title: "Blockchain Registration",
+      title: "Upload & Protect Tab",
       content: `
-        <p>Register your work on the blockchain for immutable proof.</p>
-        <p><strong>Benefits:</strong></p>
+        <p><strong>Quick Upload & Protection:</strong></p>
+        <p>Use the OneClickProtection component to rapidly protect files without going to the full upload page.</p>
+        <p><strong>Supported File Types:</strong></p>
         <ul>
-          <li>Permanent timestamp of creation</li>
-          <li>Tamper-proof ownership record</li>
-          <li>Legally recognized worldwide</li>
-          <li>Transferable ownership rights</li>
+          <li><strong>Images:</strong> JPG, PNG, GIF</li>
+          <li><strong>Videos:</strong> MP4, AVI, MOV</li>
+          <li><strong>Documents:</strong> PDF, DOC</li>
+          <li><strong>3D Models:</strong> OBJ, FBX</li>
         </ul>
-        <p><strong>Process:</strong></p>
-        <ol>
-          <li>File hash is calculated</li>
-          <li>Transaction is created</li>
-          <li>Recorded on blockchain</li>
-          <li>Certificate generated</li>
-        </ol>
-        <p>Cost: Included in paid plans</p>
+        <p>Click "Start Upload" button to go to the full Upload page for complete protection options.</p>
       `,
       tips: [
-        "Register important works immediately",
-        "Keep your certificate safe",
-        "Blockchain proof strengthens legal claims"
+        "OneClickProtection is perfect for quick uploads",
+        "For blockchain and detailed metadata, use main Upload page",
+        "Multiple file types supported simultaneously"
       ]
     },
     {
-      title: "Monitoring & Alerts",
+      title: "AI Protection Tab",
       content: `
-        <p>Continuous monitoring across platforms:</p>
+        <p>Two protection systems available:</p>
+        <p><strong>1. Basic AI Training Protection:</strong></p>
         <ul>
-          <li>Image search engines</li>
-          <li>Social media platforms</li>
-          <li>Stock photo sites</li>
-          <li>AI training datasets</li>
+          <li>Configure basic AI training defense settings</li>
+          <li>Uses AITrainingSettings component</li>
+          <li>Prevents AI models from using your work in training</li>
         </ul>
-        <p><strong>Alert types:</strong></p>
+        <p><strong>2. Enhanced Style Cloaking:</strong></p>
         <ul>
-          <li>Exact match detected</li>
-          <li>Similar content found</li>
-          <li>AI training violation</li>
-          <li>Unauthorized commercial use</li>
+          <li>Advanced protection using StyleCloak technology</li>
+          <li>Invisible adversarial perturbations</li>
+          <li>Protects artistic style from AI replication</li>
+          <li>Doesn't affect visual quality</li>
         </ul>
-        <p>Configure alert frequency in settings.</p>
+        <p>Both systems work together for maximum protection against AI training misuse.</p>
       `,
       tips: [
-        "Enable real-time alerts for critical work",
-        "Review weekly digest for less urgent items",
-        "Whitelist legitimate uses to reduce false positives"
+        "Enable both Basic and Enhanced for complete protection",
+        "Style Cloaking is market-ready and invisible",
+        "Protection doesn't degrade image quality"
+      ]
+    },
+    {
+      title: "Detection Tab",
+      content: `
+        <p><strong>AI Detection Dashboard:</strong></p>
+        <p>View comprehensive analytics and threat detection:</p>
+        <ul>
+          <li>Active threat monitoring</li>
+          <li>Detection history and logs</li>
+          <li>AI training violation alerts</li>
+          <li>Detailed forensics reports</li>
+          <li>False positive management</li>
+        </ul>
+        <p>This dashboard shows all detected threats and allows you to take action on violations.</p>
+      `,
+      tips: [
+        "Check regularly for new threat detections",
+        "Review false positives to improve accuracy",
+        "Use forensics reports for legal documentation"
+      ]
+    },
+    {
+      title: "Multi-Modal Tab",
+      content: `
+        <p><strong>Visual Recognition Tools:</strong></p>
+        <p>Advanced visual analysis and recognition capabilities:</p>
+        <ul>
+          <li>Image similarity detection</li>
+          <li>Visual fingerprinting</li>
+          <li>Content matching across platforms</li>
+          <li>Multi-modal content analysis</li>
+          <li>Cross-format detection (image, video, etc.)</li>
+        </ul>
+        <p>Uses the VisualRecognition component for powerful content matching.</p>
+      `,
+      tips: [
+        "Useful for finding modified versions of your work",
+        "Can detect content across different formats",
+        "Handles cropped, filtered, and altered images"
+      ]
+    },
+    {
+      title: "Advanced Tab",
+      content: `
+        <p>Three advanced protection systems:</p>
+        <p><strong>1. Metadata Protection:</strong></p>
+        <ul>
+          <li>Strip or preserve EXIF data</li>
+          <li>Control what information is shared</li>
+          <li>Prevent location tracking</li>
+          <li>Manage copyright metadata</li>
+        </ul>
+        <p><strong>2. Crawler Blocking:</strong></p>
+        <ul>
+          <li>Block AI training crawlers</li>
+          <li>Control which bots can access your content</li>
+          <li>Whitelist legitimate crawlers</li>
+          <li>Monitor crawler access attempts</li>
+        </ul>
+        <p><strong>3. Likeness Recognition Protection:</strong></p>
+        <ul>
+          <li>Protect your personal likeness</li>
+          <li>Prevent unauthorized use of your face/identity</li>
+          <li>Deepfake detection integration</li>
+          <li>Identity theft monitoring</li>
+        </ul>
+      `,
+      tips: [
+        "Enable all three for comprehensive protection",
+        "Metadata stripping recommended before public sharing",
+        "Likeness protection crucial for public figures and influencers"
+      ]
+    },
+    {
+      title: "Overview Tab",
+      content: `
+        <p><strong>Protection Status Card:</strong></p>
+        <p>See current status of all protection systems:</p>
+        <ul>
+          <li>AI Training Protection - Active/Inactive</li>
+          <li>Style Cloaking - Active/Inactive</li>
+          <li>Metadata Protection - Configured/Not Configured</li>
+        </ul>
+        <p><strong>Recent Activity Card:</strong></p>
+        <ul>
+          <li>New files protected</li>
+          <li>AI training violations detected</li>
+          <li>Metadata operations</li>
+          <li>Style cloak applications</li>
+        </ul>
+        <p><strong>Quick Actions Card:</strong></p>
+        <ul>
+          <li>Upload New Content button</li>
+          <li>Start New Scan button</li>
+          <li>Configure Protection button</li>
+        </ul>
+      `,
+      tips: [
+        "Check Overview tab daily for protection status",
+        "Green badges mean systems are active and working",
+        "Use Quick Actions for fast access to common tasks"
       ]
     }
   ]
