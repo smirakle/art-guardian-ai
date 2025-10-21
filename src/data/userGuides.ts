@@ -597,131 +597,206 @@ export const unifiedDashboardGuide = {
 
 export const homeGuide = {
   title: "How to Use TSMO",
-  description: "Complete guide to protecting your digital artwork and intellectual property",
+  description: "Step-by-step instructions to protect your creative work",
   sections: [
     {
-      title: "Getting Started",
+      title: "Getting Started: First Steps",
       content: `
-        <p>TSMO (Trademark and Social Media Oversight) is your comprehensive protection platform for digital content.</p>
-        <p><strong>What you can protect:</strong></p>
-        <ul>
-          <li>Digital artwork and illustrations</li>
-          <li>Photography and visual content</li>
-          <li>Videos and multimedia</li>
-          <li>Brand identity and trademarks</li>
-          <li>Personal likeness and identity</li>
-        </ul>
-        <p><strong>How it works:</strong></p>
+        <p><strong>Step 1: Create Your Account</strong></p>
         <ol>
-          <li>Upload your content</li>
-          <li>Choose protection methods</li>
-          <li>Monitor for unauthorized use</li>
-          <li>Take action against violations</li>
+          <li>Click "Sign Up" in the top right corner</li>
+          <li>Enter your email and create a password</li>
+          <li>Verify your email address</li>
+          <li>Complete your profile (name, bio, website)</li>
         </ol>
+        <p><strong>Step 2: Choose Your Plan</strong></p>
+        <ul>
+          <li><strong>Free:</strong> 10 protected works, basic monitoring</li>
+          <li><strong>Starter ($19/mo):</strong> 100 works, AI protection, blockchain</li>
+          <li><strong>Professional ($49/mo):</strong> Unlimited works, automated takedowns</li>
+        </ul>
+        <p>Start with the free plan and upgrade when needed.</p>
       `,
       tips: [
-        "Start by uploading your most valuable content first",
-        "Enable all protection methods for maximum security",
-        "Set up monitoring alerts to stay informed"
+        "Use a strong password and enable 2FA",
+        "Complete your profile for better legal documentation",
+        "Free tier is perfect for testing the platform"
       ]
     },
     {
-      title: "Protection Features",
+      title: "Uploading & Protecting Your First Artwork",
       content: `
-        <p><strong>AI Training Protection:</strong></p>
-        <p>Prevent AI models from using your work in their training datasets with invisible markers.</p>
-        
-        <p><strong>Blockchain Registration:</strong></p>
-        <p>Create immutable proof of ownership with timestamped blockchain records.</p>
-        
-        <p><strong>Deepfake Detection:</strong></p>
-        <p>Monitor for manipulated media using your likeness across the internet.</p>
-        
-        <p><strong>Trademark Monitoring:</strong></p>
-        <p>Detect unauthorized use of your brand and trademarks in real-time.</p>
-        
+        <p><strong>How to Upload:</strong></p>
+        <ol>
+          <li>Click "Upload" in the navigation menu</li>
+          <li>Drag and drop your file or click to browse</li>
+          <li>Add title and description (required for copyright)</li>
+          <li>Select category (Art, Photography, Design, etc.)</li>
+          <li>Add tags for easier organization</li>
+        </ol>
+        <p><strong>Applying Protection:</strong></p>
+        <ol>
+          <li>Check "AI Training Protection" - prevents AI from learning your style</li>
+          <li>Check "Blockchain Registration" - creates immutable ownership proof</li>
+          <li>Check "Enable Monitoring" - tracks unauthorized use 24/7</li>
+          <li>Click "Upload & Protect"</li>
+        </ol>
+        <p>Processing takes 5-30 seconds. You'll see a success message when complete.</p>
+      `,
+      tips: [
+        "Higher resolution files get better protection",
+        "Use descriptive titles for legal purposes",
+        "Enable all protections for maximum security"
+      ]
+    },
+    {
+      title: "Using the Dashboard",
+      content: `
+        <p><strong>Daily Dashboard Check:</strong></p>
+        <ol>
+          <li>Open your Unified Dashboard (main page after login)</li>
+          <li>Review "Active Threats" card - red badges need attention</li>
+          <li>Check "Protection Status" - ensure all works show green</li>
+          <li>Review "Recent Activity" for latest scans</li>
+        </ol>
+        <p><strong>Understanding Status Indicators:</strong></p>
+        <ul>
+          <li>🟢 Green: Fully protected, no issues</li>
+          <li>🟡 Yellow: Processing or minor issues</li>
+          <li>🔴 Red: Violation detected or protection failed</li>
+        </ul>
+        <p><strong>Quick Actions:</strong></p>
+        <ul>
+          <li>Click any artwork to view details</li>
+          <li>Click threats to see violation evidence</li>
+          <li>Use "Take Action" to send takedown notices</li>
+        </ul>
+      `,
+      tips: [
+        "Check dashboard daily for new threats",
+        "Address red alerts within 24 hours",
+        "Download certificates for important works"
+      ]
+    },
+    {
+      title: "Setting Up Monitoring",
+      content: `
+        <p><strong>Activate 24/7 Monitoring:</strong></p>
+        <ol>
+          <li>Go to "Monitoring Hub" in the main menu</li>
+          <li>Click "Enable Portfolio Monitoring"</li>
+          <li>Select which artworks to monitor (or select all)</li>
+          <li>Set alert preferences (instant, daily digest, weekly)</li>
+          <li>Click "Start Monitoring"</li>
+        </ol>
+        <p><strong>Configure Alert Settings:</strong></p>
+        <ol>
+          <li>Go to Settings > Notifications</li>
+          <li>Choose email or SMS alerts</li>
+          <li>Set threshold: High threats only OR All detections</li>
+          <li>Enable/disable specific monitoring types</li>
+        </ol>
+        <p>Monitoring scans the internet every 6 hours for unauthorized use.</p>
+      `,
+      tips: [
+        "Start with 'High threats only' to avoid alert fatigue",
+        "Enable SMS alerts for critical violations",
+        "Review weekly digests on Mondays"
+      ]
+    },
+    {
+      title: "Responding to Violations",
+      content: `
+        <p><strong>When You Get a Violation Alert:</strong></p>
+        <ol>
+          <li>Open the alert notification</li>
+          <li>Review the detected match and evidence</li>
+          <li>Click "View Details" to see full analysis</li>
+          <li>Verify it's actually unauthorized (not your own post)</li>
+          <li>Click "Take Action"</li>
+        </ol>
+        <p><strong>Taking Action Options:</strong></p>
+        <ul>
+          <li><strong>Send DMCA Takedown:</strong> Automated legal notice (Pro plan)</li>
+          <li><strong>Generate Takedown Letter:</strong> Download for manual sending</li>
+          <li><strong>Mark as False Positive:</strong> Improve future detections</li>
+          <li><strong>Monitor Only:</strong> Track without action</li>
+        </ul>
+        <p><strong>Manual Takedown Process (Free/Starter):</strong></p>
+        <ol>
+          <li>Click "Generate Takedown Letter"</li>
+          <li>Download the PDF with evidence</li>
+          <li>Send to the platform's DMCA contact email</li>
+          <li>Mark as "Takedown Sent" in TSMO</li>
+          <li>Track resolution in your dashboard</li>
+        </ol>
+      `,
+      tips: [
+        "Act within 24 hours of detection",
+        "Keep copies of all takedown notices",
+        "Professional plan handles this automatically"
+      ]
+    },
+    {
+      title: "Advanced Features",
+      content: `
+        <p><strong>Blockchain Certificates:</strong></p>
+        <ol>
+          <li>Go to your artwork details page</li>
+          <li>Click "Download Certificate"</li>
+          <li>Save the PDF with blockchain proof</li>
+          <li>Use in copyright disputes or legal claims</li>
+        </ol>
         <p><strong>Forgery Detection:</strong></p>
-        <p>Identify image manipulation and AI-generated copies of your work.</p>
-      `,
-      tips: [
-        "Combine multiple protection methods for best results",
-        "Blockchain certificates are legally admissible evidence",
-        "Enable real-time alerts for critical content"
-      ]
-    },
-    {
-      title: "Monitoring & Detection",
-      content: `
-        <p>24/7 automated monitoring across:</p>
-        <ul>
-          <li>Social media platforms</li>
-          <li>Image search engines</li>
-          <li>Stock photo websites</li>
-          <li>AI training datasets</li>
-          <li>E-commerce marketplaces</li>
-        </ul>
-        <p><strong>Alert types:</strong></p>
-        <ul>
-          <li>🔴 High priority: Exact matches and commercial use</li>
-          <li>🟡 Medium priority: Similar content and potential violations</li>
-          <li>🟢 Low priority: Possible matches requiring review</li>
-        </ul>
-        <p>Visit the Monitoring page to view all detections and take action.</p>
-      `,
-      tips: [
-        "Review alerts daily to catch violations early",
-        "Use automated DMCA takedowns with Pro plan",
-        "Whitelist legitimate uses to reduce false positives"
-      ]
-    },
-    {
-      title: "Taking Action",
-      content: `
-        <p><strong>When violations are detected:</strong></p>
         <ol>
-          <li>Review the detection details</li>
-          <li>Verify it's unauthorized use</li>
-          <li>File DMCA takedown notice</li>
-          <li>Track resolution status</li>
+          <li>Go to "Forgery Detection" page</li>
+          <li>Upload a suspicious image</li>
+          <li>Wait 5-10 seconds for AI analysis</li>
+          <li>View results: AI-generated probability & manipulation detection</li>
         </ol>
-        <p><strong>Legal support:</strong></p>
-        <ul>
-          <li>Download protection certificates</li>
-          <li>Access copyright claim templates</li>
-          <li>Connect with IP lawyers (Premium)</li>
-          <li>Get expert legal consultation</li>
-        </ul>
-        <p>Professional plans include automated DMCA filing for faster resolution.</p>
+        <p><strong>Batch Operations:</strong></p>
+        <ol>
+          <li>In Dashboard, select multiple artworks (checkboxes)</li>
+          <li>Click "Bulk Actions" at the top</li>
+          <li>Choose: Enable monitoring, Download certificates, Update tags</li>
+          <li>Confirm action</li>
+        </ol>
       `,
       tips: [
-        "Act quickly on high-priority violations",
-        "Keep all certificates and evidence organized",
-        "Document everything for potential legal action"
+        "Store certificates in cloud backup",
+        "Use forgery detection before purchasing art",
+        "Batch operations save time with large collections"
       ]
     },
     {
-      title: "Community & Resources",
+      title: "Getting Help",
       content: `
-        <p><strong>Join the TSMO Community:</strong></p>
+        <p><strong>When You Need Help:</strong></p>
+        <ol>
+          <li>Click the "?" icon (Help Center) in any page</li>
+          <li>Search for your issue or browse guides</li>
+          <li>If not found, click "Report Bug" button</li>
+          <li>Fill in: What you tried, what happened, what should happen</li>
+          <li>Submit - we respond within 24-48 hours</li>
+        </ol>
+        <p><strong>Common Issues & Solutions:</strong></p>
         <ul>
-          <li>Connect with other creators</li>
-          <li>Share protection strategies</li>
-          <li>Learn about licensing opportunities</li>
-          <li>Stay updated on copyright law</li>
+          <li><strong>Upload failed:</strong> Check file size (max 500MB) and format</li>
+          <li><strong>Protection pending:</strong> Large files take up to 10 minutes</li>
+          <li><strong>No detections:</strong> Monitoring takes 6-24 hours to start</li>
+          <li><strong>False positives:</strong> Mark them to improve accuracy</li>
         </ul>
-        <p><strong>Additional resources:</strong></p>
+        <p><strong>Contact Support:</strong></p>
         <ul>
-          <li>Educational guides and tutorials</li>
-          <li>Legal resources and templates</li>
-          <li>Industry news and updates</li>
-          <li>Creator marketplace for licensing</li>
+          <li>Email: support@tsmo.app</li>
+          <li>Response time: 24-72 hours (free), 4-24 hours (paid)</li>
+          <li>Include: Your username, affected artwork, screenshots</li>
         </ul>
-        <p>Visit the Community page to explore all available resources.</p>
       `,
       tips: [
-        "Learn from other creators' experiences",
-        "Stay informed about new threats",
-        "Explore licensing opportunities to monetize your work"
+        "Check Help Center first for instant answers",
+        "Use bug reports for technical issues",
+        "Include screenshots when contacting support"
       ]
     }
   ]
