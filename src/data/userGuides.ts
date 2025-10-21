@@ -246,174 +246,251 @@ export const dashboardGuide = {
 };
 
 export const protectionHubGuide = {
-  title: "Protection Hub Guide",
-  description: "Advanced protection settings and AI defense tools",
+  title: "How to Use Protection Hub",
+  description: "Step-by-step guide to protect your content with advanced AI defense tools",
   sections: [
     {
-      title: "What is the Protection Hub?",
+      title: "Getting Started with Protection Hub",
       content: `
-        <p>The Content Protection Hub is your central control center for AI training protection and advanced defense tools.</p>
-        <p><strong>Six Main Tabs:</strong></p>
+        <p><strong>Access Protection Hub:</strong></p>
+        <ol>
+          <li>Click "Protection Hub" in the main navigation menu</li>
+          <li>Or go to /protection-hub</li>
+        </ol>
+        <p><strong>What You'll See:</strong></p>
         <ul>
-          <li><strong>Upload & Protect:</strong> Quick file upload with one-click protection</li>
-          <li><strong>AI Protection:</strong> Basic and enhanced AI training protection settings</li>
-          <li><strong>Detection:</strong> AI-powered detection dashboard and analytics</li>
-          <li><strong>Multi-Modal:</strong> Visual recognition and analysis tools</li>
-          <li><strong>Advanced:</strong> Metadata protection, crawler blocking, likeness recognition</li>
-          <li><strong>Overview:</strong> Protection status, recent activity, and quick actions</li>
+          <li>Quick Stats at the top: Protected Files, Active Scans, Threats Detected, Detection Rate</li>
+          <li>Six tabs for different protection tools</li>
+          <li>Real-time protection status indicators</li>
         </ul>
-        <p><strong>Quick Stats at top:</strong> Protected Files, Active Scans, Threats Detected, Detection Rate</p>
+        <p><strong>Six Protection Tools Available:</strong></p>
+        <ol>
+          <li><strong>Upload & Protect:</strong> Quick file upload</li>
+          <li><strong>AI Protection:</strong> Configure AI training defense</li>
+          <li><strong>Detection:</strong> View threat analytics</li>
+          <li><strong>Multi-Modal:</strong> Visual recognition tools</li>
+          <li><strong>Advanced:</strong> Metadata, crawler blocking, likeness protection</li>
+          <li><strong>Overview:</strong> Status summary and quick actions</li>
+        </ol>
       `,
       tips: [
-        "Start with Upload & Protect for quick protection",
-        "Use AI Protection tab to configure defense levels",
-        "Check Overview tab for current protection status"
+        "Start with Overview tab to check current protection status",
+        "Use Upload & Protect for quick file protection",
+        "Enable AI Protection before sharing content publicly"
       ]
     },
     {
-      title: "Upload & Protect Tab",
+      title: "Quick File Upload & Protection",
       content: `
-        <p><strong>Quick Upload & Protection:</strong></p>
-        <p>Use the OneClickProtection component to rapidly protect files without going to the full upload page.</p>
+        <p><strong>How to Quickly Protect Files:</strong></p>
+        <ol>
+          <li>Click the "Upload & Protect" tab</li>
+          <li>Look for "Quick Upload & Protection" card on the left</li>
+          <li>Drag and drop files OR click to browse</li>
+          <li>Files will be protected automatically with basic settings</li>
+          <li>View protection confirmation</li>
+        </ol>
         <p><strong>Supported File Types:</strong></p>
         <ul>
-          <li><strong>Images:</strong> JPG, PNG, GIF</li>
-          <li><strong>Videos:</strong> MP4, AVI, MOV</li>
-          <li><strong>Documents:</strong> PDF, DOC</li>
-          <li><strong>3D Models:</strong> OBJ, FBX</li>
+          <li>Images: JPG, PNG, GIF</li>
+          <li>Videos: MP4, AVI, MOV</li>
+          <li>Documents: PDF, DOC</li>
+          <li>3D Models: OBJ, FBX</li>
         </ul>
-        <p>Click "Start Upload" button to go to the full Upload page for complete protection options.</p>
+        <p><strong>For More Options:</strong></p>
+        <ol>
+          <li>Click "Start Upload" button in the right card</li>
+          <li>This takes you to the full Upload page</li>
+          <li>There you can add blockchain, detailed metadata, and more</li>
+        </ol>
       `,
       tips: [
-        "OneClickProtection is perfect for quick uploads",
-        "For blockchain and detailed metadata, use main Upload page",
-        "Multiple file types supported simultaneously"
+        "Quick upload is perfect when you need fast protection",
+        "For blockchain certificates, use the main Upload page",
+        "Multiple files can be uploaded at once"
       ]
     },
     {
-      title: "AI Protection Tab",
+      title: "Enabling AI Training Protection",
       content: `
-        <p>Two protection systems available:</p>
-        <p><strong>1. Basic AI Training Protection:</strong></p>
+        <p><strong>Step 1: Basic AI Training Protection</strong></p>
+        <ol>
+          <li>Click the "AI Protection" tab</li>
+          <li>Find "Basic AI Training Protection" card on the left</li>
+          <li>Review the AI Training Settings options</li>
+          <li>Toggle protection ON for your content</li>
+          <li>Select protection level (if available)</li>
+          <li>Click "Save" or "Apply"</li>
+        </ol>
+        <p><strong>Step 2: Enhanced Style Cloaking (Recommended)</strong></p>
+        <ol>
+          <li>In the same AI Protection tab, look at right card</li>
+          <li>Find "Enhanced Style Cloaking" section</li>
+          <li>Click "Enable Style Cloak"</li>
+          <li>Choose intensity level (Basic, Standard, Maximum)</li>
+          <li>Apply to selected artworks or entire portfolio</li>
+          <li>Wait for processing (invisible to viewers)</li>
+        </ol>
+        <p><strong>What This Does:</strong></p>
         <ul>
-          <li>Configure basic AI training defense settings</li>
-          <li>Uses AITrainingSettings component</li>
-          <li>Prevents AI models from using your work in training</li>
+          <li>Prevents AI models from training on your work</li>
+          <li>Adds invisible adversarial patterns</li>
+          <li>Protects your artistic style from AI replication</li>
+          <li>No visible changes to your images</li>
         </ul>
-        <p><strong>2. Enhanced Style Cloaking:</strong></p>
-        <ul>
-          <li>Advanced protection using StyleCloak technology</li>
-          <li>Invisible adversarial perturbations</li>
-          <li>Protects artistic style from AI replication</li>
-          <li>Doesn't affect visual quality</li>
-        </ul>
-        <p>Both systems work together for maximum protection against AI training misuse.</p>
       `,
       tips: [
-        "Enable both Basic and Enhanced for complete protection",
-        "Style Cloaking is market-ready and invisible",
-        "Protection doesn't degrade image quality"
+        "Enable BOTH Basic and Enhanced for maximum protection",
+        "Style Cloaking is invisible - viewers won't notice it",
+        "Apply before sharing work on social media or portfolios"
       ]
     },
     {
-      title: "Detection Tab",
+      title: "Monitoring Threats and Detections",
       content: `
-        <p><strong>AI Detection Dashboard:</strong></p>
-        <p>View comprehensive analytics and threat detection:</p>
-        <ul>
-          <li>Active threat monitoring</li>
-          <li>Detection history and logs</li>
-          <li>AI training violation alerts</li>
-          <li>Detailed forensics reports</li>
-          <li>False positive management</li>
-        </ul>
-        <p>This dashboard shows all detected threats and allows you to take action on violations.</p>
+        <p><strong>How to Check for Threats:</strong></p>
+        <ol>
+          <li>Click the "Detection" tab</li>
+          <li>View the AI Detection Dashboard</li>
+          <li>Look at "Threats Detected" count in quick stats</li>
+          <li>Scroll to see list of detected violations</li>
+        </ol>
+        <p><strong>Reviewing a Detected Threat:</strong></p>
+        <ol>
+          <li>Click on any threat in the list</li>
+          <li>Review match details and evidence</li>
+          <li>Check confidence score (higher = more certain)</li>
+          <li>View source URL or platform</li>
+          <li>Decide if it's a real violation or false positive</li>
+        </ol>
+        <p><strong>Taking Action on Threats:</strong></p>
+        <ol>
+          <li>If it's a real violation:
+            <ul>
+              <li>Click "File DMCA" or go to DMCA Center</li>
+              <li>Generate takedown notice</li>
+              <li>Track resolution status</li>
+            </ul>
+          </li>
+          <li>If it's a false positive:
+            <ul>
+              <li>Click "Mark as False Positive"</li>
+              <li>This improves future detection accuracy</li>
+            </ul>
+          </li>
+        </ol>
       `,
       tips: [
-        "Check regularly for new threat detections",
-        "Review false positives to improve accuracy",
-        "Use forensics reports for legal documentation"
+        "Check Detection tab daily for new threats",
+        "Act quickly on high-confidence matches",
+        "Marking false positives helps train the AI"
       ]
     },
     {
-      title: "Multi-Modal Tab",
+      title: "Using Visual Recognition Tools",
       content: `
-        <p><strong>Visual Recognition Tools:</strong></p>
-        <p>Advanced visual analysis and recognition capabilities:</p>
+        <p><strong>How to Use Multi-Modal Recognition:</strong></p>
+        <ol>
+          <li>Click the "Multi-Modal" tab</li>
+          <li>Visual Recognition tools will load</li>
+          <li>Upload an image to search for similar content</li>
+          <li>Or select from your protected artworks</li>
+          <li>Click "Start Recognition Scan"</li>
+          <li>Wait 5-30 seconds for results</li>
+          <li>Review matches found across platforms</li>
+        </ol>
+        <p><strong>What It Finds:</strong></p>
         <ul>
-          <li>Image similarity detection</li>
-          <li>Visual fingerprinting</li>
-          <li>Content matching across platforms</li>
-          <li>Multi-modal content analysis</li>
-          <li>Cross-format detection (image, video, etc.)</li>
+          <li>Exact copies of your work</li>
+          <li>Modified versions (cropped, filtered, altered)</li>
+          <li>Similar content across different formats</li>
+          <li>Cross-platform matches (Instagram, Pinterest, etc.)</li>
         </ul>
-        <p>Uses the VisualRecognition component for powerful content matching.</p>
+        <p><strong>Use Cases:</strong></p>
+        <ul>
+          <li>Finding unauthorized uses you didn't know about</li>
+          <li>Tracking where your work has spread</li>
+          <li>Discovering derivative works</li>
+          <li>Building evidence for legal action</li>
+        </ul>
       `,
       tips: [
-        "Useful for finding modified versions of your work",
-        "Can detect content across different formats",
-        "Handles cropped, filtered, and altered images"
+        "Run recognition scans monthly on your top works",
+        "Works on cropped and filtered versions too",
+        "Results can be used as legal evidence"
       ]
     },
     {
-      title: "Advanced Tab",
+      title: "Advanced Protection Settings",
       content: `
-        <p>Three advanced protection systems:</p>
-        <p><strong>1. Metadata Protection:</strong></p>
-        <ul>
-          <li>Strip or preserve EXIF data</li>
-          <li>Control what information is shared</li>
-          <li>Prevent location tracking</li>
-          <li>Manage copyright metadata</li>
-        </ul>
-        <p><strong>2. Crawler Blocking:</strong></p>
-        <ul>
-          <li>Block AI training crawlers</li>
-          <li>Control which bots can access your content</li>
-          <li>Whitelist legitimate crawlers</li>
-          <li>Monitor crawler access attempts</li>
-        </ul>
-        <p><strong>3. Likeness Recognition Protection:</strong></p>
-        <ul>
-          <li>Protect your personal likeness</li>
-          <li>Prevent unauthorized use of your face/identity</li>
-          <li>Deepfake detection integration</li>
-          <li>Identity theft monitoring</li>
-        </ul>
+        <p><strong>1. Setting Up Metadata Protection:</strong></p>
+        <ol>
+          <li>Click the "Advanced" tab</li>
+          <li>Find "Metadata Protection" card (left side)</li>
+          <li>Choose: Strip All, Preserve Copyright, or Custom</li>
+          <li>Toggle options for EXIF, GPS, Camera info</li>
+          <li>Click "Apply to New Uploads" or "Apply to Existing"</li>
+        </ol>
+        <p><strong>2. Configuring Crawler Blocking:</strong></p>
+        <ol>
+          <li>In Advanced tab, find "Crawler Blocking" card (right side)</li>
+          <li>Toggle "Block AI Training Crawlers" ON</li>
+          <li>Review list of blocked bots (GPTBot, CCBot, etc.)</li>
+          <li>Add custom crawlers to block (optional)</li>
+          <li>Whitelist legitimate crawlers (Google, Bing if needed)</li>
+          <li>Click "Save Crawler Rules"</li>
+        </ol>
+        <p><strong>3. Enabling Likeness Recognition Protection:</strong></p>
+        <ol>
+          <li>In Advanced tab, scroll to "Likeness Recognition Protection" card</li>
+          <li>Upload a photo of yourself (if protecting your identity)</li>
+          <li>Click "Enable Likeness Monitoring"</li>
+          <li>Set sensitivity level (Low, Medium, High)</li>
+          <li>Configure alert preferences</li>
+          <li>System will now scan for unauthorized use of your face</li>
+        </ol>
       `,
       tips: [
-        "Enable all three for comprehensive protection",
-        "Metadata stripping recommended before public sharing",
-        "Likeness protection crucial for public figures and influencers"
+        "Strip metadata before sharing publicly to protect privacy",
+        "Enable crawler blocking to prevent AI training scraping",
+        "Likeness protection is crucial for influencers and public figures"
       ]
     },
     {
-      title: "Overview Tab",
+      title: "Using the Overview Dashboard",
       content: `
-        <p><strong>Protection Status Card:</strong></p>
-        <p>See current status of all protection systems:</p>
+        <p><strong>How to Check Your Protection Status:</strong></p>
+        <ol>
+          <li>Click the "Overview" tab</li>
+          <li>View "Protection Status" card (left)</li>
+          <li>Check for green "Active" badges (good)</li>
+          <li>Orange "Configured" means set up but not active</li>
+          <li>Red or missing badges mean not enabled</li>
+        </ol>
+        <p><strong>Status Indicators:</strong></p>
         <ul>
-          <li>AI Training Protection - Active/Inactive</li>
-          <li>Style Cloaking - Active/Inactive</li>
-          <li>Metadata Protection - Configured/Not Configured</li>
+          <li><strong>AI Training Protection:</strong> Should show "Active"</li>
+          <li><strong>Style Cloaking:</strong> Should show "Active"</li>
+          <li><strong>Metadata Protection:</strong> Should show "Configured"</li>
         </ul>
-        <p><strong>Recent Activity Card:</strong></p>
-        <ul>
-          <li>New files protected</li>
-          <li>AI training violations detected</li>
-          <li>Metadata operations</li>
-          <li>Style cloak applications</li>
-        </ul>
-        <p><strong>Quick Actions Card:</strong></p>
-        <ul>
-          <li>Upload New Content button</li>
-          <li>Start New Scan button</li>
-          <li>Configure Protection button</li>
-        </ul>
+        <p><strong>Viewing Recent Activity:</strong></p>
+        <ol>
+          <li>Check "Recent Activity" card (middle)</li>
+          <li>See latest protection actions taken</li>
+          <li>Review new files protected</li>
+          <li>Check for new violations detected</li>
+        </ol>
+        <p><strong>Quick Actions:</strong></p>
+        <ol>
+          <li>Find "Quick Actions" card (right)</li>
+          <li>Click "Upload New Content" for fast upload</li>
+          <li>Click "Start New Scan" to scan for violations</li>
+          <li>Click "Configure Protection" to adjust settings</li>
+        </ol>
       `,
       tips: [
-        "Check Overview tab daily for protection status",
-        "Green badges mean systems are active and working",
+        "Check Overview tab daily - it's your protection dashboard",
+        "All green badges = fully protected",
         "Use Quick Actions for fast access to common tasks"
       ]
     }
