@@ -710,6 +710,296 @@ export const bugReportGuide = {
   ]
 };
 
+export const advancedImageAnalysisGuide = {
+  title: "How to Use Advanced Image Analysis",
+  description: "Step-by-step guide for detecting AI-generated images and image forgery",
+  sections: [
+    {
+      title: "Getting Started",
+      content: `
+        <p><strong>Access Advanced Image Analysis:</strong></p>
+        <ol>
+          <li>Navigate to the Forgery Detection page from the main menu</li>
+          <li>Or go directly to /forgery-detection</li>
+        </ol>
+        <p><strong>Two Analysis Tools Available:</strong></p>
+        <ul>
+          <li><strong>AI Generation Detection:</strong> Detect if an image was created by AI (default tab)</li>
+          <li><strong>Forgery & Tampering:</strong> Detect if an image has been manipulated or edited</li>
+        </ul>
+        <p>Both tools work on uploaded images and provide detailed analysis results with confidence scores.</p>
+      `,
+      tips: [
+        "Works with JPG, PNG, GIF, and most image formats",
+        "Both tools analyze locally uploaded files or image URLs",
+        "Results include technical indicators and visual evidence"
+      ]
+    },
+    {
+      title: "AI Generation Detection - How to Use",
+      content: `
+        <p><strong>Step 1: Select Your Image</strong></p>
+        <p>You have two options for providing an image:</p>
+        <ul>
+          <li><strong>Upload Image:</strong> Click "Choose File" and select an image from your device</li>
+          <li><strong>Image URL:</strong> Paste a direct link to an online image</li>
+        </ul>
+        <p><strong>Step 2: Start Analysis</strong></p>
+        <ol>
+          <li>After selecting your file or entering a URL, click "Analyze for AI Generation"</li>
+          <li>Watch the progress bar as the AI detector analyzes your image</li>
+          <li>Analysis typically takes 5-15 seconds</li>
+        </ol>
+        <p><strong>Step 3: Review Results</strong></p>
+        <p>The analysis will show:</p>
+        <ul>
+          <li><strong>Main Result:</strong> "AI Generated" or "Likely Human Created" with confidence percentage</li>
+          <li><strong>Detection Method:</strong> The specific technique used for detection</li>
+          <li><strong>Suspected AI Model:</strong> If AI-generated, which model may have created it (e.g., Stable Diffusion, DALL-E, Midjourney)</li>
+        </ul>
+      `,
+      tips: [
+        "Higher confidence (80%+) indicates stronger certainty in the result",
+        "Check multiple indicators for comprehensive understanding",
+        "Some AI-generated images may be harder to detect if post-processed"
+      ]
+    },
+    {
+      title: "Understanding Detection Indicators",
+      content: `
+        <p><strong>Five Key Detection Indicators:</strong></p>
+        <ol>
+          <li><strong>Frequency Anomalies:</strong> Unusual patterns in image frequency domain that AI models create</li>
+          <li><strong>Pixel Patterns:</strong> Telltale pixel-level signatures left by neural networks</li>
+          <li><strong>Metadata Signatures:</strong> Missing or suspicious metadata that real cameras would include</li>
+          <li><strong>Style Analysis:</strong> Stylometric analysis comparing to known AI generation patterns</li>
+          <li><strong>Neural Artifacts:</strong> Specific visual artifacts common in AI-generated images</li>
+        </ol>
+        <p><strong>Indicator Levels:</strong></p>
+        <ul>
+          <li><strong>High (Red):</strong> 70%+ score - Strong indication of AI generation or manipulation</li>
+          <li><strong>Medium (Orange):</strong> 40-70% score - Moderate indicators present</li>
+          <li><strong>Low (Gray):</strong> Below 40% - Minimal or no indicators detected</li>
+        </ul>
+        <p>Each indicator has a progress bar showing its score and a badge showing its level.</p>
+      `,
+      tips: [
+        "Multiple high indicators = stronger AI generation evidence",
+        "One low indicator doesn't override other high ones",
+        "Look at the overall pattern across all five indicators"
+      ]
+    },
+    {
+      title: "Detected Artifacts Explained",
+      content: `
+        <p><strong>Common AI Artifacts Found:</strong></p>
+        <ul>
+          <li><strong>Unrealistic lighting:</strong> Shadows or highlights that don't match light sources</li>
+          <li><strong>Symmetry anomalies:</strong> Unnatural perfect or imperfect symmetry</li>
+          <li><strong>Text rendering issues:</strong> Garbled or nonsensical text in the image</li>
+          <li><strong>Hand/finger problems:</strong> Wrong number of fingers or distorted hands</li>
+          <li><strong>Background inconsistencies:</strong> Objects that blend unnaturally</li>
+          <li><strong>Texture uniformity:</strong> Too-perfect or too-uniform textures</li>
+          <li><strong>Edge artifacts:</strong> Blurred or sharp edges where they shouldn't be</li>
+        </ul>
+        <p>If artifacts are detected, they'll appear as labeled badges in the results section.</p>
+      `,
+      tips: [
+        "Artifacts are specific visual clues that AI created the image",
+        "More artifacts = higher likelihood of AI generation",
+        "Some advanced AI models hide artifacts better"
+      ]
+    },
+    {
+      title: "Technical Analysis Section",
+      content: `
+        <p><strong>Low-Level Technical Characteristics:</strong></p>
+        <ul>
+          <li><strong>Compression Artifacts:</strong>
+            <ul>
+              <li>Present (Red) = Unusual compression patterns typical of AI generators</li>
+              <li>Normal (Default) = Standard JPEG compression</li>
+            </ul>
+          </li>
+          <li><strong>Noise Patterns:</strong> Description of pixel noise (e.g., "Uniform", "Gaussian", "Non-standard")</li>
+          <li><strong>Color Space:</strong> The color encoding used (e.g., RGB, sRGB, AdobeRGB)</li>
+          <li><strong>Frequency Domain:</strong> Analysis of high/low frequency components in the image</li>
+        </ul>
+        <p>This technical data provides additional forensic evidence for experts and legal proceedings.</p>
+      `,
+      tips: [
+        "Technical analysis is most useful for expert review",
+        "Save these results for documentation or legal purposes",
+        "Non-standard patterns are red flags for AI generation"
+      ]
+    },
+    {
+      title: "Forgery & Tampering Detection - How to Use",
+      content: `
+        <p><strong>Step 1: Upload Image</strong></p>
+        <ol>
+          <li>Click the "Forgery & Tampering" tab at the top</li>
+          <li>Click "Choose File" and select an image from your device</li>
+          <li>File name and size will display once selected</li>
+        </ol>
+        <p><strong>Step 2: Run Analysis Tools</strong></p>
+        <p>Four detection methods available:</p>
+        <ol>
+          <li><strong>Run ELA (Error Level Analysis):</strong>
+            <ul>
+              <li>Generates a heatmap showing compression inconsistencies</li>
+              <li>Bright areas = recent edits or manipulations</li>
+              <li>Adjust "Scale" slider (1-64) to increase/decrease sensitivity</li>
+              <li>Compare original vs. ELA heatmap side-by-side</li>
+            </ul>
+          </li>
+          <li><strong>Read Metadata:</strong>
+            <ul>
+              <li>Extracts EXIF/XMP data from the image</li>
+              <li>Shows camera model, software, timestamps, GPS, etc.</li>
+              <li>Missing metadata can indicate tampering</li>
+            </ul>
+          </li>
+          <li><strong>Check Watermark:</strong>
+            <ul>
+              <li>Detects invisible digital watermarks</li>
+              <li>Shows confidence score and watermark ID if found</li>
+              <li>Helps verify original source and ownership</li>
+            </ul>
+          </li>
+          <li><strong>AI Forgery Analysis:</strong>
+            <ul>
+              <li>Uses OpenAI Vision API for narrative assessment</li>
+              <li>Provides forgery likelihood percentage</li>
+              <li>Gives detailed summary of potential tampering</li>
+            </ul>
+          </li>
+        </ol>
+      `,
+      tips: [
+        "Run all four tools for comprehensive forgery detection",
+        "ELA is most effective for detecting local edits and splicing",
+        "Metadata absence is suspicious for photos from cameras"
+      ]
+    },
+    {
+      title: "Interpreting ELA (Error Level Analysis)",
+      content: `
+        <p><strong>How to Read ELA Heatmaps:</strong></p>
+        <ul>
+          <li><strong>Uniform brightness:</strong> Image is consistent - likely not edited</li>
+          <li><strong>Bright spots/regions:</strong> Areas that may have been recently edited or added</li>
+          <li><strong>Dark areas:</strong> Older compression or unchanged regions</li>
+          <li><strong>Sharp boundaries:</strong> Possible splicing or object insertion</li>
+        </ul>
+        <p><strong>Using the Scale Slider:</strong></p>
+        <ul>
+          <li><strong>Low scale (1-10):</strong> Subtle differences visible, good for slight edits</li>
+          <li><strong>Medium scale (11-30):</strong> Balanced view, recommended starting point (default: 20)</li>
+          <li><strong>High scale (31-64):</strong> Amplifies small differences, may show false positives</li>
+        </ul>
+        <p><strong>What ELA Cannot Detect:</strong></p>
+        <ul>
+          <li>Edits made before the last JPEG save</li>
+          <li>Images that haven't been saved as JPEG</li>
+          <li>Very old images with multiple recompressions</li>
+        </ul>
+      `,
+      tips: [
+        "Start with default scale (20), then adjust if needed",
+        "Compare ELA with visual inspection of original",
+        "Bright areas in ELA need context - not always tampering"
+      ]
+    },
+    {
+      title: "Metadata Analysis",
+      content: `
+        <p><strong>What to Look for in Metadata:</strong></p>
+        <ul>
+          <li><strong>Camera/Device Info:</strong> Real photos have camera make/model</li>
+          <li><strong>Software:</strong> Editing software listed indicates modifications</li>
+          <li><strong>Timestamps:</strong> Creation date should match claimed time</li>
+          <li><strong>GPS Location:</strong> Coordinates should match claimed location</li>
+          <li><strong>Image Dimensions:</strong> Unusual sizes may indicate cropping</li>
+        </ul>
+        <p><strong>Red Flags:</strong></p>
+        <ul>
+          <li>No metadata at all (stripped intentionally?)</li>
+          <li>Software like Photoshop, GIMP listed in metadata</li>
+          <li>Mismatched dates (modified after creation)</li>
+          <li>GPS coordinates don't match story</li>
+        </ul>
+        <p>The metadata section shows the first 20 key-value pairs. If more exist, "…and more" appears.</p>
+      `,
+      tips: [
+        "Metadata can be faked, so use with other detection methods",
+        "Missing metadata isn't always suspicious (some apps strip it)",
+        "Social media platforms often remove metadata"
+      ]
+    },
+    {
+      title: "Best Practices for Image Analysis",
+      content: `
+        <p><strong>For AI Detection:</strong></p>
+        <ol>
+          <li>Upload high-quality images for better accuracy</li>
+          <li>Check all five detection indicators, not just overall result</li>
+          <li>Look for patterns across multiple images from same source</li>
+          <li>Save results and screenshots for documentation</li>
+        </ol>
+        <p><strong>For Forgery Detection:</strong></p>
+        <ol>
+          <li>Run all four analysis tools (ELA, Metadata, Watermark, AI)</li>
+          <li>Use original, uncompressed files when possible</li>
+          <li>Document your findings with screenshots and notes</li>
+          <li>Compare suspicious images with known authentic versions</li>
+        </ol>
+        <p><strong>For Legal/Professional Use:</strong></p>
+        <ul>
+          <li>Save all analysis results as evidence</li>
+          <li>Run analysis on original files, not screenshots</li>
+          <li>Document the analysis date and settings used</li>
+          <li>Consider consulting forensic experts for high-stakes cases</li>
+        </ul>
+      `,
+      tips: [
+        "No single tool is 100% accurate - use multiple methods",
+        "Higher quality source images = more reliable results",
+        "Keep records of all analysis for legal purposes"
+      ]
+    },
+    {
+      title: "Common Use Cases",
+      content: `
+        <p><strong>Verify Social Media Content:</strong></p>
+        <ul>
+          <li>Check if viral images are AI-generated fakes</li>
+          <li>Detect manipulated photos spreading misinformation</li>
+          <li>Verify authenticity of news imagery</li>
+        </ul>
+        <p><strong>Protect Your Artwork:</strong></p>
+        <ul>
+          <li>Detect if others are using AI to copy your style</li>
+          <li>Verify if submitted work is human-created</li>
+          <li>Check for unauthorized edits to your images</li>
+        </ul>
+        <p><strong>Professional Verification:</strong></p>
+        <ul>
+          <li>Journalism: Verify photo submissions</li>
+          <li>Legal: Analyze evidence images</li>
+          <li>Education: Detect AI-generated student work</li>
+          <li>E-commerce: Verify product photo authenticity</li>
+        </ul>
+      `,
+      tips: [
+        "Different use cases may prioritize different analysis tools",
+        "For quick checks, AI detection is fastest",
+        "For forensic proof, use all available tools"
+      ]
+    }
+  ]
+};
+
 export const monitoringHubGuide = {
   title: "How to Use Monitoring & Detection Hub",
   description: "Step-by-step guide to monitor portfolios, detect deepfakes, and identify forgery",
