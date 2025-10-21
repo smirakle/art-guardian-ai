@@ -607,202 +607,314 @@ export const homeGuide = {
           <li>Click "Sign Up" in the top right corner</li>
           <li>Enter your email and create a password</li>
           <li>Verify your email address</li>
-          <li>Complete your profile (name, bio, website)</li>
+          <li>Complete your profile</li>
         </ol>
         <p><strong>Step 2: Choose Your Plan</strong></p>
         <ul>
-          <li><strong>Student ($19/mo):</strong> Up to 1,000 artworks, basic AI monitoring, portfolio monitoring (up to 5)</li>
-          <li><strong>Starter ($29/mo):</strong> Up to 3,500 artworks, advanced AI monitoring, portfolio monitoring (up to 10), API access</li>
-          <li><strong>Professional ($199/mo):</strong> Up to 250,000 artworks, premium AI monitoring, portfolio monitoring (up to 50), blockchain verification, white-label options</li>
-          <li><strong>Enterprise (Custom):</strong> Unlimited artworks, custom API integrations, 24/7 priority support, legal team on retainer</li>
+          <li><strong>Student ($19/mo):</strong> Up to 1,000 artworks, basic AI monitoring, 5 portfolios</li>
+          <li><strong>Starter ($29/mo):</strong> Up to 3,500 artworks, advanced AI monitoring, 10 portfolios, API access</li>
+          <li><strong>Professional ($199/mo):</strong> Up to 250,000 artworks, 50 portfolios, blockchain verification, deepfake detection, white-label options</li>
+          <li><strong>Enterprise (Custom):</strong> Unlimited artworks and portfolios, custom API, 24/7 priority support</li>
         </ul>
-        <p><strong>Add-ons available:</strong></p>
-        <ul>
-          <li>AI Training Protection: $49/month</li>
-          <li>Social Media Monitoring: $100/month + $199 startup fee (Coming Soon)</li>
-        </ul>
-        <p>All plans include a 5-day free trial. No credit card required.</p>
+        <p><strong>Add-ons:</strong> AI Training Protection ($49/mo), Social Media Monitoring ($100/mo + $199 startup, Coming Soon)</p>
+        <p>All plans include a 5-day free trial with no credit card required.</p>
       `,
       tips: [
-        "Use a strong password and enable 2FA",
-        "Complete your profile for better legal documentation",
-        "Student plan offers 24% off - perfect for emerging artists"
+        "You can upload without signing in for basic protection",
+        "Sign in to access monitoring and blockchain features",
+        "Student plan offers 24% discount for students"
       ]
     },
     {
-      title: "Uploading & Protecting Your First Artwork",
+      title: "Uploading Your First Artwork",
       content: `
-        <p><strong>How to Upload:</strong></p>
+        <p><strong>Navigate to Upload Page:</strong></p>
         <ol>
-          <li>Click "Upload" in the navigation menu</li>
-          <li>Drag and drop your file or click to browse</li>
-          <li>Add title and description (required for copyright)</li>
-          <li>Select category (Art, Photography, Design, etc.)</li>
-          <li>Add tags for easier organization</li>
+          <li>Click "Upload" in the main navigation menu</li>
+          <li>Or go directly to /upload</li>
         </ol>
-        <p><strong>Applying Protection:</strong></p>
+        <p><strong>Upload Files:</strong></p>
         <ol>
-          <li>Check "AI Training Protection" - prevents AI from learning your style</li>
-          <li>Check "Blockchain Registration" - creates immutable ownership proof</li>
-          <li>Check "Enable Monitoring" - tracks unauthorized use 24/7</li>
-          <li>Click "Upload & Protect"</li>
+          <li>Drag and drop files into the upload area, or click "Select Files"</li>
+          <li>Supported formats: Images, videos, audio, PDFs, documents</li>
+          <li>You can also add URLs by pasting them in the URL input field</li>
         </ol>
-        <p>Processing takes 5-30 seconds. You'll see a success message when complete.</p>
+        <p><strong>Fill in Required Information:</strong></p>
+        <ul>
+          <li><strong>Title:</strong> Required - Give your artwork a name</li>
+          <li><strong>Description:</strong> Optional but recommended</li>
+          <li><strong>Category:</strong> Required - Photography, Digital Art, Video, Audio/Music, Writing, Design, or Other</li>
+          <li><strong>Tags:</strong> Optional - Add keywords for organization</li>
+          <li><strong>License Type:</strong> Optional - All Rights Reserved, Creative Commons, or Public Domain</li>
+        </ul>
+        <p><strong>Protection Options (checkboxes):</strong></p>
+        <ul>
+          <li><strong>Enable Watermarking:</strong> Adds visible watermark to your image</li>
+          <li><strong>Blockchain Verification:</strong> Creates blockchain certificate (requires sign-in)</li>
+        </ul>
+        <p><strong>Click "Start Protection"</strong> - Processing takes 5-30 seconds depending on file size.</p>
       `,
       tips: [
-        "Higher resolution files get better protection",
-        "Use descriptive titles for legal purposes",
-        "Enable all protections for maximum security"
+        "Higher resolution files provide better protection",
+        "Fill in all details for stronger copyright documentation",
+        "Blockchain verification is only available for signed-in users"
       ]
     },
     {
-      title: "Using the Dashboard",
+      title: "Using the Unified Dashboard",
       content: `
-        <p><strong>Daily Dashboard Check:</strong></p>
+        <p><strong>Access Your Dashboard:</strong></p>
         <ol>
-          <li>Open your Unified Dashboard (main page after login)</li>
-          <li>Review "Active Threats" card - red badges need attention</li>
-          <li>Check "Protection Status" - ensure all works show green</li>
-          <li>Review "Recent Activity" for latest scans</li>
+          <li>Click "Dashboard" in the navigation menu after signing in</li>
+          <li>Or go to /dashboard or /unified-dashboard</li>
         </ol>
-        <p><strong>Understanding Status Indicators:</strong></p>
+        <p><strong>Overview Tab Shows:</strong></p>
         <ul>
-          <li>🟢 Green: Fully protected, no issues</li>
-          <li>🟡 Yellow: Processing or minor issues</li>
-          <li>🔴 Red: Violation detected or protection failed</li>
+          <li><strong>Protected Assets:</strong> Total number of your protected artworks</li>
+          <li><strong>Active Scans:</strong> Number of ongoing monitoring scans</li>
+          <li><strong>Threats:</strong> Detected violations requiring attention</li>
+          <li><strong>Blockchain Records:</strong> Number of blockchain certificates created</li>
+          <li><strong>Legal Actions:</strong> DMCA notices and legal filings</li>
+          <li><strong>Success Rate:</strong> Percentage of resolved violations</li>
         </ul>
-        <p><strong>Quick Actions:</strong></p>
+        <p><strong>Quick Actions Available:</strong></p>
         <ul>
-          <li>Click any artwork to view details</li>
-          <li>Click threats to see violation evidence</li>
-          <li>Use "Take Action" to send takedown notices</li>
+          <li>Upload & Protect - Go to upload page</li>
+          <li>Start Monitoring - Go to Monitoring Hub</li>
+          <li>Configure AI Protection - Go to AI Protection Settings</li>
+          <li>Legal Templates - Access legal documents</li>
+        </ul>
+        <p><strong>Additional Tabs:</strong></p>
+        <ul>
+          <li>Production - Production environment metrics</li>
+          <li>AI Detection - AI-powered threat detection</li>
+          <li>Protection - One-click protection tools</li>
+          <li>Blockchain - Blockchain registry and certificates</li>
+          <li>Legal - Legal network and case management</li>
+          <li>Creator - Creator economy and licensing</li>
+          <li>Recognition - Visual recognition tools</li>
         </ul>
       `,
       tips: [
-        "Check dashboard daily for new threats",
-        "Address red alerts within 24 hours",
-        "Download certificates for important works"
+        "Check the Overview tab daily for new threats",
+        "Use Quick Actions for common tasks",
+        "Red badges indicate items needing attention"
       ]
     },
     {
       title: "Setting Up Monitoring",
       content: `
-        <p><strong>Activate 24/7 Monitoring:</strong></p>
+        <p><strong>Access Monitoring Hub:</strong></p>
         <ol>
-          <li>Go to "Monitoring Hub" in the main menu</li>
-          <li>Click "Enable Portfolio Monitoring"</li>
-          <li>Select which artworks to monitor (or select all)</li>
-          <li>Set alert preferences (instant, daily digest, weekly)</li>
-          <li>Click "Start Monitoring"</li>
+          <li>Click "Monitoring Hub" in the navigation menu</li>
+          <li>Or go to /monitoring-hub</li>
         </ol>
-        <p><strong>Configure Alert Settings:</strong></p>
-        <ol>
-          <li>Go to Settings > Notifications</li>
-          <li>Choose email or SMS alerts</li>
-          <li>Set threshold: High threats only OR All detections</li>
-          <li>Enable/disable specific monitoring types</li>
-        </ol>
-        <p>Monitoring scans the internet every 6 hours for unauthorized use.</p>
-      `,
-      tips: [
-        "Start with 'High threats only' to avoid alert fatigue",
-        "Enable SMS alerts for critical violations",
-        "Review weekly digests on Mondays"
-      ]
-    },
-    {
-      title: "Responding to Violations",
-      content: `
-        <p><strong>When You Get a Violation Alert:</strong></p>
-        <ol>
-          <li>Open the alert notification</li>
-          <li>Review the detected match and evidence</li>
-          <li>Click "View Details" to see full analysis</li>
-          <li>Verify it's actually unauthorized (not your own post)</li>
-          <li>Click "Take Action"</li>
-        </ol>
-        <p><strong>Taking Action Options:</strong></p>
+        <p><strong>Five Monitoring Types Available:</strong></p>
         <ul>
-          <li><strong>Send DMCA Takedown:</strong> Automated legal notice (Pro plan)</li>
-          <li><strong>Generate Takedown Letter:</strong> Download for manual sending</li>
-          <li><strong>Mark as False Positive:</strong> Improve future detections</li>
-          <li><strong>Monitor Only:</strong> Track without action</li>
+          <li><strong>Portfolio:</strong> Monitor all your uploaded artworks for unauthorized use</li>
+          <li><strong>Profile:</strong> Detect unauthorized use of your identity and personal information</li>
+          <li><strong>Trademark:</strong> Monitor for trademark violations and brand infringement</li>
+          <li><strong>Deepfake:</strong> Detect manipulated media using your likeness</li>
+          <li><strong>Forgery:</strong> Identify AI-generated copies and image manipulation</li>
         </ul>
-        <p><strong>Manual Takedown Process (Free/Starter):</strong></p>
+        <p><strong>How to Enable Monitoring:</strong></p>
         <ol>
-          <li>Click "Generate Takedown Letter"</li>
-          <li>Download the PDF with evidence</li>
-          <li>Send to the platform's DMCA contact email</li>
-          <li>Mark as "Takedown Sent" in TSMO</li>
-          <li>Track resolution in your dashboard</li>
+          <li>Select the tab for the type of monitoring you want</li>
+          <li>Click "Start Monitoring" or "Enable" button</li>
+          <li>Configure alert preferences (email/SMS, frequency)</li>
+          <li>Monitor will scan every 6 hours automatically</li>
         </ol>
       `,
       tips: [
-        "Act within 24 hours of detection",
-        "Keep copies of all takedown notices",
-        "Professional plan handles this automatically"
+        "Enable Portfolio monitoring first - it covers your uploaded works",
+        "Configure alert frequency in your account settings",
+        "Real-time scanning is available on Professional plan"
       ]
     },
     {
-      title: "Advanced Features",
+      title: "Using Forgery Detection",
       content: `
-        <p><strong>Blockchain Certificates:</strong></p>
+        <p><strong>Access Forgery Detection:</strong></p>
         <ol>
-          <li>Go to your artwork details page</li>
-          <li>Click "Download Certificate"</li>
-          <li>Save the PDF with blockchain proof</li>
-          <li>Use in copyright disputes or legal claims</li>
+          <li>Click "Forgery Detection" in the navigation menu</li>
+          <li>Or go to /forgery-detection</li>
         </ol>
-        <p><strong>Forgery Detection:</strong></p>
+        <p><strong>Two Analysis Tools:</strong></p>
+        <ul>
+          <li><strong>AI Generation Detection:</strong> Detects if an image was generated by AI (Midjourney, DALL-E, Stable Diffusion, etc.)</li>
+          <li><strong>Forgery & Tampering:</strong> Identifies image manipulation, editing, and digital forensics analysis</li>
+        </ul>
+        <p><strong>How to Analyze an Image:</strong></p>
         <ol>
-          <li>Go to "Forgery Detection" page</li>
-          <li>Upload a suspicious image</li>
-          <li>Wait 5-10 seconds for AI analysis</li>
-          <li>View results: AI-generated probability & manipulation detection</li>
+          <li>Select the tab (AI Generation or Forgery & Tampering)</li>
+          <li>Upload the suspicious image</li>
+          <li>Click "Analyze" or "Detect"</li>
+          <li>Wait 5-15 seconds for results</li>
+          <li>Review the analysis report with confidence scores</li>
         </ol>
-        <p><strong>Batch Operations:</strong></p>
-        <ol>
-          <li>In Dashboard, select multiple artworks (checkboxes)</li>
-          <li>Click "Bulk Actions" at the top</li>
-          <li>Choose: Enable monitoring, Download certificates, Update tags</li>
-          <li>Confirm action</li>
-        </ol>
+        <p><strong>Analysis Includes:</strong></p>
+        <ul>
+          <li>Probability score (0-100%)</li>
+          <li>ELA (Error Level Analysis) visualization</li>
+          <li>Metadata verification</li>
+          <li>Tamper detection areas</li>
+          <li>Detailed forensics report</li>
+        </ul>
       `,
       tips: [
-        "Store certificates in cloud backup",
-        "Use forgery detection before purchasing art",
-        "Batch operations save time with large collections"
+        "Use this before purchasing artwork to verify authenticity",
+        "94% accuracy on deepfakes, 97% on digital manipulations",
+        "Analysis is free for all users"
+      ]
+    },
+    {
+      title: "Filing DMCA Takedown Notices",
+      content: `
+        <p><strong>Access DMCA Center:</strong></p>
+        <ol>
+          <li>Click "DMCA Center" in the navigation menu</li>
+          <li>Or go to /dmca-center</li>
+        </ol>
+        <p><strong>File a DMCA Notice:</strong></p>
+        <ol>
+          <li>Click "File DMCA Notice" button</li>
+          <li>Fill in required information:
+            <ul>
+              <li>Your contact information</li>
+              <li>Description of your copyrighted work</li>
+              <li>URL of the infringing content</li>
+              <li>Statement of good faith belief</li>
+            </ul>
+          </li>
+          <li>Review the generated notice</li>
+          <li>Click "Submit" to file</li>
+        </ol>
+        <p><strong>Track Your Notices:</strong></p>
+        <ul>
+          <li>View all filed notices in "My DMCA Notices" tab</li>
+          <li>Check status: Pending, Acknowledged, or Resolved</li>
+          <li>Download notice as PDF for your records</li>
+          <li>View response time and resolution details</li>
+        </ul>
+        <p><strong>Rate Limits:</strong></p>
+        <ul>
+          <li>Maximum 5 notices per hour</li>
+          <li>Maximum 20 notices per day</li>
+        </ul>
+        <p><strong>Automated DMCA (Professional Plan):</strong> Automatic filing when violations are detected.</p>
+      `,
+      tips: [
+        "Be accurate with infringing URLs - incorrect info delays processing",
+        "Download notice PDFs for your legal records",
+        "Professional plan includes automated filing and faster response"
+      ]
+    },
+    {
+      title: "Blockchain Certificates",
+      content: `
+        <p><strong>Creating Certificates:</strong></p>
+        <ol>
+          <li>When uploading artwork, check "Blockchain Verification" (must be signed in)</li>
+          <li>After upload completes, blockchain registration starts automatically</li>
+          <li>Certificate is created within 1-2 minutes</li>
+          <li>You'll receive notification when complete</li>
+        </ol>
+        <p><strong>Viewing Certificates:</strong></p>
+        <ol>
+          <li>Go to Dashboard → Blockchain tab</li>
+          <li>Click on any artwork to view its certificate</li>
+          <li>Or access directly via /certificate/[certificate-id]</li>
+        </ol>
+        <p><strong>Certificate Contains:</strong></p>
+        <ul>
+          <li>Unique Certificate ID</li>
+          <li>Registration Timestamp</li>
+          <li>Artwork Fingerprint (hash)</li>
+          <li>Blockchain Hash (immutable proof)</li>
+          <li>Ownership Proof</li>
+          <li>Verification Status</li>
+        </ul>
+        <p><strong>Download & Share:</strong></p>
+        <ul>
+          <li>Click "Download Certificate" to get JSON file</li>
+          <li>Click "Share Certificate" to copy URL</li>
+          <li>Use in copyright disputes and legal proceedings</li>
+        </ul>
+      `,
+      tips: [
+        "Store certificate files in secure cloud backup",
+        "Blockchain certificates are legally admissible evidence",
+        "Share certificate URLs with buyers for proof of authenticity"
+      ]
+    },
+    {
+      title: "AI Training Protection",
+      content: `
+        <p><strong>Access AI Protection Settings:</strong></p>
+        <ol>
+          <li>Click "AI Protection Settings" or "AI Training Protection" in menu</li>
+          <li>Or go to /ai-protection-settings</li>
+        </ol>
+        <p><strong>What This Does:</strong></p>
+        <p>Prevents AI models (Midjourney, DALL-E, Stable Diffusion, etc.) from using your artwork in their training datasets. This is separate from uploading files.</p>
+        <p><strong>How to Enable:</strong></p>
+        <ol>
+          <li>Select artworks you want to protect from AI training</li>
+          <li>Choose protection level (Basic, Standard, Maximum)</li>
+          <li>Click "Enable Protection"</li>
+          <li>System applies invisible adversarial perturbations</li>
+        </ol>
+        <p><strong>Protection Levels:</strong></p>
+        <ul>
+          <li><strong>Basic:</strong> Standard protection markers</li>
+          <li><strong>Standard:</strong> Enhanced adversarial patterns</li>
+          <li><strong>Maximum:</strong> Multi-layer protection with monitoring</li>
+        </ul>
+        <p><strong>Available as Add-on:</strong> $49/month for all plans</p>
+      `,
+      tips: [
+        "This doesn't affect image quality - protection is invisible",
+        "Enable for all digital artwork you share publicly",
+        "Maximum protection recommended for high-value work"
       ]
     },
     {
       title: "Getting Help",
       content: `
-        <p><strong>When You Need Help:</strong></p>
+        <p><strong>Help Center:</strong></p>
         <ol>
-          <li>Click the "?" icon (Help Center) in any page</li>
+          <li>Click "Help Center" in navigation menu</li>
+          <li>Or go to /help-center</li>
           <li>Search for your issue or browse guides</li>
-          <li>If not found, click "Report Bug" button</li>
-          <li>Fill in: What you tried, what happened, what should happen</li>
-          <li>Submit - we respond within 24-48 hours</li>
+          <li>View FAQs and troubleshooting steps</li>
         </ol>
-        <p><strong>Common Issues & Solutions:</strong></p>
+        <p><strong>Report a Bug:</strong></p>
+        <ol>
+          <li>Click the "Report Bug" button (floating button on most pages)</li>
+          <li>Fill in: What you tried, what happened, what should happen</li>
+          <li>Optionally attach screenshots</li>
+          <li>Click Submit</li>
+        </ol>
+        <p><strong>User Guides:</strong></p>
+        <p>Most pages have a "?" icon that opens context-specific guides. Look for it in the top-right area of pages.</p>
+        <p><strong>Common Issues:</strong></p>
         <ul>
           <li><strong>Upload failed:</strong> Check file size (max 500MB) and format</li>
           <li><strong>Protection pending:</strong> Large files take up to 10 minutes</li>
-          <li><strong>No detections:</strong> Monitoring takes 6-24 hours to start</li>
-          <li><strong>False positives:</strong> Mark them to improve accuracy</li>
+          <li><strong>No detections:</strong> Monitoring takes 6-24 hours after enabling</li>
+          <li><strong>Blockchain failed:</strong> Artwork is still protected; you can retry blockchain later</li>
         </ul>
         <p><strong>Contact Support:</strong></p>
         <ul>
           <li>Email: shirleena.cunningham@tsmowatch.com</li>
-          <li>Response time: 48 hours (Student), 24 hours (Starter/Professional), 4 hours priority (Enterprise)</li>
-          <li>Include: Your username, affected artwork, screenshots</li>
+          <li>Response time: 48 hours (Student), 24 hours (Starter/Professional), 4 hours (Enterprise)</li>
+          <li>Include: Username, affected artwork name, screenshots of error</li>
         </ul>
       `,
       tips: [
-        "Check Help Center first for instant answers",
-        "Use bug reports for technical issues",
-        "Include screenshots when contacting support"
+        "Check Help Center first - most questions answered there",
+        "Use Bug Report for technical issues, not feature requests",
+        "Include your browser and operating system when reporting bugs"
       ]
     }
   ]
