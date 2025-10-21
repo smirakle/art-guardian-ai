@@ -77,7 +77,6 @@ import DocumentProtection from "./pages/DocumentProtection";
 import PortfolioMonitoringAdvanced from "./pages/PortfolioMonitoringAdvanced";
 import ThreatAlerts from "./pages/ThreatAlerts";
 import DMCAAutomation from "./pages/DMCAAutomation";
-import HelpCenter from "./pages/HelpCenter";
 
 const queryClient = new QueryClient();
 
@@ -219,7 +218,6 @@ const App = () => {
             <Route path="/portfolio-monitoring-advanced" element={<PortfolioMonitoringAdvanced />} />
             <Route path="/threat-alerts" element={<ThreatAlerts />} />
             <Route path="/dmca-automation" element={<DMCAAutomation />} />
-            <Route path="/help" element={<HelpCenter />} />
             <Route path="/status" element={<Status />} />
             <Route path="/admin/monitoring" element={
               <ProtectedRoute requiredRole="admin">
