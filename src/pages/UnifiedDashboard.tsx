@@ -20,7 +20,8 @@ import {
   Eye,
   Upload,
   Settings,
-  BarChart3
+  BarChart3,
+  Clock
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -57,6 +58,8 @@ const UnifiedDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
+  const [monitoringFrequency, setMonitoringFrequency] = useState<string>('daily');
+  const [savingFrequency, setSavingFrequency] = useState(false);
 
   // Optimized data fetching with React Query and parallel queries
   const { data: stats, isLoading: dataLoading } = useQuery({
@@ -200,6 +203,39 @@ const UnifiedDashboard = () => {
       case 'scale': return <Scale className="h-4 w-4 text-purple-500" />;
       case 'eye': return <Eye className="h-4 w-4 text-indigo-500" />;
       default: return <Activity className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
+  const handleSaveMonitoringFrequency = async () => {
+    if (!user) return;
+    
+    setSavingFrequency(true);
+    try {
+      // Update all active portfolios with the new frequency
+      const { error } = await supabase
+        .from('portfolios')
+        .update({
+          monitoring_frequency: monitoringFrequency,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', user.id)
+        .eq('is_active', true);
+
+      if (error) throw error;
+
+      toast({
+        title: "Frequency Updated",
+        description: `Monitoring frequency set to ${monitoringFrequency} for all portfolios.`,
+      });
+    } catch (error: any) {
+      console.error('Error saving monitoring frequency:', error);
+      toast({
+        title: "Update Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setSavingFrequency(false);
     }
   };
 
@@ -380,6 +416,46 @@ const UnifiedDashboard = () => {
               </CardContent>
             </Card>
           </div>
+
+          {/* Monitoring Frequency Settings */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Clock className="h-5 w-5" />
+                Monitoring Frequency
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Scan Frequency</label>
+                <select
+                  value={monitoringFrequency}
+                  onChange={(e) => setMonitoringFrequency(e.target.value)}
+                  className="w-full px-3 py-2 border rounded-md bg-background"
+                >
+                  <option value="realtime">Real-time (Continuous)</option>
+                  <option value="hourly">Hourly</option>
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                {monitoringFrequency === 'realtime' && '⚡ Continuous monitoring across all platforms'}
+                {monitoringFrequency === 'hourly' && '🔄 Scans run every hour'}
+                {monitoringFrequency === 'daily' && '📅 Scans run once per day'}
+                {monitoringFrequency === 'weekly' && '📆 Scans run once per week'}
+                {monitoringFrequency === 'monthly' && '🗓️ Scans run once per month'}
+              </div>
+              <Button 
+                className="w-full" 
+                onClick={handleSaveMonitoringFrequency}
+                disabled={savingFrequency}
+              >
+                {savingFrequency ? 'Saving...' : 'Save Frequency Settings'}
+              </Button>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Protection Tab - Lazy loaded */}
