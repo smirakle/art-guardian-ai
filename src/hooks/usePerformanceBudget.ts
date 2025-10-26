@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAlertSystem } from './useAlertSystem';
 
 interface PerformanceBudget {
@@ -18,10 +18,15 @@ const DEFAULT_BUDGETS: PerformanceBudget = {
 export const usePerformanceBudget = (budgets: Partial<PerformanceBudget> = {}) => {
   const { sendPerformanceAlert } = useAlertSystem();
   const activeBudgets = { ...DEFAULT_BUDGETS, ...budgets };
+  const observerRef = useRef<PerformanceObserver | null>(null);
+  const hasCheckedPageLoad = useRef(false);
 
   useEffect(() => {
-    // Monitor page load performance - only check once after page is fully loaded
+    // Monitor page load performance - only check once
     const checkPageLoad = () => {
+      if (hasCheckedPageLoad.current) return;
+      hasCheckedPageLoad.current = true;
+
       if (window.performance && window.performance.timing) {
         const perfData = window.performance.timing;
         const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
@@ -39,14 +44,13 @@ export const usePerformanceBudget = (budgets: Partial<PerformanceBudget> = {}) =
       window.addEventListener('load', checkPageLoad);
       return () => window.removeEventListener('load', checkPageLoad);
     }
-
-  }, [activeBudgets.pageLoad, sendPerformanceAlert]);
+  }, []); // Empty deps - only run once
 
   useEffect(() => {
     // Monitor long tasks (tasks that block main thread for > 100ms)
-    if ('PerformanceObserver' in window) {
+    if ('PerformanceObserver' in window && !observerRef.current) {
       try {
-        const observer = new PerformanceObserver((list) => {
+        observerRef.current = new PerformanceObserver((list) => {
           for (const entry of list.getEntries()) {
             // Only alert on very long tasks (> 200ms)
             if (entry.duration > 200) {
@@ -60,14 +64,19 @@ export const usePerformanceBudget = (budgets: Partial<PerformanceBudget> = {}) =
           }
         });
 
-        observer.observe({ entryTypes: ['longtask'] });
-
-        return () => observer.disconnect();
+        observerRef.current.observe({ entryTypes: ['longtask'] });
       } catch (error) {
         console.warn('PerformanceObserver not supported:', error);
       }
     }
-  }, [sendPerformanceAlert]);
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
+    };
+  }, []); // Empty deps - only setup once
 
   const measureApiCall = async <T,>(
     apiCall: () => Promise<T>,
