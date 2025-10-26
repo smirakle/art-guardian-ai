@@ -544,32 +544,56 @@ export const checkoutGuide = {
     {
       title: "Choosing Your Plan",
       content: `
-        <p><strong>Free Plan:</strong></p>
+        <p><strong>Four main subscription tiers available:</strong></p>
+        <p><strong>Student Plan ($19/month - 24% OFF):</strong></p>
         <ul>
-          <li>Basic watermark protection</li>
-          <li>Up to 10 artworks</li>
-          <li>Manual monitoring</li>
+          <li>Up to 1,000 artworks protected</li>
+          <li>Basic AI monitoring</li>
+          <li>Portfolio monitoring (up to 5)</li>
+          <li>Email alerts</li>
+          <li>Community support</li>
         </ul>
-        <p><strong>Starter Plan ($19/month):</strong></p>
+        <p><strong>Starter Plan ($29/month - 25% OFF, Most Popular):</strong></p>
         <ul>
-          <li>AI training protection</li>
-          <li>Blockchain registration</li>
-          <li>Up to 100 artworks</li>
-          <li>Automated monitoring</li>
-        </ul>
-        <p><strong>Professional Plan ($49/month):</strong></p>
-        <ul>
-          <li>Everything in Starter</li>
-          <li>Automated DMCA takedowns</li>
-          <li>Unlimited artworks</li>
+          <li>Up to 3,500 artworks protected</li>
+          <li>Advanced AI monitoring</li>
+          <li>Portfolio monitoring (up to 10)</li>
+          <li>Real-time alerts</li>
+          <li>Watermark protection</li>
+          <li>API access</li>
           <li>Priority support</li>
-          <li>White-label options</li>
         </ul>
+        <p><strong>Professional Plan ($199/month - 20% OFF):</strong></p>
+        <ul>
+          <li>Up to 250,000 artworks protected</li>
+          <li>Premium AI monitoring</li>
+          <li>Portfolio monitoring (up to 50)</li>
+          <li>Blockchain verification included</li>
+          <li>Deepfake detection included</li>
+          <li>Advanced watermarking</li>
+          <li>White-label options</li>
+          <li>Dedicated account manager</li>
+        </ul>
+        <p><strong>Enterprise Plan (Custom Pricing):</strong></p>
+        <ul>
+          <li>Unlimited artworks and portfolios</li>
+          <li>Custom deployment options</li>
+          <li>Dedicated infrastructure</li>
+          <li>24/7 priority support</li>
+          <li>Custom legal workflows</li>
+          <li>Advanced API access</li>
+        </ul>
+        <p><strong>Add-ons (available for all plans):</strong></p>
+        <ul>
+          <li><strong>AI Training Protection:</strong> $49/month</li>
+          <li><strong>Social Media Monitoring:</strong> $100/month + $199 startup fee (Coming Soon)</li>
+        </ul>
+        <p><strong>Note:</strong> Professional plan includes AI Training Protection at no extra cost.</p>
       `,
       tips: [
-        "Annual billing saves 20%",
-        "Use promo code BETA200 for 30% off",
-        "Upgrade anytime without losing data"
+        "All plans include 5-day free trial with no credit card required",
+        "Starter plan is most popular for freelancers",
+        "Professional plan best value for established artists"
       ]
     },
     {
