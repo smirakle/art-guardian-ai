@@ -1013,7 +1013,7 @@ export const monitoringHubGuide = {
           <li>Click "Monitoring Hub" in the main navigation menu</li>
           <li>Or navigate to /monitoring-hub</li>
         </ol>
-        <p><strong>What You'll See at the Top:</strong></p>
+        <p><strong>Five Key Stats at the Top:</strong></p>
         <ul>
           <li><strong>Active Monitoring:</strong> Shows 24/7 real-time monitoring status</li>
           <li><strong>Scans Completed:</strong> Total number of platform scans performed</li>
@@ -1021,19 +1021,20 @@ export const monitoringHubGuide = {
           <li><strong>Protection Rate:</strong> Percentage of successful threat resolutions</li>
           <li><strong>Platforms Monitored:</strong> Number of platforms currently being scanned</li>
         </ul>
-        <p><strong>Five Monitoring Tabs Available:</strong></p>
+        <p><strong>Note:</strong> Stats show demo numbers for illustration until your actual monitoring data populates.</p>
+        <p><strong>Five Monitoring Tabs (left to right):</strong></p>
         <ol>
-          <li><strong>Portfolio:</strong> Monitor your entire collection of protected works</li>
-          <li><strong>Profile:</strong> Track unauthorized use of your identity (coming soon)</li>
-          <li><strong>Trademark:</strong> Detect trademark violations globally (coming soon)</li>
-          <li><strong>Deepfake:</strong> Identify AI-generated deepfakes using your likeness</li>
-          <li><strong>Forgery:</strong> Detect image manipulation and AI-generated content</li>
+          <li><strong>Portfolio:</strong> Monitor your entire collection of protected works - <span class="text-green-600 font-semibold">FULLY ACTIVE</span></li>
+          <li><strong>Profile:</strong> Track unauthorized use of your identity - <span class="text-orange-600 font-semibold">COMING SOON</span></li>
+          <li><strong>Trademark:</strong> Detect trademark violations globally - <span class="text-orange-600 font-semibold">COMING SOON</span></li>
+          <li><strong>Deepfake:</strong> Identify AI-generated deepfakes using your likeness - <span class="text-green-600 font-semibold">FULLY ACTIVE</span></li>
+          <li><strong>Forgery:</strong> Detect image manipulation and AI-generated content - <span class="text-green-600 font-semibold">FULLY ACTIVE</span></li>
         </ol>
       `,
       tips: [
-        "Check the hub daily to review new violations",
-        "Focus on Portfolio and Deepfake tabs - they're fully active",
-        "Stats at the top update in real-time"
+        "Focus on Portfolio, Deepfake, and Forgery tabs - they're fully operational",
+        "Profile and Trademark monitoring are placeholder tabs for future features",
+        "Demo stats will be replaced with your real data once monitoring starts"
       ]
     },
     {
@@ -1075,14 +1076,14 @@ export const monitoringHubGuide = {
         <p><strong>How to Access Deepfake Monitoring:</strong></p>
         <ol>
           <li>Click the "Deepfake" tab in Monitoring Hub</li>
-          <li>View real-time detection statistics on the left card</li>
-          <li>Review recent detections on the right card</li>
+          <li>View real-time detection statistics and capabilities</li>
+          <li>Review recent detections and threat levels</li>
         </ol>
-        <p><strong>Real-Time Statistics Displayed:</strong></p>
+        <p><strong>Detection Capabilities:</strong></p>
         <ul>
-          <li><strong>Detection Accuracy:</strong> Shows 98.7% accuracy rate</li>
-          <li><strong>Processing Speed:</strong> Average 2.3 seconds per scan</li>
-          <li><strong>Platforms Monitored:</strong> Currently monitoring 47 platforms</li>
+          <li>Advanced AI-powered deepfake detection technology</li>
+          <li>Multi-platform scanning across social media and video sites</li>
+          <li>Real-time threat assessment and classification</li>
         </ul>
         <p><strong>How to Start a Deepfake Scan:</strong></p>
         <ol>
