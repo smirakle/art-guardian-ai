@@ -61,6 +61,26 @@ const UnifiedDashboard = () => {
   const [monitoringFrequency, setMonitoringFrequency] = useState<string>('daily');
   const [savingFrequency, setSavingFrequency] = useState(false);
 
+  // Load saved monitoring frequency on mount
+  useEffect(() => {
+    const loadMonitoringFrequency = async () => {
+      if (!user) return;
+      
+      const { data } = await supabase
+        .from('portfolios')
+        .select('monitoring_frequency')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .single();
+      
+      if (data?.monitoring_frequency) {
+        setMonitoringFrequency(data.monitoring_frequency);
+      }
+    };
+    
+    loadMonitoringFrequency();
+  }, [user]);
+
   // Optimized data fetching with React Query and parallel queries
   const { data: stats, isLoading: dataLoading } = useQuery({
     queryKey: ['dashboardStats', user?.id],
