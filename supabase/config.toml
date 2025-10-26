@@ -1,5 +1,20 @@
 project_id = "utneaqmbyjwxaqrrarpc"
 
+[functions.aitpa-core-engine]
+verify_jwt = true
+
+[functions.ai-training-protection-processor]
+verify_jwt = true
+
+[functions.ai-training-protection-monitor]
+verify_jwt = true
+
+[functions.scan-ai-training-datasets]
+verify_jwt = true
+
+[functions.aitp-readiness-check]
+verify_jwt = true
+
 [functions.security-alert-handler]
 verify_jwt = false
 

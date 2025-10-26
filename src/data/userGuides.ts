@@ -1,3 +1,94 @@
+export const aiTrainingProtectionGuide = `
+# AI Training Protection Guide
+
+Welcome to AI Training Protection - your defense against unauthorized use of your content in AI training datasets.
+
+## 🛡️ What This Feature Does
+
+Protects your creative content from being used without permission in AI model training by:
+- Generating unique fingerprints for your content
+- Monitoring AI training datasets for unauthorized usage
+- Detecting violations with confidence scoring
+- Automating legal responses when violations are found
+
+## 📋 Setup Requirements
+
+### Required API Keys
+To enable full protection capabilities, configure these API keys in your Supabase project:
+
+**Essential (Required for core functionality):**
+- OPENAI_API_KEY - Powers AI-based content analysis and fingerprint matching
+
+**Recommended (Enhanced detection):**
+- GOOGLE_CUSTOM_SEARCH_API_KEY + GOOGLE_SEARCH_ENGINE_ID - Web-wide detection
+- RESEND_API_KEY - Email notifications for violations
+
+**Optional (Additional coverage):**
+- TINEYE_API_KEY + TINEYE_API_SECRET - Reverse image search
+- BING_VISUAL_SEARCH_API_KEY - Microsoft Bing visual search
+- SERPAPI_KEY - Multi-engine search coverage
+
+### Without API Keys
+Basic protection works without API keys but with limited capabilities:
+- Local fingerprinting (hash-based)
+- Manual monitoring only
+- No automated detection
+- No real-time alerts
+
+## 🚀 How to Use
+
+1. **Upload Content** - Upload files you want to protect
+2. **Choose Protection Level** - Basic, Advanced, or Maximum
+3. **Start Monitoring** - System begins scanning AI datasets
+4. **Review Alerts** - Check violations detected
+5. **Take Action** - Automated DMCA or manual enforcement
+
+## 📊 Understanding Results
+
+**Confidence Scores:**
+- 85-100%: High confidence - automated legal action recommended
+- 60-84%: Medium confidence - manual review suggested
+- 0-59%: Low confidence - continue monitoring
+
+**Protection Levels:**
+- Basic: Hash-based fingerprinting
+- Advanced: AI-powered analysis + periodic scans
+- Maximum: Real-time monitoring + automated enforcement
+
+## ⚙️ Checking System Status
+
+Use the "Run readiness check" button in the admin panel to verify:
+- API keys are configured
+- Database tables are accessible
+- Edge functions are deployed
+- System is ready for production use
+
+## 💡 Best Practices
+
+1. Start with 1-2 test files to verify setup
+2. Configure at least OPENAI_API_KEY for meaningful results
+3. Review high-confidence violations manually before auto-filing
+4. Keep monitoring active on valuable content
+5. Update API keys if services change
+
+## 🔧 Troubleshooting
+
+**No violations detected?**
+- Verify API keys are configured correctly
+- Check that monitoring is enabled
+- Ensure files are properly uploaded
+
+**Too many false positives?**
+- Adjust confidence threshold settings
+- Review protection level (may be too sensitive)
+- Check fingerprint quality
+
+**System not ready?**
+- Run the readiness check in admin panel
+- Configure missing API keys
+- Contact support if issues persist
+`;
+
 export const uploadGuide = {
   title: "Upload & Protect Guide",
   description: "Learn how to upload and protect your artwork with TSMO",
