@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/hooks/use-toast'
 import { supabase } from '@/integrations/supabase/client'
+import { AITPTestingPanel } from '@/components/ai-protection/AITPTestingPanel'
 
 const Row = ({ label, ok }: { label: string; ok: boolean }) => (
   <div className="flex items-center justify-between py-1 text-sm">
@@ -36,33 +37,37 @@ export default function AITPReadiness() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>AI Training Protection Readiness</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <Button onClick={runCheck} disabled={loading}>
-          {loading ? 'Checking…' : 'Run readiness check'}
-        </Button>
-        {data && (
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-medium mb-2">Checks</h4>
-              {(data.checks || []).map((c: any, idx: number) => (
-                <Row key={idx} label={c.name} ok={c.ok} />
-              ))}
-            </div>
-            <div>
-              <h4 className="font-medium mb-2">Recommendations</h4>
-              <ul className="list-disc pl-5 text-sm text-muted-foreground">
-                {(data.recommendations || []).map((r: string, idx: number) => (
-                  <li key={idx}>{r}</li>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>AI Training Protection Readiness</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Button onClick={runCheck} disabled={loading}>
+            {loading ? 'Checking…' : 'Run readiness check'}
+          </Button>
+          {data && (
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="font-medium mb-2">Checks</h4>
+                {(data.checks || []).map((c: any, idx: number) => (
+                  <Row key={idx} label={c.name} ok={c.ok} />
                 ))}
-              </ul>
+              </div>
+              <div>
+                <h4 className="font-medium mb-2">Recommendations</h4>
+                <ul className="list-disc pl-5 text-sm text-muted-foreground">
+                  {(data.recommendations || []).map((r: string, idx: number) => (
+                    <li key={idx}>{r}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+          )}
+        </CardContent>
+      </Card>
+
+      <AITPTestingPanel />
+    </div>
   )
 }

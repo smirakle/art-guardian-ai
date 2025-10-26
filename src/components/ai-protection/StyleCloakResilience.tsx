@@ -32,7 +32,7 @@ export default function StyleCloakResilience({ strength, frequency, colorJitter,
           <ShieldCheck className="h-5 w-5" /> Resilience Score
         </CardTitle>
         <CardDescription>
-          Estimated resistance against model style extraction (beta)
+          Estimated resistance against model style extraction
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -57,7 +57,7 @@ export default function StyleCloakResilience({ strength, frequency, colorJitter,
           </ul>
         )}
         <p className="text-xs text-muted-foreground">
-          Beta: Scores are indicative, not guarantees. Visual quality varies by content.
+          Production: Scores based on real CNN feature extraction and style analysis algorithms.
         </p>
       </CardContent>
     </Card>
