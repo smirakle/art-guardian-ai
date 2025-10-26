@@ -1249,54 +1249,190 @@ export const unifiedDashboardGuide = {
     {
       title: "Dashboard Overview",
       content: `
-        <p>The Unified Dashboard brings all your protection metrics together in one place.</p>
-        <p><strong>Key sections:</strong></p>
+        <p>The Unified Dashboard is your central control panel for all protection activities.</p>
+        <p><strong>Six Key Metrics Displayed:</strong></p>
         <ul>
-          <li>Quick stats at a glance</li>
-          <li>Recent activity feed</li>
-          <li>Threat monitoring</li>
-          <li>Protection portfolio</li>
-          <li>Analytics and insights</li>
+          <li><strong>Protected Assets:</strong> Total artworks you've uploaded and protected</li>
+          <li><strong>Active Scans:</strong> Currently running monitoring scans</li>
+          <li><strong>Threats:</strong> Detected violations requiring your attention</li>
+          <li><strong>Blockchain Records:</strong> Blockchain certificates created</li>
+          <li><strong>Legal Actions:</strong> DMCA notices filed and tracked</li>
+          <li><strong>Success Rate:</strong> Percentage of threats successfully resolved</li>
+        </ul>
+        <p><strong>Quick Actions Sidebar:</strong></p>
+        <ul>
+          <li>Upload & Protect - Navigate to upload page</li>
+          <li>Start Monitoring - Configure monitoring settings</li>
+          <li>Configure AI Protection - Set up AI training protection</li>
+          <li>Legal Templates - Access legal documents</li>
+        </ul>
+        <p><strong>Recent Activity Feed:</strong></p>
+        <p>Shows your latest protection actions with icons, messages, and timestamps including uploads, AI protection activations, blockchain registrations, and threat detections.</p>
+      `,
+      tips: [
+        "Check dashboard daily for new threats",
+        "Higher success rate means effective violation resolution",
+        "Review recent activity to stay updated"
+      ]
+    },
+    {
+      title: "Setting Monitoring Frequency",
+      content: `
+        <p>Control how often your content is scanned across the internet:</p>
+        <p><strong>How to Set Frequency:</strong></p>
+        <ol>
+          <li>In the Overview tab, scroll to the "Monitoring Frequency" card</li>
+          <li>Select your preferred scan frequency from the dropdown:
+            <ul>
+              <li><strong>Real-time (Continuous):</strong> Scans every 5 minutes - highest protection</li>
+              <li><strong>Hourly:</strong> Scans once per hour - balanced protection</li>
+              <li><strong>Daily:</strong> Scans once per day - standard protection</li>
+              <li><strong>Weekly:</strong> Scans once per week - light monitoring</li>
+              <li><strong>Monthly:</strong> Scans once per month - minimal monitoring</li>
+            </ul>
+          </li>
+          <li>Click "Save Frequency Settings" to apply to all active portfolios</li>
+        </ol>
+        <p><strong>What This Affects:</strong></p>
+        <ul>
+          <li>How often the system searches for unauthorized uses</li>
+          <li>How quickly new threats are detected</li>
+          <li>System resource usage and scan credits</li>
+        </ul>
+        <p><strong>Recommended Settings:</strong></p>
+        <ul>
+          <li>High-value work or commercial content: Real-time or Hourly</li>
+          <li>Regular portfolio monitoring: Daily</li>
+          <li>Archive or older work: Weekly or Monthly</li>
         </ul>
       `,
       tips: [
-        "Review your dashboard daily",
-        "Set up custom alerts for threats",
-        "Use filters to focus on specific content"
+        "Real-time monitoring uses more resources but provides fastest threat detection",
+        "Your frequency setting applies to all active portfolios",
+        "Change frequency anytime based on your needs"
+      ]
+    },
+    {
+      title: "Dashboard Tabs Explained",
+      content: `
+        <p>The Unified Dashboard has 8 specialized tabs:</p>
+        <p><strong>1. Overview (Default):</strong></p>
+        <ul>
+          <li>Six key metrics at a glance</li>
+          <li>Quick Actions sidebar</li>
+          <li>Recent Activity feed</li>
+          <li>Monitoring Frequency settings</li>
+        </ul>
+        <p><strong>2. Production:</strong></p>
+        <ul>
+          <li>Production environment performance metrics</li>
+          <li>System health indicators</li>
+          <li>Usage statistics</li>
+        </ul>
+        <p><strong>3. AI Detection:</strong></p>
+        <ul>
+          <li>AI-powered threat detection analytics</li>
+          <li>Detection confidence scores</li>
+          <li>Platform-specific threat breakdowns</li>
+        </ul>
+        <p><strong>4. Protection:</strong></p>
+        <ul>
+          <li>One-click protection tools</li>
+          <li>Quick protection activation</li>
+          <li>Protection status overview</li>
+        </ul>
+        <p><strong>5. Blockchain:</strong></p>
+        <ul>
+          <li>View all blockchain certificates</li>
+          <li>Download certificate files</li>
+          <li>Verify ownership proofs</li>
+          <li>Share certificate URLs</li>
+        </ul>
+        <p><strong>6. Legal:</strong></p>
+        <ul>
+          <li>Real-time legal dashboard</li>
+          <li>Global legal network access</li>
+          <li>DMCA notice management</li>
+          <li>Legal templates and tools</li>
+        </ul>
+        <p><strong>7. Creator:</strong></p>
+        <ul>
+          <li>Creator economy features</li>
+          <li>Licensing management</li>
+          <li>Revenue tracking</li>
+        </ul>
+        <p><strong>8. Recognition:</strong></p>
+        <ul>
+          <li>Visual recognition tools</li>
+          <li>Image similarity analysis</li>
+          <li>Content matching technology</li>
+        </ul>
+      `,
+      tips: [
+        "Start with Overview tab as your daily entry point",
+        "Use Blockchain tab to download certificates for legal purposes",
+        "Legal tab streamlines DMCA filing process"
       ]
     },
     {
       title: "Managing Protections",
       content: `
         <p>Control all your protections from one central location:</p>
+        <p><strong>View Protection Status:</strong></p>
         <ul>
-          <li>View protection status for all assets</li>
-          <li>Update protection settings</li>
-          <li>Download certificates</li>
-          <li>Monitor scan results</li>
+          <li>Protected Assets metric shows total count</li>
+          <li>Active Scans shows ongoing monitoring</li>
+          <li>Recent Activity shows latest protection actions</li>
         </ul>
+        <p><strong>Update Protection Settings:</strong></p>
+        <ul>
+          <li>Navigate to specific tabs for detailed controls</li>
+          <li>Use Quick Actions for common tasks</li>
+          <li>Adjust monitoring frequency as needed</li>
+        </ul>
+        <p><strong>Taking Action on Threats:</strong></p>
+        <ol>
+          <li>Check "Threats" metric for violation count</li>
+          <li>Navigate to AI Detection tab for details</li>
+          <li>Review evidence and confidence scores</li>
+          <li>Go to Legal tab to file DMCA notices</li>
+          <li>Track resolution progress</li>
+        </ol>
       `,
       tips: [
-        "Keep all protections up to date",
-        "Review certificate expiration dates",
-        "Enable automatic renewals"
+        "Act quickly on high-priority threats",
+        "Keep certificates backed up offline",
+        "Review protection status weekly"
       ]
     },
     {
       title: "Analytics & Insights",
       content: `
-        <p>Understand your protection performance:</p>
+        <p>Understand your protection performance across all tabs:</p>
+        <p><strong>Key Metrics to Track:</strong></p>
         <ul>
-          <li>View trend charts and graphs</li>
-          <li>Track detection rates</li>
-          <li>Monitor response times</li>
-          <li>Export reports</li>
+          <li><strong>Success Rate:</strong> Shows effectiveness of violation resolution</li>
+          <li><strong>Detection Rate:</strong> Available in AI Detection tab</li>
+          <li><strong>Active Scans:</strong> Monitor ongoing protection activity</li>
+          <li><strong>Legal Actions:</strong> Track DMCA and legal progress</li>
+        </ul>
+        <p><strong>Using Production Tab:</strong></p>
+        <ul>
+          <li>View system performance metrics</li>
+          <li>Monitor resource usage</li>
+          <li>Track scan completion rates</li>
+        </ul>
+        <p><strong>AI Detection Analytics:</strong></p>
+        <ul>
+          <li>View threat detection trends</li>
+          <li>Platform-specific violation breakdowns</li>
+          <li>Confidence score distributions</li>
         </ul>
       `,
       tips: [
-        "Use analytics to improve protection strategy",
-        "Export monthly reports for records",
-        "Share insights with your team"
+        "Higher success rate indicates effective protection strategy",
+        "Use Production tab to optimize resource usage",
+        "Review AI Detection analytics to identify threat patterns"
       ]
     }
   ]
