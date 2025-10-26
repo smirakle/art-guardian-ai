@@ -298,24 +298,25 @@ export const protectionHubGuide = {
         </ol>
         <p><strong>What You'll See:</strong></p>
         <ul>
-          <li>Quick Stats at the top: Protected Files, Active Scans, Threats Detected, Detection Rate</li>
-          <li>Six tabs for different protection tools</li>
+          <li><strong>Quick Stats at the top:</strong> Protected Files, Active Scans, Threats Detected, Detection Rate</li>
+          <li><strong>Six tabs</strong> for different protection tools</li>
           <li>Real-time protection status indicators</li>
         </ul>
-        <p><strong>Six Protection Tools Available:</strong></p>
+        <p><strong>Six Protection Tabs (in order from left to right):</strong></p>
         <ol>
-          <li><strong>Upload & Protect:</strong> Quick file upload</li>
-          <li><strong>AI Protection:</strong> Configure AI training defense</li>
-          <li><strong>Detection:</strong> View threat analytics</li>
-          <li><strong>Multi-Modal:</strong> Visual recognition tools</li>
-          <li><strong>Advanced:</strong> Metadata, crawler blocking, likeness protection</li>
-          <li><strong>Overview:</strong> Status summary and quick actions</li>
+          <li><strong>Upload & Protect:</strong> Quick file upload and bulk protection</li>
+          <li><strong>AI Protection:</strong> Configure AI training defense and style cloaking</li>
+          <li><strong>Detection:</strong> View threat analytics and AI detection dashboard</li>
+          <li><strong>Multi-Modal:</strong> Visual recognition and content matching tools</li>
+          <li><strong>Advanced:</strong> Metadata protection, crawler blocking, likeness protection</li>
+          <li><strong>Overview:</strong> Status summary, recent activity, and quick actions</li>
         </ol>
+        <p><strong>Note:</strong> The quick stats at the top show demo numbers for illustration purposes until your actual protection data populates.</p>
       `,
       tips: [
-        "Start with Overview tab to check current protection status",
-        "Use Upload & Protect for quick file protection",
-        "Enable AI Protection before sharing content publicly"
+        "Start with Upload & Protect tab to quickly secure files",
+        "Enable AI Protection before sharing content publicly",
+        "Check Overview tab to see your complete protection status"
       ]
     },
     {
