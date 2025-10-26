@@ -9,9 +9,9 @@ interface PerformanceBudget {
 }
 
 const DEFAULT_BUDGETS: PerformanceBudget = {
-  pageLoad: 2000,
-  apiCall: 500,
-  databaseQuery: 200,
+  pageLoad: 5000, // Increased from 2000ms to 5000ms for more realistic threshold
+  apiCall: 2000, // Increased from 500ms to 2000ms
+  databaseQuery: 1000, // Increased from 200ms to 1000ms
   componentRender: 16, // 60fps
 };
 
@@ -20,30 +20,42 @@ export const usePerformanceBudget = (budgets: Partial<PerformanceBudget> = {}) =
   const activeBudgets = { ...DEFAULT_BUDGETS, ...budgets };
 
   useEffect(() => {
-    // Monitor page load performance
-    if (window.performance && window.performance.timing) {
-      const perfData = window.performance.timing;
-      const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
+    // Monitor page load performance - only check once after page is fully loaded
+    const checkPageLoad = () => {
+      if (window.performance && window.performance.timing) {
+        const perfData = window.performance.timing;
+        const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
 
-      if (pageLoadTime > activeBudgets.pageLoad) {
-        sendPerformanceAlert('Page Load Time', pageLoadTime, activeBudgets.pageLoad);
+        if (pageLoadTime > 0 && pageLoadTime > activeBudgets.pageLoad) {
+          sendPerformanceAlert('Page Load Time', pageLoadTime, activeBudgets.pageLoad);
+        }
       }
+    };
+
+    // Wait for page to fully load before checking
+    if (document.readyState === 'complete') {
+      checkPageLoad();
+    } else {
+      window.addEventListener('load', checkPageLoad);
+      return () => window.removeEventListener('load', checkPageLoad);
     }
 
-    // Monitor long tasks (tasks that block main thread for > 50ms)
+  }, [activeBudgets.pageLoad, sendPerformanceAlert]);
+
+  useEffect(() => {
+    // Monitor long tasks (tasks that block main thread for > 100ms)
     if ('PerformanceObserver' in window) {
       try {
         const observer = new PerformanceObserver((list) => {
           for (const entry of list.getEntries()) {
-            if (entry.duration > 50) {
+            // Only alert on very long tasks (> 200ms)
+            if (entry.duration > 200) {
               console.warn('Long task detected:', {
                 duration: entry.duration,
                 startTime: entry.startTime,
               });
               
-              if (entry.duration > activeBudgets.componentRender * 3) {
-                sendPerformanceAlert('Long Task', entry.duration, 50);
-              }
+              sendPerformanceAlert('Long Task', entry.duration, 100);
             }
           }
         });
@@ -55,7 +67,7 @@ export const usePerformanceBudget = (budgets: Partial<PerformanceBudget> = {}) =
         console.warn('PerformanceObserver not supported:', error);
       }
     }
-  }, [activeBudgets, sendPerformanceAlert]);
+  }, [sendPerformanceAlert]);
 
   const measureApiCall = async <T,>(
     apiCall: () => Promise<T>,

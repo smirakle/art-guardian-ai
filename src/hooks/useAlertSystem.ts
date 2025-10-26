@@ -65,10 +65,20 @@ export const useAlertSystem = () => {
   }, [toast]);
 
   const sendPerformanceAlert = useCallback(async (metricName: string, value: number, threshold: number) => {
+    // Only send critical alerts for severe performance issues (2x threshold)
+    // Don't show toasts for warning-level performance issues
+    const severity = value > threshold * 2 ? 'critical' : 'warning';
+    
+    // Skip sending warning alerts - only log them
+    if (severity === 'warning') {
+      console.warn(`Performance Warning: ${metricName} is ${value}ms (threshold: ${threshold}ms)`);
+      return;
+    }
+    
     await sendAlert({
       title: 'Performance Threshold Exceeded',
       message: `${metricName} is ${value}ms (threshold: ${threshold}ms)`,
-      severity: value > threshold * 1.5 ? 'critical' : 'warning',
+      severity,
       source: 'performance_monitor',
       metadata: { metricName, value, threshold }
     });
