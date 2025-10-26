@@ -306,33 +306,43 @@ async function searchWithTinEye(protectedFile: any): Promise<any[]> {
   }
 
   try {
-    // In production, implement actual TinEye API call
     console.log('Searching with TinEye for:', protectedFile.original_filename);
     
-    // Simulated TinEye results for demo purposes
-    const mockResults = [
-      {
-        url: 'https://suspicious-ai-dataset.com/images/' + protectedFile.original_filename,
-        domain: 'suspicious-ai-dataset.com',
-        confidence: 0.85,
-        context: 'Found in AI training dataset'
-      }
-    ];
-
-    for (const result of mockResults) {
-      violations.push({
-        violation_type: 'unauthorized_dataset_inclusion',
-        source_url: result.url,
-        source_domain: result.domain,
-        confidence_score: result.confidence * 100,
-        evidence_data: {
-          detection_method: 'tineye_reverse_search',
-          match_type: 'visual_similarity',
-          timestamp: new Date().toISOString(),
-          context: result.context
-        }
-      });
+    // Real TinEye API implementation
+    const nonce = Math.random().toString(36).substring(7);
+    const timestamp = Math.floor(Date.now() / 1000);
+    
+    const searchUrl = `https://api.tineye.com/rest/search/?url=${encodeURIComponent(protectedFile.file_url)}&api_key=${tineyeApiKey}&nonce=${nonce}&timestamp=${timestamp}`;
+    
+    const response = await fetch(searchUrl);
+    
+    if (!response.ok) {
+      console.error(`TinEye API error: ${response.status}`);
+      return violations;
     }
+
+    const data = await response.json();
+    
+    if (data.results && data.results.matches) {
+      for (const match of data.results.matches.slice(0, 10)) {
+        violations.push({
+          violation_type: 'unauthorized_dataset_inclusion',
+          source_url: match.backlinks?.[0]?.url || `https://${match.domain}`,
+          source_domain: match.domain,
+          confidence_score: 85,
+          evidence_data: {
+            detection_method: 'tineye_reverse_search',
+            match_type: 'visual_similarity',
+            timestamp: new Date().toISOString(),
+            context: `Found on ${match.domain}`,
+            crawl_date: match.crawl_date,
+            image_url: match.url
+          }
+        });
+      }
+    }
+    
+    console.log(`TinEye found ${data.results?.matches?.length || 0} matches`);
   } catch (error) {
     console.error('TinEye search error:', error);
   }
@@ -353,30 +363,51 @@ async function searchWithBingVisual(protectedFile: any): Promise<any[]> {
   try {
     console.log('Searching with Bing Visual Search for:', protectedFile.original_filename);
     
-    // Simulated Bing results for demo purposes
-    const mockResults = [
-      {
-        url: 'https://marketplace-seller.com/products/' + protectedFile.id,
-        domain: 'marketplace-seller.com',
-        confidence: 0.78,
-        context: 'Found on e-commerce platform'
-      }
-    ];
-
-    for (const result of mockResults) {
-      violations.push({
-        violation_type: 'unauthorized_commercial_use',
-        source_url: result.url,
-        source_domain: result.domain,
-        confidence_score: result.confidence * 100,
-        evidence_data: {
-          detection_method: 'bing_visual_search',
-          match_type: 'visual_similarity',
-          timestamp: new Date().toISOString(),
-          context: result.context
+    // Real Bing Visual Search API implementation
+    const response = await fetch('https://api.bing.microsoft.com/v7.0/images/visualsearch', {
+      method: 'POST',
+      headers: {
+        'Ocp-Apim-Subscription-Key': bingApiKey,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        imageInfo: {
+          url: protectedFile.file_url
         }
-      });
+      })
+    });
+
+    if (!response.ok) {
+      console.error(`Bing Visual Search error: ${response.status}`);
+      return violations;
     }
+
+    const data = await response.json();
+    
+    if (data.tags?.[0]?.actions) {
+      for (const action of data.tags[0].actions) {
+        if (action.actionType === 'PagesIncluding' && action.data?.value) {
+          for (const page of action.data.value.slice(0, 10)) {
+            const pageUrl = new URL(page.hostPageUrl);
+            violations.push({
+              violation_type: 'unauthorized_commercial_use',
+              source_url: page.hostPageUrl,
+              source_domain: pageUrl.hostname,
+              confidence_score: 78,
+              evidence_data: {
+                detection_method: 'bing_visual_search',
+                match_type: 'visual_similarity',
+                timestamp: new Date().toISOString(),
+                context: `Found on ${pageUrl.hostname}`,
+                page_title: page.name
+              }
+            });
+          }
+        }
+      }
+    }
+    
+    console.log('Bing Visual Search completed');
   } catch (error) {
     console.error('Bing Visual Search error:', error);
   }
@@ -397,36 +428,60 @@ async function searchWithSerpAPI(protectedFile: any): Promise<any[]> {
   try {
     console.log('Searching with SerpAPI for:', protectedFile.original_filename);
     
-    // Search multiple engines through SerpAPI
-    const searchEngines = ['google', 'bing', 'duckduckgo'];
+    // Real SerpAPI implementation for Google Reverse Image Search
+    const searchUrl = `https://serpapi.com/search.json?engine=google_reverse_image&image_url=${encodeURIComponent(protectedFile.file_url)}&api_key=${serpApiKey}`;
     
-    for (const engine of searchEngines) {
-      // Simulated SerpAPI results
-      const mockResults = [
-        {
-          url: `https://training-datasets.${engine}.com/` + protectedFile.id,
-          domain: `training-datasets.${engine}.com`,
-          confidence: 0.72,
-          context: `Found via ${engine} search`
-        }
-      ];
+    const response = await fetch(searchUrl);
+    
+    if (!response.ok) {
+      console.error(`SerpAPI error: ${response.status}`);
+      return violations;
+    }
 
-      for (const result of mockResults) {
+    const data = await response.json();
+    
+    // Process inline images
+    if (data.inline_images) {
+      for (const image of data.inline_images.slice(0, 10)) {
+        const imageUrl = new URL(image.link);
         violations.push({
           violation_type: 'potential_training_data',
-          source_url: result.url,
-          source_domain: result.domain,
-          confidence_score: result.confidence * 100,
+          source_url: image.link,
+          source_domain: imageUrl.hostname,
+          confidence_score: 80,
           evidence_data: {
-            detection_method: 'serpapi_search',
-            search_engine: engine,
-            match_type: 'text_similarity',
+            detection_method: 'serpapi_google_reverse',
+            match_type: 'visual_similarity',
             timestamp: new Date().toISOString(),
-            context: result.context
+            context: `Found via Google Reverse Image Search`,
+            title: image.title,
+            thumbnail: image.thumbnail
           }
         });
       }
     }
+    
+    // Process visual matches
+    if (data.visual_matches) {
+      for (const match of data.visual_matches.slice(0, 10)) {
+        const matchUrl = new URL(match.link);
+        violations.push({
+          violation_type: 'potential_training_data',
+          source_url: match.link,
+          source_domain: matchUrl.hostname,
+          confidence_score: 72,
+          evidence_data: {
+            detection_method: 'serpapi_visual_match',
+            match_type: 'visual_similarity',
+            timestamp: new Date().toISOString(),
+            context: 'Visual match found',
+            title: match.title
+          }
+        });
+      }
+    }
+    
+    console.log(`SerpAPI found ${(data.inline_images?.length || 0) + (data.visual_matches?.length || 0)} matches`);
   } catch (error) {
     console.error('SerpAPI search error:', error);
   }
