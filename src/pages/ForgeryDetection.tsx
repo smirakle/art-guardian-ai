@@ -3,6 +3,8 @@ import ImageForgeryDetector from '@/components/forensics/ImageForgeryDetector';
 import AIImageDetector from '@/components/forensics/AIImageDetector';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BugReportButton } from '@/components/BugReportButton';
+import { UserGuide } from '@/components/UserGuide';
+import { advancedImageAnalysisGuide } from '@/data/userGuides';
 
 const ForgeryDetection: React.FC = () => {
   useEffect(() => {
@@ -39,8 +41,15 @@ const ForgeryDetection: React.FC = () => {
     <main className="min-h-screen bg-background" role="main">
       <div className="container mx-auto px-4 py-8">
         <header className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">Advanced Image Analysis</h1>
-          <p className="text-muted-foreground">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <h1 className="text-3xl font-bold">Advanced Image Analysis</h1>
+            <UserGuide 
+              title={advancedImageAnalysisGuide.title}
+              description={advancedImageAnalysisGuide.description}
+              sections={advancedImageAnalysisGuide.sections}
+            />
+          </div>
+          <p className="text-muted-foreground text-center">
             Comprehensive image analysis including AI generation detection, forgery detection, and forensic analysis.
           </p>
         </header>
