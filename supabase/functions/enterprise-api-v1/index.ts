@@ -98,7 +98,22 @@ async function handleScanRequest(req: Request, apiKey: string) {
       });
     }
 
+    // Get API key record
+    const { data: keyRec } = await supabase
+      .from('enterprise_api_keys')
+      .select('id, user_id')
+      .eq('api_key', apiKey)
+      .single();
+
+    if (!keyRec) {
+      return new Response(JSON.stringify({ error: 'Invalid API key' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     // Call existing scan function based on content type
+    const scanStart = Date.now();
     let scanResult;
     if (content_type === 'image') {
       scanResult = await supabase.functions.invoke('real-image-search', {
@@ -115,16 +130,36 @@ async function handleScanRequest(req: Request, apiKey: string) {
       });
     }
 
-    const scanId = crypto.randomUUID();
+    const processingTime = Date.now() - scanStart;
+
+    // Store scan results in database
+    const { data: scanRecord, error: scanError } = await supabase
+      .from('partner_scan_results')
+      .insert({
+        api_key_id: keyRec.id,
+        user_id: keyRec.user_id,
+        scan_type: content_type,
+        content_url,
+        status: 'completed',
+        matches_found: scanResult.data?.matches?.length || 0,
+        threat_level: scanResult.data?.threat_level || 'low',
+        scan_data: scanResult.data || {}
+      })
+      .select()
+      .single();
+
+    if (scanError) {
+      console.error('Failed to save scan results:', scanError);
+    }
     
     return new Response(JSON.stringify({
-      scan_id: scanId,
+      scan_id: scanRecord?.id || crypto.randomUUID(),
       status: 'completed',
       content_url,
       content_type,
       results: scanResult.data || {},
       scan_timestamp: new Date().toISOString(),
-      processing_time_ms: 0
+      processing_time_ms: processingTime
     }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -142,7 +177,7 @@ async function handleScanRequest(req: Request, apiKey: string) {
 async function handleMonitorSetup(req: Request, apiKey: string) {
   try {
     const body = await req.json();
-    const { target_urls, scan_frequency = 'daily', notification_webhook } = body;
+    const { target_urls, scan_frequency = 'daily', notification_webhook, monitor_type = 'content' } = body;
 
     if (!target_urls || !Array.isArray(target_urls)) {
       return new Response(JSON.stringify({ error: 'target_urls array is required' }), {
@@ -151,16 +186,73 @@ async function handleMonitorSetup(req: Request, apiKey: string) {
       });
     }
 
-    const monitorId = crypto.randomUUID();
+    // Get API key record
+    const { data: keyRec } = await supabase
+      .from('enterprise_api_keys')
+      .select('id, user_id')
+      .eq('api_key', apiKey)
+      .single();
+
+    if (!keyRec) {
+      return new Response(JSON.stringify({ error: 'Invalid API key' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Calculate next scan time based on frequency
+    const nextScanTime = new Date();
+    switch(scan_frequency) {
+      case 'hourly':
+        nextScanTime.setHours(nextScanTime.getHours() + 1);
+        break;
+      case 'weekly':
+        nextScanTime.setDate(nextScanTime.getDate() + 7);
+        break;
+      case 'monthly':
+        nextScanTime.setMonth(nextScanTime.getMonth() + 1);
+        break;
+      default: // daily
+        nextScanTime.setDate(nextScanTime.getDate() + 1);
+    }
+
+    // Create monitoring jobs for each target URL
+    const monitoringJobs = [];
+    for (const url of target_urls) {
+      const { data: job, error } = await supabase
+        .from('partner_monitoring_jobs')
+        .insert({
+          api_key_id: keyRec.id,
+          user_id: keyRec.user_id,
+          content_url: url,
+          monitor_type,
+          scan_frequency,
+          webhook_url: notification_webhook,
+          next_scan_at: nextScanTime.toISOString(),
+          status: 'active'
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Failed to create monitoring job:', error);
+      } else {
+        monitoringJobs.push(job);
+      }
+    }
 
     return new Response(JSON.stringify({
-      monitor_id: monitorId,
+      monitor_jobs: monitoringJobs.map(job => ({
+        monitor_id: job.id,
+        content_url: job.content_url,
+        status: job.status
+      })),
       status: 'active',
       target_urls,
       scan_frequency,
       notification_webhook,
       created_at: new Date().toISOString(),
-      next_scan: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+      next_scan: nextScanTime.toISOString()
     }), {
       status: 201,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -183,30 +275,107 @@ async function handleResultsRetrieval(req: Request, apiKey: string) {
     const limit = parseInt(url.searchParams.get('limit') || '10');
     const offset = parseInt(url.searchParams.get('offset') || '0');
 
+    // Get API key record
+    const { data: keyRec } = await supabase
+      .from('enterprise_api_keys')
+      .select('id')
+      .eq('api_key', apiKey)
+      .single();
+
+    if (!keyRec) {
+      return new Response(JSON.stringify({ error: 'Invalid API key' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     let results = [];
+    let total = 0;
     
     if (scanId) {
-      // Return specific scan results
+      // Return specific scan result
+      const { data: scanResult, error } = await supabase
+        .from('partner_scan_results')
+        .select('*')
+        .eq('id', scanId)
+        .eq('api_key_id', keyRec.id)
+        .single();
+
+      if (error) {
+        return new Response(JSON.stringify({ error: 'Scan not found' }), {
+          status: 404,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
       results = [{
-        scan_id: scanId,
-        status: 'completed',
-        matches_found: 0,
-        high_risk_matches: 0,
-        scan_timestamp: new Date().toISOString(),
-        results: []
+        scan_id: scanResult.id,
+        status: scanResult.status,
+        content_url: scanResult.content_url,
+        scan_type: scanResult.scan_type,
+        matches_found: scanResult.matches_found,
+        threat_level: scanResult.threat_level,
+        scan_timestamp: scanResult.scanned_at,
+        results: scanResult.scan_data
       }];
+      total = 1;
     } else if (monitorId) {
-      // Return monitoring results
+      // Return monitoring job details and history
+      const { data: job } = await supabase
+        .from('partner_monitoring_jobs')
+        .select('*')
+        .eq('id', monitorId)
+        .eq('api_key_id', keyRec.id)
+        .single();
+
+      if (!job) {
+        return new Response(JSON.stringify({ error: 'Monitor not found' }), {
+          status: 404,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      // Get scan results for this monitoring job
+      const { data: scans } = await supabase
+        .from('partner_scan_results')
+        .select('*')
+        .eq('monitoring_job_id', monitorId)
+        .eq('api_key_id', keyRec.id)
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1);
+
       results = [{
-        monitor_id: monitorId,
-        last_scan: new Date().toISOString(),
-        total_scans: 1,
-        matches_found: 0,
-        status: 'active'
+        monitor_id: job.id,
+        content_url: job.content_url,
+        status: job.status,
+        scan_frequency: job.scan_frequency,
+        last_scan: job.last_scan_at,
+        next_scan: job.next_scan_at,
+        total_scans: job.total_scans,
+        matches_found: job.matches_found,
+        recent_scans: scans || []
       }];
+      total = 1;
     } else {
-      // Return recent results
-      results = [];
+      // Return recent scan results
+      const { data: scans, count } = await supabase
+        .from('partner_scan_results')
+        .select('*', { count: 'exact' })
+        .eq('api_key_id', keyRec.id)
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1);
+
+      results = (scans || []).map(scan => ({
+        scan_id: scan.id,
+        status: scan.status,
+        content_url: scan.content_url,
+        scan_type: scan.scan_type,
+        matches_found: scan.matches_found,
+        threat_level: scan.threat_level,
+        scan_timestamp: scan.scanned_at,
+        monitoring_job_id: scan.monitoring_job_id
+      }));
+      total = count || 0;
     }
 
     return new Response(JSON.stringify({
@@ -214,8 +383,8 @@ async function handleResultsRetrieval(req: Request, apiKey: string) {
       pagination: {
         limit,
         offset,
-        total: results.length,
-        has_more: false
+        total,
+        has_more: offset + limit < total
       }
     }), {
       status: 200,
@@ -327,15 +496,56 @@ async function handleWebhookSetup(req: Request, apiKey: string) {
       });
     }
 
-    const webhookId = crypto.randomUUID();
+    if (!Array.isArray(event_types) || event_types.length === 0) {
+      return new Response(JSON.stringify({ error: 'event_types must be a non-empty array' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Get API key record
+    const { data: keyRec } = await supabase
+      .from('enterprise_api_keys')
+      .select('id, user_id')
+      .eq('api_key', apiKey)
+      .single();
+
+    if (!keyRec) {
+      return new Response(JSON.stringify({ error: 'Invalid API key' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Create webhook in database
+    const { data: webhook, error: webhookError } = await supabase
+      .from('partner_webhooks')
+      .insert({
+        api_key_id: keyRec.id,
+        user_id: keyRec.user_id,
+        webhook_url,
+        events: event_types,
+        secret_key: secret || crypto.randomUUID(),
+        is_active: true
+      })
+      .select()
+      .single();
+
+    if (webhookError) {
+      console.error('Failed to create webhook:', webhookError);
+      return new Response(JSON.stringify({ error: 'Failed to create webhook' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
 
     return new Response(JSON.stringify({
-      webhook_id: webhookId,
-      webhook_url,
-      event_types,
+      webhook_id: webhook.id,
+      webhook_url: webhook.webhook_url,
+      event_types: webhook.events,
       status: 'active',
-      secret: secret || null,
-      created_at: new Date().toISOString()
+      secret: webhook.secret_key,
+      created_at: webhook.created_at
     }), {
       status: 201,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }

@@ -43,7 +43,7 @@ export type Database = {
           created_at: string | null
           expires_at: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           is_active: boolean | null
           session_token: string
           session_token_hash: string | null
@@ -53,7 +53,7 @@ export type Database = {
           created_at?: string | null
           expires_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           is_active?: boolean | null
           session_token: string
           session_token_hash?: string | null
@@ -63,7 +63,7 @@ export type Database = {
           created_at?: string | null
           expires_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           is_active?: boolean | null
           session_token?: string
           session_token_hash?: string | null
@@ -391,7 +391,7 @@ export type Database = {
           created_at: string | null
           details: Json | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           resource_id: string | null
           resource_type: string
           user_agent: string | null
@@ -402,7 +402,7 @@ export type Database = {
           created_at?: string | null
           details?: Json | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           resource_id?: string | null
           resource_type: string
           user_agent?: string | null
@@ -413,7 +413,7 @@ export type Database = {
           created_at?: string | null
           details?: Json | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           resource_id?: string | null
           resource_type?: string
           user_agent?: string | null
@@ -2506,7 +2506,7 @@ export type Database = {
           event_data: Json | null
           event_type: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           location_city: string | null
           location_country: string | null
           subscriber_id: string | null
@@ -2520,7 +2520,7 @@ export type Database = {
           event_data?: Json | null
           event_type: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           location_city?: string | null
           location_country?: string | null
           subscriber_id?: string | null
@@ -2534,7 +2534,7 @@ export type Database = {
           event_data?: Json | null
           event_type?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           location_city?: string | null
           location_country?: string | null
           subscriber_id?: string | null
@@ -3271,7 +3271,7 @@ export type Database = {
           endpoint: string
           error_message: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           metadata: Json | null
           method: string
           request_size_bytes: number | null
@@ -3287,7 +3287,7 @@ export type Database = {
           endpoint: string
           error_message?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           metadata?: Json | null
           method: string
           request_size_bytes?: number | null
@@ -3303,7 +3303,7 @@ export type Database = {
           endpoint?: string
           error_message?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           metadata?: Json | null
           method?: string
           request_size_bytes?: number | null
@@ -3374,7 +3374,7 @@ export type Database = {
           error_message: string
           error_stack: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           metadata: Json | null
           request_path: string | null
           resolved: boolean | null
@@ -3389,7 +3389,7 @@ export type Database = {
           error_message: string
           error_stack?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           metadata?: Json | null
           request_path?: string | null
           resolved?: boolean | null
@@ -3404,7 +3404,7 @@ export type Database = {
           error_message?: string
           error_stack?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           metadata?: Json | null
           request_path?: string | null
           resolved?: boolean | null
@@ -3503,7 +3503,7 @@ export type Database = {
           consent_version: string
           created_at: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           metadata: Json | null
           user_agent: string | null
           user_id: string
@@ -3514,7 +3514,7 @@ export type Database = {
           consent_version?: string
           created_at?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           metadata?: Json | null
           user_agent?: string | null
           user_id: string
@@ -3525,7 +3525,7 @@ export type Database = {
           consent_version?: string
           created_at?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           metadata?: Json | null
           user_agent?: string | null
           user_id?: string
@@ -3858,7 +3858,7 @@ export type Database = {
           created_at: string
           endpoint: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           metadata: Json | null
           method: string
           operation_type: string | null
@@ -3875,7 +3875,7 @@ export type Database = {
           created_at?: string
           endpoint: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           metadata?: Json | null
           method: string
           operation_type?: string | null
@@ -3892,7 +3892,7 @@ export type Database = {
           created_at?: string
           endpoint?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           metadata?: Json | null
           method?: string
           operation_type?: string | null
@@ -4448,7 +4448,7 @@ export type Database = {
           event_metadata: Json | null
           event_type: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           template_id: string
           user_agent: string | null
           user_id: string
@@ -4459,7 +4459,7 @@ export type Database = {
           event_metadata?: Json | null
           event_type: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           template_id: string
           user_agent?: string | null
           user_id: string
@@ -4470,7 +4470,7 @@ export type Database = {
           event_metadata?: Json | null
           event_type?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           template_id?: string
           user_agent?: string | null
           user_id?: string
@@ -4554,7 +4554,7 @@ export type Database = {
           created_at: string
           document_id: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           signature_data: Json
           signature_type: string
           signed_at: string
@@ -4567,7 +4567,7 @@ export type Database = {
           created_at?: string
           document_id: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           signature_data: Json
           signature_type: string
           signed_at?: string
@@ -4580,7 +4580,7 @@ export type Database = {
           created_at?: string
           document_id?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           signature_data?: Json
           signature_type?: string
           signed_at?: string
@@ -5669,6 +5669,68 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_monitoring_jobs: {
+        Row: {
+          api_key_id: string
+          content_url: string
+          created_at: string | null
+          id: string
+          last_scan_at: string | null
+          matches_found: number | null
+          metadata: Json | null
+          monitor_type: string
+          next_scan_at: string | null
+          scan_frequency: string
+          status: string
+          total_scans: number | null
+          updated_at: string | null
+          user_id: string
+          webhook_url: string | null
+        }
+        Insert: {
+          api_key_id: string
+          content_url: string
+          created_at?: string | null
+          id?: string
+          last_scan_at?: string | null
+          matches_found?: number | null
+          metadata?: Json | null
+          monitor_type: string
+          next_scan_at?: string | null
+          scan_frequency: string
+          status?: string
+          total_scans?: number | null
+          updated_at?: string | null
+          user_id: string
+          webhook_url?: string | null
+        }
+        Update: {
+          api_key_id?: string
+          content_url?: string
+          created_at?: string | null
+          id?: string
+          last_scan_at?: string | null
+          matches_found?: number | null
+          metadata?: Json | null
+          monitor_type?: string
+          next_scan_at?: string | null
+          scan_frequency?: string
+          status?: string
+          total_scans?: number | null
+          updated_at?: string | null
+          user_id?: string
+          webhook_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_monitoring_jobs_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "enterprise_api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       partner_pricing_tiers: {
         Row: {
           api_calls_included: number
@@ -5725,6 +5787,66 @@ export type Database = {
           white_label_included?: boolean
         }
         Relationships: []
+      }
+      partner_scan_results: {
+        Row: {
+          api_key_id: string
+          content_url: string
+          created_at: string | null
+          id: string
+          matches_found: number | null
+          monitoring_job_id: string | null
+          scan_data: Json | null
+          scan_type: string
+          scanned_at: string | null
+          status: string
+          threat_level: string | null
+          user_id: string
+        }
+        Insert: {
+          api_key_id: string
+          content_url: string
+          created_at?: string | null
+          id?: string
+          matches_found?: number | null
+          monitoring_job_id?: string | null
+          scan_data?: Json | null
+          scan_type: string
+          scanned_at?: string | null
+          status?: string
+          threat_level?: string | null
+          user_id: string
+        }
+        Update: {
+          api_key_id?: string
+          content_url?: string
+          created_at?: string | null
+          id?: string
+          matches_found?: number | null
+          monitoring_job_id?: string | null
+          scan_data?: Json | null
+          scan_type?: string
+          scanned_at?: string | null
+          status?: string
+          threat_level?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_scan_results_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "enterprise_api_keys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "partner_scan_results_monitoring_job_id_fkey"
+            columns: ["monitoring_job_id"]
+            isOneToOne: false
+            referencedRelation: "partner_monitoring_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       partner_subscription_usage: {
         Row: {
@@ -5834,6 +5956,62 @@ export type Database = {
             columns: ["tier_id"]
             isOneToOne: false
             referencedRelation: "partner_pricing_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      partner_webhooks: {
+        Row: {
+          api_key_id: string
+          created_at: string | null
+          events: string[]
+          failed_deliveries: number | null
+          id: string
+          is_active: boolean | null
+          last_triggered_at: string | null
+          metadata: Json | null
+          secret_key: string
+          total_deliveries: number | null
+          updated_at: string | null
+          user_id: string
+          webhook_url: string
+        }
+        Insert: {
+          api_key_id: string
+          created_at?: string | null
+          events?: string[]
+          failed_deliveries?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_triggered_at?: string | null
+          metadata?: Json | null
+          secret_key?: string
+          total_deliveries?: number | null
+          updated_at?: string | null
+          user_id: string
+          webhook_url: string
+        }
+        Update: {
+          api_key_id?: string
+          created_at?: string | null
+          events?: string[]
+          failed_deliveries?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_triggered_at?: string | null
+          metadata?: Json | null
+          secret_key?: string
+          total_deliveries?: number | null
+          updated_at?: string | null
+          user_id?: string
+          webhook_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_webhooks_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "enterprise_api_keys"
             referencedColumns: ["id"]
           },
         ]
@@ -6063,7 +6241,7 @@ export type Database = {
           created_at: string
           details: Json | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           resource_id: string | null
           resource_type: string
           user_agent: string | null
@@ -6074,7 +6252,7 @@ export type Database = {
           created_at?: string
           details?: Json | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           resource_id?: string | null
           resource_type: string
           user_agent?: string | null
@@ -6085,7 +6263,7 @@ export type Database = {
           created_at?: string
           details?: Json | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           resource_id?: string | null
           resource_type?: string
           user_agent?: string | null
@@ -7289,7 +7467,7 @@ export type Database = {
           created_at: string
           details: Json | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           resource_id: string | null
           resource_type: string
           user_agent: string | null
@@ -7300,7 +7478,7 @@ export type Database = {
           created_at?: string
           details?: Json | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           resource_id?: string | null
           resource_type: string
           user_agent?: string | null
@@ -7311,7 +7489,7 @@ export type Database = {
           created_at?: string
           details?: Json | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           resource_id?: string | null
           resource_type?: string
           user_agent?: string | null
@@ -9113,10 +9291,7 @@ export type Database = {
         }
         Returns: string
       }
-      calculate_segment_size: {
-        Args: { segment_id: string }
-        Returns: number
-      }
+      calculate_segment_size: { Args: { segment_id: string }; Returns: number }
       calculate_user_storage_usage: {
         Args: { user_id_param: string }
         Returns: undefined
@@ -9181,35 +9356,20 @@ export type Database = {
         }
         Returns: string
       }
-      generate_document_hash: {
-        Args: { content: string }
-        Returns: string
-      }
-      generate_enterprise_api_key: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      generate_government_api_key: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      generate_secure_api_key: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      generate_document_hash: { Args: { content: string }; Returns: string }
+      generate_enterprise_api_key: { Args: never; Returns: string }
+      generate_government_api_key: { Args: never; Returns: string }
+      generate_secure_api_key: { Args: never; Returns: string }
       get_all_template_download_counts: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           download_count: number
           template_id: string
         }[]
       }
-      get_artwork_limit: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
+      get_artwork_limit: { Args: never; Returns: number }
       get_current_user_role: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: Database["public"]["Enums"]["app_role"]
       }
       get_daily_usage_stats: {
@@ -9222,24 +9382,18 @@ export type Database = {
           service_type: string
         }[]
       }
-      get_portfolio_limit: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
+      get_portfolio_limit: { Args: never; Returns: number }
       get_portfolio_monitoring_cache: {
         Args: { cache_key_param: string }
         Returns: Json
       }
-      get_production_health: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
+      get_production_health: { Args: never; Returns: Json }
       get_template_download_count: {
         Args: { template_id_param: string }
         Returns: number
       }
       get_total_operating_costs: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           cost_breakdown: Json
           fixed_monthly: number
@@ -9249,7 +9403,7 @@ export type Database = {
         }[]
       }
       get_user_dashboard_stats: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           high_threats: number
           protected_artworks: number
@@ -9258,10 +9412,7 @@ export type Database = {
           total_scans: number
         }[]
       }
-      get_user_email_verified: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      get_user_email_verified: { Args: never; Returns: boolean }
       get_user_notification_preferences: {
         Args: { user_id_param: string }
         Returns: {
@@ -9273,7 +9424,7 @@ export type Database = {
         }[]
       }
       get_user_partner_tier: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           api_calls_included: number
           api_calls_remaining: number
@@ -9306,7 +9457,7 @@ export type Database = {
         }[]
       }
       get_user_subscription: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           deepfake_addon: boolean
           is_active: boolean
@@ -9324,7 +9475,7 @@ export type Database = {
         }[]
       }
       get_user_white_label_org: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           is_owner: boolean
           org_id: string
@@ -9340,10 +9491,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      hash_session_token: {
-        Args: { token: string }
-        Returns: string
-      }
+      hash_session_token: { Args: { token: string }; Returns: string }
       invalidate_admin_sessions_by_ip: {
         Args: { ip_param: unknown }
         Returns: undefined
@@ -9479,10 +9627,7 @@ export type Database = {
         }
         Returns: undefined
       }
-      trigger_scheduled_scans: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      trigger_scheduled_scans: { Args: never; Returns: undefined }
       update_case_status: {
         Args: { case_id_param: string; message?: string; new_status: string }
         Returns: boolean
@@ -9495,30 +9640,15 @@ export type Database = {
         }
         Returns: undefined
       }
-      user_has_feature: {
-        Args: { feature_name: string }
-        Returns: boolean
-      }
-      user_has_membership: {
-        Args: { _user_id: string }
-        Returns: boolean
-      }
-      user_has_white_label_access: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      validate_admin_token: {
-        Args: { token_hash: string }
-        Returns: boolean
-      }
+      user_has_feature: { Args: { feature_name: string }; Returns: boolean }
+      user_has_membership: { Args: { _user_id: string }; Returns: boolean }
+      user_has_white_label_access: { Args: never; Returns: boolean }
+      validate_admin_token: { Args: { token_hash: string }; Returns: boolean }
       validate_government_api_key: {
         Args: { api_key_param: string; required_permission?: string }
         Returns: Json
       }
-      validate_promo_code: {
-        Args: { code_param: string }
-        Returns: Json
-      }
+      validate_promo_code: { Args: { code_param: string }; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "user"
