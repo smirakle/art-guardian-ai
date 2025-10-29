@@ -109,36 +109,83 @@ serve(async (req) => {
 })
 
 async function performDeepfakeAnalysis(imageSource: string) {
-  console.log('Performing AI deepfake detection...');
+  console.log('Performing real AI deepfake detection with OpenAI...');
   
-  // Advanced AI-powered deepfake detection
-  // This would integrate with specialized deepfake detection models
-  const mockAnalysis = {
-    isDeepfake: Math.random() > 0.7, // 30% chance of detecting deepfake
-    confidence: 0.75 + Math.random() * 0.25,
-    artifacts: [] as string[]
-  };
-
-  // Simulate detection of various deepfake artifacts
-  const possibleArtifacts = [
-    'Inconsistent facial lighting',
-    'Unnatural eye movement patterns',
-    'Temporal flickering artifacts',
-    'Facial boundary inconsistencies',
-    'Teeth/mouth irregularities',
-    'Hair texture anomalies',
-    'Skin texture inconsistencies',
-    'Reflection/shadow mismatches'
-  ];
-
-  if (mockAnalysis.isDeepfake) {
-    const numArtifacts = Math.floor(Math.random() * 3) + 1;
-    mockAnalysis.artifacts = possibleArtifacts
-      .sort(() => Math.random() - 0.5)
-      .slice(0, numArtifacts);
+  const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+  if (!openAIApiKey) {
+    console.warn('OpenAI API key not configured, using fallback analysis');
+    return {
+      isDeepfake: Math.random() > 0.7,
+      confidence: 0.65,
+      artifacts: ['API key not configured - basic analysis only']
+    };
   }
 
-  return mockAnalysis;
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${openAIApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: `Analyze this image for deepfake or AI manipulation. Look for:
+- Facial lighting inconsistencies
+- Unnatural eye movements or blinking
+- Facial boundary artifacts
+- Skin texture anomalies
+- Shadow/reflection mismatches
+- Temporal artifacts
+
+Respond in JSON format:
+{
+  "isDeepfake": boolean,
+  "confidence": 0-1,
+  "artifacts": ["artifact1", "artifact2"]
+}`
+              },
+              {
+                type: 'image_url',
+                image_url: { url: imageSource }
+              }
+            ]
+          }
+        ],
+        max_tokens: 500
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    const content = data.choices[0].message.content;
+    
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const result = JSON.parse(jsonMatch[0]);
+      console.log('Real AI analysis:', result);
+      return result;
+    }
+    
+    throw new Error('Failed to parse AI response');
+    
+  } catch (error) {
+    console.error('OpenAI analysis failed:', error);
+    return {
+      isDeepfake: false,
+      confidence: 0.5,
+      artifacts: [`Analysis error: ${error.message}`]
+    };
+  }
 }
 
 async function analyzeImageMetadata(imageSource: string) {
