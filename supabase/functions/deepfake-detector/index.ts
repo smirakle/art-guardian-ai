@@ -40,6 +40,43 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
+    // Authenticate user
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      )
+    }
+
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token)
+    
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      )
+    }
+
+    // Check rate limit - 50 scans per day
+    const { data: limitCheck } = await supabaseClient.rpc('check_daily_api_limit', {
+      p_user_id: user.id,
+      p_service_type: 'deepfake_detection',
+      p_daily_limit: 50
+    })
+
+    if (limitCheck && !limitCheck.allowed) {
+      return new Response(
+        JSON.stringify({ 
+          error: 'Daily limit exceeded',
+          limit: limitCheck.daily_limit,
+          reset_time: limitCheck.reset_time
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
+      )
+    }
+
     const { imageUrl, imageData, artworkId, scanId, claimedLocation, claimedTime } = await req.json()
 
     if (!imageUrl && !imageData) {
@@ -88,13 +125,23 @@ serve(async (req) => {
       });
     }
 
+    // Track usage
+    await supabaseClient.from('production_metrics').insert({
+      metric_type: 'api_usage',
+      metric_name: 'deepfake_detection',
+      metric_value: 1,
+      metadata: { user_id: user.id, confidence: finalAnalysis.confidence }
+    })
+
     console.log('Deepfake analysis completed:', finalAnalysis);
 
     return new Response(
       JSON.stringify({
         success: true,
         analysis: finalAnalysis,
-        threat_level: finalAnalysis.confidence > 0.8 ? 'high' : finalAnalysis.confidence > 0.5 ? 'medium' : 'low'
+        threat_level: finalAnalysis.confidence > 0.8 ? 'high' : finalAnalysis.confidence > 0.5 ? 'medium' : 'low',
+        disclaimer: 'AI analysis is not 100% accurate. Results should be verified by experts for critical decisions.',
+        remaining_scans: limitCheck?.remaining || 0
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )

@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
   Brain, 
   Shield, 
@@ -11,12 +12,14 @@ import {
   TrendingUp, 
   Users, 
   Search,
-  FileImage
+  FileImage,
+  Info
 } from "lucide-react";
 import DeepfakeReporter from "@/components/DeepfakeReporter";
 import LiveDeepfakeMonitor from "@/components/deepfake/LiveDeepfakeMonitor";
 import RecentDeepfakeDetections from "@/components/RecentDeepfakeDetections";
 import { BugReportButton } from "@/components/BugReportButton";
+import { ProductionDisclaimer } from "@/components/deepfake/ProductionDisclaimer";
 
 const DeepfakeDetection = () => {
   const [activeTab, setActiveTab] = useState("detector");
@@ -65,13 +68,15 @@ const DeepfakeDetection = () => {
                 <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
                   Advanced Deepfake Detection
                 </h1>
-                <Badge variant="secondary" className="text-xs">Coming Soon</Badge>
+                <Badge variant="secondary" className="text-xs">Production</Badge>
               </div>
               <p className="text-sm sm:text-base text-muted-foreground">
-                AI-powered detection of deepfakes, face swaps, and media manipulation across surface and dark web
+                AI-powered detection of deepfakes, face swaps, and media manipulation
               </p>
             </div>
           </div>
+
+          <ProductionDisclaimer />
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -123,9 +128,16 @@ const DeepfakeDetection = () => {
             <DeepfakeReporter />
           </TabsContent>
 
-          <TabsContent value="realtime" className="space-y-6">
-            <LiveDeepfakeMonitor />
-          </TabsContent>
+              <TabsContent value="realtime" className="space-y-6">
+                <Alert variant="default" className="border-blue-500/50 bg-blue-500/10">
+                  <Info className="h-4 w-4 text-blue-500" />
+                  <AlertDescription>
+                    <strong>Coming Soon:</strong> Real-time monitoring across social media platforms requires 
+                    an Enterprise plan and will be available in Q2 2025. Current demo uses simulated data.
+                  </AlertDescription>
+                </Alert>
+                <LiveDeepfakeMonitor />
+              </TabsContent>
 
           <TabsContent value="matches" className="space-y-6">
             <Card>

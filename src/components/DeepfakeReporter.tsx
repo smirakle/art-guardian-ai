@@ -57,7 +57,6 @@ const DeepfakeReporter = () => {
     setAnalysis(null);
 
     try {
-      // Simulate progress
       const progressInterval = setInterval(() => {
         setProgress(prev => Math.min(prev + Math.random() * 15, 90));
       }, 500);
@@ -77,17 +76,43 @@ const DeepfakeReporter = () => {
       setProgress(100);
 
       if (error) {
-        throw error;
+        console.error('Deepfake detection error:', error);
+        
+        // Handle specific error types
+        if (error.message?.includes('Daily limit exceeded') || error.message?.includes('429')) {
+          toast({
+            title: "Daily Limit Reached",
+            description: "You've reached your daily scan limit of 50. Resets in 24 hours.",
+            variant: "destructive",
+          });
+        } else if (error.message?.includes('Authentication')) {
+          toast({
+            title: "Authentication Required",
+            description: "Please sign in to use deepfake detection.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Analysis Failed",
+            description: error.message || "Unable to analyze the image. Please try again.",
+            variant: "destructive",
+          });
+        }
+        return;
       }
 
       console.log('Deepfake analysis result:', result);
       setAnalysis(result.analysis);
 
+      const remainingText = result.remaining_scans !== undefined 
+        ? ` (${result.remaining_scans} scans remaining today)`
+        : '';
+
       toast({
         title: "Analysis Complete",
         description: result.analysis.isDeepfake 
-          ? `Potential ${result.analysis.manipulation_type} detected with ${Math.round(result.analysis.confidence * 100)}% confidence`
-          : "No deepfake manipulation detected",
+          ? `Potential ${result.analysis.manipulation_type} detected with ${Math.round(result.analysis.confidence * 100)}% confidence${remainingText}`
+          : `No deepfake manipulation detected${remainingText}`,
         variant: result.analysis.isDeepfake ? "destructive" : "default",
       });
 

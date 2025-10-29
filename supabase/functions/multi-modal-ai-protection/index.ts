@@ -15,6 +15,48 @@ serve(async (req) => {
   try {
     console.log('Multi-modal AI protection request received');
 
+    // Authenticate user
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      )
+    }
+
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      )
+    }
+
+    // Check rate limit - 30 scans per day
+    const { data: limitCheck } = await supabase.rpc('check_daily_api_limit', {
+      p_user_id: user.id,
+      p_service_type: 'multimodal_protection',
+      p_daily_limit: 30
+    })
+
+    if (limitCheck && !limitCheck.allowed) {
+      return new Response(
+        JSON.stringify({ 
+          error: 'Daily limit exceeded',
+          limit: limitCheck.daily_limit,
+          reset_time: limitCheck.reset_time
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
+      )
+    }
+
     const formData = await req.formData();
     const file = formData.get('file') as File;
     const analysisType = formData.get('analysisType') as string;
