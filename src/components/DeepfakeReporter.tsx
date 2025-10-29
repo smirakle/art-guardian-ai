@@ -273,8 +273,8 @@ const DeepfakeReporter = () => {
 
           <Button 
             onClick={handleAnalyze} 
-            disabled={true}
-            className="w-full bg-gradient-to-r from-primary to-accent opacity-50 cursor-not-allowed"
+            disabled={isAnalyzing}
+            className="w-full bg-gradient-to-r from-primary to-accent"
           >
             {isAnalyzing ? (
               <>
