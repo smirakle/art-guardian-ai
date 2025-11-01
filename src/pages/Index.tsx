@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,7 +18,7 @@ import ContextualHelp from "@/components/help-system/ContextualHelp";
 import { BugReportButton } from "@/components/BugReportButton";
 import { UserGuide } from "@/components/UserGuide";
 import { homeGuide } from "@/data/userGuides";
-import { Shield, Eye, Activity, Link2, Search, Check, Star, ArrowRight, Zap, Globe, Lock, TrendingUp, Users, Mail, Phone, MapPin, FileImage, Upload, Scan, Bot, Play, ChevronRight, FileText, Scale, Building, Heart, ExternalLink, UserX, Calendar } from "lucide-react";
+import { Shield, Eye, Activity, Link2, Search, Check, Star, ArrowRight, Zap, Globe, Lock, TrendingUp, Users, Mail, Phone, MapPin, FileImage, Upload, Scan, Bot, Play, ChevronRight, FileText, Scale, Building, Heart, ExternalLink, UserX, Calendar, Info } from "lucide-react";
 import { ShieldCheck, EyeOff, Fingerprint, Code2, BadgeCheck } from "lucide-react";
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import MonitoringFlow from "@/components/MonitoringFlow";
@@ -211,6 +212,17 @@ const Index = () => {
       {/* Hero Section - Simplified */}
       <section className="pt-24 sm:pt-32 pb-16 px-4">
         <div className="container mx-auto text-center max-w-5xl">
+          {/* Beta Limitations Disclaimer */}
+          <Alert className="mb-6 border-primary/30 bg-primary/5 text-left max-w-3xl mx-auto">
+            <Info className="h-4 w-4 text-primary" />
+            <AlertDescription className="text-sm">
+              <strong className="text-primary">Beta Access Notice:</strong> You currently have{" "}
+              <strong>50 scans per day</strong> during our beta period. This limit resets every 24 hours 
+              and applies to all deepfake detection and image analysis features. Thank you for being an 
+              early adopter! 🚀
+            </AlertDescription>
+          </Alert>
+
           <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm animate-pulse bg-red-600">
             💰 Stop Losing Money to Content Thieves
           </Badge>
