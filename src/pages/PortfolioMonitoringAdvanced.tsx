@@ -1,5 +1,6 @@
 import { PortfolioMonitoringDashboard } from "@/components/phase4/PortfolioMonitoringDashboard";
 import { useSubscription } from "@/contexts/SubscriptionContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FolderSearch, Lock } from "lucide-react";
@@ -8,9 +9,10 @@ import { BugReportButton } from "@/components/BugReportButton";
 
 const PortfolioMonitoringAdvanced = () => {
   const { subscription } = useSubscription();
+  const { user } = useAuth();
   const navigate = useNavigate();
   
-  const hasAccess = ['starter', 'professional', 'enterprise'].includes(subscription?.plan_id || '');
+  const hasAccess = ['starter', 'professional', 'enterprise'].includes(subscription?.plan_id || '') || user?.user_metadata?.role === 'admin';
 
   if (!hasAccess) {
     return (
