@@ -77,6 +77,7 @@ import DocumentProtection from "./pages/DocumentProtection";
 import PortfolioMonitoringAdvanced from "./pages/PortfolioMonitoringAdvanced";
 import ThreatAlerts from "./pages/ThreatAlerts";
 import DMCAAutomation from "./pages/DMCAAutomation";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -131,6 +132,7 @@ const App = () => {
                       <Route path="/dashboard" element={<Dashboard />} />
                       <Route path="/about-tsmo" element={<AboutTsmo />} />
                       <Route path="/faq" element={<FAQ />} />
+                      <Route path="/profile" element={<Profile />} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/b2b-login" element={<B2BLogin />} />
                       <Route path="/contact" element={<Contact />} />
