@@ -36,8 +36,9 @@ export const useSecurityLogging = () => {
   const logSecurityEvent = useCallback(async (event: SecurityEvent) => {
     try {
       // Get client IP and user agent
+      const rawIpAddress = event.ip_address || await getClientIP();
       const clientInfo = {
-        ip_address: event.ip_address || await getClientIP(),
+        ip_address: rawIpAddress === 'unknown' ? null : rawIpAddress,
         user_agent: event.user_agent || navigator.userAgent,
         timestamp: new Date().toISOString(),
         session_id: user?.id || 'anonymous'
