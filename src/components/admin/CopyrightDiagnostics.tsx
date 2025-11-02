@@ -230,30 +230,45 @@ export const CopyrightDiagnostics = () => {
       let pipelineTestArtworkId = testArtwork?.id;
       let shouldCleanupPipelineArtwork = false;
 
-      // If we don't have a test artwork from Phase 2, create one specifically for pipeline testing
+      // If we don't have a test artwork from Phase 2, try to find an existing one or create one
       if (!pipelineTestArtworkId) {
         try {
           const { data: userData } = await supabase.auth.getUser();
           if (userData.user) {
-            const { data: pipelineArtwork, error: pipelineArtworkError } = await supabase
+            // First, try to find an existing artwork from this user
+            const { data: existingArtwork } = await supabase
               .from('artwork')
-              .insert({
-                user_id: userData.user.id,
-                title: 'Pipeline Test Image',
-                description: 'Test image for pipeline diagnostics',
-                category: 'photography',
-                file_paths: ['https://images.unsplash.com/photo-1506905925346-21bda4d32df4'],
-                status: 'active'
-              })
-              .select()
+              .select('id')
+              .eq('user_id', userData.user.id)
+              .limit(1)
               .single();
-            
-            if (pipelineArtworkError) {
-              throw new Error(`Failed to create pipeline test artwork: ${pipelineArtworkError.message}`);
-            }
 
-            pipelineTestArtworkId = pipelineArtwork?.id;
-            shouldCleanupPipelineArtwork = true;
+            if (existingArtwork) {
+              console.log('Using existing artwork for pipeline test:', existingArtwork.id);
+              pipelineTestArtworkId = existingArtwork.id;
+            } else {
+              // If no existing artwork, create a test one
+              const { data: pipelineArtwork, error: pipelineArtworkError } = await supabase
+                .from('artwork')
+                .insert({
+                  user_id: userData.user.id,
+                  title: 'Pipeline Test Image',
+                  description: 'Test image for pipeline diagnostics',
+                  category: 'photography',
+                  file_paths: ['https://images.unsplash.com/photo-1506905925346-21bda4d32df4'],
+                  status: 'active'
+                })
+                .select()
+                .single();
+              
+              if (pipelineArtworkError) {
+                throw new Error(`Failed to create pipeline test artwork: ${pipelineArtworkError.message}`);
+              }
+
+              console.log('Created new test artwork:', pipelineArtwork?.id);
+              pipelineTestArtworkId = pipelineArtwork?.id;
+              shouldCleanupPipelineArtwork = true;
+            }
           }
         } catch (error) {
           updateResult(3, {
