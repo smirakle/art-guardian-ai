@@ -9,10 +9,10 @@ import { BugReportButton } from "@/components/BugReportButton";
 
 const PortfolioMonitoringAdvanced = () => {
   const { subscription } = useSubscription();
-  const { user } = useAuth();
+  const { role } = useAuth();
   const navigate = useNavigate();
   
-  const hasAccess = ['starter', 'professional', 'enterprise'].includes(subscription?.plan_id || '') || user?.user_metadata?.role === 'admin';
+  const hasAccess = ['starter', 'professional', 'enterprise'].includes(subscription?.plan_id || '') || role === 'admin';
 
   if (!hasAccess) {
     return (
