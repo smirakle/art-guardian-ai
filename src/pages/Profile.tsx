@@ -168,6 +168,20 @@ const Profile = () => {
       });
 
       if (error) {
+        // Check for specific Stripe configuration error
+        if (error.message?.includes('No configuration provided')) {
+          toast.error('Subscription portal is not yet configured. Please contact support for subscription changes.', {
+            duration: 5000,
+          });
+          await logSecurityEvent({
+            event_type: 'data_access',
+            severity: 'low',
+            description: 'Customer portal not configured',
+            metadata: { error: 'stripe_portal_not_configured' }
+          });
+          return;
+        }
+        
         await logSecurityEvent({
           event_type: 'data_access',
           severity: 'medium',
@@ -180,9 +194,13 @@ const Profile = () => {
       if (data?.url) {
         track('subscription_manage_clicked');
         window.location.href = data.url;
+      } else {
+        toast.error('Unable to open subscription portal. Please try again later.');
       }
     } catch (error: any) {
-      toast.error(error.message || 'Failed to open subscription management');
+      if (!error.message?.includes('No configuration provided')) {
+        toast.error(error.message || 'Failed to open subscription management');
+      }
     }
   };
 
