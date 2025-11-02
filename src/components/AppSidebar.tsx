@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
+import AccountMenu from "./AccountMenu";
 import { Button } from "@/components/ui/button";
 import {
   Sidebar,
@@ -257,15 +258,20 @@ export function AppSidebar() {
           </Button>
           
           {user ? (
-            <Button
-              variant="outline"
-              onClick={handleSignOut}
-              className="flex items-center gap-2 w-full justify-start"
-              size="sm"
-            >
-              <LogOut className="w-4 h-4" />
-              {!collapsed && <span>Sign Out</span>}
-            </Button>
+            <div className="flex items-center gap-2 w-full">
+              <AccountMenu />
+              {!collapsed && (
+                <Button
+                  variant="ghost"
+                  onClick={handleSignOut}
+                  className="flex-1 flex items-center gap-2 justify-start"
+                  size="sm"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Sign Out</span>
+                </Button>
+              )}
+            </div>
           ) : (
             <Button
               variant="outline"
