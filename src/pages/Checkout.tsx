@@ -26,6 +26,7 @@ import {
 import { CheckoutTaxCalculation } from "@/components/billing/CheckoutTaxCalculation";
 import { UserGuide } from "@/components/UserGuide";
 import { checkoutGuide } from "@/data/userGuides";
+import { BetaTestingAgreement } from "@/components/checkout/BetaTestingAgreement";
 import {
   Dialog,
   DialogContent,
@@ -52,6 +53,7 @@ const Checkout = () => {
   const [promoCode, setPromoCode] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAuthProcessing, setIsAuthProcessing] = useState(false);
+  const [betaAgreementAccepted, setBetaAgreementAccepted] = useState(false);
   const [taxCalculation, setTaxCalculation] = useState({
     subtotal: 0,
     tax_amount: 0,
@@ -180,6 +182,15 @@ const Checkout = () => {
       });
       return;
     }
+
+    if (!betaAgreementAccepted) {
+      toast({
+        title: "Agreement Required",
+        description: "Please read and accept the Beta Testing Agreement to continue.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     setIsProcessing(true);
     
@@ -247,6 +258,16 @@ const Checkout = () => {
       toast({
         title: "Authentication Required",
         description: "Please sign in or create an account first.",
+        variant: "destructive",
+      });
+      setIsProcessing(false);
+      return;
+    }
+
+    if (!betaAgreementAccepted) {
+      toast({
+        title: "Agreement Required",
+        description: "Please read and accept the Beta Testing Agreement to continue.",
         variant: "destructive",
       });
       setIsProcessing(false);
@@ -1000,6 +1021,12 @@ const Checkout = () => {
                     </Label>
                   </div>
 
+                  {/* Beta Testing Agreement */}
+                  <BetaTestingAgreement 
+                    accepted={betaAgreementAccepted}
+                    onAcceptedChange={setBetaAgreementAccepted}
+                  />
+
                   {/* Security Notice */}
                   <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/30 p-3 rounded-lg">
                     <Lock className="w-4 h-4" />
@@ -1010,7 +1037,7 @@ const Checkout = () => {
                   <Button 
                     type="submit" 
                     className="w-full bg-gradient-to-r from-primary to-accent text-lg py-6"
-                    disabled={isProcessing}
+                    disabled={isProcessing || !betaAgreementAccepted}
                   >
                     {isProcessing ? (
                       <>
@@ -1053,12 +1080,18 @@ const Checkout = () => {
                         Get 2 months of free access to test all features. No payment required.
                       </p>
                     </div>
+
+                    {/* Beta Testing Agreement */}
+                    <BetaTestingAgreement 
+                      accepted={betaAgreementAccepted}
+                      onAcceptedChange={setBetaAgreementAccepted}
+                    />
                     
                     <Button 
                       type="button" 
                       onClick={handleBetaActivation}
                       className="w-full bg-gradient-to-r from-primary to-accent text-lg py-6"
-                      disabled={isProcessing}
+                      disabled={isProcessing || !betaAgreementAccepted}
                     >
                       {isProcessing ? (
                         <>
