@@ -54,7 +54,8 @@ serve(async (req) => {
     try {
       const portalSession = await stripe.billingPortal.sessions.create({
         customer: customerId,
-        return_url: `${origin}/`,
+        return_url: `${origin}/profile`,
+        configuration: 'bpc_1SP71NBqGjZa82YcSIbD8Exg', // Stripe portal configuration
       });
       logStep("Customer portal session created", { sessionId: portalSession.id, url: portalSession.url });
 
@@ -63,20 +64,7 @@ serve(async (req) => {
         status: 200,
       });
     } catch (stripeError: any) {
-      // Handle Stripe-specific errors
-      if (stripeError.message?.includes('No configuration provided')) {
-        logStep("Stripe portal not configured", { customerId });
-        return new Response(
-          JSON.stringify({ 
-            error: "Subscription portal is not configured yet. Please contact support for subscription management.",
-            code: "PORTAL_NOT_CONFIGURED"
-          }), 
-          {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-            status: 400,
-          }
-        );
-      }
+      logStep("Stripe error", { message: stripeError.message, type: stripeError.type });
       throw stripeError;
     }
   } catch (error) {
