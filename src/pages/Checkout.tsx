@@ -26,6 +26,13 @@ import {
 import { CheckoutTaxCalculation } from "@/components/billing/CheckoutTaxCalculation";
 import { UserGuide } from "@/components/UserGuide";
 import { checkoutGuide } from "@/data/userGuides";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface PlanDetails {
   name: string;
@@ -870,7 +877,126 @@ const Checkout = () => {
                   <div className="flex items-center space-x-2">
                     <Checkbox id="terms" required />
                     <Label htmlFor="terms" className="text-sm">
-                      I agree to the Terms of Service and Privacy Policy
+                      I agree to the{' '}
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <button type="button" className="text-primary underline hover:text-primary/80">
+                            Terms of Service
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                          <DialogHeader>
+                            <DialogTitle>Terms of Service</DialogTitle>
+                          </DialogHeader>
+                          <div className="prose prose-sm max-w-none">
+                            <p className="text-muted-foreground mb-4">Last Updated: January 15, 2025</p>
+                            
+                            <h3 className="text-lg font-semibold mt-6 mb-3">1. Acceptance of Terms</h3>
+                            <p>By accessing and using TSMO Technology's services, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.</p>
+                            
+                            <h3 className="text-lg font-semibold mt-6 mb-3">2. Description of Service</h3>
+                            <p>TSMO Technology provides AI-powered content protection, monitoring, and legal support services for creators. Our services include but are not limited to:</p>
+                            <ul className="list-disc pl-6 space-y-1">
+                              <li>Real-time content monitoring across multiple platforms</li>
+                              <li>AI-powered deepfake detection</li>
+                              <li>Automated DMCA takedown notice generation and filing</li>
+                              <li>Legal document preparation and filing assistance</li>
+                            </ul>
+
+                            <h3 className="text-lg font-semibold mt-6 mb-3">3. User Responsibilities</h3>
+                            <p>You agree to:</p>
+                            <ul className="list-disc pl-6 space-y-1">
+                              <li>Provide accurate and complete information</li>
+                              <li>Maintain the security of your account credentials</li>
+                              <li>Use the service only for lawful purposes</li>
+                              <li>Not misuse or attempt to circumvent our security measures</li>
+                            </ul>
+
+                            <h3 className="text-lg font-semibold mt-6 mb-3">4. Payment and Billing</h3>
+                            <p>Subscription fees are billed in advance on a monthly or annual basis. You authorize us to charge your payment method for all fees. Refunds are provided in accordance with our refund policy.</p>
+
+                            <h3 className="text-lg font-semibold mt-6 mb-3">5. Intellectual Property</h3>
+                            <p>You retain all rights to your content. We claim no ownership over any content you submit. Our services and technology remain our intellectual property.</p>
+
+                            <h3 className="text-lg font-semibold mt-6 mb-3">6. Limitation of Liability</h3>
+                            <p>TSMO Technology provides services "as is" and makes no warranties. We are not liable for any indirect, incidental, or consequential damages arising from your use of our services.</p>
+
+                            <h3 className="text-lg font-semibold mt-6 mb-3">7. Termination</h3>
+                            <p>We reserve the right to suspend or terminate your account for violation of these terms or any applicable law.</p>
+
+                            <h3 className="text-lg font-semibold mt-6 mb-3">8. Changes to Terms</h3>
+                            <p>We may modify these terms at any time. Continued use of our services after changes constitutes acceptance of the modified terms.</p>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                      {' '}and{' '}
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <button type="button" className="text-primary underline hover:text-primary/80">
+                            Privacy Policy
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                          <DialogHeader>
+                            <DialogTitle>Privacy Policy</DialogTitle>
+                          </DialogHeader>
+                          <div className="prose prose-sm max-w-none">
+                            <p className="text-muted-foreground mb-4">Last Updated: January 15, 2025</p>
+                            
+                            <h3 className="text-lg font-semibold mt-6 mb-3">1. Information We Collect</h3>
+                            <p>We collect information you provide directly to us, including:</p>
+                            <ul className="list-disc pl-6 space-y-1">
+                              <li>Account information (name, email, payment details)</li>
+                              <li>Content you upload for protection and monitoring</li>
+                              <li>Communications with our support team</li>
+                              <li>Usage data and analytics</li>
+                            </ul>
+
+                            <h3 className="text-lg font-semibold mt-6 mb-3">2. How We Use Your Information</h3>
+                            <p>We use your information to:</p>
+                            <ul className="list-disc pl-6 space-y-1">
+                              <li>Provide and improve our services</li>
+                              <li>Process payments and transactions</li>
+                              <li>Send service updates and notifications</li>
+                              <li>Monitor for unauthorized use of your content</li>
+                              <li>Comply with legal obligations</li>
+                            </ul>
+
+                            <h3 className="text-lg font-semibold mt-6 mb-3">3. Data Security</h3>
+                            <p>We implement industry-standard security measures including encryption, secure data storage, and regular security audits to protect your information.</p>
+
+                            <h3 className="text-lg font-semibold mt-6 mb-3">4. Data Sharing</h3>
+                            <p>We do not sell your personal information. We may share data with:</p>
+                            <ul className="list-disc pl-6 space-y-1">
+                              <li>Service providers who assist in our operations</li>
+                              <li>Legal authorities when required by law</li>
+                              <li>Third parties with your explicit consent</li>
+                            </ul>
+
+                            <h3 className="text-lg font-semibold mt-6 mb-3">5. Your Rights</h3>
+                            <p>You have the right to:</p>
+                            <ul className="list-disc pl-6 space-y-1">
+                              <li>Access your personal data</li>
+                              <li>Request corrections to your data</li>
+                              <li>Request deletion of your data</li>
+                              <li>Opt-out of marketing communications</li>
+                              <li>Export your data</li>
+                            </ul>
+
+                            <h3 className="text-lg font-semibold mt-6 mb-3">6. Cookies and Tracking</h3>
+                            <p>We use cookies and similar technologies to improve user experience, analyze usage patterns, and personalize content.</p>
+
+                            <h3 className="text-lg font-semibold mt-6 mb-3">7. International Data Transfers</h3>
+                            <p>Your data may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place for such transfers.</p>
+
+                            <h3 className="text-lg font-semibold mt-6 mb-3">8. Children's Privacy</h3>
+                            <p>Our services are not intended for users under 18. We do not knowingly collect information from children.</p>
+
+                            <h3 className="text-lg font-semibold mt-6 mb-3">9. Contact Us</h3>
+                            <p>For privacy-related questions, contact us at privacy@tsmotech.com</p>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                     </Label>
                   </div>
 
