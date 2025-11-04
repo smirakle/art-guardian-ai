@@ -23,6 +23,7 @@ import { BugReportButton } from '@/components/BugReportButton';
 // Import existing components
 import { PortfolioDashboard } from '@/components/portfolio/PortfolioDashboard';
 import { OpenAIDiagnostics } from '@/components/admin/OpenAIDiagnostics';
+import AdminOnly from '@/components/AdminOnly';
 
 const MonitoringHub = () => {
   const [activeTab, setActiveTab] = useState('portfolio');
@@ -270,7 +271,9 @@ const MonitoringHub = () => {
 
         {/* Diagnostics Tab */}
         <TabsContent value="diagnostics" className="space-y-6">
-          <OpenAIDiagnostics />
+          <AdminOnly>
+            <OpenAIDiagnostics />
+          </AdminOnly>
         </TabsContent>
       </Tabs>
 
