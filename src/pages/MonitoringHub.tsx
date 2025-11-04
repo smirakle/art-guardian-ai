@@ -22,6 +22,7 @@ import { BugReportButton } from '@/components/BugReportButton';
 
 // Import existing components
 import { PortfolioDashboard } from '@/components/portfolio/PortfolioDashboard';
+import { OpenAIDiagnostics } from '@/components/admin/OpenAIDiagnostics';
 
 const MonitoringHub = () => {
   const [activeTab, setActiveTab] = useState('portfolio');
@@ -95,7 +96,7 @@ const MonitoringHub = () => {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="portfolio" className="flex items-center gap-2">
             <Briefcase className="h-4 w-4" />
             Portfolio
@@ -115,6 +116,10 @@ const MonitoringHub = () => {
           <TabsTrigger value="forgery" className="flex items-center gap-2">
             <Image className="h-4 w-4" />
             Forgery
+          </TabsTrigger>
+          <TabsTrigger value="diagnostics" className="flex items-center gap-2">
+            <Activity className="h-4 w-4" />
+            Diagnostics
           </TabsTrigger>
         </TabsList>
 
@@ -261,6 +266,11 @@ const MonitoringHub = () => {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        {/* Diagnostics Tab */}
+        <TabsContent value="diagnostics" className="space-y-6">
+          <OpenAIDiagnostics />
         </TabsContent>
       </Tabs>
 

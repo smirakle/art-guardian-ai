@@ -156,17 +156,22 @@ serve(async (req) => {
 })
 
 async function performDeepfakeAnalysis(imageSource: string) {
-  console.log('Performing real AI deepfake detection with OpenAI...');
+  console.log('[Deepfake Detector] Performing real AI deepfake detection with OpenAI...');
   
   const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
   if (!openAIApiKey) {
-    console.warn('OpenAI API key not configured, using fallback analysis');
+    console.error('[Deepfake Detector] OpenAI API key NOT configured - using FALLBACK');
+    await logProductionMetric('deepfake_fallback', 1, 'missing_api_key', {
+      reason: 'OPENAI_API_KEY not configured'
+    });
     return {
       isDeepfake: Math.random() > 0.7,
       confidence: 0.65,
-      artifacts: ['API key not configured - basic analysis only']
+      artifacts: ['⚠️ FALLBACK MODE: API key not configured - simulated analysis only']
     };
   }
+
+  const startTime = Date.now();
 
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -209,29 +214,87 @@ Respond in JSON format:
       }),
     });
 
+    const responseTime = Date.now() - startTime;
+
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('[Deepfake Detector] OpenAI API ERROR:', response.status, errorText);
+      
+      await logProductionMetric('openai_api_error', response.status, 'deepfake_detector', {
+        error: errorText,
+        responseTime,
+        status: response.status
+      });
+
+      // Alert on critical errors
+      if (response.status === 429) {
+        console.error('[CRITICAL] OpenAI rate limit exceeded - falling back!');
+      } else if (response.status === 402) {
+        console.error('[CRITICAL] OpenAI quota exhausted - falling back!');
+      } else if (response.status === 401) {
+        console.error('[CRITICAL] OpenAI API key invalid - falling back!');
+      }
+
+      return {
+        isDeepfake: false,
+        confidence: 0.5,
+        artifacts: [`⚠️ FALLBACK MODE: API error ${response.status} - simulated analysis`]
+      };
     }
 
     const data = await response.json();
     const content = data.choices[0].message.content;
     
+    console.log('[Deepfake Detector] OpenAI SUCCESS:', content.substring(0, 100), `(${responseTime}ms)`);
+
+    // Log successful API call with token usage and cost
+    await logProductionMetric('openai_deepfake_analysis', responseTime, 'openai_api', {
+      success: true,
+      model: 'gpt-4o',
+      tokens: data.usage,
+      cost: (data.usage.prompt_tokens * 2.50 / 1000000) + (data.usage.completion_tokens * 10.00 / 1000000)
+    });
+    
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       const result = JSON.parse(jsonMatch[0]);
-      console.log('Real AI analysis:', result);
+      console.log('[Deepfake Detector] Real AI analysis result:', result);
       return result;
     }
     
-    throw new Error('Failed to parse AI response');
+    throw new Error('Failed to parse AI response JSON');
     
   } catch (error) {
-    console.error('OpenAI analysis failed:', error);
+    console.error('[Deepfake Detector] OpenAI EXCEPTION:', error);
+    
+    await logProductionMetric('openai_api_exception', 0, 'deepfake_detector', {
+      error: error.message,
+      stack: error.stack
+    });
+
     return {
       isDeepfake: false,
       confidence: 0.5,
-      artifacts: [`Analysis error: ${error.message}`]
+      artifacts: [`⚠️ FALLBACK MODE: Exception - ${error.message}`]
     };
+  }
+}
+
+async function logProductionMetric(metricName: string, value: number, source: string, metadata: any = {}) {
+  try {
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    await supabaseClient.from('production_metrics').insert({
+      metric_type: source,
+      metric_name: metricName,
+      metric_value: value,
+      metadata
+    });
+  } catch (error) {
+    console.error('[Deepfake Detector] Failed to log metric:', error);
   }
 }
 
