@@ -31,13 +31,23 @@ const onboardingSteps: OnboardingStep[] = [
   {
     id: 1,
     title: "Welcome to TSMO Art Guardian",
-    description: "Your personal AI-powered art protection system. Let's get you started with protecting your creative work.",
+    description: "Your personal AI-powered art protection system. Let's get you started!",
     icon: Sparkles,
   },
   {
     id: 2,
+    title: "Create Your Account",
+    description: "Click the 'Get Protected' button in the bottom-left sidebar to sign up and unlock all protection features.",
+    icon: Shield,
+    action: {
+      label: "Get Protected",
+      path: "/auth"
+    }
+  },
+  {
+    id: 3,
     title: "Upload Your Artwork",
-    description: "Start by uploading your digital art. Our AI will analyze and create a unique fingerprint for protection.",
+    description: "After signing up, upload your digital art. Our AI will analyze and create a unique fingerprint for protection.",
     icon: Upload,
     action: {
       label: "Upload Now",
@@ -45,7 +55,7 @@ const onboardingSteps: OnboardingStep[] = [
     }
   },
   {
-    id: 3,
+    id: 4,
     title: "Monitor Your Art",
     description: "Track how your artwork is performing online with real-time monitoring and threat detection.",
     icon: Activity,
@@ -55,7 +65,7 @@ const onboardingSteps: OnboardingStep[] = [
     }
   },
   {
-    id: 4,
+    id: 5,
     title: "Deep Security Scanning",
     description: "Run comprehensive scans across the web to detect unauthorized usage and protect your intellectual property.",
     icon: Shield,
