@@ -1564,14 +1564,15 @@ export const homeGuide = {
       content: `
         <p><strong>Step 1: Create Your Account</strong></p>
         <ol>
-          <li>Click "Login" or "Sign Up" in the top navigation</li>
-          <li>Select the "Sign Up" tab</li>
+          <li>Look for the <strong>"Get Protected"</strong> button in the bottom-left sidebar</li>
+          <li>Click it to go to the sign-up page</li>
+          <li>Select the "Sign Up" tab if not already selected</li>
           <li>Enter your full name, username, email, and create a password</li>
           <li>Optionally enter a promo code if you have one</li>
           <li>Click "Create Account" to complete registration</li>
           <li>You'll be automatically signed in and redirected to the dashboard</li>
         </ol>
-        <p><strong>Note:</strong> Email verification may be required depending on your settings. You can disable "Confirm email" in Supabase settings for faster testing.</p>
+        <p><strong>Note:</strong> The "Get Protected" button is located at the bottom-left of the page in the sidebar. You can also click "Login" in the navigation menu if you already have an account.</p>
         <p><strong>Step 2: Choose Your Plan</strong></p>
         <ul>
           <li><strong>Student ($19/mo):</strong> Up to 1,000 artworks, basic AI monitoring, 5 portfolios</li>
