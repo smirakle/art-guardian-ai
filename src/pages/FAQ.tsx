@@ -8,7 +8,7 @@ const FAQ = () => {
       items: [
         {
           question: "What is TSMO Watch?",
-          answer: "TSMO Watch is a digital protection platform designed to help artists, creators, and studios safeguard their work online. Using AI-powered tracking, we monitor the web, social media, and marketplaces for stolen, copied, or deepfaked versions of your art and notify you when your intellectual property is at risk."
+          answer: "TSMO Watch is a comprehensive digital protection platform designed to help artists, creators, and studios safeguard their work online. Using advanced AI-powered tracking, blockchain verification, and automated legal tools, we monitor the web, social media, AI training datasets, and marketplaces 24/7 for stolen, copied, or deepfaked versions of your art. Currently in beta with 50 free scans per day for early adopters."
         },
         {
           question: "What does TSMO stand for?",
@@ -31,7 +31,19 @@ const FAQ = () => {
         },
         {
           question: "How does TSMO work?",
-          answer: "Our AI scanning system tracks unauthorized uses of your content across websites, social media, AI datasets, and NFT marketplaces. We send real-time alerts and offer takedown assistance so you can act quickly."
+          answer: (
+            <div>
+              <p className="mb-3">TSMO Watch uses a multi-layered protection system:</p>
+              <ol className="ml-4 space-y-2 text-sm list-decimal">
+                <li><strong>Upload & Protect:</strong> Upload your artwork and apply protection layers (watermarking, blockchain verification, AI fingerprinting)</li>
+                <li><strong>24/7 AI Monitoring:</strong> Our AI continuously scans the internet, social media, AI training datasets, and marketplaces</li>
+                <li><strong>Instant Detection:</strong> Visual recognition technology detects your work even when modified or cropped</li>
+                <li><strong>Real-time Alerts:</strong> Get notified immediately when violations are found with detailed evidence</li>
+                <li><strong>Automated Response:</strong> Auto-generate DMCA notices and legal documentation, or take manual action</li>
+                <li><strong>Legal Support:</strong> Access to IP lawyers and automated legal workflows for enforcement</li>
+              </ol>
+            </div>
+          )
         }
       ]
     },
@@ -57,11 +69,30 @@ const FAQ = () => {
       items: [
         {
           question: "How do I sign up?",
-          answer: "Visit tsmowatch.com and create an account. You can upload samples of your work, set monitoring preferences, and start tracking within minutes."
+          answer: "Look for the 'Get Protected' button in the bottom-left sidebar of the homepage, or click 'Login' in the main navigation menu. Select the 'Sign Up' tab, enter your details (full name, username, email, password), and optionally add a promo code. Click 'Create Account' to complete registration. You can also upload and protect artwork without signing in for basic protection."
         },
         {
           question: "How soon will I see results?",
-          answer: "Most users receive their first scan results within 24 hours, with ongoing reports delivered daily or weekly, depending on your plan."
+          answer: "After uploading and protecting your artwork, monitoring begins immediately if you're signed in. Most users receive their first scan results within 24 hours. During beta, you have 50 scans per day that reset every 24 hours. Ongoing reports are delivered in real-time with instant alerts for new detections, plus comprehensive daily or weekly summaries depending on your plan."
+        },
+        {
+          question: "What is the beta access and what are the limitations?",
+          answer: (
+            <div>
+              <p className="mb-3">TSMO Watch is currently in beta, offering early access to our advanced protection platform:</p>
+              <div className="mb-3">
+                <h4 className="font-semibold mb-2">Beta Access Includes:</h4>
+                <ul className="ml-4 space-y-1 text-sm">
+                  <li>• 50 scans per day for deepfake detection and image analysis</li>
+                  <li>• Daily reset of scan limits (every 24 hours)</li>
+                  <li>• Full access to upload and protection features</li>
+                  <li>• Watermarking and blockchain verification</li>
+                  <li>• Basic monitoring capabilities</li>
+                </ul>
+              </div>
+              <p className="text-sm">Thank you for being an early adopter! Beta limitations help us scale our infrastructure while providing value to our community. Paid plans will offer unlimited scans and advanced features.</p>
+            </div>
+          )
         }
       ]
     },
@@ -70,11 +101,27 @@ const FAQ = () => {
       items: [
         {
           question: "Is TSMO free?",
-          answer: "We offer a free trial with limited scans so you can see how much of your work is being used without your permission. Paid plans start with affordable monthly rates for individuals and scale up for studios and agencies."
+          answer: "TSMO offers a beta access period where you can upload and protect artwork with basic features. During beta, you get 50 scans per day (resets every 24 hours) for deepfake detection and image analysis. All plans include a 5-day free trial with no credit card required."
+        },
+        {
+          question: "What are the current pricing plans?",
+          answer: (
+            <div>
+              <p className="mb-3">TSMO Watch offers four flexible plans to match your protection needs:</p>
+              <ul className="ml-4 space-y-3 text-sm">
+                <li><strong>• Student Plan ($19/mo - 24% OFF):</strong> Up to 1,000 artworks, basic AI monitoring, 5 portfolios, email alerts, educational resources, community support, and mobile app access.</li>
+                <li><strong>• Starter Plan ($29/mo - 25% OFF):</strong> Up to 3,500 artworks, advanced AI monitoring, 10 portfolios, scheduled scans, real-time alerts, watermark protection, API access, and priority support.</li>
+                <li><strong>• Professional Plan ($199/mo):</strong> Up to 250,000 artworks, 50 portfolios, blockchain verification, deepfake detection, automated DMCA, white-label options, legal network access, and 24/7 priority support.</li>
+                <li><strong>• Enterprise Plan (Custom):</strong> Unlimited artworks and portfolios, custom API integrations, on-premise deployment, dedicated infrastructure, legal team on retainer, and custom SLA agreements.</li>
+              </ul>
+              <p className="mt-3 text-sm"><strong>Add-ons Available:</strong> AI Training Protection ($49/mo), Social Media Monitoring ($100/mo + $199 startup fee, Coming Soon)</p>
+              <p className="text-sm">All plans include a 5-day free trial • No credit card required • Cancel anytime</p>
+            </div>
+          )
         },
         {
           question: "What's included in the paid plans?",
-          answer: "Paid plans include unlimited scans, detailed reports, priority alerts, DMCA takedown support, and custom monitoring for agencies or larger portfolios."
+          answer: "Paid plans include comprehensive protection features: AI-powered monitoring, visual recognition, threat detection, real-time alerts, blockchain verification (Professional+), DMCA takedown support, legal templates, portfolio management, detailed analytics, and priority support. Higher tiers add advanced features like automated legal actions, multi-modal protection, and enterprise-grade infrastructure."
         }
       ]
     },
