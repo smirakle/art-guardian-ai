@@ -99,13 +99,16 @@ serve(async (req) => {
       .insert({
         user_id,
         original_filename: content_url.split('/').pop(),
-        fingerprint_data: fingerprint,
+        file_fingerprint: fingerprint.structural_hash,
         protection_level: violation_report.violation_class,
         is_active: true,
+        content_type,
         metadata: {
+          fingerprint: fingerprint,
           content_type,
           monitoring_targets,
-          violation_report
+          violation_report,
+          aitpa_analysis: true
         }
       })
       .select()
