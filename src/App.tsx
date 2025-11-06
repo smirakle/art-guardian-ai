@@ -78,6 +78,7 @@ import PortfolioMonitoringAdvanced from "./pages/PortfolioMonitoringAdvanced";
 import ThreatAlerts from "./pages/ThreatAlerts";
 import DMCAAutomation from "./pages/DMCAAutomation";
 import Profile from "./pages/Profile";
+import AITPAAnalysis from "./pages/AITPAAnalysis";
 
 const queryClient = new QueryClient();
 
@@ -220,6 +221,7 @@ const App = () => {
             <Route path="/portfolio-monitoring-advanced" element={<PortfolioMonitoringAdvanced />} />
             <Route path="/threat-alerts" element={<ThreatAlerts />} />
             <Route path="/dmca-automation" element={<DMCAAutomation />} />
+            <Route path="/aitpa-analysis" element={<AITPAAnalysis />} />
             <Route path="/status" element={<Status />} />
             <Route path="/admin/monitoring" element={
               <ProtectedRoute requiredRole="admin">
