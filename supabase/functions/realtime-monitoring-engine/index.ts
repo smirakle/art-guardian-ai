@@ -251,11 +251,17 @@ serve(async (req) => {
                 delivery_channels: ['in_app', 'email']
               });
           }
-        } else {
-          console.error('Failed to insert match record');
-        }
+          } else {
+            console.error('Failed to insert match record');
+          }
         }
       }
+
+      allMatches.push(...platformMatches.map(m => ({ 
+        platform: m.platform, 
+        confidence_score: m.similarity,
+        threat_level: m.similarity > 0.9 ? 'high' : m.similarity > 0.75 ? 'medium' : 'low'
+      })));
     }
 
     // Create analysis result
