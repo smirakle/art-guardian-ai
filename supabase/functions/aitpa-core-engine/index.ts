@@ -56,7 +56,7 @@ serve(async (req) => {
     const { 
       content_url, 
       content_type, 
-      monitoring_targets, 
+      monitoring_targets = [],
       user_id,
       artwork_id,
       session_id,
@@ -67,7 +67,7 @@ serve(async (req) => {
       content_url, 
       content_type, 
       user_id,
-      targets: monitoring_targets.length 
+      targets: monitoring_targets?.length || 0 
     });
 
     // Step 1: Multi-Modal Fingerprint Generation
@@ -75,11 +75,11 @@ serve(async (req) => {
     console.log('Generated fingerprint:', fingerprint.structural_hash);
 
     // Step 2: Multi-Vector Threat Detection
-    const threat_vectors = await detectAllThreats(fingerprint, monitoring_targets, content_url);
-    console.log(`Detected ${threat_vectors.length} threat vectors`);
+    const threat_vectors = await detectAllThreats(fingerprint, monitoring_targets || [], content_url);
+    console.log(`Detected ${threat_vectors?.length || 0} threat vectors`);
 
     // Step 3: Real-Time Dataset Monitoring
-    const monitoring_results = await monitorDatasets(fingerprint, monitoring_targets);
+    const monitoring_results = await monitorDatasets(fingerprint, monitoring_targets || []);
     console.log('Monitoring results:', monitoring_results);
 
     // Step 4: Pattern Recognition & Classification
@@ -117,23 +117,25 @@ serve(async (req) => {
     }
 
     // Store threat detections in ai_threat_detections
-    for (const threat of threat_vectors) {
-      await supabase.from('ai_threat_detections').insert({
-        user_id,
-        threat_type: threat.type,
-        severity: threat.severity,
-        confidence_score: threat.confidence,
-        source_url: threat.source,
-        detection_metadata: {
-          evidence: threat.evidence,
-          detected_at: threat.detected_at,
-          content_type
-        }
-      });
+    if (threat_vectors && threat_vectors.length > 0) {
+      for (const threat of threat_vectors) {
+        await supabase.from('ai_threat_detections').insert({
+          user_id,
+          threat_type: threat.type,
+          severity: threat.severity,
+          confidence_score: threat.confidence,
+          source_url: threat.source,
+          detection_metadata: {
+            evidence: threat.evidence,
+            detected_at: threat.detected_at,
+            content_type
+          }
+        });
+      }
     }
 
     // If realtime monitoring enabled, store matches
-    if (enable_realtime_monitoring && session_id && threat_vectors.length > 0) {
+    if (enable_realtime_monitoring && session_id && threat_vectors && threat_vectors.length > 0) {
       const highThreatMatches = threat_vectors.filter(t => 
         t.severity === 'high' || t.severity === 'critical'
       );
