@@ -198,7 +198,6 @@ serve(async (req) => {
         .from('realtime_scan_updates')
         .insert({
           session_id: sessionId,
-          user_id: session.user_id,
           platform,
           matches_found: platformMatches.length,
           scan_status: 'completed',
@@ -207,18 +206,30 @@ serve(async (req) => {
 
       // Store matches
       for (const match of platformMatches) {
+        // Extract domain from URL
+        let domain = 'unknown';
+        try {
+          const urlObj = new URL(match.url);
+          domain = urlObj.hostname;
+        } catch (e) {
+          console.warn('Invalid URL:', match.url);
+        }
+
         const { data: matchRecord } = await supabaseClient
           .from('realtime_matches')
           .insert({
             session_id: sessionId,
-            user_id: session.user_id,
             artwork_id: artworkId,
             platform: match.platform,
-            match_url: match.url,
-            match_title: match.title,
-            thumbnail_url: match.thumbnail,
+            source_url: match.url,
+            source_domain: domain,
             confidence_score: match.similarity,
-            threat_level: match.similarity > 0.9 ? 'high' : match.similarity > 0.75 ? 'medium' : 'low'
+            match_type: 'visual_similarity',
+            threat_level: match.similarity > 0.9 ? 'high' : match.similarity > 0.75 ? 'medium' : 'low',
+            metadata: {
+              title: match.title,
+              thumbnail: match.thumbnail
+            }
           })
           .select()
           .single();
@@ -240,27 +251,39 @@ serve(async (req) => {
                 delivery_channels: ['in_app', 'email']
               });
           }
+        } else {
+          console.error('Failed to insert match record');
+        }
         }
       }
     }
 
     // Create analysis result
+    const highRiskCount = allMatches.filter(m => m.threat_level === 'high').length;
+    const criticalRiskCount = allMatches.filter(m => m.confidence_score > 0.95).length;
+    
     await supabaseClient
       .from('realtime_analysis_results')
       .insert({
         session_id: sessionId,
-        user_id: session.user_id,
         artwork_id: artworkId,
         total_platforms_scanned: platforms.length,
         total_matches_found: allMatches.length,
-        high_risk_matches: allMatches.filter(m => m.threat_level === 'high').length,
+        high_risk_matches: highRiskCount,
+        critical_risk_matches: criticalRiskCount,
         analysis_metadata: {
           platforms,
           scan_duration_ms: Date.now() - new Date(session.started_at).getTime(),
           matches_by_platform: allMatches.reduce((acc, m) => {
             acc[m.platform] = (acc[m.platform] || 0) + 1;
             return acc;
-          }, {})
+          }, {}),
+          threat_breakdown: {
+            high: highRiskCount,
+            critical: criticalRiskCount,
+            medium: allMatches.filter(m => m.threat_level === 'medium').length,
+            low: allMatches.filter(m => m.threat_level === 'low').length
+          }
         }
       });
 

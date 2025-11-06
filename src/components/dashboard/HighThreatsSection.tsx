@@ -109,9 +109,13 @@ export const HighThreatsSection = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground text-center py-8">
-            No high-threat detections found
-          </p>
+          <div className="text-center py-8 text-muted-foreground">
+            <AlertTriangle className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p className="text-lg font-medium mb-2">No High-Risk Threats Detected</p>
+            <p className="text-sm">
+              Start a real-time monitoring session to scan for potential copyright infringements.
+            </p>
+          </div>
         </CardContent>
       </Card>
     );
