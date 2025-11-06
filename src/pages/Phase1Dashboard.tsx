@@ -4,7 +4,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Shield, Upload, Search, Eye, TrendingUp, Brain, Zap } from 'lucide-react';
 import { AIDetectionDashboard } from '@/components/phase1/AIDetectionDashboard';
-import { OneClickProtection } from '@/components/phase1/OneClickProtection';
 
 export default function Phase1Dashboard() {
   return (
@@ -52,14 +51,10 @@ export default function Phase1Dashboard() {
       </div>
 
       <Tabs defaultValue="ai-detection" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="ai-detection" className="flex items-center gap-2">
             <Brain className="h-4 w-4" />
             AI Detection
-          </TabsTrigger>
-          <TabsTrigger value="protection" className="flex items-center gap-2">
-            <Zap className="h-4 w-4" />
-            One-Click Protection
           </TabsTrigger>
           <TabsTrigger value="monitoring" className="flex items-center gap-2">
             <Upload className="h-4 w-4" />
@@ -73,10 +68,6 @@ export default function Phase1Dashboard() {
 
         <TabsContent value="ai-detection">
           <AIDetectionDashboard />
-        </TabsContent>
-
-        <TabsContent value="protection">
-          <OneClickProtection />
         </TabsContent>
 
         <TabsContent value="monitoring">

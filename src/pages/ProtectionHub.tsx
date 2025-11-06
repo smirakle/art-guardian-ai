@@ -22,7 +22,6 @@ import { MonitoringWrapper } from '@/components/MonitoringWrapper';
 
 // Import existing components
 import { AIDetectionDashboard } from '@/components/phase1/AIDetectionDashboard';
-import { OneClickProtection } from '@/components/phase1/OneClickProtection';
 import VisualRecognition from '@/components/VisualRecognition';
 import StyleCloak from '@/components/ai-protection/StyleCloak';
 import { ProductionMetadataSettings } from '@/components/ai-protection/ProductionMetadataSettings';
@@ -129,55 +128,41 @@ const ProtectionHub = () => {
 
         {/* Upload & Protect Tab */}
         <TabsContent value="upload" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Upload className="h-5 w-5" />
-                  Quick Upload & Protection
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <OneClickProtection />
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" />
-                  Supported File Types
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center gap-2">
-                    <Image className="h-4 w-4 text-blue-500" />
-                    <span className="text-sm">Images (JPG, PNG, GIF)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Video className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Videos (MP4, AVI, MOV)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-purple-500" />
-                    <span className="text-sm">Documents (PDF, DOC)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Brain className="h-4 w-4 text-orange-500" />
-                    <span className="text-sm">3D Models (OBJ, FBX)</span>
-                  </div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Supported File Types
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center gap-2">
+                  <Image className="h-4 w-4 text-blue-500" />
+                  <span className="text-sm">Images (JPG, PNG, GIF)</span>
                 </div>
-                <Button 
-                  className="w-full mt-4"
-                  onClick={() => navigate('/upload')}
-                >
-                  <Upload className="h-4 w-4 mr-2" />
-                  Start Upload
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+                <div className="flex items-center gap-2">
+                  <Video className="h-4 w-4 text-green-500" />
+                  <span className="text-sm">Videos (MP4, AVI, MOV)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-purple-500" />
+                  <span className="text-sm">Documents (PDF, DOC)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Brain className="h-4 w-4 text-orange-500" />
+                  <span className="text-sm">3D Models (OBJ, FBX)</span>
+                </div>
+              </div>
+              <Button 
+                className="w-full mt-4"
+                onClick={() => navigate('/upload')}
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Start Upload
+              </Button>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* AI Protection Tab */}

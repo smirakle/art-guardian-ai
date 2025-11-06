@@ -32,7 +32,6 @@ import { useQuery } from '@tanstack/react-query';
 // Lazy load tab components for better performance
 const ProductionDashboard = lazy(() => import('@/components/dashboard/ProductionDashboard').then(m => ({ default: m.ProductionDashboard })));
 const AIDetectionDashboard = lazy(() => import('@/components/phase1/AIDetectionDashboard').then(m => ({ default: m.AIDetectionDashboard })));
-const OneClickProtection = lazy(() => import('@/components/phase1/OneClickProtection').then(m => ({ default: m.OneClickProtection })));
 const BlockchainOwnershipRegistry = lazy(() => import('@/components/blockchain/BlockchainOwnershipRegistry').then(m => ({ default: m.BlockchainOwnershipRegistry })));
 const GlobalLegalNetwork = lazy(() => import('@/components/legal/GlobalLegalNetwork').then(m => ({ default: m.GlobalLegalNetwork })));
 const RealTimeLegalDashboard = lazy(() => import('@/components/legal/RealTimeLegalDashboard').then(m => ({ default: m.RealTimeLegalDashboard })));
@@ -481,31 +480,17 @@ const UnifiedDashboard = () => {
         {/* Protection Tab - Lazy loaded */}
         <TabsContent value="protection" className="space-y-6">
           <Suspense fallback={<div className="animate-pulse h-64 bg-muted rounded-lg" />}>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Upload className="h-5 w-5" />
-                    Upload & Protect
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <OneClickProtection />
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Brain className="h-5 w-5" />
-                    AI Detection
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <AIDetectionDashboard />
-                </CardContent>
-              </Card>
-            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Brain className="h-5 w-5" />
+                  AI Detection
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AIDetectionDashboard />
+              </CardContent>
+            </Card>
           </Suspense>
         </TabsContent>
 
