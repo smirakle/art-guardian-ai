@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { AlertTriangle, ExternalLink, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
 
 interface HighThreatMatch {
   id: string;
@@ -18,10 +19,41 @@ interface HighThreatMatch {
 export const HighThreatsSection = () => {
   const [highThreats, setHighThreats] = useState<HighThreatMatch[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     loadHighThreats();
-  }, []);
+
+    // Set up realtime subscription for new high threats
+    const channel = supabase
+      .channel('high-threats-channel')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'realtime_matches',
+          filter: 'threat_level=in.(high,critical)'
+        },
+        (payload) => {
+          console.log('New high threat detected:', payload);
+          const newThreat = payload.new as HighThreatMatch;
+          
+          setHighThreats(prev => [newThreat, ...prev].slice(0, 5));
+          
+          toast({
+            title: '🚨 New High Threat Detected',
+            description: `${newThreat.threat_level.toUpperCase()} threat found on ${newThreat.platform}`,
+            variant: 'destructive'
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [toast]);
 
   const loadHighThreats = async () => {
     try {
