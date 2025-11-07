@@ -218,11 +218,12 @@ const RealTimeMonitoring = () => {
         throw new Error('No image URL found for artwork');
       }
 
-      // Create realtime monitoring session
+      // Create realtime monitoring session with artwork_id
       const { data: session, error: sessionError } = await supabase
         .from('realtime_monitoring_sessions')
         .insert({
           user_id: user.id,
+          artwork_id: artworkId,
           session_type: 'manual',
           status: 'pending',
           platforms_monitored: ['google_images', 'tineye'],

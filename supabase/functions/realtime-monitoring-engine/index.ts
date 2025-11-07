@@ -244,20 +244,21 @@ serve(async (req) => {
     
     console.log('Starting real-time monitoring session:', sessionId);
 
-    // Get session details
+    // Get session details with artwork_id
     const { data: session, error: sessionError } = await supabaseClient
       .from('realtime_monitoring_sessions')
-      .select('*')
+      .select('*, artwork_id')
       .eq('id', sessionId)
       .single();
 
     if (sessionError) throw sessionError;
 
-    // Update session status
+    // Update session status and store artwork_id
     await supabaseClient
       .from('realtime_monitoring_sessions')
       .update({ 
         status: 'active',
+        artwork_id: artworkId || null,
         last_scan_at: new Date().toISOString()
       })
       .eq('id', sessionId);

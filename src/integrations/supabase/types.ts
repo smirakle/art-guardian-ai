@@ -7126,6 +7126,7 @@ export type Database = {
       }
       realtime_monitoring_sessions: {
         Row: {
+          artwork_id: string | null
           created_at: string
           detections_count: number | null
           ended_at: string | null
@@ -7142,6 +7143,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          artwork_id?: string | null
           created_at?: string
           detections_count?: number | null
           ended_at?: string | null
@@ -7158,6 +7160,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          artwork_id?: string | null
           created_at?: string
           detections_count?: number | null
           ended_at?: string | null
@@ -7173,10 +7176,19 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "realtime_monitoring_sessions_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artwork"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       realtime_monitoring_stats: {
         Row: {
+          active_scans: number | null
           dark_web_scans: number
           deepfakes_detected: number
           high_threat_count: number
@@ -7189,6 +7201,7 @@ export type Database = {
           timestamp: string
         }
         Insert: {
+          active_scans?: number | null
           dark_web_scans?: number
           deepfakes_detected?: number
           high_threat_count?: number
@@ -7201,6 +7214,7 @@ export type Database = {
           timestamp?: string
         }
         Update: {
+          active_scans?: number | null
           dark_web_scans?: number
           deepfakes_detected?: number
           high_threat_count?: number
