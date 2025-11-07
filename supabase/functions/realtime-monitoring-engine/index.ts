@@ -251,9 +251,8 @@ serve(async (req) => {
                 delivery_channels: ['in_app', 'email']
               });
           }
-          } else {
-            console.error('Failed to insert match record');
-          }
+        } else {
+          console.error('Failed to insert match record');
         }
       }
 
