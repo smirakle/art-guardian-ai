@@ -247,7 +247,7 @@ serve(async (req) => {
     // Get session details
     const { data: session, error: sessionError } = await supabaseClient
       .from('realtime_monitoring_sessions')
-      .select('*, artwork(*)')
+      .select('*')
       .eq('id', sessionId)
       .single();
 
