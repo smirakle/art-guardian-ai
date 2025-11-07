@@ -94,25 +94,32 @@ serve(async (req) => {
     );
 
     // Store protection record
+    const protectionData: any = {
+      user_id,
+      original_filename: content_url.split('/').pop() || 'unknown',
+      file_fingerprint: fingerprint.structural_hash,
+      protection_level: violation_report.violation_class,
+      is_active: true,
+      content_type,
+      metadata: {
+        fingerprint: fingerprint,
+        content_type,
+        monitoring_targets,
+        violation_report,
+        aitpa_analysis: true
+      }
+    };
+    
+    // Only add artwork_id if it's provided
+    if (artwork_id) {
+      protectionData.artwork_id = artwork_id;
+    }
+    
     const { data: protection_record, error } = await supabase
       .from('ai_protection_records')
-      .insert({
-        user_id,
-        original_filename: content_url.split('/').pop(),
-        file_fingerprint: fingerprint.structural_hash,
-        protection_level: violation_report.violation_class,
-        is_active: true,
-        content_type,
-        metadata: {
-          fingerprint: fingerprint,
-          content_type,
-          monitoring_targets,
-          violation_report,
-          aitpa_analysis: true
-        }
-      })
+      .insert(protectionData)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error storing protection record:', error);
