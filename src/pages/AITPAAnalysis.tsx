@@ -483,7 +483,7 @@ const AITPAAnalysis = () => {
                               {threat.status.toUpperCase()}
                             </Badge>
                           </CardTitle>
-                          <CardDescription className="mt-2 space-y-1">
+                          <div className="mt-2 space-y-1 text-sm text-muted-foreground">
                             <div className="flex items-center gap-2">
                               <span className="font-medium">Confidence:</span>
                               <span className="text-foreground">
@@ -523,7 +523,7 @@ const AITPAAnalysis = () => {
                                 </span>
                               </div>
                             )}
-                          </CardDescription>
+                          </div>
                         </div>
                       </div>
                       <Button variant="ghost" size="sm">
