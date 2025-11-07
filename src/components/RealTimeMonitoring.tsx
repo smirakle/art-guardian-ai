@@ -204,59 +204,71 @@ const RealTimeMonitoring = () => {
         throw new Error('Artwork not found');
       }
 
-      // Create comprehensive monitoring scan record
-      const { data: scan, error: scanError } = await supabase
-        .from('monitoring_scans')
+      toast({
+        title: "Vision API Scan Started",
+        description: "Analyzing image with Google Cloud Vision API...",
+      });
+
+      // Get image URL from storage
+      const imageUrl = artwork.file_paths[0] ? 
+        `${supabase.storage.from('artwork').getPublicUrl(artwork.file_paths[0]).data.publicUrl}` :
+        '';
+
+      if (!imageUrl) {
+        throw new Error('No image URL found for artwork');
+      }
+
+      // Create realtime monitoring session
+      const { data: session, error: sessionError } = await supabase
+        .from('realtime_monitoring_sessions')
         .insert({
-          artwork_id: artworkId,
-          scan_type: 'deep',
-          status: 'running',
-          started_at: new Date().toISOString(),
-          total_sources: 2500000 // Increased for dark web + surface web coverage
+          user_id: user.id,
+          session_type: 'manual',
+          status: 'pending',
+          platforms_monitored: ['google_images', 'tineye'],
+          started_at: new Date().toISOString()
         })
         .select()
         .single();
 
-      if (scanError) throw scanError;
+      if (sessionError) throw sessionError;
 
-      toast({
-        title: "Comprehensive Monitoring Started",
-        description: "Real-time scanning across surface web, dark web, and deep web sources initiated",
-      });
-
-      // Start monitoring scan directly with the edge function
-      console.log('Starting monitoring scan for:', scan.id, artworkId);
-      console.log('Invoking edge function process-monitoring-scan...');
+      // Call the realtime monitoring engine with Vision API
+      console.log('Starting Vision API monitoring for session:', session.id);
       
-      const { data: analysisData, error: analysisError } = await supabase.functions
-        .invoke('process-monitoring-scan', {
+      const { data: monitoringData, error: monitoringError } = await supabase.functions
+        .invoke('realtime-monitoring-engine', {
           body: {
-            scanId: scan.id,
-            artworkId: artworkId
+            sessionId: session.id,
+            artworkId: artworkId,
+            imageUrl: imageUrl,
+            platforms: ['google_images', 'tineye']
           }
         });
 
-      if (analysisError) {
-        console.error('Monitoring scan error:', analysisError);
+      if (monitoringError) {
+        console.error('Monitoring error:', monitoringError);
         
-        // Update scan status to failed
         await supabase
-          .from('monitoring_scans')
+          .from('realtime_monitoring_sessions')
           .update({ status: 'failed' })
-          .eq('id', scan.id);
+          .eq('id', session.id);
         
         toast({
-          title: "Analysis Failed",
-          description: "Failed to analyze artwork for monitoring",
+          title: "Vision API Scan Failed",
+          description: monitoringError.message || "Failed to analyze with Vision API",
           variant: "destructive",
         });
       } else {
-        console.log('Edge function invoked successfully:', analysisData);
+        console.log('Vision API scan complete:', monitoringData);
         
         toast({
-          title: "Monitoring Active",
-          description: "Comprehensive monitoring across 2.5M+ sources including dark web markets and forums",
+          title: "Vision API Scan Complete",
+          description: `Found ${monitoringData.matchesFound || 0} matches across ${monitoringData.platformsScanned || 0} platforms`,
         });
+        
+        // Refresh data
+        await loadAllData();
       }
 
     } catch (error: any) {
