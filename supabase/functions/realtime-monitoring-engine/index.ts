@@ -253,12 +253,29 @@ serve(async (req) => {
 
     if (sessionError) throw sessionError;
 
+    // Fetch artwork data if artwork_id exists
+    let artworkData = null;
+    const effectiveArtworkId = artworkId || session.artwork_id;
+    
+    if (effectiveArtworkId) {
+      const { data: artwork } = await supabaseClient
+        .from('artwork')
+        .select('id, title, description')
+        .eq('id', effectiveArtworkId)
+        .single();
+      
+      artworkData = artwork;
+    }
+
+    const searchQuery = artworkData?.title || 'artwork';
+    console.log('Using search query:', searchQuery);
+
     // Update session status and store artwork_id
     await supabaseClient
       .from('realtime_monitoring_sessions')
       .update({ 
         status: 'active',
-        artwork_id: artworkId || null,
+        artwork_id: effectiveArtworkId || null,
         last_scan_at: new Date().toISOString()
       })
       .eq('id', sessionId);
@@ -276,13 +293,13 @@ serve(async (req) => {
       
       switch (platform) {
         case 'google_images':
-          platformMatches = await scanGoogleImages(imageUrl, session.artwork.title, visionData);
+          platformMatches = await scanGoogleImages(imageUrl, searchQuery, visionData);
           break;
         case 'tineye':
           platformMatches = await scanTinEye(imageUrl);
           break;
         case 'pinterest':
-          platformMatches = await scanPinterest(imageUrl, session.artwork.title);
+          platformMatches = await scanPinterest(imageUrl, searchQuery);
           break;
       }
 
