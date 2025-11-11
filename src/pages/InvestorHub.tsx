@@ -116,7 +116,7 @@ const InvestorHub = () => {
                 <div className="text-xs text-muted-foreground">Total Addressable Market</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-blue-600">Pre-Launch</div>
+                <div className="text-2xl font-bold text-blue-600">Beta Testing</div>
                 <div className="text-xs text-muted-foreground">Current Stage</div>
               </div>
             </div>
