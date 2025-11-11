@@ -47,6 +47,7 @@ import IncidentManagement from "./pages/IncidentManagement";
 import RealTimeMonitoringDashboard from "./pages/RealTimeMonitoringDashboard";
 import MonitoringTest from "./pages/MonitoringTest";
 import ExternalServicesConfig from "./pages/ExternalServicesConfig";
+import TestRealtimeMonitoring from "./pages/TestRealtimeMonitoring";
 
 import CustomIntegrationsComingSoon from "./pages/CustomIntegrationsComingSoon";
 import { EnterpriseAPIAccess } from "./components/EnterpriseAPIAccess";
@@ -248,6 +249,7 @@ const App = () => {
                 <ExternalServicesConfig />
               </ProtectedRoute>
             } />
+            <Route path="/test-realtime" element={<TestRealtimeMonitoring />} />
             
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />
