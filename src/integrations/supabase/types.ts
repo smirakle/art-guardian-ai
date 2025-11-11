@@ -7199,6 +7199,7 @@ export type Database = {
           sources_scanned: number
           surface_web_scans: number
           timestamp: string
+          total_matches: number | null
         }
         Insert: {
           active_scans?: number | null
@@ -7212,6 +7213,7 @@ export type Database = {
           sources_scanned?: number
           surface_web_scans?: number
           timestamp?: string
+          total_matches?: number | null
         }
         Update: {
           active_scans?: number | null
@@ -7225,6 +7227,7 @@ export type Database = {
           sources_scanned?: number
           surface_web_scans?: number
           timestamp?: string
+          total_matches?: number | null
         }
         Relationships: []
       }
