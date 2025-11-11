@@ -43,7 +43,7 @@ const ExecutiveSummary = () => {
     pdf.setFontSize(12);
     pdf.text('Company: TSMO (AI-Powered IP Protection Platform)', 20, 65);
     pdf.text('Seeking: $100K Seed Funding', 20, 75);
-    pdf.text('Pre-Money Valuation: $1M', 20, 85);
+    pdf.text('Pre-Money Valuation: $500K-$2M', 20, 85);
     pdf.text('Industry: LegalTech / AI / Intellectual Property', 20, 95);
     
     pdf.setFontSize(14);
@@ -62,17 +62,17 @@ const ExecutiveSummary = () => {
     pdf.text('• Instant Response - Automated DMCA, blockchain verification', 20, 205);
     pdf.text('• Legal Enforcement - Expert network integration', 20, 215);
     
-    pdf.text('MARKET & TRACTION (PROJECTED)', 20, 235);
+    pdf.text('MARKET & TRACTION', 20, 235);
     pdf.setFontSize(10);
     pdf.text('• Total Addressable Market: $15.7B', 20, 245);
-    pdf.text('• Monthly Recurring Revenue: $200 (Projected)', 20, 255);
-    pdf.text('• Active Users: 50+ (Projected)', 20, 265);
-    pdf.text('• Protected Artworks: 500+ (Projected)', 20, 275);
-    pdf.text('• Exceptional Unit Economics: LTV/CAC = 39x (Projected)', 20, 285);
+    pdf.text('• Monthly Recurring Revenue: $200 (8 customers)', 20, 255);
+    pdf.text('• Year 1 Target: $68.4K revenue, 25 customers', 20, 265);
+    pdf.text('• Year 2 Target: $234K revenue, 70 customers', 20, 275);
+    pdf.text('• Unit Economics: LTV/CAC = 12x, Payback 2-3 months', 20, 285);
     
     pdf.setFontSize(8);
-    pdf.text('⚠️ Beta Testing Phase: This information is purely projected.', 20, 300);
-    pdf.text('No current users at this time. Currently in Beta Testing phase.', 20, 310);
+    pdf.text('Current Status: Pre-seed stage with 8 paying customers.', 20, 300);
+    pdf.text('Bootstrap model supporting 24+ month runway with revenue growth.', 20, 310);
     
     pdf.text('CONTACT', 20, 320);
     pdf.text('shirleena.cunningham@tsmowatch.com', 20, 330);
@@ -96,10 +96,10 @@ const ExecutiveSummary = () => {
         <p className="text-xl text-muted-foreground">
           AI-Powered Intellectual Property Protection Platform
         </p>
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-2xl mx-auto">
-          <p className="text-sm text-yellow-800 font-medium">
-            ⚠️ Beta Testing Phase: This information is purely projected. No current users at this time. 
-            Currently in Beta Testing phase.
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 max-w-2xl mx-auto">
+          <p className="text-sm text-green-800 font-medium">
+            ✅ Pre-Seed Stage: Currently generating $200 MRR with 8 paying customers. 
+            Realistic bootstrap model with 24+ month runway.
           </p>
         </div>
         <div className="flex justify-center gap-4">
@@ -131,7 +131,7 @@ const ExecutiveSummary = () => {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Pre-Money Valuation</span>
-                <span className="text-lg font-bold text-primary">$1M</span>
+                <span className="text-lg font-bold text-primary">$500K-$2M</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Total Addressable Market</span>
@@ -145,11 +145,11 @@ const ExecutiveSummary = () => {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">LTV/CAC Ratio</span>
-                <span className="text-lg font-bold text-green-600">39x</span>
+                <span className="text-lg font-bold text-green-600">~12x</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Patent Portfolio</span>
-                <span className="text-lg font-bold text-blue-600">16 Total</span>
+                <span className="text-sm font-medium">Payback Period</span>
+                <span className="text-lg font-bold text-blue-600">2-3 months</span>
               </div>
             </div>
           </div>
@@ -250,23 +250,23 @@ const ExecutiveSummary = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div>
               <div className="text-2xl font-bold text-primary">$200</div>
-              <div className="text-sm text-muted-foreground">Monthly Recurring Revenue</div>
-              <Badge variant="secondary" className="text-xs mt-1">Projected</Badge>
+              <div className="text-sm text-muted-foreground">Current MRR</div>
+              <Badge variant="default" className="text-xs mt-1">8 Customers</Badge>
             </div>
             <div>
-              <div className="text-2xl font-bold text-primary">50+</div>
-              <div className="text-sm text-muted-foreground">Active Users</div>
-              <Badge variant="secondary" className="text-xs mt-1">Projected</Badge>
+              <div className="text-2xl font-bold text-primary">$2.4K</div>
+              <div className="text-sm text-muted-foreground">Current ARR</div>
+              <Badge variant="default" className="text-xs mt-1">Live</Badge>
             </div>
             <div>
-              <div className="text-2xl font-bold text-primary">500+</div>
-              <div className="text-sm text-muted-foreground">Protected Artworks</div>
-              <Badge variant="secondary" className="text-xs mt-1">Projected</Badge>
+              <div className="text-2xl font-bold text-primary">$50K</div>
+              <div className="text-sm text-muted-foreground">Year 1 ARR Target</div>
+              <Badge variant="secondary" className="text-xs mt-1">12 Months</Badge>
             </div>
             <div>
-              <div className="text-2xl font-bold text-primary">25+</div>
-              <div className="text-sm text-muted-foreground">DMCA Filed</div>
-              <Badge variant="secondary" className="text-xs mt-1">Projected</Badge>
+              <div className="text-2xl font-bold text-primary">$180K</div>
+              <div className="text-sm text-muted-foreground">Year 2 ARR Target</div>
+              <Badge variant="secondary" className="text-xs mt-1">24 Months</Badge>
             </div>
           </div>
         </CardContent>
@@ -325,21 +325,21 @@ const ExecutiveSummary = () => {
         <CardContent>
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-semibold mb-3">Immediate Milestones (6 months)</h3>
+              <h3 className="font-semibold mb-3">6-Month Milestones</h3>
               <ul className="space-y-2 text-sm">
-                <li>• Scale to $5K MRR</li>
-                <li>• Expand team to 5 members</li>
-                <li>• Launch enterprise pilot program</li>
-                <li>• File additional patents</li>
+                <li>• $750 MRR (25 customers)</li>
+                <li>• Launch enterprise pilot</li>
+                <li>• Content marketing engine</li>
+                <li>• Partnership development</li>
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-3">Long-term Vision (18 months)</h3>
+              <h3 className="font-semibold mb-3">12-Month Milestones</h3>
               <ul className="space-y-2 text-sm">
-                <li>• $50K MRR, Series A ready</li>
-                <li>• International market expansion</li>
-                <li>• Platform API ecosystem</li>
-                <li>• Strategic partnerships</li>
+                <li>• $4.2K MRR ($50K ARR)</li>
+                <li>• 120 total customers</li>
+                <li>• Series A readiness</li>
+                <li>• Break-even by Month 18-20</li>
               </ul>
             </div>
           </div>

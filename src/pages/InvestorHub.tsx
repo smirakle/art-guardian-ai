@@ -104,11 +104,11 @@ const InvestorHub = () => {
           <CardContent className="pt-0">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold text-primary">$250K</div>
+                <div className="text-2xl font-bold text-primary">$100K</div>
                 <div className="text-xs text-muted-foreground">Seed Round Target</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-primary">$750K</div>
+                <div className="text-2xl font-bold text-primary">$500K-$2M</div>
                 <div className="text-xs text-muted-foreground">Pre-Money Valuation</div>
               </div>
               <div>
@@ -116,8 +116,8 @@ const InvestorHub = () => {
                 <div className="text-xs text-muted-foreground">Total Addressable Market</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-green-600">Q3 2025</div>
-                <div className="text-xs text-muted-foreground">Target Go-to-Market</div>
+                <div className="text-2xl font-bold text-green-600">8</div>
+                <div className="text-xs text-muted-foreground">Current Customers</div>
               </div>
             </div>
           </CardContent>
@@ -188,19 +188,19 @@ const InvestorHub = () => {
               </div>
               <div className="rounded-lg border p-3 bg-background/60">
                 <h4 className="font-semibold mb-1 text-sm">Professional</h4>
-                <p className="text-xs text-muted-foreground mb-1">$199/month</p>
+                <p className="text-xs text-muted-foreground mb-1">$79/month</p>
                 <ul className="text-xs text-muted-foreground list-disc pl-4 space-y-0.5">
-                  <li>1,000 artworks protected</li>
-                  <li>Premium AI monitoring</li>
-                  <li>50 portfolios</li>
+                  <li>Pro creators/agencies</li>
+                  <li>Advanced monitoring</li>
+                  <li>Priority support</li>
                 </ul>
               </div>
               <div className="rounded-lg border p-3 bg-background/60">
                 <h4 className="font-semibold mb-1 text-sm">Enterprise</h4>
-                <p className="text-xs text-muted-foreground mb-1">Custom pricing</p>
+                <p className="text-xs text-muted-foreground mb-1">$299-$599/month</p>
                 <ul className="text-xs text-muted-foreground list-disc pl-4 space-y-0.5">
-                  <li>Unlimited artworks</li>
-                  <li>Custom AI models</li>
+                  <li>Business/legal needs</li>
+                  <li>Custom integrations</li>
                   <li>24/7 support</li>
                 </ul>
               </div>
