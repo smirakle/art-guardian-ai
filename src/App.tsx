@@ -66,7 +66,7 @@ import EmailMarketing from "./pages/EmailMarketing";
 import TaxManagement from "./pages/TaxManagement";
 import GetApp from "./pages/GetApp";
 import DMCACenter from "./pages/DMCACenter";
-import USPTOPatentGenerator from "./components/patent/USPTOPatentGenerator";
+
 import { CopyrightFooter } from "./components/CopyrightFooter";
 import SmartOnboarding from "./components/smart-onboarding/SmartOnboarding";
 import { HelpWidget } from "./components/customer-success/HelpWidget";
@@ -203,11 +203,6 @@ const App = () => {
             
             <Route path="/get-app" element={<GetApp />} />
             <Route path="/dmca-center" element={<DMCACenter />} />
-            <Route path="/patent-generator" element={
-              <ProtectedRoute requiredRole="admin">
-                <USPTOPatentGenerator />
-              </ProtectedRoute>
-            } />
             <Route path="/certificate/:certificateId" element={<Certificate />} />
             <Route path="/mobile" element={<MobileIntegration />} />
             <Route path="/analytics" element={<AdvancedAnalytics />} />
