@@ -65,14 +65,14 @@ const ExecutiveSummary = () => {
     pdf.text('MARKET & TRACTION', 20, 235);
     pdf.setFontSize(10);
     pdf.text('• Total Addressable Market: $15.7B', 20, 245);
-    pdf.text('• Monthly Recurring Revenue: $200 (8 customers)', 20, 255);
+    pdf.text('• Current Stage: Pre-launch (production system built)', 20, 255);
     pdf.text('• Year 1 Target: $68.4K revenue, 25 customers', 20, 265);
     pdf.text('• Year 2 Target: $234K revenue, 70 customers', 20, 275);
     pdf.text('• Unit Economics: LTV/CAC = 12x, Payback 2-3 months', 20, 285);
     
     pdf.setFontSize(8);
-    pdf.text('Current Status: Pre-seed stage with 8 paying customers.', 20, 300);
-    pdf.text('Bootstrap model supporting 24+ month runway with revenue growth.', 20, 310);
+    pdf.text('Current Status: Pre-launch stage. Production system deployed.', 20, 300);
+    pdf.text('Seeking $100K seed funding for go-to-market execution.', 20, 310);
     
     pdf.text('CONTACT', 20, 320);
     pdf.text('shirleena.cunningham@tsmowatch.com', 20, 330);
@@ -96,10 +96,10 @@ const ExecutiveSummary = () => {
         <p className="text-xl text-muted-foreground">
           AI-Powered Intellectual Property Protection Platform
         </p>
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 max-w-2xl mx-auto">
-          <p className="text-sm text-green-800 font-medium">
-            ✅ Pre-Seed Stage: Currently generating $200 MRR with 8 paying customers. 
-            Realistic bootstrap model with 24+ month runway.
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-2xl mx-auto">
+          <p className="text-sm text-blue-800 font-medium">
+            🚀 Pre-Launch Stage: Production system built and deployed. No current paying customers. 
+            Seeking $100K seed funding for go-to-market launch.
           </p>
         </div>
         <div className="flex justify-center gap-4">
@@ -141,7 +141,7 @@ const ExecutiveSummary = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Current MRR</span>
-                <span className="text-lg font-bold text-green-600">$200</span>
+                <span className="text-lg font-bold text-green-600">$0</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">LTV/CAC Ratio</span>
@@ -249,24 +249,24 @@ const ExecutiveSummary = () => {
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div>
-              <div className="text-2xl font-bold text-primary">$200</div>
+              <div className="text-2xl font-bold text-blue-600">$0</div>
               <div className="text-sm text-muted-foreground">Current MRR</div>
-              <Badge variant="default" className="text-xs mt-1">8 Customers</Badge>
+              <Badge variant="outline" className="text-xs mt-1">Pre-Launch</Badge>
             </div>
             <div>
-              <div className="text-2xl font-bold text-primary">$2.4K</div>
-              <div className="text-sm text-muted-foreground">Current ARR</div>
-              <Badge variant="default" className="text-xs mt-1">Live</Badge>
+              <div className="text-2xl font-bold text-blue-600">0</div>
+              <div className="text-sm text-muted-foreground">Paying Customers</div>
+              <Badge variant="outline" className="text-xs mt-1">Pre-Launch</Badge>
             </div>
             <div>
-              <div className="text-2xl font-bold text-primary">$50K</div>
-              <div className="text-sm text-muted-foreground">Year 1 ARR Target</div>
-              <Badge variant="secondary" className="text-xs mt-1">12 Months</Badge>
+              <div className="text-2xl font-bold text-primary">$4.2K</div>
+              <div className="text-sm text-muted-foreground">12-Mo MRR Target</div>
+              <Badge variant="secondary" className="text-xs mt-1">$50K ARR</Badge>
             </div>
             <div>
-              <div className="text-2xl font-bold text-primary">$180K</div>
-              <div className="text-sm text-muted-foreground">Year 2 ARR Target</div>
-              <Badge variant="secondary" className="text-xs mt-1">24 Months</Badge>
+              <div className="text-2xl font-bold text-primary">$15K</div>
+              <div className="text-sm text-muted-foreground">24-Mo MRR Target</div>
+              <Badge variant="secondary" className="text-xs mt-1">$180K ARR</Badge>
             </div>
           </div>
         </CardContent>

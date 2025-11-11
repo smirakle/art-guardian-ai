@@ -59,9 +59,9 @@ const InvestorHub = () => {
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Comprehensive investment materials for qualified investors and strategic partners
           </p>
-          <div className="bg-green-50 border border-green-200 rounded-lg p-3 max-w-2xl mx-auto">
-            <p className="text-sm text-green-800 font-medium">
-              ✅ LIVE PRODUCTION SYSTEM: Real algorithms, active monitoring, measurable performance metrics from deployed infrastructure.
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 max-w-2xl mx-auto">
+            <p className="text-sm text-blue-800 font-medium">
+              🚀 PRE-LAUNCH STAGE: Live production system built and deployed. Seeking seed funding to launch go-to-market strategy.
             </p>
           </div>
         </div>
@@ -116,8 +116,8 @@ const InvestorHub = () => {
                 <div className="text-xs text-muted-foreground">Total Addressable Market</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-green-600">8</div>
-                <div className="text-xs text-muted-foreground">Current Customers</div>
+                <div className="text-2xl font-bold text-blue-600">Pre-Launch</div>
+                <div className="text-xs text-muted-foreground">Current Stage</div>
               </div>
             </div>
           </CardContent>
