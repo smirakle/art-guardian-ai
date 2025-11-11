@@ -256,6 +256,7 @@ export class FoundingPartnerBriefGenerator {
     doc.text(`Generated: ${new Date(generatedAt).toLocaleString()}`, 20, yPosition);
     doc.text("Contact: investors@tsmo.com", 20, yPosition + 6);
     doc.text("This document contains forward-looking statements and proprietary information.", 20, yPosition + 12);
+    doc.text("TSMO Watch is proprietary of TSMO Technology Inc.", 20, yPosition + 18);
 
     return new Uint8Array(doc.output('arraybuffer'));
   }

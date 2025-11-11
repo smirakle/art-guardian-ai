@@ -255,6 +255,7 @@ const DemoScriptDownload = () => {
     pdf.setFontSize(9);
     pdf.setTextColor(150, 150, 150);
     pdf.text('This condensed version hits all major value propositions while maintaining engagement through fast pacing and clear demonstrations.', 20, yPosition + 10);
+    pdf.text('TSMO Watch is proprietary of TSMO Technology Inc.', 20, yPosition + 20);
     
     // Save the PDF
     pdf.save('TSMO-5Min-Demo-Script.pdf');

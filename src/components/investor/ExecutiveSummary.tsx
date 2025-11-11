@@ -79,6 +79,7 @@ const ExecutiveSummary = () => {
     pdf.text('Schedule a demo: calendly.com/tsmo-investors', 20, 340);
     
     pdf.text('© 2025 TSMO. Confidential & Proprietary.', 20, 360);
+    pdf.text('TSMO Watch is proprietary of TSMO Technology Inc.', 20, 370);
     
     pdf.save('TSMO-Executive-Summary.pdf');
   };

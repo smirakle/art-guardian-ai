@@ -421,6 +421,8 @@ const ComprehensivePatentDocument = () => {
     addText('Document Prepared by: TSMO Development Team', 10);
     addText('Classification: CONFIDENTIAL - PATENT PENDING', 10, true);
     addText('Attorney-Client Privilege: This document is prepared in anticipation of patent filing and is protected by attorney-client privilege.', 9);
+    yPosition += 10;
+    addText('TSMO Watch is proprietary of TSMO Technology Inc.', 10, true);
 
     // Save PDF
     pdf.save('TSMO_Comprehensive_Patent_Filing_Document.pdf');
