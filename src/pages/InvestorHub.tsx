@@ -18,8 +18,6 @@ import {
   DollarSign
 } from 'lucide-react';
 import ComprehensiveAPIDocumentation from '@/components/enterprise/ComprehensiveAPIDocumentation';
-import AdminProtectedPatentDocs from '@/components/AdminProtectedPatentDocs';
-import AITPAPatentDocument from '@/components/patent/AITPAPatentDocument';
 import AdminOnly from '@/components/AdminOnly';
 
 const InvestorHub = () => {
@@ -241,7 +239,7 @@ const InvestorHub = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="summary" className="w-full">
-          <TabsList className="grid w-full grid-cols-7 mb-4">
+          <TabsList className="grid w-full grid-cols-6 mb-4">
             <TabsTrigger value="summary" className="gap-2">
               <FileText className="h-4 w-4" />
               Executive Summary
@@ -249,10 +247,6 @@ const InvestorHub = () => {
             <TabsTrigger value="pitch" className="gap-2">
               <TrendingUp className="h-4 w-4" />
               Pitch Deck
-            </TabsTrigger>
-            <TabsTrigger value="patents" className="gap-2">
-              <Shield className="h-4 w-4" />
-              Patent Docs
             </TabsTrigger>
             <TabsTrigger value="roadmap" className="gap-2">
               <TrendingUp className="h-4 w-4" />
@@ -278,18 +272,6 @@ const InvestorHub = () => {
 
           <TabsContent value="pitch">
             <InvestorPitchDeck />
-          </TabsContent>
-
-          <TabsContent value="patents">
-            <AdminOnly 
-              fallbackTitle="Patent Documentation Access Restricted" 
-              fallbackDescription="Patent documentation contains confidential intellectual property information and filing strategies. Access is restricted to administrators only."
-            >
-              <div className="space-y-6">
-                <AITPAPatentDocument />
-                <AdminProtectedPatentDocs />
-              </div>
-            </AdminOnly>
           </TabsContent>
 
           <TabsContent value="roadmap">
