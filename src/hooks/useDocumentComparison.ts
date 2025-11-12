@@ -38,7 +38,9 @@ export const useDocumentComparison = () => {
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("User not authenticated");
+      if (!user) {
+        throw new Error("Please log in to compare documents");
+      }
 
       // Fetch original document
       const { data: originalDoc, error: docError } = await supabase
@@ -49,31 +51,54 @@ export const useDocumentComparison = () => {
         .single();
 
       if (docError || !originalDoc) {
-        throw new Error("Original document not found");
+        throw new Error("Original document not found. Please verify you have access to this document.");
+      }
+
+      const originalText = (originalDoc.metadata as any)?.original_text || "";
+      
+      if (!originalText || originalText.length === 0) {
+        throw new Error("Original document has no text content to compare");
       }
 
       // Get comparison text
-      let comparisonText = comparisonSource.text;
+      let comparisonText = comparisonSource.text?.trim();
       
       if (comparisonSource.url && !comparisonText) {
-        const { data, error } = await supabase.functions.invoke(
-          "fetch-document-content",
-          {
-            body: { url: comparisonSource.url }
-          }
-        );
+        try {
+          const { data, error } = await supabase.functions.invoke(
+            "fetch-document-content",
+            {
+              body: { url: comparisonSource.url }
+            }
+          );
 
-        if (error) throw error;
-        comparisonText = data.content;
+          if (error) {
+            throw new Error(`Failed to fetch document from URL: ${error.message || 'Unknown error'}`);
+          }
+          
+          comparisonText = data?.content?.trim();
+          
+          if (!comparisonText) {
+            throw new Error("The URL returned no text content. Please verify the URL or paste text directly.");
+          }
+        } catch (error: any) {
+          throw new Error(`Cannot access the URL: ${error.message}`);
+        }
       }
 
-      if (!comparisonText) {
+      if (!comparisonText || comparisonText.length === 0) {
         throw new Error("No comparison text provided");
       }
 
-      // Perform diff comparison
+      if (comparisonText.length < 50) {
+        throw new Error("Comparison text is too short (minimum 50 characters required)");
+      }
+
+      // Perform diff comparison with progress tracking
       const dmp = new DiffMatchPatch();
-      const originalText = (originalDoc.metadata as any)?.original_text || "";
+      
+      // Set timeout for large documents (10 seconds)
+      dmp.Diff_Timeout = 10;
       
       const diffs = dmp.diff_main(originalText, comparisonText);
       dmp.diff_cleanupSemantic(diffs);
@@ -86,21 +111,25 @@ export const useDocumentComparison = () => {
 
       const differences: DiffSegment[] = diffs.map(([type, text]) => {
         const length = text.length;
-        totalChars += length;
 
         if (type === 0) { // DIFF_EQUAL
           matchedChars += length;
+          totalChars += length;
           return { type: "equal", text };
         } else if (type === 1) { // DIFF_INSERT
           addedChars += length;
+          totalChars += length;
           return { type: "insert", text };
         } else { // DIFF_DELETE
           removedChars += length;
+          totalChars += length;
           return { type: "delete", text };
         }
       });
 
-      const similarityScore = totalChars > 0 ? matchedChars / totalChars : 0;
+      // Calculate similarity based on matched content vs original
+      const originalLength = originalText.length;
+      const similarityScore = originalLength > 0 ? matchedChars / originalLength : 0;
 
       const result: ComparisonResult = {
         id: crypto.randomUUID(),
@@ -120,34 +149,66 @@ export const useDocumentComparison = () => {
       };
 
       // Save comparison result to database
-      await supabase.from("document_version_comparisons").insert({
-        user_id: user.id,
-        original_document_id: originalDocumentId,
-        comparison_url: comparisonSource.url,
-        similarity_score: similarityScore,
-        total_chars: totalChars,
-        matched_chars: matchedChars,
-        added_chars: addedChars,
-        removed_chars: removedChars,
-        differences: differences as any,
-        metadata: result.metadata as any
-      });
+      const { error: insertError } = await supabase
+        .from("document_version_comparisons")
+        .insert({
+          user_id: user.id,
+          original_document_id: originalDocumentId,
+          comparison_url: comparisonSource.url,
+          similarity_score: similarityScore,
+          total_chars: totalChars,
+          matched_chars: matchedChars,
+          added_chars: addedChars,
+          removed_chars: removedChars,
+          differences: differences as any,
+          metadata: result.metadata as any
+        });
 
-      setComparisonResults(prev => [...prev, result]);
+      if (insertError) {
+        console.error("Failed to save comparison to database:", insertError);
+        // Don't fail the entire operation, just log it
+      }
+
+      setComparisonResults(prev => [result, ...prev]);
+
+      // Provide contextual feedback based on similarity
+      let toastTitle = "Comparison Complete";
+      let toastDescription = `${(similarityScore * 100).toFixed(1)}% similarity detected`;
+      let toastVariant: "default" | "destructive" = "default";
+
+      if (similarityScore >= 0.9) {
+        toastTitle = "⚠️ Critical: Plagiarism Detected";
+        toastDescription = `${(similarityScore * 100).toFixed(1)}% similarity - Immediate action recommended`;
+        toastVariant = "destructive";
+      } else if (similarityScore >= 0.7) {
+        toastTitle = "⚠️ High Similarity Detected";
+        toastDescription = `${(similarityScore * 100).toFixed(1)}% similarity - Review recommended`;
+      } else if (similarityScore >= 0.5) {
+        toastTitle = "Moderate Similarity Found";
+        toastDescription = `${(similarityScore * 100).toFixed(1)}% similarity detected`;
+      } else {
+        toastTitle = "Low Similarity";
+        toastDescription = `Only ${(similarityScore * 100).toFixed(1)}% similarity - Likely unique content`;
+      }
 
       toast({
-        title: "Comparison Complete",
-        description: `${(similarityScore * 100).toFixed(1)}% similarity detected`,
+        title: toastTitle,
+        description: toastDescription,
+        variant: toastVariant,
       });
 
       return result;
     } catch (error: any) {
       console.error("Document comparison error:", error);
+      
+      const errorMessage = error.message || "An unexpected error occurred during comparison";
+      
       toast({
         title: "Comparison Failed",
-        description: error.message || "Failed to compare documents",
+        description: errorMessage,
         variant: "destructive",
       });
+      
       return null;
     } finally {
       setComparing(false);
