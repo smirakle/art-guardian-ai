@@ -73,7 +73,7 @@ export const useDocumentComparison = () => {
 
       // Perform diff comparison
       const dmp = new DiffMatchPatch();
-      const originalText = originalDoc.metadata?.original_text || "";
+      const originalText = (originalDoc.metadata as any)?.original_text || "";
       
       const diffs = dmp.diff_main(originalText, comparisonText);
       dmp.diff_cleanupSemantic(diffs);
@@ -129,8 +129,8 @@ export const useDocumentComparison = () => {
         matched_chars: matchedChars,
         added_chars: addedChars,
         removed_chars: removedChars,
-        differences: differences,
-        metadata: result.metadata
+        differences: differences as any,
+        metadata: result.metadata as any
       });
 
       setComparisonResults(prev => [...prev, result]);
@@ -196,10 +196,10 @@ export const useDocumentComparison = () => {
 
       if (error) throw error;
 
-      const results: ComparisonResult[] = (data || []).map(item => ({
+      const results: ComparisonResult[] = (data as any[] || []).map((item: any) => ({
         id: item.id,
         original_document_id: item.original_document_id,
-        comparison_url: item.comparison_url,
+        comparison_url: item.comparison_url || undefined,
         comparison_text: null,
         similarity_score: item.similarity_score,
         total_chars: item.total_chars,
@@ -207,7 +207,7 @@ export const useDocumentComparison = () => {
         added_chars: item.added_chars,
         removed_chars: item.removed_chars,
         differences: item.differences as DiffSegment[],
-        metadata: item.metadata as any
+        metadata: item.metadata
       }));
 
       setComparisonResults(results);

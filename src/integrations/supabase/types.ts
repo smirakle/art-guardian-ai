@@ -2419,6 +2419,62 @@ export type Database = {
           },
         ]
       }
+      document_version_comparisons: {
+        Row: {
+          added_chars: number
+          comparison_url: string | null
+          created_at: string
+          differences: Json
+          id: string
+          matched_chars: number
+          metadata: Json | null
+          original_document_id: string | null
+          removed_chars: number
+          similarity_score: number
+          total_chars: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          added_chars?: number
+          comparison_url?: string | null
+          created_at?: string
+          differences?: Json
+          id?: string
+          matched_chars?: number
+          metadata?: Json | null
+          original_document_id?: string | null
+          removed_chars?: number
+          similarity_score: number
+          total_chars?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          added_chars?: number
+          comparison_url?: string | null
+          created_at?: string
+          differences?: Json
+          id?: string
+          matched_chars?: number
+          metadata?: Json | null
+          original_document_id?: string | null
+          removed_chars?: number
+          similarity_score?: number
+          total_chars?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_version_comparisons_original_document_id_fkey"
+            columns: ["original_document_id"]
+            isOneToOne: false
+            referencedRelation: "ai_protection_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_ab_tests: {
         Row: {
           campaign_id: string | null
