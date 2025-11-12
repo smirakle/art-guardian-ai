@@ -2117,6 +2117,146 @@ export type Database = {
         }
         Relationships: []
       }
+      document_monitoring_sessions: {
+        Row: {
+          created_at: string
+          ended_at: string | null
+          high_risk_matches: number
+          id: string
+          last_scan_at: string | null
+          metadata: Json | null
+          platforms: string[]
+          protection_record_id: string | null
+          scan_frequency: string
+          session_type: string
+          started_at: string
+          status: string
+          total_matches: number
+          total_scans: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          ended_at?: string | null
+          high_risk_matches?: number
+          id?: string
+          last_scan_at?: string | null
+          metadata?: Json | null
+          platforms?: string[]
+          protection_record_id?: string | null
+          scan_frequency?: string
+          session_type?: string
+          started_at?: string
+          status?: string
+          total_matches?: number
+          total_scans?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          ended_at?: string | null
+          high_risk_matches?: number
+          id?: string
+          last_scan_at?: string | null
+          metadata?: Json | null
+          platforms?: string[]
+          protection_record_id?: string | null
+          scan_frequency?: string
+          session_type?: string
+          started_at?: string
+          status?: string
+          total_matches?: number
+          total_scans?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_monitoring_sessions_protection_record_id_fkey"
+            columns: ["protection_record_id"]
+            isOneToOne: false
+            referencedRelation: "ai_protection_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_plagiarism_matches: {
+        Row: {
+          ai_training_detected: boolean | null
+          context_snippet: string | null
+          created_at: string
+          detection_method: string | null
+          id: string
+          match_type: string
+          matched_content: string | null
+          metadata: Json | null
+          protection_record_id: string | null
+          session_id: string | null
+          similarity_score: number
+          source_domain: string | null
+          source_url: string
+          status: string
+          threat_level: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_training_detected?: boolean | null
+          context_snippet?: string | null
+          created_at?: string
+          detection_method?: string | null
+          id?: string
+          match_type: string
+          matched_content?: string | null
+          metadata?: Json | null
+          protection_record_id?: string | null
+          session_id?: string | null
+          similarity_score: number
+          source_domain?: string | null
+          source_url: string
+          status?: string
+          threat_level: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_training_detected?: boolean | null
+          context_snippet?: string | null
+          created_at?: string
+          detection_method?: string | null
+          id?: string
+          match_type?: string
+          matched_content?: string | null
+          metadata?: Json | null
+          protection_record_id?: string | null
+          session_id?: string | null
+          similarity_score?: number
+          source_domain?: string | null
+          source_url?: string
+          status?: string
+          threat_level?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_plagiarism_matches_protection_record_id_fkey"
+            columns: ["protection_record_id"]
+            isOneToOne: false
+            referencedRelation: "ai_protection_records"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_plagiarism_matches_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "document_monitoring_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       document_protection_jobs: {
         Row: {
           completed_at: string | null
@@ -2169,6 +2309,112 @@ export type Database = {
             columns: ["protection_record_id"]
             isOneToOne: false
             referencedRelation: "ai_protection_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_scan_updates: {
+        Row: {
+          created_at: string
+          id: string
+          matches_found: number
+          platform: string
+          progress_percentage: number
+          scan_details: Json | null
+          session_id: string | null
+          sources_scanned: number
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          matches_found?: number
+          platform: string
+          progress_percentage?: number
+          scan_details?: Json | null
+          session_id?: string | null
+          sources_scanned?: number
+          status: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          matches_found?: number
+          platform?: string
+          progress_percentage?: number
+          scan_details?: Json | null
+          session_id?: string | null
+          sources_scanned?: number
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_scan_updates_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "document_monitoring_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_takedown_notices: {
+        Row: {
+          created_at: string
+          id: string
+          match_id: string | null
+          metadata: Json | null
+          notice_content: string
+          notice_type: string
+          resolution: string | null
+          response_received_at: string | null
+          sent_at: string | null
+          status: string
+          target_platform: string
+          target_url: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          match_id?: string | null
+          metadata?: Json | null
+          notice_content: string
+          notice_type?: string
+          resolution?: string | null
+          response_received_at?: string | null
+          sent_at?: string | null
+          status?: string
+          target_platform: string
+          target_url: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          match_id?: string | null
+          metadata?: Json | null
+          notice_content?: string
+          notice_type?: string
+          resolution?: string | null
+          response_received_at?: string | null
+          sent_at?: string | null
+          status?: string
+          target_platform?: string
+          target_url?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_takedown_notices_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "document_plagiarism_matches"
             referencedColumns: ["id"]
           },
         ]
