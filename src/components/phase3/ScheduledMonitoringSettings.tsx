@@ -49,7 +49,7 @@ export const ScheduledMonitoringSettings = ({ protectionRecordId }: { protection
       if (!user) throw new Error("Not authenticated");
 
       const { data, error } = await supabase
-        .from("scheduled_document_monitoring")
+        .from("scheduled_document_monitoring" as any)
         .insert({
           user_id: user.id,
           protection_record_id: protectionRecordId,
