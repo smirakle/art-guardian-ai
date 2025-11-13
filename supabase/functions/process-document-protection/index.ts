@@ -92,11 +92,31 @@ serve(async (req) => {
     const timestamp = Date.now();
     const fileName = `${user.id}/${timestamp}-${file.name}`;
     
+    // Determine content type from file extension or use the provided type
+    const getContentType = (filename: string, providedType?: string): string => {
+      if (providedType && providedType !== 'text/plain') return providedType;
+      
+      const ext = filename.split('.').pop()?.toLowerCase();
+      const mimeTypes: Record<string, string> = {
+        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'doc': 'application/msword',
+        'pdf': 'application/pdf',
+        'txt': 'text/plain',
+        'rtf': 'application/rtf',
+        'odt': 'application/vnd.oasis.opendocument.text',
+      };
+      return mimeTypes[ext || ''] || 'application/octet-stream';
+    };
+    
+    const contentType = getContentType(file.name, file.type);
+    console.log('Uploading with content type:', contentType);
+    
     const { data: uploadData, error: uploadError } = await supabaseClient.storage
       .from('protected-documents')
       .upload(fileName, fileData, {
         cacheControl: '3600',
         upsert: false,
+        contentType: contentType,
       });
 
     if (uploadError) throw uploadError;
