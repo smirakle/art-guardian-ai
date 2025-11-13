@@ -248,6 +248,18 @@ serve(async (req) => {
       tracerId
     });
 
+    // Trigger background text extraction for PDF/DOCX files
+    const fileExt = file.name.split('.').pop()?.toLowerCase() || '';
+    if (['pdf', 'docx', 'doc'].includes(fileExt)) {
+      console.log('Triggering background text extraction for:', fileExt);
+      supabaseClient.functions.invoke('extract-document-text', {
+        body: {
+          protectionRecordId: protectionRecord.id,
+          filePath: uploadData.path
+        }
+      }).catch(err => console.error('Background extraction error:', err));
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
