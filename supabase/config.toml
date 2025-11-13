@@ -1,5 +1,8 @@
 project_id = "utneaqmbyjwxaqrrarpc"
 
+[functions.analyze-similarity-ai]
+verify_jwt = false
+
 [functions.aitpa-core-engine]
 verify_jwt = true
 

@@ -196,6 +196,48 @@ serve(async (req) => {
       // Continue with fallback
     }
 
+    // Enhance Copyscape results with AI analysis for high-similarity matches
+    if (copyscapeMatches > 0) {
+      console.log("Running AI analysis on Copyscape matches...");
+      
+      // Get plagiarism matches to analyze
+      const { data: matches } = await supabase
+        .from("document_plagiarism_matches")
+        .select("*")
+        .eq("session_id", sessionId)
+        .gte("similarity_score", 0.6)
+        .limit(5);
+
+      if (matches && matches.length > 0) {
+        for (const match of matches) {
+          try {
+            console.log(`Analyzing match from ${match.source_url} with AI...`);
+            
+            const { data: aiResult } = await supabase.functions.invoke(
+              'analyze-similarity-ai',
+              {
+                body: {
+                  originalText: documentContent,
+                  comparedText: match.matched_content || "",
+                  matchUrl: match.source_url,
+                  sessionId: sessionId
+                }
+              }
+            );
+
+            if (aiResult?.success) {
+              console.log(`AI analysis complete for ${match.source_url}:`, {
+                similarity: aiResult.analysis.similarity_score,
+                paraphrased: aiResult.analysis.is_paraphrased
+              });
+            }
+          } catch (error) {
+            console.error("AI analysis error for match:", error);
+          }
+        }
+      }
+    }
+
     // If Copyscape didn't find matches or failed, do simulated platform scans
     if (totalMatches === 0) {
       console.log("Running fallback platform scans...");
