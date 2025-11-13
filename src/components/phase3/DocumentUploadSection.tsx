@@ -21,6 +21,27 @@ export const DocumentUploadSection = () => {
     }
   };
 
+  const handleLoadSample = () => {
+    const sampleText = `Sample Protected Document
+
+This is a test document for demonstrating the AI protection and monitoring system.
+
+Key Features:
+- Invisible watermarking technology
+- AI training prevention
+- Plagiarism detection
+- Unauthorized usage tracking
+- Real-time monitoring alerts
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+This document contains unique patterns that can be tracked across the internet to detect unauthorized usage and AI training attempts.`;
+
+    const blob = new Blob([sampleText], { type: 'text/plain' });
+    const file = new File([blob], 'sample-test-document.txt', { type: 'text/plain' });
+    setSelectedFile(file);
+  };
+
   const handleUpload = async () => {
     if (!selectedFile) return;
 
@@ -55,6 +76,13 @@ export const DocumentUploadSection = () => {
             >
               <FileText className="w-4 h-4 mr-2" />
               {selectedFile ? selectedFile.name : "Choose File"}
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={handleLoadSample}
+              size="sm"
+            >
+              Load Sample
             </Button>
             <input
               ref={fileInputRef}
