@@ -80,6 +80,32 @@ serve(async (req) => {
 
     console.log('Generated fingerprint:', fileFingerprint.substring(0, 16) + '...');
 
+    // Extract text content from document
+    let extractedText = '';
+    try {
+      const textDecoder = new TextDecoder('utf-8', { fatal: false });
+      
+      if (fileMimeType === 'text/plain' || file.name.endsWith('.txt') || file.name.endsWith('.md')) {
+        // Plain text files
+        extractedText = textDecoder.decode(fileData);
+      } else {
+        // For other file types, convert binary to string for now
+        // In a production environment, you'd use proper PDF/DOCX parsers
+        extractedText = textDecoder.decode(fileData);
+      }
+      
+      // Clean up extracted text
+      extractedText = extractedText
+        .replace(/[^\x20-\x7E\n\r\t]/g, ' ') // Remove non-printable characters
+        .replace(/\s+/g, ' ') // Normalize whitespace
+        .trim();
+      
+      console.log('Extracted text length:', extractedText.length);
+    } catch (error) {
+      console.error('Text extraction error:', error);
+      extractedText = '';
+    }
+
     // Update progress: 30%
     await supabaseClient.rpc('update_protection_job_progress', {
       job_id_param: job.id,
@@ -151,6 +177,8 @@ serve(async (req) => {
     });
 
     // Create protection record
+    const wordCount = extractedText ? extractedText.split(/\s+/).filter(w => w.length > 0).length : 0;
+    
     const { data: protectionRecord, error: protectionError } = await supabaseClient
       .from('ai_protection_records')
       .insert({
@@ -164,9 +192,14 @@ serve(async (req) => {
         protected_file_path: uploadData.path,
         original_mime_type: file.type,
         file_extension: file.name.split('.').pop() || '',
-        word_count: 0, // Placeholder - would need actual text extraction
-        char_count: file.size,
+        word_count: wordCount,
+        char_count: extractedText.length,
         document_methods: enableTracers ? ['invisible_tracers'] : [],
+        metadata: {
+          original_text: extractedText,
+          file_size: file.size,
+          uploaded_at: new Date().toISOString()
+        }
       })
       .select('id, protection_id')
       .single();
