@@ -22,13 +22,29 @@ serve(async (req) => {
       }
     );
 
-    const { file, protectionLevel, enableTracers, enableFingerprinting } = await req.json();
+    const { 
+      file, 
+      protectionLevel, 
+      enableTracers, 
+      enableFingerprinting,
+      extractedText,
+      fingerprint,
+      wordCount,
+      characterCount,
+      extractionMethod,
+      pageCount,
+      protectionId
+    } = await req.json();
     
     console.log('Processing document protection request:', {
       fileName: file.name,
       protectionLevel,
       enableTracers,
-      enableFingerprinting
+      enableFingerprinting,
+      extractionMethod,
+      wordCount,
+      pageCount,
+      hasExtractedText: !!extractedText
     });
 
     // Get user
@@ -80,33 +96,15 @@ serve(async (req) => {
 
     console.log('Generated fingerprint:', fileFingerprint.substring(0, 16) + '...');
 
-    // Extract text content from text files, mark others for async extraction
-    let extractedText = '';
-    let extractionStatus = 'completed';
-    const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
+    // Use the text that was already extracted on the client side
+    const finalExtractedText = extractedText || '';
+    const extractionStatus = extractedText ? 'completed' : 'pending';
     
-    if (['txt', 'md'].includes(fileExtension) || fileMimeType === 'text/plain') {
-      try {
-        const textDecoder = new TextDecoder('utf-8', { fatal: false });
-        extractedText = textDecoder.decode(fileData);
-        
-        // Limit text length to prevent storage issues (max 1MB)
-        if (extractedText.length > 1000000) {
-          extractedText = extractedText.substring(0, 1000000);
-          console.log('Text truncated to 1MB');
-        }
-        
-        console.log('Extracted text length:', extractedText.length);
-      } catch (error) {
-        console.error('Text extraction error:', error);
-        extractedText = '';
-      }
-    } else if (['pdf', 'docx', 'doc'].includes(fileExtension)) {
-      console.log('PDF/DOCX detected - will extract asynchronously');
-      extractionStatus = 'pending';
-    } else {
-      console.log('Skipping text extraction for file type:', fileExtension);
-    }
+    console.log('Using client-extracted text:', {
+      length: finalExtractedText.length,
+      wordCount: wordCount || 0,
+      method: extractionMethod || 'unknown'
+    });
 
     // Update progress: 30%
     await supabaseClient.rpc('update_protection_job_progress', {
