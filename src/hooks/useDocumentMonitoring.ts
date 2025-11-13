@@ -151,7 +151,7 @@ export const useDocumentMonitoring = () => {
         .from("document_monitoring_sessions")
         .insert({
           user_id: user.id,
-          protection_record_id: protectionRecordId,
+          protection_record_id: protectionRecordId || null,
           session_type: "realtime",
           status: "active",
           platforms: platforms,

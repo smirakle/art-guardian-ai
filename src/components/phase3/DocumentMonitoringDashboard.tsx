@@ -31,8 +31,8 @@ export const DocumentMonitoringDashboard = () => {
 
   const handleStartMonitoring = () => {
     if (!selectedProtectionRecord) {
-      // For demo purposes, use a placeholder ID
-      startMonitoring("demo-record-id", PLATFORMS);
+      // For demo purposes, use null for protection_record_id
+      startMonitoring(null as any, PLATFORMS);
     } else {
       startMonitoring(selectedProtectionRecord, PLATFORMS);
     }
