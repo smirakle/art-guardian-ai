@@ -80,30 +80,28 @@ serve(async (req) => {
 
     console.log('Generated fingerprint:', fileFingerprint.substring(0, 16) + '...');
 
-    // Extract text content from document
+    // Extract text content only from plain text files
     let extractedText = '';
-    try {
-      const textDecoder = new TextDecoder('utf-8', { fatal: false });
-      
-      if (fileMimeType === 'text/plain' || file.name.endsWith('.txt') || file.name.endsWith('.md')) {
-        // Plain text files
+    const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
+    
+    if (['txt', 'md'].includes(fileExtension) || fileMimeType === 'text/plain') {
+      try {
+        const textDecoder = new TextDecoder('utf-8', { fatal: false });
         extractedText = textDecoder.decode(fileData);
-      } else {
-        // For other file types, convert binary to string for now
-        // In a production environment, you'd use proper PDF/DOCX parsers
-        extractedText = textDecoder.decode(fileData);
+        
+        // Limit text length to prevent storage issues (max 1MB)
+        if (extractedText.length > 1000000) {
+          extractedText = extractedText.substring(0, 1000000);
+          console.log('Text truncated to 1MB');
+        }
+        
+        console.log('Extracted text length:', extractedText.length);
+      } catch (error) {
+        console.error('Text extraction error:', error);
+        extractedText = '';
       }
-      
-      // Clean up extracted text
-      extractedText = extractedText
-        .replace(/[^\x20-\x7E\n\r\t]/g, ' ') // Remove non-printable characters
-        .replace(/\s+/g, ' ') // Normalize whitespace
-        .trim();
-      
-      console.log('Extracted text length:', extractedText.length);
-    } catch (error) {
-      console.error('Text extraction error:', error);
-      extractedText = '';
+    } else {
+      console.log('Skipping text extraction for non-text file type:', fileExtension);
     }
 
     // Update progress: 30%
