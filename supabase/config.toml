@@ -203,13 +203,7 @@ verify_jwt = true
 [functions.production-realtime-scanner]
 verify_jwt = true
 
-[functions.process-document-protection]
-verify_jwt = true
-
-[functions.extract-document-text]
-verify_jwt = true
-
-[functions.document-monitoring-engine]
+[functions.test-openai-api]
 verify_jwt = true
 
 [functions.test-openai-api]
