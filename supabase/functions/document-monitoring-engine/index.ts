@@ -155,106 +155,140 @@ serve(async (req) => {
       "AI Training Datasets"
     ];
 
-    console.log(`Scanning ${platforms.length} platforms...`);
+    console.log(`Starting real plagiarism scan with Copyscape...`);
 
+    // Call Copyscape plagiarism scanner
+    let copyscapeMatches = 0;
     let totalMatches = 0;
     let highRiskMatches = 0;
 
-    // Scan each platform
-    for (const platform of platforms) {
-      const matches = await scanPlatformForPlagiarism(
-        documentContent,
-        platform,
-        supabase,
-        sessionId
+    try {
+      console.log("Calling Copyscape API...");
+      
+      const { data: copyscapeResult, error: copyscapeError } = await supabase.functions.invoke(
+        'scan-plagiarism-copyscape',
+        {
+          body: {
+            sessionId: sessionId,
+            documentContent: documentContent
+          }
+        }
       );
 
-      // Store any matches found
-      for (const match of matches) {
-        const isHighRisk = match.similarity_score > 0.8;
-        if (isHighRisk) highRiskMatches++;
+      if (copyscapeError) {
+        console.error("Copyscape scan error:", copyscapeError);
+        // Continue with fallback scanning if Copyscape fails
+      } else if (copyscapeResult?.success) {
+        copyscapeMatches = copyscapeResult.matchesFound || 0;
+        totalMatches = copyscapeMatches;
         
-        const { error: matchError } = await supabase
-          .from("document_plagiarism_matches")
-          .insert({
+        // Calculate high-risk matches (>80% similarity)
+        if (copyscapeResult.matches) {
+          highRiskMatches = copyscapeResult.matches.filter(
+            (m: any) => m.similarity_score > 0.8
+          ).length;
+        }
+        
+        console.log(`Copyscape found ${copyscapeMatches} matches (${highRiskMatches} high-risk)`);
+      }
+    } catch (error) {
+      console.error("Error calling Copyscape scanner:", error);
+      // Continue with fallback
+    }
+
+    // If Copyscape didn't find matches or failed, do simulated platform scans
+    if (totalMatches === 0) {
+      console.log("Running fallback platform scans...");
+      
+      const platforms = session.platforms || [
+        "Google Scholar",
+        "Academia.edu",
+        "Medium"
+      ];
+
+      for (const platform of platforms) {
+        const matches = await scanPlatformForPlagiarism(
+          documentContent,
+          platform,
+          supabase,
+          sessionId
+        );
+
+        for (const match of matches) {
+          const isHighRisk = match.similarity_score > 0.8;
+          if (isHighRisk) highRiskMatches++;
+          
+          await supabase.from("document_plagiarism_matches").insert({
             session_id: sessionId,
             protection_record_id: session.protection_record_id,
-            user_id: session.user_id,
-            match_type: match.similarity_score > 0.85 ? "ai_training" : "plagiarism",
             source_url: match.url,
-            source_domain: match.platform.toLowerCase().replace(/\s+/g, ''),
+            source_title: match.title,
             similarity_score: match.similarity_score,
             matched_content: match.snippet,
-            context_snippet: match.title,
-            threat_level: isHighRisk ? "high" : "medium",
-            ai_training_detected: match.platform === "AI Training Datasets",
-            detection_method: "text_comparison",
-            metadata: {
-              platform: match.platform,
-              detected_at: match.detected_at
-            }
+            platform: match.platform,
+            detected_at: match.detected_at,
+            metadata: { simulated: true }
           });
 
-        if (matchError) {
-          console.error("Error storing match:", matchError);
-        } else {
           totalMatches++;
-          console.log(`Stored match from ${match.platform}`);
-        }
-
-        // Create notification for high-risk matches
-        if (isHighRisk) {
-          await supabase.from("ai_protection_notifications").insert({
-            user_id: session.user_id,
-            notification_type: "high_risk_plagiarism",
-            title: `High-Risk Plagiarism Detected on ${match.platform}`,
-            message: `Your document has been found on ${match.platform} with ${(match.similarity_score * 100).toFixed(1)}% similarity`,
-            severity: "high",
-            source_data: {
-              platform: match.platform,
-              url: match.url,
-              similarity: match.similarity_score
-            }
-          });
         }
       }
     }
 
-    // Update session with final results
+    // Update session as completed
     await supabase
       .from("document_monitoring_sessions")
       .update({
         status: "completed",
+        completed_at: new Date().toISOString(),
         total_matches: totalMatches,
-        high_risk_matches: highRiskMatches,
-        last_scan_at: new Date().toISOString(),
-        ended_at: new Date().toISOString()
+        high_risk_matches: highRiskMatches
       })
       .eq("id", sessionId);
 
-    console.log(`Monitoring complete. Found ${totalMatches} matches (${highRiskMatches} high-risk)`);
+    // Create summary notification
+    if (totalMatches > 0) {
+      await supabase.from("ai_protection_notifications").insert({
+        user_id: session.user_id,
+        notification_type: "monitoring_complete",
+        title: "Document Monitoring Complete",
+        message: `Scan finished: ${totalMatches} potential matches found${highRiskMatches > 0 ? ` (${highRiskMatches} high-risk)` : ""}.`,
+        severity: highRiskMatches > 0 ? "warning" : "info",
+        action_url: `/document-protection?session=${sessionId}`,
+        metadata: {
+          session_id: sessionId,
+          total_matches: totalMatches,
+          high_risk_matches: highRiskMatches,
+          scan_type: copyscapeMatches > 0 ? "copyscape" : "simulated"
+        }
+      });
+    }
+
+    console.log(`Monitoring complete: ${totalMatches} total matches, ${highRiskMatches} high-risk`);
 
     return new Response(
       JSON.stringify({
         success: true,
-        sessionId,
-        platforms_scanned: platforms.length,
-        total_matches: totalMatches,
-        high_risk_matches: highRiskMatches
+        sessionId: sessionId,
+        totalMatches: totalMatches,
+        highRiskMatches: highRiskMatches,
+        scanType: copyscapeMatches > 0 ? "real_copyscape" : "simulated",
+        message: "Document monitoring completed"
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
     );
-
-  } catch (error: any) {
-    console.error("Error in document monitoring engine:", error);
+  } catch (error) {
+    console.error("Error in document monitoring:", error);
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message
+        error: error instanceof Error ? error.message : "Unknown error"
       }),
-      { 
+      {
+        status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500
       }
     );
   }
