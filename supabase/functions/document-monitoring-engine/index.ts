@@ -130,7 +130,7 @@ serve(async (req) => {
   }
 });
 
-async function scanPlatformForPlatiarism(platform: string) {
+async function scanPlatformForPlagiarism(platform: string) {
   const detectionChance = platform === "AI Training Datasets" ? 0.3 : 
                           platform === "Medium" ? 0.25 :
                           platform === "Research Gate" ? 0.2 : 0.1;
