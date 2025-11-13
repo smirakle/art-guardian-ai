@@ -118,11 +118,16 @@ serve(async (req) => {
       .from("document_monitoring_sessions")
       .select("*")
       .eq("id", sessionId)
-      .single();
+      .maybeSingle();
 
-    if (sessionError || !session) {
-      console.error("Session not found:", sessionError);
-      throw new Error("Session not found");
+    if (sessionError) {
+      console.error("Database error fetching session:", sessionError);
+      throw new Error(`Database error: ${sessionError.message}`);
+    }
+
+    if (!session) {
+      console.error("Session not found for ID:", sessionId);
+      throw new Error(`Session with ID ${sessionId} does not exist. Please ensure the monitoring session was created before scanning.`);
     }
 
     // Perform Copyscape scan
