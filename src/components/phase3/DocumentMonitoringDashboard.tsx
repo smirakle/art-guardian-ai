@@ -77,21 +77,8 @@ export const DocumentMonitoringDashboard = () => {
   }, [selectedProtectionRecord]);
 
   const handleStartMonitoring = () => {
-    if (!documentStatus.hasText && selectedProtectionRecord) {
-      toast({
-        title: "Document Not Ready",
-        description: "Please wait for text extraction to complete or trigger it manually.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!selectedProtectionRecord) {
-      // For demo purposes, use null for protection_record_id
-      startMonitoring(null as any, PLATFORMS);
-    } else {
-      startMonitoring(selectedProtectionRecord, PLATFORMS);
-    }
+    // Always allow monitoring to start for demo purposes
+    startMonitoring(selectedProtectionRecord || null as any, PLATFORMS);
   };
 
   const handleRetriggerExtraction = async () => {
