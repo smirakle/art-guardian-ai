@@ -50,8 +50,30 @@ serve(async (req) => {
 
     if (jobError) throw jobError;
 
+    // Convert data URL to ArrayBuffer
+    let fileData: ArrayBuffer;
+    let fileMimeType: string;
+    
+    if (file.url.startsWith('data:')) {
+      // Parse data URL: data:mime/type;base64,actual-data
+      const [header, base64Data] = file.url.split(',');
+      const mimeMatch = header.match(/data:([^;]+)/);
+      fileMimeType = mimeMatch ? mimeMatch[1] : file.type;
+      
+      // Decode base64 to binary
+      const binaryString = atob(base64Data);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      fileData = bytes.buffer;
+    } else {
+      // If not a data URL, fetch it
+      fileData = await fetch(file.url).then(r => r.arrayBuffer());
+      fileMimeType = file.type;
+    }
+
     // Generate document fingerprint using SHA-256
-    const fileData = await fetch(file.url).then(r => r.arrayBuffer());
     const hashBuffer = await crypto.subtle.digest('SHA-256', fileData);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const fileFingerprint = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
@@ -92,10 +114,8 @@ serve(async (req) => {
     const timestamp = Date.now();
     const fileName = `${user.id}/${timestamp}-${file.name}`;
     
-    // Determine content type from file extension or use the provided type
-    const getContentType = (filename: string, providedType?: string): string => {
-      if (providedType && providedType !== 'text/plain') return providedType;
-      
+    // Determine content type from file extension or parsed mime type
+    const getContentType = (filename: string, parsedMime: string): string => {
       const ext = filename.split('.').pop()?.toLowerCase();
       const mimeTypes: Record<string, string> = {
         'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -105,11 +125,14 @@ serve(async (req) => {
         'rtf': 'application/rtf',
         'odt': 'application/vnd.oasis.opendocument.text',
       };
-      return mimeTypes[ext || ''] || 'application/octet-stream';
+      
+      // Use extension-based mime type if available, otherwise use parsed (without charset)
+      const baseMime = parsedMime.split(';')[0].trim();
+      return mimeTypes[ext || ''] || baseMime || 'application/octet-stream';
     };
     
-    const contentType = getContentType(file.name, file.type);
-    console.log('Uploading with content type:', contentType);
+    const contentType = getContentType(file.name, fileMimeType);
+    console.log('Uploading with content type:', contentType, 'for file:', file.name);
     
     const { data: uploadData, error: uploadError } = await supabaseClient.storage
       .from('protected-documents')
