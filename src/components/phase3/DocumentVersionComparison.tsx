@@ -11,7 +11,9 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useDocumentComparison } from "@/hooks/useDocumentComparison";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   FileText, 
   Link as LinkIcon, 
@@ -28,6 +30,13 @@ import {
   Clock,
   FileSearch
 } from "lucide-react";
+
+interface ProtectedDocument {
+  id: string;
+  original_filename: string;
+  created_at: string;
+  protection_level: string;
+}
 
 interface DocumentVersionComparisonProps {
   originalDocumentId?: string;
@@ -52,6 +61,8 @@ export const DocumentVersionComparison = ({
   const [viewMode, setViewMode] = useState<"side-by-side" | "unified">("unified");
   const [urlError, setUrlError] = useState("");
   const [textError, setTextError] = useState("");
+  const [protectedDocs, setProtectedDocs] = useState<ProtectedDocument[]>([]);
+  const [loadingDocs, setLoadingDocs] = useState(false);
 
   useEffect(() => {
     if (plagiarismMatchId) {
@@ -64,6 +75,40 @@ export const DocumentVersionComparison = ({
       loadComparisonHistory(originalDocumentId);
     }
   }, [originalDocumentId, loadComparisonHistory]);
+
+  useEffect(() => {
+    if (selectedDocId) {
+      loadComparisonHistory(selectedDocId);
+    }
+  }, [selectedDocId, loadComparisonHistory]);
+
+  useEffect(() => {
+    if (!originalDocumentId) {
+      loadProtectedDocuments();
+    }
+  }, [originalDocumentId]);
+
+  const loadProtectedDocuments = async () => {
+    setLoadingDocs(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('ai_protection_records')
+        .select('id, original_filename, created_at, protection_level')
+        .eq('user_id', user.id)
+        .eq('content_type', 'document')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setProtectedDocs(data || []);
+    } catch (error) {
+      console.error('Error loading protected documents:', error);
+    } finally {
+      setLoadingDocs(false);
+    }
+  };
 
   const validateUrl = (url: string): boolean => {
     setUrlError("");
@@ -183,7 +228,7 @@ export const DocumentVersionComparison = ({
                   <div>
                     <CardTitle>Compare Document Versions</CardTitle>
                     <CardDescription className="mt-1">
-                      Upload or paste a suspected plagiarized version to analyze
+                      Select your protected document and compare it with a suspected copy
                     </CardDescription>
                   </div>
                 </div>
@@ -195,14 +240,65 @@ export const DocumentVersionComparison = ({
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
                     <p className="text-sm">
-                      Paste a URL to fetch content automatically, or paste text directly. 
+                      Select your original protected document, then paste a URL or text to compare. 
                       We'll analyze character-by-character differences and provide detailed statistics.
                     </p>
                   </TooltipContent>
                 </Tooltip>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-6">
+              {!originalDocumentId && (
+                <div className="space-y-2">
+                  <Label htmlFor="protected-doc-select" className="flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-primary" />
+                    Select Your Protected Document
+                    {protectedDocs.length > 0 && (
+                      <Badge variant="secondary" className="ml-2">
+                        {protectedDocs.length} available
+                      </Badge>
+                    )}
+                  </Label>
+                  {loadingDocs ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : protectedDocs.length === 0 ? (
+                    <Alert className="border-border/50">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        No protected documents found. Please upload and protect a document first in the "Upload & Protect" tab.
+                      </AlertDescription>
+                    </Alert>
+                  ) : (
+                    <Select value={selectedDocId} onValueChange={setSelectedDocId}>
+                      <SelectTrigger id="protected-doc-select">
+                        <SelectValue placeholder="Choose a document to use as original..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {protectedDocs.map((doc) => (
+                          <SelectItem key={doc.id} value={doc.id}>
+                            <div className="flex items-center gap-2">
+                              <FileText className="w-4 h-4" />
+                              <span className="font-medium">{doc.original_filename}</span>
+                              <Badge variant="outline" className="ml-2">
+                                {doc.protection_level}
+                              </Badge>
+                              <span className="text-xs text-muted-foreground">
+                                {new Date(doc.created_at).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                  {selectedDocId && (
+                    <p className="text-sm text-muted-foreground">
+                      ✓ Original document selected. Now enter a URL or paste text below to compare.
+                    </p>
+                  )}
+                </div>
+              )}
+
             <Tabs defaultValue="url" className="space-y-4">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="url">
