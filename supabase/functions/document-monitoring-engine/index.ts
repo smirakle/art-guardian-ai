@@ -1,3 +1,4 @@
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -8,42 +9,234 @@ const corsHeaders = {
 
 console.log("Document Monitoring Engine function started");
 
-// Define the scanning function BEFORE serve()
-async function scanPlatformForPlagiarism(platform: string) {
-  const detectionChance = platform === "AI Training Datasets" ? 0.3 : 
-                          platform === "Medium" ? 0.25 :
-                          platform === "Research Gate" ? 0.2 : 0.1;
-  
-  if (Math.random() < detectionChance) {
-    const similarityScore = 0.7 + Math.random() * 0.3;
-    const aiTrainingDetected = platform === "AI Training Datasets" || Math.random() < 0.3;
-    
-    let threatLevel = "low";
-    if (similarityScore > 0.9) threatLevel = "critical";
-    else if (similarityScore > 0.8) threatLevel = "high";
-    else if (similarityScore > 0.7) threatLevel = "medium";
-    
-    return {
-      protection_record_id: null,
-      user_id: null,
-      match_type: aiTrainingDetected ? "ai_training" : "plagiarism",
-      source_url: `https://${platform.toLowerCase().replace(/\s/g, '')}.com/document/${Math.random().toString(36).substring(7)}`,
-      source_domain: platform.toLowerCase().replace(/\s/g, ''),
-      similarity_score: similarityScore,
-      matched_content: "Sample matched content from the document...",
-      context_snippet: "...the surrounding context of the matched content shows clear similarity...",
-      threat_level: threatLevel,
-      ai_training_detected: aiTrainingDetected,
-      detection_method: aiTrainingDetected ? "ai_dataset_scan" : "content_fingerprint",
-      metadata: {
-        scan_timestamp: new Date().toISOString(),
-        platform_confidence: Math.random() * 0.3 + 0.7,
-        content_hash: Math.random().toString(36).substring(7)
-      }
-    };
+// Platform configurations for real API scanning
+const platformConfigs = {
+  "Google Scholar": { searchEngine: "google", category: "scholar" },
+  "Research Gate": { searchEngine: "serpapi", category: "academic" },
+  "Academia.edu": { searchEngine: "google", category: "academic" },
+  "Medium": { searchEngine: "serpapi", category: "blog" },
+  "Substack": { searchEngine: "google", category: "newsletter" },
+  "Common Crawl": { searchEngine: "google", category: "web" },
+  "AI Training Datasets": { searchEngine: "copyleaks", category: "ai" }
+};
+
+// Scan using OpenAI for content similarity
+async function analyzeContentSimilarity(content: string, searchResults: any[]): Promise<number> {
+  const openaiKey = Deno.env.get("OPENAI_API_KEY");
+  if (!openaiKey) return 0;
+
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${openaiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [{
+          role: "system",
+          content: "You are a plagiarism detection expert. Analyze the similarity between the original content and search results. Return only a number between 0 and 1 representing similarity percentage."
+        }, {
+          role: "user",
+          content: `Original content: "${content.substring(0, 500)}"\n\nSearch results: ${JSON.stringify(searchResults.slice(0, 3))}\n\nProvide similarity score (0-1):`
+        }],
+        temperature: 0.3,
+      }),
+    });
+
+    const data = await response.json();
+    const scoreText = data.choices?.[0]?.message?.content || "0";
+    return parseFloat(scoreText) || 0;
+  } catch (error) {
+    console.error("OpenAI similarity analysis error:", error);
+    return 0;
   }
+}
+
+// Scan using Copyleaks API for professional plagiarism detection
+async function scanWithCopyleaks(content: string, platform: string) {
+  const copyleaksKey = Deno.env.get("COPYLEAKS_API_KEY");
+  if (!copyleaksKey) {
+    console.log("Copyleaks API key not configured, skipping");
+    return null;
+  }
+
+  try {
+    // Submit scan to Copyleaks
+    const scanResponse = await fetch("https://api.copyleaks.com/v3/scans/submit/file", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${copyleaksKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text: content.substring(0, 25000), // Copyleaks limit
+        properties: {
+          webhooks: {
+            status: `${Deno.env.get("SUPABASE_URL")}/functions/v1/copyleaks-webhook`
+          }
+        }
+      }),
+    });
+
+    if (!scanResponse.ok) {
+      console.error("Copyleaks scan failed:", await scanResponse.text());
+      return null;
+    }
+
+    const scanData = await scanResponse.json();
+    console.log("Copyleaks scan submitted:", scanData);
+
+    // Note: Copyleaks is async - results come via webhook
+    return {
+      scan_id: scanData.scanId,
+      status: "pending",
+      message: "Scan submitted to Copyleaks for professional analysis"
+    };
+  } catch (error) {
+    console.error("Copyleaks error:", error);
+    return null;
+  }
+}
+
+// Scan using Google Custom Search API
+async function scanWithGoogleSearch(content: string, platform: string) {
+  const googleKey = Deno.env.get("GOOGLE_CUSTOM_SEARCH_API_KEY");
+  const searchEngineId = Deno.env.get("GOOGLE_SEARCH_ENGINE_ID");
   
-  return null;
+  if (!googleKey || !searchEngineId) {
+    console.log("Google Search credentials not configured");
+    return [];
+  }
+
+  try {
+    const query = content.substring(0, 200).replace(/[^\w\s]/g, '');
+    const response = await fetch(
+      `https://www.googleapis.com/customsearch/v1?key=${googleKey}&cx=${searchEngineId}&q="${encodeURIComponent(query)}"&num=10`
+    );
+
+    if (!response.ok) {
+      console.error("Google Search error:", await response.text());
+      return [];
+    }
+
+    const data = await response.json();
+    return data.items?.map((item: any) => ({
+      url: item.link,
+      title: item.title,
+      snippet: item.snippet,
+      domain: new URL(item.link).hostname
+    })) || [];
+  } catch (error) {
+    console.error("Google Search API error:", error);
+    return [];
+  }
+}
+
+// Scan using SerpAPI for academic and blog platforms
+async function scanWithSerpAPI(content: string, platform: string) {
+  const serpApiKey = Deno.env.get("SERPAPI_KEY");
+  if (!serpApiKey) {
+    console.log("SerpAPI key not configured");
+    return [];
+  }
+
+  try {
+    const query = content.substring(0, 200).replace(/[^\w\s]/g, '');
+    let engine = "google";
+    
+    if (platform === "Medium") engine = "google";
+    else if (platform === "Research Gate") engine = "google_scholar";
+    
+    const response = await fetch(
+      `https://serpapi.com/search?engine=${engine}&q="${encodeURIComponent(query)}"&api_key=${serpApiKey}`
+    );
+
+    if (!response.ok) {
+      console.error("SerpAPI error:", await response.text());
+      return [];
+    }
+
+    const data = await response.json();
+    const results = data.organic_results || data.scholar_results || [];
+    
+    return results.map((item: any) => ({
+      url: item.link,
+      title: item.title,
+      snippet: item.snippet,
+      domain: item.link ? new URL(item.link).hostname : platform.toLowerCase()
+    }));
+  } catch (error) {
+    console.error("SerpAPI error:", error);
+    return [];
+  }
+}
+
+// Main scanning function with real API integrations
+async function scanPlatformForPlagiarism(platform: string, documentContent: string, userId: string) {
+  const config = platformConfigs[platform as keyof typeof platformConfigs];
+  if (!config) return null;
+
+  console.log(`Real scan starting for ${platform} using ${config.searchEngine}`);
+  
+  let searchResults: any[] = [];
+  let copyleaksResult = null;
+
+  // Use appropriate API based on platform
+  if (config.searchEngine === "copyleaks") {
+    copyleaksResult = await scanWithCopyleaks(documentContent, platform);
+  } else if (config.searchEngine === "serpapi") {
+    searchResults = await scanWithSerpAPI(documentContent, platform);
+  } else {
+    searchResults = await scanWithGoogleSearch(documentContent, platform);
+  }
+
+  // If no results, no plagiarism detected
+  if (searchResults.length === 0 && !copyleaksResult) {
+    console.log(`No matches found on ${platform}`);
+    return null;
+  }
+
+  // Analyze content similarity using OpenAI
+  const similarityScore = await analyzeContentSimilarity(documentContent, searchResults);
+  
+  // Only report if similarity is significant (>70%)
+  if (similarityScore < 0.7) {
+    console.log(`Low similarity (${similarityScore}) on ${platform}, not reporting`);
+    return null;
+  }
+
+  const aiTrainingDetected = platform === "AI Training Datasets" || similarityScore > 0.85;
+  
+  let threatLevel = "low";
+  if (similarityScore > 0.9) threatLevel = "critical";
+  else if (similarityScore > 0.8) threatLevel = "high";
+  else if (similarityScore > 0.7) threatLevel = "medium";
+
+  const topMatch = searchResults[0];
+  
+  return {
+    protection_record_id: null,
+    user_id: userId,
+    match_type: aiTrainingDetected ? "ai_training" : "plagiarism",
+    source_url: topMatch?.url || `https://${platform.toLowerCase().replace(/\s/g, '')}.com`,
+    source_domain: topMatch?.domain || platform.toLowerCase().replace(/\s/g, ''),
+    similarity_score: similarityScore,
+    matched_content: topMatch?.snippet || "Content match detected via API scan",
+    context_snippet: topMatch?.title || `Match found on ${platform}`,
+    threat_level: threatLevel,
+    ai_training_detected: aiTrainingDetected,
+    detection_method: config.searchEngine === "copyleaks" ? "copyleaks_professional" : 
+                      config.searchEngine === "serpapi" ? "serpapi_search" : "google_search",
+    metadata: {
+      scan_timestamp: new Date().toISOString(),
+      api_used: config.searchEngine,
+      total_results: searchResults.length,
+      copyleaks_scan_id: copyleaksResult?.scan_id,
+      top_matches: searchResults.slice(0, 3).map(r => ({ url: r.url, title: r.title }))
+    }
+  };
 }
 
 serve(async (req) => {
@@ -59,10 +252,16 @@ serve(async (req) => {
     const { sessionId } = await req.json();
     console.log("Processing document monitoring session:", sessionId);
 
-    // Fetch session data to get user_id
+    // Fetch session data to get user_id and protection record
     const { data: session, error: sessionError } = await supabase
       .from("document_monitoring_sessions")
-      .select("user_id")
+      .select(`
+        user_id,
+        ai_protection_records (
+          id,
+          original_content
+        )
+      `)
       .eq("id", sessionId)
       .single();
 
@@ -75,7 +274,17 @@ serve(async (req) => {
     }
 
     const userId = session.user_id;
-    console.log("Session user_id:", userId);
+    const documentContent = session.ai_protection_records?.original_content || "";
+    
+    if (!documentContent) {
+      console.error("No document content found for session");
+      return new Response(
+        JSON.stringify({ error: "Document content not found" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
+      );
+    }
+
+    console.log("Session user_id:", userId, "Content length:", documentContent.length);
 
     const platforms = [
       "Google Scholar",
@@ -107,7 +316,8 @@ serve(async (req) => {
         console.error(`Failed to insert scan update for ${platform}:`, insertError);
       }
 
-      const platformResult = await scanPlatformForPlagiarism(platform);
+      // Real API scan
+      const platformResult = await scanPlatformForPlagiarism(platform, documentContent, userId);
       
       if (platformResult) {
         results.push(platformResult);
@@ -151,7 +361,7 @@ serve(async (req) => {
         platform: platform,
         status: "completed",
         progress_percentage: 100,
-        sources_scanned: platformResult ? 1000 : 500,
+        sources_scanned: platformResult ? (platformResult.metadata.total_results || 10) : 0,
         matches_found: platformResult ? 1 : 0,
         scan_details: { 
           completed_at: new Date().toISOString(),
@@ -162,6 +372,9 @@ serve(async (req) => {
       if (completeError) {
         console.error(`Failed to insert completed scan update for ${platform}:`, completeError);
       }
+
+      // Rate limiting between platform scans
+      await new Promise(resolve => setTimeout(resolve, 2000));
     }
 
     await supabase
@@ -175,7 +388,7 @@ serve(async (req) => {
       })
       .eq("id", sessionId);
 
-    console.log(`Document monitoring scan completed. Found ${results.length} matches.`);
+    console.log(`Document monitoring scan completed. Found ${results.length} real matches.`);
 
     return new Response(
       JSON.stringify({
