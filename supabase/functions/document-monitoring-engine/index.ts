@@ -59,6 +59,24 @@ serve(async (req) => {
     const { sessionId } = await req.json();
     console.log("Processing document monitoring session:", sessionId);
 
+    // Fetch session data to get user_id
+    const { data: session, error: sessionError } = await supabase
+      .from("document_monitoring_sessions")
+      .select("user_id")
+      .eq("id", sessionId)
+      .single();
+
+    if (sessionError || !session) {
+      console.error("Failed to fetch session:", sessionError);
+      return new Response(
+        JSON.stringify({ error: "Session not found" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 404 }
+      );
+    }
+
+    const userId = session.user_id;
+    console.log("Session user_id:", userId);
+
     const platforms = [
       "Google Scholar",
       "Research Gate",
@@ -74,8 +92,9 @@ serve(async (req) => {
     for (const platform of platforms) {
       console.log(`Scanning ${platform} for plagiarism...`);
 
-      await supabase.from("document_scan_updates").insert({
+      const { error: insertError } = await supabase.from("document_scan_updates").insert({
         session_id: sessionId,
+        user_id: userId,
         platform: platform,
         status: "scanning",
         progress_percentage: 0,
@@ -83,6 +102,10 @@ serve(async (req) => {
         matches_found: 0,
         scan_details: { started_at: new Date().toISOString() }
       });
+
+      if (insertError) {
+        console.error(`Failed to insert scan update for ${platform}:`, insertError);
+      }
 
       const platformResult = await scanPlatformForPlagiarism(platform);
       
@@ -122,8 +145,9 @@ serve(async (req) => {
         }
       }
 
-      await supabase.from("document_scan_updates").insert({
+      const { error: completeError } = await supabase.from("document_scan_updates").insert({
         session_id: sessionId,
+        user_id: userId,
         platform: platform,
         status: "completed",
         progress_percentage: 100,
@@ -134,6 +158,10 @@ serve(async (req) => {
           result: platformResult || "no_matches"
         }
       });
+
+      if (completeError) {
+        console.error(`Failed to insert completed scan update for ${platform}:`, completeError);
+      }
     }
 
     await supabase
