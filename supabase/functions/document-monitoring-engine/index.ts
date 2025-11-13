@@ -244,46 +244,62 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
     const { sessionId } = await req.json();
-    console.log("Processing document monitoring session:", sessionId);
+    console.log("Starting document monitoring for session:", sessionId);
 
-    // Fetch session data to get user_id and protection record
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    // Get session details and protection record with extracted text
     const { data: session, error: sessionError } = await supabase
       .from("document_monitoring_sessions")
       .select(`
-        user_id,
+        *,
         ai_protection_records (
-          id,
-          original_content
+          metadata,
+          word_count
         )
       `)
       .eq("id", sessionId)
       .single();
 
-    if (sessionError || !session) {
-      console.error("Failed to fetch session:", sessionError);
-      return new Response(
-        JSON.stringify({ error: "Session not found" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 404 }
-      );
+    if (sessionError) {
+      console.error("Session fetch error:", sessionError);
+      throw new Error(`Failed to fetch session: ${sessionError.message}`);
     }
 
-    const userId = session.user_id;
-    const documentContent = session.ai_protection_records?.original_content || "";
+    // Check if we have document content to scan
+    const documentContent = session.ai_protection_records?.metadata?.original_text || "";
+    const wordCount = session.ai_protection_records?.word_count || 0;
     
-    if (!documentContent) {
-      console.error("No document content found for session");
+    if ((!documentContent || documentContent.trim().length === 0) && wordCount === 0) {
+      console.error("No document content available for session:", sessionId);
+      
+      // Update session with error status
+      await supabase
+        .from("document_monitoring_sessions")
+        .update({
+          status: "failed",
+          metadata: {
+            error: "No document text available. Text extraction may have failed or is still in progress.",
+            error_time: new Date().toISOString()
+          }
+        })
+        .eq("id", sessionId);
+
       return new Response(
-        JSON.stringify({ error: "Document content not found" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
+        JSON.stringify({
+          success: false,
+          error: "No document content available for scanning. Please ensure the document text has been extracted.",
+          sessionId
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    console.log("Session user_id:", userId, "Content length:", documentContent.length);
+    console.log("Document content length:", documentContent.length, "characters, word count:", wordCount);
 
     const platforms = [
       "Google Scholar",

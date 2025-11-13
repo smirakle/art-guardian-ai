@@ -80,8 +80,9 @@ serve(async (req) => {
 
     console.log('Generated fingerprint:', fileFingerprint.substring(0, 16) + '...');
 
-    // Extract text content only from plain text files
+    // Extract text content from text files, mark others for async extraction
     let extractedText = '';
+    let extractionStatus = 'completed';
     const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
     
     if (['txt', 'md'].includes(fileExtension) || fileMimeType === 'text/plain') {
@@ -100,8 +101,11 @@ serve(async (req) => {
         console.error('Text extraction error:', error);
         extractedText = '';
       }
+    } else if (['pdf', 'docx', 'doc'].includes(fileExtension)) {
+      console.log('PDF/DOCX detected - will extract asynchronously');
+      extractionStatus = 'pending';
     } else {
-      console.log('Skipping text extraction for non-text file type:', fileExtension);
+      console.log('Skipping text extraction for file type:', fileExtension);
     }
 
     // Update progress: 30%
@@ -176,6 +180,7 @@ serve(async (req) => {
 
     // Create protection record
     const wordCount = extractedText ? extractedText.split(/\s+/).filter(w => w.length > 0).length : 0;
+    const fileExtForCheck = file.name.split('.').pop()?.toLowerCase() || '';
     
     const { data: protectionRecord, error: protectionError } = await supabaseClient
       .from('ai_protection_records')
@@ -196,13 +201,35 @@ serve(async (req) => {
         metadata: {
           original_text: extractedText,
           file_size: file.size,
-          uploaded_at: new Date().toISOString()
+          uploaded_at: new Date().toISOString(),
+          extraction_status: ['pdf', 'docx', 'doc'].includes(fileExtForCheck) && !extractedText ? 'pending' : 'completed'
         }
       })
       .select('id, protection_id')
       .single();
 
     if (protectionError) throw protectionError;
+
+    // Trigger async text extraction for PDF/DOCX files if no text was extracted
+    if (['pdf', 'docx', 'doc'].includes(fileExtForCheck) && !extractedText) {
+      console.log('Triggering async text extraction for:', fileExtForCheck);
+      
+      // Invoke extract-document-text function asynchronously (don't wait)
+      supabaseClient.functions.invoke('extract-document-text', {
+        body: {
+          protectionRecordId: protectionRecord.id,
+          filePath: uploadData.path
+        }
+      }).then(({ error: extractError }) => {
+        if (extractError) {
+          console.error('Text extraction invocation error:', extractError);
+        } else {
+          console.log('Text extraction triggered successfully for record:', protectionRecord.id);
+        }
+      }).catch(err => {
+        console.error('Text extraction promise error:', err);
+      });
+    }
 
     // Create document tracer if enabled
     let tracerId: string | undefined;

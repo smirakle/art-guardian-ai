@@ -3,8 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useDocumentMonitoring } from "@/hooks/useDocumentMonitoring";
-import { Shield, AlertTriangle, FileText, Search, StopCircle } from "lucide-react";
-import { useState } from "react";
+import { Shield, AlertTriangle, FileText, Search, StopCircle, RefreshCw } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const PLATFORMS = [
   "Google Scholar",
@@ -28,13 +30,128 @@ export const DocumentMonitoringDashboard = () => {
   } = useDocumentMonitoring();
 
   const [selectedProtectionRecord, setSelectedProtectionRecord] = useState<string>("");
+  const [documentStatus, setDocumentStatus] = useState<{
+    hasText: boolean;
+    isExtracting: boolean;
+    error: string | null;
+  }>({ hasText: false, isExtracting: false, error: null });
+  const [isCheckingDocument, setIsCheckingDocument] = useState(false);
+  const { toast } = useToast();
+
+  // Check document status when selected
+  useEffect(() => {
+    if (!selectedProtectionRecord) {
+      setDocumentStatus({ hasText: false, isExtracting: false, error: null });
+      return;
+    }
+
+    const checkDocumentStatus = async () => {
+      setIsCheckingDocument(true);
+      try {
+        const { data: record, error } = await supabase
+          .from('ai_protection_records')
+          .select('metadata, word_count, protected_file_path')
+          .eq('id', selectedProtectionRecord)
+          .single();
+
+        if (error) throw error;
+
+        const metadata = record?.metadata as any;
+        const hasExtractedText = (metadata?.original_text && metadata.original_text.length > 0) || (record?.word_count && record.word_count > 0);
+        const isExtracting = metadata?.extraction_status === 'processing';
+        
+        setDocumentStatus({
+          hasText: hasExtractedText,
+          isExtracting: isExtracting,
+          error: metadata?.extraction_error || null
+        });
+      } catch (error: any) {
+        console.error('Error checking document:', error);
+        setDocumentStatus({ hasText: false, isExtracting: false, error: error.message });
+      } finally {
+        setIsCheckingDocument(false);
+      }
+    };
+
+    checkDocumentStatus();
+  }, [selectedProtectionRecord]);
 
   const handleStartMonitoring = () => {
+    if (!documentStatus.hasText && selectedProtectionRecord) {
+      toast({
+        title: "Document Not Ready",
+        description: "Please wait for text extraction to complete or trigger it manually.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (!selectedProtectionRecord) {
       // For demo purposes, use null for protection_record_id
       startMonitoring(null as any, PLATFORMS);
     } else {
       startMonitoring(selectedProtectionRecord, PLATFORMS);
+    }
+  };
+
+  const handleRetriggerExtraction = async () => {
+    if (!selectedProtectionRecord) return;
+
+    try {
+      const { data: record } = await supabase
+        .from('ai_protection_records')
+        .select('protected_file_path')
+        .eq('id', selectedProtectionRecord)
+        .single();
+
+      if (!record?.protected_file_path) throw new Error('File path not found');
+
+      toast({
+        title: "Extracting Text",
+        description: "Text extraction has been triggered. This may take a moment..."
+      });
+
+      const { error } = await supabase.functions.invoke('extract-document-text', {
+        body: {
+          protectionRecordId: selectedProtectionRecord,
+          filePath: record.protected_file_path
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Extraction Complete",
+        description: "Document text has been extracted successfully."
+      });
+
+      // Refresh status
+      setTimeout(() => {
+        const checkStatus = async () => {
+          const { data: updatedRecord } = await supabase
+            .from('ai_protection_records')
+            .select('metadata, word_count')
+            .eq('id', selectedProtectionRecord)
+            .single();
+
+          if (updatedRecord) {
+            const metadata = updatedRecord?.metadata as any;
+            setDocumentStatus({
+              hasText: !!(metadata?.original_text || updatedRecord?.word_count),
+              isExtracting: false,
+              error: null
+            });
+          }
+        };
+        checkStatus();
+      }, 2000);
+    } catch (error: any) {
+      console.error('Error triggering extraction:', error);
+      toast({
+        title: "Extraction Failed",
+        description: error.message,
+        variant: "destructive"
+      });
     }
   };
 
@@ -73,8 +190,59 @@ export const DocumentMonitoringDashboard = () => {
             Monitor your documents across the web for plagiarism and unauthorized AI training usage.
           </p>
 
+          {selectedProtectionRecord && (
+            <div className="p-3 border rounded-lg space-y-2">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium">Document Status</p>
+                {isCheckingDocument && <RefreshCw className="w-4 h-4 animate-spin text-muted-foreground" />}
+              </div>
+              
+              {documentStatus.isExtracting && (
+                <div className="flex items-center gap-2 text-sm text-blue-600">
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <span>Text extraction in progress...</span>
+                </div>
+              )}
+              
+              {!documentStatus.hasText && !documentStatus.isExtracting && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-orange-600">
+                    <AlertTriangle className="w-4 h-4" />
+                    <span>Text extraction needed</span>
+                  </div>
+                  <Button 
+                    onClick={handleRetriggerExtraction} 
+                    size="sm" 
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Extract Text Now
+                  </Button>
+                </div>
+              )}
+              
+              {documentStatus.hasText && (
+                <div className="flex items-center gap-2 text-sm text-green-600">
+                  <FileText className="w-4 h-4" />
+                  <span>Ready for monitoring</span>
+                </div>
+              )}
+
+              {documentStatus.error && (
+                <div className="text-sm text-destructive">
+                  Error: {documentStatus.error}
+                </div>
+              )}
+            </div>
+          )}
+
           {!isMonitoring ? (
-            <Button onClick={handleStartMonitoring} className="w-full">
+            <Button 
+              onClick={handleStartMonitoring} 
+              className="w-full"
+              disabled={selectedProtectionRecord && !documentStatus.hasText}
+            >
               <Search className="w-4 h-4 mr-2" />
               Start Real-time Monitoring
             </Button>
