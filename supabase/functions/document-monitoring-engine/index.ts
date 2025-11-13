@@ -8,6 +8,44 @@ const corsHeaders = {
 
 console.log("Document Monitoring Engine function started");
 
+// Define the scanning function BEFORE serve()
+async function scanPlatformForPlagiarism(platform: string) {
+  const detectionChance = platform === "AI Training Datasets" ? 0.3 : 
+                          platform === "Medium" ? 0.25 :
+                          platform === "Research Gate" ? 0.2 : 0.1;
+  
+  if (Math.random() < detectionChance) {
+    const similarityScore = 0.7 + Math.random() * 0.3;
+    const aiTrainingDetected = platform === "AI Training Datasets" || Math.random() < 0.3;
+    
+    let threatLevel = "low";
+    if (similarityScore > 0.9) threatLevel = "critical";
+    else if (similarityScore > 0.8) threatLevel = "high";
+    else if (similarityScore > 0.7) threatLevel = "medium";
+    
+    return {
+      protection_record_id: null,
+      user_id: null,
+      match_type: aiTrainingDetected ? "ai_training" : "plagiarism",
+      source_url: `https://${platform.toLowerCase().replace(/\s/g, '')}.com/document/${Math.random().toString(36).substring(7)}`,
+      source_domain: platform.toLowerCase().replace(/\s/g, ''),
+      similarity_score: similarityScore,
+      matched_content: "Sample matched content from the document...",
+      context_snippet: "...the surrounding context of the matched content shows clear similarity...",
+      threat_level: threatLevel,
+      ai_training_detected: aiTrainingDetected,
+      detection_method: aiTrainingDetected ? "ai_dataset_scan" : "content_fingerprint",
+      metadata: {
+        scan_timestamp: new Date().toISOString(),
+        platform_confidence: Math.random() * 0.3 + 0.7,
+        content_hash: Math.random().toString(36).substring(7)
+      }
+    };
+  }
+  
+  return null;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -130,39 +168,3 @@ serve(async (req) => {
   }
 });
 
-async function scanPlatformForPlagiarism(platform: string) {
-  const detectionChance = platform === "AI Training Datasets" ? 0.3 : 
-                          platform === "Medium" ? 0.25 :
-                          platform === "Research Gate" ? 0.2 : 0.1;
-  
-  if (Math.random() < detectionChance) {
-    const similarityScore = 0.7 + Math.random() * 0.3;
-    const aiTrainingDetected = platform === "AI Training Datasets" || Math.random() < 0.3;
-    
-    let threatLevel = "low";
-    if (similarityScore > 0.9) threatLevel = "critical";
-    else if (similarityScore > 0.8) threatLevel = "high";
-    else if (similarityScore > 0.7) threatLevel = "medium";
-    
-    return {
-      protection_record_id: null,
-      user_id: null,
-      match_type: aiTrainingDetected ? "ai_training" : "plagiarism",
-      source_url: `https://${platform.toLowerCase().replace(/\s/g, '')}.com/document/${Math.random().toString(36).substring(7)}`,
-      source_domain: platform.toLowerCase().replace(/\s/g, ''),
-      similarity_score: similarityScore,
-      matched_content: "Sample matched content from the document...",
-      context_snippet: "...the surrounding context of the matched content shows clear similarity...",
-      threat_level: threatLevel,
-      ai_training_detected: aiTrainingDetected,
-      detection_method: aiTrainingDetected ? "ai_dataset_scan" : "content_fingerprint",
-      metadata: {
-        scan_timestamp: new Date().toISOString(),
-        platform_confidence: Math.random() * 0.3 + 0.7,
-        content_hash: Math.random().toString(36).substring(7)
-      }
-    };
-  }
-  
-  return null;
-}
