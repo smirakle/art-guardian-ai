@@ -8,7 +8,12 @@ import { useState, useRef } from "react";
 import { Progress } from "@/components/ui/progress";
 
 export const DocumentUploadSection = () => {
-  const { uploadProtectedDocument, uploading } = useProtectedDocumentUpload();
+  const { 
+    uploadProtectedDocument, 
+    uploading, 
+    extractionProgress, 
+    extractionStatus 
+  } = useProtectedDocumentUpload();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [protectionLevel, setProtectionLevel] = useState<"basic" | "standard" | "maximum">("standard");
   const [enableTracers, setEnableTracers] = useState(true);
