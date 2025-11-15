@@ -1,7 +1,8 @@
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import PromoVideoScriptDownload from "@/components/PromoVideoScriptDownload";
-import { Video, FileText, Download } from "lucide-react";
+import PromoVideoPlayer from "@/components/PromoVideoPlayer";
+import { Video, FileText, Download, Play } from "lucide-react";
 
 const PromoMaterials = () => {
   return (
@@ -16,15 +17,33 @@ const PromoMaterials = () => {
             </p>
           </div>
 
+          {/* 10-Second Promo Video */}
+          <Card className="border-primary/20">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <Play className="h-8 w-8 text-primary" />
+                <div>
+                  <CardTitle>10-Second Promo Video</CardTitle>
+                  <CardDescription>
+                    Interactive animated promo showcasing TSMO's core message
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <PromoVideoPlayer />
+            </CardContent>
+          </Card>
+
           {/* Promotional Video Script Section */}
           <Card className="border-primary/20">
             <CardHeader>
               <div className="flex items-center gap-3">
                 <Video className="h-8 w-8 text-primary" />
                 <div>
-                  <CardTitle>Promotional Video Script</CardTitle>
+                  <CardTitle>90-Second Video Script</CardTitle>
                   <CardDescription>
-                    A complete script for creating promotional videos about TSMO
+                    Downloadable script for creating longer promotional videos
                   </CardDescription>
                 </div>
               </div>
