@@ -76,6 +76,7 @@ import AdvancedAnalytics from "./pages/AdvancedAnalytics";
 import MarketingFlyer from "./pages/MarketingFlyer";
 import DocumentProtection from "./pages/DocumentProtection";
 import PortfolioMonitoringAdvanced from "./pages/PortfolioMonitoringAdvanced";
+import PromoMaterials from "./pages/PromoMaterials";
 import ThreatAlerts from "./pages/ThreatAlerts";
 import DMCAAutomation from "./pages/DMCAAutomation";
 import Profile from "./pages/Profile";
@@ -245,6 +246,7 @@ const App = () => {
               </ProtectedRoute>
             } />
             <Route path="/test-realtime" element={<TestRealtimeMonitoring />} />
+            <Route path="/promo-materials" element={<PromoMaterials />} />
             
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />
