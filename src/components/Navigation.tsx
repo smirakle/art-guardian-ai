@@ -30,6 +30,7 @@ const Navigation = () => {
     { path: "/upload", label: "Upload & Protect", icon: Upload },
     { path: "/community", label: t('nav.community'), icon: Users },
     { path: "/legal-templates", label: "Legal Templates", icon: FileText },
+    { path: "/promo-materials", label: "Promo Materials", icon: FileText },
     { path: "/faq", label: "FAQ", icon: HelpCircle },
     { path: "/admin", label: "Admin Panel", icon: UserCog },
     { path: "/about-tsmo", label: t('nav.about'), icon: Info },
