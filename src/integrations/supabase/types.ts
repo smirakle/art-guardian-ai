@@ -2117,6 +2117,59 @@ export type Database = {
         }
         Relationships: []
       }
+      document_ai_analysis: {
+        Row: {
+          analysis_details: string | null
+          analyzed_at: string
+          confidence: number | null
+          created_at: string
+          id: string
+          is_paraphrased: boolean | null
+          key_concepts_matched: string[] | null
+          semantic_similarity: number | null
+          session_id: string | null
+          similarity_score: number | null
+          source_url: string | null
+          structural_similarity: number | null
+        }
+        Insert: {
+          analysis_details?: string | null
+          analyzed_at?: string
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          is_paraphrased?: boolean | null
+          key_concepts_matched?: string[] | null
+          semantic_similarity?: number | null
+          session_id?: string | null
+          similarity_score?: number | null
+          source_url?: string | null
+          structural_similarity?: number | null
+        }
+        Update: {
+          analysis_details?: string | null
+          analyzed_at?: string
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          is_paraphrased?: boolean | null
+          key_concepts_matched?: string[] | null
+          semantic_similarity?: number | null
+          session_id?: string | null
+          similarity_score?: number | null
+          source_url?: string | null
+          structural_similarity?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_ai_analysis_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "document_monitoring_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       document_monitoring_sessions: {
         Row: {
           created_at: string
@@ -7682,6 +7735,68 @@ export type Database = {
           },
         ]
       }
+      scheduled_document_monitoring: {
+        Row: {
+          created_at: string
+          email_notifications: boolean | null
+          id: string
+          is_active: boolean | null
+          last_executed: string | null
+          next_execution: string | null
+          notification_threshold: string | null
+          platforms: string[] | null
+          protection_record_id: string | null
+          schedule_days: number[] | null
+          schedule_time: string
+          schedule_type: string
+          total_executions: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email_notifications?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          last_executed?: string | null
+          next_execution?: string | null
+          notification_threshold?: string | null
+          platforms?: string[] | null
+          protection_record_id?: string | null
+          schedule_days?: number[] | null
+          schedule_time?: string
+          schedule_type: string
+          total_executions?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email_notifications?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          last_executed?: string | null
+          next_execution?: string | null
+          notification_threshold?: string | null
+          platforms?: string[] | null
+          protection_record_id?: string | null
+          schedule_days?: number[] | null
+          schedule_time?: string
+          schedule_type?: string
+          total_executions?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_document_monitoring_protection_record_id_fkey"
+            columns: ["protection_record_id"]
+            isOneToOne: false
+            referencedRelation: "ai_protection_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scheduled_scans: {
         Row: {
           artwork_id: string | null
@@ -9607,6 +9722,15 @@ export type Database = {
           execution_time: string
           recurrence_pattern: Json
           schedule_type: string
+        }
+        Returns: string
+      }
+      calculate_next_scheduled_scan: {
+        Args: {
+          from_time_param?: string
+          schedule_days_param: number[]
+          schedule_time_param: string
+          schedule_type_param: string
         }
         Returns: string
       }
