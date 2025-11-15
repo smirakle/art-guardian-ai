@@ -23,9 +23,9 @@ const PromoMaterials = () => {
               <div className="flex items-center gap-3">
                 <Play className="h-8 w-8 text-primary" />
                 <div>
-                  <CardTitle>10-Second Promo Video</CardTitle>
+                  <CardTitle>10-Second Promo Video with Voiceover</CardTitle>
                   <CardDescription>
-                    Interactive animated promo showcasing TSMO's core message
+                    Interactive animated promo with AI-generated voiceover narration
                   </CardDescription>
                 </div>
               </div>
