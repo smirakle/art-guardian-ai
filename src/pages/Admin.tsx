@@ -18,7 +18,9 @@ import GovernmentApiPanel from "@/components/admin/GovernmentApiPanel";
 import AdminMFAEnforcement from "@/components/security/AdminMFAEnforcement";
 import EnhancedSecurityDashboard from "@/components/security/EnhancedSecurityDashboard";
 import AdminLiveChatDashboard from "@/components/admin/AdminLiveChatDashboard";
- const Admin = () => {
+import AllUploadsAndScans from "@/components/admin/AllUploadsAndScans";
+
+const Admin = () => {
    const [activeTab, setActiveTab] = useState("dashboard");
    const [isMonitoring, setIsMonitoring] = useState(true);
 
@@ -44,6 +46,7 @@ import AdminLiveChatDashboard from "@/components/admin/AdminLiveChatDashboard";
                 <TabsTrigger value="ai-training" className="px-4 py-2 text-sm font-medium">AI Training</TabsTrigger>
                 <TabsTrigger value="live-support" className="px-4 py-2 text-sm font-medium bg-green-500/10 border border-green-500/20">Live Support</TabsTrigger>
                 <TabsTrigger value="live-feed" className="px-4 py-2 text-sm font-medium">Live Feed</TabsTrigger>
+                <TabsTrigger value="uploads-scans" className="px-4 py-2 text-sm font-medium">Uploads & Scans</TabsTrigger>
               </TabsList>
             </div>
 
@@ -107,6 +110,10 @@ import AdminLiveChatDashboard from "@/components/admin/AdminLiveChatDashboard";
  
             <TabsContent value="live-feed" className="space-y-6">
               <LiveFeed isActive={isMonitoring} />
+            </TabsContent>
+
+            <TabsContent value="uploads-scans" className="space-y-6">
+              <AllUploadsAndScans />
             </TabsContent>
           </Tabs>
         </div>
