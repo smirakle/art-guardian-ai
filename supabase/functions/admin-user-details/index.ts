@@ -105,9 +105,15 @@ serve(async (req) => {
     }
 
     if (userId) {
+      // Get user email from auth.users using service role
+      const { data: authUser, error: authUserError } = await supabase.auth.admin.getUserById(userId)
+      
+      if (authUserError) {
+        console.error('Error fetching auth user:', authUserError)
+      }
+
       // Get detailed user information
-      const [profileData, roleData, artworkData, subscriptionData, activityData] = await Promise.all([
-        supabase.from('profiles').select('*').eq('user_id', userId).single(),
+      const [roleData, artworkData, subscriptionData, activityData] = await Promise.all([
         supabase.from('user_roles').select('*').eq('user_id', userId).single(),
         supabase.from('artwork').select('count', { count: 'exact', head: true }).eq('user_id', userId),
         supabase.from('subscriptions').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(1),
@@ -115,8 +121,9 @@ serve(async (req) => {
       ])
 
       const userDetails = {
-        profile: profileData.data,
-        role: roleData.data,
+        id: userId,
+        email: authUser?.user?.email || 'Unknown',
+        role: roleData.data?.role || 'user',
         stats: {
           artworkCount: artworkData.count || 0,
           subscription: subscriptionData.data?.[0] || null,
@@ -124,7 +131,7 @@ serve(async (req) => {
         recentActivity: activityData.data || []
       }
 
-      return new Response(JSON.stringify({ user: userDetails }), {
+      return new Response(JSON.stringify(userDetails), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
     }
@@ -133,17 +140,18 @@ serve(async (req) => {
     const limit = parseInt(searchParams.get('limit') || '20')
     const offset = parseInt(searchParams.get('offset') || '0')
 
-    const { data: users, error } = await supabase
-      .from('profiles')
-      .select(`
-        *,
-        user_roles (role),
-        subscriptions (plan_id, status)
-      `)
-      .range(offset, offset + limit - 1)
-      .order('created_at', { ascending: false })
+    // Get all users from auth.users
+    const { data: authUsersData, error: authError } = await supabase.auth.admin.listUsers({
+      page: Math.floor(offset / limit) + 1,
+      perPage: limit
+    })
 
-    if (error) throw error
+    if (authError) {
+      console.error('Error listing auth users:', authError)
+      throw authError
+    }
+
+    const users = authUsersData?.users || []
 
     return new Response(JSON.stringify({ users }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
