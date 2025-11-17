@@ -55,6 +55,7 @@ export default function AllUploadsAndScans() {
   const [artworks, setArtworks] = useState<ArtworkRecord[]>([]);
   const [protectionRecords, setProtectionRecords] = useState<ProtectionRecord[]>([]);
   const [scanResults, setScanResults] = useState<ScanResult[]>([]);
+  const [userNames, setUserNames] = useState<Record<string, string>>({});
   const [userEmails, setUserEmails] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -96,26 +97,31 @@ export default function AllUploadsAndScans() {
       if (scanError) throw scanError;
       setScanResults(scanData || []);
 
-      // Fetch user emails from admin-user-details edge function
+      // Fetch user emails and names from admin-user-details edge function
       const uniqueUserIds = new Set<string>();
       artworkData?.forEach(a => uniqueUserIds.add(a.user_id));
       protectionData?.forEach(p => uniqueUserIds.add(p.user_id));
       scanData?.forEach(s => uniqueUserIds.add(s.user_id));
 
+      const nameMap: Record<string, string> = {};
       const emailMap: Record<string, string> = {};
+      
       for (const userId of Array.from(uniqueUserIds)) {
         try {
           const { data: userData } = await supabase.functions.invoke('admin-user-details', {
             body: { userId }
           });
-          if (userData?.email) {
-            emailMap[userId] = userData.email;
+          if (userData) {
+            nameMap[userId] = userData.full_name || userData.email || 'Unknown User';
+            emailMap[userId] = userData.email || 'No email';
           }
         } catch (err) {
           console.error(`Error fetching user ${userId}:`, err);
+          nameMap[userId] = 'Unknown User';
           emailMap[userId] = 'Unknown';
         }
       }
+      setUserNames(nameMap);
       setUserEmails(emailMap);
     } catch (error) {
       console.error('Error loading data:', error);
@@ -133,15 +139,17 @@ export default function AllUploadsAndScans() {
   };
 
   const renderUserInfo = (userId: string) => {
+    const name = userNames[userId] || 'Loading...';
     const email = userEmails[userId];
+    
     return (
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex items-center gap-2">
               <User className="h-4 w-4 text-muted-foreground" />
-              <span className="font-mono text-xs">
-                {email || `${userId.slice(0, 8)}...`}
+              <span className="text-sm font-medium">
+                {name}
               </span>
               <Button
                 variant="ghost"
@@ -158,7 +166,7 @@ export default function AllUploadsAndScans() {
             </div>
           </TooltipTrigger>
           <TooltipContent>
-            <p className="font-mono text-xs">Full ID: {userId}</p>
+            <p className="font-mono text-xs">User ID: {userId}</p>
             {email && <p className="text-xs mt-1">Email: {email}</p>}
           </TooltipContent>
         </Tooltip>

@@ -112,6 +112,9 @@ serve(async (req) => {
         console.error('Error fetching auth user:', authUserError)
       }
 
+      const userMetadata = authUser?.user?.user_metadata || {}
+      const fullName = userMetadata.full_name || userMetadata.username || authUser?.user?.email || 'Unknown'
+
       // Get detailed user information
       const [roleData, artworkData, subscriptionData, activityData] = await Promise.all([
         supabase.from('user_roles').select('*').eq('user_id', userId).single(),
@@ -123,6 +126,7 @@ serve(async (req) => {
       const userDetails = {
         id: userId,
         email: authUser?.user?.email || 'Unknown',
+        full_name: fullName,
         role: roleData.data?.role || 'user',
         stats: {
           artworkCount: artworkData.count || 0,
