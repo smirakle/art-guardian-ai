@@ -4,10 +4,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FileText, Image, Download, Shield } from "lucide-react";
+import { FileText, Image, Download, Shield, User, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
+import { toast } from "sonner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+interface UserInfo {
+  id: string;
+  email: string;
+}
 
 interface ArtworkRecord {
   id: string;
@@ -43,7 +55,9 @@ export default function AllUploadsAndScans() {
   const [artworks, setArtworks] = useState<ArtworkRecord[]>([]);
   const [protectionRecords, setProtectionRecords] = useState<ProtectionRecord[]>([]);
   const [scanResults, setScanResults] = useState<ScanResult[]>([]);
+  const [userEmails, setUserEmails] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {
     loadAllData();
@@ -81,11 +95,75 @@ export default function AllUploadsAndScans() {
 
       if (scanError) throw scanError;
       setScanResults(scanData || []);
+
+      // Fetch user emails from admin-user-details edge function
+      const uniqueUserIds = new Set<string>();
+      artworkData?.forEach(a => uniqueUserIds.add(a.user_id));
+      protectionData?.forEach(p => uniqueUserIds.add(p.user_id));
+      scanData?.forEach(s => uniqueUserIds.add(s.user_id));
+
+      const emailMap: Record<string, string> = {};
+      for (const userId of Array.from(uniqueUserIds)) {
+        try {
+          const { data: userData } = await supabase.functions.invoke('admin-user-details', {
+            body: { userId }
+          });
+          if (userData?.email) {
+            emailMap[userId] = userData.email;
+          }
+        } catch (err) {
+          console.error(`Error fetching user ${userId}:`, err);
+          emailMap[userId] = 'Unknown';
+        }
+      }
+      setUserEmails(emailMap);
     } catch (error) {
       console.error('Error loading data:', error);
+      toast.error('Failed to load uploads and scans data');
     } finally {
       setLoading(false);
     }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(text);
+    toast.success('Copied to clipboard');
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const renderUserInfo = (userId: string) => {
+    const email = userEmails[userId];
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="flex items-center gap-2">
+              <User className="h-4 w-4 text-muted-foreground" />
+              <span className="font-mono text-xs">
+                {email || `${userId.slice(0, 8)}...`}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0"
+                onClick={() => copyToClipboard(userId)}
+              >
+                {copiedId === userId ? (
+                  <Check className="h-3 w-3 text-green-500" />
+                ) : (
+                  <Copy className="h-3 w-3" />
+                )}
+              </Button>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="font-mono text-xs">Full ID: {userId}</p>
+            {email && <p className="text-xs mt-1">Email: {email}</p>}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
   };
 
   const formatFileSize = (bytes: number | null) => {
@@ -154,7 +232,7 @@ export default function AllUploadsAndScans() {
                   <TableRow>
                     <TableHead>Title</TableHead>
                     <TableHead>Category</TableHead>
-                    <TableHead>User ID</TableHead>
+                    <TableHead>User</TableHead>
                     <TableHead>File Size</TableHead>
                     <TableHead>Protection</TableHead>
                     <TableHead>Status</TableHead>
@@ -173,7 +251,7 @@ export default function AllUploadsAndScans() {
                       <TableRow key={artwork.id}>
                         <TableCell className="font-medium">{artwork.title}</TableCell>
                         <TableCell>{artwork.category}</TableCell>
-                        <TableCell className="font-mono text-xs">{artwork.user_id.slice(0, 8)}...</TableCell>
+                        <TableCell>{renderUserInfo(artwork.user_id)}</TableCell>
                         <TableCell>{formatFileSize(artwork.file_size)}</TableCell>
                         <TableCell>
                           {artwork.ai_protection_enabled ? (
@@ -207,7 +285,7 @@ export default function AllUploadsAndScans() {
                     <TableHead>Filename</TableHead>
                     <TableHead>Content Type</TableHead>
                     <TableHead>Protection Level</TableHead>
-                    <TableHead>User ID</TableHead>
+                    <TableHead>User</TableHead>
                     <TableHead>Fingerprint</TableHead>
                     <TableHead>Created</TableHead>
                   </TableRow>
@@ -229,7 +307,7 @@ export default function AllUploadsAndScans() {
                             {record.protection_level}
                           </Badge>
                         </TableCell>
-                        <TableCell className="font-mono text-xs">{record.user_id.slice(0, 8)}...</TableCell>
+                        <TableCell>{renderUserInfo(record.user_id)}</TableCell>
                         <TableCell className="font-mono text-xs">{record.file_fingerprint.slice(0, 12)}...</TableCell>
                         <TableCell>{format(new Date(record.created_at), 'MMM d, yyyy')}</TableCell>
                       </TableRow>
@@ -248,7 +326,7 @@ export default function AllUploadsAndScans() {
                     <TableHead>Image URL</TableHead>
                     <TableHead>Total Matches</TableHead>
                     <TableHead>Threat Level</TableHead>
-                    <TableHead>User ID</TableHead>
+                    <TableHead>User</TableHead>
                     <TableHead>Created</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -269,7 +347,7 @@ export default function AllUploadsAndScans() {
                             {scan.threat_level}
                           </Badge>
                         </TableCell>
-                        <TableCell className="font-mono text-xs">{scan.user_id.slice(0, 8)}...</TableCell>
+                        <TableCell>{renderUserInfo(scan.user_id)}</TableCell>
                         <TableCell>{format(new Date(scan.created_at), 'MMM d, yyyy')}</TableCell>
                       </TableRow>
                     ))
