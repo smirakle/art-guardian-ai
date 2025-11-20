@@ -73,7 +73,6 @@ export function AppSidebar() {
   const secondaryNavItems = [
     { path: "/admin", label: "Admin Panel", icon: UserCog },
     { path: "/about-tsmo", label: t('nav.about'), icon: Info },
-    { path: "/promo-materials", label: "Promo Materials", icon: FileText },
     { path: "/contact", label: t('nav.contact'), icon: Mail },
     { path: "/terms-and-privacy", label: "Terms & Privacy", icon: Scale }
   ];
