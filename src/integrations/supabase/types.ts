@@ -9899,6 +9899,12 @@ export type Database = {
           requires_clearance: boolean
         }[]
       }
+      get_user_roles: {
+        Args: { _user_id: string }
+        Returns: {
+          role: Database["public"]["Enums"]["app_role"]
+        }[]
+      }
       get_user_subscription: {
         Args: never
         Returns: {
