@@ -18,6 +18,19 @@ export interface CommunityPost {
     username?: string;
   };
   user_liked?: boolean;
+  liked_by?: Array<{
+    user_id: string;
+    full_name?: string;
+    username?: string;
+  }>;
+  comments?: Array<{
+    id: string;
+    content: string;
+    created_at: string;
+    user_id: string;
+    full_name?: string;
+    username?: string;
+  }>;
 }
 
 export interface CommunityComment {
@@ -89,15 +102,70 @@ export const useCommunity = () => {
         userLikes = likesData?.map(like => like.post_id) || [];
       }
 
+      // Get all likes for posts with user profiles
+      const postIds = data?.map(post => post.id) || [];
+      const { data: allLikesData } = postIds.length > 0 ? await supabase
+        .from('community_votes')
+        .select('post_id, user_id')
+        .in('post_id', postIds)
+        .eq('vote_type', 'like') : { data: [] };
+
+      const likeUserIds = allLikesData?.map(like => like.user_id).filter(id => id !== null) || [];
+      const { data: likeProfilesData } = likeUserIds.length > 0 ? await supabase
+        .from('profiles')
+        .select('user_id, full_name, username')
+        .in('user_id', likeUserIds) : { data: [] };
+
+      // Get all comments for posts with user profiles
+      const { data: commentsData } = postIds.length > 0 ? await supabase
+        .from('community_comments')
+        .select('*')
+        .in('post_id', postIds)
+        .order('created_at', { ascending: false }) : { data: [] };
+
+      const commentUserIds = commentsData?.map(comment => comment.user_id).filter(id => id !== null) || [];
+      const { data: commentProfilesData } = commentUserIds.length > 0 ? await supabase
+        .from('profiles')
+        .select('user_id, full_name, username')
+        .in('user_id', commentUserIds) : { data: [] };
+
       const postsWithData = data?.map(post => {
         const profile = profilesData?.find(p => p.user_id === post.user_id);
+        
+        // Get likes for this post
+        const postLikes = allLikesData?.filter(like => like.post_id === post.id) || [];
+        const liked_by = postLikes.map(like => {
+          const likeProfile = likeProfilesData?.find(p => p.user_id === like.user_id);
+          return {
+            user_id: like.user_id,
+            full_name: likeProfile?.full_name,
+            username: likeProfile?.username
+          };
+        });
+
+        // Get comments for this post
+        const postComments = commentsData?.filter(comment => comment.post_id === post.id) || [];
+        const comments = postComments.map(comment => {
+          const commentProfile = commentProfilesData?.find(p => p.user_id === comment.user_id);
+          return {
+            id: comment.id,
+            content: comment.content,
+            created_at: comment.created_at,
+            user_id: comment.user_id,
+            full_name: commentProfile?.full_name,
+            username: commentProfile?.username
+          };
+        });
+
         return {
           ...post,
           profiles: profile ? {
             full_name: profile.full_name,
             username: profile.username
           } : undefined,
-          user_liked: userLikes.includes(post.id)
+          user_liked: userLikes.includes(post.id),
+          liked_by,
+          comments
         };
       }) || [];
 

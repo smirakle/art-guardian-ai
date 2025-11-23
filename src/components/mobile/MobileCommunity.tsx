@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { 
   Users, 
   MessageSquare, 
@@ -21,7 +22,8 @@ import {
   GraduationCap,
   Plus,
   Send,
-  Smartphone
+  Smartphone,
+  ChevronDown
 } from "lucide-react";
 import { useCommunity } from "@/hooks/useCommunity";
 import { formatDistanceToNow } from "date-fns";
@@ -212,7 +214,7 @@ export const MobileCommunity = () => {
                       </div>
                       <h3 className="text-sm font-medium mb-1 line-clamp-2">{post.title}</h3>
                       <p className="text-xs text-muted-foreground mb-2 line-clamp-3">{post.content}</p>
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-3">
                           <Button
                             variant="ghost"
@@ -233,6 +235,74 @@ export const MobileCommunity = () => {
                           {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                         </div>
                       </div>
+
+                      {/* Liked By Section */}
+                      {post.liked_by && post.liked_by.length > 0 && (
+                        <Collapsible>
+                          <CollapsibleTrigger className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-2">
+                            <ThumbsUp className="w-3 h-3" />
+                            <span>Liked by {post.liked_by.length} {post.liked_by.length === 1 ? 'person' : 'people'}</span>
+                            <ChevronDown className="w-3 h-3" />
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className="space-y-1 mb-2">
+                            {post.liked_by.slice(0, 5).map((like) => (
+                              <div key={like.user_id} className="flex items-center gap-2 text-xs">
+                                <Avatar className="w-4 h-4">
+                                  <AvatarFallback className="text-[8px]">
+                                    {like.full_name?.[0] || like.username?.[0] || 'U'}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <span className="text-muted-foreground">
+                                  {like.full_name || like.username || 'User'}
+                                </span>
+                              </div>
+                            ))}
+                            {post.liked_by.length > 5 && (
+                              <div className="text-xs text-muted-foreground pl-6">
+                                +{post.liked_by.length - 5} more
+                              </div>
+                            )}
+                          </CollapsibleContent>
+                        </Collapsible>
+                      )}
+
+                      {/* Comments Section */}
+                      {post.comments && post.comments.length > 0 && (
+                        <Collapsible>
+                          <CollapsibleTrigger className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
+                            <MessageSquare className="w-3 h-3" />
+                            <span>View {post.comments.length} {post.comments.length === 1 ? 'comment' : 'comments'}</span>
+                            <ChevronDown className="w-3 h-3" />
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className="space-y-2 mt-2 pt-2 border-t">
+                            {post.comments.slice(0, 3).map((comment) => (
+                              <div key={comment.id} className="flex items-start gap-2">
+                                <Avatar className="w-5 h-5">
+                                  <AvatarFallback className="text-[8px]">
+                                    {comment.full_name?.[0] || comment.username?.[0] || 'U'}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-1">
+                                    <span className="text-xs font-medium">
+                                      {comment.full_name || comment.username || 'User'}
+                                    </span>
+                                    <span className="text-[10px] text-muted-foreground">
+                                      {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-muted-foreground">{comment.content}</p>
+                                </div>
+                              </div>
+                            ))}
+                            {post.comments.length > 3 && (
+                              <div className="text-xs text-muted-foreground pl-7">
+                                +{post.comments.length - 3} more comments
+                              </div>
+                            )}
+                          </CollapsibleContent>
+                        </Collapsible>
+                      )}
                     </div>
                   </div>
                 </CardContent>
