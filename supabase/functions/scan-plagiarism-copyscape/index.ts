@@ -113,20 +113,36 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Get session details
-    const { data: session, error: sessionError } = await supabase
-      .from("document_monitoring_sessions")
-      .select("*")
-      .eq("id", sessionId)
-      .maybeSingle();
+    // Get session details with retry logic
+    let session = null;
+    let retryCount = 0;
+    const maxRetries = 3;
+    
+    while (!session && retryCount < maxRetries) {
+      const { data, error: sessionError } = await supabase
+        .from("document_monitoring_sessions")
+        .select("*")
+        .eq("id", sessionId)
+        .maybeSingle();
 
-    if (sessionError) {
-      console.error("Database error fetching session:", sessionError);
-      throw new Error(`Database error: ${sessionError.message}`);
+      if (sessionError) {
+        console.error("Database error fetching session:", sessionError);
+        throw new Error(`Database error: ${sessionError.message}`);
+      }
+
+      if (data) {
+        session = data;
+      } else {
+        retryCount++;
+        if (retryCount < maxRetries) {
+          console.log(`Session not found, retrying... (${retryCount}/${maxRetries})`);
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retry
+        }
+      }
     }
 
     if (!session) {
-      console.error("Session not found for ID:", sessionId);
+      console.error("Session not found after retries for ID:", sessionId);
       throw new Error(`Session with ID ${sessionId} does not exist. Please ensure the monitoring session was created before scanning.`);
     }
 
