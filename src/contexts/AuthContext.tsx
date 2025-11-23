@@ -59,12 +59,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       setProfile(profileData);
 
-      // Fetch user role
+      // Fetch user roles (prioritize admin role if present)
       const { data: roleData, error: roleError } = await supabase
         .from('user_roles')
         .select('role')
-        .eq('user_id', userId)
-        .single();
+        .eq('user_id', userId);
 
       if (roleError) {
         console.error('Error fetching role:', roleError);
@@ -72,7 +71,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
 
-      setRole(roleData.role);
+      // If user has multiple roles, prioritize admin
+      if (roleData && roleData.length > 0) {
+        const hasAdminRole = roleData.find(r => r.role === 'admin');
+        setRole(hasAdminRole ? 'admin' : roleData[0].role);
+      } else {
+        setRole('user');
+      }
     } catch (error) {
       console.error('Error in fetchProfile:', error);
     }
