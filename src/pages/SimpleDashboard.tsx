@@ -16,20 +16,33 @@ const SimpleDashboard = () => {
   const { stats: aiProtectionStats } = useAIProtectionStats();
 
   // Fetch user's artwork
-  const { data: artwork } = useQuery({
+  const { data: artwork, error: artworkError } = useQuery({
     queryKey: ['user-artwork', user?.id],
     queryFn: async () => {
       if (!user) return [];
-      const { data } = await supabase
+      console.log('Fetching artwork for user:', user.id);
+      const { data, error } = await supabase
         .from('artwork')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(6);
+      
+      if (error) {
+        console.error('Artwork fetch error:', error);
+        throw error;
+      }
+      
+      console.log('Artwork data:', data);
       return data || [];
     },
     enabled: !!user,
   });
+
+  // Log artwork error if any
+  if (artworkError) {
+    console.error('Artwork query error:', artworkError);
+  }
 
   // Fetch recent alerts
   const { data: alerts } = useQuery({
@@ -113,12 +126,18 @@ const SimpleDashboard = () => {
                   ? art.file_paths[0]
                   : supabase.storage.from('artwork').getPublicUrl(art.file_paths[0]).data.publicUrl;
                 
+                console.log('Image URL for', art.title, ':', imageUrl);
+                
                 return (
                   <div key={art.id} className="relative group">
                     <img
                       src={imageUrl}
                       alt={art.title}
                       className="w-full aspect-square object-cover rounded-lg"
+                      onError={(e) => {
+                        console.error('Image failed to load:', imageUrl);
+                        e.currentTarget.src = 'https://placehold.co/400x400?text=Image+Not+Found';
+                      }}
                     />
                     <div className="absolute top-2 right-2">
                       <Badge variant="default" className="bg-green-600">
