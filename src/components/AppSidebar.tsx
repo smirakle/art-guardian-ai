@@ -128,75 +128,79 @@ export function AppSidebar() {
                   );
                 })}
 
-                {/* Admin-only navigation items */}
-                {role === 'admin' && adminOnlyItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <SidebarMenuItem key={item.path}>
+                {/* Advanced mode additional items */}
+                {interfaceMode === 'advanced' && (
+                  <>
+                    {/* Admin-only navigation items */}
+                    {role === 'admin' && adminOnlyItems.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <SidebarMenuItem key={item.path}>
+                          <SidebarMenuButton
+                            onClick={() => navigate(item.path)}
+                            isActive={isActive(item.path)}
+                            className="flex items-center gap-2 text-orange-600 hover:text-orange-600"
+                          >
+                            <Icon className="w-4 h-4" />
+                            {!collapsed && <span>{item.label}</span>}
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    })}
+                    
+                    {/* SLA Status for Professional/Enterprise */}
+                    {(subscription?.plan_id === 'professional' || subscription?.plan_id === 'enterprise') && (
+                      <SidebarMenuItem>
+                        <SidebarMenuButton
+                          onClick={() => navigate('/sla-status')}
+                          isActive={isActive('/sla-status')}
+                          className="flex items-center gap-2"
+                        >
+                          <BarChart3 className="w-4 h-4" />
+                          {!collapsed && <span>SLA Status</span>}
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )}
+
+                    {/* Enterprise API Access */}
+                    {subscription?.plan_id === 'enterprise' && (
+                      <SidebarMenuItem>
+                        <SidebarMenuButton
+                          onClick={() => navigate('/enterprise-api')}
+                          isActive={isActive('/enterprise-api')}
+                          className="flex items-center gap-2"
+                        >
+                          <Key className="w-4 h-4" />
+                          {!collapsed && <span>Enterprise API</span>}
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )}
+
+                    {/* AI Protection Settings */}
+                    <SidebarMenuItem>
                       <SidebarMenuButton
-                        onClick={() => navigate(item.path)}
-                        isActive={isActive(item.path)}
-                        className="flex items-center gap-2 text-orange-600 hover:text-orange-600"
+                        onClick={() => navigate('/ai-protection-settings')}
+                        isActive={isActive('/ai-protection-settings')}
+                        className="flex items-center gap-2"
                       >
-                        <Icon className="w-4 h-4" />
-                        {!collapsed && <span>{item.label}</span>}
+                        <ShieldCheck className="w-4 h-4" />
+                        {!collapsed && <span>AI Protection</span>}
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  );
-                })}
-                
-                {/* SLA Status for Professional/Enterprise */}
-                {(subscription?.plan_id === 'professional' || subscription?.plan_id === 'enterprise') && (
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      onClick={() => navigate('/sla-status')}
-                      isActive={isActive('/sla-status')}
-                      className="flex items-center gap-2"
-                    >
-                      <BarChart3 className="w-4 h-4" />
-                      {!collapsed && <span>SLA Status</span>}
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+
+                    {/* Investor Hub */}
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        onClick={() => navigate('/investors')}
+                        isActive={isActive('/investors')}
+                        className="flex items-center gap-2"
+                      >
+                        <TrendingUp className="w-4 h-4" />
+                        {!collapsed && <span>Investor Hub</span>}
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </>
                 )}
-
-
-                {/* Enterprise API Access */}
-                {subscription?.plan_id === 'enterprise' && (
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      onClick={() => navigate('/enterprise-api')}
-                      isActive={isActive('/enterprise-api')}
-                      className="flex items-center gap-2"
-                    >
-                      <Key className="w-4 h-4" />
-                      {!collapsed && <span>Enterprise API</span>}
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )}
-
-                {/* AI Protection Settings */}
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    onClick={() => navigate('/ai-protection-settings')}
-                    isActive={isActive('/ai-protection-settings')}
-                    className="flex items-center gap-2"
-                  >
-                    <ShieldCheck className="w-4 h-4" />
-                    {!collapsed && <span>AI Protection</span>}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-
-                {/* Investor Hub */}
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    onClick={() => navigate('/investors')}
-                    isActive={isActive('/investors')}
-                    className="flex items-center gap-2"
-                  >
-                    <TrendingUp className="w-4 h-4" />
-                    {!collapsed && <span>Investor Hub</span>}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
