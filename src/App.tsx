@@ -13,6 +13,7 @@ import MaintenanceMode from "@/components/MaintenanceMode";
 import { useMaintenanceMode } from "@/lib/maintenance";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
+import { UserPreferencesProvider } from "@/contexts/UserPreferencesContext";
 import { BlockchainProvider } from "@/contexts/BlockchainContext";
 import SecurityHeaders from "@/components/security/SecurityHeaders";
 import Index from "./pages/Index";
@@ -80,6 +81,7 @@ import PromoMaterials from "./pages/PromoMaterials";
 import ThreatAlerts from "./pages/ThreatAlerts";
 import DMCAAutomation from "./pages/DMCAAutomation";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import AITPAAnalysis from "./pages/AITPAAnalysis";
 
 const queryClient = new QueryClient();
@@ -115,6 +117,7 @@ const App = () => {
         <TooltipProvider>
           <AuthProvider>
             <SubscriptionProvider>
+              <UserPreferencesProvider>
               <BlockchainProvider>
             <SecurityHeaders />
             <Toaster />
@@ -135,6 +138,7 @@ const App = () => {
                       <Route path="/dashboard" element={<Dashboard />} />
                       <Route path="/about-tsmo" element={<AboutTsmo />} />
                       <Route path="/faq" element={<FAQ />} />
+                      <Route path="/settings" element={<Settings />} />
                       <Route path="/profile" element={<Profile />} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/b2b-login" element={<B2BLogin />} />
@@ -257,6 +261,7 @@ const App = () => {
               </div>
             </SidebarProvider>
               </BlockchainProvider>
+              </UserPreferencesProvider>
           </SubscriptionProvider>
         </AuthProvider>
       </TooltipProvider>

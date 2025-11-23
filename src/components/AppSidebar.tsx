@@ -4,6 +4,7 @@ import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
+import { useUserPreferences } from "@/contexts/UserPreferencesContext";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
 import AccountMenu from "./AccountMenu";
@@ -29,6 +30,7 @@ export function AppSidebar() {
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const { user, role, signOut } = useAuth();
   const { subscription } = useSubscription();
+  const { interfaceMode } = useUserPreferences();
   const { t } = useTranslation();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
@@ -37,6 +39,16 @@ export function AppSidebar() {
     await signOut();
     navigate('/');
   };
+
+  // Simplified navigation for beginner mode
+  const beginnerNavItems = [
+    { path: "/", label: "Home", icon: Home },
+    { path: "/dashboard", label: "My Dashboard", icon: Home },
+    { path: "/upload", label: "My Art", icon: FileImage },
+    { path: "/monitoring-hub", label: "Find Copies", icon: Search },
+    { path: "/dmca-center", label: "Alerts", icon: AlertTriangle },
+    { path: "/settings", label: "Settings", icon: Settings },
+  ];
 
   const mainNavItems = [
     { path: "/", label: t('nav.home'), icon: Home },
@@ -55,6 +67,8 @@ export function AppSidebar() {
     { path: "/faq", label: "FAQ", icon: HelpCircle },
     { path: "/roadmap", label: "Roadmap", icon: TrendingUp },
   ];
+
+  const navItems = interfaceMode === 'beginner' ? beginnerNavItems : mainNavItems;
 
   // Advanced monitoring features (Phase 3-6)
   const advancedMonitoringItems = [
@@ -95,10 +109,10 @@ export function AppSidebar() {
 
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Main Navigation</SidebarGroupLabel>
+            <SidebarGroupLabel>{interfaceMode === 'beginner' ? 'Menu' : 'Main Navigation'}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {mainNavItems.map((item) => {
+                {navItems.map((item) => {
                   const Icon = item.icon;
                   return (
                     <SidebarMenuItem key={item.path}>
@@ -187,7 +201,8 @@ export function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
 
-          {/* Advanced Monitoring Features */}
+          {/* Advanced Monitoring Features - Hidden in beginner mode */}
+          {interfaceMode === 'advanced' && (
           <SidebarGroup>
             <SidebarGroupLabel>Advanced Monitoring</SidebarGroupLabel>
             <SidebarGroupContent>
@@ -216,7 +231,9 @@ export function AppSidebar() {
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
+          )}
 
+          {interfaceMode === 'advanced' && (
           <SidebarGroup>
             <SidebarGroupLabel>Other</SidebarGroupLabel>
             <SidebarGroupContent>
@@ -243,6 +260,7 @@ export function AppSidebar() {
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
+          )}
         </SidebarContent>
 
         <SidebarFooter className="p-4 space-y-2">
