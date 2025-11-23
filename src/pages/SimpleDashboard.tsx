@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { SimpleAIProtection } from '@/components/beginner/SimpleAIProtection';
 import { useAIProtectionStats } from '@/hooks/useAIProtectionStats';
+import { MobileCommunity } from '@/components/mobile/MobileCommunity';
 
 const SimpleDashboard = () => {
   const navigate = useNavigate();
@@ -214,6 +215,12 @@ const SimpleDashboard = () => {
             Get Help
           </Button>
         </div>
+      </div>
+
+      {/* Community Section */}
+      <div>
+        <h2 className="text-2xl font-bold mb-4">Community</h2>
+        <MobileCommunity />
       </div>
     </div>
   );
