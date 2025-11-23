@@ -1118,7 +1118,7 @@ export const advancedImageAnalysisGuide = {
 
 export const monitoringHubGuide = {
   title: "How to Use Monitoring & Detection Hub",
-  description: "Step-by-step guide to monitor portfolios, detect deepfakes, and identify forgery",
+  description: "Beginner-friendly guide to monitor portfolios, detect deepfakes, and identify forgery",
   sections: [
     {
       title: "Getting Started with Monitoring Hub",
@@ -1126,238 +1126,199 @@ export const monitoringHubGuide = {
         <p><strong>How to Access:</strong></p>
         <ol>
           <li>Click "Monitoring Hub" in the main navigation menu</li>
-          <li>Or navigate to /monitoring-hub</li>
+          <li>Or navigate directly to /monitoring-hub</li>
         </ol>
-        <p><strong>Five Key Stats at the Top:</strong></p>
+        <p><strong>What You'll See at the Top:</strong></p>
         <ul>
-          <li><strong>Active Monitoring:</strong> Shows 24/7 real-time monitoring status</li>
-          <li><strong>Scans Completed:</strong> Total number of platform scans performed</li>
-          <li><strong>Violations Found:</strong> Number of detected copyright violations</li>
-          <li><strong>Protection Rate:</strong> Percentage of successful threat resolutions</li>
-          <li><strong>Platforms Monitored:</strong> Number of platforms currently being scanned</li>
+          <li><strong>Active Monitoring:</strong> Shows 24/7 protection is running</li>
+          <li><strong>Scans Completed:</strong> How many times we've checked for violations</li>
+          <li><strong>Violations Found:</strong> Unauthorized uses detected</li>
+          <li><strong>Protection Rate:</strong> How successful we are at stopping violations</li>
+          <li><strong>Platforms Monitored:</strong> How many websites we're watching</li>
         </ul>
-        <p><strong>Note:</strong> Stats show demo numbers for illustration until your actual monitoring data populates.</p>
-        <p><strong>Five Monitoring Tabs (left to right):</strong></p>
+        <p><strong>Six Tabs Available:</strong></p>
         <ol>
-          <li><strong>Portfolio:</strong> Monitor your entire collection of protected works - <span class="text-green-600 font-semibold">FULLY ACTIVE</span></li>
-          <li><strong>Profile:</strong> Track unauthorized use of your identity - <span class="text-orange-600 font-semibold">COMING SOON</span></li>
-          <li><strong>Trademark:</strong> Detect trademark violations globally - <span class="text-orange-600 font-semibold">COMING SOON</span></li>
-          <li><strong>Deepfake:</strong> Identify AI-generated deepfakes using your likeness - <span class="text-green-600 font-semibold">FULLY ACTIVE</span></li>
-          <li><strong>Forgery:</strong> Detect image manipulation and AI-generated content - <span class="text-green-600 font-semibold">FULLY ACTIVE</span></li>
+          <li><strong>Portfolio:</strong> Monitor your collection - <span class="text-green-600 font-semibold">FULLY WORKING</span></li>
+          <li><strong>Profile:</strong> Track identity misuse - <span class="text-orange-600 font-semibold">COMING SOON</span></li>
+          <li><strong>Trademark:</strong> Detect trademark violations - <span class="text-orange-600 font-semibold">COMING SOON</span></li>
+          <li><strong>Deepfake:</strong> Find AI fakes - <span class="text-green-600 font-semibold">FULLY WORKING</span></li>
+          <li><strong>Forgery:</strong> Detect edited images - <span class="text-green-600 font-semibold">FULLY WORKING</span></li>
+          <li><strong>Diagnostics:</strong> Admin tools - For administrators only</li>
         </ol>
       `,
       tips: [
-        "Focus on Portfolio, Deepfake, and Forgery tabs - they're fully operational",
-        "Profile and Trademark monitoring are placeholder tabs for future features",
-        "Demo stats will be replaced with your real data once monitoring starts"
+        "Start with the Portfolio tab to see your protected works",
+        "Numbers shown are examples - your real data will appear after first scan",
+        "Click any tab to switch between different monitoring tools"
       ]
     },
     {
       title: "Using Portfolio Monitoring",
       content: `
-        <p><strong>How to Monitor Your Portfolio:</strong></p>
+        <p><strong>Step-by-Step:</strong></p>
         <ol>
-          <li>Click the "Portfolio" tab at the top</li>
-          <li>You'll see the Portfolio Dashboard with your protected works</li>
-          <li>Review protection status for each artwork</li>
-          <li>Check for detected matches across platforms</li>
-          <li>View blockchain certificates if enabled</li>
+          <li>Click the "Portfolio" tab</li>
+          <li>See all your protected artworks listed</li>
+          <li>Check protection status for each item</li>
+          <li>View any violations that were found</li>
+          <li>Click on violations to see more details</li>
         </ol>
-        <p><strong>What Portfolio Monitoring Tracks:</strong></p>
+        <p><strong>What We Monitor:</strong></p>
         <ul>
-          <li>All your uploaded and protected artworks</li>
-          <li>Active scans across multiple platforms</li>
-          <li>Copyright infringement matches</li>
-          <li>Protection status (watermarked, blockchain registered)</li>
-          <li>Historical scan results</li>
+          <li>Every artwork you've uploaded and protected</li>
+          <li>Social media platforms (Instagram, Facebook, Twitter, etc.)</li>
+          <li>E-commerce sites (Etsy, Redbubble, etc.)</li>
+          <li>Image search engines</li>
+          <li>Art-sharing websites</li>
         </ul>
-        <p><strong>How to Take Action:</strong></p>
+        <p><strong>When a Violation is Found:</strong></p>
         <ol>
-          <li>Click on any detected violation</li>
-          <li>Review evidence and match confidence score</li>
-          <li>Use Quick Actions to file DMCA notice</li>
-          <li>Track resolution in your Dashboard</li>
+          <li>You'll see it listed with a confidence score (how sure we are it's a violation)</li>
+          <li>Click to view evidence (screenshots, URLs)</li>
+          <li>Use the Quick Actions section to file a takedown notice</li>
+          <li>We'll track the resolution for you</li>
         </ol>
       `,
       tips: [
-        "Portfolio tab is your main monitoring dashboard",
-        "Check it daily for new matches",
-        "Higher confidence scores (>80%) are likely real violations"
+        "Check Portfolio tab daily for new violations",
+        "Confidence above 80% usually means it's a real violation",
+        "Use Quick Actions at the bottom to take fast action"
       ]
     },
     {
-      title: "Deepfake Detection & Monitoring",
+      title: "Deepfake Detection & Scanning",
       content: `
-        <p><strong>How to Access Deepfake Monitoring:</strong></p>
-        <ol>
-          <li>Click the "Deepfake" tab in Monitoring Hub</li>
-          <li>View real-time detection statistics and capabilities</li>
-          <li>Review recent detections and threat levels</li>
-        </ol>
-        <p><strong>Detection Capabilities:</strong></p>
-        <ul>
-          <li>Advanced AI-powered deepfake detection technology</li>
-          <li>Multi-platform scanning across social media and video sites</li>
-          <li>Real-time threat assessment and classification</li>
-        </ul>
         <p><strong>How to Start a Deepfake Scan:</strong></p>
         <ol>
-          <li>In the Deepfake tab, locate the "Start Deepfake Scan" button</li>
-          <li>Click the button to initiate a new scan</li>
-          <li>Scans run across 47 social media and video platforms</li>
-          <li>Results appear in "Recent Detections" card</li>
+          <li>Click the "Deepfake" tab</li>
+          <li>See detection statistics and recent findings</li>
+          <li>Click "Start Deepfake Scan" button</li>
+          <li>You'll be taken to the AI Image Detector tool</li>
+          <li>Upload an image or paste a URL to check</li>
+          <li>Click "Analyze for AI Generation" to start</li>
         </ol>
-        <p><strong>Understanding Detection Results:</strong></p>
+        <p><strong>Understanding Deepfake Results:</strong></p>
+        <ul>
+          <li><strong>Detection Accuracy:</strong> How good our AI detector is (shown as percentage)</li>
+          <li><strong>Processing Speed:</strong> How fast scans complete (usually 2-3 seconds)</li>
+          <li><strong>Platforms Monitored:</strong> How many sites we're actively scanning</li>
+        </ul>
+        <p><strong>Recent Detections Section:</strong></p>
         <ul>
           <li><strong>Critical (Red):</strong> High-quality deepfake detected - immediate action needed</li>
-          <li><strong>Warning (Orange):</strong> Face swap or manipulation attempt identified</li>
-          <li><strong>Low Risk (Yellow):</strong> Voice synthesis or minor manipulation detected</li>
+          <li><strong>Warning (Orange):</strong> Face swap or manipulation detected</li>
+          <li><strong>Low Risk (Yellow):</strong> Minor indicators found</li>
         </ul>
-        <p><strong>Taking Action on Deepfakes:</strong></p>
-        <ol>
-          <li>Click on any detection in "Recent Detections"</li>
-          <li>Review the threat level and evidence</li>
-          <li>For Critical threats, file DMCA immediately</li>
-          <li>Use Analytics Dashboard to track patterns</li>
-        </ol>
       `,
       tips: [
-        "Run deepfake scans weekly to catch new threats early",
-        "Critical (red) detections require immediate action",
-        "Save evidence screenshots for legal purposes"
+        "Click 'Start Deepfake Scan' to analyze specific images",
+        "Higher threat levels need faster response",
+        "Save evidence screenshots for later reference"
       ]
     },
     {
-      title: "Forgery & Image Analysis",
+      title: "Image Forgery Detection",
       content: `
-        <p><strong>How to Access Forgery Detection:</strong></p>
+        <p><strong>How to Analyze an Image for Forgery:</strong></p>
         <ol>
-          <li>Click the "Forgery" tab in Monitoring Hub</li>
-          <li>View Image Forgery Analysis card on the left</li>
-          <li>Review Detection Techniques on the right</li>
+          <li>Click the "Forgery" tab</li>
+          <li>Review the detection capabilities displayed</li>
+          <li>Click "Analyze Image" button</li>
+          <li>You'll go to the Forgery Detection tool</li>
+          <li>Upload an image from your computer</li>
+          <li>Use the analysis buttons to check the image</li>
         </ol>
-        <p><strong>Active Detection Methods:</strong></p>
+        <p><strong>Four Analysis Tools Available:</strong></p>
         <ul>
-          <li><strong>Manipulation Detection:</strong> Active - finds edited images</li>
-          <li><strong>Metadata Analysis:</strong> Enhanced - checks EXIF data for tampering</li>
-          <li><strong>AI-Generated Detection:</strong> AI-Powered - identifies AI-created images</li>
+          <li><strong>ELA (Error Level Analysis):</strong> Shows edited regions in the image</li>
+          <li><strong>Metadata Check:</strong> Reads camera and editing information</li>
+          <li><strong>Watermark Detection:</strong> Finds invisible watermarks</li>
+          <li><strong>AI Analysis:</strong> Uses AI to detect deepfakes and manipulation</li>
         </ul>
-        <p><strong>How to Analyze an Image:</strong></p>
-        <ol>
-          <li>In the Forgery tab, click "Analyze Image" button</li>
-          <li>Upload the suspicious image</li>
-          <li>Wait for analysis (5-15 seconds)</li>
-          <li>Review results showing manipulation probability</li>
-          <li>Check which techniques detected issues</li>
-        </ol>
-        <p><strong>Six Detection Techniques Used:</strong></p>
-        <ol>
-          <li><strong>Copy-move detection:</strong> Finds duplicated regions in images</li>
-          <li><strong>Splice detection:</strong> Identifies images merged from multiple sources</li>
-          <li><strong>EXIF forensics:</strong> Analyzes metadata for inconsistencies</li>
-          <li><strong>Compression artifacts:</strong> Detects re-compression patterns</li>
-          <li><strong>AI fingerprinting:</strong> Identifies AI-generated content</li>
-          <li><strong>Geometric transformation:</strong> Finds rotation, scaling, or distortion</li>
-        </ol>
-        <p><strong>Interpreting Results:</strong></p>
+        <p><strong>Detection Techniques Explained:</strong></p>
         <ul>
-          <li>High confidence (>85%): Image is likely manipulated or AI-generated</li>
-          <li>Medium confidence (50-85%): Further investigation recommended</li>
-          <li>Low confidence (<50%): Image appears authentic</li>
+          <li><strong>Copy-move detection:</strong> Finds copied and pasted areas</li>
+          <li><strong>Splice detection:</strong> Identifies images combined together</li>
+          <li><strong>EXIF forensics:</strong> Checks camera data for inconsistencies</li>
+          <li><strong>AI fingerprinting:</strong> Detects AI-generated content</li>
         </ul>
       `,
       tips: [
-        "Use forgery detection on suspicious copies of your work",
-        "EXIF metadata can reveal if image was edited",
-        "AI-generated detection helps identify fake versions"
+        "Run all four analysis tools for best results",
+        "Bright areas in ELA may indicate editing",
+        "Missing metadata can be a red flag"
       ]
     },
     {
-      title: "Using Quick Actions",
+      title: "Quick Actions - Take Fast Action",
       content: `
-        <p><strong>Quick Actions Panel Location:</strong></p>
+        <p>At the bottom of the Monitoring Hub, you'll find Quick Actions for common tasks:</p>
+        <p><strong>1. Start Comprehensive Scan:</strong></p>
         <ul>
-          <li>Scroll to the bottom of any Monitoring Hub tab</li>
-          <li>Find the "Quick Actions" card</li>
+          <li>Click to begin full portfolio monitoring</li>
+          <li>Takes you to Portfolio Monitoring page</li>
+          <li>Scans all your protected works across platforms</li>
         </ul>
-        <p><strong>Three Quick Actions Available:</strong></p>
+        <p><strong>2. View All Alerts:</strong></p>
+        <ul>
+          <li>See all detected violations in one place</li>
+          <li>Takes you to AI Protection page</li>
+          <li>Shows threats requiring your attention</li>
+        </ul>
+        <p><strong>3. Analytics Dashboard:</strong></p>
+        <ul>
+          <li>View detailed statistics and trends</li>
+          <li>Opens the Analytics page</li>
+          <li>See charts and graphs of your protection data</li>
+        </ul>
+        <p><strong>How to Use Quick Actions:</strong></p>
         <ol>
-          <li><strong>Start Comprehensive Scan:</strong>
-            <ul>
-              <li>Initiates full scan across all platforms</li>
-              <li>Checks portfolio, deepfakes, and forgery</li>
-              <li>Takes 5-10 minutes to complete</li>
-            </ul>
-          </li>
-          <li><strong>View All Alerts:</strong>
-            <ul>
-              <li>Opens centralized alerts dashboard</li>
-              <li>Shows all detected violations</li>
-              <li>Prioritized by threat level</li>
-            </ul>
-          </li>
-          <li><strong>Analytics Dashboard:</strong>
-            <ul>
-              <li>Opens detailed analytics and trends</li>
-              <li>Shows violation patterns over time</li>
-              <li>Helps identify high-risk platforms</li>
-            </ul>
-          </li>
+          <li>Scroll to the bottom of Monitoring Hub</li>
+          <li>Click any Quick Action button</li>
+          <li>You'll navigate to the relevant page automatically</li>
         </ol>
-        <p><strong>When to Use Quick Actions:</strong></p>
-        <ul>
-          <li><strong>Comprehensive Scan:</strong> Run weekly or before important launches</li>
-          <li><strong>View All Alerts:</strong> Check daily for new violations</li>
-          <li><strong>Analytics:</strong> Review monthly to understand threat trends</li>
-        </ul>
       `,
       tips: [
-        "Run comprehensive scans before product launches",
-        "Check alerts daily for time-sensitive violations",
-        "Use analytics to identify which platforms need more monitoring"
+        "Quick Actions save time - use them instead of navigating menus",
+        "Start Comprehensive Scan regularly to catch new violations",
+        "Check Analytics weekly to track protection trends"
       ]
     },
     {
-      title: "Best Practices for Monitoring",
+      title: "Beginner Tips & Best Practices",
       content: `
-        <p><strong>Daily Routine:</strong></p>
+        <p><strong>Daily Routine (5 minutes):</strong></p>
         <ol>
-          <li>Check Monitoring Hub dashboard stats</li>
-          <li>Review "Violations Found" count for changes</li>
-          <li>Click "View All Alerts" to see new detections</li>
-          <li>Take action on high-priority violations (Critical/Warning)</li>
+          <li>Open Monitoring Hub</li>
+          <li>Check the stats at the top for new violations</li>
+          <li>Click Portfolio tab to review your works</li>
+          <li>Address any high-priority violations found</li>
         </ol>
-        <p><strong>Weekly Actions:</strong></p>
+        <p><strong>When You Find a Violation:</strong></p>
         <ol>
-          <li>Run "Start Comprehensive Scan" from Quick Actions</li>
-          <li>Run manual deepfake scan in Deepfake tab</li>
-          <li>Check Portfolio tab for all protected works</li>
-          <li>Review analytics to spot trends</li>
+          <li>Don't panic - we've got tools to help</li>
+          <li>Click on the violation to see evidence</li>
+          <li>Check the confidence score (higher = more certain)</li>
+          <li>Use Quick Actions to file a takedown notice</li>
+          <li>Monitor the resolution in your Dashboard</li>
         </ol>
-        <p><strong>Monthly Review:</strong></p>
-        <ol>
-          <li>Open Analytics Dashboard</li>
-          <li>Review violation patterns and trends</li>
-          <li>Identify high-risk platforms</li>
-          <li>Adjust monitoring settings based on findings</li>
-          <li>Export reports for records</li>
-        </ol>
-        <p><strong>When to Take Immediate Action:</strong></p>
+        <p><strong>Common Questions:</strong></p>
         <ul>
-          <li>Critical deepfake detections (red badge)</li>
-          <li>Commercial use of your work detected</li>
-          <li>High-confidence forgery matches (>85%)</li>
-          <li>Multiple violations from same source</li>
+          <li><strong>How often should I check?</strong> Daily is best, weekly minimum</li>
+          <li><strong>What confidence score is reliable?</strong> 80% or higher</li>
+          <li><strong>Can I automate responses?</strong> Yes, with Pro plan</li>
+          <li><strong>How long does scanning take?</strong> Initial scan: 10-15 min, ongoing: continuous</li>
         </ul>
       `,
       tips: [
-        "Set aside 5 minutes daily to review Monitoring Hub",
-        "Act within 24 hours on Critical threats",
-        "Document all violations for potential legal action"
+        "Set a daily reminder to check Monitoring Hub",
+        "Don't ignore low-confidence matches - review them anyway",
+        "Keep records of all violations and actions taken"
       ]
     }
   ]
 };
+
 
 export const unifiedDashboardGuide = {
   title: "Unified Dashboard Guide",
