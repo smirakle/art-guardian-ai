@@ -79,16 +79,39 @@ const AIImageDetector: React.FC = () => {
     setResult(null);
 
     try {
-      let imageData = '';
+      let finalImageUrl = imageUrl;
       
+      // If user uploaded a file, upload it to storage first
       if (file) {
-        // Convert file to base64
-        const reader = new FileReader();
-        imageData = await new Promise<string>((resolve, reject) => {
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
+        console.log('Uploading image to storage...');
+        setProgress(10);
+        
+        // Get current user
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          throw new Error('Authentication required - please sign in');
+        }
+        
+        // Upload image to Supabase Storage
+        const filePath = `ai-detection/${user.id}/${Date.now()}_${file.name}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('artwork')
+          .upload(filePath, file, { upsert: true });
+        
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          throw new Error(`Upload failed: ${uploadError.message}`);
+        }
+        
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('artwork')
+          .getPublicUrl(filePath);
+        
+        finalImageUrl = publicUrl;
+        console.log('Image uploaded, public URL:', publicUrl);
+        setProgress(30);
+      } else {
         setProgress(20);
       }
 
@@ -97,10 +120,10 @@ const AIImageDetector: React.FC = () => {
         setProgress(prev => Math.min(prev + 10, 90));
       }, 500);
 
+      console.log('Calling AI detection function with URL:', finalImageUrl);
       const { data, error } = await supabase.functions.invoke('ai-image-detector', {
         body: {
-          imageUrl: imageUrl || undefined,
-          imageData: imageData || undefined,
+          imageUrl: finalImageUrl,
         },
       });
 
@@ -113,9 +136,11 @@ const AIImageDetector: React.FC = () => {
       }
 
       if (!data || !data.result) {
+        console.error('Invalid response:', data);
         throw new Error('Invalid response from detection service');
       }
 
+      console.log('Analysis result:', data.result);
       setResult(data.result);
       
       toast({
