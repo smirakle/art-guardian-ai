@@ -131,12 +131,31 @@ export default function ImageForgeryDetector() {
   };
 
   const aiForgeryAnalysis = async () => {
-    if (!src) return;
+    if (!file) return;
     try {
       setProcessing(true);
+      
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Authentication required');
+      
+      // Upload image to Supabase Storage to get a public URL
+      const filePath = `forensics/${user.id}/${Date.now()}_${file.name}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('artwork')
+        .upload(filePath, file, { upsert: true });
+      
+      if (uploadError) throw uploadError;
+      
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('artwork')
+        .getPublicUrl(filePath);
+      
+      // Call edge function with public URL
       const { data, error } = await supabase.functions.invoke('advanced-visual-analysis', {
         body: { 
-          imageUrl: src,
+          imageUrl: publicUrl,
           analysisTypes: ['deepfake_detection']
         }
       });
