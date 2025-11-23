@@ -108,22 +108,28 @@ const SimpleDashboard = () => {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {artwork.map((art) => (
-                <div key={art.id} className="relative group">
-                  <img
-                    src={art.file_paths[0]}
-                    alt={art.title}
-                    className="w-full aspect-square object-cover rounded-lg"
-                  />
-                  <div className="absolute top-2 right-2">
-                    <Badge variant="default" className="bg-green-600">
-                      <CheckCircle2 className="h-3 w-3 mr-1" />
-                      Protected
-                    </Badge>
+              {artwork.map((art) => {
+                const imageUrl = art.file_paths[0]?.startsWith('http') 
+                  ? art.file_paths[0]
+                  : supabase.storage.from('artwork').getPublicUrl(art.file_paths[0]).data.publicUrl;
+                
+                return (
+                  <div key={art.id} className="relative group">
+                    <img
+                      src={imageUrl}
+                      alt={art.title}
+                      className="w-full aspect-square object-cover rounded-lg"
+                    />
+                    <div className="absolute top-2 right-2">
+                      <Badge variant="default" className="bg-green-600">
+                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        Protected
+                      </Badge>
+                    </div>
+                    <p className="mt-2 font-medium truncate">{art.title}</p>
                   </div>
-                  <p className="mt-2 font-medium truncate">{art.title}</p>
-                </div>
-              ))}
+                );
+              })}
               <button
                 onClick={() => navigate('/upload')}
                 className="aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center hover:border-primary hover:bg-muted/50 transition-colors"
