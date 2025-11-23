@@ -131,35 +131,55 @@ export default function ImageForgeryDetector() {
   };
 
   const aiForgeryAnalysis = async () => {
-    if (!file) return;
+    if (!file) {
+      toast({ title: 'No file selected', description: 'Please upload an image first.', variant: 'destructive' });
+      return;
+    }
     try {
       setProcessing(true);
+      console.log('Starting AI forgery analysis...');
       
       // Get current user
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Authentication required');
+      if (!user) {
+        throw new Error('Authentication required - please sign in');
+      }
+      console.log('User authenticated:', user.id);
       
       // Upload image to Supabase Storage to get a public URL
       const filePath = `forensics/${user.id}/${Date.now()}_${file.name}`;
+      console.log('Uploading to:', filePath);
+      
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('artwork')
         .upload(filePath, file, { upsert: true });
       
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw new Error(`Upload failed: ${uploadError.message}`);
+      }
+      console.log('Upload successful:', uploadData);
       
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('artwork')
         .getPublicUrl(filePath);
+      console.log('Public URL:', publicUrl);
       
       // Call edge function with public URL
+      console.log('Calling edge function...');
       const { data, error } = await supabase.functions.invoke('advanced-visual-analysis', {
         body: { 
           imageUrl: publicUrl,
           analysisTypes: ['deepfake_detection']
         }
       });
-      if (error) throw error;
+      
+      if (error) {
+        console.error('Edge function error:', error);
+        throw new Error(`Analysis failed: ${error.message}`);
+      }
+      console.log('Edge function response:', data);
       
       const deepfakeData = data?.results?.deepfake_detection;
       const confidence = Math.round((deepfakeData?.confidence ?? 0.5) * 100);
@@ -174,7 +194,7 @@ export default function ImageForgeryDetector() {
         description: `AI confidence: ${confidence}%` 
       });
     } catch (e: any) {
-      console.error(e);
+      console.error('AI forgery analysis error:', e);
       toast({ 
         title: 'AI analysis failed', 
         description: e?.message ?? 'Could not analyze image', 
