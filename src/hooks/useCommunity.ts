@@ -236,11 +236,33 @@ export const useCommunity = () => {
     }
 
     try {
-      const { error } = await supabase
+      // Check if user already liked this post
+      const { data: existingLike } = await supabase
         .from('community_votes')
-        .upsert({ post_id: postId, vote_type: 'like', user_id: user.id });
+        .select('id')
+        .eq('post_id', postId)
+        .eq('user_id', user.id)
+        .eq('vote_type', 'like')
+        .single();
 
-      if (error) throw error;
+      if (existingLike) {
+        // Unlike - delete the vote
+        const { error } = await supabase
+          .from('community_votes')
+          .delete()
+          .eq('post_id', postId)
+          .eq('user_id', user.id)
+          .eq('vote_type', 'like');
+
+        if (error) throw error;
+      } else {
+        // Like - insert new vote
+        const { error } = await supabase
+          .from('community_votes')
+          .insert({ post_id: postId, vote_type: 'like', user_id: user.id });
+
+        if (error) throw error;
+      }
       
       await fetchPosts();
     } catch (error) {
