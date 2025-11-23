@@ -189,7 +189,7 @@ async function searchKnownAIDatasets(fingerprint: string, imageUrl: string): Pro
         title: `Potential match in ${dataset.name} dataset`,
         confidence,
         domain: dataset.domain,
-        thumbnail: imageUrl,
+        thumbnail: null,
         snippet: `Fingerprint analysis suggests possible inclusion in ${dataset.name} training dataset`
       });
     }
