@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +28,7 @@ import AdminOnly from '@/components/AdminOnly';
 
 const MonitoringHub = () => {
   const [activeTab, setActiveTab] = useState('portfolio');
+  const navigate = useNavigate();
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
@@ -187,7 +189,7 @@ const MonitoringHub = () => {
                     <span>Platforms Monitored</span>
                     <Badge className="bg-purple-500">47 active</Badge>
                   </div>
-                  <Button className="w-full mt-4">
+                  <Button className="w-full mt-4" onClick={() => navigate('/forgery-detection?tab=ai-detection')}>
                     <Search className="h-4 w-4 mr-2" />
                     Start Deepfake Scan
                   </Button>
@@ -243,7 +245,7 @@ const MonitoringHub = () => {
                     <span>AI-Generated Detection</span>
                     <Badge className="bg-purple-500">AI-Powered</Badge>
                   </div>
-                  <Button className="w-full mt-4">
+                  <Button className="w-full mt-4" onClick={() => navigate('/forgery-detection?tab=forgery-detection')}>
                     <Monitor className="h-4 w-4 mr-2" />
                     Analyze Image
                   </Button>
@@ -287,15 +289,15 @@ const MonitoringHub = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button className="flex items-center gap-2">
+            <Button className="flex items-center gap-2" onClick={() => navigate('/portfolio-monitoring')}>
               <Search className="h-4 w-4" />
               Start Comprehensive Scan
             </Button>
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button variant="outline" className="flex items-center gap-2" onClick={() => navigate('/ai-protection')}>
               <AlertTriangle className="h-4 w-4" />
               View All Alerts
             </Button>
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button variant="outline" className="flex items-center gap-2" onClick={() => navigate('/analytics')}>
               <TrendingUp className="h-4 w-4" />
               Analytics Dashboard
             </Button>

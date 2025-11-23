@@ -44,6 +44,7 @@ export default function ImageForgeryDetector() {
 
   const onPick = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
+    console.log('[ImageForgeryDetector] File picked:', f?.name, f?.type);
     if (!f) return;
     if (!f.type.startsWith('image/')) {
       toast({ title: 'Unsupported file', description: 'Please choose an image file.', variant: 'destructive' });
@@ -53,6 +54,7 @@ export default function ImageForgeryDetector() {
     const url = URL.createObjectURL(f);
     if (src) URL.revokeObjectURL(src);
     setSrc(url);
+    console.log('[ImageForgeryDetector] Image source set:', url);
     setElaUrl((u) => { if (u) URL.revokeObjectURL(u); return null; });
     setAiResult(null);
     setWatermark(null);
