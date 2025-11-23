@@ -42,6 +42,7 @@ const AIImageDetector: React.FC = () => {
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
+    console.log('[AIImageDetector] File uploaded:', selectedFile?.name, selectedFile?.type);
     if (!selectedFile) return;
 
     if (!selectedFile.type.startsWith('image/')) {
@@ -56,6 +57,7 @@ const AIImageDetector: React.FC = () => {
     setFile(selectedFile);
     setImageUrl('');
     setResult(null);
+    console.log('[AIImageDetector] File state set, imageUrl cleared');
   };
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
