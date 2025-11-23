@@ -6,10 +6,13 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { SimpleAIProtection } from '@/components/beginner/SimpleAIProtection';
+import { useAIProtectionStats } from '@/hooks/useAIProtectionStats';
 
 const SimpleDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { stats: aiProtectionStats } = useAIProtectionStats();
 
   // Fetch user's artwork
   const { data: artwork } = useQuery({
@@ -52,6 +55,32 @@ const SimpleDashboard = () => {
       <div>
         <h1 className="text-4xl font-bold mb-2">Welcome Back!</h1>
         <p className="text-lg text-muted-foreground">Here's what's happening with your art</p>
+        
+        {/* Quick Stats */}
+        <div className="flex flex-wrap gap-4 mt-4 text-sm">
+          <div className="flex items-center gap-2">
+            <Shield className="h-4 w-4 text-green-600" />
+            <span className="text-muted-foreground">
+              {artwork?.length || 0} artworks protected
+            </span>
+          </div>
+          {aiProtectionStats.totalProtected > 0 && (
+            <div className="flex items-center gap-2">
+              <Shield className="h-4 w-4 text-primary" />
+              <span className="text-muted-foreground">
+                {aiProtectionStats.totalProtected} protected from AI training
+              </span>
+            </div>
+          )}
+          {threatCount > 0 && (
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-destructive" />
+              <span className="text-muted-foreground">
+                {threatCount} alerts need attention
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Your Protected Art */}
@@ -105,6 +134,9 @@ const SimpleDashboard = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* AI Training Protection Section */}
+      <SimpleAIProtection />
 
       {/* Alerts Section */}
       <Card className={threatCount > 0 ? "border-2 border-destructive" : "border-2 border-green-500"}>
