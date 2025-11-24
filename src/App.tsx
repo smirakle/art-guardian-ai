@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +16,7 @@ import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { UserPreferencesProvider } from "@/contexts/UserPreferencesContext";
 import { BlockchainProvider } from "@/contexts/BlockchainContext";
 import SecurityHeaders from "@/components/security/SecurityHeaders";
+import { initializeErrorHandlers, cleanupErrorHandlers } from "@/lib/errorBoundary";
 import Index from "./pages/Index";
 import AboutTsmo from "./pages/AboutTsmo";
 import FAQ from "./pages/FAQ";
@@ -92,6 +93,12 @@ const App = () => {
   
   // Activate Real User Monitoring for all pages
   const { trackUserAction } = useRealUserMonitoring();
+
+  // Initialize global error handlers for production
+  useEffect(() => {
+    initializeErrorHandlers();
+    return () => cleanupErrorHandlers();
+  }, []);
 
   // If maintenance mode is enabled, show only the maintenance page
   if (isMaintenanceMode) {
