@@ -115,11 +115,9 @@ const App = () => {
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <AuthProvider>
-            <SubscriptionProvider>
-              <UserPreferencesProvider>
-              <BlockchainProvider>
-            <SecurityHeaders />
+          <UserPreferencesProvider>
+            <BlockchainProvider>
+              <SecurityHeaders />
             <Toaster />
             <Sonner />
             <SmartOnboarding />
@@ -258,15 +256,13 @@ const App = () => {
                    </div>
                    <CopyrightFooter />
                 </main>
-              </div>
+               </div>
             </SidebarProvider>
-              </BlockchainProvider>
-              </UserPreferencesProvider>
-          </SubscriptionProvider>
-        </AuthProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
-      </WagmiProvider>
+            </BlockchainProvider>
+          </UserPreferencesProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 };
 
