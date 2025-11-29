@@ -25,7 +25,8 @@ export const useProtectedDocumentUpload = () => {
 
   const uploadProtectedDocument = async (
     file: File,
-    options: ProtectionOptions
+    options: ProtectionOptions,
+    guestSessionId?: string
   ): Promise<UploadResult> => {
     setUploading(true);
     setExtractionProgress(0);
@@ -37,7 +38,7 @@ export const useProtectedDocumentUpload = () => {
       }
 
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("User not authenticated");
+      const isGuest = !user && guestSessionId;
 
       setExtractionStatus("Extracting text from document...");
       const extractionResult = await DocumentProcessor.extractText(file, (progress, status) => {
@@ -47,11 +48,12 @@ export const useProtectedDocumentUpload = () => {
 
       let fingerprint = "";
       if (options.enableFingerprinting) {
-        fingerprint = DocumentProcessor.generateFingerprint(extractionResult.text, user.id);
+        const userId = user?.id || guestSessionId || 'anonymous';
+        fingerprint = DocumentProcessor.generateFingerprint(extractionResult.text, userId);
       }
 
       let processedText = extractionResult.text;
-      const protectionId = `prot_${Date.now()}_${user.id.substring(0, 8)}`;
+      const protectionId = `prot_${Date.now()}_${user?.id.substring(0, 8) || guestSessionId?.substring(0, 8) || 'guest'}`;
       if (options.enableTracers) {
         processedText = DocumentProcessor.injectTracers(extractionResult.text, protectionId);
       }
@@ -76,7 +78,9 @@ export const useProtectedDocumentUpload = () => {
             characterCount: extractionResult.characterCount,
             extractionMethod: extractionResult.extractionMethod,
             pageCount: extractionResult.pageCount,
-            protectionId
+            protectionId,
+            isGuest,
+            guestSessionId
           }
         }
       );

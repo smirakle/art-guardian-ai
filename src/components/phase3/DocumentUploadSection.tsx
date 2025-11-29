@@ -3,9 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useProtectedDocumentUpload } from "@/hooks/useProtectedDocumentUpload";
+import { useGuestSession } from "@/hooks/useGuestSession";
+import { useAuth } from "@/contexts/AuthContext";
 import { Upload, FileText, Shield } from "lucide-react";
 import { useState, useRef } from "react";
 import { Progress } from "@/components/ui/progress";
+import { GuestUploadPrompt } from "./GuestUploadPrompt";
 
 export const DocumentUploadSection = () => {
   const { 
@@ -14,10 +17,14 @@ export const DocumentUploadSection = () => {
     extractionProgress, 
     extractionStatus 
   } = useProtectedDocumentUpload();
+  const { guestSessionId } = useGuestSession();
+  const { user } = useAuth();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [protectionLevel, setProtectionLevel] = useState<"basic" | "standard" | "maximum">("standard");
   const [enableTracers, setEnableTracers] = useState(true);
   const [enableFingerprinting, setEnableFingerprinting] = useState(true);
+  const [showGuestPrompt, setShowGuestPrompt] = useState(false);
+  const [guestUploadCount, setGuestUploadCount] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,11 +57,20 @@ This document contains unique patterns that can be tracked across the internet t
   const handleUpload = async () => {
     if (!selectedFile) return;
 
-    await uploadProtectedDocument(selectedFile, {
-      protectionLevel,
-      enableTracers,
-      enableFingerprinting,
-    });
+    const result = await uploadProtectedDocument(
+      selectedFile, 
+      {
+        protectionLevel,
+        enableTracers,
+        enableFingerprinting,
+      },
+      user ? undefined : guestSessionId
+    );
+
+    if (result.success && !user) {
+      setGuestUploadCount(prev => prev + 1);
+      setShowGuestPrompt(true);
+    }
 
     setSelectedFile(null);
     if (fileInputRef.current) {
@@ -63,14 +79,23 @@ This document contains unique patterns that can be tracked across the internet t
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Upload className="w-5 h-5" />
-          Upload & Protect Documents
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Upload className="w-5 h-5" />
+            Upload & Protect Documents
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {!user && (
+            <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-sm">
+              <p className="text-foreground">
+                <strong>Guest Mode:</strong> You can upload and protect documents without an account. 
+                Create a free account to save and manage your protected content.
+              </p>
+            </div>
+          )}
         <div className="space-y-2">
           <Label>Select Document</Label>
           <div className="flex items-center gap-2">
@@ -150,7 +175,14 @@ This document contains unique patterns that can be tracked across the internet t
             </p>
           </div>
         )}
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+      
+      <GuestUploadPrompt
+        open={showGuestPrompt}
+        onOpenChange={setShowGuestPrompt}
+        uploadCount={guestUploadCount}
+      />
+    </>
   );
 };
