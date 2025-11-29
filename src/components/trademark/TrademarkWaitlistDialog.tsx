@@ -42,14 +42,20 @@ const waitlistSchema = z.object({
 
 type WaitlistFormData = z.infer<typeof waitlistSchema>;
 
+type FeatureType = 'trademark' | 'profile' | 'deepfake' | 'forgery';
+
 interface TrademarkWaitlistDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  featureType?: FeatureType;
+  featureName?: string;
 }
 
 export function TrademarkWaitlistDialog({
   open,
   onOpenChange,
+  featureType = 'trademark',
+  featureName = 'Trademark Monitoring',
 }: TrademarkWaitlistDialogProps) {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -86,6 +92,7 @@ export function TrademarkWaitlistDialog({
         use_case: data.use_case,
         priority_level: data.priority_level,
         status: "pending",
+        feature_type: featureType,
       });
 
       if (error) throw error;
@@ -93,7 +100,7 @@ export function TrademarkWaitlistDialog({
       setIsSuccess(true);
       toast({
         title: "Successfully joined waitlist! 🎉",
-        description: "We'll notify you when trademark monitoring becomes available.",
+        description: `We'll notify you when ${featureName} becomes available.`,
       });
 
       setTimeout(() => {
@@ -124,13 +131,13 @@ export function TrademarkWaitlistDialog({
                 You're on the list!
               </>
             ) : (
-              "Join Trademark Monitoring Waitlist"
+              `Join ${featureName} Waitlist`
             )}
           </DialogTitle>
           <DialogDescription>
             {isSuccess
-              ? "We'll keep you updated on our trademark monitoring launch."
-              : "Be among the first to access our comprehensive trademark monitoring system."}
+              ? `We'll keep you updated on our ${featureName.toLowerCase()} launch.`
+              : `Be among the first to access our comprehensive ${featureName.toLowerCase()} system.`}
           </DialogDescription>
         </DialogHeader>
 

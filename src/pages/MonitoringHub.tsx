@@ -47,6 +47,7 @@ const MonitoringHub = () => {
   const [monitoringActive, setMonitoringActive] = useState(true);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [waitlistOpen, setWaitlistOpen] = useState(false);
+  const [waitlistFeature, setWaitlistFeature] = useState<'trademark' | 'profile'>('trademark');
   const navigate = useNavigate();
 
   return (
@@ -285,7 +286,14 @@ const MonitoringHub = () => {
                     <p className="text-sm text-muted-foreground mb-3">
                       Want early access when this feature launches?
                     </p>
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        setWaitlistFeature('profile');
+                        setWaitlistOpen(true);
+                      }}
+                    >
                       Join Waitlist
                     </Button>
                   </div>
@@ -341,7 +349,10 @@ const MonitoringHub = () => {
                     <Button 
                       size="sm" 
                       variant="outline"
-                      onClick={() => setWaitlistOpen(true)}
+                      onClick={() => {
+                        setWaitlistFeature('trademark');
+                        setWaitlistOpen(true);
+                      }}
                     >
                       Join Waitlist
                     </Button>
@@ -664,7 +675,9 @@ const MonitoringHub = () => {
 
       <TrademarkWaitlistDialog 
         open={waitlistOpen} 
-        onOpenChange={setWaitlistOpen} 
+        onOpenChange={setWaitlistOpen}
+        featureType={waitlistFeature}
+        featureName={waitlistFeature === 'trademark' ? 'Trademark Monitoring' : 'Profile Monitoring'}
       />
 
       <BugReportButton />
