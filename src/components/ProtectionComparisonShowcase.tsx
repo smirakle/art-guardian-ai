@@ -20,6 +20,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import exampleArtwork from "@/assets/example-artwork.gif";
 
 const ProtectionComparisonShowcase = () => {
   const [activeTab, setActiveTab] = useState("document");
@@ -141,9 +142,17 @@ const ProtectionComparisonShowcase = () => {
                   </div>
 
                   {/* Visual Representation */}
-                  <div className="relative bg-muted/30 rounded-lg p-8 mb-6 border-2 border-dashed border-destructive/30 min-h-[200px] flex items-center justify-center">
+                  <div className="relative bg-muted/30 rounded-lg p-4 mb-6 border-2 border-dashed border-destructive/30 min-h-[200px] flex items-center justify-center overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-destructive/5 to-transparent rounded-lg" />
-                    <Icon className="h-24 w-24 text-muted-foreground/40" strokeWidth={1} />
+                    {activeTab === "artwork" ? (
+                      <img 
+                        src={exampleArtwork} 
+                        alt="Unprotected artwork example" 
+                        className="max-w-full max-h-[180px] object-contain opacity-70"
+                      />
+                    ) : (
+                      <Icon className="h-24 w-24 text-muted-foreground/40" strokeWidth={1} />
+                    )}
                     <div className="absolute top-2 right-2">
                       <AlertTriangle className="h-6 w-6 text-destructive animate-pulse" />
                     </div>
@@ -177,9 +186,17 @@ const ProtectionComparisonShowcase = () => {
                   </div>
 
                   {/* Visual Representation */}
-                  <div className="relative bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-8 mb-6 border-2 border-primary/30 min-h-[200px] flex items-center justify-center">
+                  <div className="relative bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-4 mb-6 border-2 border-primary/30 min-h-[200px] flex items-center justify-center overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/5 to-transparent rounded-lg" />
-                    <Icon className="h-24 w-24 text-primary/60" strokeWidth={1.5} />
+                    {activeTab === "artwork" ? (
+                      <img 
+                        src={exampleArtwork} 
+                        alt="TSMO protected artwork example" 
+                        className="max-w-full max-h-[180px] object-contain"
+                      />
+                    ) : (
+                      <Icon className="h-24 w-24 text-primary/60" strokeWidth={1.5} />
+                    )}
                     <div className="absolute top-2 right-2">
                       <Shield className="h-6 w-6 text-primary" />
                     </div>
