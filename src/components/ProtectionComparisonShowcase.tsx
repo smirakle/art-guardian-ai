@@ -189,11 +189,42 @@ const ProtectionComparisonShowcase = () => {
                   <div className="relative bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg p-4 mb-6 border-2 border-primary/30 min-h-[200px] flex items-center justify-center overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/5 to-transparent rounded-lg" />
                     {activeTab === "artwork" ? (
-                      <img 
-                        src={exampleArtwork} 
-                        alt="TSMO protected artwork example" 
-                        className="max-w-full max-h-[180px] object-contain"
-                      />
+                      <div className="relative">
+                        {/* Protected Image with Glow */}
+                        <img 
+                          src={exampleArtwork} 
+                          alt="TSMO protected artwork example" 
+                          className="max-w-full max-h-[180px] object-contain relative z-10 rounded-lg shadow-[0_0_30px_rgba(var(--primary),0.3)] animate-pulse"
+                          style={{ animationDuration: '3s' }}
+                        />
+                        
+                        {/* Diagonal Watermark Overlay */}
+                        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg z-20">
+                          <div className="absolute inset-0 flex flex-col justify-around -rotate-30 origin-center scale-150">
+                            <div className="text-primary/20 font-bold text-sm tracking-widest whitespace-nowrap">
+                              TSMO PROTECTED • TSMO PROTECTED • TSMO PROTECTED
+                            </div>
+                            <div className="text-primary/15 font-bold text-sm tracking-widest whitespace-nowrap">
+                              TSMO PROTECTED • TSMO PROTECTED • TSMO PROTECTED
+                            </div>
+                            <div className="text-primary/20 font-bold text-sm tracking-widest whitespace-nowrap">
+                              TSMO PROTECTED • TSMO PROTECTED • TSMO PROTECTED
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Security Grid Pattern */}
+                        <div 
+                          className="absolute inset-0 pointer-events-none z-20 opacity-20"
+                          style={{
+                            backgroundImage: `
+                              linear-gradient(0deg, transparent 24%, hsl(var(--primary)) 25%, hsl(var(--primary)) 26%, transparent 27%, transparent 74%, hsl(var(--primary)) 75%, hsl(var(--primary)) 76%, transparent 77%, transparent),
+                              linear-gradient(90deg, transparent 24%, hsl(var(--primary)) 25%, hsl(var(--primary)) 26%, transparent 27%, transparent 74%, hsl(var(--primary)) 75%, hsl(var(--primary)) 76%, transparent 77%, transparent)
+                            `,
+                            backgroundSize: '30px 30px'
+                          }}
+                        />
+                      </div>
                     ) : (
                       <Icon className="h-24 w-24 text-primary/60" strokeWidth={1.5} />
                     )}
