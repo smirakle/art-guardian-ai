@@ -110,13 +110,15 @@ export const AIProtectionVisualDemo = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
-      {/* Background Music */}
+      {/* Background Music - Epic Cinematic Tech Music */}
       <audio 
         ref={audioRef} 
         loop 
         muted={isMuted}
-        src="https://cdn.pixabay.com/audio/2022/03/10/audio_4a392a76e5.mp3"
-      />
+      >
+        <source src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3" type="audio/mpeg" />
+        <source src="https://cdn.pixabay.com/audio/2024/03/17/audio_1a52fd6bc5.mp3" type="audio/mpeg" />
+      </audio>
       
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
