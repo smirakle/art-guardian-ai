@@ -48,6 +48,10 @@ export function AppSidebar() {
     { path: "/monitoring-hub", label: "Find Copies", icon: Search },
     { path: "/dmca-center", label: "Alerts", icon: AlertTriangle },
     { path: "/settings", label: "Settings", icon: Settings },
+    { path: "/faq", label: "FAQ", icon: HelpCircle },
+    { path: "/about-tsmo", label: "About TSMO", icon: Info },
+    { path: "/contact", label: "Contact", icon: Mail },
+    { path: "/terms-and-privacy", label: "Terms & Privacy", icon: Scale },
   ];
 
   const mainNavItems = [
