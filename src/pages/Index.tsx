@@ -198,7 +198,7 @@ Own Your Future</h1>
           </p>
           
           <p className="text-base sm:text-lg text-muted-foreground/80 mb-8 max-w-2xl mx-auto italic">
-            TSMO Watch was created for Independent artists, designers, musicians, small-to-mid-size creative brands
+            "TSMO Watch was created for Independent artists, designers, musicians, small-to-mid-size creative brands" - Shirleena Cunningham Founder and CEO
           </p>
 
           {/* Primary Sign-Up CTA */}
