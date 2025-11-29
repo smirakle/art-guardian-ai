@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/collapsible";
 import { UserGuide } from '@/components/UserGuide';
 import { monitoringHubGuide } from '@/data/userGuides';
+import { TrademarkWaitlistDialog } from '@/components/trademark/TrademarkWaitlistDialog';
 import { 
   Monitor, 
   Search, 
@@ -45,6 +46,7 @@ const MonitoringHub = () => {
   const [activeTab, setActiveTab] = useState('portfolio');
   const [monitoringActive, setMonitoringActive] = useState(true);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [waitlistOpen, setWaitlistOpen] = useState(false);
   const navigate = useNavigate();
 
   return (
@@ -336,7 +338,11 @@ const MonitoringHub = () => {
                     <p className="text-sm text-muted-foreground mb-3">
                       Want early access when this feature launches?
                     </p>
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => setWaitlistOpen(true)}
+                    >
                       Join Waitlist
                     </Button>
                   </div>
@@ -655,6 +661,12 @@ const MonitoringHub = () => {
           </div>
         </CardContent>
       </Card>
+
+      <TrademarkWaitlistDialog 
+        open={waitlistOpen} 
+        onOpenChange={setWaitlistOpen} 
+      />
+
       <BugReportButton />
     </div>
   );

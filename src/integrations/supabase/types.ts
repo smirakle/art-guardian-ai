@@ -9127,6 +9127,42 @@ export type Database = {
           },
         ]
       }
+      trademark_waitlist: {
+        Row: {
+          company_name: string | null
+          created_at: string
+          email: string
+          id: string
+          priority_level: string | null
+          status: string | null
+          updated_at: string
+          use_case: string | null
+          user_id: string
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          priority_level?: string | null
+          status?: string | null
+          updated_at?: string
+          use_case?: string | null
+          user_id: string
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          priority_level?: string | null
+          status?: string | null
+          updated_at?: string
+          use_case?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       trademarks: {
         Row: {
           application_number: string | null
