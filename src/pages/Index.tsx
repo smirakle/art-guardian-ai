@@ -304,100 +304,210 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Protection Features Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-              <CardHeader className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <EyeOff className="h-6 w-6 text-white" />
+          {/* Protection Layers - Specific Features */}
+          <div className="grid lg:grid-cols-2 xl:grid-cols-4 gap-8 mb-12">
+            {/* AI Training Protection */}
+            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                  <Bot className="h-8 w-8 text-white" />
                 </div>
-                <CardTitle>Invisible Art Shield</CardTitle>
+                <CardTitle className="text-2xl text-center mb-4">AI Training Protection</CardTitle>
+                <CardDescription className="text-center text-base">
+                  Prevent unauthorized use of your creative work in AI training datasets and generative models.
+                </CardDescription>
               </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-muted-foreground mb-4">
-                  Market-ready invisible protection that prevents AI from learning your artistic style while keeping
-                  your artwork visually unchanged.
-                </p>
-                <Badge variant="default" className="bg-green-600 text-white">
-                  StyleCloak - Market Ready
-                </Badge>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Real-time AI scraping detection across major platforms</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Watermarking technology invisible to humans but detectable by AI</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Automated DMCA notices to AI training companies</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Legal certificate of protection for court cases</span>
+                  </div>
+                </div>
+                <div className="pt-4">
+                  <Button className="w-full bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700" onClick={() => navigate("/ai-protection")}>
+                    Protect from AI Training
+                    <Shield className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-              <CardHeader className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Fingerprint className="h-6 w-6 text-white" />
+            {/* Profile Monitoring */}
+            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                  <UserX className="h-8 w-8 text-white" />
                 </div>
-                <CardTitle>Smart Detection</CardTitle>
+                <CardTitle className="text-2xl text-center mb-4">Profile Monitoring</CardTitle>
+                <CardDescription className="text-center text-base">
+                  Monitor for fake accounts, impersonation, and unauthorized use of your identity across social
+                  platforms.
+                </CardDescription>
               </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-muted-foreground mb-4">
-                  Advanced AI finds copies of your art anywhere online, even when modified, cropped, or filtered.
-                </p>
-                <Badge variant="secondary">Multi-Modal AI</Badge>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Scan Instagram, Twitter, TikTok, Facebook for fake profiles</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Identity theft and impersonation detection</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Automated reporting to platform abuse teams</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Risk assessment and threat level analysis</span>
+                  </div>
+                </div>
+                <div className="pt-4">
+                  <Button className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700" onClick={() => navigate("/profile-monitoring")}>
+                    Monitor Your Profile
+                    <Users className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-              <CardHeader className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <BadgeCheck className="h-6 w-6 text-white" />
+            {/* Portfolio Monitoring */}
+            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                  <FileImage className="h-8 w-8 text-white" />
                 </div>
-                <CardTitle>Blockchain Proof</CardTitle>
+                <CardTitle className="text-2xl text-center mb-4">Portfolio Monitoring</CardTitle>
+                <CardDescription className="text-center text-base">
+                  Comprehensive protection for your entire creative portfolio with multi-platform scanning and
+                  analytics.
+                </CardDescription>
               </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-muted-foreground mb-4">
-                  Immutable blockchain certificates that prove ownership and creation date for legal disputes.
-                </p>
-                <Badge variant="secondary">Permanent Record</Badge>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Bulk monitoring of unlimited artworks and projects</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Cross-platform detection: marketplaces, social media, websites</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Scheduled scans and automated monitoring workflows</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Detailed analytics and threat intelligence reports</span>
+                  </div>
+                </div>
+                <div className="pt-4">
+                  <Button className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700" onClick={() => navigate("/portfolio-monitoring")}>
+                    Monitor Portfolio
+                    <TrendingUp className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-              <CardHeader className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Scale className="h-6 w-6 text-white" />
+            {/* Trademark Intelligence */}
+            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                  <Scale className="h-8 w-8 text-white" />
                 </div>
-                <CardTitle>Legal Automation</CardTitle>
+                <CardTitle className="text-2xl text-center mb-4">Trademark Intelligence</CardTitle>
+                <CardDescription className="text-center text-base">
+                  AI-powered trademark monitoring and legal automation across global jurisdictions for comprehensive IP
+                  protection.
+                </CardDescription>
               </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-muted-foreground mb-4">
-                  Automated DMCA notices and takedown requests using lawyer-approved templates and documentation.
-                </p>
-                <Badge variant="secondary">Legal-Grade</Badge>
-              </CardContent>
-            </Card>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Multi-jurisdiction trademark similarity analysis</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Real-time monitoring across USPTO and international databases</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Automated legal workflow and document generation</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm">Advanced analytics and portfolio management</span>
+                  </div>
+                </div>
 
-            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-              <CardHeader className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Activity className="h-6 w-6 text-white" />
+                <div className="pt-4">
+                  <Button className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700" onClick={() => navigate("/trademark-monitoring")}>
+                    Monitor Trademarks
+                    <Scale className="ml-2 h-4 w-4" />
+                  </Button>
                 </div>
-                <CardTitle>Real-Time Alerts</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-muted-foreground mb-4">
-                  Instant notifications when violations are detected, with detailed reports and evidence packages.
-                </p>
-                <Badge variant="secondary">24/7 Monitoring</Badge>
               </CardContent>
             </Card>
+          </div>
 
-            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-              <CardHeader className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-teal-600 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Globe className="h-6 w-6 text-white" />
-                </div>
-                <CardTitle>Global Coverage</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-muted-foreground mb-4">
-                  Monitor across all major platforms, marketplaces, social media, and websites worldwide.
-                </p>
-                <Badge variant="secondary">Worldwide Scan</Badge>
-              </CardContent>
-            </Card>
+          {/* Supporting Features - Compact Row */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-lg border border-primary/10">
+              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <BadgeCheck className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2">Blockchain Proof</h3>
+              <p className="text-sm text-muted-foreground">
+                Immutable blockchain certificates proving ownership
+              </p>
+            </div>
+
+            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-lg border border-primary/10">
+              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Activity className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2">Real-Time Alerts</h3>
+              <p className="text-sm text-muted-foreground">
+                Instant notifications with detailed evidence packages
+              </p>
+            </div>
+
+            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-lg border border-primary/10">
+              <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-teal-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Globe className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2">Global Coverage</h3>
+              <p className="text-sm text-muted-foreground">
+                Monitor across all major platforms worldwide
+              </p>
+            </div>
+
+            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-lg border border-primary/10">
+              <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Scale className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2">Legal Automation</h3>
+              <p className="text-sm text-muted-foreground">
+                Automated DMCA notices with legal documentation
+              </p>
+            </div>
           </div>
 
           <div className="mt-12 text-center">
@@ -753,226 +863,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Advanced Protection Features */}
-      <section className="py-20 px-4 bg-gradient-to-br from-blue-50 to-purple-50">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <Badge variant="secondary" className="mb-4 px-4 py-2">
-              🛡️ Advanced Protection Suite
-            </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Four-Layer Defense System</h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Comprehensive protection across AI training datasets, social media profiles, entire creative portfolios,
-              and trademark intelligence with real-time monitoring and automated response.
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-2 xl:grid-cols-4 gap-8">
-            {/* AI Training Protection */}
-            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="pb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                  <Bot className="h-8 w-8 text-white" />
-                </div>
-                <CardTitle className="text-2xl text-center mb-4">AI Training Protection</CardTitle>
-                <CardDescription className="text-center text-base">
-                  Prevent unauthorized use of your creative work in AI training datasets and generative models.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Real-time AI scraping detection across major platforms</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Watermarking technology invisible to humans but detectable by AI</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Automated DMCA notices to AI training companies</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Legal certificate of protection for court cases</span>
-                  </div>
-                </div>
-                <div className="pt-4">
-                  <Button className="w-full bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700" onClick={() => navigate("/ai-protection")}>
-                    Protect from AI Training
-                    <Shield className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Profile Monitoring */}
-            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="pb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                  <UserX className="h-8 w-8 text-white" />
-                </div>
-                <CardTitle className="text-2xl text-center mb-4">Profile Monitoring</CardTitle>
-                <CardDescription className="text-center text-base">
-                  Monitor for fake accounts, impersonation, and unauthorized use of your identity across social
-                  platforms.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Scan Instagram, Twitter, TikTok, Facebook for fake profiles</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Identity theft and impersonation detection</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Automated reporting to platform abuse teams</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Risk assessment and threat level analysis</span>
-                  </div>
-                </div>
-                <div className="pt-4">
-                  <Button className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700" onClick={() => navigate("/profile-monitoring")}>
-                    Monitor Your Profile
-                    <Users className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Portfolio Monitoring */}
-            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="pb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                  <FileImage className="h-8 w-8 text-white" />
-                </div>
-                <CardTitle className="text-2xl text-center mb-4">Portfolio Monitoring</CardTitle>
-                <CardDescription className="text-center text-base">
-                  Comprehensive protection for your entire creative portfolio with multi-platform scanning and
-                  analytics.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Bulk monitoring of unlimited artworks and projects</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Cross-platform detection: marketplaces, social media, websites</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Scheduled scans and automated monitoring workflows</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Detailed analytics and threat intelligence reports</span>
-                  </div>
-                </div>
-                <div className="pt-4">
-                  <Button className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700" onClick={() => navigate("/portfolio-monitoring")}>
-                    Monitor Portfolio
-                    <TrendingUp className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Trademark Intelligence */}
-            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="pb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                  <Scale className="h-8 w-8 text-white" />
-                </div>
-                <CardTitle className="text-2xl text-center mb-4">Trademark Intelligence</CardTitle>
-                <CardDescription className="text-center text-base">
-                  AI-powered trademark monitoring and legal automation across global jurisdictions for comprehensive IP
-                  protection.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Multi-jurisdiction trademark similarity analysis</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Real-time monitoring across USPTO and international databases</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Automated legal workflow and document generation</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Advanced analytics and portfolio management</span>
-                  </div>
-                </div>
-
-                <div className="pt-4">
-                  <Button className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700" onClick={() => navigate("/trademark-monitoring")}>
-                    Monitor Trademarks
-                    <Scale className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Protection Process */}
-          <div className="mt-16 bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-            <h3 className="text-2xl font-bold text-center mb-8">How It Works</h3>
-            <div className="grid md:grid-cols-4 gap-6">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
-                  1
-                </div>
-                <h4 className="font-semibold mb-2">Upload & Protect</h4>
-                <p className="text-sm text-muted-foreground">
-                  Upload your creative work and apply our multi-layer protection
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
-                  2
-                </div>
-                <h4 className="font-semibold mb-2">24/7 Scanning</h4>
-                <p className="text-sm text-muted-foreground">
-                  Our AI continuously monitors the web for unauthorized usage
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
-                  3
-                </div>
-                <h4 className="font-semibold mb-2">Instant Alerts</h4>
-                <p className="text-sm text-muted-foreground">
-                  Get notified immediately when potential theft is detected
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
-                  4
-                </div>
-                <h4 className="font-semibold mb-2">Take Action</h4>
-                <p className="text-sm text-muted-foreground">
-                  Automated DMCA filing and legal support to protect your rights
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Legal Resources Section */}
       <section className="py-20 px-4 bg-gray-50">
