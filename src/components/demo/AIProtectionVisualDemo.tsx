@@ -7,11 +7,13 @@ import { FingerprintingScene } from './scenes/FingerprintingScene';
 import { ShieldBuildingScene } from './scenes/ShieldBuildingScene';
 import { MonitoringScene } from './scenes/MonitoringScene';
 import { AlertScene } from './scenes/AlertScene';
+import { useNarration } from '@/hooks/useNarration';
+import { useToast } from '@/hooks/use-toast';
 
 interface Scene {
   name: string;
   duration: number;
-  component: React.ComponentType;
+  component: React.ComponentType<{ onNarrate?: (text: string) => void }>;
 }
 
 const scenes: Scene[] = [
@@ -28,7 +30,11 @@ export const AIProtectionVisualDemo = () => {
   const [progress, setProgress] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [narratingScene, setNarratingScene] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const { playNarration, stopNarration } = useNarration();
+  const { toast } = useToast();
+  const hasNarratedScene = useRef<Set<number>>(new Set());
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -44,6 +50,7 @@ export const AIProtectionVisualDemo = () => {
         if (currentSceneIndex < scenes.length - 1) {
           setCurrentSceneIndex(prev => prev + 1);
           setProgress(0);
+          hasNarratedScene.current.clear(); // Reset narration tracking for new scene
         } else {
           setIsPlaying(false);
           setProgress(100);
@@ -55,6 +62,27 @@ export const AIProtectionVisualDemo = () => {
 
     return () => clearInterval(interval);
   }, [isPlaying, currentSceneIndex]);
+
+  // Handle scene narration
+  const handleNarration = async (text: string) => {
+    if (isMuted || hasNarratedScene.current.has(currentSceneIndex)) return;
+    
+    hasNarratedScene.current.add(currentSceneIndex);
+    setNarratingScene(true);
+    
+    try {
+      await playNarration(text);
+    } catch (error) {
+      console.error('Narration error:', error);
+      toast({
+        title: "Narration unavailable",
+        description: "Voice-over couldn't be loaded. Continuing with visuals only.",
+        variant: "destructive"
+      });
+    } finally {
+      setNarratingScene(false);
+    }
+  };
 
   const handlePlayPause = () => {
     const newPlayingState = !isPlaying;
@@ -74,6 +102,8 @@ export const AIProtectionVisualDemo = () => {
     setCurrentSceneIndex(0);
     setProgress(0);
     setIsPlaying(false);
+    hasNarratedScene.current.clear();
+    stopNarration();
     
     // Reset and pause audio
     if (audioRef.current) {
@@ -84,6 +114,8 @@ export const AIProtectionVisualDemo = () => {
 
   const handleSkip = () => {
     if (currentSceneIndex < scenes.length - 1) {
+      stopNarration();
+      hasNarratedScene.current.clear();
       setCurrentSceneIndex(prev => prev + 1);
       setProgress(0);
     }
@@ -127,7 +159,7 @@ export const AIProtectionVisualDemo = () => {
             AI Protection Visual Demo
           </h1>
           <p className="text-muted-foreground">
-            A cinematic journey through TSMO's AI training protection system
+            A cinematic journey through TSMO's AI training protection system with voice narration
           </p>
         </div>
 
@@ -135,7 +167,7 @@ export const AIProtectionVisualDemo = () => {
         <Card className="p-0 overflow-hidden border-2 border-primary/20 shadow-2xl">
           {/* Scene Display */}
           <div className="relative aspect-video bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-            <CurrentSceneComponent />
+            <CurrentSceneComponent onNarrate={handleNarration} />
             
             {/* Scene Title Overlay */}
             <div className="absolute top-4 left-4 bg-background/80 backdrop-blur-sm px-4 py-2 rounded-lg border border-primary/20">
@@ -143,6 +175,13 @@ export const AIProtectionVisualDemo = () => {
                 Scene {currentSceneIndex + 1} of {scenes.length}: {scenes[currentSceneIndex].name}
               </p>
             </div>
+
+            {/* Narration indicator */}
+            {narratingScene && (
+              <div className="absolute top-4 right-4 bg-primary/80 backdrop-blur-sm px-3 py-1 rounded-lg animate-pulse">
+                <p className="text-xs text-white font-medium">🎙️ Narrating...</p>
+              </div>
+            )}
           </div>
 
           {/* Progress Bar */}
@@ -220,11 +259,11 @@ export const AIProtectionVisualDemo = () => {
         <Card className="mt-6 p-6">
           <h3 className="text-lg font-semibold mb-2">About This Scene</h3>
           <p className="text-muted-foreground">
-            {currentSceneIndex === 0 && "Watch as your artwork is uploaded and prepared for comprehensive AI protection."}
-            {currentSceneIndex === 1 && "Advanced fingerprinting technology analyzes every detail of your work, creating a unique digital signature."}
-            {currentSceneIndex === 2 && "Multiple layers of protection shields are deployed around your artwork, each defending against different AI threats."}
-            {currentSceneIndex === 3 && "Real-time monitoring across 70+ platforms ensures your artwork is continuously protected from unauthorized AI training."}
-            {currentSceneIndex === 4 && "When threats are detected, instant alerts trigger automated DMCA filing and legal protection workflows."}
+            {currentSceneIndex === 0 && "Watch as your artwork is uploaded and prepared for comprehensive AI protection with invisible security layers."}
+            {currentSceneIndex === 1 && "Advanced fingerprinting technology analyzes every detail, creating a unique digital signature impossible to replicate."}
+            {currentSceneIndex === 2 && "Multiple protection shields deploy around your artwork, each defending against different AI training threats."}
+            {currentSceneIndex === 3 && "Real-time monitoring across 70+ platforms ensures continuous protection from unauthorized AI training."}
+            {currentSceneIndex === 4 && "Instant threat detection triggers automated DMCA filing and legal protection workflows in seconds."}
           </p>
         </Card>
       </div>

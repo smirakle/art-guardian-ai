@@ -1,12 +1,24 @@
 import { useEffect, useState } from 'react';
 import { AlertTriangle, Shield, FileText, CheckCircle } from 'lucide-react';
 
-export const AlertScene = () => {
+interface AlertSceneProps {
+  onNarrate?: (text: string) => void;
+}
+
+export const AlertScene = ({ onNarrate }: AlertSceneProps) => {
   const [showAlert, setShowAlert] = useState(false);
   const [confidence, setConfidence] = useState(0);
   const [dmcaStatus, setDmcaStatus] = useState<'pending' | 'filing' | 'filed'>('pending');
 
   useEffect(() => {
+    // Start narration
+    onNarrate?.(
+      "Threat detected! Someone's trying to steal Sarah's style on Instagram! " +
+      "But we're already on it. 92% confidence match. Evidence collected. " +
+      "Legal template generated. DMCA notice filed automatically. " +
+      "Total response time? Just 2.3 seconds. That's the power of TSMO!"
+    );
+
     setTimeout(() => setShowAlert(true), 500);
 
     const confidenceInterval = setInterval(() => {
@@ -17,7 +29,7 @@ export const AlertScene = () => {
     setTimeout(() => setDmcaStatus('filed'), 5000);
 
     return () => clearInterval(confidenceInterval);
-  }, []);
+  }, [onNarrate]);
 
   return (
     <div className="w-full h-full flex items-center justify-center p-8 relative overflow-hidden">

@@ -2,11 +2,22 @@ import { useEffect, useState } from 'react';
 import { Fingerprint, Activity } from 'lucide-react';
 import { ScanLineEffect } from '../effects/ScanLineEffect';
 
-export const FingerprintingScene = () => {
+interface FingerprintingSceneProps {
+  onNarrate?: (text: string) => void;
+}
+
+export const FingerprintingScene = ({ onNarrate }: FingerprintingSceneProps) => {
   const [dataPoints, setDataPoints] = useState(0);
   const [analysisComplete, setAnalysisComplete] = useState(false);
 
   useEffect(() => {
+    // Start narration
+    onNarrate?.(
+      "Our AI is now analyzing every pixel, every detail of this artwork. " +
+      "We're creating a unique digital fingerprint that's impossible to replicate. " +
+      "Over 12,000 data points extracted and secured."
+    );
+
     const interval = setInterval(() => {
       setDataPoints(prev => {
         if (prev >= 100) {
@@ -18,7 +29,7 @@ export const FingerprintingScene = () => {
     }, 60);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [onNarrate]);
 
   return (
     <div className="w-full h-full flex items-center justify-center p-12 relative overflow-hidden">
