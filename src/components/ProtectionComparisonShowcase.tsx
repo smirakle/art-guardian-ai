@@ -148,7 +148,7 @@ const ProtectionComparisonShowcase = () => {
                       <img 
                         src={exampleArtwork} 
                         alt="Unprotected artwork example" 
-                        className="max-w-full max-h-[180px] object-contain opacity-70"
+                        className="max-w-full max-h-[180px] object-contain"
                       />
                     ) : (
                       <Icon className="h-24 w-24 text-muted-foreground/40" strokeWidth={1} />
