@@ -15,8 +15,12 @@ const Hero = () => {
             {t('hero.title')}
           </h1>
           
-          <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-muted-foreground mb-4 max-w-2xl mx-auto">
             {t('hero.subtitle')}
+          </p>
+          
+          <p className="text-base sm:text-lg text-muted-foreground/80 mb-8 max-w-2xl mx-auto italic">
+            {t('hero.audience')}
           </p>
           
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-8">
