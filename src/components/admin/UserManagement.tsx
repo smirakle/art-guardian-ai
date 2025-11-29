@@ -53,7 +53,8 @@ const UserManagement = () => {
           user_id,
           full_name,
           username,
-          created_at
+          created_at,
+          updated_at
         `)
         .order('created_at', { ascending: false });
 
@@ -101,7 +102,7 @@ const UserManagement = () => {
         role: roleMap.get(profile.user_id) || 'user',
         artworkCount: artworkCounts[profile.user_id] || 0,
         email: emailMap[profile.user_id] || 'Email not available',
-        lastActive: 'Recently' // You could fetch this from a last_seen table if implemented
+        lastActive: (profile as any).updated_at || profile.created_at
       })) || [];
 
       setUsers(enrichedUsers);
@@ -186,13 +187,14 @@ const UserManagement = () => {
 
   const exportUsers = () => {
     const csvContent = [
-      ['Name', 'Username', 'Role', 'Artworks', 'Joined'].join(','),
+      ['Name', 'Username', 'Role', 'Artworks', 'Joined', 'Last Active'].join(','),
       ...filteredUsers.map(user => [
         user.full_name || '',
         user.username || '',
         user.role || 'user',
         user.artworkCount || 0,
-        new Date(user.created_at).toLocaleDateString()
+        new Date(user.created_at).toLocaleDateString(),
+        user.lastActive ? new Date(user.lastActive).toLocaleString() : 'N/A'
       ].join(','))
     ].join('\n');
 
@@ -326,6 +328,7 @@ const UserManagement = () => {
                 <TableHead>Role</TableHead>
                 <TableHead>Artworks</TableHead>
                 <TableHead>Joined</TableHead>
+                <TableHead>Last Active</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -351,6 +354,9 @@ const UserManagement = () => {
                   <TableCell>{user.artworkCount || 0}</TableCell>
                   <TableCell>
                     {new Date(user.created_at).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    {user.lastActive ? new Date(user.lastActive).toLocaleString() : 'N/A'}
                   </TableCell>
                   <TableCell>
                     <Dialog open={dialogOpen && selectedUser?.id === user.id} 
