@@ -204,7 +204,7 @@ const ProtectionComparisonShowcase = () => {
               size="lg" 
               variant="outline"
               className="border-primary text-primary hover:bg-primary/10"
-              onClick={() => navigate("/document-protection")}
+              onClick={() => navigate("/protection-guide")}
             >
               Learn More About Protection
             </Button>
