@@ -7,10 +7,13 @@ const TermsAndPrivacy = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="text-center mb-8">
+          <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-4">Terms of Service & Privacy Policy</h1>
           <p className="text-lg text-muted-foreground">
             Your rights and responsibilities when using TSMO Technology
+          </p>
+          <p className="text-sm text-muted-foreground mt-2 italic">
+            Created for independent artists, designers, musicians, and small-to-mid-size creative brands
           </p>
           <Badge variant="secondary" className="mt-2">
             Last Updated: {new Date().toLocaleDateString()}
@@ -243,10 +246,10 @@ const TermsAndPrivacy = () => {
               <section>
                 <h3 className="text-xl font-semibold mb-3">4. Registered DMCA Agent</h3>
                 <div className="bg-muted p-4 rounded-lg">
-                  <p className="font-medium">DMCA Agent: Coming Soon</p>
-                  <p className="text-muted-foreground">Email: Coming Soon</p>
+                  <p className="font-medium">DMCA Agent: Shirleena Cunningham</p>
+                  <p className="text-muted-foreground">Email: shirleena.cunningham@tsmowatch.com</p>
                   <p className="text-muted-foreground">
-                    Address: Coming Soon
+                    Address: P.O. Box [To Be Assigned]
                   </p>
                 </div>
               </section>
@@ -289,18 +292,19 @@ const TermsAndPrivacy = () => {
                 </div>
                 <div>
                   <p className="font-medium">DMCA Agent</p>
-                  <p className="text-muted-foreground">Coming Soon</p>
+                  <p className="text-muted-foreground">Shirleena Cunningham</p>
+                  <p className="text-muted-foreground">shirleena.cunningham@tsmowatch.com</p>
                 </div>
                 <div>
                   <p className="font-medium">Privacy Officer</p>
+                  <p className="text-muted-foreground">Shirleena Cunningham</p>
                   <p className="text-muted-foreground">shirleena.cunningham@tsmowatch.com</p>
                 </div>
                 <div>
                   <p className="font-medium">Mailing Address</p>
                   <p className="text-muted-foreground">
                      TSMO Technology Legal Department<br />
-                    123 Innovation Drive<br />
-                    Tech City, TC 12345<br />
+                    P.O. Box [To Be Assigned]<br />
                     United States
                   </p>
                 </div>
