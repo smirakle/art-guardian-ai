@@ -7,6 +7,7 @@ import { Routes, Route } from "react-router-dom";
 import { WagmiProvider } from 'wagmi'
 import { wagmiConfig } from '@/lib/blockchain/config'
 import { useRealUserMonitoring } from "@/hooks/useRealUserMonitoring";
+import { GuestUploadConverter } from "@/components/GuestUploadConverter";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import MaintenanceMode from "@/components/MaintenanceMode";
@@ -118,6 +119,7 @@ const App = () => {
           <UserPreferencesProvider>
             <BlockchainProvider>
               <SecurityHeaders />
+              <GuestUploadConverter />
             <Toaster />
             <Sonner />
             <SmartOnboarding />

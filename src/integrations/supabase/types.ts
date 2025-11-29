@@ -4418,6 +4418,60 @@ export type Database = {
         }
         Relationships: []
       }
+      guest_uploads: {
+        Row: {
+          char_count: number | null
+          content_type: string
+          converted_at: string | null
+          converted_to_user_id: string | null
+          created_at: string | null
+          expires_at: string | null
+          file_name: string
+          file_path: string
+          file_size: number
+          fingerprint: string | null
+          id: string
+          protection_id: string
+          protection_level: string | null
+          session_id: string
+          word_count: number | null
+        }
+        Insert: {
+          char_count?: number | null
+          content_type: string
+          converted_at?: string | null
+          converted_to_user_id?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          file_name: string
+          file_path: string
+          file_size: number
+          fingerprint?: string | null
+          id?: string
+          protection_id: string
+          protection_level?: string | null
+          session_id: string
+          word_count?: number | null
+        }
+        Update: {
+          char_count?: number | null
+          content_type?: string
+          converted_at?: string | null
+          converted_to_user_id?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          file_name?: string
+          file_path?: string
+          file_size?: number
+          fingerprint?: string | null
+          id?: string
+          protection_id?: string
+          protection_level?: string | null
+          session_id?: string
+          word_count?: number | null
+        }
+        Relationships: []
+      }
       industry_verticals: {
         Row: {
           compliance_requirements: Json | null
@@ -9768,6 +9822,11 @@ export type Database = {
           window_minutes_param?: number
         }
         Returns: boolean
+      }
+      cleanup_expired_guest_uploads: { Args: never; Returns: undefined }
+      convert_guest_uploads_to_user: {
+        Args: { p_session_id: string; p_user_id: string }
+        Returns: number
       }
       create_ai_protection_notification: {
         Args: {

@@ -33,7 +33,9 @@ serve(async (req) => {
       characterCount,
       extractionMethod,
       pageCount,
-      protectionId
+      protectionId,
+      isGuest,
+      guestSessionId
     } = await req.json();
     
     console.log('Processing document protection request:', {
@@ -44,27 +46,37 @@ serve(async (req) => {
       extractionMethod,
       wordCount,
       pageCount,
-      hasExtractedText: !!extractedText
+      hasExtractedText: !!extractedText,
+      isGuest,
+      hasGuestSession: !!guestSessionId
     });
 
-    // Get user
+    // Get user (optional for guests)
     const { data: { user } } = await supabaseClient.auth.getUser();
-    if (!user) throw new Error('User not authenticated');
+    
+    // Validate: either authenticated user or guest with session ID
+    if (!user && (!isGuest || !guestSessionId)) {
+      throw new Error('Authentication or guest session required');
+    }
 
-    // Create job record
-    const { data: job, error: jobError } = await supabaseClient
-      .from('document_protection_jobs')
-      .insert({
-        user_id: user.id,
-        original_filename: file.name,
-        file_size: file.size,
-        protection_level: protectionLevel,
-        status: 'processing'
-      })
-      .select()
-      .single();
+    // Create job record (only for authenticated users)
+    let job = null;
+    if (user) {
+      const { data: jobData, error: jobError } = await supabaseClient
+        .from('document_protection_jobs')
+        .insert({
+          user_id: user.id,
+          original_filename: file.name,
+          file_size: file.size,
+          protection_level: protectionLevel,
+          status: 'processing'
+        })
+        .select()
+        .single();
 
-    if (jobError) throw jobError;
+      if (jobError) throw jobError;
+      job = jobData;
+    }
 
     // Convert data URL to ArrayBuffer
     let fileData: ArrayBuffer;
@@ -106,11 +118,13 @@ serve(async (req) => {
       method: extractionMethod || 'unknown'
     });
 
-    // Update progress: 30%
-    await supabaseClient.rpc('update_protection_job_progress', {
-      job_id_param: job.id,
-      progress_param: 30
-    });
+    // Update progress: 30% (only for authenticated users)
+    if (job) {
+      await supabaseClient.rpc('update_protection_job_progress', {
+        job_id_param: job.id,
+        progress_param: 30
+      });
+    }
 
     // Determine protection methods
     const protectionMethods = [];
@@ -130,15 +144,18 @@ serve(async (req) => {
     // Generate protection ID
     const protectionId = `DOC-${Date.now()}-${Math.random().toString(36).substring(7)}`;
 
-    // Update progress: 60%
-    await supabaseClient.rpc('update_protection_job_progress', {
-      job_id_param: job.id,
-      progress_param: 60
-    });
+    // Update progress: 60% (only for authenticated users)
+    if (job) {
+      await supabaseClient.rpc('update_protection_job_progress', {
+        job_id_param: job.id,
+        progress_param: 60
+      });
+    }
 
     // Upload protected file to storage
     const timestamp = Date.now();
-    const fileName = `${user.id}/${timestamp}-${file.name}`;
+    const userId = user?.id || 'guest';
+    const fileName = `${userId}/${timestamp}-${file.name}`;
     
     // Determine content type from file extension or parsed mime type
     const getContentType = (filename: string, parsedMime: string): string => {
@@ -170,20 +187,55 @@ serve(async (req) => {
 
     if (uploadError) throw uploadError;
 
-    // Update progress: 80%
-    await supabaseClient.rpc('update_protection_job_progress', {
-      job_id_param: job.id,
-      progress_param: 80
-    });
+    // Update progress: 80% (only for authenticated users)
+    if (job) {
+      await supabaseClient.rpc('update_protection_job_progress', {
+        job_id_param: job.id,
+        progress_param: 80
+      });
+    }
 
-    // Create protection record
+    // Create protection record or guest upload
     const wordCount = extractedText ? extractedText.split(/\s+/).filter(w => w.length > 0).length : 0;
     const fileExtForCheck = file.name.split('.').pop()?.toLowerCase() || '';
     
+    if (isGuest && guestSessionId) {
+      // Create guest upload record
+      const { data: guestUpload, error: guestError } = await supabaseClient
+        .from('guest_uploads')
+        .insert({
+          session_id: guestSessionId,
+          file_name: file.name,
+          file_path: uploadData.path,
+          file_size: file.size,
+          content_type: file.type,
+          protection_level: protectionLevel,
+          protection_id: protectionId,
+          fingerprint: fileFingerprint,
+          word_count: wordCount,
+          char_count: extractedText.length
+        })
+        .select('id')
+        .single();
+
+      if (guestError) throw guestError;
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: 'Guest document protected successfully',
+          guestUploadId: guestUpload.id,
+          protectionId
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Authenticated user flow
     const { data: protectionRecord, error: protectionError } = await supabaseClient
       .from('ai_protection_records')
       .insert({
-        user_id: user.id,
+        user_id: user!.id,
         protection_id: protectionId,
         content_type: 'document',
         original_filename: file.name,
@@ -234,7 +286,7 @@ serve(async (req) => {
     if (enableTracers && protectionRecord) {
       const tracerPayload = btoa(JSON.stringify({
         protection_id: protectionRecord.protection_id,
-        user_id: user.id,
+        user_id: user!.id,
         timestamp: Date.now(),
         fingerprint: fileFingerprint.substring(0, 16),
       }));
@@ -242,7 +294,7 @@ serve(async (req) => {
       const { data: tracerData, error: tracerError } = await supabaseClient
         .from('ai_document_tracers')
         .insert({
-          user_id: user.id,
+          user_id: user!.id,
           protection_record_id: protectionRecord.id,
           tracer_type: 'invisible_marker',
           tracer_payload: tracerPayload,
@@ -256,17 +308,19 @@ serve(async (req) => {
       }
     }
 
-    // Update job to completed
-    await supabaseClient.rpc('update_protection_job_progress', {
-      job_id_param: job.id,
-      progress_param: 100,
-      status_param: 'completed'
-    });
+    // Update job to completed (only for authenticated users)
+    if (job) {
+      await supabaseClient.rpc('update_protection_job_progress', {
+        job_id_param: job.id,
+        progress_param: 100,
+        status_param: 'completed'
+      });
 
-    await supabaseClient
-      .from('document_protection_jobs')
-      .update({ protection_record_id: protectionRecord.id })
-      .eq('id', job.id);
+      await supabaseClient
+        .from('document_protection_jobs')
+        .update({ protection_record_id: protectionRecord.id })
+        .eq('id', job.id);
+    }
 
     console.log('Document protection completed:', {
       protectionId: protectionRecord.protection_id,
