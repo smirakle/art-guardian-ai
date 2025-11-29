@@ -16,6 +16,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import LeaveReview from "@/components/LeaveReview";
 import ContextualHelp from "@/components/help-system/ContextualHelp";
 import { BugReportButton } from "@/components/BugReportButton";
+import Testimonials from "@/components/Testimonials";
 import { UserGuide } from "@/components/UserGuide";
 import { homeGuide } from "@/data/userGuides";
 import { Shield, Eye, Activity, Link2, Search, Check, Star, ArrowRight, Zap, Globe, Lock, TrendingUp, Users, Mail, Phone, MapPin, FileImage, Upload, Scan, Bot, Play, ChevronRight, FileText, Scale, Building, Heart, ExternalLink, UserX, Calendar, Info } from "lucide-react";
@@ -254,7 +255,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Creator Problems & Solution */}
+      {/* Creator Problems */}
       <section className="bg-red-50 py-10 px-4">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-8">
@@ -319,41 +320,16 @@ const Index = () => {
               </CardContent>
             </Card>
           </div>
-
-          <div className="text-center mt-6 space-y-4">
-            <div className="bg-white rounded-lg p-6 border-2 border-primary max-w-2xl mx-auto">
-              <h3 className="text-xl font-bold text-primary mb-2">The Solution: TSMO Protection</h3>
-              <p className="text-gray-700 mb-4">
-                Automated monitoring + AI detection + legal automation = Your content protected 24/7
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-6 py-3" onClick={() => navigate("/upload")}>
-                  Start Protection - FREE Trial
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-                <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary/10 px-6 py-3" onClick={() => {
-                navigate("/");
-                setTimeout(() => {
-                  const freeTrialSection = document.getElementById("free-trial");
-                  if (freeTrialSection) {
-                    freeTrialSection.scrollIntoView({
-                      behavior: "smooth"
-                    });
-                  }
-                }, 100);
-              }}>
-                  Start Your Free Trial
-                </Button>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
       {/* Protection Comparison Showcase */}
       <ProtectionComparisonShowcase />
 
-      {/* How It Works - Clearer Process */}
+      {/* Testimonials - Social Proof */}
+      <Testimonials />
+
+      {/* How It Works & Features - Consolidated */}
       <section id="how-it-works" className="py-20 px-4 bg-muted/30">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
@@ -404,54 +380,137 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Protection Layers - Specific Features */}
-          <div className="grid lg:grid-cols-2 xl:grid-cols-4 gap-8 mb-12">
-            {/* AI Training Protection */}
-            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="pb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                  <Bot className="h-8 w-8 text-white" />
+          {/* Core Features Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                  <Eye className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle className="text-2xl text-center mb-4">AI Training Protection</CardTitle>
-                <CardDescription className="text-center text-base">
-                  Prevent unauthorized use of your creative work in AI training datasets and generative models.
+                <CardTitle>Visual Recognition</CardTitle>
+                <CardDescription>
+                  Advanced AI analyzes your artwork and detects unauthorized usage across the web
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Real-time AI scraping detection across major platforms</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Watermarking technology invisible to humans but detectable by AI</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Automated DMCA notices to AI training companies</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">Legal certificate of protection for court cases</span>
-                  </div>
-                </div>
-                <div className="pt-4">
-                  <Button className="w-full bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700" onClick={() => navigate("/ai-protection")}>
-                    Protect from AI Training
-                    <Shield className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
             </Card>
 
-            {/* Profile Monitoring */}
-            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="pb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                  <UserX className="h-8 w-8 text-white" />
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                  <Activity className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle className="text-2xl text-center mb-4">Profile Monitoring</CardTitle>
+                <CardTitle>Real-time Monitoring</CardTitle>
+                <CardDescription>
+                  24/7 surveillance across platforms, marketplaces, and social media networks
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                  <Link2 className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle>Blockchain Verification</CardTitle>
+                <CardDescription>
+                  Immutable proof of creation and ownership through blockchain technology
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                  <Search className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle>Deep Web Scanning</CardTitle>
+                <CardDescription>
+                  Advanced dark web monitoring and threat detection for comprehensive protection
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+
+          {/* Additional Capabilities */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-lg border border-primary/10">
+              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Zap className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2">Instant Alerts</h3>
+              <p className="text-sm text-muted-foreground">
+                Immediate notifications with detailed evidence packages
+              </p>
+            </div>
+
+            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-lg border border-primary/10">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Globe className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2">Global Coverage</h3>
+              <p className="text-sm text-muted-foreground">
+                Monitor across all major platforms worldwide
+              </p>
+            </div>
+
+            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-lg border border-primary/10">
+              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Lock className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2">Legal Support</h3>
+              <p className="text-sm text-muted-foreground">
+                Automated DMCA filing and legal assistance
+              </p>
+            </div>
+
+            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-lg border border-primary/10">
+              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Scale className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2">Trademark Intelligence</h3>
+              <p className="text-sm text-muted-foreground">
+                AI-powered trademark monitoring across jurisdictions
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Mid-Page CTA */}
+      <section className="py-16 px-4 bg-gradient-to-r from-primary/10 to-accent/10">
+        <div className="container mx-auto max-w-3xl text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Ready to Protect Your Creative Work?
+          </h2>
+          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Join thousands of artists who trust TSMO to safeguard their digital creations
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              size="lg" 
+              className="px-8 h-12 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+              onClick={() => navigate("/upload")}
+            >
+              Start Protecting Now
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="px-8 h-12"
+              onClick={() => navigate("/pricing")}
+            >
+              View Pricing Plans
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Legal Resources Section */}
+      <section className="py-20 px-4 bg-gray-50">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Legal Resources & Support</h2>
                 <CardDescription className="text-center text-base">
                   Monitor for fake accounts, impersonation, and unauthorized use of your identity across social
                   platforms.
@@ -761,89 +820,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Free Trial CTA Section */}
-      <section id="free-trial" className="py-20 px-4 bg-gradient-to-br from-primary/10 via-accent/5 to-primary/5">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center space-y-8">
-            {/* Main Heading */}
-            <div className="space-y-4">
-              <Badge variant="secondary" className="px-6 py-2 text-base">
-                <Shield className="h-5 w-5 mr-2" />
-                No Credit Card Required
-              </Badge>
-              <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Start Your Free Trial Now
-              </h2>
-              <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-                Protect your creative work with AI-powered monitoring. Get started in minutes.
-              </p>
-            </div>
-
-            {/* Key Benefits */}
-            <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto py-8">
-              <div className="space-y-2">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                  <Check className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="font-semibold text-lg">14-Day Free Trial</h3>
-                <p className="text-sm text-muted-foreground">Full access to all features</p>
-              </div>
-              <div className="space-y-2">
-                <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto">
-                  <Shield className="h-6 w-6 text-accent" />
-                </div>
-                <h3 className="font-semibold text-lg">No Credit Card</h3>
-                <p className="text-sm text-muted-foreground">Zero commitment required</p>
-              </div>
-              <div className="space-y-2">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                  <Zap className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="font-semibold text-lg">Instant Setup</h3>
-                <p className="text-sm text-muted-foreground">Start protecting in 2 minutes</p>
-              </div>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-              <Button 
-                size="lg" 
-                className="h-14 px-12 text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
-                onClick={() => navigate("/upload")}
-              >
-                Start Free Trial
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="h-14 px-12 text-lg"
-                onClick={() => navigate("/pricing")}
-              >
-                View Pricing Plans
-              </Button>
-            </div>
-
-            {/* Trust Indicators */}
-            <div className="pt-8 flex flex-wrap justify-center gap-6 items-center text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                <span>15,000+ Protected Artists</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Shield className="h-4 w-4" />
-                <span>50,000+ Violations Found</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Activity className="h-4 w-4" />
-                <span>24/7 Monitoring</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
       {/* Legal Resources Section */}
       <section className="py-20 px-4 bg-gray-50">
         <div className="container mx-auto max-w-6xl">
@@ -1042,6 +1018,37 @@ const Index = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Platform Status Banner */}
+      <section className="py-4 px-4 bg-gradient-to-r from-yellow-50 to-orange-50 border-t border-yellow-200">
+        <div className="container mx-auto max-w-6xl">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <span className="font-medium text-yellow-800">
+                Platform Status: Live & Active
+              </span>
+              <Badge variant="outline" className="text-green-700 border-green-300 text-xs">
+                Beta
+              </Badge>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-yellow-700">
+                Core features ready • Updates weekly
+              </span>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-yellow-700 hover:bg-yellow-100 h-8 text-xs"
+                onClick={() => navigate("/roadmap")}
+              >
+                Roadmap
+                <ChevronRight className="ml-1 h-3 w-3" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Leave a Review Section */}
       <LeaveReview />
