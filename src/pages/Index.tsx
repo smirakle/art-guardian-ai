@@ -215,7 +215,7 @@ const Index = () => {
                 className="h-12 px-8 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 whitespace-nowrap"
                 onClick={() => navigate("/upload")}
               >
-                Start Free Trial
+                Start Free
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>

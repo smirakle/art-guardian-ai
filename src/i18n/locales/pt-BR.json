@@ -2,6 +2,22 @@
   "nav": {
     "markets": "Mercados de Criadores"
   },
+  "hero": {
+    "title": "Proteja Seu Trabalho Criativo com Monitoramento de Direitos Autorais Impulsionado por IA",
+    "subtitle": "Tecnologia avançada de reconhecimento visual que monitora a web 24 horas por dia para proteger suas criações artísticas do uso não autorizado.",
+    "getStarted": "Começar Grátis",
+    "learnMore": "Saiba Mais"
+  },
+  "cta": {
+    "title": "Pronto para Proteger Seu Trabalho Criativo?",
+    "subtitle": "Junte-se a milhares de artistas que confiam na TSMO para proteger sua propriedade intelectual.",
+    "getStarted": "Começar Grátis",
+    "benefits": {
+      "freeUploads": "Uploads e monitoramento gratuitos",
+      "support": "Suporte especializado 24/7",
+      "protection": "Garantia de proteção legal"
+    }
+  },
   "markets": {
     "title": "Painel dos Mercados de Criadores",
     "subtitle": "Mercados principais: EUA, UE, Japão, Coreia do Sul, Brasil",

@@ -2,6 +2,22 @@
   "nav": {
     "markets": "Creator-Märkte"
   },
+  "hero": {
+    "title": "Schützen Sie Ihre kreative Arbeit mit KI-gestützter Urheberrechtsüberwachung",
+    "subtitle": "Fortschrittliche visuelle Erkennungstechnologie, die das Web rund um die Uhr überwacht, um Ihre künstlerischen Kreationen vor unbefugter Nutzung zu schützen.",
+    "getStarted": "Kostenlos Starten",
+    "learnMore": "Mehr Erfahren"
+  },
+  "cta": {
+    "title": "Bereit, Ihre kreative Arbeit zu schützen?",
+    "subtitle": "Schließen Sie sich Tausenden von Künstlern an, die TSMO vertrauen, um ihr geistiges Eigentum zu schützen.",
+    "getStarted": "Kostenlos Starten",
+    "benefits": {
+      "freeUploads": "Kostenlose Uploads & Überwachung",
+      "support": "24/7 Experten-Support",
+      "protection": "Rechtliche Schutzgarantie"
+    }
+  },
   "markets": {
     "title": "Creator-Märkte Dashboard",
     "subtitle": "Top-Märkte: USA, EU, Japan, Südkorea, Brasilien",

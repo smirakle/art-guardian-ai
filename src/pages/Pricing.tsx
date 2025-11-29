@@ -96,6 +96,30 @@ const Pricing = () => {
 
   const plans = [
     {
+      id: 'free',
+      name: 'Free',
+      icon: Shield,
+      description: 'Get started with basic protection',
+      price: { monthly: 0, yearly: 0 },
+      originalPrice: null,
+      discount: null,
+      color: 'from-gray-400 to-gray-600',
+      features: [
+        'Up to 50 artworks protected',
+        'Basic image monitoring',
+        '1 scan per week',
+        'Email alerts for matches',
+        'Community support',
+        'Mobile app access'
+      ],
+      limitations: [
+        'Personal use only',
+        'No AI features',
+        'No API access'
+      ],
+      popular: false
+    },
+    {
       id: 'student',
       name: 'Student',
       icon: Star,
@@ -153,14 +177,38 @@ const Pricing = () => {
       id: 'professional',
       name: 'Professional',
       icon: Zap,
-      description: 'Complete art protection suite for established artists and agencies',
-      price: { monthly: 199, yearly: 1990 },
-      originalPrice: { monthly: 249, yearly: 2490 },
+      description: 'For professional creators and small teams',
+      price: { monthly: 79, yearly: 790 },
+      originalPrice: { monthly: 99, yearly: 990 },
       discount: '20% OFF',
       color: 'from-orange-500 to-red-600',
       features: [
-        'Up to 250,000 artworks protected',
+        'Up to 50,000 artworks protected',
         'Premium AI threat monitoring',
+        'AI agent deployment (up to 5 platforms)',
+        'Portfolio monitoring (up to 25)',
+        'Real-time alerts & notifications',
+        'Advanced watermarking',
+        'Copyright scanning',
+        'DMCA filing assistance',
+        'API access (5,000 calls/month)',
+        'Priority support'
+      ],
+      limitations: [],
+      popular: false
+    },
+    {
+      id: 'pro-plus',
+      name: 'Pro Plus',
+      icon: Crown,
+      description: 'Advanced protection for agencies and high-volume creators',
+      price: { monthly: 149, yearly: 1490 },
+      originalPrice: { monthly: 199, yearly: 1990 },
+      discount: '25% OFF',
+      color: 'from-violet-500 to-purple-600',
+      features: [
+        'Up to 100,000 artworks protected',
+        'Elite AI threat monitoring',
         'AI agent deployment (up to 10 platforms)',
         'Advanced AI predictive analysis',
         'Portfolio monitoring (up to 50)',
@@ -168,14 +216,14 @@ const Pricing = () => {
         'Automated AI response system',
         'AI Training protection (included)',
         'Advanced watermarking & protection',
-        'Blockchain verification & licensing',
+        'Blockchain verification',
         'DMCA automation & legal tools',
         'White-label options',
         'API access (10,000 calls/month)',
         'Dedicated account manager'
       ],
       limitations: [],
-      popular: false
+      popular: true
     },
     {
       id: 'enterprise',
@@ -620,7 +668,7 @@ const Pricing = () => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12">
           {plans.map((plan) => {
             const Icon = plan.icon;
             const currentPrice = plan.price[billingCycle];
@@ -761,6 +809,14 @@ const Pricing = () => {
                     >
                       Contact Sales
                     </Button>
+                  ) : plan.id === 'free' ? (
+                    <Button
+                      onClick={() => navigate('/upload')}
+                      className="w-full py-6 text-lg font-semibold"
+                      variant="outline"
+                    >
+                      Get Started Free
+                    </Button>
                   ) : (
                     <Dialog>
                       <DialogTrigger asChild>
@@ -792,9 +848,14 @@ const Pricing = () => {
                     </Dialog>
                   )}
 
-                  {plan.id !== 'enterprise' && (
+                  {plan.id !== 'enterprise' && plan.id !== 'free' && (
                     <p className="text-xs text-center text-muted-foreground">
-                      5-day free trial • Cancel anytime
+                      14-day free trial • No credit card required
+                    </p>
+                  )}
+                  {plan.id === 'free' && (
+                    <p className="text-xs text-center text-muted-foreground">
+                      No credit card required • Upgrade anytime
                     </p>
                   )}
                 </CardContent>
@@ -855,7 +916,7 @@ const Pricing = () => {
               <CardContent className="p-6">
                 <h4 className="font-semibold mb-2">Is there a free trial?</h4>
                 <p className="text-sm text-muted-foreground">
-                  Yes, all paid plans include a 5-day free trial with full access to features.
+                  Yes! Start with our Free plan or try any paid plan with a 14-day free trial (no credit card required).
                 </p>
               </CardContent>
             </Card>
