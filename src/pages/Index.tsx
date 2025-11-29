@@ -26,6 +26,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import OnboardingTour from "@/components/OnboardingTour";
 import DemoEnvironment from "@/components/investor/DemoEnvironment";
 import MobileAppCTA from "@/components/MobileAppCTA";
+import ProtectionComparisonShowcase from "@/components/ProtectionComparisonShowcase";
 const Index = () => {
   const {
     toast
@@ -348,6 +349,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Protection Comparison Showcase */}
+      <ProtectionComparisonShowcase />
 
       {/* How It Works - Clearer Process */}
       <section id="how-it-works" className="py-20 px-4 bg-muted/30">
