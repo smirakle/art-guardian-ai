@@ -211,11 +211,17 @@ Own Your Future</h1>
             </p>
           </div>
 
-          {/* Secondary CTA */}
-          <Button variant="outline" size="lg" className="mb-8" onClick={() => setShowLiveDemo(true)}>
-            <Play className="mr-2 h-4 w-4" />
-            Watch 2-Min Demo
-          </Button>
+          {/* Secondary CTAs */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+            <Button variant="outline" size="lg" onClick={() => setShowLiveDemo(true)}>
+              <Play className="mr-2 h-4 w-4" />
+              Watch Live Demo
+            </Button>
+            <Button size="lg" className="bg-gradient-to-r from-primary via-secondary to-primary hover:from-primary/90 hover:via-secondary/90 hover:to-primary/90" onClick={() => navigate('/demo/visual')}>
+              <Zap className="mr-2 h-4 w-4" />
+              2-Min Visual Demo
+            </Button>
+          </div>
 
           {/* Simplified Stats - Mobile Optimized */}
           <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-8">
