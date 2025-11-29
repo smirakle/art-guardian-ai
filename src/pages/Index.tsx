@@ -253,6 +253,102 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Creator Problems & Solution */}
+      <section className="bg-red-50 py-10 px-4">
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold mb-3 text-red-800">Stop Losing Money to Content Thieves</h2>
+            <p className="text-base text-red-700 max-w-2xl mx-auto">
+              Every minute your content isn't protected, you're losing revenue. Here's what's happening to creators.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-4 text-center">
+                <div className="text-3xl font-bold text-red-600 mb-2">$3,200</div>
+                <p className="text-sm text-gray-700">
+                  Average revenue lost per creator annually to unauthorized use and theft.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-4 text-center">
+                <div className="text-base font-bold text-red-600 mb-2">AI Training Theft</div>
+                <p className="text-sm text-gray-700">
+                  Your content trains AI models worth billions, but you receive $0 in compensation.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-4 text-center">
+                <div className="text-base font-bold text-red-600 mb-2">Merch Thieves</div>
+                <p className="text-sm text-gray-700">
+                  Print-on-demand sites profit from your stolen designs while you get nothing.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-4 text-center">
+                <div className="text-base font-bold text-red-600 mb-2">Impossible to Track</div>
+                <p className="text-sm text-gray-700">
+                  Manual monitoring takes 10+ hours weekly and still misses 90% of violations.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-4 text-center">
+                <div className="text-base font-bold text-red-600 mb-2">Legal Costs</div>
+                <p className="text-sm text-gray-700">
+                  Lawyers charge $300+/hour for takedown notices you could automate.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-3 text-center">
+                <div className="text-sm font-bold text-red-600 mb-1">Time = Money</div>
+                <p className="text-xs text-gray-700">
+                  Every day without protection costs you potential licensing deals and royalties.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center mt-6 space-y-4">
+            <div className="bg-white rounded-lg p-6 border-2 border-primary max-w-2xl mx-auto">
+              <h3 className="text-xl font-bold text-primary mb-2">The Solution: TSMO Protection</h3>
+              <p className="text-gray-700 mb-4">
+                Automated monitoring + AI detection + legal automation = Your content protected 24/7
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-6 py-3" onClick={() => navigate("/upload")}>
+                  Start Protection - FREE Trial
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary/10 px-6 py-3" onClick={() => {
+                navigate("/");
+                setTimeout(() => {
+                  const freeTrialSection = document.getElementById("free-trial");
+                  if (freeTrialSection) {
+                    freeTrialSection.scrollIntoView({
+                      behavior: "smooth"
+                    });
+                  }
+                }, 100);
+              }}>
+                  Start Your Free Trial
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* How It Works - Clearer Process */}
       <section id="how-it-works" className="py-20 px-4 bg-muted/30">
         <div className="container mx-auto max-w-6xl">
@@ -545,102 +641,6 @@ const Index = () => {
                 View Roadmap
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Creator Problems & Solution */}
-      <section className="bg-red-50 py-10 px-4">
-        <div className="container mx-auto max-w-5xl">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold mb-3 text-red-800">Stop Losing Money to Content Thieves</h2>
-            <p className="text-base text-red-700 max-w-2xl mx-auto">
-              Every minute your content isn't protected, you're losing revenue. Here's what's happening to creators.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-4 text-center">
-                <div className="text-3xl font-bold text-red-600 mb-2">$3,200</div>
-                <p className="text-sm text-gray-700">
-                  Average revenue lost per creator annually to unauthorized use and theft.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-4 text-center">
-                <div className="text-base font-bold text-red-600 mb-2">AI Training Theft</div>
-                <p className="text-sm text-gray-700">
-                  Your content trains AI models worth billions, but you receive $0 in compensation.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-4 text-center">
-                <div className="text-base font-bold text-red-600 mb-2">Merch Thieves</div>
-                <p className="text-sm text-gray-700">
-                  Print-on-demand sites profit from your stolen designs while you get nothing.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-4 text-center">
-                <div className="text-base font-bold text-red-600 mb-2">Impossible to Track</div>
-                <p className="text-sm text-gray-700">
-                  Manual monitoring takes 10+ hours weekly and still misses 90% of violations.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-4 text-center">
-                <div className="text-base font-bold text-red-600 mb-2">Legal Costs</div>
-                <p className="text-sm text-gray-700">
-                  Lawyers charge $300+/hour for takedown notices you could automate.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-3 text-center">
-                <div className="text-sm font-bold text-red-600 mb-1">Time = Money</div>
-                <p className="text-xs text-gray-700">
-                  Every day without protection costs you potential licensing deals and royalties.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="text-center mt-6 space-y-4">
-            <div className="bg-white rounded-lg p-6 border-2 border-primary max-w-2xl mx-auto">
-              <h3 className="text-xl font-bold text-primary mb-2">The Solution: TSMO Protection</h3>
-              <p className="text-gray-700 mb-4">
-                Automated monitoring + AI detection + legal automation = Your content protected 24/7
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-6 py-3" onClick={() => navigate("/upload")}>
-                  Start Protection - FREE Trial
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-                <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary/10 px-6 py-3" onClick={() => {
-                navigate("/");
-                setTimeout(() => {
-                  const freeTrialSection = document.getElementById("free-trial");
-                  if (freeTrialSection) {
-                    freeTrialSection.scrollIntoView({
-                      behavior: "smooth"
-                    });
-                  }
-                }, 100);
-              }}>
-                  Start Your Free Trial
-                </Button>
-              </div>
             </div>
           </div>
         </div>
