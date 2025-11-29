@@ -646,30 +646,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="bg-gray-50 py-16 px-4">
-        <div className="container mx-auto max-w-4xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-3xl font-bold text-primary">24/7</div>
-              <div className="text-sm text-muted-foreground">Monitoring</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-primary">99.9%</div>
-              <div className="text-sm text-muted-foreground">Detection Rate</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-primary">10K+</div>
-              <div className="text-sm text-muted-foreground">Protected Artists</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-primary">$50M+</div>
-              <div className="text-sm text-muted-foreground">Art Value Protected</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Features Section */}
       <section className="py-20 px-4">
         <div className="container mx-auto max-w-6xl">
