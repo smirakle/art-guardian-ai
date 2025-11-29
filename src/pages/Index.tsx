@@ -16,7 +16,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import LeaveReview from "@/components/LeaveReview";
 import ContextualHelp from "@/components/help-system/ContextualHelp";
 import { BugReportButton } from "@/components/BugReportButton";
-import Testimonials from "@/components/Testimonials";
 import { UserGuide } from "@/components/UserGuide";
 import { homeGuide } from "@/data/userGuides";
 import { Shield, Eye, Activity, Link2, Search, Check, Star, ArrowRight, Zap, Globe, Lock, TrendingUp, Users, Mail, Phone, MapPin, FileImage, Upload, Scan, Bot, Play, ChevronRight, FileText, Scale, Building, Heart, ExternalLink, UserX, Calendar, Info } from "lucide-react";
@@ -325,9 +324,6 @@ const Index = () => {
 
       {/* Protection Comparison Showcase */}
       <ProtectionComparisonShowcase />
-
-      {/* Testimonials - Social Proof */}
-      <Testimonials />
 
       {/* How It Works & Features - Consolidated */}
       <section id="how-it-works" className="py-20 px-4 bg-muted/30">
