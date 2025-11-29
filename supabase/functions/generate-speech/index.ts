@@ -17,6 +17,8 @@ serve(async (req) => {
       throw new Error('Text is required')
     }
 
+    console.log('Generating speech for text length:', text.length, 'with voice:', voice || 'nova')
+
     const response = await fetch('https://api.openai.com/v1/audio/speech', {
       method: 'POST',
       headers: {
@@ -34,6 +36,7 @@ serve(async (req) => {
 
     if (!response.ok) {
       const error = await response.json()
+      console.error('OpenAI API error:', response.status, error)
       throw new Error(error.error?.message || 'Failed to generate speech')
     }
 
@@ -50,6 +53,8 @@ serve(async (req) => {
     }
     
     const base64Audio = btoa(binary)
+
+    console.log('Speech generated successfully, audio size:', base64Audio.length, 'bytes')
 
     return new Response(
       JSON.stringify({ audioContent: base64Audio }),
