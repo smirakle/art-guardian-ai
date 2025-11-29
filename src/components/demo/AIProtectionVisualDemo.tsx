@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Play, Pause, SkipForward, Maximize, RotateCcw } from 'lucide-react';
+import { Play, Pause, SkipForward, Maximize, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 import { UploadScene } from './scenes/UploadScene';
 import { FingerprintingScene } from './scenes/FingerprintingScene';
 import { ShieldBuildingScene } from './scenes/ShieldBuildingScene';
@@ -27,6 +27,8 @@ export const AIProtectionVisualDemo = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -55,13 +57,29 @@ export const AIProtectionVisualDemo = () => {
   }, [isPlaying, currentSceneIndex]);
 
   const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
+    const newPlayingState = !isPlaying;
+    setIsPlaying(newPlayingState);
+    
+    // Control background music
+    if (audioRef.current) {
+      if (newPlayingState) {
+        audioRef.current.play().catch(err => console.log('Audio play failed:', err));
+      } else {
+        audioRef.current.pause();
+      }
+    }
   };
 
   const handleReset = () => {
     setCurrentSceneIndex(0);
     setProgress(0);
     setIsPlaying(false);
+    
+    // Reset and pause audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
   };
 
   const handleSkip = () => {
@@ -81,10 +99,25 @@ export const AIProtectionVisualDemo = () => {
     }
   };
 
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+    if (audioRef.current) {
+      audioRef.current.muted = !isMuted;
+    }
+  };
+
   const CurrentSceneComponent = scenes[currentSceneIndex].component;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+      {/* Background Music */}
+      <audio 
+        ref={audioRef} 
+        loop 
+        muted={isMuted}
+        src="https://cdn.pixabay.com/audio/2022/03/10/audio_4a392a76e5.mp3"
+      />
+      
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8 text-center">
@@ -161,9 +194,14 @@ export const AIProtectionVisualDemo = () => {
               </div>
 
               {/* Right: View Controls */}
-              <Button onClick={toggleFullscreen} variant="outline" size="icon">
-                <Maximize className="h-4 w-4" />
-              </Button>
+              <div className="flex gap-2">
+                <Button onClick={toggleMute} variant="outline" size="icon" title={isMuted ? "Unmute" : "Mute"}>
+                  {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                </Button>
+                <Button onClick={toggleFullscreen} variant="outline" size="icon">
+                  <Maximize className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
             {/* Scene Info */}
