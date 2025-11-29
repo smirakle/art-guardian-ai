@@ -193,9 +193,7 @@ const Index = () => {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">Protect Your Art
 Own Your Future</h1>
 
-          <p className="text-lg sm:text-xl text-muted-foreground mb-4 max-w-2xl mx-auto">
-            24/7 automated monitoring finds unauthorized use of your artwork across the internet
-          </p>
+          
           
           <p className="text-base sm:text-lg text-muted-foreground/80 mb-8 max-w-2xl mx-auto italic font-sans text-center font-light">"TSMO was created for Independent artists, designers, musicians, small-to-mid-size creative brands" - Shirleena Cunningham, Founder and CEO</p>
 
