@@ -29,11 +29,22 @@ const protectionLayers = [
   },
 ];
 
-export const ShieldBuildingScene = () => {
+interface ShieldBuildingSceneProps {
+  onNarrate?: (text: string) => void;
+}
+
+export const ShieldBuildingScene = ({ onNarrate }: ShieldBuildingSceneProps) => {
   const [activeLayers, setActiveLayers] = useState<number[]>([]);
   const [shieldComplete, setShieldComplete] = useState(false);
 
   useEffect(() => {
+    // Start narration
+    onNarrate?.(
+      "Watch as we deploy multiple layers of protection around Sarah's artwork. " +
+      "Invisible watermarks, adversarial noise, metadata injection, and blockchain registration. " +
+      "Four impenetrable shields that work together to defend against AI training theft."
+    );
+
     protectionLayers.forEach((layer, index) => {
       setTimeout(() => {
         setActiveLayers(prev => [...prev, index]);
@@ -42,7 +53,7 @@ export const ShieldBuildingScene = () => {
         }
       }, layer.delay);
     });
-  }, []);
+  }, [onNarrate]);
 
   return (
     <div className="w-full h-full flex items-center justify-center p-12 relative overflow-hidden">

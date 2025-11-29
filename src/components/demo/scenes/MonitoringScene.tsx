@@ -7,12 +7,24 @@ const platforms = [
   'Behance', 'Dribbble', 'Twitter', 'Facebook', 'Reddit'
 ];
 
-export const MonitoringScene = () => {
+interface MonitoringSceneProps {
+  onNarrate?: (text: string) => void;
+}
+
+export const MonitoringScene = ({ onNarrate }: MonitoringSceneProps) => {
   const [scannedPlatforms, setScannedPlatforms] = useState(0);
   const [currentScan, setCurrentScan] = useState('');
   const [totalScans, setTotalScans] = useState(0);
 
   useEffect(() => {
+    // Start narration
+    onNarrate?.(
+      "Now our AI monitoring system springs into action! " +
+      "We're scanning over 70 platforms simultaneously - Instagram, Pinterest, TikTok, and more. " +
+      "Like having a private detective watching every corner of the internet, 24/7. " +
+      "Any unauthorized use? We'll catch it instantly!"
+    );
+
     const interval = setInterval(() => {
       setScannedPlatforms(prev => {
         const next = prev + 1;
@@ -25,7 +37,7 @@ export const MonitoringScene = () => {
     }, 800);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [onNarrate]);
 
   return (
     <div className="w-full h-full flex items-center justify-center p-8 relative overflow-hidden">

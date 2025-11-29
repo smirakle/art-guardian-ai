@@ -2,11 +2,21 @@ import { useEffect, useState } from 'react';
 import { Upload, CheckCircle } from 'lucide-react';
 import { ParticleEffect } from '../effects/ParticleEffect';
 
-export const UploadScene = () => {
+interface UploadSceneProps {
+  onNarrate?: (text: string) => void;
+}
+
+export const UploadScene = ({ onNarrate }: UploadSceneProps) => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [showParticles, setShowParticles] = useState(false);
 
   useEffect(() => {
+    // Start narration
+    onNarrate?.(
+      "Meet Sarah's artwork. She just spent 47 hours perfecting this digital masterpiece. " +
+      "Now, let's protect it from AI training theft with TSMO's advanced protection system."
+    );
+
     // Simulate upload progress
     const interval = setInterval(() => {
       setUploadProgress(prev => {
@@ -19,7 +29,7 @@ export const UploadScene = () => {
     }, 100);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [onNarrate]);
 
   return (
     <div className="w-full h-full flex items-center justify-center p-12 relative overflow-hidden">
