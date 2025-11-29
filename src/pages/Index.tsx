@@ -187,17 +187,11 @@ const Index = () => {
         <div className="container mx-auto text-center max-w-4xl">
           {/* TSMO Logo - Dramatically Reduced */}
           <div className="mb-6">
-            <img 
-              src={tsmoLogo} 
-              alt="TSMO Logo" 
-              className="h-[10.5rem] sm:h-[14rem] md:h-[17.5rem] mx-auto object-contain" 
-              loading="eager"
-            />
+            <img src={tsmoLogo} alt="TSMO Logo" className="h-[10.5rem] sm:h-[14rem] md:h-[17.5rem] mx-auto object-contain" loading="eager" />
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
-            Protect Your Art from AI Training & Theft
-          </h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">Protect Your Art
+Own Your Future</h1>
 
           <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             24/7 automated monitoring finds unauthorized use of your artwork across the internet
@@ -206,16 +200,8 @@ const Index = () => {
           {/* Primary Sign-Up CTA */}
           <div className="max-w-md mx-auto mb-6">
             <div className="flex flex-col sm:flex-row gap-3">
-              <Input 
-                type="email" 
-                placeholder="Enter your email"
-                className="flex-1 h-12 text-base"
-              />
-              <Button 
-                size="lg" 
-                className="h-12 px-8 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 whitespace-nowrap"
-                onClick={() => navigate("/upload")}
-              >
+              <Input type="email" placeholder="Enter your email" className="flex-1 h-12 text-base" />
+              <Button size="lg" className="h-12 px-8 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 whitespace-nowrap" onClick={() => navigate("/upload")}>
                 Start Free
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -226,12 +212,7 @@ const Index = () => {
           </div>
 
           {/* Secondary CTA */}
-          <Button 
-            variant="outline" 
-            size="lg" 
-            className="mb-8"
-            onClick={() => setShowLiveDemo(true)}
-          >
+          <Button variant="outline" size="lg" className="mb-8" onClick={() => setShowLiveDemo(true)}>
             <Play className="mr-2 h-4 w-4" />
             Watch 2-Min Demo
           </Button>
@@ -482,20 +463,11 @@ const Index = () => {
             Join thousands of artists who trust TSMO to safeguard their digital creations
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              className="px-8 h-12 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
-              onClick={() => navigate("/upload")}
-            >
+            <Button size="lg" className="px-8 h-12 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90" onClick={() => navigate("/upload")}>
               Start Protecting Now
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="px-8 h-12"
-              onClick={() => navigate("/pricing")}
-            >
+            <Button variant="outline" size="lg" className="px-8 h-12" onClick={() => navigate("/pricing")}>
               View Pricing Plans
             </Button>
           </div>
@@ -718,12 +690,7 @@ const Index = () => {
               <span className="text-xs text-yellow-700">
                 Core features ready • Updates weekly
               </span>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-yellow-700 hover:bg-yellow-100 h-8 text-xs"
-                onClick={() => navigate("/roadmap")}
-              >
+              <Button variant="ghost" size="sm" className="text-yellow-700 hover:bg-yellow-100 h-8 text-xs" onClick={() => navigate("/roadmap")}>
                 Roadmap
                 <ChevronRight className="ml-1 h-3 w-3" />
               </Button>
