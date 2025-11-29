@@ -409,134 +409,33 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Beta Testing Status - Enhanced */}
-      <section id="beta-status" className="py-16 px-4 bg-gradient-to-r from-yellow-50 to-orange-50 border-y border-yellow-200">
+      {/* Platform Status Banner - Compact */}
+      <section className="py-6 px-4 bg-gradient-to-r from-yellow-50 to-orange-50 border-y border-yellow-200">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-12">
-            <Badge variant="outline" className="text-yellow-700 border-yellow-300 mb-6 px-4 py-2 text-lg">
-              🚀 Beta Testing Phase - Join Early Access
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-yellow-800">Platform Development Status</h2>
-            <p className="text-xl text-yellow-700 max-w-3xl mx-auto">
-              Core protection features are live and working. Advanced automation features are being rolled out weekly.
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-8 mb-12">
-            <Card className="border-0 shadow-xl bg-gradient-to-br from-green-50 to-emerald-50">
-              <CardHeader className="text-center pb-4">
-                <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Check className="h-8 w-8 text-white" />
-                </div>
-                <CardTitle className="text-2xl text-green-800">✅ Active & Working</CardTitle>
-                <CardDescription className="text-green-700">Ready to use right now</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="bg-white/80 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Upload className="h-5 w-5 text-green-600" />
-                      <span className="font-semibold text-green-800">Image Protection</span>
-                    </div>
-                    <p className="text-sm text-green-700">Upload and analyze artwork with AI protection layers</p>
-                  </div>
-                  <div className="bg-white/80 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Eye className="h-5 w-5 text-green-600" />
-                      <span className="font-semibold text-green-800">Monitoring System</span>
-                    </div>
-                    <p className="text-sm text-green-700">Track violations across major platforms</p>
-                  </div>
-                  <div className="bg-white/80 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <FileText className="h-5 w-5 text-green-600" />
-                      <span className="font-semibold text-green-800">Legal Templates</span>
-                    </div>
-                    <p className="text-sm text-green-700">DMCA and takedown notice templates</p>
-                  </div>
-                  <div className="bg-white/80 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Users className="h-5 w-5 text-green-600" />
-                      <span className="font-semibold text-green-800">Portfolio Management</span>
-                    </div>
-                    <p className="text-sm text-green-700">Organize and manage your protected works</p>
-                  </div>
-                  <div className="bg-white/80 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Bot className="h-5 w-5 text-green-600" />
-                      <span className="font-semibold text-green-800">AI Training Protection</span>
-                    </div>
-                    <p className="text-sm text-green-700">StyleCloak anti-training technology - Market Ready</p>
-                  </div>
-                  <div className="bg-white/80 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Globe className="h-5 w-5 text-green-600" />
-                      <span className="font-semibold text-green-800">Real-time Scanning</span>
-                    </div>
-                    <p className="text-sm text-green-700">Instant detection across all platforms - Market Ready</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-xl bg-gradient-to-br from-orange-50 to-red-50">
-              <CardHeader className="text-center pb-4">
-                <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Activity className="h-8 w-8 text-white" />
-                </div>
-                <CardTitle className="text-2xl text-orange-800">🔧 Coming Soon</CardTitle>
-                <CardDescription className="text-orange-700">Rolling out in the next 30 days</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="bg-white/80 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Zap className="h-5 w-5 text-orange-600" />
-                      <span className="font-semibold text-orange-800">Auto Takedowns</span>
-                    </div>
-                    <p className="text-sm text-orange-700">Automated DMCA filing and platform reporting</p>
-                  </div>
-                  <div className="bg-white/80 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Building className="h-5 w-5 text-orange-600" />
-                      <span className="font-semibold text-orange-800">Enterprise Dashboard</span>
-                    </div>
-                    <p className="text-sm text-orange-700">Advanced analytics and team management tools</p>
-                  </div>
-                  <div className="bg-white/80 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Lock className="h-5 w-5 text-orange-600" />
-                      <span className="font-semibold text-orange-800">Blockchain Registry</span>
-                    </div>
-                    <p className="text-sm text-orange-700">Immutable ownership certificates</p>
-                  </div>
-                  <div className="bg-white/80 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Scale className="h-5 w-5 text-orange-600" />
-                      <span className="font-semibold text-orange-800">Advanced Legal Tools</span>
-                    </div>
-                    <p className="text-sm text-orange-700">Enhanced DMCA and international takedown support</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="text-center">
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 px-8" onClick={() => navigate("/roadmap")}>
-                <Calendar className="mr-2 h-5 w-5" />
-                View Development Roadmap
-              </Button>
-              <Button variant="outline" size="lg" className="border-yellow-300 text-yellow-700 hover:bg-yellow-100 px-8" onClick={() => navigate("/contact")}>
-                <Mail className="mr-2 h-5 w-5" />
-                Report Issues & Feedback
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+              <span className="font-semibold text-yellow-800">
+                🚀 Platform Status: Live & Active
+              </span>
+              <Badge variant="outline" className="text-green-700 border-green-300 text-xs">
+                Beta
+              </Badge>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-yellow-700">
+                Core features ready • New updates weekly
+              </span>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+                onClick={() => navigate("/roadmap")}
+              >
+                View Roadmap
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
-            <p className="mt-6 text-sm text-yellow-700 max-w-2xl mx-auto">
-              <strong>Beta Testers Get:</strong> Extended free trial, priority support, and direct input
-              on feature development.
-            </p>
           </div>
         </div>
       </section>
