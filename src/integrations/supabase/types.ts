@@ -9132,6 +9132,7 @@ export type Database = {
           company_name: string | null
           created_at: string
           email: string
+          feature_type: string
           id: string
           priority_level: string | null
           status: string | null
@@ -9143,6 +9144,7 @@ export type Database = {
           company_name?: string | null
           created_at?: string
           email: string
+          feature_type?: string
           id?: string
           priority_level?: string | null
           status?: string | null
@@ -9154,6 +9156,7 @@ export type Database = {
           company_name?: string | null
           created_at?: string
           email?: string
+          feature_type?: string
           id?: string
           priority_level?: string | null
           status?: string | null
