@@ -38,7 +38,7 @@ const Hero = () => {
             </Button>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 max-w-2xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-8 max-w-4xl mx-auto">
             <div className="text-center p-4">
               <Shield className="w-10 h-10 text-primary mb-2 mx-auto" />
               <h3 className="font-semibold mb-1">24/7 Monitoring</h3>
@@ -55,6 +55,18 @@ const Hero = () => {
               <Palette className="w-10 h-10 text-secondary mb-2 mx-auto" />
               <h3 className="font-semibold mb-1">Artist-First</h3>
               <p className="text-muted-foreground text-sm">Built for creators</p>
+            </div>
+
+            <div className="text-center p-4">
+              <div className="text-3xl font-bold text-primary mb-2">99.9%</div>
+              <h3 className="font-semibold mb-1">Detection Rate</h3>
+              <p className="text-muted-foreground text-sm">Industry-leading accuracy</p>
+            </div>
+
+            <div className="text-center p-4">
+              <div className="text-3xl font-bold text-primary mb-2">$50M+</div>
+              <h3 className="font-semibold mb-1">Art Value</h3>
+              <p className="text-muted-foreground text-sm">Protected assets</p>
             </div>
           </div>
         </div>
