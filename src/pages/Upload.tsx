@@ -25,8 +25,16 @@ import {
   Info,
   Brain,
   Activity,
-  Globe
+  Globe,
+  ChevronDown,
+  Eye,
+  Sparkles
 } from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePerformanceBudget } from "@/hooks/usePerformanceBudget";
@@ -40,6 +48,7 @@ import { WatermarkResult } from "@/lib/advancedWatermark";
 import { UserGuide } from "@/components/UserGuide";
 import { uploadGuide } from "@/data/userGuides";
 import { BugReportButton } from "@/components/BugReportButton";
+import ImprovedUploadGuidance from "@/components/ImprovedUploadGuidance";
 
 interface UploadedFile {
   id: string;
@@ -77,6 +86,13 @@ const Upload = () => {
   const [urls, setUrls] = useState<string[]>([]);
   const [rawFiles, setRawFiles] = useState<File[]>([]);
   const [watermarkResults, setWatermarkResults] = useState<WatermarkResult[]>([]);
+  
+  // Progress tracking
+  const [currentStep, setCurrentStep] = useState<'select' | 'upload' | 'analyze' | 'monitor'>('select');
+  const [completedTabs, setCompletedTabs] = useState<Set<string>>(new Set());
+  const [activeTab, setActiveTab] = useState("upload");
+  const [showOptionalFields, setShowOptionalFields] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -136,7 +152,9 @@ const Upload = () => {
   };
 
   const processFiles = async (fileList: File[]) => {
-
+    setRawFiles(prev => [...prev, ...fileList]);
+    setCurrentStep('upload');
+    
     for (const file of fileList) {
       const fileId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
       const newFile: UploadedFile = {
@@ -188,12 +206,16 @@ const Upload = () => {
       setFiles(prev => prev.map(f => 
         f.id === fileId ? { ...f, status: 'processing', progress: 100 } : f
       ));
+      
+      setCurrentStep('analyze');
 
       // Simulate processing time
       setTimeout(() => {
         setFiles(prev => prev.map(f => 
           f.id === fileId ? { ...f, status: 'protected' } : f
         ));
+        
+        setCompletedTabs(prev => new Set(prev).add('upload'));
         
         toast({
           title: "File Uploaded",
@@ -325,6 +347,12 @@ const Upload = () => {
   };
 
   const handleStartProtection = async () => {
+    // Show summary first
+    if (!showSummary) {
+      setShowSummary(true);
+      return;
+    }
+    
     // Validation
     if (files.length === 0 && urls.length === 0) {
       toast({
@@ -354,6 +382,7 @@ const Upload = () => {
     }
 
     setIsProtecting(true);
+    setCurrentStep('monitor');
 
     try {
       // Show initial toast
@@ -497,6 +526,9 @@ const Upload = () => {
       // Success notification
       const totalItems = files.length + urls.length;
       const blockchainMessage = enableBlockchain ? " with blockchain certificate" : "";
+      
+      setCompletedTabs(prev => new Set(prev).add('upload').add('analyze'));
+      
       toast({
         title: "Protection Complete!",
         description: `${totalItems} item(s) are now protected and being monitored 24/7${blockchainMessage}`,
@@ -543,63 +575,106 @@ const Upload = () => {
               sections={uploadGuide.sections}
             />
             </div>
-            <p className="text-lg md:text-xl text-muted-foreground mb-4">
+            <p className="text-lg md:text-xl text-muted-foreground mb-6">
               Upload your creative work to start AI-powered protection
             </p>
             
-            <Alert className="mb-4 border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-800">
-              <Info className="h-4 w-4 text-blue-600" />
-              <AlertDescription className="text-blue-800">
-                <span className="font-medium">Note:</span> For advanced monitoring features, visit the <strong>Dashboard</strong> after uploading your content.
+            {/* Consolidated Alert */}
+            <Alert className="mb-4 border-primary/20 bg-primary/5">
+              <Info className="h-4 w-4 text-primary" />
+              <AlertDescription>
+                {!user ? (
+                  <>
+                    <span className="font-medium">Free Access:</span> You can upload and protect artwork without signing in. 
+                    Sign in for full features like monitoring and blockchain verification. 
+                  </>
+                ) : (
+                  <>
+                    <span className="font-medium">Pro Tip:</span> Visit the <strong>Dashboard</strong> after uploading for advanced monitoring features.
+                  </>
+                )}
               </AlertDescription>
             </Alert>
-            
-            {!user && (
-              <Alert className="mb-6 border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-800">
-                <Info className="w-4 h-4" />
-                <AlertDescription className="text-blue-800 dark:text-blue-200">
-                  <strong>Free Access:</strong> You can upload and protect artwork without signing in. Sign in for full features like monitoring and blockchain verification.
-                </AlertDescription>
-              </Alert>
-            )}
           </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
-        <Tabs defaultValue="upload" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="upload">Upload Files</TabsTrigger>
-            <TabsTrigger value="watermark">Advanced Watermark</TabsTrigger>
-            <TabsTrigger value="analyze">Visual Analysis</TabsTrigger>
+        {/* Progress Stepper */}
+        <div className="mb-6">
+          <ImprovedUploadGuidance currentStep={currentStep} />
+        </div>
+
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-3 h-auto">
+            <TabsTrigger value="upload" className="flex flex-col gap-1 py-3 relative">
+              <div className="flex items-center gap-2">
+                <UploadIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">Step 1: Upload</span>
+                <span className="sm:hidden">Upload</span>
+                {completedTabs.has('upload') && (
+                  <CheckCircle className="h-3 w-3 text-green-500" />
+                )}
+              </div>
+              <span className="text-xs text-muted-foreground hidden sm:block">Select and upload files</span>
+            </TabsTrigger>
+            <TabsTrigger value="watermark" className="flex flex-col gap-1 py-3 relative">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                <span className="hidden sm:inline">Step 2: Watermark</span>
+                <span className="sm:hidden">Watermark</span>
+                {completedTabs.has('watermark') && (
+                  <CheckCircle className="h-3 w-3 text-green-500" />
+                )}
+              </div>
+              <span className="text-xs text-muted-foreground hidden sm:block">Apply protection</span>
+            </TabsTrigger>
+            <TabsTrigger value="analyze" className="flex flex-col gap-1 py-3 relative">
+              <div className="flex items-center gap-2">
+                <Eye className="h-4 w-4" />
+                <span className="hidden sm:inline">Step 3: Analyze</span>
+                <span className="sm:hidden">Analyze</span>
+                {completedTabs.has('analyze') && (
+                  <CheckCircle className="h-3 w-3 text-green-500" />
+                )}
+              </div>
+              <span className="text-xs text-muted-foreground hidden sm:block">Visual recognition</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="upload" className="mt-6">
             <div className="grid gap-6 lg:grid-cols-2">
-              {/* Upload Area */}
-              <Card>
+              {/* Upload Area - Enhanced */}
+              <Card className="border-2 hover:border-primary/50 transition-colors">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <UploadIcon className="h-5 w-5" />
+                    <UploadIcon className="h-5 w-5 text-primary" />
                     Upload Files
+                    {files.length > 0 && (
+                      <Badge variant="secondary" className="ml-auto">
+                        {files.length} files
+                      </Badge>
+                    )}
                   </CardTitle>
                   <CardDescription>
-                    Drag and drop files or click to select
+                    Drag and drop files or click to select. All formats supported.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div
-                    className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                    className={`border-2 border-dashed rounded-lg p-8 text-center transition-all duration-300 ${
                       isDragging 
-                        ? 'border-primary bg-primary/5' 
-                        : 'border-muted-foreground/25 hover:border-muted-foreground/50'
+                        ? 'border-primary bg-primary/10 scale-[1.02]' 
+                        : 'border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/30'
                     }`}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
                   >
-                    <FolderOpen className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                    <div className={`transition-transform duration-300 ${isDragging ? 'scale-110' : ''}`}>
+                      <FolderOpen className={`mx-auto h-12 w-12 mb-4 ${isDragging ? 'text-primary' : 'text-muted-foreground'}`} />
+                    </div>
                     <h3 className="text-lg font-semibold mb-2">
                       Drop files here or click to upload
                     </h3>
@@ -614,7 +689,7 @@ const Upload = () => {
                       id="file-upload"
                       accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
                     />
-                    <Button asChild>
+                    <Button asChild size="lg" className="hover:scale-105 transition-transform">
                       <label htmlFor="file-upload" className="cursor-pointer">
                         <Camera className="h-4 w-4 mr-2" />
                         Select Files
@@ -623,8 +698,11 @@ const Upload = () => {
                   </div>
 
                   {/* Add URL Section */}
-                  <div className="mt-6 p-4 border rounded-lg">
-                    <h4 className="font-medium mb-3">Add URLs</h4>
+                  <div className="mt-6 p-4 border rounded-lg bg-muted/30">
+                    <h4 className="font-medium mb-3 flex items-center gap-2">
+                      <Link className="h-4 w-4" />
+                      Add URLs
+                    </h4>
                     <div className="flex gap-2">
                       <Input
                         placeholder="Enter article or content URL"
@@ -640,10 +718,10 @@ const Upload = () => {
                     {urls.length > 0 && (
                       <div className="mt-3 space-y-2">
                         {urls.map((url, index) => (
-                          <div key={index} className="flex items-center justify-between p-2 bg-muted/50 rounded">
-                            <span className="text-sm flex items-center gap-2">
-                              <Link className="h-4 w-4" />
-                              {url}
+                          <div key={index} className="flex items-center justify-between p-2 bg-background rounded animate-fade-in">
+                            <span className="text-sm flex items-center gap-2 truncate">
+                              <Link className="h-4 w-4 flex-shrink-0" />
+                              <span className="truncate">{url}</span>
                             </span>
                             <Button
                               size="sm"
@@ -660,11 +738,11 @@ const Upload = () => {
                 </CardContent>
               </Card>
 
-              {/* Metadata Form */}
+              {/* Metadata Form - With Progressive Disclosure */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
+                    <FileText className="h-5 w-5 text-primary" />
                     Artwork Details
                   </CardTitle>
                   <CardDescription>
@@ -672,88 +750,115 @@ const Upload = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="title">Title *</Label>
-                    <Input
-                      id="title"
-                      placeholder="Enter artwork title"
-                      value={artworkTitle}
-                      onChange={(e) => setArtworkTitle(e.target.value)}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      placeholder="Describe your artwork"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      rows={3}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="category">Category *</Label>
-                    <Select value={category} onValueChange={setCategory}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="photography">Photography</SelectItem>
-                        <SelectItem value="digital-art">Digital Art</SelectItem>
-                        <SelectItem value="video">Video</SelectItem>
-                        <SelectItem value="audio">Audio/Music</SelectItem>
-                        <SelectItem value="writing">Writing</SelectItem>
-                        <SelectItem value="design">Design</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label>Tags</Label>
-                    <div className="flex gap-2 mt-1">
+                  {/* Essential Fields - Always Visible */}
+                  <div className="space-y-4 p-4 rounded-lg bg-primary/5 border border-primary/20">
+                    <h4 className="font-medium text-sm flex items-center gap-2">
+                      <Shield className="h-4 w-4" />
+                      Essential Information
+                    </h4>
+                    
+                    <div>
+                      <Label htmlFor="title">Title *</Label>
                       <Input
-                        placeholder="Add tags"
-                        value={tagInput}
-                        onChange={(e) => setTagInput(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && addTag()}
+                        id="title"
+                        placeholder="Enter artwork title"
+                        value={artworkTitle}
+                        onChange={(e) => setArtworkTitle(e.target.value)}
+                        className="mt-1"
                       />
-                      <Button onClick={addTag} size="sm">
-                        <Plus className="h-4 w-4" />
-                      </Button>
                     </div>
-                    {tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {tags.map((tag, index) => (
-                          <Badge key={index} variant="secondary" className="cursor-pointer" onClick={() => removeTag(tag)}>
-                            {tag} <X className="h-3 w-3 ml-1" />
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
+
+                    <div>
+                      <Label htmlFor="category">Category *</Label>
+                      <Select value={category} onValueChange={setCategory}>
+                        <SelectTrigger className="mt-1">
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="photography">Photography</SelectItem>
+                          <SelectItem value="digital-art">Digital Art</SelectItem>
+                          <SelectItem value="video">Video</SelectItem>
+                          <SelectItem value="audio">Audio/Music</SelectItem>
+                          <SelectItem value="writing">Writing</SelectItem>
+                          <SelectItem value="design">Design</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
-                  <div>
-                    <Label htmlFor="license">License Type</Label>
-                    <Select value={licenseType} onValueChange={setLicenseType}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select license" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all-rights-reserved">All Rights Reserved</SelectItem>
-                        <SelectItem value="cc-by">Creative Commons BY</SelectItem>
-                        <SelectItem value="cc-by-sa">Creative Commons BY-SA</SelectItem>
-                        <SelectItem value="cc-by-nc">Creative Commons BY-NC</SelectItem>
-                        <SelectItem value="public-domain">Public Domain</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  {/* Optional Fields - Collapsible */}
+                  <Collapsible open={showOptionalFields} onOpenChange={setShowOptionalFields}>
+                    <CollapsibleTrigger asChild>
+                      <Button variant="ghost" className="w-full justify-between">
+                        <span className="flex items-center gap-2">
+                          <FileText className="h-4 w-4" />
+                          Optional Details
+                        </span>
+                        <ChevronDown className={`h-4 w-4 transition-transform ${showOptionalFields ? 'rotate-180' : ''}`} />
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="space-y-4 mt-4">
+                      <div>
+                        <Label htmlFor="description">Description</Label>
+                        <Textarea
+                          id="description"
+                          placeholder="Describe your artwork"
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          rows={3}
+                          className="mt-1"
+                        />
+                      </div>
+
+                      <div>
+                        <Label>Tags</Label>
+                        <div className="flex gap-2 mt-1">
+                          <Input
+                            placeholder="Add tags"
+                            value={tagInput}
+                            onChange={(e) => setTagInput(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && addTag()}
+                          />
+                          <Button onClick={addTag} size="sm">
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        {tags.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {tags.map((tag, index) => (
+                              <Badge key={index} variant="secondary" className="cursor-pointer hover:bg-destructive/80 transition-colors" onClick={() => removeTag(tag)}>
+                                {tag} <X className="h-3 w-3 ml-1" />
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <Label htmlFor="license">License Type</Label>
+                        <Select value={licenseType} onValueChange={setLicenseType}>
+                          <SelectTrigger className="mt-1">
+                            <SelectValue placeholder="Select license" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all-rights-reserved">All Rights Reserved</SelectItem>
+                            <SelectItem value="cc-by">Creative Commons BY</SelectItem>
+                            <SelectItem value="cc-by-sa">Creative Commons BY-SA</SelectItem>
+                            <SelectItem value="cc-by-nc">Creative Commons BY-NC</SelectItem>
+                            <SelectItem value="public-domain">Public Domain</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
 
                   {/* Protection Options */}
                   <div className="space-y-4 pt-4 border-t">
-                    <h4 className="font-medium">Protection Options</h4>
+                    <h4 className="font-medium flex items-center gap-2">
+                      <Shield className="h-4 w-4 text-primary" />
+                      Protection Options
+                    </h4>
                     
                     <div className="flex items-center space-x-2">
                       <Checkbox
@@ -761,7 +866,7 @@ const Upload = () => {
                         checked={enableWatermark}
                         onCheckedChange={(checked) => setEnableWatermark(checked === true)}
                       />
-                      <Label htmlFor="watermark">Enable Watermarking</Label>
+                      <Label htmlFor="watermark" className="cursor-pointer">Enable Watermarking</Label>
                     </div>
                     
                     {user && (
@@ -771,10 +876,52 @@ const Upload = () => {
                           checked={enableBlockchain}
                           onCheckedChange={(checked) => setEnableBlockchain(checked === true)}
                         />
-                        <Label htmlFor="blockchain">Blockchain Verification</Label>
+                        <Label htmlFor="blockchain" className="cursor-pointer">Blockchain Verification</Label>
                       </div>
                     )}
                   </div>
+
+                  {/* Summary Section */}
+                  {showSummary && (files.length > 0 || urls.length > 0) && (
+                    <div className="p-4 rounded-lg bg-accent/10 border-2 border-accent/50 animate-fade-in">
+                      <h4 className="font-semibold mb-3 flex items-center gap-2">
+                        <CheckCircle className="h-5 w-5 text-accent" />
+                        Ready to Protect
+                      </h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Files:</span>
+                          <span className="font-medium">{files.length}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">URLs:</span>
+                          <span className="font-medium">{urls.length}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Category:</span>
+                          <span className="font-medium capitalize">{category || 'Not set'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Watermark:</span>
+                          <span className="font-medium">{enableWatermark ? 'Yes' : 'No'}</span>
+                        </div>
+                        {user && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Blockchain:</span>
+                            <span className="font-medium">{enableBlockchain ? 'Yes' : 'No'}</span>
+                          </div>
+                        )}
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="w-full mt-3"
+                        onClick={() => setShowSummary(false)}
+                      >
+                        Edit Details
+                      </Button>
+                    </div>
+                  )}
 
                   <Button 
                     onClick={handleStartProtection} 
@@ -787,10 +934,15 @@ const Upload = () => {
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                         Protecting...
                       </>
-                    ) : (
+                    ) : showSummary ? (
                       <>
                         <Shield className="h-4 w-4 mr-2" />
-                        Start Protection ({files.length + urls.length} items)
+                        Confirm & Protect
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Review & Protect ({files.length + urls.length} items)
                       </>
                     )}
                   </Button>
@@ -851,6 +1003,7 @@ const Upload = () => {
               files={rawFiles}
               onWatermarkComplete={(results) => {
                 setWatermarkResults(results);
+                setCompletedTabs(prev => new Set(prev).add('watermark'));
                 toast({
                   title: "Watermarking Complete",
                   description: `Processed ${results.filter(r => r.success).length} of ${results.length} files`,
