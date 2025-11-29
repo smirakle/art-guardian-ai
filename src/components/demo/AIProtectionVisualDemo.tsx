@@ -67,13 +67,14 @@ export const AIProtectionVisualDemo = () => {
   const handleNarration = async (text: string) => {
     if (isMuted || hasNarratedScene.current.has(currentSceneIndex)) return;
     
-    hasNarratedScene.current.add(currentSceneIndex);
     setNarratingScene(true);
     
     try {
       await playNarration(text);
+      // Only mark as narrated after successful completion
+      hasNarratedScene.current.add(currentSceneIndex);
     } catch (error) {
-      console.error('Narration error:', error);
+      console.error('Narration error for scene', currentSceneIndex, ':', error);
       toast({
         title: "Narration unavailable",
         description: "Voice-over couldn't be loaded. Continuing with visuals only.",
