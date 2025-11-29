@@ -190,7 +190,7 @@ const Index = () => {
             <img 
               src={tsmoLogo} 
               alt="TSMO Logo" 
-              className="h-[21rem] sm:h-[28rem] md:h-[35rem] mx-auto object-contain" 
+              className="h-[10.5rem] sm:h-[14rem] md:h-[17.5rem] mx-auto object-contain" 
               loading="eager"
             />
           </div>
