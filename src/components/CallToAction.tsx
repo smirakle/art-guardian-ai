@@ -13,30 +13,30 @@ const CallToAction = () => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-r from-primary/5 via-accent/10 to-secondary/5">
+    <section className="py-16 bg-gradient-to-r from-primary/5 to-accent/5">
       <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <Shield className="w-16 h-16 text-primary mx-auto mb-6 animate-pulse" />
+        <div className="max-w-3xl mx-auto text-center">
+          <Shield className="w-12 h-12 text-primary mx-auto mb-4" />
           
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
             {t('cta.title')}
           </h2>
           
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-muted-foreground mb-6 max-w-xl mx-auto">
             {t('cta.subtitle')}
           </p>
 
-          <Card className="max-w-md mx-auto mb-8 bg-card/80 backdrop-blur-sm border-border/50">
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                <div className="flex gap-2">
+          <Card className="max-w-md mx-auto mb-6 bg-card/80 backdrop-blur-sm border-border/50">
+            <CardContent className="p-4">
+              <div className="space-y-3">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Input 
-                    placeholder="Enter your email address" 
+                    placeholder="Enter your email" 
                     type="email"
-                    className="flex-1"
+                    className="flex-1 h-11"
                   />
                   <Button 
-                    className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground"
+                    className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground h-11 whitespace-nowrap"
                     onClick={() => window.location.href = '/monitoring'}
                   >
                     {t('cta.getStarted')}
@@ -56,18 +56,18 @@ const CallToAction = () => {
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+          <div className="grid grid-cols-3 gap-4 mt-8 max-w-xl mx-auto">
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">10M+</div>
-              <div className="text-muted-foreground">Images Protected</div>
+              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">10M+</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Images Protected</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-accent mb-2">50K+</div>
-              <div className="text-muted-foreground">Active Artists</div>
+              <div className="text-2xl sm:text-3xl font-bold text-accent mb-1">50K+</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Active Artists</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-secondary mb-2">99.9%</div>
-              <div className="text-muted-foreground">Detection Accuracy</div>
+              <div className="text-2xl sm:text-3xl font-bold text-secondary mb-1">99.9%</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Detection Rate</div>
             </div>
           </div>
         </div>

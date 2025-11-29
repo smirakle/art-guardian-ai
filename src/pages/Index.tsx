@@ -178,135 +178,77 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Navigation Menu - Quick Access */}
-      <div className="fixed top-20 right-4 z-40 backdrop-blur-sm border p-2 shadow-lg rounded-lg bg-violet-50">
-        <div className="flex flex-col gap-1">
-          <Button variant="ghost" size="sm" onClick={() => document.getElementById("how-it-works")?.scrollIntoView({
-          behavior: "smooth"
-        })}>
-            How It Works
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => document.getElementById("beta-status")?.scrollIntoView({
-          behavior: "smooth"
-        })}>
-            Beta Status
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => document.getElementById("pricing")?.scrollIntoView({
-          behavior: "smooth"
-        })}>
-            Pricing
-          </Button>
-        </div>
-      </div>
-
-      {/* How-To Guide */}
-      <div className="fixed top-20 left-4 z-40">
-        <UserGuide 
-          title={homeGuide.title}
-          description={homeGuide.description}
-          sections={homeGuide.sections}
-        />
-      </div>
+      {/* Removed floating navigation for cleaner mobile experience */}
 
 
-      {/* Hero Section - Simplified */}
-      <section className="pt-24 sm:pt-32 pb-16 px-4">
-        <div className="container mx-auto text-center max-w-5xl">
-          {/* Beta Limitations Disclaimer */}
-          <Alert className="mb-6 border-primary/30 bg-primary/5 text-left max-w-3xl mx-auto">
-            <Info className="h-4 w-4 text-primary" />
-            <AlertDescription className="text-sm">
-              <strong className="text-primary">Beta Access Notice:</strong> You currently have{" "}
-              <strong>50 scans per day</strong> during our beta period. This limit resets every 24 hours 
-              and applies to all deepfake detection and image analysis features. Thank you for being an 
-              early adopter! 🚀
-            </AlertDescription>
-          </Alert>
-
-          <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm animate-pulse bg-red-600">
-            💰 Stop Losing Money to Content Thieves
-          </Badge>
-
-          {/* TSMO Logo - Reduced Size */}
-          <div className="mb-8">
-            <img src={tsmoLogo} alt="TSMO Multimedia Creative Protection Logo" className="h-72 sm:h-96 md:h-[30rem] mx-auto object-contain" />
+      {/* Hero Section - Simplified for Conversion */}
+      <section className="pt-16 sm:pt-20 pb-12 px-4">
+        <div className="container mx-auto text-center max-w-4xl">
+          {/* TSMO Logo - Dramatically Reduced */}
+          <div className="mb-6">
+            <img 
+              src={tsmoLogo} 
+              alt="TSMO Logo" 
+              className="h-24 sm:h-32 md:h-40 mx-auto object-contain" 
+              loading="eager"
+            />
           </div>
 
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight lg:text-6xl">
-            Protect Your Art.
-            <br />
-            <span className="font-normal text-neutral-700">Keep What's Yours.</span>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
+            Protect Your Art from AI Training & Theft
           </h1>
 
-          <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-4xl mx-auto leading-relaxed md:text-xl">
-            Advanced AI-powered protection for digital artists. Monitor, verify, and secure your creative work with
-            blockchain technology and&nbsp;real-time&nbsp;threat&nbsp;detection.
+          <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            24/7 automated monitoring finds unauthorized use of your artwork across the internet
           </p>
 
-          <div className="mb-8 p-4 bg-primary/10 rounded-lg border border-primary/20">
-            <p className="text-primary font-semibold text-lg">
-              Join 15,000+ creators who watch their art 24/7 and get thieves removed instantly.
+          {/* Primary Sign-Up CTA */}
+          <div className="max-w-md mx-auto mb-6">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Input 
+                type="email" 
+                placeholder="Enter your email"
+                className="flex-1 h-12 text-base"
+              />
+              <Button 
+                size="lg" 
+                className="h-12 px-8 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 whitespace-nowrap"
+                onClick={() => navigate("/upload")}
+              >
+                Start Free Trial
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              No credit card required • Join 15,000+ protected artists
             </p>
           </div>
 
-          {/* Action Buttons - Simplified */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <Button size="lg" className="w-full sm:w-auto px-10 py-5 text-xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg hover:shadow-xl transition-all duration-300" onClick={() => navigate("/ai-protection-settings")} data-tooltip="upload">
-              Start AI Training Protection
-              <ArrowRight className="ml-2 h-6 w-6" />
-            </Button>
-            <Button variant="outline" size="lg" className="w-full sm:w-auto px-10 py-5 text-xl border-2 border-primary hover:bg-primary/10" onClick={() => setShowLiveDemo(true)}>
-              <Activity className="mr-2 h-6 w-6" />
-              See Live Demo
-            </Button>
-          </div>
+          {/* Secondary CTA */}
+          <Button 
+            variant="outline" 
+            size="lg" 
+            className="mb-8"
+            onClick={() => setShowLiveDemo(true)}
+          >
+            <Play className="mr-2 h-4 w-4" />
+            Watch 2-Min Demo
+          </Button>
 
-          {/* Social Proof - Enhanced */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12 max-w-4xl mx-auto">
-            <Card className="p-4 text-center border-0 shadow-lg bg-white/80 backdrop-blur-sm">
-              <div className="text-3xl font-bold text-primary mb-1">15K+</div>
-              <div className="text-sm text-muted-foreground">Creators Protected</div>
-            </Card>
-            <Card className="p-4 text-center border-0 shadow-lg bg-white/80 backdrop-blur-sm">
-              <div className="text-3xl font-bold text-primary mb-1">$2.4M</div>
-              <div className="text-sm text-muted-foreground">Revenue Recovered</div>
-            </Card>
-            <Card className="p-4 text-center border-0 shadow-lg bg-white/80 backdrop-blur-sm">
-              <div className="text-3xl font-bold text-primary mb-1">50K+</div>
-              <div className="text-sm text-muted-foreground">Violations Detected</div>
-            </Card>
-            <Card className="p-4 text-center border-0 shadow-lg bg-white/80 backdrop-blur-sm">
-              <div className="text-3xl font-bold text-primary mb-1">24/7</div>
-              <div className="text-sm text-muted-foreground">Monitoring</div>
-            </Card>
-          </div>
-
-          {/* Mobile App CTA */}
-          <MobileAppCTA variant="hero" className="mb-8" />
-
-          {/* Problem Showcase */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
-            <Card className="p-4 bg-red-50 border border-red-200">
-              <div className="flex items-center gap-3 mb-2">
-                <Bot className="h-6 w-6 text-red-600" />
-                <span className="font-semibold text-red-700">AI Art Theft</span>
-              </div>
-              <p className="text-sm text-red-600">AI models stealing your style without permission</p>
-            </Card>
-            <Card className="p-4 bg-red-50 border border-red-200">
-              <div className="flex items-center gap-3 mb-2">
-                <FileImage className="h-6 w-6 text-red-600" />
-                <span className="font-semibold text-red-700">Fake Products</span>
-              </div>
-              <p className="text-sm text-red-600">Unauthorized merchandise using your artwork</p>
-            </Card>
-            <Card className="p-4 bg-red-50 border border-red-200">
-              <div className="flex items-center gap-3 mb-2">
-                <Search className="h-6 w-6 text-red-600" />
-                <span className="font-semibold text-red-700">Art Copying</span>
-              </div>
-              <p className="text-sm text-red-600">Direct copying and unauthorized distribution</p>
-            </Card>
+          {/* Simplified Stats - Mobile Optimized */}
+          <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-8">
+            <div className="text-center">
+              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">15K+</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Protected Artists</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">50K+</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Violations Found</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">24/7</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Monitoring</div>
+            </div>
           </div>
         </div>
       </section>
