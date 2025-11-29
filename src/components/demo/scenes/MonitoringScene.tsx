@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Activity, Globe, Search } from 'lucide-react';
 import { MatrixRain } from '../effects/MatrixRain';
 
@@ -15,15 +15,19 @@ export const MonitoringScene = ({ onNarrate }: MonitoringSceneProps) => {
   const [scannedPlatforms, setScannedPlatforms] = useState(0);
   const [currentScan, setCurrentScan] = useState('');
   const [totalScans, setTotalScans] = useState(0);
+  const hasNarrated = useRef(false);
 
   useEffect(() => {
-    // Start narration
-    onNarrate?.(
-      "Now our AI monitoring system springs into action! " +
-      "We're scanning over 70 platforms simultaneously - Instagram, Pinterest, TikTok, and more. " +
-      "Like having a private detective watching every corner of the internet, 24/7. " +
-      "Any unauthorized use? We'll catch it instantly!"
-    );
+    // Start narration only once
+    if (!hasNarrated.current && onNarrate) {
+      hasNarrated.current = true;
+      onNarrate(
+        "Now our AI monitoring system springs into action! " +
+        "We're scanning over 70 platforms simultaneously - Instagram, Pinterest, TikTok, and more. " +
+        "Like having a private detective watching every corner of the internet, 24/7. " +
+        "Any unauthorized use? We'll catch it instantly!"
+      );
+    }
 
     const interval = setInterval(() => {
       setScannedPlatforms(prev => {
@@ -37,7 +41,8 @@ export const MonitoringScene = ({ onNarrate }: MonitoringSceneProps) => {
     }, 800);
 
     return () => clearInterval(interval);
-  }, [onNarrate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="w-full h-full flex items-center justify-center p-8 relative overflow-hidden">

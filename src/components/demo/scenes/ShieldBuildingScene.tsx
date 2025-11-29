@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Shield, Lock, Zap, Database } from 'lucide-react';
 import { ShieldEffect } from '../effects/ShieldEffect';
 
@@ -36,14 +36,18 @@ interface ShieldBuildingSceneProps {
 export const ShieldBuildingScene = ({ onNarrate }: ShieldBuildingSceneProps) => {
   const [activeLayers, setActiveLayers] = useState<number[]>([]);
   const [shieldComplete, setShieldComplete] = useState(false);
+  const hasNarrated = useRef(false);
 
   useEffect(() => {
-    // Start narration
-    onNarrate?.(
-      "Watch as we deploy multiple layers of protection around Sarah's artwork. " +
-      "Invisible watermarks, adversarial noise, metadata injection, and blockchain registration. " +
-      "Four impenetrable shields that work together to defend against AI training theft."
-    );
+    // Start narration only once
+    if (!hasNarrated.current && onNarrate) {
+      hasNarrated.current = true;
+      onNarrate(
+        "Watch as we deploy multiple layers of protection around Sarah's artwork. " +
+        "Invisible watermarks, adversarial noise, metadata injection, and blockchain registration. " +
+        "Four impenetrable shields that work together to defend against AI training theft."
+      );
+    }
 
     protectionLayers.forEach((layer, index) => {
       setTimeout(() => {
@@ -53,7 +57,8 @@ export const ShieldBuildingScene = ({ onNarrate }: ShieldBuildingSceneProps) => 
         }
       }, layer.delay);
     });
-  }, [onNarrate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="w-full h-full flex items-center justify-center p-12 relative overflow-hidden">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Fingerprint, Activity } from 'lucide-react';
 import { ScanLineEffect } from '../effects/ScanLineEffect';
 
@@ -9,14 +9,18 @@ interface FingerprintingSceneProps {
 export const FingerprintingScene = ({ onNarrate }: FingerprintingSceneProps) => {
   const [dataPoints, setDataPoints] = useState(0);
   const [analysisComplete, setAnalysisComplete] = useState(false);
+  const hasNarrated = useRef(false);
 
   useEffect(() => {
-    // Start narration
-    onNarrate?.(
-      "Our AI is now analyzing every pixel, every detail of this artwork. " +
-      "We're creating a unique digital fingerprint that's impossible to replicate. " +
-      "Over 12,000 data points extracted and secured."
-    );
+    // Start narration only once
+    if (!hasNarrated.current && onNarrate) {
+      hasNarrated.current = true;
+      onNarrate(
+        "Our AI is now analyzing every pixel, every detail of this artwork. " +
+        "We're creating a unique digital fingerprint that's impossible to replicate. " +
+        "Over 12,000 data points extracted and secured."
+      );
+    }
 
     const interval = setInterval(() => {
       setDataPoints(prev => {
@@ -29,7 +33,8 @@ export const FingerprintingScene = ({ onNarrate }: FingerprintingSceneProps) => 
     }, 60);
 
     return () => clearInterval(interval);
-  }, [onNarrate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="w-full h-full flex items-center justify-center p-12 relative overflow-hidden">

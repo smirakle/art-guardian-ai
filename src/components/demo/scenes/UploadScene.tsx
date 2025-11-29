@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Upload, CheckCircle } from 'lucide-react';
 import { ParticleEffect } from '../effects/ParticleEffect';
 
@@ -9,13 +9,17 @@ interface UploadSceneProps {
 export const UploadScene = ({ onNarrate }: UploadSceneProps) => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [showParticles, setShowParticles] = useState(false);
+  const hasNarrated = useRef(false);
 
   useEffect(() => {
-    // Start narration
-    onNarrate?.(
-      "Meet Sarah's artwork. She just spent 47 hours perfecting this digital masterpiece. " +
-      "Now, let's protect it from AI training theft with TSMO's advanced protection system."
-    );
+    // Start narration only once
+    if (!hasNarrated.current && onNarrate) {
+      hasNarrated.current = true;
+      onNarrate(
+        "Meet Sarah's artwork. She just spent 47 hours perfecting this digital masterpiece. " +
+        "Now, let's protect it from AI training theft with TSMO's advanced protection system."
+      );
+    }
 
     // Simulate upload progress
     const interval = setInterval(() => {
@@ -29,7 +33,8 @@ export const UploadScene = ({ onNarrate }: UploadSceneProps) => {
     }, 100);
 
     return () => clearInterval(interval);
-  }, [onNarrate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="w-full h-full flex items-center justify-center p-12 relative overflow-hidden">
