@@ -84,6 +84,7 @@ import DMCAAutomation from "./pages/DMCAAutomation";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import AITPAAnalysis from "./pages/AITPAAnalysis";
+import { AIProtectionVisualDemo } from "./components/demo/AIProtectionVisualDemo";
 
 const queryClient = new QueryClient();
 
@@ -251,6 +252,7 @@ const App = () => {
             } />
             <Route path="/test-realtime" element={<TestRealtimeMonitoring />} />
             <Route path="/promo-materials" element={<PromoMaterials />} />
+            <Route path="/demo/visual" element={<AIProtectionVisualDemo />} />
             
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />
