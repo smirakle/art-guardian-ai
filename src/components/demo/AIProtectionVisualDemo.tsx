@@ -31,7 +31,6 @@ export const AIProtectionVisualDemo = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [narratingScene, setNarratingScene] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const { playNarration, stopNarration } = useNarration();
   const { toast } = useToast();
   const hasNarratedScene = useRef<Set<number>>(new Set());
@@ -86,17 +85,7 @@ export const AIProtectionVisualDemo = () => {
   };
 
   const handlePlayPause = () => {
-    const newPlayingState = !isPlaying;
-    setIsPlaying(newPlayingState);
-    
-    // Control background music
-    if (audioRef.current) {
-      if (newPlayingState) {
-        audioRef.current.play().catch(err => console.log('Audio play failed:', err));
-      } else {
-        audioRef.current.pause();
-      }
-    }
+    setIsPlaying(!isPlaying);
   };
 
   const handleReset = () => {
@@ -105,12 +94,6 @@ export const AIProtectionVisualDemo = () => {
     setIsPlaying(false);
     hasNarratedScene.current.clear();
     stopNarration();
-    
-    // Reset and pause audio
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
   };
 
   const handleSkip = () => {
@@ -134,25 +117,12 @@ export const AIProtectionVisualDemo = () => {
 
   const toggleMute = () => {
     setIsMuted(!isMuted);
-    if (audioRef.current) {
-      audioRef.current.muted = !isMuted;
-    }
   };
 
   const CurrentSceneComponent = scenes[currentSceneIndex].component;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
-      {/* Background Music - Epic Cinematic Tech Music */}
-      <audio 
-        ref={audioRef} 
-        loop 
-        muted={isMuted}
-      >
-        <source src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3" type="audio/mpeg" />
-        <source src="https://cdn.pixabay.com/audio/2024/03/17/audio_1a52fd6bc5.mp3" type="audio/mpeg" />
-      </audio>
-      
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8 text-center">
@@ -160,7 +130,7 @@ export const AIProtectionVisualDemo = () => {
             AI Protection Visual Demo
           </h1>
           <p className="text-muted-foreground">
-            A cinematic journey through TSMO's AI training protection system with voice narration
+            A cinematic journey through TSMO's AI training protection system
           </p>
         </div>
 
