@@ -94,16 +94,24 @@ export const uploadGuide = {
   description: "Learn how to upload and protect your artwork with TSMO",
   sections: [
     {
-      title: "Step 1: Access the Upload Page",
+      title: "Understanding the Upload Process",
       content: `
-        <p><strong>Three ways to upload and protect:</strong></p>
+        <p><strong>Visual Progress Stepper:</strong></p>
+        <p>At the top of the page, you'll see a progress indicator showing your current step:</p>
         <ol>
-          <li><strong>Upload Files Tab:</strong> Upload images, videos, audio, and documents</li>
-          <li><strong>Advanced Watermark Tab:</strong> Apply sophisticated watermarking</li>
-          <li><strong>Visual Analysis Tab:</strong> Analyze and recognize similar content</li>
+          <li><strong>Select Your Artwork</strong> - Choose files to protect (30 seconds)</li>
+          <li><strong>Secure Upload</strong> - Files are encrypted during transfer (1-2 minutes)</li>
+          <li><strong>AI Analysis</strong> - Protection fingerprints created (2-3 minutes)</li>
+          <li><strong>Live Monitoring</strong> - 24/7 monitoring begins (Continuous)</li>
+        </ol>
+        <p><strong>Three Protection Tabs (with completion badges):</strong></p>
+        <ol>
+          <li><strong>📤 Step 1: Upload</strong> - Select files, add details, and start protection</li>
+          <li><strong>🛡️ Step 2: Watermark</strong> - Apply sophisticated watermarking</li>
+          <li><strong>🔍 Step 3: Analyze</strong> - Visual recognition and analysis</li>
         </ol>
         <p><strong>Free Access Available:</strong></p>
-        <p>You can upload and protect artwork without signing in. Sign in for full features like automatic monitoring and blockchain verification.</p>
+        <p>Upload and protect artwork without signing in. Sign in for full features like automatic monitoring and blockchain verification.</p>
         <p><strong>Supported formats:</strong></p>
         <ul>
           <li>Images: JPG, PNG, GIF, WebP and other image formats</li>
@@ -113,103 +121,137 @@ export const uploadGuide = {
         </ul>
       `,
       tips: [
-        "No sign-in required for basic protection",
-        "Higher resolution files provide better protection",
-        "You can upload multiple files at once"
+        "Watch the progress stepper to know your current step",
+        "Completed tabs show a green checkmark",
+        "No sign-in required for basic protection"
       ]
     },
     {
-      title: "Step 2: Upload Your Content",
+      title: "Step 1: Upload Your Content",
       content: `
-        <p><strong>Method 1: Upload Files</strong></p>
+        <p><strong>Enhanced Upload Area (left side):</strong></p>
         <ol>
-          <li>Click the upload area or drag and drop files</li>
-          <li>Select one or multiple files from your device</li>
-          <li>Files will appear in the "Uploaded Files" list below</li>
+          <li><strong>Drag & Drop:</strong> Simply drag files onto the upload area - it will highlight when files are over it</li>
+          <li><strong>Or Click "Select Files":</strong> Browse and choose files from your device</li>
+          <li>Files appear with preview thumbnails immediately</li>
+          <li>Watch for animated status indicators as files upload</li>
         </ol>
-        <p><strong>Method 2: Add URLs (Articles & Content)</strong></p>
+        <p><strong>Add URLs Section (below upload area):</strong></p>
         <ol>
-          <li>Find the "Add URLs" section below the file upload area</li>
+          <li>Find the "Add URLs" card with Link icon</li>
           <li>Enter any article or content URL you want to protect</li>
           <li>Click the "+" button or press Enter to add</li>
-          <li>Add multiple URLs as needed</li>
+          <li>URLs appear with truncation for long links</li>
+          <li>Remove by clicking the X icon on any URL</li>
         </ol>
-        <p>URLs and files can be combined in the same protection request.</p>
-      `,
-      tips: [
-        "You can mix files and URLs in one protection batch",
-        "URLs can be articles, social media posts, or any web content",
-        "Remove items by clicking the X icon"
-      ]
-    },
-    {
-      title: "Step 3: Add Artwork Details",
-      content: `
-        <p>Fill in the required information about your content:</p>
+        <p><strong>Visual Feedback:</strong></p>
         <ul>
-          <li><strong>Title:</strong> Give your artwork a descriptive name (required)</li>
-          <li><strong>Description:</strong> Add context about your work (optional)</li>
-          <li><strong>Category:</strong> Choose from Photography, Digital Art, Video, Audio/Music, Writing, Design, or Other (required)</li>
-          <li><strong>Tags:</strong> Add searchable keywords by typing and pressing Enter or clicking "+" (optional)</li>
-          <li><strong>License Type:</strong> Select copyright license (optional)</li>
+          <li>Upload area scales and changes color when dragging files</li>
+          <li>File count badge appears on Upload tab when files are added</li>
+          <li>Progress stepper updates to "Secure Upload" phase automatically</li>
         </ul>
-        <p>This information helps with organization and copyright documentation.</p>
       `,
       tips: [
-        "Title and Category are required fields",
-        "Use descriptive titles for better legal documentation",
-        "Tags help organize your portfolio"
+        "Upload area provides visual feedback - watch for animations",
+        "Mix files and URLs in one protection batch",
+        "Multiple files can be uploaded simultaneously"
       ]
     },
     {
-      title: "Step 4: Choose Protection Options",
+      title: "Step 2: Add Artwork Details (Progressive Form)",
       content: `
-        <p><strong>Two protection methods available on Upload page:</strong></p>
+        <p><strong>Essential Information (always visible - highlighted section):</strong></p>
+        <ul>
+          <li><strong>Title *</strong> - Give your artwork a descriptive name (required)</li>
+          <li><strong>Category *</strong> - Choose from Photography, Digital Art, Video, Audio/Music, Writing, Design, or Other (required)</li>
+        </ul>
+        <p><strong>Optional Details (collapsible section):</strong></p>
+        <p>Click "Optional Details" to expand and see additional fields:</p>
+        <ul>
+          <li><strong>Description:</strong> Add context about your work</li>
+          <li><strong>Tags:</strong> Add searchable keywords (type and press Enter or click "+")</li>
+          <li><strong>License Type:</strong> Select copyright license (All Rights Reserved, Creative Commons, etc.)</li>
+        </ul>
+        <p><strong>Progressive Disclosure Design:</strong></p>
+        <p>The form uses a "progressive disclosure" pattern - essential fields are always visible, while optional fields are hidden by default to reduce clutter. Click the dropdown arrow to expand optional fields when needed.</p>
+      `,
+      tips: [
+        "Only Title and Category are required - everything else is optional",
+        "Optional fields are collapsed to keep the interface clean",
+        "Tags can be removed by clicking on them after adding"
+      ]
+    },
+    {
+      title: "Step 3: Choose Protection Options",
+      content: `
+        <p><strong>Protection Options Section (at bottom of form):</strong></p>
         <ul>
           <li><strong>Enable Watermarking:</strong> Adds visible watermark to your images (checked by default)</li>
-          <li><strong>Blockchain Verification:</strong> Creates immutable proof of ownership (requires sign-in)</li>
+          <li><strong>Blockchain Verification:</strong> Creates immutable proof of ownership (requires sign-in, shown only if logged in)</li>
         </ul>
-        <p><strong>Additional AI Protection:</strong></p>
-        <p>For advanced AI training protection (style cloaking, adversarial patterns), visit the <strong>Protection Hub</strong> after uploading. The AI Protection tab there offers comprehensive defense against AI training.</p>
-        <p><strong>Advanced Watermarking:</strong></p>
-        <p>Click the "Advanced Watermark" tab at the top for sophisticated watermarking with custom positioning, transparency, and text options.</p>
+        <p><strong>Additional Tabs for Advanced Protection:</strong></p>
+        <ul>
+          <li><strong>Step 2: Watermark Tab:</strong> Click this tab for sophisticated watermarking with custom positioning, transparency, and text options</li>
+          <li><strong>Step 3: Analyze Tab:</strong> Visual recognition and content matching tools</li>
+        </ul>
+        <p><strong>AI Training Protection:</strong></p>
+        <p>For advanced AI training protection (style cloaking, adversarial patterns), visit the <strong>Protection Hub</strong> after uploading. The AI Protection tab there offers comprehensive defense against unauthorized AI training.</p>
       `,
       tips: [
-        "Watermarking is enabled by default",
-        "Blockchain requires authentication - sign in first",
-        "For AI style protection, use Protection Hub after upload"
+        "Watermarking is enabled by default for quick protection",
+        "Blockchain option only appears when you're signed in",
+        "Each tab shows a completion checkmark when finished"
       ]
     },
     {
-      title: "Step 5: Start Protection",
+      title: "Step 4: Review & Confirm Protection",
       content: `
-        <p>Once you've added content and filled in details:</p>
+        <p><strong>Two-Step Protection Process:</strong></p>
         <ol>
-          <li>Review the number of items (files + URLs) shown on the button</li>
-          <li>Click "Start Protection" button at the bottom</li>
-          <li>Your content will be uploaded and secured</li>
-          <li>Files show status indicators:
+          <li><strong>First Click - "Review & Protect":</strong>
             <ul>
-              <li>Uploading (blue pulsing icon)</li>
-              <li>Processing & Securing (yellow pulsing shield)</li>
-              <li>Protected & Monitored (green checkmark)</li>
+              <li>Button shows total items count (files + URLs)</li>
+              <li>Click to see a summary of what will be protected</li>
+              <li>Review card appears showing:
+                <ul>
+                  <li>Number of files</li>
+                  <li>Number of URLs</li>
+                  <li>Selected category</li>
+                  <li>Watermark setting</li>
+                  <li>Blockchain setting (if signed in)</li>
+                </ul>
+              </li>
+              <li>You can click "Edit Details" to make changes</li>
+            </ul>
+          </li>
+          <li><strong>Second Click - "Confirm & Protect":</strong>
+            <ul>
+              <li>Final confirmation starts the protection process</li>
+              <li>Progress stepper updates to "Live Monitoring"</li>
+              <li>Files show animated status indicators:
+                <ul>
+                  <li>Uploading (blue pulsing icon)</li>
+                  <li>Processing & Securing (yellow pulsing shield)</li>
+                  <li>Protected & Monitored (green checkmark)</li>
+                </ul>
+              </li>
             </ul>
           </li>
         </ol>
         <p><strong>What happens automatically:</strong></p>
         <ul>
-          <li>Files are uploaded to secure encrypted storage</li>
-          <li>Protection methods are applied as selected</li>
-          <li>Metadata is recorded in the database</li>
-          <li>Blockchain certificate is created (if enabled and signed in)</li>
-          <li><strong>Automatic monitoring scan is started</strong> (if signed in)</li>
+          <li>✅ Files uploaded to secure encrypted storage</li>
+          <li>✅ Protection methods applied as selected</li>
+          <li>✅ Metadata recorded in database</li>
+          <li>✅ Blockchain certificate created (if enabled and signed in)</li>
+          <li>✅ Automatic monitoring scan started (if signed in)</li>
         </ul>
-        <p>You'll see notifications for each step completion.</p>
+        <p>Toast notifications appear for each step completion.</p>
       `,
       tips: [
+        "Always review the summary before final confirmation",
         "Don't close the browser during upload",
-        "Monitoring starts automatically if you're signed in",
-        "Protection typically completes in a few seconds"
+        "Monitoring starts automatically if you're signed in"
       ]
     },
     {
