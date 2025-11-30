@@ -118,9 +118,16 @@ const IPLawyersDirectory = () => {
     <div className="max-w-6xl mx-auto">
       <div className="mb-8">
         <h2 className="text-3xl font-bold mb-4">IP Lawyers Directory</h2>
-        <p className="text-muted-foreground text-lg mb-6">
+        <p className="text-muted-foreground text-lg mb-4">
           Connect with verified intellectual property attorneys specializing in creative work protection
         </p>
+        
+        {/* Disclaimer */}
+        <div className="bg-muted/50 border border-border rounded-lg p-4 mb-6">
+          <p className="text-sm text-muted-foreground">
+            <strong>Disclaimer:</strong> This directory is provided for informational purposes only. TSMO Technology Inc is not in partnership with, affiliated with, or endorsing any of the law firms or attorneys listed. We recommend conducting your own due diligence when selecting legal representation.
+          </p>
+        </div>
         
         {/* Search and Filter Controls */}
         <div className="grid md:grid-cols-4 gap-4 mb-6">
