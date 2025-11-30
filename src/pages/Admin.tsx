@@ -77,21 +77,46 @@ const Admin = () => {
     }
   };
 
+  const sectionDescriptions: Record<string, string> = {
+    dashboard: "Overview of system status and key metrics",
+    users: "Manage user accounts and permissions",
+    "enhanced-users": "Advanced user management with detailed insights",
+    realtime: "Monitor real-time data and system activity",
+    monitoring: "System monitoring dashboard and metrics",
+    analytics: "Comprehensive analytics and reporting",
+    security: "Security settings and audit logs",
+    "gov-defense": "Government and defense sector management",
+    "gov-api": "Government API integration settings",
+    data: "Export and manage system data",
+    system: "System configuration and settings",
+    blockchain: "Blockchain integration and management",
+    "ai-training": "AI training and model management",
+    "live-support": "Live customer support dashboard",
+    "live-feed": "Real-time activity feed",
+    "uploads-scans": "Manage uploads and security scans",
+    "guest-uploads": "Track uploads from guest users",
+  };
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background pt-16">
         <AdminSidebar activeTab={activeTab} onTabChange={setActiveTab} />
         
         <div className="flex-1 flex flex-col">
-          <header className="h-14 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-16 z-10 flex items-center px-4">
-            <SidebarTrigger />
-            <h1 className="ml-4 text-lg font-semibold">
-              {activeTab.split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
-            </h1>
+          <header className="h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-16 z-10 flex items-center px-6">
+            <SidebarTrigger className="mr-4" />
+            <div className="flex flex-col">
+              <h1 className="text-xl font-bold tracking-tight">
+                {activeTab.split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                {sectionDescriptions[activeTab]}
+              </p>
+            </div>
           </header>
           
-          <main className="flex-1 overflow-auto">
-            <div className="container mx-auto px-4 py-6">
+          <main className="flex-1 overflow-auto bg-muted/20">
+            <div className="container max-w-7xl mx-auto px-6 py-8">
               <div className="space-y-6">
                 {renderContent()}
               </div>

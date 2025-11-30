@@ -13,7 +13,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
+  SidebarHeader,
 } from "@/components/ui/sidebar";
+import { Badge } from "@/components/ui/badge";
 
 interface AdminSidebarProps {
   activeTab: string;
@@ -71,12 +73,34 @@ export function AdminSidebar({ activeTab, onTabChange }: AdminSidebarProps) {
 
   return (
     <Sidebar className={isCollapsed ? "w-16" : "w-64"} collapsible="icon">
-      <SidebarContent>
-        {menuSections.map((section) => (
-          <SidebarGroup key={section.label}>
-            {!isCollapsed && <SidebarGroupLabel>{section.label}</SidebarGroupLabel>}
+      <SidebarHeader className="border-b px-4 py-3">
+        {!isCollapsed && (
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+              <Shield className="h-4 w-4 text-primary" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold">Admin Panel</span>
+              <span className="text-xs text-muted-foreground">Management Console</span>
+            </div>
+          </div>
+        )}
+        {isCollapsed && (
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 mx-auto">
+            <Shield className="h-4 w-4 text-primary" />
+          </div>
+        )}
+      </SidebarHeader>
+      <SidebarContent className="px-2">
+        {menuSections.map((section, idx) => (
+          <SidebarGroup key={section.label} className={idx > 0 ? "mt-4" : ""}>
+            {!isCollapsed && (
+              <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2">
+                {section.label}
+              </SidebarGroupLabel>
+            )}
             <SidebarGroupContent>
-              <SidebarMenu>
+              <SidebarMenu className="space-y-1">
                 {section.items.map((item) => {
                   const isActive = activeTab === item.id;
                   return (
@@ -84,17 +108,23 @@ export function AdminSidebar({ activeTab, onTabChange }: AdminSidebarProps) {
                       <SidebarMenuButton
                         onClick={() => onTabChange(item.id)}
                         isActive={isActive}
-                        className={
-                          item.highlight === "primary"
-                            ? "data-[active=true]:bg-primary/10 data-[active=true]:border-l-2 data-[active=true]:border-primary"
-                            : item.highlight === "accent"
-                            ? "data-[active=true]:bg-accent/50"
-                            : ""
-                        }
+                        className={`
+                          transition-all duration-200 rounded-md
+                          ${isActive ? "bg-primary/10 text-primary font-medium shadow-sm" : "hover:bg-muted/50"}
+                          ${item.highlight === "primary" && isActive ? "border-l-2 border-primary" : ""}
+                          ${item.highlight === "accent" && isActive ? "bg-accent/50" : ""}
+                        `}
                         tooltip={isCollapsed ? item.label : undefined}
                       >
-                        <item.icon className="h-4 w-4" />
-                        {!isCollapsed && <span>{item.label}</span>}
+                        <item.icon className={`h-4 w-4 ${isActive ? "text-primary" : ""}`} />
+                        {!isCollapsed && (
+                          <span className="flex-1">{item.label}</span>
+                        )}
+                        {!isCollapsed && item.highlight === "primary" && (
+                          <Badge variant="outline" className="ml-auto text-xs bg-primary/10 text-primary border-primary/20">
+                            Gov
+                          </Badge>
+                        )}
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   );
