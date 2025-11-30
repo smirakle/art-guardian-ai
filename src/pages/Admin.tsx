@@ -31,24 +31,54 @@ const Admin = () => {
         <div className="max-w-7xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <div className="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
-              <TabsList className="flex w-max min-w-full gap-2 px-4 py-2 bg-muted/50 backdrop-blur-sm border border-border/50 rounded-lg shadow-sm">
-                <TabsTrigger value="dashboard" className="px-4 py-2 text-sm font-medium">Dashboard</TabsTrigger>
-                <TabsTrigger value="users" className="px-4 py-2 text-sm font-medium">Users</TabsTrigger>
-                <TabsTrigger value="enhanced-users" className="px-4 py-2 text-sm font-medium">Enhanced Users</TabsTrigger>
-                <TabsTrigger value="realtime" className="px-4 py-2 text-sm font-medium">Real-Time</TabsTrigger>
-                <TabsTrigger value="data" className="px-4 py-2 text-sm font-medium">Data Export</TabsTrigger>
-                <TabsTrigger value="monitoring" className="px-4 py-2 text-sm font-medium">Monitoring</TabsTrigger>
-                <TabsTrigger value="analytics" className="px-4 py-2 text-sm font-medium">Analytics</TabsTrigger>
-                <TabsTrigger value="security" className="px-4 py-2 text-sm font-medium">Security</TabsTrigger>
-                <TabsTrigger value="gov-defense" className="px-4 py-2 text-sm font-medium bg-primary/10 border border-primary/20">Gov/Defense</TabsTrigger>
-                <TabsTrigger value="gov-api" className="px-4 py-2 text-sm font-medium">Gov API</TabsTrigger>
-                <TabsTrigger value="system" className="px-4 py-2 text-sm font-medium">System</TabsTrigger>
-                <TabsTrigger value="blockchain" className="px-4 py-2 text-sm font-medium">Blockchain</TabsTrigger>
-                <TabsTrigger value="ai-training" className="px-4 py-2 text-sm font-medium">AI Training</TabsTrigger>
-                <TabsTrigger value="live-support" className="px-4 py-2 text-sm font-medium bg-green-500/10 border border-green-500/20">Live Support</TabsTrigger>
-                <TabsTrigger value="live-feed" className="px-4 py-2 text-sm font-medium">Live Feed</TabsTrigger>
-                <TabsTrigger value="uploads-scans" className="px-4 py-2 text-sm font-medium">Uploads & Scans</TabsTrigger>
-                <TabsTrigger value="guest-uploads" className="px-4 py-2 text-sm font-medium">Guest Uploads</TabsTrigger>
+              <TabsList className="flex flex-wrap w-full gap-3 px-4 py-3 bg-muted/50 backdrop-blur-sm border border-border/50 rounded-lg shadow-sm">
+                {/* Core Section */}
+                <div className="flex gap-2 items-center">
+                  <TabsTrigger value="dashboard" className="px-4 py-2 text-sm font-semibold">Dashboard</TabsTrigger>
+                  <TabsTrigger value="users" className="px-4 py-2 text-sm font-medium">Users</TabsTrigger>
+                  <TabsTrigger value="enhanced-users" className="px-4 py-2 text-sm font-medium">Enhanced Users</TabsTrigger>
+                </div>
+                
+                <div className="h-8 w-px bg-border" />
+                
+                {/* Monitoring Section */}
+                <div className="flex gap-2 items-center">
+                  <span className="text-xs text-muted-foreground font-medium px-2">Monitoring</span>
+                  <TabsTrigger value="realtime" className="px-4 py-2 text-sm font-medium">Real-Time</TabsTrigger>
+                  <TabsTrigger value="monitoring" className="px-4 py-2 text-sm font-medium">Dashboard</TabsTrigger>
+                  <TabsTrigger value="analytics" className="px-4 py-2 text-sm font-medium">Analytics</TabsTrigger>
+                  <TabsTrigger value="live-feed" className="px-4 py-2 text-sm font-medium">Live Feed</TabsTrigger>
+                </div>
+                
+                <div className="h-8 w-px bg-border" />
+                
+                {/* Data & Security Section */}
+                <div className="flex gap-2 items-center">
+                  <span className="text-xs text-muted-foreground font-medium px-2">Data & Security</span>
+                  <TabsTrigger value="uploads-scans" className="px-4 py-2 text-sm font-medium">Uploads & Scans</TabsTrigger>
+                  <TabsTrigger value="guest-uploads" className="px-4 py-2 text-sm font-medium">Guest Uploads</TabsTrigger>
+                  <TabsTrigger value="data" className="px-4 py-2 text-sm font-medium">Data Export</TabsTrigger>
+                  <TabsTrigger value="security" className="px-4 py-2 text-sm font-medium">Security</TabsTrigger>
+                </div>
+                
+                <div className="h-8 w-px bg-border" />
+                
+                {/* Advanced Section */}
+                <div className="flex gap-2 items-center">
+                  <span className="text-xs text-muted-foreground font-medium px-2">Advanced</span>
+                  <TabsTrigger value="blockchain" className="px-4 py-2 text-sm font-medium">Blockchain</TabsTrigger>
+                  <TabsTrigger value="ai-training" className="px-4 py-2 text-sm font-medium">AI Training</TabsTrigger>
+                  <TabsTrigger value="system" className="px-4 py-2 text-sm font-medium">System</TabsTrigger>
+                </div>
+                
+                <div className="h-8 w-px bg-border" />
+                
+                {/* Government & Support Section */}
+                <div className="flex gap-2 items-center">
+                  <TabsTrigger value="gov-defense" className="px-4 py-2 text-sm font-medium bg-primary/10 border border-primary/20">Gov/Defense</TabsTrigger>
+                  <TabsTrigger value="gov-api" className="px-4 py-2 text-sm font-medium">Gov API</TabsTrigger>
+                  <TabsTrigger value="live-support" className="px-4 py-2 text-sm font-medium bg-accent/50">Live Support</TabsTrigger>
+                </div>
               </TabsList>
             </div>
 
