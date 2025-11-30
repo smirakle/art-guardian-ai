@@ -1181,8 +1181,8 @@ export const monitoringHubGuide = {
         <p><strong>Six Tabs Available:</strong></p>
         <ol>
           <li><strong>Portfolio:</strong> Monitor your collection - <span class="text-green-600 font-semibold">FULLY WORKING</span></li>
-          <li><strong>Profile:</strong> Track identity misuse - <span class="text-orange-600 font-semibold">COMING SOON</span></li>
-          <li><strong>Trademark:</strong> Detect trademark violations - <span class="text-orange-600 font-semibold">COMING SOON</span></li>
+          <li><strong>Profile:</strong> Track identity misuse - <span class="text-orange-600 font-semibold">COMING SOON - Join Waitlist Available</span></li>
+          <li><strong>Trademark:</strong> Detect trademark violations - <span class="text-orange-600 font-semibold">COMING SOON - Join Waitlist Available</span></li>
           <li><strong>Deepfake:</strong> Find AI fakes - <span class="text-green-600 font-semibold">FULLY WORKING</span></li>
           <li><strong>Forgery:</strong> Detect edited images - <span class="text-green-600 font-semibold">FULLY WORKING</span></li>
           <li><strong>Diagnostics:</strong> Admin tools - For administrators only</li>
@@ -1190,8 +1190,8 @@ export const monitoringHubGuide = {
       `,
       tips: [
         "Start with the Portfolio tab to see your protected works",
-        "Numbers shown are examples - your real data will appear after first scan",
-        "Click any tab to switch between different monitoring tools"
+        "Join the waitlist for Profile and Trademark monitoring to get early access",
+        "Numbers shown are examples - your real data will appear after first scan"
       ]
     },
     {
@@ -1225,6 +1225,47 @@ export const monitoringHubGuide = {
         "Check Portfolio tab daily for new violations",
         "Confidence above 80% usually means it's a real violation",
         "Use Quick Actions at the bottom to take fast action"
+      ]
+    },
+    {
+      title: "Profile & Trademark Monitoring (Coming Soon)",
+      content: `
+        <p><strong>Join the Waitlist:</strong></p>
+        <p>Profile and Trademark monitoring features are currently under development. Want early access when they launch?</p>
+        <p><strong>How to Join:</strong></p>
+        <ol>
+          <li>Click on the "Profile" or "Trademark" tab</li>
+          <li>Look for the "Get Notified" section on the right side</li>
+          <li>Click "Join Waitlist" button</li>
+          <li>Enter your email address</li>
+          <li>Submit to be added to the early access list</li>
+        </ol>
+        <p><strong>Planned Features for Profile Monitoring:</strong></p>
+        <ul>
+          <li>Cross-platform identity monitoring</li>
+          <li>Impersonation detection</li>
+          <li>Social media account tracking</li>
+          <li>Reputation management tools</li>
+        </ul>
+        <p><strong>Planned Features for Trademark Monitoring:</strong></p>
+        <ul>
+          <li>USPTO & international trademark monitoring</li>
+          <li>Domain name infringement detection</li>
+          <li>Marketplace brand violation tracking</li>
+          <li>Automated cease & desist generation</li>
+        </ul>
+        <p><strong>What Happens After You Join:</strong></p>
+        <ul>
+          <li>You'll receive an email confirmation</li>
+          <li>We'll notify you when the feature is ready to launch</li>
+          <li>Early access subscribers get priority access</li>
+          <li>No commitment required - unsubscribe anytime</li>
+        </ul>
+      `,
+      tips: [
+        "Join both waitlists if you need both features",
+        "Check your email regularly for launch updates",
+        "Early access users often get special launch pricing"
       ]
     },
     {
