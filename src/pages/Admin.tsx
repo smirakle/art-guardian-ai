@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 import SecurityAuditLog from "@/components/admin/SecurityAuditLog";
 import UserManagement from "@/components/admin/UserManagement";
@@ -23,108 +22,109 @@ import AllUploadsAndScans from "@/components/admin/AllUploadsAndScans";
 import GuestUploadsTracking from "@/components/admin/GuestUploadsTracking";
 
 const Admin = () => {
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [isMonitoring, setIsMonitoring] = useState(true);
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case "dashboard":
-        return <AdminDashboard />;
-      case "users":
-        return <UserManagement />;
-      case "enhanced-users":
-        return <EnhancedUserManagement />;
-      case "realtime":
-        return <RealTimeDataMonitoring />;
-      case "monitoring":
-        return (
-          <>
-            <RealTimeMonitoring />
-            <MonitoringReadiness />
-          </>
-        );
-      case "analytics":
-        return <MonitoringDashboard />;
-      case "security":
-        return (
-          <>
-            <AdminMFAEnforcement />
-            <EnhancedSecurityDashboard />
-          </>
-        );
-      case "gov-defense":
-        return <GovernmentDefenseMonitoring />;
-      case "gov-api":
-        return <GovernmentApiPanel />;
-      case "data":
-        return <DataExportPanel />;
-      case "system":
-        return <SystemManagement />;
-      case "blockchain":
-        return <BlockchainReadiness />;
-      case "ai-training":
-        return <AITPReadiness />;
-      case "live-support":
-        return <AdminLiveChatDashboard />;
-      case "live-feed":
-        return <LiveFeed isActive={isMonitoring} />;
-      case "uploads-scans":
-        return <AllUploadsAndScans />;
-      case "guest-uploads":
-        return <GuestUploadsTracking />;
-      default:
-        return <AdminDashboard />;
-    }
-  };
-
-  const sectionDescriptions: Record<string, string> = {
-    dashboard: "Overview of system status and key metrics",
-    users: "Manage user accounts and permissions",
-    "enhanced-users": "Advanced user management with detailed insights",
-    realtime: "Monitor real-time data and system activity",
-    monitoring: "System monitoring dashboard and metrics",
-    analytics: "Comprehensive analytics and reporting",
-    security: "Security settings and audit logs",
-    "gov-defense": "Government and defense sector management",
-    "gov-api": "Government API integration settings",
-    data: "Export and manage system data",
-    system: "System configuration and settings",
-    blockchain: "Blockchain integration and management",
-    "ai-training": "AI training and model management",
-    "live-support": "Live customer support dashboard",
-    "live-feed": "Real-time activity feed",
-    "uploads-scans": "Manage uploads and security scans",
-    "guest-uploads": "Track uploads from guest users",
-  };
+   const [activeTab, setActiveTab] = useState("dashboard");
+   const [isMonitoring, setIsMonitoring] = useState(true);
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background pt-16">
-        <AdminSidebar activeTab={activeTab} onTabChange={setActiveTab} />
-        
-        <div className="flex-1 flex flex-col">
-          <header className="h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-16 z-10 flex items-center px-6">
-            <SidebarTrigger className="mr-4" />
-            <div className="flex flex-col">
-              <h1 className="text-xl font-bold tracking-tight">
-                {activeTab.split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                {sectionDescriptions[activeTab]}
-              </p>
+    <div className="min-h-screen bg-background pt-20 pb-12">
+      <div className="container mx-auto px-4">
+        <div className="max-w-7xl mx-auto">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <div className="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
+              <TabsList className="flex w-max min-w-full gap-2 px-4 py-2 bg-muted/50 backdrop-blur-sm border border-border/50 rounded-lg shadow-sm">
+                <TabsTrigger value="dashboard" className="px-4 py-2 text-sm font-medium">Dashboard</TabsTrigger>
+                <TabsTrigger value="users" className="px-4 py-2 text-sm font-medium">Users</TabsTrigger>
+                <TabsTrigger value="enhanced-users" className="px-4 py-2 text-sm font-medium">Enhanced Users</TabsTrigger>
+                <TabsTrigger value="realtime" className="px-4 py-2 text-sm font-medium">Real-Time</TabsTrigger>
+                <TabsTrigger value="data" className="px-4 py-2 text-sm font-medium">Data Export</TabsTrigger>
+                <TabsTrigger value="monitoring" className="px-4 py-2 text-sm font-medium">Monitoring</TabsTrigger>
+                <TabsTrigger value="analytics" className="px-4 py-2 text-sm font-medium">Analytics</TabsTrigger>
+                <TabsTrigger value="security" className="px-4 py-2 text-sm font-medium">Security</TabsTrigger>
+                <TabsTrigger value="gov-defense" className="px-4 py-2 text-sm font-medium bg-primary/10 border border-primary/20">Gov/Defense</TabsTrigger>
+                <TabsTrigger value="gov-api" className="px-4 py-2 text-sm font-medium">Gov API</TabsTrigger>
+                <TabsTrigger value="system" className="px-4 py-2 text-sm font-medium">System</TabsTrigger>
+                <TabsTrigger value="blockchain" className="px-4 py-2 text-sm font-medium">Blockchain</TabsTrigger>
+                <TabsTrigger value="ai-training" className="px-4 py-2 text-sm font-medium">AI Training</TabsTrigger>
+                <TabsTrigger value="live-support" className="px-4 py-2 text-sm font-medium bg-green-500/10 border border-green-500/20">Live Support</TabsTrigger>
+                <TabsTrigger value="live-feed" className="px-4 py-2 text-sm font-medium">Live Feed</TabsTrigger>
+                <TabsTrigger value="uploads-scans" className="px-4 py-2 text-sm font-medium">Uploads & Scans</TabsTrigger>
+                <TabsTrigger value="guest-uploads" className="px-4 py-2 text-sm font-medium">Guest Uploads</TabsTrigger>
+              </TabsList>
             </div>
-          </header>
-          
-          <main className="flex-1 overflow-auto bg-muted/20">
-            <div className="container max-w-7xl mx-auto px-6 py-8">
-              <div className="space-y-6">
-                {renderContent()}
-              </div>
-            </div>
-          </main>
+
+            <TabsContent value="dashboard" className="space-y-6">
+              <AdminDashboard />
+            </TabsContent>
+
+            <TabsContent value="users" className="space-y-6">
+              <UserManagement />
+            </TabsContent>
+
+            <TabsContent value="enhanced-users" className="space-y-6">
+              <EnhancedUserManagement />
+            </TabsContent>
+
+            <TabsContent value="realtime" className="space-y-6">
+              <RealTimeDataMonitoring />
+            </TabsContent>
+
+            <TabsContent value="monitoring" className="space-y-6">
+              <RealTimeMonitoring />
+              <MonitoringReadiness />
+            </TabsContent>
+
+            <TabsContent value="analytics" className="space-y-6">
+              <MonitoringDashboard />
+            </TabsContent>
+
+            <TabsContent value="security" className="space-y-6">
+              <AdminMFAEnforcement />
+              <EnhancedSecurityDashboard />
+            </TabsContent>
+
+            <TabsContent value="gov-defense" className="space-y-6">
+              <GovernmentDefenseMonitoring />
+            </TabsContent>
+
+            <TabsContent value="gov-api" className="space-y-6">
+              <GovernmentApiPanel />
+            </TabsContent>
+
+            <TabsContent value="data" className="space-y-6">
+              <DataExportPanel />
+            </TabsContent>
+
+            <TabsContent value="system" className="space-y-6">
+              <SystemManagement />
+            </TabsContent>
+
+            <TabsContent value="blockchain" className="space-y-6">
+              <BlockchainReadiness />
+            </TabsContent>
+
+            <TabsContent value="ai-training" className="space-y-6">
+              <AITPReadiness />
+            </TabsContent>
+
+            <TabsContent value="live-support" className="space-y-6">
+              <AdminLiveChatDashboard />
+            </TabsContent>
+ 
+            <TabsContent value="live-feed" className="space-y-6">
+              <LiveFeed isActive={isMonitoring} />
+            </TabsContent>
+
+            <TabsContent value="uploads-scans" className="space-y-6">
+              <AllUploadsAndScans />
+            </TabsContent>
+
+            <TabsContent value="guest-uploads" className="space-y-6">
+              <GuestUploadsTracking />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
-    </SidebarProvider>
+    </div>
   );
 };
 
