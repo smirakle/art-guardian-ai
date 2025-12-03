@@ -258,15 +258,15 @@ Own Your Future</h1>
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
             <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
               <CardContent className="p-5 text-center">
                 <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
                   <TrendingUp className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">$3,200</div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">2.5 Billion</div>
                 <p className="text-sm text-muted-foreground">
-                  Average annual revenue impact from unauthorized content use
+                  Images stolen and used without permission every single day
                 </p>
               </CardContent>
             </Card>
@@ -276,9 +276,9 @@ Own Your Future</h1>
                 <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Bot className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
-                <div className="text-base font-semibold text-amber-700 dark:text-amber-400 mb-2">AI Training Data</div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">$29.2B</div>
                 <p className="text-sm text-muted-foreground">
-                  Creative works increasingly used to train AI without creator compensation
+                  Annual losses to creative industries from digital piracy (2024)
                 </p>
               </CardContent>
             </Card>
@@ -288,9 +288,9 @@ Own Your Future</h1>
                 <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Search className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
-                <div className="text-base font-semibold text-amber-700 dark:text-amber-400 mb-2">10+ Hours/Week</div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">85%</div>
                 <p className="text-sm text-muted-foreground">
-                  Time spent on manual monitoring that could go toward creating
+                  Of creators report their work being used without permission
                 </p>
               </CardContent>
             </Card>
@@ -300,9 +300,9 @@ Own Your Future</h1>
                 <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Scale className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
-                <div className="text-base font-semibold text-amber-700 dark:text-amber-400 mb-2">Legal Complexity</div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">141B</div>
                 <p className="text-sm text-muted-foreground">
-                  Navigating DMCA and international copyright requires expertise
+                  Piracy site visits globally in 2024 across all content types
                 </p>
               </CardContent>
             </Card>
