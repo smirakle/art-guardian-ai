@@ -264,10 +264,18 @@ Own Your Future</h1>
                 <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
                   <TrendingUp className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">2.5 Billion</div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">216B+</div>
                 <p className="text-sm text-muted-foreground">
-                  Images stolen and used without permission every single day
+                  Visits to piracy websites globally in 2024
                 </p>
+                <a 
+                  href="https://www.muso.com/magazine/global-piracy-increases-by-almost-10-percent-in-2024" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
+                >
+                  Source: MUSO →
+                </a>
               </CardContent>
             </Card>
 
@@ -276,10 +284,18 @@ Own Your Future</h1>
                 <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Bot className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">$29B-$71B</div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">$29.2B</div>
                 <p className="text-sm text-muted-foreground">
-                  Annual US losses to digital video piracy alone (2024)
+                  Annual US losses to digital video piracy (2022)
                 </p>
+                <a 
+                  href="https://www.theglobalipcenter.com/wp-content/uploads/2019/06/Digital-Video-Piracy.pdf" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
+                >
+                  Source: US Chamber →
+                </a>
               </CardContent>
             </Card>
 
@@ -288,10 +304,18 @@ Own Your Future</h1>
                 <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Search className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">76%</div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">9.5%</div>
                 <p className="text-sm text-muted-foreground">
-                  Of Gen Z & Millennials admit to watching pirated content
+                  Increase in global piracy visits year-over-year
                 </p>
+                <a 
+                  href="https://www.muso.com/magazine/global-piracy-increases-by-almost-10-percent-in-2024" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
+                >
+                  Source: MUSO →
+                </a>
               </CardContent>
             </Card>
 
@@ -304,6 +328,14 @@ Own Your Future</h1>
                 <p className="text-sm text-muted-foreground">
                   Projected cumulative US streaming piracy losses by 2027
                 </p>
+                <a 
+                  href="https://www.parksassociates.com/blogs/in-the-news/streaming-services-to-lose--113-billion-by-2027-due-to-piracy" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
+                >
+                  Source: Parks Associates →
+                </a>
               </CardContent>
             </Card>
           </div>
