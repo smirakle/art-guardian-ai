@@ -276,9 +276,9 @@ Own Your Future</h1>
                 <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Bot className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">$29.2B</div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">$29B-$71B</div>
                 <p className="text-sm text-muted-foreground">
-                  Annual losses to creative industries from digital piracy (2024)
+                  Annual US losses to digital video piracy alone (2024)
                 </p>
               </CardContent>
             </Card>
@@ -288,9 +288,9 @@ Own Your Future</h1>
                 <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Search className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">85%</div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">76%</div>
                 <p className="text-sm text-muted-foreground">
-                  Of creators report their work being used without permission
+                  Of Gen Z & Millennials admit to watching pirated content
                 </p>
               </CardContent>
             </Card>
@@ -300,9 +300,9 @@ Own Your Future</h1>
                 <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Scale className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">141B</div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">$113B</div>
                 <p className="text-sm text-muted-foreground">
-                  Piracy site visits globally in 2024 across all content types
+                  Projected cumulative US streaming piracy losses by 2027
                 </p>
               </CardContent>
             </Card>
