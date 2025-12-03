@@ -117,7 +117,7 @@ This document contains unique patterns that can be tracked across the internet t
             <input
               ref={fileInputRef}
               type="file"
-              accept=".pdf,.doc,.docx,.txt,.md"
+              accept=".pdf,.doc,.docx,.txt,.md,.jpg,.jpeg,.png,.tiff,.tif,.bmp,.svg,.webp"
               onChange={handleFileSelect}
               className="hidden"
             />
@@ -156,6 +156,12 @@ This document contains unique patterns that can be tracked across the internet t
             <li>• Invisible tracers for unauthorized usage tracking</li>
             <li>• Pattern injection for AI training prevention</li>
             <li>• Metadata embedding for ownership proof</li>
+            {selectedFile && /\.(jpg|jpeg|png|tiff|tif|bmp|svg|webp)$/i.test(selectedFile.name) && (
+              <>
+                <li className="text-primary">• Invisible watermark embedding (blueprints)</li>
+                <li className="text-primary">• OCR text extraction for annotations</li>
+              </>
+            )}
           </ul>
         </div>
 

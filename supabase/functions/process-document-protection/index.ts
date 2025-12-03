@@ -35,7 +35,9 @@ serve(async (req) => {
       pageCount,
       protectionId,
       isGuest,
-      guestSessionId
+      guestSessionId,
+      isBlueprint,
+      hasWatermark
     } = await req.json();
     
     console.log('Processing document protection request:', {
@@ -48,7 +50,9 @@ serve(async (req) => {
       pageCount,
       hasExtractedText: !!extractedText,
       isGuest,
-      hasGuestSession: !!guestSessionId
+      hasGuestSession: !!guestSessionId,
+      isBlueprint: isBlueprint || false,
+      hasWatermark: hasWatermark || false
     });
 
     // Get user (optional for guests)
@@ -132,6 +136,9 @@ serve(async (req) => {
       protectionMethods.push('basic_fingerprinting');
     } else if (protectionLevel === 'standard') {
       protectionMethods.push('basic_fingerprinting', 'metadata_embedding');
+      if (isBlueprint && hasWatermark) {
+        protectionMethods.push('invisible_watermark');
+      }
     } else {
       protectionMethods.push(
         'basic_fingerprinting',
@@ -139,6 +146,9 @@ serve(async (req) => {
         'invisible_tracers',
         'pattern_injection'
       );
+      if (isBlueprint && hasWatermark) {
+        protectionMethods.push('invisible_watermark');
+      }
     }
 
     // Generate protection ID
@@ -167,6 +177,15 @@ serve(async (req) => {
         'txt': 'text/plain',
         'rtf': 'application/rtf',
         'odt': 'application/vnd.oasis.opendocument.text',
+        // Image/Blueprint formats
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'png': 'image/png',
+        'tiff': 'image/tiff',
+        'tif': 'image/tiff',
+        'bmp': 'image/bmp',
+        'svg': 'image/svg+xml',
+        'webp': 'image/webp',
       };
       
       // Use extension-based mime type if available, otherwise use parsed (without charset)
