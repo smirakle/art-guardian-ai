@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { DocumentProcessor } from "@/utils/DocumentProcessor";
+import { watermarkService } from "@/lib/watermark";
 
 interface ProtectionOptions {
   protectionLevel: "basic" | "standard" | "maximum";
@@ -40,9 +41,30 @@ export const useProtectedDocumentUpload = () => {
       const { data: { user } } = await supabase.auth.getUser();
       const isGuest = !user && guestSessionId;
 
+      // Check if file is an image (blueprint)
+      const isImage = /\.(jpg|jpeg|png|tiff|tif|bmp|svg|webp)$/i.test(file.name);
+      let watermarkedFile = file;
+      
+      if (isImage && options.protectionLevel !== 'basic') {
+        setExtractionStatus("Applying invisible watermark...");
+        setExtractionProgress(20);
+        try {
+          const watermarkId = `WM-${Date.now()}-${user?.id?.substring(0, 8) || guestSessionId?.substring(0, 8) || 'guest'}`;
+          const watermarkedBlob = await watermarkService.applyWatermark(file, {
+            text: watermarkId,
+            opacity: 0.02,
+            size: 48,
+            frequency: 'high'
+          });
+          watermarkedFile = new File([watermarkedBlob], file.name, { type: file.type });
+        } catch (wmError) {
+          console.warn('Watermarking failed, continuing without:', wmError);
+        }
+      }
+
       setExtractionStatus("Extracting text from document...");
-      const extractionResult = await DocumentProcessor.extractText(file, (progress, status) => {
-        setExtractionProgress(progress);
+      const extractionResult = await DocumentProcessor.extractText(watermarkedFile, (progress, status) => {
+        setExtractionProgress(Math.min(20 + progress * 0.6, 80));
         setExtractionStatus(status);
       });
 
@@ -61,7 +83,7 @@ export const useProtectedDocumentUpload = () => {
       const reader = new FileReader();
       const fileData = await new Promise<string>((resolve) => {
         reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(watermarkedFile);
       });
 
       const { data: processingResult, error: processingError } = await supabase.functions.invoke(
@@ -80,7 +102,9 @@ export const useProtectedDocumentUpload = () => {
             pageCount: extractionResult.pageCount,
             protectionId,
             isGuest,
-            guestSessionId
+            guestSessionId,
+            isBlueprint: isImage,
+            hasWatermark: isImage && options.protectionLevel !== 'basic'
           }
         }
       );
@@ -88,9 +112,13 @@ export const useProtectedDocumentUpload = () => {
       if (processingError) throw processingError;
       if (!processingResult.success) throw new Error(processingResult.error || 'Protection failed');
 
+      const description = isImage 
+        ? `${file.name} protected with invisible watermark${extractionResult.wordCount > 0 ? ` (${extractionResult.wordCount} words extracted via OCR)` : ''}`
+        : `${file.name} secured (${extractionResult.wordCount} words via ${extractionResult.extractionMethod})`;
+
       toast({
-        title: "Document Protected",
-        description: `${file.name} secured (${extractionResult.wordCount} words via ${extractionResult.extractionMethod})`,
+        title: isImage ? "Blueprint Protected" : "Document Protected",
+        description,
       });
 
       return { success: true, ...processingResult };
