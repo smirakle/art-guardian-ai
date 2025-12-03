@@ -20,7 +20,6 @@ import EnhancedSecurityDashboard from "@/components/security/EnhancedSecurityDas
 import AdminLiveChatDashboard from "@/components/admin/AdminLiveChatDashboard";
 import AllUploadsAndScans from "@/components/admin/AllUploadsAndScans";
 import GuestUploadsTracking from "@/components/admin/GuestUploadsTracking";
-import { DailyUsageDisplay } from "@/components/monitoring/DailyUsageDisplay";
 
 const Admin = () => {
    const [activeTab, setActiveTab] = useState("dashboard");
@@ -50,7 +49,6 @@ const Admin = () => {
                 <TabsTrigger value="live-feed" className="px-4 py-2 text-sm font-medium">Live Feed</TabsTrigger>
                 <TabsTrigger value="uploads-scans" className="px-4 py-2 text-sm font-medium">Uploads & Scans</TabsTrigger>
                 <TabsTrigger value="guest-uploads" className="px-4 py-2 text-sm font-medium">Guest Uploads</TabsTrigger>
-                <TabsTrigger value="api-usage" className="px-4 py-2 text-sm font-medium bg-blue-500/10 border border-blue-500/20">API Usage</TabsTrigger>
               </TabsList>
             </div>
 
@@ -122,16 +120,6 @@ const Admin = () => {
 
             <TabsContent value="guest-uploads" className="space-y-6">
               <GuestUploadsTracking />
-            </TabsContent>
-
-            <TabsContent value="api-usage" className="space-y-6">
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-2xl font-bold">API Usage Dashboard</h2>
-                  <p className="text-muted-foreground">Monitor your daily API consumption and limits</p>
-                </div>
-                <DailyUsageDisplay />
-              </div>
             </TabsContent>
           </Tabs>
         </div>
