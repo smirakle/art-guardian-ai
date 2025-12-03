@@ -7470,6 +7470,7 @@ export type Database = {
           code: string
           created_at: string
           current_uses: number
+          discount_duration_months: number | null
           discount_percentage: number
           id: string
           is_active: boolean
@@ -7483,6 +7484,7 @@ export type Database = {
           code: string
           created_at?: string
           current_uses?: number
+          discount_duration_months?: number | null
           discount_percentage: number
           id?: string
           is_active?: boolean
@@ -7496,6 +7498,7 @@ export type Database = {
           code?: string
           created_at?: string
           current_uses?: number
+          discount_duration_months?: number | null
           discount_percentage?: number
           id?: string
           is_active?: boolean
@@ -8471,6 +8474,7 @@ export type Database = {
           plan_id: string
           promo_code_discount: number | null
           promo_code_id: string | null
+          promo_discount_ends_at: string | null
           social_media_addon: boolean
           status: string
           stripe_customer_id: string | null
@@ -8492,6 +8496,7 @@ export type Database = {
           plan_id: string
           promo_code_discount?: number | null
           promo_code_id?: string | null
+          promo_discount_ends_at?: string | null
           social_media_addon?: boolean
           status?: string
           stripe_customer_id?: string | null
@@ -8513,6 +8518,7 @@ export type Database = {
           plan_id?: string
           promo_code_discount?: number | null
           promo_code_id?: string | null
+          promo_discount_ends_at?: string | null
           social_media_addon?: boolean
           status?: string
           stripe_customer_id?: string | null
