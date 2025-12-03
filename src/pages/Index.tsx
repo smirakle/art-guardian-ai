@@ -287,18 +287,6 @@ Own Your Future</h1>
             <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
               <CardContent className="p-5 text-center">
                 <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Globe className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div className="text-base font-semibold text-amber-700 dark:text-amber-400 mb-2">Global Reach</div>
-                <p className="text-sm text-muted-foreground">
-                  Content spreads across platforms faster than manual tracking allows
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
-              <CardContent className="p-5 text-center">
-                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Search className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div className="text-base font-semibold text-amber-700 dark:text-amber-400 mb-2">10+ Hours/Week</div>
@@ -316,18 +304,6 @@ Own Your Future</h1>
                 <div className="text-base font-semibold text-amber-700 dark:text-amber-400 mb-2">Legal Complexity</div>
                 <p className="text-sm text-muted-foreground">
                   Navigating DMCA and international copyright requires expertise
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
-              <CardContent className="p-5 text-center">
-                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Calendar className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div className="text-base font-semibold text-amber-700 dark:text-amber-400 mb-2">Opportunity Cost</div>
-                <p className="text-sm text-muted-foreground">
-                  Missed licensing deals and partnerships due to untracked usage
                 </p>
               </CardContent>
             </Card>
@@ -455,8 +431,8 @@ Own Your Future</h1>
           </div>
 
           {/* Additional Capabilities */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-lg border border-primary/10">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
               <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Zap className="h-6 w-6 text-white" />
               </div>
@@ -466,17 +442,7 @@ Own Your Future</h1>
               </p>
             </div>
 
-            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-lg border border-primary/10">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <Globe className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="font-semibold mb-2">Global Coverage</h3>
-              <p className="text-sm text-muted-foreground">
-                Monitor across all major platforms worldwide
-              </p>
-            </div>
-
-            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-lg border border-primary/10">
+            <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
               <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Lock className="h-6 w-6 text-white" />
               </div>
@@ -486,7 +452,7 @@ Own Your Future</h1>
               </p>
             </div>
 
-            <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-lg border border-primary/10">
+            <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
               <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Scale className="h-6 w-6 text-white" />
               </div>
@@ -618,54 +584,6 @@ Own Your Future</h1>
         </div>
       </section>
 
-
-      {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-primary/5 to-accent/5">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Protect Your Creative Work?</h2>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Join thousands of artists who trust TSMO to safeguard their digital creations. Start your protection journey
-            today.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" className="px-8 py-3 text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90" onClick={() => navigate("/upload")}>
-              Start Protecting Now
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button variant="outline" size="lg" className="px-8 py-3 text-lg" onClick={() => navigate("/pricing")}>
-              View Pricing Plans
-            </Button>
-          </div>
-
-          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <Shield className="h-6 w-6 text-green-500" />
-              </div>
-              <div className="text-sm font-medium text-muted-foreground">Advanced Protection</div>
-            </div>
-            <div>
-              <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <Activity className="h-6 w-6 text-blue-500" />
-              </div>
-              <div className="text-sm font-medium text-muted-foreground">Real-time Monitoring</div>
-            </div>
-            <div>
-              <div className="w-12 h-12 bg-purple-500/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <Lock className="h-6 w-6 text-purple-500" />
-              </div>
-              <div className="text-sm font-medium text-muted-foreground">Blockchain Security</div>
-            </div>
-            <div>
-              <div className="w-12 h-12 bg-orange-500/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <Users className="h-6 w-6 text-orange-500" />
-              </div>
-              <div className="text-sm font-medium text-muted-foreground">Expert Support</div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Sales Dialog */}
       <Dialog open={showSalesDialog} onOpenChange={setShowSalesDialog}>
