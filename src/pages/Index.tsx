@@ -28,7 +28,6 @@ import DemoEnvironment from "@/components/investor/DemoEnvironment";
 import MobileAppCTA from "@/components/MobileAppCTA";
 import ProtectionComparisonShowcase from "@/components/ProtectionComparisonShowcase";
 import TrustBadges from "@/components/TrustBadges";
-import { EnhancedFooter } from "@/components/EnhancedFooter";
 const Index = () => {
   const {
     toast
@@ -665,9 +664,6 @@ Own Your Future</h1>
 
       {/* Leave a Review Section */}
       <LeaveReview />
-
-      {/* Enhanced Footer */}
-      <EnhancedFooter />
 
       {/* Bug Report Button */}
       <BugReportButton />
