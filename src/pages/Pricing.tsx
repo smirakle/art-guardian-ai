@@ -618,7 +618,7 @@ const Pricing = () => {
         </div>
 
         <Button
-          onClick={() => handleFormSubmit(plan.name)}
+          onClick={() => handleFormSubmit(plan.id)}
           disabled={isProcessing}
           className="w-full py-3 text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 disabled:opacity-50"
         >
