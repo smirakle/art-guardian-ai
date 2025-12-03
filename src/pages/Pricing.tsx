@@ -46,10 +46,24 @@ const Pricing = () => {
   };
 
   const handleFormSubmit = async (planId: string) => {
-    if (!formData.email) {
+    console.log('Form submit triggered for plan:', planId);
+    console.log('Form data:', formData);
+    
+    if (!formData.email || !formData.email.trim()) {
       toast({
-        title: "Missing Email",
-        description: "Please enter your email address",
+        title: "Email Required",
+        description: "Please enter your email address to continue",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address",
         variant: "destructive",
       });
       return;
@@ -58,6 +72,15 @@ const Pricing = () => {
     setIsProcessing(true);
     
     try {
+      console.log('Calling create-checkout-session with:', {
+        planId: planId.toLowerCase(),
+        billingCycle,
+        email: formData.email,
+        promoCode: promoCode.trim() || undefined,
+        socialMediaAddon: socialMediaAddon[planId] || false,
+        aiTrainingAddon: aiTrainingAddon[planId] || false
+      });
+
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: {
           planId: planId.toLowerCase(),
@@ -69,24 +92,40 @@ const Pricing = () => {
         }
       });
 
-      if (error) throw error;
+      console.log('Checkout response:', { data, error });
+
+      if (error) {
+        console.error('Edge function error:', error);
+        throw error;
+      }
 
       if (data?.url) {
-        // Open Stripe checkout in a new tab
         window.open(data.url, '_blank');
         
         toast({
           title: "Redirecting to Checkout",
           description: promoCode && promoCode.toLowerCase() === 'feedback' 
             ? "Your promotional code has been applied! One month free." 
-            : "Opening secure payment page...",
+            : "Opening secure payment page in new tab...",
+        });
+      } else if (data?.message) {
+        toast({
+          title: "Success",
+          description: data.message,
+        });
+      } else {
+        console.error('No URL in response:', data);
+        toast({
+          title: "Checkout Error",
+          description: "No checkout URL received. Please try again.",
+          variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Checkout error:', error);
       toast({
         title: "Checkout Error",
-        description: "Failed to create checkout session. Please try again.",
+        description: error?.message || "Failed to create checkout session. Please try again.",
         variant: "destructive",
       });
     } finally {
