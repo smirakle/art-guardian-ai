@@ -28,7 +28,6 @@ import DemoEnvironment from "@/components/investor/DemoEnvironment";
 import MobileAppCTA from "@/components/MobileAppCTA";
 import ProtectionComparisonShowcase from "@/components/ProtectionComparisonShowcase";
 import TrustBadges from "@/components/TrustBadges";
-import Testimonials from "@/components/Testimonials";
 import { EnhancedFooter } from "@/components/EnhancedFooter";
 const Index = () => {
   const {
@@ -748,9 +747,6 @@ Own Your Future</h1>
 
       {/* Leave a Review Section */}
       <LeaveReview />
-
-      {/* Testimonials */}
-      <Testimonials />
 
       {/* Enhanced Footer */}
       <EnhancedFooter />
