@@ -264,17 +264,17 @@ Own Your Future</h1>
                 <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
                   <TrendingUp className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">216B+</div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">~50%</div>
                 <p className="text-sm text-muted-foreground">
-                  Visits to piracy websites globally in 2024
+                  Of creators have had their content stolen or used without permission by brands
                 </p>
                 <a 
-                  href="https://www.muso.com/magazine/global-piracy-increases-by-almost-10-percent-in-2024" 
+                  href="https://massive.io/newsroom/2024-survey-finds-creator-user-generated-content-stole-by-brands/" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
                 >
-                  Source: MUSO →
+                  Source: MASV / Dynata 2024 →
                 </a>
               </CardContent>
             </Card>
@@ -284,17 +284,17 @@ Own Your Future</h1>
                 <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Bot className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">$29.2B</div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">57%</div>
                 <p className="text-sm text-muted-foreground">
-                  Annual US losses to digital video piracy (2022)
+                  Of US artists worry about financial vulnerability including food, housing & medical care
                 </p>
                 <a 
-                  href="https://www.theglobalipcenter.com/wp-content/uploads/2019/06/Digital-Video-Piracy.pdf" 
+                  href="https://www.mellon.org/news/new-national-study-offers-fresh-insight-lives-livelihoods-us-artists" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
                 >
-                  Source: US Chamber →
+                  Source: Mellon Foundation 2025 →
                 </a>
               </CardContent>
             </Card>
@@ -304,17 +304,17 @@ Own Your Future</h1>
                 <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Search className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">9.5%</div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">71%</div>
                 <p className="text-sm text-muted-foreground">
-                  Increase in global piracy visits year-over-year
+                  Of US independent creators earn less than $30,000 annually from creative work
                 </p>
                 <a 
-                  href="https://www.muso.com/magazine/global-piracy-increases-by-almost-10-percent-in-2024" 
+                  href="https://www.mbopartners.com/state-of-independence/creator-economy-report/" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
                 >
-                  Source: MUSO →
+                  Source: MBO Partners 2023 →
                 </a>
               </CardContent>
             </Card>
@@ -324,17 +324,17 @@ Own Your Future</h1>
                 <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Scale className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">$113B</div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">34%</div>
                 <p className="text-sm text-muted-foreground">
-                  Projected cumulative US streaming piracy losses by 2027
+                  Less likely to survive 5 years if your intellectual property rights are infringed
                 </p>
                 <a 
-                  href="https://www.parksassociates.com/blogs/in-the-news/streaming-services-to-lose--113-billion-by-2027-due-to-piracy" 
+                  href="https://www.oecd.org/en/publications/risks-of-illicit-trade-in-counterfeits-to-small-and-medium-sized-firms_fa6d5089-en.html" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
                 >
-                  Source: Parks Associates →
+                  Source: OECD / EUIPO 2023 →
                 </a>
               </CardContent>
             </Card>
