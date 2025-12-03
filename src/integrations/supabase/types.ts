@@ -4418,6 +4418,69 @@ export type Database = {
         }
         Relationships: []
       }
+      guest_sessions: {
+        Row: {
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          ip_address: unknown
+          is_valid: boolean | null
+          max_uploads: number | null
+          session_token: string
+          session_token_hash: string | null
+          upload_count: number | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          ip_address?: unknown
+          is_valid?: boolean | null
+          max_uploads?: number | null
+          session_token: string
+          session_token_hash?: string | null
+          upload_count?: number | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          ip_address?: unknown
+          is_valid?: boolean | null
+          max_uploads?: number | null
+          session_token?: string
+          session_token_hash?: string | null
+          upload_count?: number | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      guest_upload_rate_limits: {
+        Row: {
+          created_at: string | null
+          id: string
+          ip_address: unknown
+          request_count: number | null
+          window_start: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          ip_address: unknown
+          request_count?: number | null
+          window_start?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown
+          request_count?: number | null
+          window_start?: string | null
+        }
+        Relationships: []
+      }
       guest_uploads: {
         Row: {
           char_count: number | null
@@ -9853,6 +9916,10 @@ export type Database = {
         Args: { api_key_param: string; endpoint_param?: string }
         Returns: boolean
       }
+      check_guest_ip_rate_limit: {
+        Args: { p_ip_address: unknown; p_max_requests?: number }
+        Returns: Json
+      }
       check_portfolio_monitoring_rate_limit: {
         Args: {
           endpoint_param: string
@@ -9862,6 +9929,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      cleanup_expired_guest_sessions: { Args: never; Returns: undefined }
       cleanup_expired_guest_uploads: { Args: never; Returns: undefined }
       convert_guest_uploads_to_user: {
         Args: { p_session_id: string; p_user_id: string }
@@ -10193,6 +10261,10 @@ export type Database = {
       validate_admin_token: { Args: { token_hash: string }; Returns: boolean }
       validate_government_api_key: {
         Args: { api_key_param: string; required_permission?: string }
+        Returns: Json
+      }
+      validate_guest_session: {
+        Args: { p_ip_address?: unknown; p_session_token: string }
         Returns: Json
       }
       validate_promo_code: { Args: { code_param: string }; Returns: Json }
