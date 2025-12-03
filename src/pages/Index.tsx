@@ -86,6 +86,7 @@ const Index = () => {
   const [isSendingSales, setIsSendingSales] = useState(false);
   const [showOnboardingTour, setShowOnboardingTour] = useState(false);
   const [showLiveDemo, setShowLiveDemo] = useState(false);
+  const [showSolutionsDialog, setShowSolutionsDialog] = useState(false);
   const startDemo = () => {
     setIsAnalyzing(true);
     setDemoStep(1);
@@ -344,12 +345,134 @@ Own Your Future</h1>
             <Button 
               variant="outline" 
               className="border-amber-400 text-amber-700 hover:bg-amber-100 dark:border-amber-600 dark:text-amber-400 dark:hover:bg-amber-950/50"
-              onClick={() => navigate("/upload")}
+              onClick={() => setShowSolutionsDialog(true)}
             >
               See How We Solve This
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
+
+          {/* Solutions Dialog */}
+          <Dialog open={showSolutionsDialog} onOpenChange={setShowSolutionsDialog}>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="text-2xl">How TSMO Protects Creators</DialogTitle>
+                <DialogDescription>
+                  Our platform directly addresses the challenges independent creators face with comprehensive protection tools.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="grid md:grid-cols-2 gap-4 mt-4">
+                {/* Solution 1: Content Theft */}
+                <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
+                        <Eye className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <Badge variant="outline" className="text-xs mb-1 border-amber-400 text-amber-700">Problem: ~50% stolen</Badge>
+                        <h4 className="font-semibold text-base">24/7 AI Monitoring & Detection</h4>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Our AI continuously scans platforms, marketplaces, and social media—detecting unauthorized use of your work within hours, not months.
+                    </p>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Real-time platform monitoring</li>
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Visual fingerprint matching</li>
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Instant theft alerts</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                {/* Solution 2: Financial Security */}
+                <Card className="border-secondary/20 bg-gradient-to-br from-secondary/5 to-transparent">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center shrink-0">
+                        <Scale className="w-5 h-5 text-secondary" />
+                      </div>
+                      <div>
+                        <Badge variant="outline" className="text-xs mb-1 border-amber-400 text-amber-700">Problem: 57% financial worry</Badge>
+                        <h4 className="font-semibold text-base">Automated DMCA & Legal Support</h4>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Free takedown notices, legal templates, and IP lawyer access help creators recover lost income from infringement quickly and affordably.
+                    </p>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> One-click DMCA notices</li>
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Legal template library</li>
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> IP attorney network</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                {/* Solution 3: Income Growth */}
+                <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-transparent">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center shrink-0">
+                        <BadgeCheck className="w-5 h-5 text-accent" />
+                      </div>
+                      <div>
+                        <Badge variant="outline" className="text-xs mb-1 border-amber-400 text-amber-700">Problem: 71% earn &lt;$30K</Badge>
+                        <h4 className="font-semibold text-base">Proof of Ownership & Licensing</h4>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Blockchain verification and licensing tools help you monetize your work and prove ownership for brand partnerships and commercial opportunities.
+                    </p>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Blockchain certificates</li>
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Commercial licensing tools</li>
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Ownership verification</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                {/* Solution 4: Business Survival */}
+                <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
+                        <Shield className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <Badge variant="outline" className="text-xs mb-1 border-amber-400 text-amber-700">Problem: 34% survival risk</Badge>
+                        <h4 className="font-semibold text-base">Proactive IP Protection</h4>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Invisible watermarking, AI training detection, and real-time alerts prevent infringement before it damages your business and reputation.
+                    </p>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Invisible watermarks</li>
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> AI training detection</li>
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Preventive protection</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <DialogFooter className="mt-6 flex-col sm:flex-row gap-3">
+                <Button variant="outline" onClick={() => setShowSolutionsDialog(false)}>
+                  Close
+                </Button>
+                <Button 
+                  className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+                  onClick={() => {
+                    setShowSolutionsDialog(false);
+                    navigate("/upload");
+                  }}
+                >
+                  Start Protecting Your Work
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </section>
 
