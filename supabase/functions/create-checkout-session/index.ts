@@ -32,21 +32,6 @@ serve(async (req) => {
     const { planId, billingCycle, email, promoCode, socialMediaAddon, deepfakeAddon, aiTrainingAddon, userId } = await req.json();
     logStep("Request data received", { planId, billingCycle, email, promoCode, socialMediaAddon, deepfakeAddon, aiTrainingAddon, userId });
 
-    // Validate BETA200 promo code for lifetime discount
-    let lifetimeDiscount = 0;
-    let promoCodeId = null;
-    if (promoCode && promoCode.toUpperCase() === 'BETA200') {
-      const { data: validation } = await supabaseClient.rpc('validate_promo_code', { 
-        code_param: promoCode.toUpperCase() 
-      });
-      
-      if (validation && validation.valid && validation.is_lifetime) {
-        lifetimeDiscount = validation.discount_percentage;
-        promoCodeId = validation.code_id;
-        logStep("Lifetime discount will be applied", { discount: lifetimeDiscount });
-      }
-    }
-
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
     // Define plan pricing
@@ -62,13 +47,6 @@ serve(async (req) => {
 
     const pricing = planPricing[planId as keyof typeof planPricing];
     let amount = pricing[billingCycle as keyof typeof pricing];
-    
-    // Apply lifetime discount if BETA200 promo code is valid
-    if (lifetimeDiscount > 0) {
-      const discountAmount = Math.floor(amount * (lifetimeDiscount / 100));
-      amount = amount - discountAmount;
-      logStep("Lifetime discount applied", { original: pricing[billingCycle as keyof typeof pricing], discounted: amount });
-    }
     
     // Add social media addon if selected (available for all plans)
     if (socialMediaAddon) {
@@ -197,93 +175,74 @@ serve(async (req) => {
         deepfakeAddon: deepfakeAddon ? 'true' : 'false',
         aiTrainingAddon: aiTrainingAddon ? 'true' : 'false',
         promoCode: promoCode || '',
-        lifetimeDiscount: lifetimeDiscount.toString(),
-        promoCodeId: promoCodeId || '',
       },
     };
 
-    // Handle promotional codes
+    // Handle promotional codes dynamically from database
     if (promoCode) {
-      const code = promoCode.toLowerCase();
-      logStep("Applying promotional code", { promoCode });
+      logStep("Validating promo code through database", { promoCode });
       
-      // Check if this is the BETA200 lifetime discount code
-      if (code === 'beta200') {
-        // Validate the promo code through Supabase
-        const { data: validation, error: validationError } = await supabaseClient
-          .rpc('validate_promo_code', { code_param: 'BETA200' });
+      // Validate the promo code through Supabase RPC
+      const { data: validation, error: validationError } = await supabaseClient
+        .rpc('validate_promo_code', { code_param: promoCode.toUpperCase() });
 
-        if (!validationError && validation?.valid) {
-          // Create or retrieve lifetime 30% discount coupon
-          let coupon;
-          try {
-            coupon = await stripe.coupons.retrieve('beta200-lifetime-30');
-            logStep("Found existing BETA200 coupon");
-          } catch (error) {
-            // Create the coupon if it doesn't exist
-            coupon = await stripe.coupons.create({
-              id: 'beta200-lifetime-30',
-              name: 'Beta Tester 30% Lifetime Discount',
-              duration: 'forever', // Lifetime discount
-              percent_off: 30,
-            });
-            logStep("Created new BETA200 coupon", { couponId: coupon.id });
+      if (validationError) {
+        logStep("Promo code validation error", { error: validationError.message });
+      } else if (validation && validation.valid) {
+        logStep("Promo code validated successfully", { 
+          discountPercentage: validation.discount_percentage,
+          isLifetime: validation.is_lifetime,
+          discountDurationMonths: validation.discount_duration_months
+        });
+
+        // Generate a unique coupon ID based on the promo code and its properties
+        const couponId = `${promoCode.toLowerCase()}-${validation.discount_percentage}${validation.is_lifetime ? '-forever' : validation.discount_duration_months ? `-${validation.discount_duration_months}mo` : '-once'}`;
+        
+        let coupon;
+        try {
+          // Try to retrieve existing coupon
+          coupon = await stripe.coupons.retrieve(couponId);
+          logStep("Found existing coupon", { couponId });
+        } catch (error) {
+          // Create the coupon if it doesn't exist
+          const couponConfig: any = {
+            id: couponId,
+            percent_off: validation.discount_percentage,
+          };
+
+          // Set coupon duration based on promo code properties
+          if (validation.is_lifetime) {
+            // Lifetime discount (forever)
+            couponConfig.duration = 'forever';
+            couponConfig.name = `${promoCode.toUpperCase()} - ${validation.discount_percentage}% Lifetime Discount`;
+          } else if (validation.discount_duration_months && validation.discount_duration_months > 0) {
+            // Time-limited discount (repeating for X months)
+            couponConfig.duration = 'repeating';
+            couponConfig.duration_in_months = validation.discount_duration_months;
+            couponConfig.name = `${promoCode.toUpperCase()} - ${validation.discount_percentage}% Off for ${validation.discount_duration_months} Months`;
+          } else {
+            // One-time discount
+            couponConfig.duration = 'once';
+            couponConfig.name = `${promoCode.toUpperCase()} - ${validation.discount_percentage}% Off`;
           }
+
+          coupon = await stripe.coupons.create(couponConfig);
+          logStep("Created new coupon", { couponId: coupon.id, duration: couponConfig.duration });
+        }
+        
+        if (coupon) {
+          sessionConfig.discounts = [{
+            coupon: coupon.id,
+          }];
           
-          if (coupon) {
-            sessionConfig.discounts = [{
-              coupon: coupon.id,
-            }];
-            sessionConfig.metadata.promo_code = 'BETA200';
-            sessionConfig.metadata.lifetime_discount = 'true';
-          }
+          // Update metadata with promo code details
+          sessionConfig.metadata.promoCodeId = validation.code_id || '';
+          sessionConfig.metadata.discountPercentage = validation.discount_percentage.toString();
+          sessionConfig.metadata.isLifetimeDiscount = validation.is_lifetime ? 'true' : 'false';
+          sessionConfig.metadata.discountDurationMonths = validation.discount_duration_months?.toString() || '';
         }
-      } else if (code === 'freemonth') {
-        // Create or retrieve coupon for one month free
-        let coupon;
-        try {
-          coupon = await stripe.coupons.retrieve('one-month-free');
-          logStep("Found existing coupon");
-        } catch (error) {
-          // Create the coupon if it doesn't exist
-          coupon = await stripe.coupons.create({
-            id: 'one-month-free',
-            name: 'One Month Free',
-            duration: 'once',
-            amount_off: billingCycle === 'monthly' ? amount : Math.floor(amount / 12), // One month's worth
-            currency: 'usd',
-          });
-          logStep("Created new coupon", { couponId: coupon.id });
-        }
-        
-        if (coupon) {
-          sessionConfig.discounts = [{
-            coupon: coupon.id,
-          }];
-        }
-      } else if (code === 'betatester') {
-        // Create or retrieve coupon for two months free
-        let coupon;
-        try {
-          coupon = await stripe.coupons.retrieve('two-months-free');
-          logStep("Found existing BETATESTER coupon");
-        } catch (error) {
-          // Create the coupon if it doesn't exist
-          coupon = await stripe.coupons.create({
-            id: 'two-months-free',
-            name: 'Two Months Free - Beta Tester',
-            duration: 'once',
-            amount_off: billingCycle === 'monthly' ? amount * 2 : Math.floor(amount / 6), // Two months' worth
-            currency: 'usd',
-          });
-          logStep("Created new BETATESTER coupon", { couponId: coupon.id });
-        }
-        
-        if (coupon) {
-          sessionConfig.discounts = [{
-            coupon: coupon.id,
-          }];
-        }
+      } else {
+        logStep("Promo code is invalid or expired", { promoCode });
       }
     }
 
