@@ -34,19 +34,45 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
-    // Define plan pricing
-    const planPricing = {
+    // Define plan pricing (amounts in cents)
+    const planPricing: Record<string, { monthly: number; yearly: number }> = {
+      free: { monthly: 0, yearly: 0 },
       student: { monthly: 1900, yearly: 19000 }, // $19/month, $190/year
       starter: { monthly: 2900, yearly: 29000 }, // $29/month, $290/year  
-      professional: { monthly: 19900, yearly: 199000 }, // $199/month, $1990/year
+      professional: { monthly: 7900, yearly: 79000 }, // $79/month, $790/year
+      'pro-plus': { monthly: 14900, yearly: 149000 }, // $149/month, $1490/year
     };
 
-    if (!planPricing[planId as keyof typeof planPricing]) {
-      throw new Error("Invalid plan selected");
+    // Handle free plan separately
+    if (planId === 'free') {
+      return new Response(JSON.stringify({ 
+        url: `${req.headers.get("origin")}/success?plan=free`,
+        sessionId: null,
+        message: "Free plan activated"
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
     }
 
-    const pricing = planPricing[planId as keyof typeof planPricing];
-    let amount = pricing[billingCycle as keyof typeof pricing];
+    // Handle enterprise plan separately
+    if (planId === 'enterprise') {
+      return new Response(JSON.stringify({ 
+        url: `${req.headers.get("origin")}/contact?plan=enterprise`,
+        sessionId: null,
+        message: "Contact sales for enterprise pricing"
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+
+    if (!planPricing[planId]) {
+      throw new Error(`Invalid plan selected: ${planId}`);
+    }
+
+    const pricing = planPricing[planId];
+    let amount = billingCycle === 'monthly' ? pricing.monthly : pricing.yearly;
     
     // Add social media addon if selected (available for all plans)
     if (socialMediaAddon) {
