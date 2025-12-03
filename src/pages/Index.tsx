@@ -27,6 +27,9 @@ import OnboardingTour from "@/components/OnboardingTour";
 import DemoEnvironment from "@/components/investor/DemoEnvironment";
 import MobileAppCTA from "@/components/MobileAppCTA";
 import ProtectionComparisonShowcase from "@/components/ProtectionComparisonShowcase";
+import TrustBadges from "@/components/TrustBadges";
+import Testimonials from "@/components/Testimonials";
+import { EnhancedFooter } from "@/components/EnhancedFooter";
 const Index = () => {
   const {
     toast
@@ -241,76 +244,114 @@ Own Your Future</h1>
         </div>
       </section>
 
-      {/* Creator Problems */}
-      <section className="bg-red-50 py-10 px-4">
+      {/* Creator Problems - Softened Professional Design */}
+      <section className="bg-gradient-to-b from-amber-50/80 to-orange-50/50 dark:from-amber-950/20 dark:to-orange-950/10 py-12 px-4 border-y border-amber-200/50 dark:border-amber-800/30">
         <div className="container mx-auto max-w-5xl">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold mb-3 text-red-800">Stop Losing Money to Content Thieves</h2>
-            <p className="text-base text-red-700 max-w-2xl mx-auto">
-              Every minute your content isn't protected, you're losing revenue. Here's what's happening to creators.
+          <div className="text-center mb-10">
+            <Badge variant="outline" className="mb-4 border-amber-400 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50">
+              <Info className="w-3 h-3 mr-1" />
+              Industry Challenge
+            </Badge>
+            <h2 className="text-2xl md:text-3xl font-bold mb-3 text-amber-900 dark:text-amber-100">
+              The Hidden Cost of Unprotected Content
+            </h2>
+            <p className="text-base text-amber-800/80 dark:text-amber-200/80 max-w-2xl mx-auto">
+              Understanding the challenges helps you make informed decisions about protecting your creative work.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-4 text-center">
-                <div className="text-3xl font-bold text-red-600 mb-2">$3,200</div>
-                <p className="text-sm text-gray-700">
-                  Average revenue lost per creator annually to unauthorized use and theft.
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
+              <CardContent className="p-5 text-center">
+                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <TrendingUp className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">$3,200</div>
+                <p className="text-sm text-muted-foreground">
+                  Average annual revenue impact from unauthorized content use
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-4 text-center">
-                <div className="text-base font-bold text-red-600 mb-2">AI Training Theft</div>
-                <p className="text-sm text-gray-700">
-                  Your content trains AI models worth billions, but you receive $0 in compensation.
+            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
+              <CardContent className="p-5 text-center">
+                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Bot className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div className="text-base font-semibold text-amber-700 dark:text-amber-400 mb-2">AI Training Data</div>
+                <p className="text-sm text-muted-foreground">
+                  Creative works increasingly used to train AI without creator compensation
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-4 text-center">
-                <div className="text-base font-bold text-red-600 mb-2">Merch Thieves</div>
-                <p className="text-sm text-gray-700">
-                  Print-on-demand sites profit from your stolen designs while you get nothing.
+            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
+              <CardContent className="p-5 text-center">
+                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Globe className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div className="text-base font-semibold text-amber-700 dark:text-amber-400 mb-2">Global Reach</div>
+                <p className="text-sm text-muted-foreground">
+                  Content spreads across platforms faster than manual tracking allows
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-4 text-center">
-                <div className="text-base font-bold text-red-600 mb-2">Impossible to Track</div>
-                <p className="text-sm text-gray-700">
-                  Manual monitoring takes 10+ hours weekly and still misses 90% of violations.
+            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
+              <CardContent className="p-5 text-center">
+                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Search className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div className="text-base font-semibold text-amber-700 dark:text-amber-400 mb-2">10+ Hours/Week</div>
+                <p className="text-sm text-muted-foreground">
+                  Time spent on manual monitoring that could go toward creating
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-4 text-center">
-                <div className="text-base font-bold text-red-600 mb-2">Legal Costs</div>
-                <p className="text-sm text-gray-700">
-                  Lawyers charge $300+/hour for takedown notices you could automate.
+            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
+              <CardContent className="p-5 text-center">
+                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Scale className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div className="text-base font-semibold text-amber-700 dark:text-amber-400 mb-2">Legal Complexity</div>
+                <p className="text-sm text-muted-foreground">
+                  Navigating DMCA and international copyright requires expertise
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-3 text-center">
-                <div className="text-sm font-bold text-red-600 mb-1">Time = Money</div>
-                <p className="text-xs text-gray-700">
-                  Every day without protection costs you potential licensing deals and royalties.
+            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
+              <CardContent className="p-5 text-center">
+                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Calendar className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div className="text-base font-semibold text-amber-700 dark:text-amber-400 mb-2">Opportunity Cost</div>
+                <p className="text-sm text-muted-foreground">
+                  Missed licensing deals and partnerships due to untracked usage
                 </p>
               </CardContent>
             </Card>
+          </div>
+
+          <div className="text-center mt-8">
+            <Button 
+              variant="outline" 
+              className="border-amber-400 text-amber-700 hover:bg-amber-100 dark:border-amber-600 dark:text-amber-400 dark:hover:bg-amber-950/50"
+              onClick={() => navigate("/upload")}
+            >
+              See How We Solve This
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
           </div>
         </div>
       </section>
 
       {/* Protection Comparison Showcase */}
       <ProtectionComparisonShowcase />
+
+      {/* Trust Badges */}
+      <TrustBadges />
 
       {/* How It Works & Features - Consolidated */}
       <section id="how-it-works" className="py-20 px-4 bg-muted/30">
@@ -707,6 +748,12 @@ Own Your Future</h1>
 
       {/* Leave a Review Section */}
       <LeaveReview />
+
+      {/* Testimonials */}
+      <Testimonials />
+
+      {/* Enhanced Footer */}
+      <EnhancedFooter />
 
       {/* Bug Report Button */}
       <BugReportButton />
