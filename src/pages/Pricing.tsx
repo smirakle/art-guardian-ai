@@ -4,9 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { CheckCircle, Star, Shield, Zap, Crown, Building2, CreditCard, User, Mail, Phone, MapPin, Lock, UserCheck, Tag, Users } from "lucide-react";
+import { CheckCircle, Star, Shield, Zap, Crown, Building2, User, Mail, Tag, Users } from "lucide-react";
 import { SLAGuarantees } from "@/components/sla/SLAGuarantees";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -25,21 +24,8 @@ const Pricing = () => {
     firstName: '',
     lastName: '',
     email: '',
-    username: '',
-    password: '',
-    confirmPassword: '',
-    phone: '',
-    company: '',
-    address: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: '',
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    cardName: ''
   });
+  const [emailError, setEmailError] = useState('');
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -322,281 +308,111 @@ const Pricing = () => {
     return `$${price}`;
   };
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.trim()) {
+      setEmailError('Email is required');
+      return false;
+    }
+    if (!emailRegex.test(email)) {
+      setEmailError('Please enter a valid email address');
+      return false;
+    }
+    setEmailError('');
+    return true;
+  };
+
   const SignUpForm = ({ plan }: { plan: any }) => {
     return (
-      <div className="space-y-6 max-h-[70vh] overflow-y-auto">
-        {/* Personal Information */}
+      <div className="space-y-6">
+        {/* Stripe Redirect Notice */}
+        <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Shield className="w-5 h-5 text-primary" />
+            <span className="font-semibold text-primary">Secure Checkout</span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            You'll be redirected to Stripe's secure checkout to complete your payment. 
+            Your payment information is handled securely by Stripe.
+          </p>
+        </div>
+
+        {/* Basic Information */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-2">
             <User className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-semibold">Personal Information</h3>
+            <h3 className="text-lg font-semibold">Your Information</h3>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First Name *</Label>
+              <Label htmlFor="firstName">First Name</Label>
               <Input
                 id="firstName"
                 value={formData.firstName}
                 onChange={(e) => handleInputChange('firstName', e.target.value)}
                 placeholder="John"
-                required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name *</Label>
+              <Label htmlFor="lastName">Last Name</Label>
               <Input
                 id="lastName"
                 value={formData.lastName}
                 onChange={(e) => handleInputChange('lastName', e.target.value)}
                 placeholder="Doe"
-                required
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email Address *</Label>
+            <Label htmlFor="email" className="flex items-center gap-1">
+              Email Address <span className="text-destructive">*</span>
+            </Label>
             <div className="relative">
               <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
+                onChange={(e) => {
+                  handleInputChange('email', e.target.value);
+                  if (emailError) validateEmail(e.target.value);
+                }}
+                onBlur={(e) => validateEmail(e.target.value)}
                 placeholder="john@example.com"
-                className="pl-10"
+                className={`pl-10 ${emailError ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                 required
               />
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="username">Username *</Label>
-            <div className="relative">
-              <UserCheck className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="username"
-                value={formData.username}
-                onChange={(e) => handleInputChange('username', e.target.value)}
-                placeholder="johndoe123"
-                className="pl-10"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="password">Password *</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
-                  placeholder="Enter password"
-                  className="pl-10"
-                  required
-                />
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Must be at least 8 characters long
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password *</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                  placeholder="Confirm password"
-                  className="pl-10"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number</Label>
-            <div className="relative">
-              <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="phone"
-                value={formData.phone}
-                onChange={(e) => handleInputChange('phone', e.target.value)}
-                placeholder="+1 (555) 123-4567"
-                className="pl-10"
-              />
-            </div>
-          </div>
-
-          {(plan.id === 'professional' || plan.id === 'enterprise') && (
-            <div className="space-y-2">
-              <Label htmlFor="company">Company/Organization</Label>
-              <Input
-                id="company"
-                value={formData.company}
-                onChange={(e) => handleInputChange('company', e.target.value)}
-                placeholder="Your Company Name"
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Billing Address */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 mb-4">
-            <MapPin className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-semibold">Billing Address</h3>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="address">Street Address</Label>
-            <Input
-              id="address"
-              value={formData.address}
-              onChange={(e) => handleInputChange('address', e.target.value)}
-              placeholder="123 Main St"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="city">City</Label>
-              <Input
-                id="city"
-                value={formData.city}
-                onChange={(e) => handleInputChange('city', e.target.value)}
-                placeholder="New York"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="state">State</Label>
-              <Input
-                id="state"
-                value={formData.state}
-                onChange={(e) => handleInputChange('state', e.target.value)}
-                placeholder="NY"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="zipCode">ZIP Code</Label>
-              <Input
-                id="zipCode"
-                value={formData.zipCode}
-                onChange={(e) => handleInputChange('zipCode', e.target.value)}
-                placeholder="10001"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="country">Country</Label>
-            <Select value={formData.country} onValueChange={(value) => handleInputChange('country', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select country" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="us">United States</SelectItem>
-                <SelectItem value="ca">Canada</SelectItem>
-                <SelectItem value="uk">United Kingdom</SelectItem>
-                <SelectItem value="au">Australia</SelectItem>
-                <SelectItem value="de">Germany</SelectItem>
-                <SelectItem value="fr">France</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
+            {emailError && (
+              <p className="text-sm text-destructive">{emailError}</p>
+            )}
           </div>
         </div>
 
         {/* Promotional Code */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-2">
             <Tag className="w-5 h-5 text-primary" />
             <h3 className="text-lg font-semibold">Promotional Code</h3>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="promoCode">Promotional Code (Optional)</Label>
+            <Label htmlFor="promoCode">Promo Code (Optional)</Label>
             <div className="relative">
               <Tag className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 id="promoCode"
                 value={promoCode}
                 onChange={(e) => setPromoCode(e.target.value)}
-                placeholder="Enter promo code (e.g., FEEDBACK)"
+                placeholder="Enter promo code"
                 className="pl-10"
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              Enter "FEEDBACK" for one month free on your subscription!
+              Enter "FEEDBACK" for one month free!
             </p>
-          </div>
-        </div>
-
-        {/* Credit Card Information */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 mb-4">
-            <CreditCard className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-semibold">Payment Information</h3>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="cardName">Name on Card *</Label>
-            <Input
-              id="cardName"
-              value={formData.cardName}
-              onChange={(e) => handleInputChange('cardName', e.target.value)}
-              placeholder="John Doe"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="cardNumber">Card Number *</Label>
-            <div className="relative">
-              <CreditCard className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="cardNumber"
-                value={formData.cardNumber}
-                onChange={(e) => handleInputChange('cardNumber', e.target.value)}
-                placeholder="1234 5678 9012 3456"
-                className="pl-10"
-                maxLength={19}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="expiryDate">Expiry Date *</Label>
-              <Input
-                id="expiryDate"
-                value={formData.expiryDate}
-                onChange={(e) => handleInputChange('expiryDate', e.target.value)}
-                placeholder="MM/YY"
-                maxLength={5}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="cvv">CVV *</Label>
-              <Input
-                id="cvv"
-                value={formData.cvv}
-                onChange={(e) => handleInputChange('cvv', e.target.value)}
-                placeholder="123"
-                maxLength={4}
-                required
-              />
-            </div>
           </div>
         </div>
 
@@ -657,12 +473,19 @@ const Pricing = () => {
         </div>
 
         <Button
-          onClick={() => handleFormSubmit(plan.id)}
+          onClick={() => {
+            if (!validateEmail(formData.email)) return;
+            handleFormSubmit(plan.id);
+          }}
           disabled={isProcessing}
           className="w-full py-3 text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 disabled:opacity-50"
         >
-          {isProcessing ? "Processing..." : "Start My Protection Plan"}
+          {isProcessing ? "Processing..." : "Continue to Secure Checkout →"}
         </Button>
+
+        <p className="text-xs text-center text-muted-foreground mt-3">
+          🔒 Secure payment powered by Stripe
+        </p>
       </div>
     );
   };
