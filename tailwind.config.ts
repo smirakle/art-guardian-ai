@@ -19,10 +19,16 @@ export default {
 		},
 		extend: {
 			fontFamily: {
+				'sans': ['Inter', 'system-ui', 'sans-serif'],
+				'display': ['Playfair Display', 'Georgia', 'serif'],
 				'times': ['"Times New Roman"', 'Times', 'serif'],
 			},
 			fontSize: {
 				'13pt': '13pt',
+			},
+			letterSpacing: {
+				'tight': '-0.025em',
+				'tighter': '-0.05em',
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -67,6 +73,11 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				warning: {
+					DEFAULT: 'hsl(var(--warning))',
+					foreground: 'hsl(var(--warning-foreground))',
+					muted: 'hsl(var(--warning-muted))'
 				}
 			},
 			borderRadius: {
