@@ -1,6 +1,7 @@
 import React from 'react';
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import { useTranslation } from 'react-i18next';
+import CaseStudies from '@/components/CaseStudies';
 
 const AboutTsmo = () => {
   const { t } = useTranslation();
@@ -79,6 +80,9 @@ const AboutTsmo = () => {
           </div>
         </div>
       </section>
+      
+      {/* Case Studies Section */}
+      <CaseStudies />
     </div>
   );
 };
