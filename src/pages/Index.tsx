@@ -808,6 +808,10 @@ Own Your Future</h1>
               <span className="text-xs text-yellow-700">
                 Core features ready • Updates weekly
               </span>
+              <Button variant="ghost" size="sm" className="text-yellow-700 hover:bg-yellow-100 h-8 text-xs" onClick={() => navigate("/press-kit")}>
+                Press Kit
+                <ChevronRight className="ml-1 h-3 w-3" />
+              </Button>
               <Button variant="ghost" size="sm" className="text-yellow-700 hover:bg-yellow-100 h-8 text-xs" onClick={() => navigate("/roadmap")}>
                 Roadmap
                 <ChevronRight className="ml-1 h-3 w-3" />
