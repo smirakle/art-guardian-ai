@@ -86,6 +86,7 @@ import Settings from "./pages/Settings";
 import AITPAAnalysis from "./pages/AITPAAnalysis";
 import { AIProtectionVisualDemo } from "./components/demo/AIProtectionVisualDemo";
 import ProtectionGuide from "./pages/ProtectionGuide";
+import PressKit from "./pages/PressKit";
 
 const queryClient = new QueryClient();
 
@@ -255,6 +256,7 @@ const App = () => {
             <Route path="/promo-materials" element={<PromoMaterials />} />
             <Route path="/demo/visual" element={<AIProtectionVisualDemo />} />
             <Route path="/protection-guide" element={<ProtectionGuide />} />
+            <Route path="/press-kit" element={<PressKit />} />
             
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />
