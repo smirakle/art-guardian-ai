@@ -18,6 +18,7 @@ import tsmoLogo from "@/assets/tsmo-logo.png";
 import tsmoTransparentLogo from "@/assets/tsmo-transparent-logo.png";
 import tsmoLogoFull from "@/assets/tsmo-logo-full.png";
 import tsmoLogoHighres from "@/assets/press/tsmo-logo-highres.png";
+import tsmoLogoTransparentHighres from "@/assets/press/tsmo-logo-transparent-highres.png";
 
 const pressImages = [
   {
@@ -66,11 +67,18 @@ const pressImages = [
 
 const logos = [
   {
+    name: "TSMO Transparent High-Res (300 DPI)",
+    description: "Print-ready transparent logo at 1920×1920px, 300 DPI",
+    src: tsmoLogoTransparentHighres,
+    filename: "tsmo-logo-transparent-300dpi.png",
+    featured: true
+  },
+  {
     name: "TSMO High-Res Logo (300 DPI)",
-    description: "Print-ready logo at 1920×1920px, 300 DPI",
+    description: "High-res logo at 1920×1920px, 300 DPI",
     src: tsmoLogoHighres,
     filename: "tsmo-logo-300dpi.png",
-    featured: true
+    featured: false
   },
   {
     name: "TSMO Logo",
