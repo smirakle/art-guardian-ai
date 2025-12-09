@@ -243,6 +243,181 @@ Own Your Future</h1>
         </div>
       </section>
 
+      {/* How It Works & Features - Consolidated */}
+      <section id="how-it-works" className="py-20 px-4 bg-muted/30">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">How We Protect You</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Our comprehensive protection system combines AI technology, blockchain verification, and legal automation
+              to safeguard your creative work.
+            </p>
+          </div>
+
+          {/* Step-by-step Process */}
+          <div className="grid md:grid-cols-4 gap-8 mb-16">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
+                1
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Upload & Protect</h3>
+              <p className="text-muted-foreground">
+                Upload your artwork and apply our invisible protection layers that don't affect image quality
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
+                2
+              </div>
+              <h3 className="text-xl font-semibold mb-3">24/7 AI Monitoring</h3>
+              <p className="text-muted-foreground">
+                Our AI continuously scans the internet, social media, and marketplaces for unauthorized use
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
+                3
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Instant Detection</h3>
+              <p className="text-muted-foreground">
+                Get notified immediately when violations are found, with detailed evidence and location data
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
+                4
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Automated Response</h3>
+              <p className="text-muted-foreground">
+                Automatic takedown notices and legal documentation to protect your rights
+              </p>
+            </div>
+          </div>
+
+          {/* Core Features Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                  <Eye className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle>Visual Recognition</CardTitle>
+                <CardDescription>
+                  Advanced AI analyzes your artwork and detects unauthorized usage across the web
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                  <Activity className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle>Real-time Monitoring</CardTitle>
+                <CardDescription>
+                  24/7 surveillance across platforms, marketplaces, and social media networks
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                  <Link2 className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle>Blockchain Verification</CardTitle>
+                <CardDescription>
+                  Immutable proof of creation and ownership through blockchain technology
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                  <Search className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle>Deep Web Scanning</CardTitle>
+                <CardDescription>
+                  Advanced dark web monitoring and threat detection for comprehensive protection
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+
+          {/* Additional Capabilities */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
+              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Zap className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2">Instant Alerts</h3>
+              <p className="text-sm text-muted-foreground">
+                Immediate notifications with detailed evidence packages
+              </p>
+            </div>
+
+            <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
+              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <FileText className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2">Auto-Documentation</h3>
+              <p className="text-sm text-muted-foreground">
+                Automated legal evidence preparation
+              </p>
+            </div>
+
+            <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Scale className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2">Legal Support</h3>
+              <p className="text-sm text-muted-foreground">
+                Access to IP lawyers and DMCA assistance
+              </p>
+            </div>
+
+            <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
+              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <TrendingUp className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2">Analytics Dashboard</h3>
+              <p className="text-sm text-muted-foreground">
+                Track protection status and violation trends
+              </p>
+            </div>
+
+            <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
+              <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Users className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2">Artist Community</h3>
+              <p className="text-sm text-muted-foreground">
+                Connect and share protection strategies
+              </p>
+            </div>
+
+            <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
+              <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Globe className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2">Global Coverage</h3>
+              <p className="text-sm text-muted-foreground">
+                International monitoring and enforcement
+              </p>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="text-center">
+            <Button size="lg" className="px-8 h-12 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90" onClick={() => navigate("/upload")}>
+              Start Protecting Your Art
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Creator Problems - Softened Professional Design */}
       <section className="bg-gradient-to-b from-amber-50/80 to-orange-50/50 dark:from-amber-950/20 dark:to-orange-950/10 py-12 px-4 border-y border-amber-200/50 dark:border-amber-800/30">
         <div className="container mx-auto max-w-5xl">
@@ -482,142 +657,6 @@ Own Your Future</h1>
       {/* Trust Badges */}
       <TrustBadges />
 
-      {/* How It Works & Features - Consolidated */}
-      <section id="how-it-works" className="py-20 px-4 bg-muted/30">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">How We Protect You</h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Our comprehensive protection system combines AI technology, blockchain verification, and legal automation
-              to safeguard your creative work.
-            </p>
-          </div>
-
-          {/* Step-by-step Process */}
-          <div className="grid md:grid-cols-4 gap-8 mb-16">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
-                1
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Upload & Protect</h3>
-              <p className="text-muted-foreground">
-                Upload your artwork and apply our invisible protection layers that don't affect image quality
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
-                2
-              </div>
-              <h3 className="text-xl font-semibold mb-3">24/7 AI Monitoring</h3>
-              <p className="text-muted-foreground">
-                Our AI continuously scans the internet, social media, and marketplaces for unauthorized use
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
-                3
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Instant Detection</h3>
-              <p className="text-muted-foreground">
-                Get notified immediately when violations are found, with detailed evidence and location data
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
-                4
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Automated Response</h3>
-              <p className="text-muted-foreground">
-                Automatic takedown notices and legal documentation to protect your rights
-              </p>
-            </div>
-          </div>
-
-          {/* Core Features Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <Eye className="h-6 w-6 text-primary" />
-                </div>
-                <CardTitle>Visual Recognition</CardTitle>
-                <CardDescription>
-                  Advanced AI analyzes your artwork and detects unauthorized usage across the web
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <Activity className="h-6 w-6 text-primary" />
-                </div>
-                <CardTitle>Real-time Monitoring</CardTitle>
-                <CardDescription>
-                  24/7 surveillance across platforms, marketplaces, and social media networks
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <Link2 className="h-6 w-6 text-primary" />
-                </div>
-                <CardTitle>Blockchain Verification</CardTitle>
-                <CardDescription>
-                  Immutable proof of creation and ownership through blockchain technology
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <Search className="h-6 w-6 text-primary" />
-                </div>
-                <CardTitle>Deep Web Scanning</CardTitle>
-                <CardDescription>
-                  Advanced dark web monitoring and threat detection for comprehensive protection
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </div>
-
-          {/* Additional Capabilities */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <Zap className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="font-semibold mb-2">Instant Alerts</h3>
-              <p className="text-sm text-muted-foreground">
-                Immediate notifications with detailed evidence packages
-              </p>
-            </div>
-
-            <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <Lock className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="font-semibold mb-2">Legal Support</h3>
-              <p className="text-sm text-muted-foreground">
-                Automated DMCA filing and legal assistance
-              </p>
-            </div>
-
-            <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
-              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <Scale className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="font-semibold mb-2">Trademark Intelligence</h3>
-              <p className="text-sm text-muted-foreground">
-                AI-powered trademark monitoring across jurisdictions
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Mid-Page CTA */}
       <section className="py-16 px-4 bg-gradient-to-r from-primary/10 to-accent/10">
