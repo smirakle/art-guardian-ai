@@ -1,8 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Twitter, Instagram, Facebook, Linkedin } from 'lucide-react';
 
 export const CopyrightFooter = () => {
   const currentYear = new Date().getFullYear();
+
+  const socialLinks = [
+    { icon: Twitter, url: 'https://x.com/TsmoWatch', label: 'X (Twitter)' },
+    { icon: Instagram, url: 'https://www.instagram.com/tsmo_watch_art__guardian_/', label: 'Instagram' },
+    { icon: Facebook, url: 'https://www.facebook.com/profile.php?id=61584194224810', label: 'Facebook' },
+    { icon: Linkedin, url: 'https://www.linkedin.com/company/tsmo-watch/?viewAsMember=true', label: 'LinkedIn' },
+  ];
 
   return (
     <footer className="border-t bg-background/95 backdrop-blur-sm">
@@ -19,6 +27,21 @@ export const CopyrightFooter = () => {
             </div>
           </div>
           <div className="flex items-center space-x-4">
+            {/* Social Media Links */}
+            <div className="flex items-center space-x-3 mr-4">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label={social.label}
+                >
+                  <social.icon className="h-4 w-4" />
+                </a>
+              ))}
+            </div>
             <Link 
               to="/terms-and-privacy" 
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
