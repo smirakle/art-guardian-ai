@@ -210,7 +210,7 @@ Own Your Future</h1>
               </Button>
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              No credit card required • Join 15,000+ protected artists
+              No credit card required
             </p>
           </div>
 
