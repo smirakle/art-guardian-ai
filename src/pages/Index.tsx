@@ -244,7 +244,239 @@ Own Your Future</h1>
         </div>
       </section>
 
-      {/* How It Works & Features - Consolidated */}
+      {/* STEP 2: Industry Challenge - The Problem */}
+      <section className="bg-gradient-to-b from-amber-50/80 to-orange-50/50 dark:from-amber-950/20 dark:to-orange-950/10 py-12 px-4 border-y border-amber-200/50 dark:border-amber-800/30">
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center mb-10">
+            <Badge variant="outline" className="mb-4 border-amber-400 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50">
+              <Info className="w-3 h-3 mr-1" />
+              Industry Challenge
+            </Badge>
+            <h2 className="text-2xl md:text-3xl font-bold mb-3 text-amber-900 dark:text-amber-100">
+              The Hidden Cost of Unprotected Content
+            </h2>
+            <p className="text-base text-amber-800/80 dark:text-amber-200/80 max-w-2xl mx-auto">
+              Understanding the challenges helps you make informed decisions about protecting your creative work.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
+              <CardContent className="p-5 text-center">
+                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <TrendingUp className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">~50%</div>
+                <p className="text-sm text-muted-foreground">
+                  Of creators have had their content stolen or used without permission by brands
+                </p>
+                <a 
+                  href="https://massive.io/newsroom/2024-survey-finds-creator-user-generated-content-stole-by-brands/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
+                >
+                  Source: MASV / Dynata 2024 →
+                </a>
+              </CardContent>
+            </Card>
+
+            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
+              <CardContent className="p-5 text-center">
+                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Bot className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">57%</div>
+                <p className="text-sm text-muted-foreground">
+                  Of US artists worry about financial vulnerability including food, housing & medical care
+                </p>
+                <a 
+                  href="https://www.mellon.org/news/new-national-study-offers-fresh-insight-lives-livelihoods-us-artists" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
+                >
+                  Source: Mellon Foundation 2025 →
+                </a>
+              </CardContent>
+            </Card>
+
+            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
+              <CardContent className="p-5 text-center">
+                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Search className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">71%</div>
+                <p className="text-sm text-muted-foreground">
+                  Of US independent creators earn less than $30,000 annually from creative work
+                </p>
+                <a 
+                  href="https://www.mbopartners.com/state-of-independence/creator-economy-report/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
+                >
+                  Source: MBO Partners 2023 →
+                </a>
+              </CardContent>
+            </Card>
+
+            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
+              <CardContent className="p-5 text-center">
+                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Scale className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">34%</div>
+                <p className="text-sm text-muted-foreground">
+                  Less likely to survive 5 years if your intellectual property rights are infringed
+                </p>
+                <a 
+                  href="https://www.oecd.org/en/publications/risks-of-illicit-trade-in-counterfeits-to-small-and-medium-sized-firms_fa6d5089-en.html" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
+                >
+                  Source: OECD / EUIPO 2023 →
+                </a>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center mt-8">
+            <Button 
+              variant="outline" 
+              className="border-amber-400 text-amber-700 hover:bg-amber-100 dark:border-amber-600 dark:text-amber-400 dark:hover:bg-amber-950/50"
+              onClick={() => setShowSolutionsDialog(true)}
+            >
+              See How We Solve This
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Solutions Dialog */}
+          <Dialog open={showSolutionsDialog} onOpenChange={setShowSolutionsDialog}>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="text-2xl">How TSMO Protects Creators</DialogTitle>
+                <DialogDescription>
+                  Our platform directly addresses the challenges independent creators face with comprehensive protection tools.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="grid md:grid-cols-2 gap-4 mt-4">
+                <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
+                        <Eye className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <Badge variant="outline" className="text-xs mb-1 border-amber-400 text-amber-700">Problem: ~50% stolen</Badge>
+                        <h4 className="font-semibold text-base">24/7 AI Monitoring & Detection</h4>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Our AI continuously scans platforms, marketplaces, and social media—detecting unauthorized use of your work within hours, not months.
+                    </p>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Real-time platform monitoring</li>
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Visual fingerprint matching</li>
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Instant theft alerts</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-secondary/20 bg-gradient-to-br from-secondary/5 to-transparent">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center shrink-0">
+                        <Scale className="w-5 h-5 text-secondary" />
+                      </div>
+                      <div>
+                        <Badge variant="outline" className="text-xs mb-1 border-amber-400 text-amber-700">Problem: 57% financial worry</Badge>
+                        <h4 className="font-semibold text-base">Automated DMCA & Legal Support</h4>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Free takedown notices, legal templates, and IP lawyer access help creators recover lost income from infringement quickly and affordably.
+                    </p>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> One-click DMCA notices</li>
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Legal template library</li>
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> IP attorney network</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-transparent">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center shrink-0">
+                        <BadgeCheck className="w-5 h-5 text-accent" />
+                      </div>
+                      <div>
+                        <Badge variant="outline" className="text-xs mb-1 border-amber-400 text-amber-700">Problem: 71% earn &lt;$30K</Badge>
+                        <h4 className="font-semibold text-base">Proof of Ownership & Licensing</h4>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Blockchain verification and licensing tools help you monetize your work and prove ownership for brand partnerships and commercial opportunities.
+                    </p>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Blockchain certificates</li>
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Commercial licensing tools</li>
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Ownership verification</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
+                        <Shield className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <Badge variant="outline" className="text-xs mb-1 border-amber-400 text-amber-700">Problem: 34% survival risk</Badge>
+                        <h4 className="font-semibold text-base">Proactive IP Protection</h4>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Invisible watermarking, AI training detection, and real-time alerts prevent infringement before it damages your business and reputation.
+                    </p>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Invisible watermarks</li>
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> AI training detection</li>
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Preventive protection</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <DialogFooter className="mt-6 flex-col sm:flex-row gap-3">
+                <Button variant="outline" onClick={() => setShowSolutionsDialog(false)}>
+                  Close
+                </Button>
+                <Button 
+                  className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+                  onClick={() => {
+                    setShowSolutionsDialog(false);
+                    navigate("/upload");
+                  }}
+                >
+                  Start Protecting Your Work
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </section>
+
+      {/* STEP 3: Problem to Solution Transition */}
+      <ProblemToSolutionTransition />
+
+      {/* STEP 4: How It Works & Features - The Solution */}
       <section id="how-it-works" className="py-20 px-4 bg-muted/30">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
@@ -419,250 +651,13 @@ Own Your Future</h1>
         </div>
       </section>
 
-      {/* Protection Comparison Showcase */}
+      {/* STEP 5: Protection Comparison Showcase - Proof */}
       <ProtectionComparisonShowcase />
 
-      {/* Creator Problems - Softened Professional Design */}
-      <section className="bg-gradient-to-b from-amber-50/80 to-orange-50/50 dark:from-amber-950/20 dark:to-orange-950/10 py-12 px-4 border-y border-amber-200/50 dark:border-amber-800/30">
-        <div className="container mx-auto max-w-5xl">
-          <div className="text-center mb-10">
-            <Badge variant="outline" className="mb-4 border-amber-400 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50">
-              <Info className="w-3 h-3 mr-1" />
-              Industry Challenge
-            </Badge>
-            <h2 className="text-2xl md:text-3xl font-bold mb-3 text-amber-900 dark:text-amber-100">
-              The Hidden Cost of Unprotected Content
-            </h2>
-            <p className="text-base text-amber-800/80 dark:text-amber-200/80 max-w-2xl mx-auto">
-              Understanding the challenges helps you make informed decisions about protecting your creative work.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
-              <CardContent className="p-5 text-center">
-                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <TrendingUp className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">~50%</div>
-                <p className="text-sm text-muted-foreground">
-                  Of creators have had their content stolen or used without permission by brands
-                </p>
-                <a 
-                  href="https://massive.io/newsroom/2024-survey-finds-creator-user-generated-content-stole-by-brands/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
-                >
-                  Source: MASV / Dynata 2024 →
-                </a>
-              </CardContent>
-            </Card>
-
-            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
-              <CardContent className="p-5 text-center">
-                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Bot className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">57%</div>
-                <p className="text-sm text-muted-foreground">
-                  Of US artists worry about financial vulnerability including food, housing & medical care
-                </p>
-                <a 
-                  href="https://www.mellon.org/news/new-national-study-offers-fresh-insight-lives-livelihoods-us-artists" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
-                >
-                  Source: Mellon Foundation 2025 →
-                </a>
-              </CardContent>
-            </Card>
-
-            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
-              <CardContent className="p-5 text-center">
-                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Search className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">71%</div>
-                <p className="text-sm text-muted-foreground">
-                  Of US independent creators earn less than $30,000 annually from creative work
-                </p>
-                <a 
-                  href="https://www.mbopartners.com/state-of-independence/creator-economy-report/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
-                >
-                  Source: MBO Partners 2023 →
-                </a>
-              </CardContent>
-            </Card>
-
-            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
-              <CardContent className="p-5 text-center">
-                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Scale className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">34%</div>
-                <p className="text-sm text-muted-foreground">
-                  Less likely to survive 5 years if your intellectual property rights are infringed
-                </p>
-                <a 
-                  href="https://www.oecd.org/en/publications/risks-of-illicit-trade-in-counterfeits-to-small-and-medium-sized-firms_fa6d5089-en.html" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
-                >
-                  Source: OECD / EUIPO 2023 →
-                </a>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="text-center mt-8">
-            <Button 
-              variant="outline" 
-              className="border-amber-400 text-amber-700 hover:bg-amber-100 dark:border-amber-600 dark:text-amber-400 dark:hover:bg-amber-950/50"
-              onClick={() => setShowSolutionsDialog(true)}
-            >
-              See How We Solve This
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-
-          {/* Solutions Dialog */}
-          <Dialog open={showSolutionsDialog} onOpenChange={setShowSolutionsDialog}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="text-2xl">How TSMO Protects Creators</DialogTitle>
-                <DialogDescription>
-                  Our platform directly addresses the challenges independent creators face with comprehensive protection tools.
-                </DialogDescription>
-              </DialogHeader>
-              
-              <div className="grid md:grid-cols-2 gap-4 mt-4">
-                {/* Solution 1: Content Theft */}
-                <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
-                  <CardContent className="p-5">
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-                        <Eye className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <Badge variant="outline" className="text-xs mb-1 border-amber-400 text-amber-700">Problem: ~50% stolen</Badge>
-                        <h4 className="font-semibold text-base">24/7 AI Monitoring & Detection</h4>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Our AI continuously scans platforms, marketplaces, and social media—detecting unauthorized use of your work within hours, not months.
-                    </p>
-                    <ul className="text-xs text-muted-foreground space-y-1">
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Real-time platform monitoring</li>
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Visual fingerprint matching</li>
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Instant theft alerts</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-
-                {/* Solution 2: Financial Security */}
-                <Card className="border-secondary/20 bg-gradient-to-br from-secondary/5 to-transparent">
-                  <CardContent className="p-5">
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center shrink-0">
-                        <Scale className="w-5 h-5 text-secondary" />
-                      </div>
-                      <div>
-                        <Badge variant="outline" className="text-xs mb-1 border-amber-400 text-amber-700">Problem: 57% financial worry</Badge>
-                        <h4 className="font-semibold text-base">Automated DMCA & Legal Support</h4>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Free takedown notices, legal templates, and IP lawyer access help creators recover lost income from infringement quickly and affordably.
-                    </p>
-                    <ul className="text-xs text-muted-foreground space-y-1">
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> One-click DMCA notices</li>
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Legal template library</li>
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> IP attorney network</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-
-                {/* Solution 3: Income Growth */}
-                <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-transparent">
-                  <CardContent className="p-5">
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center shrink-0">
-                        <BadgeCheck className="w-5 h-5 text-accent" />
-                      </div>
-                      <div>
-                        <Badge variant="outline" className="text-xs mb-1 border-amber-400 text-amber-700">Problem: 71% earn &lt;$30K</Badge>
-                        <h4 className="font-semibold text-base">Proof of Ownership & Licensing</h4>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Blockchain verification and licensing tools help you monetize your work and prove ownership for brand partnerships and commercial opportunities.
-                    </p>
-                    <ul className="text-xs text-muted-foreground space-y-1">
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Blockchain certificates</li>
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Commercial licensing tools</li>
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Ownership verification</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-
-                {/* Solution 4: Business Survival */}
-                <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
-                  <CardContent className="p-5">
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-                        <Shield className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <Badge variant="outline" className="text-xs mb-1 border-amber-400 text-amber-700">Problem: 34% survival risk</Badge>
-                        <h4 className="font-semibold text-base">Proactive IP Protection</h4>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Invisible watermarking, AI training detection, and real-time alerts prevent infringement before it damages your business and reputation.
-                    </p>
-                    <ul className="text-xs text-muted-foreground space-y-1">
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Invisible watermarks</li>
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> AI training detection</li>
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Preventive protection</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <DialogFooter className="mt-6 flex-col sm:flex-row gap-3">
-                <Button variant="outline" onClick={() => setShowSolutionsDialog(false)}>
-                  Close
-                </Button>
-                <Button 
-                  className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
-                  onClick={() => {
-                    setShowSolutionsDialog(false);
-                    navigate("/upload");
-                  }}
-                >
-                  Start Protecting Your Work
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </section>
-
-      {/* Problem to Solution Transition */}
-      <ProblemToSolutionTransition />
-
-      {/* Trust Badges */}
+      {/* STEP 6: Trust Badges - Social Proof */}
       <TrustBadges />
 
-
-      {/* Mid-Page CTA */}
+      {/* STEP 7: Mid-Page CTA - Conversion */}
       <section className="py-16 px-4 bg-gradient-to-r from-primary/10 to-accent/10">
         <div className="container mx-auto max-w-3xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
