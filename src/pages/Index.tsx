@@ -418,6 +418,9 @@ Own Your Future</h1>
         </div>
       </section>
 
+      {/* Protection Comparison Showcase */}
+      <ProtectionComparisonShowcase />
+
       {/* Creator Problems - Softened Professional Design */}
       <section className="bg-gradient-to-b from-amber-50/80 to-orange-50/50 dark:from-amber-950/20 dark:to-orange-950/10 py-12 px-4 border-y border-amber-200/50 dark:border-amber-800/30">
         <div className="container mx-auto max-w-5xl">
@@ -650,9 +653,6 @@ Own Your Future</h1>
           </Dialog>
         </div>
       </section>
-
-      {/* Protection Comparison Showcase */}
-      <ProtectionComparisonShowcase />
 
       {/* Trust Badges */}
       <TrustBadges />
