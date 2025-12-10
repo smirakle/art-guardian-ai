@@ -28,6 +28,7 @@ import DemoEnvironment from "@/components/investor/DemoEnvironment";
 import MobileAppCTA from "@/components/MobileAppCTA";
 import ProtectionComparisonShowcase from "@/components/ProtectionComparisonShowcase";
 import TrustBadges from "@/components/TrustBadges";
+import { ProblemToSolutionTransition } from "@/components/ProblemToSolutionTransition";
 const Index = () => {
   const {
     toast
@@ -653,6 +654,9 @@ Own Your Future</h1>
           </Dialog>
         </div>
       </section>
+
+      {/* Problem to Solution Transition */}
+      <ProblemToSolutionTransition />
 
       {/* Trust Badges */}
       <TrustBadges />
