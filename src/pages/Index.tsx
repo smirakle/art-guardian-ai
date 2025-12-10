@@ -226,15 +226,19 @@ Own Your Future</h1>
             </Button>
           </div>
 
-          {/* Simplified Stats - Mobile Optimized */}
+          {/* Key Features - Mobile Optimized */}
           <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-8">
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">15K+</div>
-              <div className="text-xs sm:text-sm text-muted-foreground">Protected Artists</div>
+              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">
+                <Search className="w-6 h-6 sm:w-8 sm:h-8 mx-auto" />
+              </div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Reverse Image Search</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">50K+</div>
-              <div className="text-xs sm:text-sm text-muted-foreground">Violations Found</div>
+              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">
+                <Link2 className="w-6 h-6 sm:w-8 sm:h-8 mx-auto" />
+              </div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Blockchain Certificates</div>
             </div>
             <div className="text-center">
               <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">24/7</div>
