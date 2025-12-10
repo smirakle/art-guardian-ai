@@ -21,6 +21,7 @@ import tsmoLogoHighres from "@/assets/press/tsmo-logo-highres.png";
 import tsmoLogoTransparentHighres from "@/assets/press/tsmo-logo-transparent-highres.png";
 import tsmoLogoPrintReady from "@/assets/press/tsmo-logo-print-ready-300dpi.png";
 import tsmoLogoTransparentPrint from "@/assets/press/tsmo-logo-transparent-print.png";
+import tsmoLogoMultilayerPrint from "@/assets/press/tsmo-logo-multilayer-print.png";
 
 const pressImages = [
   {
@@ -69,11 +70,18 @@ const pressImages = [
 
 const logos = [
   {
+    name: "TSMO Multi-Layer Print Logo (300 DPI)",
+    description: "Premium logo with visual depth and 3D layering effects",
+    src: tsmoLogoMultilayerPrint,
+    filename: "tsmo-logo-multilayer-print-300dpi.png",
+    featured: true
+  },
+  {
     name: "TSMO Transparent Print Logo (300 DPI)",
     description: "Official TSMO logo with transparent background for print",
     src: tsmoLogoTransparentPrint,
     filename: "tsmo-logo-transparent-print-300dpi.png",
-    featured: true
+    featured: false
   },
   {
     name: "TSMO Print-Ready Logo (300 DPI)",
