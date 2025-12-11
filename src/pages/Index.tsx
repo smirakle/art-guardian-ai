@@ -248,6 +248,20 @@ Own Your Future</h1>
         </div>
       </section>
 
+      {/* As Seen On Badge */}
+      <div className="text-center py-6">
+        <a 
+          href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/"
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-muted/50 hover:bg-muted/80 rounded-full border border-border/50 transition-all hover:scale-105"
+        >
+          <span className="text-sm text-muted-foreground">As Seen on</span>
+          <span className="text-sm font-semibold text-foreground">BizWeekly.com</span>
+          <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
+        </a>
+      </div>
+
       {/* STEP 2: Industry Challenge - The Problem */}
       <section className="bg-gradient-to-b from-amber-50/80 to-orange-50/50 dark:from-amber-950/20 dark:to-orange-950/10 py-12 px-4 border-y border-amber-200/50 dark:border-amber-800/30">
         <div className="container mx-auto max-w-5xl">
