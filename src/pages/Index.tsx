@@ -21,7 +21,7 @@ import { homeGuide } from "@/data/userGuides";
 import { Shield, Eye, Activity, Link2, Search, Check, Star, ArrowRight, Zap, Globe, Lock, TrendingUp, Users, Mail, Phone, MapPin, FileImage, Upload, Scan, Bot, Play, ChevronRight, FileText, Scale, Building, Heart, ExternalLink, UserX, Calendar, Info } from "lucide-react";
 import { ShieldCheck, EyeOff, Fingerprint, Code2, BadgeCheck } from "lucide-react";
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
-import bizWeeklyBanner from "@/assets/biz-weekly-banner.png";
+import bizWeeklyBanner from "@/assets/Biz_Weekly.png";
 import MonitoringFlow from "@/components/MonitoringFlow";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import OnboardingTour from "@/components/OnboardingTour";
