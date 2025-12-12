@@ -255,7 +255,7 @@ Own Your Future</h1>
           <img 
             src={bizWeeklyBanner} 
             alt="As seen on BizWeekly" 
-            className="w-full max-w-xs mx-auto h-auto object-contain"
+            className="w-full max-w-sm mx-auto h-auto object-contain"
             loading="lazy"
           />
         </div>
