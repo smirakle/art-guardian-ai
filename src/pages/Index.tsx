@@ -250,12 +250,12 @@ Own Your Future</h1>
       </section>
 
       {/* As Seen On Banner */}
-      <section className="py-8 px-4 bg-background">
-        <div className="container mx-auto max-w-3xl">
+      <section className="py-6 px-4 bg-background">
+        <div className="container mx-auto max-w-2xl">
           <img 
             src={bizWeeklyBanner} 
             alt="As seen on BizWeekly" 
-            className="w-full max-w-xl mx-auto h-auto object-contain"
+            className="w-full max-w-xs mx-auto h-auto object-contain"
             loading="lazy"
           />
         </div>
