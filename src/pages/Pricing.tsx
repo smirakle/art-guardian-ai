@@ -132,8 +132,8 @@ const Pricing = () => {
       features: [
         'Up to 50 artworks protected',
         'Basic image upload & storage',
-        'Email alerts (Coming Soon)',
-        'Basic monitoring (Coming Soon)',
+        'Basic monitoring',
+        'Email alerts',
         'Community support (Coming Soon)'
       ],
       limitations: [
@@ -155,11 +155,12 @@ const Pricing = () => {
       features: [
         'Up to 1,000 artworks protected',
         'Basic image upload & storage',
+        'Basic monitoring',
+        'Email alerts',
+        'AI Training protection',
         'AI threat detection (Coming Soon)',
         'Portfolio monitoring (Coming Soon)',
-        'Email alerts (Coming Soon)',
-        'Watermark protection (Coming Soon)',
-        'Educational resources (Coming Soon)'
+        'Watermark protection (Coming Soon)'
       ],
       limitations: [
         'Limited to personal use',
@@ -180,14 +181,14 @@ const Pricing = () => {
       features: [
         'Up to 3,500 artworks protected',
         'Basic image upload & storage',
+        'Basic monitoring',
+        'Email alerts',
+        'AI Training protection',
         'AI threat monitoring (Coming Soon)',
         'AI agent deployment (Coming Soon)',
         'Portfolio monitoring (Coming Soon)',
-        'Real-time alerts (Coming Soon)',
         'Watermark protection (Coming Soon)',
-        'Copyright scanning (Coming Soon)',
-        'API access (Coming Soon)',
-        'Priority support (Coming Soon)'
+        'API access (Coming Soon)'
       ],
       limitations: [
         'Commercial use allowed',
@@ -208,14 +209,14 @@ const Pricing = () => {
       features: [
         'Up to 50,000 artworks protected',
         'Basic image upload & storage',
+        'Basic monitoring',
+        'Email alerts',
+        'AI Training protection',
         'Premium AI monitoring (Coming Soon)',
         'AI agent deployment (Coming Soon)',
         'Portfolio monitoring (Coming Soon)',
-        'Real-time alerts (Coming Soon)',
-        'Advanced watermarking (Coming Soon)',
         'DMCA filing assistance (Coming Soon)',
-        'API access (Coming Soon)',
-        'Priority support (Coming Soon)'
+        'API access (Coming Soon)'
       ],
       limitations: [],
       popular: false
@@ -232,16 +233,15 @@ const Pricing = () => {
       features: [
         'Up to 100,000 artworks protected',
         'Basic image upload & storage',
+        'Basic monitoring',
+        'Email alerts',
+        'AI Training protection',
         'Elite AI monitoring (Coming Soon)',
         'AI agent deployment (Coming Soon)',
         'Predictive analysis (Coming Soon)',
-        'Portfolio monitoring (Coming Soon)',
-        'AI Training protection (Coming Soon)',
         'Blockchain verification (Coming Soon)',
         'DMCA automation (Coming Soon)',
-        'White-label options (Coming Soon)',
-        'API access (Coming Soon)',
-        'Dedicated account manager (Coming Soon)'
+        'API access (Coming Soon)'
       ],
       limitations: [],
       popular: true
@@ -258,19 +258,17 @@ const Pricing = () => {
       features: [
         'Unlimited artworks protected',
         'Basic image upload & storage',
+        'Basic monitoring',
+        'Email alerts',
+        'AI Training protection',
         'Custom AI model training (Coming Soon)',
         'Threat intelligence network (Coming Soon)',
         'Predictive analytics (Coming Soon)',
-        'Enterprise portfolio management (Coming Soon)',
-        '24/7 monitoring (Coming Soon)',
-        'AI Training protection (Coming Soon)',
         'Blockchain integration (Coming Soon)',
         'Legal enforcement workflows (Coming Soon)',
         'Enterprise SSO (Coming Soon)',
         'Custom APIs (Coming Soon)',
-        'On-premise deployment (Coming Soon)',
-        'SLA guarantees (Coming Soon)',
-        'Dedicated security team (Coming Soon)'
+        'SLA guarantees (Coming Soon)'
       ],
       limitations: [],
       popular: false
