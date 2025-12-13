@@ -242,7 +242,7 @@ const Pricing = () => {
         'Watermark protection',
         'AI agent deployment (Coming Soon)',
         'Predictive analysis (Coming Soon)',
-        'Blockchain verification (Coming Soon)',
+        'Blockchain verification',
         'DMCA automation (Coming Soon)',
         'API access (Coming Soon)'
       ],
@@ -269,7 +269,7 @@ const Pricing = () => {
         'Watermark protection',
         'Custom AI model training (Coming Soon)',
         'Predictive analytics (Coming Soon)',
-        'Blockchain integration (Coming Soon)',
+        'Blockchain integration',
         'Enterprise SSO (Coming Soon)',
         'Custom APIs (Coming Soon)',
         'SLA guarantees (Coming Soon)'
