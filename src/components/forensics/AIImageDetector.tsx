@@ -94,8 +94,8 @@ const AIImageDetector: React.FC = () => {
           throw new Error('Authentication required - please sign in');
         }
         
-        // Upload image to Supabase Storage
-        const filePath = `ai-detection/${user.id}/${Date.now()}_${file.name}`;
+        // Upload image to Supabase Storage - path must start with user ID to satisfy RLS policy
+        const filePath = `${user.id}/ai-detection/${Date.now()}_${file.name}`;
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('artwork')
           .upload(filePath, file, { upsert: true });
