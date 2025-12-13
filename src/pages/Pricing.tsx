@@ -134,8 +134,7 @@ const Pricing = () => {
         'Basic image monitoring',
         '1 scan per week',
         'Email alerts for matches',
-        'Community support',
-        'Mobile app access'
+        'Community support'
       ],
       limitations: [
         'Personal use only',
@@ -160,7 +159,6 @@ const Pricing = () => {
         'Email alerts & notifications',
         'Educational resources',
         'Community support',
-        'Mobile app access',
         'Basic watermark protection'
       ],
       limitations: [
