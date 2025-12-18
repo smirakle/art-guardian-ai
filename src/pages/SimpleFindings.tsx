@@ -5,18 +5,20 @@ import {
   PartyPopper, 
   AlertCircle, 
   ExternalLink, 
-  HelpCircle,
   Brain,
   Shield,
   Sparkles,
   ChevronRight,
   CheckCircle,
-  Trash2
+  Trash2,
+  UserPlus
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { FindingExplanationPopover } from '@/components/beginner/FindingExplanationPopover';
+import { GuestSignupCTA } from '@/components/beginner/GuestSignupCTA';
 
 interface SimpleFinding {
   id: string;
@@ -224,6 +226,19 @@ const SimpleFindings = () => {
       ));
 
       toast.success("Got it!", { description: "We've marked this as seen." });
+
+      // Show sign-up prompt for guests after taking action
+      if (!user) {
+        setTimeout(() => {
+          toast("Want to track future findings?", {
+            description: "Create a free account to get email alerts",
+            action: {
+              label: "Sign Up",
+              onClick: () => navigate('/auth')
+            }
+          });
+        }, 1500);
+      }
     } catch (error) {
       console.error('Error marking as seen:', error);
     }
@@ -382,10 +397,7 @@ const SimpleFindings = () => {
                       </button>
                     </div>
                     
-                    <button className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors">
-                      <HelpCircle className="h-4 w-4" />
-                      What does this mean?
-                    </button>
+                    <FindingExplanationPopover type={finding.type} />
                   </div>
                 </CardContent>
               </Card>
@@ -439,18 +451,27 @@ const SimpleFindings = () => {
 
       {/* Empty state */}
       {findings.length === 0 && (
-        <Card className="bg-muted/30">
-          <CardContent className="py-12 text-center">
-            <Shield className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
-            <h3 className="text-lg font-medium text-foreground mb-2">No findings yet</h3>
-            <p className="text-muted-foreground">
-              Upload your content to start monitoring for unauthorized use
-            </p>
-            <Button className="mt-4" onClick={() => navigate('/upload')}>
-              Upload Content
-            </Button>
-          </CardContent>
-        </Card>
+        user ? (
+          <Card className="bg-muted/30">
+            <CardContent className="py-12 text-center">
+              <Shield className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
+              <h3 className="text-lg font-medium text-foreground mb-2">No findings yet</h3>
+              <p className="text-muted-foreground">
+                Upload your content to start monitoring for unauthorized use
+              </p>
+              <Button className="mt-4" onClick={() => navigate('/upload')}>
+                Upload Content
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <GuestSignupCTA context="empty" />
+        )
+      )}
+
+      {/* Sign-up CTA for guests with findings */}
+      {!user && findings.length > 0 && (
+        <GuestSignupCTA context="findings" />
       )}
     </div>
   );
