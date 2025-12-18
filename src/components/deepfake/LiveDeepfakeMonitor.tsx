@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Brain, Play, Square, Activity, AlertTriangle, CheckCircle, Eye } from 'lucide-react';
+import { Brain, Play, Square, Activity, AlertTriangle, CheckCircle, Eye, Zap, ExternalLink } from 'lucide-react';
 import { useDeepfakeMonitoring } from '@/hooks/useDeepfakeMonitoring';
 
 export default function LiveDeepfakeMonitor() {
@@ -44,14 +44,32 @@ export default function LiveDeepfakeMonitor() {
               <CardTitle className="flex items-center gap-2">
                 Live Deepfake Monitoring
               </CardTitle>
-              <Badge variant="secondary">Coming Soon</Badge>
+              <Badge variant="default" className="bg-green-600 hover:bg-green-700">
+                <Zap className="w-3 h-3 mr-1" />
+                Real API
+              </Badge>
             </div>
           </div>
           <CardDescription>
-            Real-time scanning for deepfakes across social media platforms
+            Real-time scanning using SerpAPI reverse image search + OpenAI GPT-4 Vision analysis
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* API Info Banner */}
+          <div className="flex flex-wrap gap-2 p-3 bg-primary/5 border border-primary/20 rounded-lg">
+            <Badge variant="outline" className="text-xs">
+              <img src="https://serpapi.com/favicon.ico" alt="" className="w-3 h-3 mr-1" />
+              SerpAPI Reverse Image
+            </Badge>
+            <Badge variant="outline" className="text-xs">
+              <img src="https://openai.com/favicon.ico" alt="" className="w-3 h-3 mr-1" />
+              OpenAI GPT-4 Vision
+            </Badge>
+            <span className="text-xs text-muted-foreground ml-auto">
+              Searches your protected images across 6 platforms
+            </span>
+          </div>
+
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <p className="text-sm font-medium">Status</p>
@@ -59,26 +77,26 @@ export default function LiveDeepfakeMonitor() {
                 {isMonitoring ? (
                   <>
                     <Activity className="w-4 h-4 text-green-500 animate-pulse" />
-                    <span className="text-sm text-green-600 dark:text-green-400">Active</span>
+                    <span className="text-sm text-green-600 dark:text-green-400">Scanning with Real APIs</span>
                   </>
                 ) : (
                   <>
                     <Square className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">Inactive</span>
+                    <span className="text-sm text-muted-foreground">Ready to Scan</span>
                   </>
                 )}
               </div>
             </div>
 
             {isMonitoring ? (
-              <Button onClick={stopMonitoring} variant="destructive" disabled>
+              <Button onClick={stopMonitoring} variant="destructive">
                 <Square className="w-4 h-4 mr-2" />
                 Stop Monitoring
               </Button>
             ) : (
-              <Button onClick={handleStart} className="bg-gradient-to-r from-primary to-accent opacity-50 cursor-not-allowed" disabled>
+              <Button onClick={handleStart} className="bg-gradient-to-r from-primary to-accent">
                 <Play className="w-4 h-4 mr-2" />
-                Start Monitoring
+                Start Real Scan
               </Button>
             )}
           </div>
@@ -130,7 +148,7 @@ export default function LiveDeepfakeMonitor() {
           <Card>
             <CardContent className="pt-6">
               <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">Avg Confidence</p>
+                <p className="text-sm text-muted-foreground">AI Confidence Avg</p>
                 <p className="text-2xl font-bold">
                   {liveMatches.length > 0
                     ? Math.round(liveMatches.reduce((sum, m) => sum + m.detection_confidence, 0) / liveMatches.length * 100)
@@ -149,6 +167,7 @@ export default function LiveDeepfakeMonitor() {
             <CardTitle className="flex items-center gap-2">
               <Eye className="w-5 h-5" />
               Live Detections ({liveMatches.length})
+              <Badge variant="outline" className="ml-2 text-xs">Real Results</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -169,15 +188,25 @@ export default function LiveDeepfakeMonitor() {
                     <div className="flex items-center gap-2 mb-1">
                       <p className="font-medium text-sm">{match.manipulation_type}</p>
                       <Badge variant={match.threat_level === 'high' ? 'destructive' : 'secondary'} className="text-xs">
-                        {Math.round(match.detection_confidence * 100)}%
+                        {Math.round(match.detection_confidence * 100)}% AI Confidence
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground">
                       Found on {match.source_domain}
                     </p>
+                    {match.source_url && (
+                      <a 
+                        href={match.source_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-xs text-primary hover:underline flex items-center gap-1 mt-1"
+                      >
+                        View Source <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
                     {match.facial_artifacts && match.facial_artifacts.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-2">
-                        {match.facial_artifacts.slice(0, 2).map((artifact, idx) => (
+                        {match.facial_artifacts.slice(0, 3).map((artifact, idx) => (
                           <Badge key={idx} variant="outline" className="text-xs">
                             {artifact}
                           </Badge>
@@ -199,7 +228,10 @@ export default function LiveDeepfakeMonitor() {
       {scanUpdates.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Platform Scan Progress</CardTitle>
+            <CardTitle className="text-base flex items-center gap-2">
+              Platform Scan Progress
+              <Badge variant="outline" className="text-xs">Real API Calls</Badge>
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -212,10 +244,12 @@ export default function LiveDeepfakeMonitor() {
                   <div className="flex items-center gap-2">
                     {update.matches_found > 0 && (
                       <Badge variant="destructive" className="text-xs">
-                        {update.matches_found} found
+                        {update.matches_found} deepfake{update.matches_found > 1 ? 's' : ''} found
                       </Badge>
                     )}
-                    <Badge variant="outline" className="text-xs">completed</Badge>
+                    <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                      ✓ API Scan Complete
+                    </Badge>
                   </div>
                 </div>
               ))}
