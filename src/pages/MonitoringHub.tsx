@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -13,14 +13,70 @@ import {
   Activity,
   CheckCircle,
   Zap,
-  Briefcase
+  Briefcase,
+  Loader2
 } from 'lucide-react';
 import { BugReportButton } from '@/components/BugReportButton';
 import { PortfolioDashboard } from '@/components/portfolio/PortfolioDashboard';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 const MonitoringHub = () => {
   const [activeTab, setActiveTab] = useState('portfolio');
+  const [stats, setStats] = useState({ threats: 0, protected: 0, rate: 0 });
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Fetch threats (copyright matches + AI threat detections)
+        const [matchesRes, threatsRes, artworkRes, protectionRes] = await Promise.all([
+          supabase
+            .from('copyright_matches')
+            .select('id', { count: 'exact', head: true }),
+          supabase
+            .from('ai_threat_detections')
+            .select('id', { count: 'exact', head: true })
+            .eq('user_id', user.id),
+          supabase
+            .from('artwork')
+            .select('id', { count: 'exact', head: true })
+            .eq('user_id', user.id),
+          supabase
+            .from('ai_protection_records')
+            .select('id', { count: 'exact', head: true })
+            .eq('user_id', user.id)
+        ]);
+
+        const threatCount = (matchesRes.count || 0) + (threatsRes.count || 0);
+        const protectedCount = (artworkRes.count || 0) + (protectionRes.count || 0);
+        
+        // Calculate protection rate (items without high threats / total items)
+        const rate = protectedCount > 0 
+          ? Math.max(0, Math.round(((protectedCount - threatCount) / protectedCount) * 100))
+          : 100;
+
+        setStats({
+          threats: threatCount,
+          protected: protectedCount,
+          rate: Math.min(100, Math.max(0, rate))
+        });
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, [user]);
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
@@ -35,32 +91,44 @@ const MonitoringHub = () => {
         </p>
       </div>
 
-      {/* Simplified Stats - 3 cards only */}
+      {/* Stats with real data */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <Card className="border-l-4 border-l-orange-500">
           <CardContent className="pt-6 text-center">
             <AlertTriangle className="h-6 w-6 mx-auto mb-2 text-orange-500" />
-            <div className="text-2xl font-bold">23</div>
+            {loading ? (
+              <Loader2 className="h-6 w-6 mx-auto animate-spin" />
+            ) : (
+              <div className="text-2xl font-bold">{stats.threats}</div>
+            )}
             <p className="text-sm text-muted-foreground">Threats Found</p>
           </CardContent>
         </Card>
         <Card className="border-l-4 border-l-blue-500">
           <CardContent className="pt-6 text-center">
             <Shield className="h-6 w-6 mx-auto mb-2 text-blue-500" />
-            <div className="text-2xl font-bold">847</div>
+            {loading ? (
+              <Loader2 className="h-6 w-6 mx-auto animate-spin" />
+            ) : (
+              <div className="text-2xl font-bold">{stats.protected}</div>
+            )}
             <p className="text-sm text-muted-foreground">Items Protected</p>
           </CardContent>
         </Card>
         <Card className="border-l-4 border-l-green-500">
           <CardContent className="pt-6 text-center">
             <Activity className="h-6 w-6 mx-auto mb-2 text-green-500" />
-            <div className="text-2xl font-bold">96%</div>
+            {loading ? (
+              <Loader2 className="h-6 w-6 mx-auto animate-spin" />
+            ) : (
+              <div className="text-2xl font-bold">{stats.rate}%</div>
+            )}
             <p className="text-sm text-muted-foreground">Protection Rate</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Simplified Tabs - 3 working features only */}
+      {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-3 h-auto">
           <TabsTrigger value="portfolio" className="flex items-center gap-2 py-3">
@@ -77,12 +145,10 @@ const MonitoringHub = () => {
           </TabsTrigger>
         </TabsList>
 
-        {/* Portfolio Tab */}
         <TabsContent value="portfolio" className="space-y-6">
           <PortfolioDashboard />
         </TabsContent>
 
-        {/* Deepfake Tab - Simplified */}
         <TabsContent value="deepfake" className="space-y-6">
           <Card>
             <CardHeader>
@@ -115,7 +181,6 @@ const MonitoringHub = () => {
                 Start Deepfake Scan
               </Button>
 
-              {/* Recent detections */}
               <div className="space-y-2 pt-4 border-t">
                 <h4 className="text-sm font-medium text-muted-foreground">Recent Detections</h4>
                 <div className="flex justify-between items-center p-2 bg-destructive/10 rounded-lg">
@@ -131,7 +196,6 @@ const MonitoringHub = () => {
           </Card>
         </TabsContent>
 
-        {/* Forgery Tab - Simplified */}
         <TabsContent value="forgery" className="space-y-6">
           <Card>
             <CardHeader>
@@ -163,7 +227,7 @@ const MonitoringHub = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Simplified Quick Actions - 2 buttons only */}
+      {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
         <Button 
           size="lg"
@@ -185,7 +249,7 @@ const MonitoringHub = () => {
           <AlertTriangle className="h-5 w-5 mr-2 text-orange-500" />
           <div className="text-left">
             <div className="font-semibold">View Alerts</div>
-            <div className="text-xs text-muted-foreground">23 violations found</div>
+            <div className="text-xs text-muted-foreground">{stats.threats} threats found</div>
           </div>
         </Button>
       </div>
