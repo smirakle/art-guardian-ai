@@ -725,7 +725,7 @@ Own Your Future</h1>
                   <div>Verified specialists</div>
                   <div>Free consultations available</div>
                 </div>
-                <Button variant="outline" size="sm" className="w-full" onClick={() => navigate("/lawyers")}>
+                <Button size="sm" className="w-full" onClick={() => navigate("/lawyers")}>
                   Find a Lawyer
                 </Button>
               </div>
