@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Shield, AlertTriangle, CheckCircle, Upload, Download, Eye, Lock, BarChart3, Bell, Settings, FileText } from 'lucide-react';
+import { Shield, AlertTriangle, CheckCircle, Upload, Download, Eye, Lock, BarChart3, Bell, Settings, FileText, Zap, Search, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -53,6 +53,7 @@ const AITrainingProtectionDashboard = () => {
   const [protectionRecords, setProtectionRecords] = useState<ProtectionRecord[]>([]);
   const [violations, setViolations] = useState<Violation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [scanning, setScanning] = useState(false);
   const [stats, setStats] = useState({
     totalProtected: 0,
     activeViolations: 0,
@@ -201,7 +202,7 @@ const AITrainingProtectionDashboard = () => {
     }
   };
 
-  const startRealTimeScanning = async (protectionId: string) => {
+  const startRealTimeScanning = async (protectionId?: string) => {
     try {
       const canProceed = await checkRateLimit('ai-training-scan', 50, 60);
       if (!canProceed) {
@@ -209,21 +210,28 @@ const AITrainingProtectionDashboard = () => {
         return;
       }
 
-      const { data, error } = await supabase.functions.invoke('ai-training-protection-monitor', {
+      setScanning(true);
+      toast.info('Starting real API scan with SerpAPI + OpenAI...', { duration: 3000 });
+
+      const { data, error } = await supabase.functions.invoke('ai-protection-scanner', {
         body: {
-          protectionRecordId: protectionId,
-          enableRealTimeScanning: true,
-          scanType: 'comprehensive'
+          userId: user?.id,
+          protectionRecordId: protectionId
         }
       });
 
       if (error) throw error;
       
-      toast.success(`Real-time scanning initiated: ${data.violations_detected} threats detected`);
+      toast.success(`Real API scan complete: ${data.violations_found} violations found across ${data.files_scanned} files`, {
+        description: `APIs used: ${data.apis_used?.join(', ') || 'SerpAPI, OpenAI'}`
+      });
       loadViolations();
+      loadProtectionData();
     } catch (error) {
       console.error('Error starting real-time scan:', error);
-      toast.error('Failed to start real-time scanning');
+      toast.error('Failed to start scanning. Check that SERPAPI_KEY and OPENAI_API_KEY are configured.');
+    } finally {
+      setScanning(false);
     }
   };
 
@@ -260,10 +268,34 @@ const AITrainingProtectionDashboard = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">AI Training Protection</h1>
-          <p className="text-muted-foreground">Protect your content from unauthorized AI training</p>
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-foreground">AI Training Protection</h1>
+            <Badge variant="default" className="bg-green-600 hover:bg-green-700">
+              <Zap className="w-3 h-3 mr-1" />
+              Real API
+            </Badge>
+          </div>
+          <p className="text-muted-foreground">Detect unauthorized AI training using SerpAPI + OpenAI Vision</p>
         </div>
         <div className="flex gap-2">
+          <Button 
+            variant="default" 
+            onClick={() => startRealTimeScanning()}
+            disabled={scanning}
+            className="bg-gradient-to-r from-primary to-accent"
+          >
+            {scanning ? (
+              <>
+                <Search className="h-4 w-4 mr-2 animate-spin" />
+                Scanning...
+              </>
+            ) : (
+              <>
+                <Search className="h-4 w-4 mr-2" />
+                Scan All Files
+              </>
+            )}
+          </Button>
           <Button variant="outline" onClick={() => loadProtectionData()}>
             <Eye className="h-4 w-4 mr-2" />
             Refresh
@@ -281,6 +313,23 @@ const AITrainingProtectionDashboard = () => {
             </label>
           </Button>
         </div>
+      </div>
+
+      {/* API Info Banner */}
+      <div className="flex flex-wrap items-center gap-3 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+        <span className="text-sm font-medium">Powered by Real APIs:</span>
+        <Badge variant="outline" className="text-xs">
+          SerpAPI Reverse Image Search
+        </Badge>
+        <Badge variant="outline" className="text-xs">
+          SerpAPI Google Search
+        </Badge>
+        <Badge variant="outline" className="text-xs">
+          OpenAI GPT-4 Vision Analysis
+        </Badge>
+        <span className="text-xs text-muted-foreground ml-auto">
+          Scans LAION, Common Crawl, HuggingFace, and more
+        </span>
       </div>
 
       {/* Stats Cards */}
@@ -420,13 +469,38 @@ const AITrainingProtectionDashboard = () => {
                         <AlertDescription>
                           <div className="flex items-center justify-between">
                             <div className="space-y-1">
-                              <p className="font-medium">{violation.violation_type}</p>
+                              <div className="flex items-center gap-2">
+                                <p className="font-medium">{violation.violation_type?.replace(/_/g, ' ')}</p>
+                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                                  Real Detection
+                                </Badge>
+                              </div>
                               <p className="text-sm text-muted-foreground">
                                 Found on: {violation.source_domain}
                               </p>
+                              {violation.source_url && (
+                                <a 
+                                  href={violation.source_url} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-xs text-primary hover:underline flex items-center gap-1"
+                                >
+                                  View Source <ExternalLink className="w-3 h-3" />
+                                </a>
+                              )}
                               <p className="text-sm text-muted-foreground">
-                                Confidence: {Math.round(violation.confidence_score * 100)}%
+                                AI Confidence: {Math.round(violation.confidence_score * 100)}%
                               </p>
+                              {violation.evidence_data?.dataset_name && (
+                                <p className="text-xs text-muted-foreground">
+                                  Dataset: {violation.evidence_data.dataset_name}
+                                </p>
+                              )}
+                              {violation.evidence_data?.ai_analysis && (
+                                <p className="text-xs text-muted-foreground italic mt-1">
+                                  "{violation.evidence_data.ai_analysis}"
+                                </p>
+                              )}
                               <div className="flex gap-2 mt-2">
                                 <Badge variant={violation.status === 'pending' ? 'destructive' : 'secondary'}>
                                   {violation.status}
