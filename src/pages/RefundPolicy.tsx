@@ -128,7 +128,7 @@ const RefundPolicy = () => {
               <div className="p-4 bg-muted/50 rounded-lg">
                 <p className="font-medium mb-2">Contact Information:</p>
                 <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>Email: <a href="mailto:support@tsmowatch.com" className="text-primary hover:underline">support@tsmowatch.com</a></li>
+                  <li>Email: <a href="mailto:shirleena.cunningham@tsmowatch.com" className="text-primary hover:underline">shirleena.cunningham@tsmowatch.com</a></li>
                   <li>Subject: "Refund Request - [Your Account Email]"</li>
                 </ul>
               </div>
@@ -146,7 +146,7 @@ const RefundPolicy = () => {
               <p className="text-muted-foreground text-sm mb-4">
                 Our support team is here to help with any billing or refund questions.
               </p>
-              <a href="mailto:support@tsmowatch.com">
+              <a href="mailto:shirleena.cunningham@tsmowatch.com">
                 <Button>
                   <Mail className="h-4 w-4 mr-2" />
                   Contact Support
