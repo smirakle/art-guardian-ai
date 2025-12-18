@@ -8,11 +8,13 @@ import {
   ExternalLink,
   Clock,
   Brain,
-  Shield
+  Shield,
+  ArrowRight
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from 'react-router-dom';
 
 interface DeepfakeMatch {
   id: string;
@@ -46,6 +48,7 @@ interface CopyrightMatch {
 export const RecentDetectionsWidget = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [deepfakeMatches, setDeepfakeMatches] = useState<DeepfakeMatch[]>([]);
   const [copyrightMatches, setCopyrightMatches] = useState<CopyrightMatch[]>([]);
   const [loading, setLoading] = useState(true);
@@ -179,13 +182,26 @@ export const RecentDetectionsWidget = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <AlertTriangle className="h-5 w-5" />
-          Recent Detections
-        </CardTitle>
-        <CardDescription>
-          Latest deepfake and copyright violations detected
-        </CardDescription>
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5" />
+              Recent Detections
+            </CardTitle>
+            <CardDescription className="mt-1">
+              Latest deepfake and copyright violations detected
+            </CardDescription>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => navigate('/findings')}
+            className="gap-1"
+          >
+            View All
+            <ArrowRight className="h-3 w-3" />
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         {!hasDetections ? (

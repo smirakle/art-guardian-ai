@@ -87,6 +87,7 @@ import AITPAAnalysis from "./pages/AITPAAnalysis";
 import { AIProtectionVisualDemo } from "./components/demo/AIProtectionVisualDemo";
 import ProtectionGuide from "./pages/ProtectionGuide";
 import PressKit from "./pages/PressKit";
+import Findings from "./pages/Findings";
 
 const queryClient = new QueryClient();
 
@@ -166,6 +167,7 @@ const App = () => {
                        <Route path="/sla-status" element={<SLAStatus />} />
                             <Route path="/protection-hub" element={<ProtectionHub />} />
                             <Route path="/monitoring-hub" element={<MonitoringHub />} />
+                            <Route path="/findings" element={<Findings />} />
                             
                             {/* Legacy redirects */}
                             <Route path="/ai-protection" element={<ProtectionHub />} />
