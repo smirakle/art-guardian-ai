@@ -38,6 +38,7 @@ const Index = () => {
   const {
     user
   } = useAuth();
+  const [signupEmail, setSignupEmail] = useState('');
   useEffect(() => {
     const title = "TSMO | AI Art Protection & Forgery Detection";
     document.title = title;
@@ -204,8 +205,18 @@ Own Your Future</h1>
           {/* Primary Sign-Up CTA */}
           <div className="max-w-md mx-auto mb-6">
             <div className="flex flex-col sm:flex-row gap-3">
-              <Input type="email" placeholder="Enter your email" className="flex-1 h-12 text-base" />
-              <Button size="lg" className="h-12 px-8 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 whitespace-nowrap" onClick={() => navigate("/upload")}>
+              <Input 
+                type="email" 
+                placeholder="Enter your email" 
+                className="flex-1 h-12 text-base" 
+                value={signupEmail}
+                onChange={(e) => setSignupEmail(e.target.value)}
+              />
+              <Button 
+                size="lg" 
+                className="h-12 px-8 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 whitespace-nowrap" 
+                onClick={() => navigate(`/auth?email=${encodeURIComponent(signupEmail)}&tab=signup`)}
+              >
                 Start Free
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
@@ -10,42 +10,26 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Eye, EyeOff, Lock, Mail, User, Check, CreditCard } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, Check } from 'lucide-react';
 
 const Auth: React.FC = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
+  const [searchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab') === 'signup' ? false : true;
+  const initialEmail = searchParams.get('email') || '';
+  
+  const [isLogin, setIsLogin] = useState(initialTab);
+  const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [username, setUsername] = useState('');
-  const [promoCode, setPromoCode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [accountType, setAccountType] = useState<'free' | 'paid'>('free');
-  const [promoValid, setPromoValid] = useState<boolean | null>(null);
 
   const freeFeatures = [
-    'Upload up to 5 artworks',
+    'Up to 50 artworks protected',
     'Basic copyright monitoring', 
     'Email alerts for violations',
-    'Community access',
-    'Basic legal templates'
+    'Basic image storage',
+    'Community support'
   ];
-
-  const paidPlans = {
-    starter: {
-      name: 'Starter',
-      monthly: 29,
-      yearly: 290,
-      features: ['Advanced monitoring', '25 artworks', 'Real-time alerts', 'Basic reporting']
-    },
-    professional: {
-      name: 'Professional', 
-      monthly: 79,
-      yearly: 790,
-      features: ['Premium monitoring', 'Unlimited artworks', 'Priority alerts', 'Advanced analytics', 'DMCA assistance']
-    }
-  };
 
   const navigate = useNavigate();
   const { user, signIn, signUp } = useAuth();
@@ -69,21 +53,15 @@ const Auth: React.FC = () => {
           navigate('/dashboard');
         }
       } else {
-        // For free account signup
-        const { error } = await signUp(email, password, {
-          full_name: fullName,
-          username: username,
-          account_type: 'free',
-          promo_code: promoCode.trim() ? promoCode.toUpperCase() : undefined
+        // Simplified signup - just email and password
+        const { error } = await signUp(email.trim(), password.trim(), {
+          account_type: 'free'
         });
         
         if (!error) {
-          const message = promoCode.trim() 
-            ? "Check your email to verify. Your promo code will be applied when you subscribe!"
-            : "Check your email to verify your account, then you can start using TSMO for free.";
           toast({
-            title: "Account created successfully!",
-            description: message,
+            title: "Account created!",
+            description: "Check your email to verify your account, then start protecting your art.",
           });
         }
       }
@@ -228,37 +206,6 @@ const Auth: React.FC = () => {
             <TabsContent value="signup" className="space-y-4 mt-4">
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                    <Input
-                      id="fullName"
-                      type="text"
-                      placeholder="Enter your full name"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                    <Input
-                      id="username"
-                      type="text"
-                      placeholder="Choose a username"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -281,10 +228,11 @@ const Auth: React.FC = () => {
                     <Input
                       id="signup-password"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="Create a password"
+                      placeholder="Create a password (min. 6 characters)"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="pl-10 pr-10"
+                      minLength={6}
                       required
                     />
                     <Button
@@ -303,51 +251,33 @@ const Auth: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Promo Code */}
-                <div className="space-y-2">
-                  <Label htmlFor="promo-code">Promo Code (Optional)</Label>
-                  <Input
-                    id="promo-code"
-                    type="text"
-                    placeholder="Enter BETA200 for 30% lifetime discount"
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                    className={promoValid === true ? 'border-green-500' : promoValid === false ? 'border-red-500' : ''}
-                  />
-                  {promoCode === 'BETA200' && (
-                    <p className="text-sm text-green-600 font-semibold">
-                      ✨ 30% lifetime discount will be applied to all plans!
-                    </p>
-                  )}
-                </div>
-
                 {/* Free Account Benefits */}
                 <div className="space-y-3 pt-4 border-t">
                   <div className="text-center">
-                    <h3 className="text-lg font-semibold text-green-600">Free Account Includes:</h3>
+                    <h3 className="text-base font-semibold text-primary">What you get for free:</h3>
                   </div>
                   
-                  <div className="space-y-2">
+                  <div className="grid grid-cols-1 gap-1.5">
                     {freeFeatures.map((feature, index) => (
                       <div key={index} className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-green-500" />
+                        <Check className="h-4 w-4 text-green-500 shrink-0" />
                         <span className="text-sm">{feature}</span>
                       </div>
                     ))}
-                  </div>
-                  
-                  <div className="text-center text-xs text-muted-foreground">
-                    You can upgrade to premium features anytime after creating your account.
                   </div>
                 </div>
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-green-600 hover:bg-green-700" 
+                  className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90" 
                   disabled={loading}
                 >
                   {loading ? 'Creating Account...' : 'Create Free Account'}
                 </Button>
+                
+                <p className="text-center text-xs text-muted-foreground">
+                  Upgrade to Pro anytime for advanced features
+                </p>
               </form>
             </TabsContent>
           </Tabs>
