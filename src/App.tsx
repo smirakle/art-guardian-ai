@@ -87,6 +87,7 @@ import AITPAAnalysis from "./pages/AITPAAnalysis";
 import { AIProtectionVisualDemo } from "./components/demo/AIProtectionVisualDemo";
 import ProtectionGuide from "./pages/ProtectionGuide";
 import PressKit from "./pages/PressKit";
+import SimpleFindings from "./pages/SimpleFindings";
 import Findings from "./pages/Findings";
 
 const queryClient = new QueryClient();
@@ -168,6 +169,7 @@ const App = () => {
                             <Route path="/protection-hub" element={<ProtectionHub />} />
                             <Route path="/monitoring-hub" element={<MonitoringHub />} />
                             <Route path="/findings" element={<Findings />} />
+                            <Route path="/simple-findings" element={<SimpleFindings />} />
                             
                             {/* Legacy redirects */}
                             <Route path="/ai-protection" element={<ProtectionHub />} />
