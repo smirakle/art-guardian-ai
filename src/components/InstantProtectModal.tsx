@@ -1,11 +1,12 @@
 import { useState, useCallback } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Shield, Upload, CheckCircle2, Sparkles, Lock, Fingerprint, ArrowRight, X } from "lucide-react";
+import { Shield, Upload, CheckCircle2, Sparkles, Lock, Fingerprint, ArrowRight, X, Download, FileText, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { realWorldProtection } from "@/lib/realWorldProtection";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface InstantProtectModalProps {
   open: boolean;
@@ -39,6 +40,10 @@ export const InstantProtectModal = ({ open, onOpenChange }: InstantProtectModalP
   const [protectionResult, setProtectionResult] = useState<{
     protectionId: string;
     methodsApplied: string[];
+    protectedBlob?: Blob;
+    metadata?: Record<string, any>;
+    originalSize?: number;
+    protectedSize?: number;
   } | null>(null);
   
   const protectionCount = getGuestProtectionCount();
@@ -139,7 +144,11 @@ export const InstantProtectModal = ({ open, onOpenChange }: InstantProtectModalP
 
       setProtectionResult({
         protectionId: result.protectionId,
-        methodsApplied: result.methods
+        methodsApplied: result.methods,
+        protectedBlob: result.protectedBlob,
+        metadata: result.metadata,
+        originalSize: selectedFile.size,
+        protectedSize: result.protectedBlob?.size
       });
 
       // Short delay to show 100% before completing
@@ -165,6 +174,28 @@ export const InstantProtectModal = ({ open, onOpenChange }: InstantProtectModalP
 
   const handleProtectMore = () => {
     resetState();
+  };
+
+  const handleDownloadProtected = () => {
+    if (!protectionResult?.protectedBlob || !selectedFile) return;
+    const url = URL.createObjectURL(protectionResult.protectedBlob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `protected_${selectedFile.name}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast({
+      title: "Downloaded!",
+      description: "Your protected image has been saved."
+    });
+  };
+
+  const formatBytes = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
   };
 
   return (
@@ -324,63 +355,131 @@ export const InstantProtectModal = ({ open, onOpenChange }: InstantProtectModalP
 
         {/* Complete Step */}
         {step === "complete" && (
-          <div className="space-y-6 py-4">
+          <div className="space-y-4 py-2">
             <div className="text-center">
-              <div className="mx-auto w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mb-4">
-                <CheckCircle2 className="h-8 w-8 text-green-500" />
+              <div className="mx-auto w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center mb-3">
+                <CheckCircle2 className="h-6 w-6 text-green-500" />
               </div>
               
               {previewUrl && (
-                <div className="relative inline-block mb-4">
+                <div className="relative inline-block mb-3">
                   <img 
                     src={previewUrl} 
                     alt="Protected" 
-                    className="max-h-32 rounded-lg shadow-lg"
+                    className="max-h-24 rounded-lg shadow-lg"
                   />
                   <div className="absolute -bottom-2 -right-2 bg-green-500 text-white rounded-full p-1">
-                    <Shield className="h-4 w-4" />
+                    <Shield className="h-3 w-3" />
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="bg-muted/50 rounded-lg p-4 space-y-3">
-              <h4 className="font-medium flex items-center gap-2">
-                <Fingerprint className="h-4 w-4 text-primary" />
-                Protection Applied
-              </h4>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                {protectionResult?.methodsApplied.map((method, i) => (
-                  <div key={i} className="flex items-center gap-2 text-muted-foreground">
-                    <CheckCircle2 className="h-3 w-3 text-green-500" />
-                    {method}
+            {/* Verification Tabs */}
+            <Tabs defaultValue="proof" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="proof" className="text-xs">
+                  <Eye className="h-3 w-3 mr-1" />
+                  Proof
+                </TabsTrigger>
+                <TabsTrigger value="technical" className="text-xs">
+                  <FileText className="h-3 w-3 mr-1" />
+                  Technical
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="proof" className="space-y-3 mt-3">
+                {/* File Size Change - proves modification */}
+                <div className="bg-muted/50 rounded-lg p-3 space-y-2">
+                  <h5 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">File Modified</h5>
+                  <div className="flex justify-between items-center text-sm">
+                    <span>Original Size:</span>
+                    <span className="font-mono">{formatBytes(protectionResult?.originalSize || 0)}</span>
                   </div>
-                ))}
-              </div>
-              <div className="pt-2 border-t border-border">
-                <p className="text-xs text-muted-foreground">
-                  Protection ID: <span className="font-mono">{protectionResult?.protectionId.slice(0, 12)}...</span>
-                </p>
-              </div>
-            </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span>Protected Size:</span>
+                    <span className="font-mono text-green-600">{formatBytes(protectionResult?.protectedSize || 0)}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm border-t pt-2 mt-2">
+                    <span>Data Added:</span>
+                    <span className="font-mono text-primary">
+                      +{formatBytes((protectionResult?.protectedSize || 0) - (protectionResult?.originalSize || 0))}
+                    </span>
+                  </div>
+                </div>
 
-            <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 space-y-3">
-              <h4 className="font-medium">Want to keep this protected?</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-3 w-3 text-primary" />
-                  Save to your permanent dashboard
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-3 w-3 text-primary" />
-                  Enable 24/7 web monitoring
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-3 w-3 text-primary" />
-                  Download protection certificate
-                </li>
-              </ul>
-              <Button onClick={handleCreateAccount} className="w-full" size="lg">
+                {/* Download Protected File */}
+                <Button 
+                  onClick={handleDownloadProtected} 
+                  variant="outline" 
+                  className="w-full"
+                  disabled={!protectionResult?.protectedBlob}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download Protected Image
+                </Button>
+                <p className="text-xs text-center text-muted-foreground">
+                  Download and verify the embedded metadata yourself
+                </p>
+              </TabsContent>
+
+              <TabsContent value="technical" className="space-y-3 mt-3">
+                {/* Adversarial Noise Details */}
+                {protectionResult?.metadata?.protection?.adversarialNoise && (
+                  <div className="bg-muted/50 rounded-lg p-3 space-y-1">
+                    <h5 className="text-xs font-medium flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3 text-green-500" />
+                      Adversarial Noise
+                    </h5>
+                    <div className="text-xs text-muted-foreground font-mono space-y-0.5">
+                      <p>Algorithm: {protectionResult.metadata.protection.adversarialNoise.algorithm}</p>
+                      <p>Epsilon: {protectionResult.metadata.protection.adversarialNoise.epsilon}</p>
+                      <p>Iterations: {protectionResult.metadata.protection.adversarialNoise.iterations}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Rights Metadata Details */}
+                {protectionResult?.metadata?.protection?.rightsMetadata && (
+                  <div className="bg-muted/50 rounded-lg p-3 space-y-1">
+                    <h5 className="text-xs font-medium flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3 text-green-500" />
+                      Rights Metadata
+                    </h5>
+                    <div className="text-xs text-muted-foreground font-mono space-y-0.5">
+                      <p>Standard: {protectionResult.metadata.protection.rightsMetadata.standard}</p>
+                      <p>Copyright Notice: Embedded</p>
+                      <p>AI Training: PROHIBITED</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Crawler Blocking Details */}
+                {protectionResult?.metadata?.protection?.crawlerBlocking && (
+                  <div className="bg-muted/50 rounded-lg p-3 space-y-1">
+                    <h5 className="text-xs font-medium flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3 text-green-500" />
+                      Crawler Blocking
+                    </h5>
+                    <div className="text-xs text-muted-foreground font-mono space-y-0.5">
+                      <p>Methods: {protectionResult.metadata.protection.crawlerBlocking.methods?.join(", ")}</p>
+                      <p>Robots: noindex, nofollow, noarchive</p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="border-t pt-2">
+                  <p className="text-xs text-muted-foreground">
+                    ID: <span className="font-mono">{protectionResult?.protectionId}</span>
+                  </p>
+                </div>
+              </TabsContent>
+            </Tabs>
+
+            {/* CTA */}
+            <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 space-y-2">
+              <h4 className="text-sm font-medium">Save & Monitor This Image</h4>
+              <Button onClick={handleCreateAccount} className="w-full" size="sm">
                 Create Free Account
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -388,12 +487,12 @@ export const InstantProtectModal = ({ open, onOpenChange }: InstantProtectModalP
 
             <div className="flex gap-2">
               {remainingProtections > 0 && (
-                <Button variant="outline" onClick={handleProtectMore} className="flex-1">
+                <Button variant="outline" onClick={handleProtectMore} className="flex-1" size="sm">
                   Protect Another
                 </Button>
               )}
-              <Button variant="ghost" onClick={handleClose} className="flex-1">
-                Continue as Guest
+              <Button variant="ghost" onClick={handleClose} className="flex-1" size="sm">
+                Close
               </Button>
             </div>
           </div>
