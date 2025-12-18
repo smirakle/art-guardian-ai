@@ -10,6 +10,8 @@ import ImageAnalysisCard from "./visual-recognition/ImageAnalysisCard";
 import RealTimeMonitoring from "./RealTimeMonitoring";
 import BlockchainVerification from "./BlockchainVerification";
 import EnhancedMonitoringOverview from "./monitoring/EnhancedMonitoringOverview";
+import { useArtworkLimit } from "@/hooks/useArtworkLimit";
+import { ArtworkLimitIndicator } from "./artwork/ArtworkLimitIndicator";
 
 import { watermarkService, InvisibleWatermark } from "@/lib/watermark";
 import { enhancedWatermarkService, EnhancedWatermarkOptions, EnhancedWatermarkSystem } from "@/lib/enhancedWatermark";
@@ -21,6 +23,7 @@ const VisualRecognition = () => {
   const { toast } = useToast();
   const { analyzeImage } = useImageAnalysis();
   const { user } = useAuth();
+  const { checkLimit, refreshStatus, canUpload, remainingSlots } = useArtworkLimit();
   const [images, setImages] = useState<ImageAnalysis[]>([]);
   const [isInitializing, setIsInitializing] = useState(false);
   const [currentStep, setCurrentStep] = useState<'upload' | 'analyze' | 'monitor'>('upload');
@@ -59,6 +62,17 @@ const VisualRecognition = () => {
         toast({
           title: "Authentication Required",
           description: "Please sign in to upload content",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Check artwork limit before upload
+      const limitStatus = await checkLimit(1);
+      if (!limitStatus.canUpload) {
+        toast({
+          title: "Upload Limit Reached",
+          description: limitStatus.message,
           variant: "destructive",
         });
         return;
@@ -179,6 +193,17 @@ const VisualRecognition = () => {
         toast({
           title: "Authentication Required",
           description: "Please sign in to upload content",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Check artwork limit before upload
+      const limitStatus = await checkLimit(1);
+      if (!limitStatus.canUpload) {
+        toast({
+          title: "Upload Limit Reached",
+          description: limitStatus.message,
           variant: "destructive",
         });
         return;
@@ -336,6 +361,17 @@ const VisualRecognition = () => {
       toast({
         title: "Authentication Required",
         description: "Please sign in to upload files",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check artwork limit before upload
+    const limitStatus = await checkLimit(files.length);
+    if (!limitStatus.canUpload) {
+      toast({
+        title: "Upload Limit Reached",
+        description: limitStatus.message,
         variant: "destructive",
       });
       return;
@@ -570,7 +606,10 @@ const VisualRecognition = () => {
         });
       }
     });
-  }, [images.length, analyzeImage, toast]);
+    
+    // Refresh limit status after uploads
+    refreshStatus();
+  }, [images.length, analyzeImage, toast, checkLimit, refreshStatus]);
 
   return (
     <TooltipProvider>
@@ -650,6 +689,9 @@ const VisualRecognition = () => {
           </TabsList>
 
           <TabsContent value="quick-analysis" className="space-y-6">
+            {/* Artwork Limit Indicator */}
+            <ArtworkLimitIndicator className="p-4 bg-muted/50 rounded-lg" />
+            
             <UploadArea 
               onFileUpload={handleFileUpload}
               onUrlUpload={handleUrlUpload}
