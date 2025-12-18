@@ -47,7 +47,7 @@ export function AppSidebar() {
     { path: "/protection-hub", label: "Protect My Art", icon: Shield },
     { path: "/upload", label: "My Art", icon: FileImage },
     { path: "/monitoring-hub", label: "Find Copies", icon: Search },
-    { path: "/findings", label: "See Copies Found", icon: Eye },
+    { path: "/simple-findings", label: "See Copies Found", icon: Eye },
     { path: "/dmca-center", label: "Alerts", icon: AlertTriangle },
     { path: "/settings", label: "Settings", icon: Settings },
     { path: "/faq", label: "FAQ", icon: HelpCircle },
