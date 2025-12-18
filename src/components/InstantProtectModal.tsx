@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Shield, Upload, CheckCircle2, Sparkles, Lock, Fingerprint, ArrowRight, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useSecureGuestSession } from "@/hooks/useSecureGuestSession";
 import { realWorldProtection } from "@/lib/realWorldProtection";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
@@ -15,10 +14,22 @@ interface InstantProtectModalProps {
 
 type Step = "upload" | "processing" | "complete";
 
+const GUEST_PROTECTION_KEY = "tsmo_guest_protection_count";
+const MAX_GUEST_PROTECTIONS = 3;
+
+const getGuestProtectionCount = (): number => {
+  const stored = localStorage.getItem(GUEST_PROTECTION_KEY);
+  return stored ? parseInt(stored, 10) : 0;
+};
+
+const incrementGuestProtection = (): void => {
+  const current = getGuestProtectionCount();
+  localStorage.setItem(GUEST_PROTECTION_KEY, String(current + 1));
+};
+
 export const InstantProtectModal = ({ open, onOpenChange }: InstantProtectModalProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { getOrCreateSession, recordUpload, canUpload, status } = useSecureGuestSession();
   
   const [step, setStep] = useState<Step>("upload");
   const [isDragging, setIsDragging] = useState(false);
@@ -29,6 +40,10 @@ export const InstantProtectModal = ({ open, onOpenChange }: InstantProtectModalP
     protectionId: string;
     methodsApplied: string[];
   } | null>(null);
+  
+  const protectionCount = getGuestProtectionCount();
+  const canProtect = protectionCount < MAX_GUEST_PROTECTIONS;
+  const remainingProtections = MAX_GUEST_PROTECTIONS - protectionCount;
 
   const resetState = () => {
     setStep("upload");
@@ -85,28 +100,17 @@ export const InstantProtectModal = ({ open, onOpenChange }: InstantProtectModalP
   const handleProtect = async () => {
     if (!selectedFile) return;
 
+    // Check if can still protect
+    if (!canProtect) {
+      toast({
+        title: "Limit Reached",
+        description: "Create a free account to protect more images.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
-      // Get or create guest session
-      const session = await getOrCreateSession();
-      if (!session) {
-        toast({
-          title: "Session Error",
-          description: "Unable to create guest session. Please try again.",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Check if can still upload
-      if (!canUpload) {
-        toast({
-          title: "Upload Limit Reached",
-          description: "Create a free account to protect more images.",
-          variant: "destructive"
-        });
-        return;
-      }
-
       setStep("processing");
       setProgress(10);
 
@@ -130,8 +134,8 @@ export const InstantProtectModal = ({ open, onOpenChange }: InstantProtectModalP
       clearInterval(progressInterval);
       setProgress(100);
 
-      // Record the upload
-      await recordUpload();
+      // Record the protection locally
+      incrementGuestProtection();
 
       setProtectionResult({
         protectionId: result.protectionId,
@@ -263,9 +267,9 @@ export const InstantProtectModal = ({ open, onOpenChange }: InstantProtectModalP
               </span>
             </div>
 
-            {status && (
+            {remainingProtections > 0 && (
               <p className="text-xs text-center text-muted-foreground">
-                {status.uploadsRemaining} free protection{status.uploadsRemaining !== 1 ? "s" : ""} remaining
+                {remainingProtections} free protection{remainingProtections !== 1 ? "s" : ""} remaining
               </p>
             )}
           </div>
@@ -383,7 +387,7 @@ export const InstantProtectModal = ({ open, onOpenChange }: InstantProtectModalP
             </div>
 
             <div className="flex gap-2">
-              {status && status.uploadsRemaining > 0 && (
+              {remainingProtections > 0 && (
                 <Button variant="outline" onClick={handleProtectMore} className="flex-1">
                   Protect Another
                 </Button>
