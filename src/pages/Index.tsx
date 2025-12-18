@@ -204,7 +204,7 @@ const Index = () => {
 
           
           
-          <p className="text-base sm:text-lg text-muted-foreground/80 mb-8 max-w-2xl mx-auto italic font-sans text-center font-light">"TSMO was created for Independent artists, designers, musicians, small-to-mid-size creative brands" - Shirleena Cunningham, Founder and CEO</p>
+          <p className="text-base sm:text-lg text-muted-foreground/80 mb-8 max-w-2xl mx-auto italic font-sans text-center font-light">For working artists who can't afford art theft: protect your portfolio with monitoring, alerts, and ownership proof.</p>
 
           {/* Primary Sign-Up CTA */}
           <div className="max-w-md mx-auto mb-6">
