@@ -313,6 +313,13 @@ export class RealWorldProtection {
    * Add web crawler blocking mechanisms
    */
   private async addCrawlerBlocking(file: Blob): Promise<Blob> {
+    // For images, embed crawler blocking in image data (steganography)
+    // rather than prepending binary headers which corrupts the file
+    if (file.type.startsWith('image/')) {
+      return this.embedCrawlerBlockingInImage(file);
+    }
+    
+    // For non-images, use binary header approach
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -353,6 +360,51 @@ export class RealWorldProtection {
         }
       };
       reader.readAsArrayBuffer(file);
+    });
+  }
+
+  /**
+   * Embed crawler blocking data in image using steganography (preserves image format)
+   */
+  private async embedCrawlerBlockingInImage(file: Blob): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d')!;
+      const img = new Image();
+
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        // Embed crawler blocking signature in green channel LSBs
+        const crawlerSignature = 'NOCRAWL:AI_PROHIBITED:' + new Date().toISOString();
+        const binaryData = this.stringToBinary(crawlerSignature);
+        const endMarker = '1111111111111110';
+        const fullBinaryData = binaryData + endMarker;
+
+        // Start embedding after the first 1000 pixels (to not overlap with rights metadata in blue channel)
+        const startOffset = Math.min(1000, Math.floor(data.length / 8));
+        
+        for (let i = 0; i < Math.min(fullBinaryData.length, (data.length / 4) - startOffset); i++) {
+          const pixelIndex = (startOffset + i) * 4 + 1; // Green channel
+          const bit = parseInt(fullBinaryData[i]);
+          data[pixelIndex] = (data[pixelIndex] & 0xFE) | bit;
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error('Failed to embed crawler blocking'));
+        }, file.type, 0.95); // Use 0.95 quality to preserve more data
+      };
+
+      img.onerror = () => reject(new Error('Failed to load image for crawler blocking'));
+      img.src = URL.createObjectURL(file);
     });
   }
 
