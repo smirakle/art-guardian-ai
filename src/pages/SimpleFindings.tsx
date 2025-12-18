@@ -35,6 +35,13 @@ const SimpleFindings = () => {
   const [findings, setFindings] = useState<SimpleFinding[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Filter out internal Supabase URLs - these are not real external threats
+  const isRealExternalSource = (url: string, domain: string) => {
+    if (!url || !domain) return false;
+    const internalDomains = ['supabase.co', 'supabase.com', 'localhost', '127.0.0.1'];
+    return !internalDomains.some(d => domain.includes(d) || url.includes(d));
+  };
+
   useEffect(() => {
     loadFindings();
   }, [user]);
@@ -44,7 +51,7 @@ const SimpleFindings = () => {
       setLoading(true);
       const allFindings: SimpleFinding[] = [];
 
-      // Load deepfake matches
+      // Load deepfake matches - only external sources
       const { data: deepfakes } = await supabase
         .from('deepfake_matches')
         .select('*')
@@ -52,7 +59,9 @@ const SimpleFindings = () => {
         .limit(20);
 
       if (deepfakes) {
-        deepfakes.forEach(d => {
+        deepfakes
+          .filter(d => isRealExternalSource(d.source_url, d.source_domain))
+          .forEach(d => {
           allFindings.push({
             id: d.id,
             type: 'deepfake',
@@ -76,7 +85,9 @@ const SimpleFindings = () => {
           .limit(20);
 
         if (copyrights) {
-          copyrights.forEach(c => {
+          copyrights
+            .filter(c => isRealExternalSource(c.source_url, c.source_domain))
+            .forEach(c => {
             allFindings.push({
               id: c.id,
               type: 'copyright',
@@ -91,7 +102,7 @@ const SimpleFindings = () => {
           });
         }
 
-        // Load AI training violations
+        // Load AI training violations - only external sources
         const { data: violations } = await supabase
           .from('ai_training_violations')
           .select('*')
@@ -100,7 +111,9 @@ const SimpleFindings = () => {
           .limit(20);
 
         if (violations) {
-          violations.forEach(v => {
+          violations
+            .filter(v => isRealExternalSource(v.source_url || '', v.source_domain || ''))
+            .forEach(v => {
             allFindings.push({
               id: v.id,
               type: 'ai_training',
