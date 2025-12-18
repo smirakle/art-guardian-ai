@@ -340,12 +340,12 @@ const FAQ = () => {
               <div className="mb-4">
                 <h4 className="font-semibold mb-2">Available templates include:</h4>
                 <ul className="ml-4 space-y-2 text-sm">
-                  <li><strong>• DMCA Takedown Notice:</strong> Standard template for copyright infringement claims ($19.99/$4.99 member)</li>
-                  <li><strong>• Copyright Cease & Desist:</strong> Professional cease and desist letter for copyright violations ($24.99/$7.99 member)</li>
-                  <li><strong>• Artist Licensing Agreement:</strong> Comprehensive licensing template for artwork usage ($39.99/$14.99 member)</li>
-                  <li><strong>• Social Media Usage Rights:</strong> Template for social media content licensing ($29.99/$9.99 member)</li>
-                  <li><strong>• NFT Creator Rights:</strong> Legal framework for NFT creators and collectors ($49.99/$19.99 member)</li>
-                  <li><strong>• International Copyright Notice:</strong> Multi-jurisdiction copyright protection document ($79.99/$24.99 member)</li>
+                  <li><strong>• DMCA Takedown Notice:</strong> Standard template for copyright infringement claims - FREE</li>
+                  <li><strong>• Copyright Cease & Desist:</strong> Professional cease and desist letter for copyright violations - FREE</li>
+                  <li><strong>• Artist Licensing Agreement:</strong> Comprehensive licensing template for artwork usage - FREE</li>
+                  <li><strong>• Social Media Usage Rights:</strong> Template for social media content licensing - FREE</li>
+                  <li><strong>• NFT Creator Rights:</strong> Legal framework for NFT creators and collectors - FREE</li>
+                  <li><strong>• International Copyright Notice:</strong> Multi-jurisdiction copyright protection document - FREE</li>
                 </ul>
               </div>
               
@@ -354,8 +354,8 @@ const FAQ = () => {
                 <ul className="ml-4 space-y-1 text-sm">
                   <li>• Professionally reviewed by IP lawyers</li>
                   <li>• Customizable for your specific needs</li>
-                  <li>• Instant download after purchase</li>
-                  <li>• Member discounts available</li>
+                  <li>• Instant download - no payment required</li>
+                  <li>• All templates completely free</li>
                   <li>• Regular updates to match current laws</li>
                 </ul>
               </div>
