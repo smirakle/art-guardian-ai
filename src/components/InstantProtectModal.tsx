@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Shield, Upload, CheckCircle2, Sparkles, Lock, Fingerprint, ArrowRight, X, Download, FileText, Eye } from "lucide-react";
+import { Shield, Upload, CheckCircle2, Sparkles, Lock, Fingerprint, ArrowRight, X, Download, FileText, Eye, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { realWorldProtection } from "@/lib/realWorldProtection";
 import { useToast } from "@/hooks/use-toast";
@@ -272,6 +272,12 @@ export const InstantProtectModal = ({ open, onOpenChange }: InstantProtectModalP
                   <p className="text-xs text-muted-foreground">
                     Supports JPG, PNG, WEBP • Max 20MB
                   </p>
+                  <div className="mt-3 p-2 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                    <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+                      <AlertTriangle className="h-3 w-3 flex-shrink-0" />
+                      <span>Original work only. AI-generated images will not be protected.</span>
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
