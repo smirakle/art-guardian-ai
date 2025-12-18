@@ -35,7 +35,7 @@ export const CopyrightFooter = () => {
               <p className="font-medium">Founded by Shirleena Cunningham</p>
               <p className="flex items-center gap-1.5">
                 <MapPin className="h-3 w-3" />
-                Virginia, United States
+                Cambridge, MA
               </p>
               <p className="flex items-center gap-1.5">
                 <Mail className="h-3 w-3" />
