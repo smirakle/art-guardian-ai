@@ -18,7 +18,7 @@ import ContextualHelp from "@/components/help-system/ContextualHelp";
 import { BugReportButton } from "@/components/BugReportButton";
 import { UserGuide } from "@/components/UserGuide";
 import { homeGuide } from "@/data/userGuides";
-import { Shield, Eye, Activity, Link2, Search, Check, Star, ArrowRight, Zap, Globe, Lock, TrendingUp, Users, Mail, Phone, MapPin, FileImage, Upload, Scan, Bot, Play, ChevronRight, FileText, Scale, Building, Heart, ExternalLink, UserX, Calendar, Info, Bell } from "lucide-react";
+import { Shield, Eye, Activity, Link2, Search, Check, Star, ArrowRight, Zap, Globe, Lock, TrendingUp, Users, Mail, Phone, MapPin, FileImage, Upload, Scan, Bot, Play, ChevronRight, FileText, Scale, Building, Heart, ExternalLink, UserX, Calendar, Info, Bell, Sparkles } from "lucide-react";
 import { ShieldCheck, EyeOff, Fingerprint, Code2, BadgeCheck } from "lucide-react";
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import bizWeeklyBanner from "@/assets/Biz_Weekly.png";
@@ -30,6 +30,8 @@ import MobileAppCTA from "@/components/MobileAppCTA";
 import ProtectionComparisonShowcase from "@/components/ProtectionComparisonShowcase";
 import TrustBadges from "@/components/TrustBadges";
 import { ProblemToSolutionTransition } from "@/components/ProblemToSolutionTransition";
+import { InstantProtectModal } from "@/components/InstantProtectModal";
+
 const Index = () => {
   const {
     toast
@@ -90,6 +92,7 @@ const Index = () => {
   const [showOnboardingTour, setShowOnboardingTour] = useState(false);
   const [showLiveDemo, setShowLiveDemo] = useState(false);
   const [showSolutionsDialog, setShowSolutionsDialog] = useState(false);
+  const [showInstantProtect, setShowInstantProtect] = useState(false);
   const startDemo = () => {
     setIsAnalyzing(true);
     setDemoStep(1);
@@ -171,6 +174,8 @@ const Index = () => {
       {/* User Experience Enhancements */}
       <ContextualHelp />
 
+      {/* Instant Protect Modal - Guest Mode */}
+      <InstantProtectModal open={showInstantProtect} onOpenChange={setShowInstantProtect} />
       {/* Live Demo Modal */}
       <Dialog open={showLiveDemo} onOpenChange={setShowLiveDemo}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
@@ -227,7 +232,7 @@ Own Your Future</h1>
           </div>
 
           {/* Secondary CTAs */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
             <Button variant="outline" size="lg" onClick={() => setShowLiveDemo(true)}>
               <Play className="mr-2 h-4 w-4" />
               Watch Live Demo
@@ -236,6 +241,25 @@ Own Your Future</h1>
               <Zap className="mr-2 h-4 w-4" />
               2-Min Visual Demo
             </Button>
+          </div>
+
+          {/* Try It Now - Guest Mode CTA */}
+          <div className="border-t border-border/30 pt-6 mb-8">
+            <p className="text-sm text-muted-foreground mb-3">
+              Want to see it work first?
+            </p>
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border-emerald-500/40 hover:border-emerald-500/60 hover:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+              onClick={() => setShowInstantProtect(true)}
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              Try It Now — No Signup Required
+            </Button>
+            <p className="text-xs text-muted-foreground mt-2">
+              Protect 1 image instantly • See results in seconds
+            </p>
           </div>
 
           {/* Key Features - Mobile Optimized */}
