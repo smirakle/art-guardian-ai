@@ -703,9 +703,8 @@ Own Your Future</h1>
                 <p className="text-sm text-muted-foreground mb-4">
                   Professional legal documents ready to download and customize.
                 </p>
-                <div className="text-xs text-muted-foreground mb-4">
-                  <div>$2.99 with membership</div>
-                  <div>$9.99 without membership</div>
+                <div className="text-lg font-bold text-green-600 mb-4">
+                  FREE
                 </div>
                 <Button size="sm" className="w-full" onClick={() => navigate("/legal-templates")}>
                   Browse Templates
