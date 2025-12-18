@@ -238,22 +238,20 @@ const saveToSupabase = async () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="md:col-span-2 flex justify-end gap-2">
-            <Button variant="default" disabled={!resultUrl} onClick={saveToSupabase} className="gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+          <StyleCloakResilience
+            strength={strength[0]}
+            frequency={frequency[0]}
+            colorJitter={colorJitter[0]}
+            useSegmentation={useSegmentation}
+          />
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Button variant="default" disabled={!resultUrl} onClick={saveToSupabase} className="gap-2 whitespace-nowrap">
               <Shield className="h-4 w-4" /> Save to Library
             </Button>
-            <Button variant="secondary" disabled={!resultUrl} onClick={download} className="gap-2">
-              <Download className="h-4 w-4" /> Download Cloaked Image
+            <Button variant="secondary" disabled={!resultUrl} onClick={download} className="gap-2 whitespace-nowrap">
+              <Download className="h-4 w-4" /> Download
             </Button>
-          </div>
-          <div>
-            <StyleCloakResilience
-              strength={strength[0]}
-              frequency={frequency[0]}
-              colorJitter={colorJitter[0]}
-              useSegmentation={useSegmentation}
-            />
           </div>
         </div>
       </CardContent>
