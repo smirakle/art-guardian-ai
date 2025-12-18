@@ -7,6 +7,13 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Production limits
+const DAILY_LIMITS = {
+  monitoring_sessions: 10,
+  serpapi_calls: 100,
+  openai_calls: 200
+};
+
 // Platform domain mappings for filtering search results
 const platformDomains: Record<string, string[]> = {
   'Twitter/X': ['twitter.com', 'x.com', 'twimg.com', 'pbs.twimg.com'],
@@ -39,7 +46,7 @@ serve(async (req) => {
     }
 
     const { sessionId } = await req.json();
-    console.log(`Real deepfake monitoring engine started for session: ${sessionId}`);
+    console.log(`[PRODUCTION] Real deepfake monitoring started for session: ${sessionId}`);
 
     // Get the session to find the user
     const { data: session } = await supabase
@@ -50,6 +57,31 @@ serve(async (req) => {
 
     const userId = session?.user_id;
 
+    // Check daily monitoring limit
+    if (userId) {
+      const { data: usageCheck } = await supabase.rpc('check_daily_api_limit', {
+        p_user_id: userId,
+        p_service_type: 'monitoring',
+        p_daily_limit: DAILY_LIMITS.monitoring_sessions
+      });
+      
+      if (usageCheck && !usageCheck.allowed) {
+        console.log(`[RATE LIMIT] User ${userId} exceeded daily monitoring limit`);
+        return new Response(JSON.stringify({
+          error: 'Daily monitoring limit reached',
+          daily_limit: DAILY_LIMITS.monitoring_sessions,
+          reset_time: usageCheck.reset_time,
+          hint: 'Your daily monitoring limit resets at midnight UTC'
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 429,
+        });
+      }
+    }
+
+    // Track API calls for this session
+    let apiUsage = { serpapi: 0, openai: 0 };
+
     // Fetch user's protected images to search for
     const { data: artworks } = await supabase
       .from('artwork')
@@ -57,7 +89,7 @@ serve(async (req) => {
       .eq('user_id', userId)
       .limit(10);
 
-    console.log(`Found ${artworks?.length || 0} protected artworks to monitor`);
+    console.log(`[PRODUCTION] Found ${artworks?.length || 0} protected artworks to monitor`);
 
     // Platform scanning targets
     const platforms = [
