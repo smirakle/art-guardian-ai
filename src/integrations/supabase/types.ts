@@ -9910,6 +9910,16 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_artwork_limit_before_upload: {
+        Args: { files_to_upload?: number }
+        Returns: {
+          artwork_limit: number
+          can_upload: boolean
+          current_count: number
+          message: string
+          remaining_slots: number
+        }[]
+      }
       check_daily_api_limit: {
         Args: {
           p_daily_limit: number
@@ -10017,6 +10027,7 @@ export type Database = {
           variable_monthly: number
         }[]
       }
+      get_user_artwork_count: { Args: never; Returns: number }
       get_user_dashboard_stats: {
         Args: never
         Returns: {
