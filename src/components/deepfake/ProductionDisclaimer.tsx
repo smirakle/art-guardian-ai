@@ -1,9 +1,27 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle, Info } from "lucide-react";
+import { AlertTriangle, Info, Zap, Shield } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export const ProductionDisclaimer = () => {
   return (
     <div className="space-y-4 mb-6">
+      {/* Production Status */}
+      <Alert variant="default" className="border-green-500/50 bg-green-500/10">
+        <Shield className="h-4 w-4 text-green-500" />
+        <AlertDescription className="text-sm">
+          <div className="flex items-center gap-2 mb-2">
+            <strong>Production Status:</strong>
+            <Badge variant="default" className="bg-green-600 text-xs">LIVE</Badge>
+            <Badge variant="outline" className="text-xs">Real APIs Active</Badge>
+          </div>
+          <div className="flex flex-wrap gap-2 mt-2">
+            <Badge variant="secondary" className="text-xs">SerpAPI Reverse Image</Badge>
+            <Badge variant="secondary" className="text-xs">OpenAI GPT-4 Vision</Badge>
+            <Badge variant="secondary" className="text-xs">TinEye API</Badge>
+          </div>
+        </AlertDescription>
+      </Alert>
+
       <Alert variant="default" className="border-amber-500/50 bg-amber-500/10">
         <AlertTriangle className="h-4 w-4 text-amber-500" />
         <AlertDescription className="text-sm">
@@ -14,16 +32,17 @@ export const ProductionDisclaimer = () => {
       </Alert>
 
       <Alert>
-        <Info className="h-4 w-4" />
+        <Zap className="h-4 w-4" />
         <AlertDescription className="text-sm space-y-2">
-          <p><strong>Usage Limits:</strong></p>
+          <p><strong>Daily API Limits (Production):</strong></p>
           <ul className="list-disc ml-4 space-y-1">
-            <li>Single Image Analysis: 50 scans per day</li>
-            <li>Multi-modal Protection: 30 scans per day</li>
-            <li>Real-time Monitoring: Coming soon (requires enterprise plan)</li>
+            <li><strong>Full Scans:</strong> 50 per day (SerpAPI + OpenAI analysis)</li>
+            <li><strong>AI Training Protection:</strong> 50 files per day</li>
+            <li><strong>Real-time Monitoring:</strong> 10 sessions per day</li>
+            <li><strong>Individual API calls:</strong> ~100 SerpAPI, ~200 OpenAI daily</li>
           </ul>
           <p className="mt-2 text-xs text-muted-foreground">
-            All scans are logged for quality assurance and cost management.
+            Limits reset at midnight UTC. All API usage is tracked and logged.
           </p>
         </AlertDescription>
       </Alert>
@@ -31,9 +50,13 @@ export const ProductionDisclaimer = () => {
       <Alert>
         <Info className="h-4 w-4" />
         <AlertDescription className="text-sm">
-          <strong>What We Analyze:</strong> Our AI examines facial artifacts, lighting inconsistencies, 
-          temporal anomalies, metadata forensics, and cross-platform verification to detect potential 
-          deepfakes and AI-generated content.
+          <strong>Real Detection Methods:</strong>
+          <ul className="list-disc ml-4 mt-2 space-y-1">
+            <li><strong>Reverse Image Search:</strong> SerpAPI scans Google, social platforms for your images</li>
+            <li><strong>AI Vision Analysis:</strong> GPT-4 Vision examines facial artifacts, lighting, boundaries</li>
+            <li><strong>Dataset Scanning:</strong> Checks LAION, Common Crawl, HuggingFace for unauthorized use</li>
+            <li><strong>Metadata Forensics:</strong> Analyzes EXIF data and compression artifacts</li>
+          </ul>
         </AlertDescription>
       </Alert>
     </div>

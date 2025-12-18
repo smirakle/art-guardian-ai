@@ -7,6 +7,13 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Production limits - tracked per user per day
+const DAILY_LIMITS = {
+  full_scan: 50,      // Total full scans per day
+  serpapi_calls: 100, // Individual SerpAPI requests
+  openai_calls: 200   // Individual OpenAI analysis calls
+};
+
 // Known AI training dataset domains and indicators
 const AI_TRAINING_INDICATORS = {
   datasets: [
@@ -49,6 +56,30 @@ serve(async (req) => {
     }
 
     const { userId, protectionRecordId } = await req.json().catch(() => ({}));
+
+    // Check daily limit before proceeding
+    if (userId) {
+      const { data: usageCheck } = await supabase.rpc('check_daily_api_limit', {
+        p_user_id: userId,
+        p_service_type: 'full_scan',
+        p_daily_limit: DAILY_LIMITS.full_scan
+      });
+      
+      if (usageCheck && !usageCheck.allowed) {
+        return new Response(JSON.stringify({
+          error: 'Daily scan limit reached',
+          daily_limit: DAILY_LIMITS.full_scan,
+          reset_time: usageCheck.reset_time,
+          hint: 'Your daily scan limit resets at midnight UTC'
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 429,
+        });
+      }
+    }
+
+    // Track API usage for cost monitoring
+    let apiCallsUsed = { serpapi: 0, openai: 0 };
 
     // Build query for protected files
     let query = supabase
