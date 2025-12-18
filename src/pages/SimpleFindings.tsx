@@ -10,7 +10,8 @@ import {
   Shield,
   Sparkles,
   ChevronRight,
-  CheckCircle
+  CheckCircle,
+  Trash2
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -228,6 +229,26 @@ const SimpleFindings = () => {
     }
   };
 
+  const handleDelete = async (finding: SimpleFinding) => {
+    try {
+      const table = finding.type === 'deepfake' ? 'deepfake_matches' : 
+                    finding.type === 'copyright' ? 'copyright_matches' : 
+                    'ai_training_violations';
+
+      await supabase
+        .from(table)
+        .delete()
+        .eq('id', finding.id);
+
+      setFindings(prev => prev.filter(f => f.id !== finding.id));
+
+      toast.success("Removed", { description: "This alert has been deleted." });
+    } catch (error) {
+      console.error('Error deleting finding:', error);
+      toast.error("Couldn't delete", { description: "Please try again." });
+    }
+  };
+
   const unreviewedFindings = findings.filter(f => !f.isReviewed);
   const hasIssues = unreviewedFindings.length > 0;
 
@@ -343,13 +364,23 @@ const SimpleFindings = () => {
 
                   {/* Bottom action */}
                   <div className="px-5 py-3 bg-muted/50 border-t flex items-center justify-between">
-                    <button
-                      onClick={() => handleMarkSeen(finding)}
-                      className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
-                    >
-                      <CheckCircle className="h-4 w-4" />
-                      I've seen this
-                    </button>
+                    <div className="flex items-center gap-4">
+                      <button
+                        onClick={() => handleMarkSeen(finding)}
+                        className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
+                      >
+                        <CheckCircle className="h-4 w-4" />
+                        I've seen this
+                      </button>
+                      
+                      <button
+                        onClick={() => handleDelete(finding)}
+                        className="text-sm text-muted-foreground hover:text-destructive flex items-center gap-2 transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Delete
+                      </button>
+                    </div>
                     
                     <button className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors">
                       <HelpCircle className="h-4 w-4" />
@@ -388,7 +419,16 @@ const SimpleFindings = () => {
                       </p>
                     </div>
                     
-                    <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleDelete(finding)}
+                        className="p-2 text-muted-foreground hover:text-destructive transition-colors rounded-md hover:bg-destructive/10"
+                        title="Delete"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                    </div>
                   </div>
                 </CardContent>
               </Card>
