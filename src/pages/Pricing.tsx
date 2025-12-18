@@ -134,6 +134,7 @@ const Pricing = () => {
         'Basic image upload & storage',
         'Basic monitoring',
         'Email alerts',
+        'AI Training protection',
         'Community support'
       ],
       limitations: [
