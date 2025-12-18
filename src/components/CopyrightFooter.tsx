@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Twitter, Instagram, Facebook, Linkedin } from 'lucide-react';
+import { Twitter, Instagram, Facebook, Linkedin, Mail, MapPin, Building2 } from 'lucide-react';
 
 export const CopyrightFooter = () => {
   const currentYear = new Date().getFullYear();
@@ -12,62 +12,96 @@ export const CopyrightFooter = () => {
     { icon: Linkedin, url: 'https://www.linkedin.com/company/tsmo-watch/?viewAsMember=true', label: 'LinkedIn' },
   ];
 
+  const legalLinks = [
+    { to: '/terms-and-privacy', label: 'Terms of Service' },
+    { to: '/terms-and-privacy', label: 'Privacy Policy' },
+    { to: '/refund-policy', label: 'Refund Policy' },
+    { to: '/contact', label: 'Support' },
+    { to: '/dmca-center', label: 'DMCA' },
+  ];
+
   return (
     <footer className="border-t bg-background/95 backdrop-blur-sm">
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
-            <p className="text-sm text-muted-foreground">
-              © {currentYear} TSMO Technology. All rights reserved.
-            </p>
-            <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-              <span>Proprietary & Confidential</span>
-              <span>•</span>
-              <span>Protected by Copyright Law</span>
+      <div className="container mx-auto px-4 py-8">
+        {/* Company Identity Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
+          {/* Company Info */}
+          <div className="space-y-3">
+            <h3 className="font-semibold text-foreground flex items-center gap-2">
+              <Building2 className="h-4 w-4" />
+              TSMO Technology LLC
+            </h3>
+            <div className="text-sm text-muted-foreground space-y-1">
+              <p className="font-medium">Founded by Shirleena Cunningham</p>
+              <p className="flex items-center gap-1.5">
+                <MapPin className="h-3 w-3" />
+                Virginia, United States
+              </p>
+              <p className="flex items-center gap-1.5">
+                <Mail className="h-3 w-3" />
+                <a href="mailto:support@tsmowatch.com" className="hover:text-foreground transition-colors">
+                  support@tsmowatch.com
+                </a>
+              </p>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
-            {/* Social Media Links */}
-            <div className="flex items-center space-x-3 mr-4">
+
+          {/* Legal Links */}
+          <div className="space-y-3">
+            <h3 className="font-semibold text-foreground">Legal</h3>
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              {legalLinks.map((link) => (
+                <Link
+                  key={link.label}
+                  to={link.to}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Social & Contact */}
+          <div className="space-y-3">
+            <h3 className="font-semibold text-foreground">Connect With Us</h3>
+            <div className="flex items-center gap-3">
               {socialLinks.map((social) => (
                 <a
                   key={social.label}
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors p-2 rounded-lg hover:bg-muted"
                   aria-label={social.label}
                 >
-                  <social.icon className="h-4 w-4" />
+                  <social.icon className="h-5 w-5" />
                 </a>
               ))}
             </div>
-            <Link 
-              to="/terms-and-privacy" 
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Terms & Privacy
-            </Link>
-            <Link 
-              to="/dmca-center" 
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              DMCA
-            </Link>
-            <Link 
-              to="/contact" 
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Legal Contact
-            </Link>
+            <p className="text-xs text-muted-foreground">
+              Questions? Email us at{' '}
+              <a href="mailto:support@tsmowatch.com" className="underline hover:text-foreground">
+                support@tsmowatch.com
+              </a>
+            </p>
           </div>
         </div>
-        <div className="mt-4 pt-4 border-t text-center">
-          <p className="text-xs text-muted-foreground">
-            This software is proprietary to TSMO Technology. Unauthorized reproduction, distribution, or use is strictly prohibited.
-            <br />
-            For licensing inquiries: <a href="mailto:shirleena.cunningham@tsmowatch.com" className="hover:text-foreground transition-colors">shirleena.cunningham@tsmowatch.com</a>
-          </p>
+
+        {/* Divider */}
+        <div className="border-t pt-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="text-sm text-muted-foreground text-center md:text-left">
+              <p>© {currentYear} TSMO Technology LLC. All rights reserved.</p>
+              <p className="text-xs mt-1">Proprietary & Confidential • Protected by Copyright Law</p>
+            </div>
+            <div className="text-xs text-muted-foreground text-center md:text-right max-w-md">
+              For licensing inquiries:{' '}
+              <a href="mailto:shirleena.cunningham@tsmowatch.com" className="hover:text-foreground transition-colors underline">
+                shirleena.cunningham@tsmowatch.com
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
