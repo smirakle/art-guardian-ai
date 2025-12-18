@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Shield, AlertTriangle, CheckCircle2, Upload, Search, Mail } from 'lucide-react';
+import { Shield, AlertTriangle, CheckCircle2, Upload, Search, Mail, Clock, UserPlus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -65,9 +65,28 @@ const SimpleDashboard = () => {
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto p-6">
+      {/* Guest Mode Banner */}
+      {!user && (
+        <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-full">
+              <Clock className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="font-medium text-foreground">Guest Mode — Your data expires in 7 days</p>
+              <p className="text-sm text-muted-foreground">Create a free account to save permanently</p>
+            </div>
+          </div>
+          <Button onClick={() => navigate('/auth')} className="flex-shrink-0">
+            <UserPlus className="h-4 w-4 mr-2" />
+            Create Free Account
+          </Button>
+        </div>
+      )}
+
       {/* Header */}
       <div>
-        <h1 className="text-4xl font-bold mb-2">Welcome Back!</h1>
+        <h1 className="text-4xl font-bold mb-2">{user ? 'Welcome Back!' : 'Welcome!'}</h1>
         <p className="text-lg text-muted-foreground">Here's what's happening with your art</p>
         
         {/* Quick Stats */}
