@@ -15,12 +15,6 @@ const TrustBadges = () => {
       description: "Only you can see your uploads"
     },
     {
-      icon: Award,
-      emoji: "✅",
-      label: "Used by Big Companies",
-      description: "Trusted by professional artists"
-    },
-    {
       icon: Globe,
       emoji: "🌍",
       label: "Works Worldwide",
