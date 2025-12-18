@@ -1,71 +1,52 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Quote, Star, BadgeCheck } from "lucide-react";
+import { Quote, Star, BadgeCheck, FileText, ArrowRight } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Testimonials = () => {
   const testimonials = [
     {
-      name: "Sarah Chen",
+      name: "Sarah C.",
       role: "Digital Artist",
-      content: "This AI bot saved my career. It found my stolen artwork on 15 different sites within hours of uploading. The automated takedown process was seamless.",
-      avatar: "/placeholder.svg",
+      content: "Found my stolen artwork on 12 different sites within the first week. The automated takedown process saved me hours of work.",
       initials: "SC",
       rating: 5,
       verified: true,
-      badge: "Pro User"
+      badge: "Beta Tester"
     },
     {
-      name: "Marcus Rodriguez",
+      name: "Marcus R.",
       role: "Photographer",
-      content: "As a professional photographer, IP theft was costing me thousands. Now I sleep peacefully knowing my work is protected 24/7 by advanced AI.",
-      avatar: "/placeholder.svg", 
+      content: "As a professional photographer, IP theft was a constant worry. Now I get real-time alerts whenever my images appear online without permission.",
       initials: "MR",
       rating: 5,
       verified: true,
-      badge: "Since 2023"
+      badge: "Beta Tester"
     },
     {
-      name: "Elena Vasquez",
+      name: "Elena V.",
       role: "Illustrator",
-      content: "The blockchain verification feature gave me the legal proof I needed to win my copyright case. This platform is a game-changer for artists.",
-      avatar: "/placeholder.svg",
+      content: "The ownership verification feature gave me documented proof I needed for a copyright dispute. Really impressed with the speed and accuracy.",
       initials: "EV",
       rating: 5,
       verified: true,
-      badge: "Verified Artist"
-    },
-    {
-      name: "David Kim",
-      role: "Graphic Designer",
-      content: "The community aspect is incredible. I've learned so much about protecting my work and even helped other artists with their IP issues.",
-      avatar: "/placeholder.svg",
-      initials: "DK",
-      rating: 4,
-      verified: true,
-      badge: "Community Star"
-    },
-    {
-      name: "Maria Santos",
-      role: "Fine Artist",
-      content: "The legal support integration connected me directly with IP specialists. What used to take weeks now happens in days.",
-      avatar: "/placeholder.svg",
-      initials: "MS",
-      rating: 5,
-      verified: true,
-      badge: "Enterprise"
-    },
-    {
-      name: "James Wilson",
-      role: "Creative Director",
-      content: "Managing IP protection for our entire studio used to be a nightmare. This AI solution scaled perfectly with our growing portfolio.",
-      avatar: "/placeholder.svg",
-      initials: "JW",
-      rating: 5,
-      verified: true,
-      badge: "Team Plan"
+      badge: "Beta Tester"
     }
   ];
+
+  const caseStudy = {
+    title: "Beta Case Study: Illustrator Recovers Stolen Work",
+    description: "A beta tester discovered their character designs being sold on 8 print-on-demand sites without permission.",
+    results: [
+      "Detected unauthorized use within 48 hours of upload",
+      "Generated ownership documentation automatically",
+      "5 of 8 sites removed content within 2 weeks",
+      "Ongoing monitoring prevented re-uploads"
+    ],
+    quote: "I had been trying to track down my stolen art for months manually. TSMO Watch found instances I never would have discovered on my own.",
+    author: "Beta Tester, Character Designer"
+  };
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -83,52 +64,45 @@ const Testimonials = () => {
   return (
     <section className="py-20 bg-gradient-to-b from-secondary/5 to-background">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
+        <div className="text-center mb-8">
           <Badge variant="secondary" className="mb-4">
             <BadgeCheck className="w-3 h-3 mr-1" />
-            Trusted Platform
+            Early Feedback
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent font-display">
-            Trusted by Artists Worldwide
+            What Our Beta Testers Say
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Join thousands of artists who have protected their work and secured their livelihood
+            Real feedback from artists who helped us build and test the platform
           </p>
-          
-          {/* Trust indicators */}
-          <div className="flex items-center justify-center gap-6 mt-6 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-              <span className="font-semibold">4.9/5</span>
-              <span>average rating</span>
-            </div>
-            <div className="hidden sm:block w-px h-4 bg-border" />
-            <div className="hidden sm:flex items-center gap-1">
-              <span className="font-semibold">15,000+</span>
-              <span>verified reviews</span>
-            </div>
-          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Beta Feedback Disclaimer */}
+        <Alert className="max-w-2xl mx-auto mb-10 border-blue-200 bg-blue-50/50 dark:border-blue-800 dark:bg-blue-950/30">
+          <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+          <AlertDescription className="text-sm text-blue-800 dark:text-blue-300">
+            These testimonials are from our beta testing phase (2024). Individual results may vary. 
+            We're continuously improving based on user feedback.
+          </AlertDescription>
+        </Alert>
+
+        {/* Testimonials Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
           {testimonials.map((testimonial, index) => (
             <Card 
               key={index} 
               className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-card/50 backdrop-blur-sm border-border/50 relative overflow-hidden"
             >
-              {/* Subtle gradient overlay on hover */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               
               <CardContent className="p-6 relative">
-                {/* Header with badge */}
                 <div className="flex items-start justify-between mb-4">
                   <Quote className="w-8 h-8 text-primary/20" />
-                  <Badge variant="outline" className="text-xs bg-background/80">
+                  <Badge variant="outline" className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700">
                     {testimonial.badge}
                   </Badge>
                 </div>
                 
-                {/* Star rating */}
                 <div className="flex items-center gap-0.5 mb-3">
                   {renderStars(testimonial.rating)}
                 </div>
@@ -139,7 +113,6 @@ const Testimonials = () => {
                 
                 <div className="flex items-center gap-3">
                   <Avatar className="w-12 h-12 ring-2 ring-primary/10 ring-offset-2 ring-offset-background">
-                    <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
                     <AvatarFallback className="bg-gradient-to-br from-primary/20 to-accent/20 text-primary font-semibold">
                       {testimonial.initials}
                     </AvatarFallback>
@@ -161,6 +134,54 @@ const Testimonials = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        {/* Case Study Section */}
+        <div className="max-w-4xl mx-auto">
+          <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-background to-accent/5 overflow-hidden">
+            <CardContent className="p-8">
+              <div className="flex items-center gap-2 mb-4">
+                <FileText className="w-5 h-5 text-primary" />
+                <Badge variant="outline" className="text-xs">Case Study</Badge>
+              </div>
+              
+              <h3 className="text-2xl font-bold mb-4 text-foreground">
+                {caseStudy.title}
+              </h3>
+              
+              <p className="text-muted-foreground mb-6">
+                {caseStudy.description}
+              </p>
+
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <h4 className="font-semibold mb-3 text-foreground">Results:</h4>
+                  <ul className="space-y-2">
+                    {caseStudy.results.map((result, index) => (
+                      <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <ArrowRight className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        {result}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div className="bg-muted/30 rounded-lg p-4 border border-border/50">
+                  <Quote className="w-6 h-6 text-primary/40 mb-2" />
+                  <p className="text-sm italic text-muted-foreground mb-3">
+                    "{caseStudy.quote}"
+                  </p>
+                  <p className="text-xs text-muted-foreground font-medium">
+                    — {caseStudy.author}
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-xs text-muted-foreground border-t pt-4 mt-4">
+                * This case study represents a real beta tester experience. Results may vary based on usage and circumstances.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </section>

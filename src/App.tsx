@@ -60,6 +60,7 @@ import Roadmap from "./pages/Roadmap";
 import CreatorMarkets from "./pages/CreatorMarkets";
 import ForgeryDetection from "./pages/ForgeryDetection";
 import TermsAndPrivacy from "./pages/TermsAndPrivacy";
+import RefundPolicy from "./pages/RefundPolicy";
 import AttorneyPacket from "./pages/AttorneyPacket";
 import ProductionDashboard from "./components/production/ProductionDashboard";
 import { PartnerPricingManager } from "./components/partner/PartnerPricingManager";
@@ -197,6 +198,7 @@ const App = () => {
             <Route path="/forgery-detection" element={<ForgeryDetection />} />
             <Route path="/roadmap" element={<Roadmap />} />
             <Route path="/terms-and-privacy" element={<TermsAndPrivacy />} />
+            <Route path="/refund-policy" element={<RefundPolicy />} />
             <Route path="/attorney-packet" element={
               <ProtectedRoute requiredRole="admin">
                 <AttorneyPacket />

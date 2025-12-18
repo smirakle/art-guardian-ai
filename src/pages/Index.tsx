@@ -274,7 +274,8 @@ Own Your Future</h1>
               <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">
                 <Link2 className="w-6 h-6 sm:w-8 sm:h-8 mx-auto" />
               </div>
-              <div className="text-xs sm:text-sm text-muted-foreground">Blockchain Certificates</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Ownership Timestamps</div>
+              <div className="text-[10px] text-muted-foreground/60 mt-0.5">Not a crypto product</div>
             </div>
             <div className="text-center">
               <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">24/7</div>
@@ -472,13 +473,16 @@ Own Your Future</h1>
                       </div>
                     </div>
                     <p className="text-sm text-muted-foreground mb-3">
-                      Blockchain verification and licensing tools help you monetize your work and prove ownership for brand partnerships and commercial opportunities.
+                      Timestamped ownership proofs and licensing tools help you monetize your work and prove ownership for brand partnerships and commercial opportunities.
                     </p>
                     <ul className="text-xs text-muted-foreground space-y-1">
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Blockchain certificates</li>
+                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Timestamped ownership proofs</li>
                       <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Commercial licensing tools</li>
                       <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Ownership verification</li>
                     </ul>
+                    <p className="text-[10px] text-muted-foreground/70 mt-2 italic">
+                      Not a crypto investment product. No tokens, trading, or custody.
+                    </p>
                   </CardContent>
                 </Card>
 
