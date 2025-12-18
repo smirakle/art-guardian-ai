@@ -35,8 +35,6 @@ interface ProductionTemplate {
   featured: boolean;
   verified: boolean;
   lawyerReviewed: boolean;
-  price: number;
-  memberPrice: number;
   downloadCount: number;
   rating: number;
   reviewCount: number;
@@ -56,7 +54,7 @@ const ProductionLegalTemplates: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedJurisdiction, setSelectedJurisdiction] = useState<string>('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'popular' | 'recent' | 'rating' | 'price'>('popular');
+  const [sortBy, setSortBy] = useState<'popular' | 'recent' | 'rating'>('popular');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [userMembership, setUserMembership] = useState<any>(null);
   const [purchasedTemplates, setPurchasedTemplates] = useState<string[]>([]);
@@ -91,8 +89,6 @@ const ProductionLegalTemplates: React.FC = () => {
           featured: true,
           verified: true,
           lawyerReviewed: true,
-          price: 1999, // $19.99
-          memberPrice: 499, // $4.99
           downloadCount: 15847,
           rating: 4.9,
           reviewCount: 2847,
@@ -120,8 +116,6 @@ const ProductionLegalTemplates: React.FC = () => {
           featured: true,
           verified: true,
           lawyerReviewed: true,
-          price: 2999, // $29.99
-          memberPrice: 799, // $7.99
           downloadCount: 8765,
           rating: 4.8,
           reviewCount: 1432,
@@ -149,8 +143,6 @@ const ProductionLegalTemplates: React.FC = () => {
           featured: true,
           verified: true,
           lawyerReviewed: true,
-          price: 4999, // $49.99
-          memberPrice: 1499, // $14.99
           downloadCount: 5432,
           rating: 4.7,
           reviewCount: 987,
@@ -178,8 +170,6 @@ const ProductionLegalTemplates: React.FC = () => {
           featured: true,
           verified: true,
           lawyerReviewed: true,
-          price: 7999, // $79.99
-          memberPrice: 2499, // $24.99
           downloadCount: 12543,
           rating: 4.9,
           reviewCount: 3241,
@@ -207,8 +197,6 @@ const ProductionLegalTemplates: React.FC = () => {
           featured: true,
           verified: true,
           lawyerReviewed: true,
-          price: 3999, // $39.99
-          memberPrice: 999, // $9.99
           downloadCount: 9876,
           rating: 4.8,
           reviewCount: 2156,
@@ -236,8 +224,6 @@ const ProductionLegalTemplates: React.FC = () => {
           featured: false,
           verified: true,
           lawyerReviewed: true,
-          price: 5999, // $59.99
-          memberPrice: 1999, // $19.99
           downloadCount: 3421,
           rating: 4.6,
           reviewCount: 654,
@@ -328,52 +314,6 @@ const ProductionLegalTemplates: React.FC = () => {
     }
   };
 
-  const handlePurchaseTemplate = async (template: ProductionTemplate) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast({
-          title: "Login Required",
-          description: "Please sign in to access templates",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Check if user is admin - only admins get free access
-      if (userRole === 'admin') {
-        toast({
-          title: "Admin Access",
-          description: "Admin access granted - template available for download",
-        });
-        setPurchasedTemplates(prev => [...prev, template.id]);
-        return;
-      }
-
-      const { data, error } = await supabase.functions.invoke('purchase-template', {
-        body: {
-          templateId: template.id,
-          templateTitle: template.title,
-          regularPrice: template.price,
-          memberPrice: template.memberPrice,
-        }
-      });
-
-      if (error) throw error;
-
-      // Redirect to Stripe checkout
-      if (data?.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error('Purchase error:', error);
-      toast({
-        title: "Purchase Error",
-        description: "Failed to initiate purchase",
-        variant: "destructive"
-      });
-    }
-  };
 
   const handleDownloadTemplate = async (template: ProductionTemplate) => {
     try {
@@ -818,28 +758,10 @@ Generated on: ${new Date().toISOString()}
           return (new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime()) * multiplier;
         case 'rating':
           return (b.rating - a.rating) * multiplier;
-        case 'price':
-          const priceA = userMembership ? a.memberPrice : a.price;
-          const priceB = userMembership ? b.memberPrice : b.price;
-          return (priceB - priceA) * multiplier;
         default:
           return 0;
       }
     });
-
-  const getPrice = (template: ProductionTemplate) => {
-    if (userRole === 'admin') return 0; // Free for admins only
-    // Students and starters get member prices, not free
-    if (userMembership?.plan_id === 'student' || userMembership?.plan_id === 'starter' || userMembership) {
-      return template.memberPrice;
-    }
-    return template.price;
-  };
-
-  const formatPrice = (cents: number) => {
-    if (cents === 0) return 'FREE';
-    return `$${(cents / 100).toFixed(2)}`;
-  };
 
   if (loading) {
     return (
@@ -961,16 +883,6 @@ Generated on: ${new Date().toISOString()}
         {/* Templates Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredAndSortedTemplates.map((template) => {
-            const isPurchased = purchasedTemplates.includes(template.id);
-            const isAdmin = userRole === 'admin';
-            const isStudent = userMembership?.plan_id === 'student';
-            const isStarter = userMembership?.plan_id === 'starter';
-            const isFreeAccess = isAdmin; // Only admins get free access now
-            const isMember = userMembership && (isStudent || isStarter || userMembership.plan_id);
-            const currentPrice = getPrice(template);
-            const originalPrice = template.price;
-            const discount = isMember && template.memberPrice < template.price;
-
             return (
               <Card key={template.id} className="group hover:shadow-lg transition-shadow">
                 <CardHeader>
