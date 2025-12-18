@@ -44,6 +44,7 @@ export function AppSidebar() {
   const beginnerNavItems = [
     { path: "/", label: "Home", icon: Home },
     { path: "/dashboard", label: "My Dashboard", icon: Home },
+    { path: "/protection-hub", label: "Protect My Art", icon: Shield },
     { path: "/upload", label: "My Art", icon: FileImage },
     { path: "/monitoring-hub", label: "Find Copies", icon: Search },
     { path: "/dmca-center", label: "Alerts", icon: AlertTriangle },
@@ -180,17 +181,6 @@ export function AppSidebar() {
                       </SidebarMenuItem>
                     )}
 
-                    {/* AI Protection Settings */}
-                    <SidebarMenuItem>
-                      <SidebarMenuButton
-                        onClick={() => navigate('/ai-protection-settings')}
-                        isActive={isActive('/ai-protection-settings')}
-                        className="flex items-center gap-2"
-                      >
-                        <ShieldCheck className="w-4 h-4" />
-                        {!collapsed && <span>AI Protection</span>}
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
 
                     {/* Investor Hub */}
                     <SidebarMenuItem>
