@@ -64,9 +64,39 @@ export const useAlertSystem = () => {
     }
   }, [toast]);
 
+  const getPerformanceExplanation = (metricName: string, valueMs: number) => {
+    const seconds = (valueMs / 1000).toFixed(1);
+    const readableTime = valueMs >= 1000 ? `${seconds} seconds` : `${valueMs}ms`;
+    
+    const explanations: Record<string, { title: string; message: string }> = {
+      'Page Load Time': {
+        title: 'Your page is loading slowly',
+        message: `This page took ${readableTime} to load. Try refreshing or check your internet connection.`
+      },
+      'Long Task': {
+        title: 'App is running slowly',
+        message: `Something is slowing down the app (${readableTime}). This usually fixes itself in a moment.`
+      },
+      'API Call': {
+        title: 'Connecting is taking longer',
+        message: `We're having trouble connecting to our servers (${readableTime}). This may affect loading your data.`
+      },
+      'Database Query': {
+        title: 'Getting your data is slow',
+        message: `Retrieving your information took ${readableTime}. Please wait or try refreshing.`
+      }
+    };
+    
+    // Find matching explanation or use a generic one
+    const key = Object.keys(explanations).find(k => metricName.toLowerCase().includes(k.toLowerCase()));
+    return explanations[key || 'Page Load Time'] || {
+      title: 'Performance issue detected',
+      message: `Something took ${readableTime} which is longer than expected. Try refreshing.`
+    };
+  };
+
   const sendPerformanceAlert = useCallback(async (metricName: string, value: number, threshold: number) => {
     // Only send critical alerts for severe performance issues (2x threshold)
-    // Don't show toasts for warning-level performance issues
     const severity = value > threshold * 2 ? 'critical' : 'warning';
     
     // Skip sending warning alerts - only log them
@@ -75,9 +105,11 @@ export const useAlertSystem = () => {
       return;
     }
     
+    const { title, message } = getPerformanceExplanation(metricName, value);
+    
     await sendAlert({
-      title: 'Performance Threshold Exceeded',
-      message: `${metricName} is ${value}ms (threshold: ${threshold}ms)`,
+      title,
+      message,
       severity,
       source: 'performance_monitor',
       metadata: { metricName, value, threshold }
