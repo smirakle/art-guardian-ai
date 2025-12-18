@@ -134,145 +134,58 @@ const Pricing = () => {
         'Basic image upload & storage',
         'Basic monitoring',
         'Email alerts',
-        'Community support (Coming Soon)'
+        'Community support'
       ],
       limitations: [
         'Personal use only',
-        'No AI features',
-        'No API access'
+        'No AI features'
       ],
       popular: false
     },
     {
-      id: 'student',
-      name: 'Student',
-      icon: Star,
-      description: 'Perfect for students and emerging artists',
-      price: { monthly: 19, yearly: 190 },
-      originalPrice: { monthly: 25, yearly: 250 },
-      discount: '24% OFF',
-      color: 'from-blue-500 to-purple-600',
-      features: [
-        'Up to 1,000 artworks protected',
-        'Basic image upload & storage',
-        'Basic monitoring',
-        'Email alerts',
-        'AI Training protection',
-        'AI threat detection',
-        'Portfolio monitoring',
-        'Watermark protection'
-      ],
-      limitations: [
-        'Limited to personal use',
-        'Standard response time (48hrs)',
-        'No AI agent deployment'
-      ],
-      popular: false
-    },
-    {
-      id: 'starter',
-      name: 'Starter',
-      icon: Shield,
-      description: 'Ideal for freelancers and small creators',
-      price: { monthly: 29, yearly: 290 },
-      originalPrice: { monthly: 39, yearly: 390 },
-      discount: '25% OFF',
-      color: 'from-green-500 to-emerald-600',
-      features: [
-        'Up to 3,500 artworks protected',
-        'Basic image upload & storage',
-        'Basic monitoring',
-        'Email alerts',
-        'AI Training protection',
-        'AI threat detection',
-        'Portfolio monitoring',
-        'Watermark protection',
-        'AI agent deployment (Coming Soon)',
-        'API access (Coming Soon)'
-      ],
-      limitations: [
-        'Commercial use allowed',
-        'Standard takedown assistance',
-        'Limited AI monitoring agents'
-      ],
-      popular: true
-    },
-    {
-      id: 'professional',
-      name: 'Professional',
+      id: 'pro',
+      name: 'Pro',
       icon: Zap,
-      description: 'For professional creators and small teams',
-      price: { monthly: 79, yearly: 790 },
-      originalPrice: { monthly: 99, yearly: 990 },
-      discount: '20% OFF',
-      color: 'from-orange-500 to-red-600',
+      description: 'Everything you need to protect your creative work',
+      price: { monthly: 29, yearly: 290 },
+      originalPrice: { monthly: 49, yearly: 490 },
+      discount: '40% OFF',
+      color: 'from-primary to-accent',
       features: [
         'Up to 50,000 artworks protected',
-        'Basic image upload & storage',
-        'Basic monitoring',
-        'Email alerts',
+        'Advanced image upload & storage',
+        'Real-time monitoring',
+        'Instant email & push alerts',
         'AI Training protection',
         'AI threat detection',
         'Portfolio monitoring',
         'Watermark protection',
-        'AI agent deployment (Coming Soon)',
-        'DMCA filing assistance (Coming Soon)',
-        'API access (Coming Soon)'
-      ],
-      limitations: [],
-      popular: false
-    },
-    {
-      id: 'pro-plus',
-      name: 'Pro Plus',
-      icon: Crown,
-      description: 'Advanced protection for agencies and high-volume creators',
-      price: { monthly: 149, yearly: 1490 },
-      originalPrice: { monthly: 199, yearly: 1990 },
-      discount: '25% OFF',
-      color: 'from-violet-500 to-purple-600',
-      features: [
-        'Up to 100,000 artworks protected',
-        'Basic image upload & storage',
-        'Basic monitoring',
-        'Email alerts',
-        'AI Training protection',
-        'AI threat detection',
-        'Portfolio monitoring',
-        'Watermark protection',
-        'AI agent deployment (Coming Soon)',
-        'Predictive analysis (Coming Soon)',
         'Blockchain verification',
-        'DMCA automation (Coming Soon)',
-        'API access (Coming Soon)'
+        'DMCA filing assistance',
+        'Priority support'
       ],
       limitations: [],
       popular: true
     },
     {
       id: 'enterprise',
-      name: 'Enterprise Custom',
+      name: 'Enterprise',
       icon: Building2,
-      description: 'Tailored solutions for large organizations',
+      description: 'Custom solutions for teams and organizations',
       price: { monthly: 'Custom', yearly: 'Custom' },
       originalPrice: null,
       discount: null,
       color: 'from-purple-600 to-pink-600',
       features: [
         'Unlimited artworks protected',
-        'Basic image upload & storage',
-        'Basic monitoring',
-        'Email alerts',
-        'AI Training protection',
-        'AI threat detection',
-        'Portfolio monitoring',
-        'Watermark protection',
-        'Custom AI model training (Coming Soon)',
-        'Predictive analytics (Coming Soon)',
-        'Blockchain integration',
-        'Enterprise SSO (Coming Soon)',
-        'Custom APIs (Coming Soon)',
-        'SLA guarantees (Coming Soon)'
+        'Everything in Pro, plus:',
+        'Custom AI model training',
+        'Dedicated account manager',
+        'Custom integrations & API',
+        'Team management',
+        'Advanced analytics',
+        'SLA guarantees',
+        'White-label options'
       ],
       limitations: [],
       popular: false
@@ -527,7 +440,7 @@ const Pricing = () => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 max-w-5xl mx-auto">
           {plans.map((plan) => {
             const Icon = plan.icon;
             const currentPrice = plan.price[billingCycle];
