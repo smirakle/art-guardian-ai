@@ -200,8 +200,7 @@ const Index = () => {
             <img src={tsmoLogo} alt="TSMO Logo" className="h-[10.5rem] sm:h-[14rem] md:h-[17.5rem] mx-auto object-contain" loading="eager" />
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">Protect Your Art
-Own Your Future</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">Stop Online Art Theft. Protect Your Portfolio.</h1>
 
           
           
