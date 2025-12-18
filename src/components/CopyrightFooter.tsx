@@ -29,7 +29,7 @@ export const CopyrightFooter = () => {
           <div className="space-y-3">
             <h3 className="font-semibold text-foreground flex items-center gap-2">
               <Building2 className="h-4 w-4" />
-              TSMO Technology LLC
+              TSMO Technology Inc.
             </h3>
             <div className="text-sm text-muted-foreground space-y-1">
               <p className="font-medium">Founded by Shirleena Cunningham</p>
@@ -92,7 +92,7 @@ export const CopyrightFooter = () => {
         <div className="border-t pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-sm text-muted-foreground text-center md:text-left">
-              <p>© {currentYear} TSMO Technology LLC. All rights reserved.</p>
+              <p>© {currentYear} TSMO Technology Inc. All rights reserved.</p>
               <p className="text-xs mt-1">Proprietary & Confidential • Protected by Copyright Law</p>
             </div>
             <div className="text-xs text-muted-foreground text-center md:text-right max-w-md">

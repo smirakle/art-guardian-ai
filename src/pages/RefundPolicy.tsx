@@ -48,7 +48,7 @@ const RefundPolicy = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                TSMO Technology LLC ("TSMO Watch") is committed to customer satisfaction. 
+                TSMO Technology Inc. ("TSMO Watch") is committed to customer satisfaction.
                 We offer refunds under the following conditions:
               </p>
               <div className="grid md:grid-cols-2 gap-4">
