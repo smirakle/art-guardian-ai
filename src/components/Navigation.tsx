@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, Scale, Info, FileText, HelpCircle, Globe, Crown } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, Scale, Info, FileText, HelpCircle, Globe, Crown, BookOpen, Star } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
@@ -29,6 +29,8 @@ const Navigation = () => {
     { path: "/partner-pricing", label: "Partner Program", icon: Crown },
     { path: "/upload", label: "Upload & Protect", icon: Upload },
     { path: "/community", label: t('nav.community'), icon: Users },
+    { path: "/blog", label: "Blog", icon: BookOpen },
+    { path: "/success-stories", label: "Success Stories", icon: Star },
     { path: "/legal-templates", label: "Legal Templates", icon: FileText },
     { path: "/promo-materials", label: "Promo Materials", icon: FileText },
     { path: "/faq", label: "FAQ", icon: HelpCircle },
