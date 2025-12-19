@@ -53,7 +53,7 @@ const Index = () => {
       }
       tag.content = content;
     };
-    setMeta("description", "Protect your art with AI monitoring, blockchain verification, and image forgery detection.");
+    setMeta("description", "Stop online art theft. TSMO monitors the web 24/7 to find stolen artwork, proves ownership with timestamps, and helps you take action. Free to start.");
     let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
     if (!link) {
       link = document.createElement("link");
