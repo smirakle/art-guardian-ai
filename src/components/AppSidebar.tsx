@@ -49,11 +49,9 @@ export function AppSidebar() {
     { path: "/monitoring-hub", label: "Find Copies", icon: Search },
     { path: "/simple-findings", label: "See Copies Found", icon: Eye },
     { path: "/dmca-center", label: "Alerts", icon: AlertTriangle },
+    { path: "/legal-resources", label: "Legal Resources", icon: Scale },
+    { path: "/support", label: "Support", icon: HelpCircle },
     { path: "/settings", label: "Settings", icon: Settings },
-    { path: "/faq", label: "FAQ", icon: HelpCircle },
-    { path: "/about-tsmo", label: "About TSMO", icon: Info },
-    { path: "/contact", label: "Contact", icon: Mail },
-    { path: "/terms-and-privacy", label: "Terms & Privacy", icon: Scale },
   ];
 
   const mainNavItems = [
@@ -68,10 +66,9 @@ export function AppSidebar() {
     { path: "/deepfake-detection", label: "Deepfake Detection", icon: Eye },
     { path: "/forgery-detection", label: "Forgery Detection", icon: Search },
     { path: "/community", label: t('nav.community'), icon: Users },
-    { path: "/legal-templates", label: "Legal Templates", icon: FileText },
     { path: "/dmca-center", label: "DMCA Center", icon: Gavel },
-    
-    { path: "/faq", label: "FAQ", icon: HelpCircle },
+    { path: "/legal-resources", label: "Legal Resources", icon: Scale },
+    { path: "/support", label: "Support", icon: HelpCircle },
     { path: "/roadmap", label: "Roadmap", icon: TrendingUp },
   ];
 

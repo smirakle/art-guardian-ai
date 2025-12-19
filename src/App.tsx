@@ -90,6 +90,8 @@ import ProtectionGuide from "./pages/ProtectionGuide";
 import PressKit from "./pages/PressKit";
 import SimpleFindings from "./pages/SimpleFindings";
 import Findings from "./pages/Findings";
+import LegalResources from "./pages/LegalResources";
+import Support from "./pages/Support";
 
 const queryClient = new QueryClient();
 
@@ -263,6 +265,8 @@ const App = () => {
             <Route path="/demo/visual" element={<AIProtectionVisualDemo />} />
             <Route path="/protection-guide" element={<ProtectionGuide />} />
             <Route path="/press-kit" element={<PressKit />} />
+            <Route path="/legal-resources" element={<LegalResources />} />
+            <Route path="/support" element={<Support />} />
             
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />
