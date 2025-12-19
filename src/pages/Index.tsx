@@ -2,45 +2,30 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
-import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import LeaveReview from "@/components/LeaveReview";
 import ContextualHelp from "@/components/help-system/ContextualHelp";
 import { BugReportButton } from "@/components/BugReportButton";
-import { UserGuide } from "@/components/UserGuide";
-import { homeGuide } from "@/data/userGuides";
-import { Shield, Eye, Activity, Link2, Search, Check, Star, ArrowRight, Zap, Globe, Lock, TrendingUp, Users, Mail, Phone, MapPin, FileImage, Upload, Scan, Bot, Play, ChevronRight, FileText, Scale, Building, Heart, ExternalLink, UserX, Calendar, Info, Bell, Sparkles } from "lucide-react";
-import { ShieldCheck, EyeOff, Fingerprint, Code2, BadgeCheck } from "lucide-react";
+import { Shield, Eye, Search, ArrowRight, Zap, Globe, FileText, Play, ChevronRight, Scale, Bell } from "lucide-react";
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import bizWeeklyBanner from "@/assets/Biz_Weekly.png";
-import MonitoringFlow from "@/components/MonitoringFlow";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import OnboardingTour from "@/components/OnboardingTour";
 import DemoEnvironment from "@/components/investor/DemoEnvironment";
-import MobileAppCTA from "@/components/MobileAppCTA";
 import ProtectionComparisonShowcase from "@/components/ProtectionComparisonShowcase";
 import TrustBadges from "@/components/TrustBadges";
-import { ProblemToSolutionTransition } from "@/components/ProblemToSolutionTransition";
 import { InstantProtectModal } from "@/components/InstantProtectModal";
 
 const Index = () => {
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const navigate = useNavigate();
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   const [signupEmail, setSignupEmail] = useState('');
+  
   useEffect(() => {
     const title = "TSMO | AI Art Protection & Forgery Detection";
     document.title = title;
@@ -62,7 +47,6 @@ const Index = () => {
     }
     link.href = `${window.location.origin}/`;
 
-    // Organization structured data
     let script = document.querySelector('script[data-ld="org"]') as HTMLScriptElement | null;
     if (!script) {
       script = document.createElement("script");
@@ -78,8 +62,9 @@ const Index = () => {
       logo: window.location.origin + "/favicon.ico"
     });
   }, []);
-  const [demoStep, setDemoStep] = useState(0);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  const [showLiveDemo, setShowLiveDemo] = useState(false);
+  const [showInstantProtect, setShowInstantProtect] = useState(false);
   const [showSalesDialog, setShowSalesDialog] = useState(false);
   const [salesFormData, setSalesFormData] = useState({
     name: "",
@@ -89,70 +74,21 @@ const Index = () => {
     message: ""
   });
   const [isSendingSales, setIsSendingSales] = useState(false);
-  const [showOnboardingTour, setShowOnboardingTour] = useState(false);
-  const [showLiveDemo, setShowLiveDemo] = useState(false);
-  const [showSolutionsDialog, setShowSolutionsDialog] = useState(false);
-  const [showInstantProtect, setShowInstantProtect] = useState(false);
-  const startDemo = () => {
-    setIsAnalyzing(true);
-    setDemoStep(1);
 
-    // Simulate analysis steps
-    setTimeout(() => setDemoStep(2), 2000);
-    setTimeout(() => setDemoStep(3), 4000);
-    setTimeout(() => setDemoStep(4), 6000);
-    setTimeout(() => {
-      setDemoStep(5);
-      setIsAnalyzing(false);
-    }, 8000);
-  };
-  const resetDemo = () => {
-    setDemoStep(0);
-    setIsAnalyzing(false);
-  };
-  const handlePricingPlan = (plan: string) => {
-    if (plan === "Contact Sales") {
-      setSalesFormData(prev => ({
-        ...prev,
-        interestedPlan: "Enterprise"
-      }));
-      setShowSalesDialog(true);
-    } else {
-      toast({
-        title: `${plan} Plan Selected`,
-        description: "Redirecting to checkout..."
-      });
-      // Navigate to checkout
-      setTimeout(() => {
-        navigate(`/checkout?plan=${plan.toLowerCase()}`);
-      }, 1500);
-    }
-  };
   const handleSalesInquiry = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSendingSales(true);
     try {
-      const {
-        data,
-        error
-      } = await supabase.functions.invoke("send-sales-inquiry", {
+      const { data, error } = await supabase.functions.invoke("send-sales-inquiry", {
         body: salesFormData
       });
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
       toast({
         title: "Sales Inquiry Sent!",
         description: "Thank you for your interest. Our sales team will contact you within 24 hours."
       });
       setShowSalesDialog(false);
-      setSalesFormData({
-        name: "",
-        email: "",
-        company: "",
-        interestedPlan: "",
-        message: ""
-      });
+      setSalesFormData({ name: "", email: "", company: "", interestedPlan: "", message: "" });
     } catch (error) {
       console.error("Error sending sales inquiry:", error);
       toast({
@@ -164,18 +100,12 @@ const Index = () => {
       setIsSendingSales(false);
     }
   };
-  const handleFreeTrial = (plan: string) => {
-    toast({
-      title: "Free Trial Started!",
-      description: `Your 5-day ${plan} trial is now active. Check your email for setup instructions.`
-    });
-  };
-  return <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      {/* User Experience Enhancements */}
-      <ContextualHelp />
 
-      {/* Instant Protect Modal - Guest Mode */}
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <ContextualHelp />
       <InstantProtectModal open={showInstantProtect} onOpenChange={setShowInstantProtect} />
+      
       {/* Live Demo Modal */}
       <Dialog open={showLiveDemo} onOpenChange={setShowLiveDemo}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
@@ -189,22 +119,20 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Removed floating navigation for cleaner mobile experience */}
-
-
-      {/* Hero Section - Simplified for Conversion */}
+      {/* Hero Section */}
       <section className="pt-16 sm:pt-20 pb-12 px-4">
         <div className="container mx-auto text-center max-w-4xl">
-          {/* TSMO Logo - Dramatically Reduced */}
           <div className="mb-6">
             <img src={tsmoLogo} alt="TSMO Logo" className="h-[10.5rem] sm:h-[14rem] md:h-[17.5rem] mx-auto object-contain" loading="eager" />
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">Stop Online Art Theft. Protect Your Portfolio.</h1>
-
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
+            Stop Online Art Theft. Protect Your Portfolio.
+          </h1>
           
-          
-          <p className="text-base sm:text-lg text-muted-foreground/80 mb-8 max-w-2xl mx-auto italic font-sans text-center font-light">For working artists who can't afford art theft: protect your portfolio with monitoring, alerts, and ownership proof.</p>
+          <p className="text-base sm:text-lg text-muted-foreground/80 mb-8 max-w-2xl mx-auto italic font-sans text-center font-light">
+            For working artists who can't afford art theft: protect your portfolio with monitoring, alerts, and ownership proof.
+          </p>
 
           {/* Primary Sign-Up CTA */}
           <div className="max-w-md mx-auto mb-6">
@@ -225,9 +153,7 @@ const Index = () => {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              No credit card required
-            </p>
+            <p className="text-xs text-muted-foreground mt-2">No credit card required</p>
           </div>
 
           {/* Secondary CTAs */}
@@ -244,9 +170,7 @@ const Index = () => {
 
           {/* Try It Now - Guest Mode CTA */}
           <div className="border-t border-border/30 pt-6 mb-8">
-            <p className="text-sm text-muted-foreground mb-3">
-              Want to see it work first?
-            </p>
+            <p className="text-sm text-muted-foreground mb-3">Want to see it work first?</p>
             <Button 
               size="lg" 
               variant="outline"
@@ -261,18 +185,14 @@ const Index = () => {
             </p>
           </div>
 
-          {/* Key Features - Mobile Optimized */}
+          {/* Key Features */}
           <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-8">
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">
-                <Search className="w-6 h-6 sm:w-8 sm:h-8 mx-auto" />
-              </div>
+              <Search className="w-6 h-6 sm:w-8 sm:h-8 mx-auto text-primary mb-1" />
               <div className="text-xs sm:text-sm text-muted-foreground">Reverse Image Search</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">
-                <Link2 className="w-6 h-6 sm:w-8 sm:h-8 mx-auto" />
-              </div>
+              <Shield className="w-6 h-6 sm:w-8 sm:h-8 mx-auto text-primary mb-1" />
               <div className="text-xs sm:text-sm text-muted-foreground">Ownership Timestamps</div>
               <div className="text-[10px] text-muted-foreground/60 mt-0.5">Not a crypto product</div>
             </div>
@@ -296,242 +216,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* STEP 2: Industry Challenge - The Problem */}
-      <section className="bg-gradient-to-b from-amber-50/80 to-orange-50/50 dark:from-amber-950/20 dark:to-orange-950/10 py-12 px-4 border-y border-amber-200/50 dark:border-amber-800/30">
-        <div className="container mx-auto max-w-5xl">
-          <div className="text-center mb-10">
-            <Badge variant="outline" className="mb-4 border-amber-400 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50">
-              <Info className="w-3 h-3 mr-1" />
-              Industry Challenge
-            </Badge>
-            <h2 className="text-2xl md:text-3xl font-bold mb-3 text-amber-900 dark:text-amber-100">
-              The Hidden Cost of Unprotected Content
-            </h2>
-            <p className="text-base text-amber-800/80 dark:text-amber-200/80 max-w-2xl mx-auto">
-              Understanding the challenges helps you make informed decisions about protecting your creative work.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
-              <CardContent className="p-5 text-center">
-                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <TrendingUp className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">~50%</div>
-                <p className="text-sm text-muted-foreground">
-                  Of creators have had their content stolen or used without permission by brands
-                </p>
-                <a 
-                  href="https://massive.io/newsroom/2024-survey-finds-creator-user-generated-content-stole-by-brands/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
-                >
-                  Source: MASV / Dynata 2024 →
-                </a>
-              </CardContent>
-            </Card>
-
-            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
-              <CardContent className="p-5 text-center">
-                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Bot className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">57%</div>
-                <p className="text-sm text-muted-foreground">
-                  Of US artists worry about financial vulnerability including food, housing & medical care
-                </p>
-                <a 
-                  href="https://www.mellon.org/news/new-national-study-offers-fresh-insight-lives-livelihoods-us-artists" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
-                >
-                  Source: Mellon Foundation 2025 →
-                </a>
-              </CardContent>
-            </Card>
-
-            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
-              <CardContent className="p-5 text-center">
-                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Search className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">71%</div>
-                <p className="text-sm text-muted-foreground">
-                  Of US independent creators earn less than $30,000 annually from creative work
-                </p>
-                <a 
-                  href="https://www.mbopartners.com/state-of-independence/creator-economy-report/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
-                >
-                  Source: MBO Partners 2023 →
-                </a>
-              </CardContent>
-            </Card>
-
-            <Card className="border-amber-200/60 dark:border-amber-700/40 bg-card/90 backdrop-blur-sm hover-lift">
-              <CardContent className="p-5 text-center">
-                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Scale className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-400 mb-2">34%</div>
-                <p className="text-sm text-muted-foreground">
-                  Less likely to survive 5 years if your intellectual property rights are infringed
-                </p>
-                <a 
-                  href="https://www.oecd.org/en/publications/risks-of-illicit-trade-in-counterfeits-to-small-and-medium-sized-firms_fa6d5089-en.html" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-xs text-muted-foreground/70 hover:text-amber-600 mt-2 inline-flex items-center gap-1 transition-colors"
-                >
-                  Source: OECD / EUIPO 2023 →
-                </a>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="text-center mt-8">
-            <Button 
-              variant="outline" 
-              className="border-amber-400 text-amber-700 hover:bg-amber-100 dark:border-amber-600 dark:text-amber-400 dark:hover:bg-amber-950/50"
-              onClick={() => setShowSolutionsDialog(true)}
-            >
-              See How We Solve This
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-
-          {/* Solutions Dialog */}
-          <Dialog open={showSolutionsDialog} onOpenChange={setShowSolutionsDialog}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="text-2xl">How TSMO Protects Creators</DialogTitle>
-                <DialogDescription>
-                  Our platform directly addresses the challenges independent creators face with comprehensive protection tools.
-                </DialogDescription>
-              </DialogHeader>
-              
-              <div className="grid md:grid-cols-2 gap-4 mt-4">
-                <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
-                  <CardContent className="p-5">
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-                        <Eye className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <Badge variant="outline" className="text-xs mb-1 border-amber-400 text-amber-700">Problem: ~50% stolen</Badge>
-                        <h4 className="font-semibold text-base">24/7 AI Monitoring & Detection</h4>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Our AI continuously scans platforms, marketplaces, and social media—detecting unauthorized use of your work within hours, not months.
-                    </p>
-                    <ul className="text-xs text-muted-foreground space-y-1">
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Real-time platform monitoring</li>
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Visual fingerprint matching</li>
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Instant theft alerts</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-secondary/20 bg-gradient-to-br from-secondary/5 to-transparent">
-                  <CardContent className="p-5">
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center shrink-0">
-                        <Scale className="w-5 h-5 text-secondary" />
-                      </div>
-                      <div>
-                        <Badge variant="outline" className="text-xs mb-1 border-amber-400 text-amber-700">Problem: 57% financial worry</Badge>
-                        <h4 className="font-semibold text-base">Automated DMCA & Legal Support</h4>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Free takedown notices, legal templates, and IP lawyer access help creators recover lost income from infringement quickly and affordably.
-                    </p>
-                    <ul className="text-xs text-muted-foreground space-y-1">
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> One-click DMCA notices</li>
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Legal template library</li>
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> IP attorney network</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-transparent">
-                  <CardContent className="p-5">
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center shrink-0">
-                        <BadgeCheck className="w-5 h-5 text-accent" />
-                      </div>
-                      <div>
-                        <Badge variant="outline" className="text-xs mb-1 border-amber-400 text-amber-700">Problem: 71% earn &lt;$30K</Badge>
-                        <h4 className="font-semibold text-base">Proof of Ownership & Licensing</h4>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Timestamped ownership proofs and licensing tools help you monetize your work and prove ownership for brand partnerships and commercial opportunities.
-                    </p>
-                    <ul className="text-xs text-muted-foreground space-y-1">
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Timestamped ownership proofs</li>
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Commercial licensing tools</li>
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Ownership verification</li>
-                    </ul>
-                    <p className="text-[10px] text-muted-foreground/70 mt-2 italic">
-                      Not a crypto investment product. No tokens, trading, or custody.
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
-                  <CardContent className="p-5">
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-                        <Shield className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <Badge variant="outline" className="text-xs mb-1 border-amber-400 text-amber-700">Problem: 34% survival risk</Badge>
-                        <h4 className="font-semibold text-base">Proactive IP Protection</h4>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Invisible watermarking, AI training detection, and real-time alerts prevent infringement before it damages your business and reputation.
-                    </p>
-                    <ul className="text-xs text-muted-foreground space-y-1">
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Invisible watermarks</li>
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> AI training detection</li>
-                      <li className="flex items-center gap-2"><Check className="w-3 h-3 text-green-500" /> Preventive protection</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <DialogFooter className="mt-6 flex-col sm:flex-row gap-3">
-                <Button variant="outline" onClick={() => setShowSolutionsDialog(false)}>
-                  Close
-                </Button>
-                <Button 
-                  className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
-                  onClick={() => {
-                    setShowSolutionsDialog(false);
-                    navigate("/upload");
-                  }}
-                >
-                  Start Protecting Your Work
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </section>
-
-      {/* STEP 3: Problem to Solution Transition */}
-      <ProblemToSolutionTransition />
-
-      {/* STEP 4: How It Works & Features - The Solution */}
+      {/* How It Works */}
       <section id="how-it-works" className="py-20 px-4 bg-muted/30">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
@@ -544,40 +229,24 @@ const Index = () => {
           {/* Simple 4-Step Process */}
           <div className="grid md:grid-cols-4 gap-8 mb-16">
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
-                1
-              </div>
+              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">1</div>
               <h3 className="text-xl font-semibold mb-3">Add Your Art</h3>
-              <p className="text-muted-foreground">
-                Just drag and drop your image. We'll remember what it looks like.
-              </p>
+              <p className="text-muted-foreground">Just drag and drop your image. We'll remember what it looks like.</p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
-                2
-              </div>
+              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">2</div>
               <h3 className="text-xl font-semibold mb-3">We Watch the Internet</h3>
-              <p className="text-muted-foreground">
-                We check thousands of websites every day, looking for copies of your art.
-              </p>
+              <p className="text-muted-foreground">We check thousands of websites every day, looking for copies of your art.</p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
-                3
-              </div>
+              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">3</div>
               <h3 className="text-xl font-semibold mb-3">We Alert You</h3>
-              <p className="text-muted-foreground">
-                Found a copy? We'll email you right away with a screenshot and link.
-              </p>
+              <p className="text-muted-foreground">Found a copy? We'll email you right away with a screenshot and link.</p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
-                4
-              </div>
+              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">4</div>
               <h3 className="text-xl font-semibold mb-3">We Help You Stop It</h3>
-              <p className="text-muted-foreground">
-                Click one button to send a "take it down" notice. No lawyer needed.
-              </p>
+              <p className="text-muted-foreground">Click one button to send a "take it down" notice. No lawyer needed.</p>
             </div>
           </div>
 
@@ -640,16 +309,14 @@ const Index = () => {
             </Card>
           </div>
 
-          {/* Simplified Additional Capabilities - Reduced to 3 */}
+          {/* Additional Capabilities */}
           <div className="grid md:grid-cols-3 gap-6 mb-12">
             <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
               <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Bell className="h-6 w-6 text-white" />
               </div>
               <h3 className="font-semibold mb-2">📧 Email & Phone Alerts</h3>
-              <p className="text-sm text-muted-foreground">
-                We text you when something urgent happens
-              </p>
+              <p className="text-sm text-muted-foreground">We text you when something urgent happens</p>
             </div>
 
             <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
@@ -657,9 +324,7 @@ const Index = () => {
                 <Scale className="h-6 w-6 text-white" />
               </div>
               <h3 className="font-semibold mb-2">⚖️ Legal Help When Needed</h3>
-              <p className="text-sm text-muted-foreground">
-                Talk to a real copyright lawyer if things get serious
-              </p>
+              <p className="text-sm text-muted-foreground">Talk to a real copyright lawyer if things get serious</p>
             </div>
 
             <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
@@ -667,9 +332,7 @@ const Index = () => {
                 <Globe className="h-6 w-6 text-white" />
               </div>
               <h3 className="font-semibold mb-2">🌍 Works Everywhere</h3>
-              <p className="text-sm text-muted-foreground">
-                We check websites in every country, in every language
-              </p>
+              <p className="text-sm text-muted-foreground">We check websites in every country, in every language</p>
             </div>
           </div>
 
@@ -683,13 +346,13 @@ const Index = () => {
         </div>
       </section>
 
-      {/* STEP 5: Protection Comparison Showcase - Proof */}
+      {/* Protection Comparison Showcase */}
       <ProtectionComparisonShowcase />
 
-      {/* STEP 6: Trust Badges - Social Proof */}
+      {/* Trust Badges */}
       <TrustBadges />
 
-      {/* STEP 7: Mid-Page CTA - Conversion */}
+      {/* Final CTA */}
       <section className="py-16 px-4 bg-gradient-to-r from-primary/10 to-accent/10">
         <div className="container mx-auto max-w-3xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -710,104 +373,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Legal Resources Section */}
-      <section className="py-20 px-4 bg-gray-50">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Legal Resources & Support</h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Access professional legal templates and connect with IP specialists to protect your creative work.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow p-6">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <FileText className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-lg font-bold mb-3">Legal Templates</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Professional legal documents ready to download and customize.
-                </p>
-                <div className="text-lg font-bold text-green-600 mb-4">
-                  FREE
-                </div>
-                <Button size="sm" className="w-full" onClick={() => navigate("/legal-templates")}>
-                  Browse Templates
-                </Button>
-              </div>
-            </Card>
-
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow p-6">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Scale className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-lg font-bold mb-3">IP Lawyers Directory</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Connect with verified intellectual property attorneys.
-                </p>
-                <div className="text-xs text-muted-foreground mb-4">
-                  <div>Verified specialists</div>
-                  <div>Free consultations available</div>
-                </div>
-                <Button size="sm" className="w-full" onClick={() => navigate("/lawyers")}>
-                  Find a Lawyer
-                </Button>
-              </div>
-            </Card>
-
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow p-6">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Building className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-lg font-bold mb-3">Official Authorities</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Government copyright offices and intellectual property organizations.
-                </p>
-                <div className="space-y-2">
-                  <a href="https://www.copyright.gov" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors">
-                    US Copyright Office <ExternalLink className="ml-1 h-3 w-3" />
-                  </a>
-                  <a href="https://www.wipo.int" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors">
-                    WIPO <ExternalLink className="ml-1 h-3 w-3" />
-                  </a>
-                  <a href="https://euipo.europa.eu" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors">
-                    EU Copyright <ExternalLink className="ml-1 h-3 w-3" />
-                  </a>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow p-6">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Heart className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-lg font-bold mb-3">Legal Support Network</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Organizations providing legal aid and support for artists.
-                </p>
-                <div className="space-y-2">
-                  <a href="https://www.vlaa.org" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors">
-                    Volunteer Lawyers for the Arts <ExternalLink className="ml-1 h-3 w-3" />
-                  </a>
-                  <a href="https://www.cala.org" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors">
-                    California Lawyers for the Arts <ExternalLink className="ml-1 h-3 w-3" />
-                  </a>
-                  <a href="https://www.legalaidnyc.org" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center text-xs text-primary hover:text-primary/80 transition-colors">
-                    Legal Aid Society <ExternalLink className="ml-1 h-3 w-3" />
-                  </a>
-                </div>
-              </div>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-
       {/* Sales Dialog */}
       <Dialog open={showSalesDialog} onOpenChange={setShowSalesDialog}>
         <DialogContent className="sm:max-w-[500px]">
@@ -821,32 +386,45 @@ const Index = () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="name">Name *</Label>
-                <Input id="name" required value={salesFormData.name} onChange={e => setSalesFormData(prev => ({
-                ...prev,
-                name: e.target.value
-              }))} placeholder="Your full name" />
+                <Input 
+                  id="name" 
+                  required 
+                  value={salesFormData.name} 
+                  onChange={e => setSalesFormData(prev => ({ ...prev, name: e.target.value }))} 
+                  placeholder="Your full name" 
+                />
               </div>
               <div>
                 <Label htmlFor="email">Email *</Label>
-                <Input id="email" type="email" required value={salesFormData.email} onChange={e => setSalesFormData(prev => ({
-                ...prev,
-                email: e.target.value
-              }))} placeholder="your@email.com" />
+                <Input 
+                  id="email" 
+                  type="email" 
+                  required 
+                  value={salesFormData.email} 
+                  onChange={e => setSalesFormData(prev => ({ ...prev, email: e.target.value }))} 
+                  placeholder="your@email.com" 
+                />
               </div>
             </div>
             <div>
               <Label htmlFor="company">Company</Label>
-              <Input id="company" value={salesFormData.company} onChange={e => setSalesFormData(prev => ({
-              ...prev,
-              company: e.target.value
-            }))} placeholder="Your company name (optional)" />
+              <Input 
+                id="company" 
+                value={salesFormData.company} 
+                onChange={e => setSalesFormData(prev => ({ ...prev, company: e.target.value }))} 
+                placeholder="Your company name (optional)" 
+              />
             </div>
             <div>
               <Label htmlFor="message">Message *</Label>
-              <Textarea id="message" required rows={4} value={salesFormData.message} onChange={e => setSalesFormData(prev => ({
-              ...prev,
-              message: e.target.value
-            }))} placeholder="Tell us about your requirements and how many artworks you need to protect..." />
+              <Textarea 
+                id="message" 
+                required 
+                rows={4} 
+                value={salesFormData.message} 
+                onChange={e => setSalesFormData(prev => ({ ...prev, message: e.target.value }))} 
+                placeholder="Tell us about your requirements..." 
+              />
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setShowSalesDialog(false)} disabled={isSendingSales}>
@@ -860,41 +438,9 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Platform Status Banner */}
-      <section className="py-4 px-4 bg-gradient-to-r from-yellow-50 to-orange-50 border-t border-yellow-200">
-        <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="font-medium text-yellow-800">
-                Platform Status: Live & Active
-              </span>
-              <Badge variant="outline" className="text-green-700 border-green-300 text-xs">
-                Beta
-              </Badge>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-yellow-700">
-                Core features ready • Updates weekly
-              </span>
-              <Button variant="ghost" size="sm" className="text-yellow-700 hover:bg-yellow-100 h-8 text-xs" onClick={() => navigate("/press-kit")}>
-                Press Kit
-                <ChevronRight className="ml-1 h-3 w-3" />
-              </Button>
-              <Button variant="ghost" size="sm" className="text-yellow-700 hover:bg-yellow-100 h-8 text-xs" onClick={() => navigate("/roadmap")}>
-                Roadmap
-                <ChevronRight className="ml-1 h-3 w-3" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Leave a Review Section */}
-      <LeaveReview />
-
-      {/* Bug Report Button */}
       <BugReportButton />
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
