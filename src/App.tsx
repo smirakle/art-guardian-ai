@@ -92,6 +92,12 @@ import SimpleFindings from "./pages/SimpleFindings";
 import Findings from "./pages/Findings";
 import LegalResources from "./pages/LegalResources";
 import Support from "./pages/Support";
+import ReverseImageSearch from "./pages/ReverseImageSearch";
+import StopArtTheft from "./pages/StopArtTheft";
+import AIProtectionArtists from "./pages/AIProtectionArtists";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import SuccessStories from "./pages/SuccessStories";
 
 const queryClient = new QueryClient();
 
@@ -267,6 +273,12 @@ const App = () => {
             <Route path="/press-kit" element={<PressKit />} />
             <Route path="/legal-resources" element={<LegalResources />} />
             <Route path="/support" element={<Support />} />
+            <Route path="/reverse-image-search" element={<ReverseImageSearch />} />
+            <Route path="/stop-art-theft" element={<StopArtTheft />} />
+            <Route path="/ai-protection-artists" element={<AIProtectionArtists />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/success-stories" element={<SuccessStories />} />
             
                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                        <Route path="*" element={<NotFound />} />
