@@ -131,7 +131,7 @@ const Index = () => {
           </h1>
           
           <p className="text-base sm:text-lg text-muted-foreground/80 mb-8 max-w-2xl mx-auto italic font-sans text-center font-light">
-            For working artists who can't afford art theft: protect your portfolio with monitoring, alerts, and ownership proof.
+            TSMO Watch protects your creative pieces from AI training. Upload your work, apply style cloaking, download the protected image, and upload it to your portfolio. And monitor it 24/7 with TSMO Watch reverse image search.
           </p>
 
           {/* Primary Sign-Up CTA */}
