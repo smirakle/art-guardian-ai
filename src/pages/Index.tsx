@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import ContextualHelp from "@/components/help-system/ContextualHelp";
 import { BugReportButton } from "@/components/BugReportButton";
-import { Shield, Eye, Search, ArrowRight, Zap, Globe, FileText, Play, ChevronRight, Scale, Bell } from "lucide-react";
+import { Shield, Eye, Search, ArrowRight, Zap, Globe, FileText, Play, ChevronRight, Scale, Bell, Upload } from "lucide-react";
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import bizWeeklyBanner from "@/assets/Biz_Weekly.png";
 import DemoEnvironment from "@/components/investor/DemoEnvironment";
@@ -217,122 +217,38 @@ const Index = () => {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-20 px-4 bg-muted/30">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">How We Keep Your Art Safe</h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              We watch the internet for copies of your art. If someone steals it, we'll tell you and help you stop them.
-            </p>
+      <section id="how-it-works" className="py-16 px-4 bg-muted/30">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-bold mb-3">How We Keep Your Art Safe</h2>
+            <p className="text-lg text-muted-foreground">We watch the internet for copies of your art.</p>
           </div>
 
-          {/* Simple 4-Step Process */}
-          <div className="grid md:grid-cols-4 gap-8 mb-16">
+          {/* Simple 4-Step Process - Icons + Titles Only */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">1</div>
-              <h3 className="text-xl font-semibold mb-3">Add Your Art</h3>
-              <p className="text-muted-foreground">Just drag and drop your image. We'll remember what it looks like.</p>
+              <div className="w-14 h-14 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-3">
+                <Upload className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-semibold">Upload</h3>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">2</div>
-              <h3 className="text-xl font-semibold mb-3">We Watch the Internet</h3>
-              <p className="text-muted-foreground">We check thousands of websites every day, looking for copies of your art.</p>
+              <div className="w-14 h-14 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-3">
+                <Search className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="font-semibold">We Scan</h3>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">3</div>
-              <h3 className="text-xl font-semibold mb-3">We Alert You</h3>
-              <p className="text-muted-foreground">Found a copy? We'll email you right away with a screenshot and link.</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">4</div>
-              <h3 className="text-xl font-semibold mb-3">We Help You Stop It</h3>
-              <p className="text-muted-foreground">Click one button to send a "take it down" notice. No lawyer needed.</p>
-            </div>
-          </div>
-
-          {/* Benefit-Focused Feature Cards */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <Search className="h-6 w-6 text-primary" />
-                </div>
-                <CardTitle className="flex items-center gap-2">
-                  <span>🔍</span> Find Stolen Art
-                </CardTitle>
-                <CardDescription>
-                  We recognize your art even if someone changes the colors, crops it, or adds filters.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <Eye className="h-6 w-6 text-primary" />
-                </div>
-                <CardTitle className="flex items-center gap-2">
-                  <span>👁️</span> Always Watching
-                </CardTitle>
-                <CardDescription>
-                  We never sleep. We're checking the internet for your art right now.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <FileText className="h-6 w-6 text-primary" />
-                </div>
-                <CardTitle className="flex items-center gap-2">
-                  <span>📜</span> Prove It's Yours
-                </CardTitle>
-                <CardDescription>
-                  Get a digital certificate that proves you created it first.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <Zap className="h-6 w-6 text-primary" />
-                </div>
-                <CardTitle className="flex items-center gap-2">
-                  <span>⚡</span> Stop Thieves Fast
-                </CardTitle>
-                <CardDescription>
-                  Most artists find stolen art and get it removed within 48 hours.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </div>
-
-          {/* Additional Capabilities */}
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <div className="w-14 h-14 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-3">
                 <Bell className="h-6 w-6 text-white" />
               </div>
-              <h3 className="font-semibold mb-2">📧 Email & Phone Alerts</h3>
-              <p className="text-sm text-muted-foreground">We text you when something urgent happens</p>
+              <h3 className="font-semibold">Get Alerted</h3>
             </div>
-
-            <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <Scale className="h-6 w-6 text-white" />
+            <div className="text-center">
+              <div className="w-14 h-14 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-3">
+                <Shield className="h-6 w-6 text-white" />
               </div>
-              <h3 className="font-semibold mb-2">⚖️ Legal Help When Needed</h3>
-              <p className="text-sm text-muted-foreground">Talk to a real copyright lawyer if things get serious</p>
-            </div>
-
-            <div className="text-center p-6 bg-card/60 backdrop-blur-sm rounded-lg border border-border/50 hover-lift">
-              <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <Globe className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="font-semibold mb-2">🌍 Works Everywhere</h3>
-              <p className="text-sm text-muted-foreground">We check websites in every country, in every language</p>
+              <h3 className="font-semibold">Take It Down</h3>
             </div>
           </div>
 
