@@ -1301,6 +1301,60 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string
+          excerpt: string | null
+          featured_image_url: string | null
+          id: string
+          published_at: string | null
+          scheduled_at: string | null
+          slug: string
+          social_media_posted: boolean | null
+          status: string
+          tags: string[] | null
+          title: string
+          twitter_post_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string
+          excerpt?: string | null
+          featured_image_url?: string | null
+          id?: string
+          published_at?: string | null
+          scheduled_at?: string | null
+          slug: string
+          social_media_posted?: boolean | null
+          status?: string
+          tags?: string[] | null
+          title: string
+          twitter_post_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string
+          excerpt?: string | null
+          featured_image_url?: string | null
+          id?: string
+          published_at?: string | null
+          scheduled_at?: string | null
+          slug?: string
+          social_media_posted?: boolean | null
+          status?: string
+          tags?: string[] | null
+          title?: string
+          twitter_post_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cache_statistics: {
         Row: {
           cache_key: string
