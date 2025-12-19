@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import ContextualHelp from "@/components/help-system/ContextualHelp";
 import { BugReportButton } from "@/components/BugReportButton";
-import { Shield, Eye, Search, ArrowRight, Zap, Globe, FileText, Play, ChevronRight, Scale, Bell, Upload } from "lucide-react";
+import { Shield, Eye, Search, ArrowRight, Zap, Globe, FileText, Play, ChevronRight, Scale, Bell, Upload, BookOpen, Clock } from "lucide-react";
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import bizWeeklyBanner from "@/assets/Biz_Weekly.png";
 import DemoEnvironment from "@/components/investor/DemoEnvironment";
@@ -265,6 +265,100 @@ const Index = () => {
 
       {/* Trust Badges */}
       <TrustBadges />
+
+      {/* Blog Section */}
+      <section className="py-16 px-4 bg-background">
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center mb-10">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <BookOpen className="h-6 w-6 text-primary" />
+              <h2 className="text-3xl md:text-4xl font-bold">From Our Blog</h2>
+            </div>
+            <p className="text-lg text-muted-foreground">Tips, guides, and insights for protecting your creative work</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            {/* Blog Post 1 */}
+            <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/30">
+              <CardHeader className="pb-3">
+                <Badge variant="secondary" className="w-fit mb-2">Protection</Badge>
+                <CardTitle className="text-lg group-hover:text-primary transition-colors line-clamp-2">
+                  How to Find If Your Art Is Being Stolen Online
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
+                  Learn the essential techniques to discover if your artwork is being used without permission across the internet.
+                </p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Clock className="h-3 w-3" />
+                    <span>8 min read</span>
+                  </div>
+                  <Link to="/blog/how-to-find-if-your-art-is-being-stolen-online" className="text-sm text-primary hover:underline flex items-center gap-1">
+                    Read more <ChevronRight className="h-3 w-3" />
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Blog Post 2 */}
+            <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/30">
+              <CardHeader className="pb-3">
+                <Badge variant="secondary" className="w-fit mb-2">AI</Badge>
+                <CardTitle className="text-lg group-hover:text-primary transition-colors line-clamp-2">
+                  AI Training: What Artists Need to Know in 2025
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
+                  Understanding how AI companies use artwork for training and what you can do to protect your creative rights.
+                </p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Clock className="h-3 w-3" />
+                    <span>10 min read</span>
+                  </div>
+                  <Link to="/blog/ai-training-what-artists-need-to-know-2025" className="text-sm text-primary hover:underline flex items-center gap-1">
+                    Read more <ChevronRight className="h-3 w-3" />
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Blog Post 3 */}
+            <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/30">
+              <CardHeader className="pb-3">
+                <Badge variant="secondary" className="w-fit mb-2">Legal</Badge>
+                <CardTitle className="text-lg group-hover:text-primary transition-colors line-clamp-2">
+                  DMCA Takedown Guide for Digital Artists
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
+                  A step-by-step guide to filing DMCA takedown notices and protecting your copyright online.
+                </p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Clock className="h-3 w-3" />
+                    <span>12 min read</span>
+                  </div>
+                  <Link to="/blog/dmca-takedown-guide-digital-artists" className="text-sm text-primary hover:underline flex items-center gap-1">
+                    Read more <ChevronRight className="h-3 w-3" />
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center">
+            <Button variant="outline" size="lg" onClick={() => navigate("/blog")}>
+              View All Articles
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </section>
 
       {/* Final CTA */}
       <section className="py-16 px-4 bg-gradient-to-r from-primary/10 to-accent/10">
