@@ -31,221 +31,307 @@ const blogPostsData: Record<string, BlogPostData> = {
   "how-to-find-if-your-art-is-being-stolen-online": {
     slug: "how-to-find-if-your-art-is-being-stolen-online",
     title: "How to Find If Your Art Is Being Stolen Online",
-    excerpt: "A step-by-step guide to discovering unauthorized use of your artwork across the internet.",
+    excerpt: "A friendly guide to discovering if someone is using your artwork without permission.",
     category: "Protection",
     readTime: "8 min read",
     date: "2025-12-15",
     author: "TSMO Team",
     icon: Shield,
     content: `
-## Why You Need to Monitor Your Art
+## Let's be real: art theft sucks
 
-As a digital artist, your work is constantly at risk. Studies show that **85% of stolen artwork goes undetected** by the original creator. This means thieves are profiting from your creativity without your knowledge.
+You spent hours—maybe days—on a piece. You poured your heart into it. And then some random person on the internet decides it's theirs now. No credit. No payment. Just... stolen.
 
-## Step 1: Start with Google Reverse Image Search
+The frustrating part? Most artists never even find out. Studies suggest that **85% of stolen art goes completely unnoticed** by the original creator. That's a lot of thieves getting away with it.
 
-The most basic (but limited) approach:
+But here's the good news: you can fight back. Let me show you how.
 
-1. Go to [Google Images](https://images.google.com)
-2. Click the camera icon
-3. Upload your image or paste its URL
-4. Review the results
+## Start with the basics: Google Reverse Image Search
 
-**Limitation:** Google only indexes a fraction of the internet and misses many platforms where theft is common, like Instagram, TikTok, and print-on-demand sites.
+This is the free, easy option. Here's how it works:
 
-## Step 2: Check Popular Print-on-Demand Sites
+1. Head over to [Google Images](https://images.google.com)
+2. Click the little camera icon in the search bar
+3. Upload your artwork (or paste a link to it)
+4. See what comes up
 
-Art theft is rampant on POD platforms. Manually search:
+**Fair warning though:** Google only sees a small slice of the internet. It completely misses Instagram, TikTok, most print-on-demand sites, and tons of other places where theft actually happens. Think of it as checking one room in a very big house.
 
+## Check where the thieves hang out
+
+Art theft is especially bad on print-on-demand sites. These are places where anyone can upload a design and sell it on t-shirts, mugs, posters—you name it.
+
+The usual suspects:
 - Redbubble
 - Society6
 - Teepublic
 - Zazzle
 - Amazon Merch
 
-Search for keywords related to your art style or subject matter.
+Try searching for keywords related to your art. If you drew a purple dragon, search "purple dragon." You might be surprised (and angry) at what you find.
 
-## Step 3: Use Specialized Tools Like TSMO
+## Get help from tools built for artists
 
-For comprehensive coverage, you need tools designed for artists:
+Look, manually searching every corner of the internet isn't realistic. That's why tools like TSMO exist.
 
-- **Continuous monitoring** across 50+ platforms
-- **AI-powered detection** that finds edited versions
-- **Legal-ready documentation** for takedowns
-- **One-click DMCA filing**
+Here's what we do differently:
+- We scan **50+ platforms** continuously—not just once
+- Our AI catches edited versions of your art (cropped, color-shifted, flipped)
+- We save screenshots and timestamps as legal proof
+- When you find theft, we help you send takedowns with one click
 
-## Step 4: Set Up Google Alerts
+It's like having a guard dog for your portfolio.
 
-Create alerts for:
-- Your artist name
-- Titles of popular works
-- Unique phrases from your descriptions
+## Set up free alerts
 
-## Step 5: Check AI Training Datasets
+Google Alerts is your friend here. Create alerts for:
+- Your artist name or username
+- Titles of your most popular pieces
+- Unique phrases from your art descriptions
 
-Your art may be in datasets like LAION-5B. Tools like [Have I Been Trained](https://haveibeentrained.com) can help, but TSMO provides more comprehensive monitoring.
+Every time those words pop up online, Google will email you. It's not perfect, but it's free and catches some things.
 
-## What to Do When You Find Theft
+## The AI problem (yes, this matters now)
 
-1. **Document everything** - screenshots with timestamps
-2. **Gather evidence** of your original creation
-3. **File a DMCA takedown** - TSMO can automate this
-4. **Consider legal action** for repeat offenders
+Here's something scary: your art might already be inside AI systems. Datasets like LAION-5B contain billions of images scraped from the internet. If your work was online, there's a chance it was grabbed.
 
-## Conclusion
+Sites like "Have I Been Trained" let you check, but TSMO goes further—we monitor these datasets and alert you if your art shows up.
 
-Regular monitoring is essential for protecting your creative work. While manual methods help, automated tools like TSMO provide the comprehensive coverage artists need in today's digital landscape.
+## Okay, I found stolen art. Now what?
+
+Don't panic. Here's your game plan:
+
+1. **Screenshot everything** — get the URL, the date, the page
+2. **Find your original files** — anything that proves you made it first
+3. **File a DMCA takedown** — this is a legal notice that forces sites to remove stolen content
+4. **For repeat offenders** — consider talking to a lawyer
+
+TSMO can handle steps 1-3 automatically, which saves you a ton of time and frustration.
+
+## The bottom line
+
+You shouldn't have to play internet detective to protect your own work. But until the world gets better about respecting creators, a little monitoring goes a long way.
+
+Start with free methods if you're on a budget. But if your art is part of your income—or just really important to you—investing in proper monitoring is worth every penny.
+
+Your art is worth protecting. Don't let the thieves win.
     `
   },
   "ai-training-what-artists-need-to-know-2025": {
     slug: "ai-training-what-artists-need-to-know-2025",
     title: "AI Training: What Artists Need to Know in 2025",
-    excerpt: "Understanding how AI models use your art, your legal rights, and practical steps to protect your work.",
+    excerpt: "A no-jargon guide to how AI uses your art and what you can actually do about it.",
     category: "AI",
     readTime: "12 min read",
     date: "2025-12-10",
     author: "TSMO Team",
     icon: Bot,
     content: `
-## The AI Training Problem
+## So... AI learned from your art. Without asking.
 
-AI image generators like Midjourney, Stable Diffusion, and DALL-E are trained on billions of images scraped from the internet—often without artists' permission or compensation.
+Here's the uncomfortable truth: if you've ever posted art online, there's a good chance an AI has "studied" it. Midjourney, Stable Diffusion, DALL-E—they all learned to make images by looking at billions of pictures scraped from the internet.
 
-## How AI Companies Get Your Art
+Nobody asked permission. Nobody paid. They just... took it.
 
-### Web Scraping
-Automated bots crawl websites and download images. Major datasets include:
+Let's break down what's happening and what you can do about it.
 
-- **LAION-5B**: 5.8 billion image-text pairs
-- **Common Crawl**: Petabytes of web data
-- **Conceptual Captions**: 12M+ images
+## How did they get my art?
 
-### What They Do With It
-Your art teaches AI to:
-- Replicate your unique style
-- Generate "new" images that look like yours
-- Allow users to create in "your style" with prompts
+### The short answer: bots
 
-## Your Legal Rights
+Tech companies built programs that automatically crawl the internet and download everything they find. Your DeviantArt portfolio? Downloaded. That piece you posted on Twitter? Grabbed. Your personal website? Yep, that too.
 
-### Copyright Still Applies
-Your art is protected by copyright the moment you create it. Using it for AI training without permission may constitute infringement.
+These downloads get bundled into massive datasets:
 
-### Ongoing Lawsuits
-Artists like Sarah Andersen, Kelly McKernan, and Karla Ortiz are suing AI companies. The outcomes will shape the future of AI art.
+- **LAION-5B** has 5.8 billion images (yes, billion with a B)
+- **Common Crawl** is basically a copy of huge chunks of the internet
+- **Conceptual Captions** contains over 12 million images
 
-### The Fair Use Debate
-AI companies claim "fair use" but courts haven't definitively ruled. Your opt-out documentation strengthens potential claims.
+### What they do with it
 
-## How to Protect Your Art
+Once they have your art, they feed it into AI systems that learn patterns. The AI doesn't "remember" your specific image, but it learns from it. That means:
 
-### 1. Glaze-Style Protection
-Tools like Glaze and TSMO apply invisible perturbations that confuse AI models during training.
+- It can copy your unique style
+- People can type "in the style of [your name]" and get something that looks like your work
+- Your years of practice become a prompt option for strangers
 
-### 2. Opt-Out Tags
-Embed C2PA and IPTC metadata telling AI crawlers to skip your work.
+It feels gross because it is gross.
 
-### 3. Robots.txt
-Add directives blocking known AI scrapers (though compliance varies).
+## Is this even legal?
 
-### 4. Monitor Datasets
-Use TSMO to scan if your work appears in training datasets.
+This is the million-dollar question—literally, there are major lawsuits happening right now.
 
-## What's Coming in 2025
+### Copyright still protects you
 
-- **New regulations** in the EU requiring training data disclosure
-- **Opt-out registries** being developed
-- **Watermarking standards** for AI-generated content
-- **More lawsuits** with potential precedent-setting rulings
+The moment you create art, you own the copyright. That hasn't changed. The question is whether using art for AI training counts as infringement.
 
-## Take Action Now
+### Artists are fighting back
 
-Don't wait for laws to catch up. Start protecting your art today with TSMO's AI protection features.
+Sarah Andersen, Kelly McKernan, Karla Ortiz, and others are suing AI companies. Getty Images sued Stability AI. These cases will probably shape the rules for years to come.
+
+### The "fair use" argument
+
+AI companies claim training on your art is "fair use"—the same rule that lets people use snippets for criticism or education. But using someone's entire portfolio to build a competing product? That's a stretch, and courts haven't agreed yet.
+
+## What can you actually do?
+
+You're not helpless here. Let's talk options.
+
+### 1. Add protection to your images
+
+Tools like Glaze (and TSMO) can add invisible changes to your images that confuse AI during training. The art looks normal to humans, but AI systems get scrambled data.
+
+Think of it like putting a "Do Not Copy" code in your work that only machines can see.
+
+### 2. Use opt-out tags
+
+There are metadata standards (C2PA, IPTC) that tell AI crawlers "don't use this." Not all AI companies respect these, but having them helps if you ever need to take legal action.
+
+### 3. Tell bots to stay away
+
+You can add rules to your website (called robots.txt) that ask AI crawlers not to download your stuff. Again, not everyone follows the rules, but it's documented proof that you said no.
+
+### 4. Monitor what's out there
+
+TSMO scans AI training datasets to check if your work appears. If it does, you have evidence—which matters for legal cases.
+
+## What's changing in 2025?
+
+Things are moving fast:
+
+- **New EU laws** will force AI companies to disclose what data they used for training
+- **Opt-out registries** are being built—official lists of artists who don't consent
+- **Watermarking standards** for AI-generated content are coming (so people know what's AI-made)
+- **More lawsuits** will create legal precedents
+
+This isn't over. The artists fighting these battles are making progress.
+
+## My honest advice
+
+Don't wait for laws to fix this. They're too slow. Start protecting your work now:
+
+1. Use protection tools on new uploads
+2. Add opt-out metadata to your files
+3. Monitor your art in training datasets
+4. Document everything in case you need it later
+
+It's not fair that you have to do this extra work. But until the system catches up, it's the smartest move.
+
+Your style is uniquely yours. Don't let machines steal it for free.
     `
   },
   "dmca-takedown-guide-for-digital-artists": {
     slug: "dmca-takedown-guide-for-digital-artists",
     title: "DMCA Takedown Guide for Digital Artists",
-    excerpt: "Everything you need to know about filing effective DMCA takedown notices.",
+    excerpt: "How to get your stolen art removed from websites—explained in plain English.",
     category: "Legal",
     readTime: "10 min read",
     date: "2025-12-05",
     author: "TSMO Team",
     icon: Gavel,
     content: `
-## What is the DMCA?
+## Someone stole your art. Let's get it taken down.
 
-The Digital Millennium Copyright Act (DMCA) is a US law that gives copyright holders a fast way to remove infringing content from websites. Even if you're not in the US, DMCA applies to any website with US users or servers.
+Finding your art on someone else's shop or profile is infuriating. The good news? You have legal power here. It's called a DMCA takedown, and it works.
 
-## When to File a DMCA Takedown
+Let me walk you through it—no law degree required.
 
-File when someone:
-- Posts your art without permission
-- Sells products featuring your art
-- Uses your art in their marketing
-- Shares your art without credit (when required)
+## What's a DMCA anyway?
 
-## The 6 Required Elements
+DMCA stands for "Digital Millennium Copyright Act." It's a US law from 1998 that gives copyright holders (that's you!) a fast way to remove stolen content from websites.
 
-A valid DMCA notice must include:
+The cool part: it works globally. If a website has US users or servers (which is almost everyone), they have to follow DMCA rules or risk huge legal trouble.
 
-1. **Your physical or electronic signature**
-2. **Identification of the copyrighted work** (link to your original)
-3. **Identification of the infringing material** (exact URLs)
-4. **Your contact information** (email, address, phone)
-5. **Statement of good faith** that use is not authorized
-6. **Statement of accuracy** under penalty of perjury
+## When should you file one?
 
-## Step-by-Step Process
+Use a DMCA takedown when someone:
+- Posts your art on social media without permission
+- Sells products with your designs (t-shirts, prints, stickers)
+- Uses your art in their business marketing
+- Reposts your work without credit (when your license requires it)
 
-### Step 1: Document the Infringement
-- Screenshot the infringing page with timestamps
-- Save the exact URLs
-- Note any sales or commercial use
+Basically: if it's your art and you didn't say they could use it, you can file.
 
-### Step 2: Find the Correct Recipient
-Most platforms have dedicated DMCA contacts:
-- Look for "DMCA," "Copyright," or "Legal" pages
-- Check their Terms of Service
-- TSMO has a database of 1000+ platform contacts
+## The 6 things every DMCA notice needs
 
-### Step 3: Send the Notice
-Use email for fastest processing. Include all 6 elements.
+For your takedown to be valid, you need to include these elements. Miss one, and they might ignore you.
 
-### Step 4: Follow Up
-- Platforms have 24-72 hours to respond
-- Document all communications
-- Escalate if ignored
+1. **Your signature** — can be electronic, like typing your name
+2. **Link to YOUR original** — show them the real thing
+3. **Link to the STOLEN version** — the exact URL(s) of the theft
+4. **Your contact info** — email at minimum, phone and address for serious cases
+5. **A "good faith" statement** — that you believe the use is not authorized
+6. **An "accuracy" statement** — that your info is correct, under penalty of perjury
 
-## Platform-Specific Tips
+That last part sounds scary, but it just means "don't lie." If it's really your art, you're fine.
 
-### Instagram/Facebook
-Use their built-in copyright reporting forms. Response time: 24-48 hours.
+## How to actually do it: step by step
 
-### Etsy/Amazon
-Upload proof of original creation. May require registration documentation.
+### Step 1: Gather your evidence
 
-### Redbubble/Society6
-Direct DMCA forms available. Usually removed within 72 hours.
+Before you fire off emails, document everything:
+- Screenshot the infringing page (including the URL and date)
+- Find your original file with creation date if possible
+- Note if they're making money from it
 
-## What Happens After You File
+### Step 2: Find where to send it
 
-1. **Content removed** (usually within 24-72 hours)
-2. **Counter-notice possible** - the infringer can dispute
-3. **Repeat infringers** may have accounts terminated
-4. **Legal escalation** if counter-noticed (rare)
+Most platforms have a copyright or legal page. Look for:
+- "DMCA" or "Copyright" links in the footer
+- A "Report" button on the content itself
+- Terms of Service page with contact info
 
-## Automating with TSMO
+TSMO has a database of 1000+ platform contacts—we can skip this step for you.
 
-Filing takedowns manually is tedious. TSMO provides:
-- Pre-filled templates for major platforms
-- One-click filing
-- Status tracking
-- Escalation support
+### Step 3: Send your notice
 
-## Conclusion
+Email works best. Include all 6 required elements. Be clear, be professional, be firm.
 
-The DMCA is a powerful tool for artists. Understanding how to use it effectively protects your livelihood and creative rights.
+Here's a simple template:
+
+"I am the copyright owner of [describe your work]. It is being used without my permission at [infringing URL]. My original can be found at [your URL]. I request immediate removal. This is my electronic signature: [Your Name]."
+
+### Step 4: Wait (but not too long)
+
+Platforms typically respond within 24-72 hours. If you don't hear back in a week, follow up. If they ignore you, escalate—their hosting provider or payment processor often cares more.
+
+## Platform-specific tips
+
+### Instagram and Facebook
+Use their built-in copyright forms. They're actually pretty good—usually removed within 24-48 hours.
+
+### Etsy and Amazon
+They want proof you made the original first. Having dated files helps a lot.
+
+### Redbubble, Society6, Teepublic
+Direct DMCA forms available. Usually removed within 72 hours. These sites deal with tons of theft, so they have the process down.
+
+## What happens after you file?
+
+1. **Content gets removed** — usually within 1-3 days
+2. **The thief might counter-file** — they can dispute it, but then they have to give you their real info and you can sue them
+3. **Repeat offenders get banned** — platforms track this stuff
+4. **You might need a lawyer** — rare, but if someone counter-files, it could go to court
+
+## The lazy way: let TSMO handle it
+
+Manually filing takedowns is a pain. You have to find contact info, write the notice, track responses, follow up...
+
+TSMO automates all of this:
+- Pre-filled templates that meet all legal requirements
+- One-click filing to major platforms
+- Dashboard to track status of all your takedowns
+- Automatic follow-ups when platforms are slow
+
+It's like having a legal assistant who works 24/7.
+
+## You've got this
+
+The DMCA is one of the most artist-friendly laws out there. It puts the power in YOUR hands. Don't let thieves profit from your hard work.
+
+And remember: every takedown you file is a message that artists fight back.
+
+Now go reclaim what's yours.
     `
   }
 };
