@@ -16,7 +16,7 @@ import { Shield, Eye, Search, ArrowRight, Zap, Globe, FileText, Play, ChevronRig
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import bizWeeklyBanner from "@/assets/Biz_Weekly.png";
 import DemoEnvironment from "@/components/investor/DemoEnvironment";
-import ProtectionComparisonShowcase from "@/components/ProtectionComparisonShowcase";
+
 import TrustBadges from "@/components/TrustBadges";
 import { InstantProtectModal } from "@/components/InstantProtectModal";
 
@@ -262,8 +262,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Protection Comparison Showcase */}
-      <ProtectionComparisonShowcase />
 
       {/* Trust Badges */}
       <TrustBadges />
