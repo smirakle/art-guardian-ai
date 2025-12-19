@@ -174,15 +174,16 @@ const Support = () => {
               <Phone className="h-8 w-8 text-destructive" />
             </div>
             <div className="text-center md:text-left flex-1">
-              <h3 className="text-xl font-bold mb-2">Urgent Copyright Issue?</h3>
+              <div className="flex items-center gap-2 justify-center md:justify-start mb-2">
+                <h3 className="text-xl font-bold">Urgent Copyright Issue?</h3>
+                <span className="px-2 py-0.5 text-xs font-medium bg-muted text-muted-foreground rounded-full">Coming Soon</span>
+              </div>
               <p className="text-muted-foreground mb-4">
                 If you've discovered active infringement that requires immediate attention, our priority support team can help.
               </p>
-              <Link to="/dmca-center">
-                <Button variant="destructive">
-                  File Emergency DMCA
-                </Button>
-              </Link>
+              <Button variant="destructive" disabled className="opacity-50 cursor-not-allowed">
+                File Emergency DMCA
+              </Button>
             </div>
           </div>
         </CardContent>
