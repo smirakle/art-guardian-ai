@@ -86,6 +86,7 @@ export function AppSidebar() {
     { path: "/email-marketing", label: "Email Marketing", icon: Send },
     { path: "/tax-management", label: "Tax Management", icon: DollarSign },
     { path: "/marketing-flyer", label: "Marketing Flyer", icon: FileImage },
+    { path: "/blog-management", label: "Blog Management", icon: BookOpen },
   ];
 
   const secondaryNavItems = [

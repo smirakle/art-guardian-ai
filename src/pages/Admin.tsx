@@ -50,7 +50,7 @@ const Admin = () => {
                 <TabsTrigger value="live-feed" className="px-4 py-2 text-sm font-medium">Live Feed</TabsTrigger>
                 <TabsTrigger value="uploads-scans" className="px-4 py-2 text-sm font-medium">Uploads & Scans</TabsTrigger>
                 <TabsTrigger value="guest-uploads" className="px-4 py-2 text-sm font-medium">Guest Uploads</TabsTrigger>
-                <TabsTrigger value="blog" className="px-4 py-2 text-sm font-medium bg-purple-500/10 border border-purple-500/20">Blog</TabsTrigger>
+                
               </TabsList>
             </div>
 
@@ -124,9 +124,6 @@ const Admin = () => {
               <GuestUploadsTracking />
             </TabsContent>
 
-            <TabsContent value="blog" className="space-y-6">
-              <BlogManagement />
-            </TabsContent>
           </Tabs>
         </div>
       </div>
