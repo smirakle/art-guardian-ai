@@ -3,6 +3,8 @@ import { Helmet } from "react-helmet";
 import { useParams, Link, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   ArrowLeft, 
   Calendar, 
@@ -12,7 +14,9 @@ import {
   Bot,
   Gavel,
   CheckCircle2,
-  ArrowRight
+  ArrowRight,
+  Loader2,
+  FileText
 } from "lucide-react";
 
 interface BlogPostData {
@@ -336,9 +340,58 @@ Now go reclaim what's yours.
   }
 };
 
+const getIconForCategory = (category: string): React.ElementType => {
+  switch (category?.toLowerCase()) {
+    case 'protection': return Shield;
+    case 'ai': return Bot;
+    case 'legal': return Gavel;
+    default: return FileText;
+  }
+};
+
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
-  const post = slug ? blogPostsData[slug] : null;
+  
+  // Fetch from database first
+  const { data: dbPost, isLoading } = useQuery({
+    queryKey: ['blog-post', slug],
+    queryFn: async () => {
+      if (!slug) return null;
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('slug', slug)
+        .eq('status', 'published')
+        .single();
+      
+      if (error) return null;
+      return data;
+    },
+    enabled: !!slug
+  });
+
+  // Try database post first, then fallback to hardcoded
+  const hardcodedPost = slug ? blogPostsData[slug] : null;
+  
+  const post = dbPost ? {
+    slug: dbPost.slug,
+    title: dbPost.title,
+    excerpt: dbPost.excerpt || '',
+    content: dbPost.content,
+    category: dbPost.tags?.[0] || 'General',
+    readTime: '5 min read',
+    date: dbPost.published_at || dbPost.created_at,
+    author: 'TSMO Team',
+    icon: getIconForCategory(dbPost.tags?.[0] || '')
+  } : hardcodedPost;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (!post) {
     return <Navigate to="/blog" replace />;
