@@ -337,101 +337,111 @@ const BlogManagement = () => {
         </Dialog>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
         {blogPosts?.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <p className="text-muted-foreground mb-4">No blog posts yet</p>
-              <Button onClick={() => setIsCreateOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" />
+          <Card className="col-span-full">
+            <CardContent className="flex flex-col items-center justify-center py-8">
+              <p className="text-muted-foreground mb-4 text-sm">No blog posts yet</p>
+              <Button size="sm" onClick={() => setIsCreateOpen(true)}>
+                <Plus className="h-3 w-3 mr-1" />
                 Create Your First Post
               </Button>
             </CardContent>
           </Card>
         ) : (
           blogPosts?.map((post) => (
-            <Card key={post.id}>
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <CardTitle className="flex items-center gap-2">
+            <Card key={post.id} className="flex flex-col">
+              <CardHeader className="p-3 pb-2">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="space-y-1 min-w-0 flex-1">
+                    <CardTitle className="text-sm font-medium line-clamp-1 flex items-center gap-1">
                       {post.title}
+                    </CardTitle>
+                    <div className="flex items-center gap-1 flex-wrap">
                       {getStatusBadge(post.status)}
                       {post.social_media_posted && (
-                        <Badge variant="outline" className="text-blue-500 border-blue-500">
-                          <Twitter className="h-3 w-3 mr-1" />
+                        <Badge variant="outline" className="text-blue-500 border-blue-500 text-xs px-1 py-0">
+                          <Twitter className="h-2.5 w-2.5 mr-0.5" />
                           Posted
                         </Badge>
                       )}
-                    </CardTitle>
-                    <CardDescription className="flex items-center gap-4">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
+                    </div>
+                    <CardDescription className="text-xs flex items-center gap-2">
+                      <span className="flex items-center gap-0.5">
+                        <Calendar className="h-2.5 w-2.5" />
                         {format(new Date(post.created_at), 'MMM d, yyyy')}
                       </span>
-                      <span>/blog/{post.slug}</span>
                     </CardDescription>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => window.open(`/blog/${post.slug}`, '_blank')}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleEdit(post)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        if (confirm('Are you sure you want to delete this post?')) {
-                          deleteMutation.mutate(post.id);
-                        }
-                      }}
-                      disabled={deleteMutation.isPending}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                    {post.status === 'published' && !post.social_media_posted && (
-                      <Button
-                        size="sm"
-                        onClick={() => postToTwitterMutation.mutate(post)}
-                        disabled={postToTwitterMutation.isPending}
-                      >
-                        {postToTwitterMutation.isPending ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <>
-                            <Send className="h-4 w-4 mr-1" />
-                            Post to X
-                          </>
-                        )}
-                      </Button>
-                    )}
                   </div>
                 </div>
               </CardHeader>
-              {post.excerpt && (
-                <CardContent>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{post.excerpt}</p>
-                  {post.tags && post.tags.length > 0 && (
-                    <div className="flex gap-1 mt-2">
-                      {post.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              )}
+              <CardContent className="p-3 pt-0 flex-1">
+                {post.excerpt && (
+                  <p className="text-xs text-muted-foreground line-clamp-2 mb-2">{post.excerpt}</p>
+                )}
+                {post.tags && post.tags.length > 0 && (
+                  <div className="flex gap-1 flex-wrap">
+                    {post.tags.slice(0, 3).map((tag) => (
+                      <Badge key={tag} variant="secondary" className="text-[10px] px-1 py-0">
+                        {tag}
+                      </Badge>
+                    ))}
+                    {post.tags.length > 3 && (
+                      <Badge variant="secondary" className="text-[10px] px-1 py-0">
+                        +{post.tags.length - 3}
+                      </Badge>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+              <div className="p-3 pt-0 flex gap-1 flex-wrap border-t mt-auto">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 w-7 p-0"
+                  onClick={() => window.open(`/blog/${post.slug}`, '_blank')}
+                >
+                  <Eye className="h-3 w-3" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 w-7 p-0"
+                  onClick={() => handleEdit(post)}
+                >
+                  <Edit className="h-3 w-3" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 w-7 p-0"
+                  onClick={() => {
+                    if (confirm('Are you sure you want to delete this post?')) {
+                      deleteMutation.mutate(post.id);
+                    }
+                  }}
+                  disabled={deleteMutation.isPending}
+                >
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+                {post.status === 'published' && !post.social_media_posted && (
+                  <Button
+                    size="sm"
+                    className="h-7 text-xs ml-auto"
+                    onClick={() => postToTwitterMutation.mutate(post)}
+                    disabled={postToTwitterMutation.isPending}
+                  >
+                    {postToTwitterMutation.isPending ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                      <>
+                        <Send className="h-3 w-3 mr-1" />
+                        Post to X
+                      </>
+                    )}
+                  </Button>
+                )}
+              </div>
             </Card>
           ))
         )}
