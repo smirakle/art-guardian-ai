@@ -3,6 +3,8 @@ import { Helmet } from "react-helmet";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   BookOpen, 
   Calendar, 
@@ -13,7 +15,8 @@ import {
   Bot,
   Lightbulb,
   TrendingUp,
-  FileText
+  FileText,
+  Loader2
 } from "lucide-react";
 
 interface BlogPost {
@@ -27,7 +30,8 @@ interface BlogPost {
   featured?: boolean;
 }
 
-const blogPosts: BlogPost[] = [
+// Fallback hardcoded posts
+const fallbackPosts: BlogPost[] = [
   {
     slug: "how-to-find-if-your-art-is-being-stolen-online",
     title: "How to Find If Your Art Is Being Stolen Online",
@@ -59,22 +63,60 @@ const blogPosts: BlogPost[] = [
   }
 ];
 
-const categories = [
-  { name: "All", count: blogPosts.length },
-  { name: "Protection", count: blogPosts.filter(p => p.category === "Protection").length },
-  { name: "AI", count: blogPosts.filter(p => p.category === "AI").length },
-  { name: "Legal", count: blogPosts.filter(p => p.category === "Legal").length },
-  { name: "Tutorials", count: 0 }
-];
+const getIconForCategory = (category: string): React.ElementType => {
+  switch (category?.toLowerCase()) {
+    case 'protection': return Shield;
+    case 'ai': return Bot;
+    case 'legal': return Gavel;
+    default: return FileText;
+  }
+};
 
 const Blog = () => {
   const [selectedCategory, setSelectedCategory] = React.useState("All");
+
+  // Fetch blog posts from database
+  const { data: dbPosts, isLoading } = useQuery({
+    queryKey: ['blog-posts'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('status', 'published')
+        .order('published_at', { ascending: false });
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  // Transform database posts to match BlogPost interface
+  const blogPosts: BlogPost[] = dbPosts && dbPosts.length > 0 
+    ? dbPosts.map(post => ({
+        slug: post.slug,
+        title: post.title,
+        excerpt: post.excerpt || '',
+        category: post.tags?.[0] || 'General',
+        readTime: '5 min read',
+        date: post.published_at || post.created_at,
+        icon: getIconForCategory(post.tags?.[0] || ''),
+        featured: false
+      }))
+    : fallbackPosts;
+
+  const categories = [
+    { name: "All", count: blogPosts.length },
+    { name: "Protection", count: blogPosts.filter(p => p.category === "Protection").length },
+    { name: "AI", count: blogPosts.filter(p => p.category === "AI").length },
+    { name: "Legal", count: blogPosts.filter(p => p.category === "Legal").length },
+    { name: "Tutorials", count: blogPosts.filter(p => p.category === "Tutorials").length }
+  ];
 
   const filteredPosts = selectedCategory === "All" 
     ? blogPosts 
     : blogPosts.filter(post => post.category === selectedCategory);
 
-  const featuredPosts = blogPosts.filter(post => post.featured);
+  const featuredPosts = blogPosts.filter(post => post.featured).slice(0, 2);
 
   const structuredData = {
     "@context": "https://schema.org",
