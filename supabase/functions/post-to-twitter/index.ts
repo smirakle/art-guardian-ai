@@ -85,31 +85,38 @@ function generateOAuthHeader(method: string, url: string): string {
 
 const BASE_URL = "https://api.twitter.com/2";
 
-async function sendTweet(tweetText: string): Promise<any> {
-  const url = `${BASE_URL}/tweets`;
-  const method = "POST";
-
+async function twitterRequest(method: string, path: string, body?: unknown) {
+  const url = `${BASE_URL}${path}`;
   const oauthHeader = generateOAuthHeader(method, url);
-  console.log("Sending tweet:", tweetText.substring(0, 50) + "...");
 
   const response = await fetch(url, {
-    method: method,
+    method,
     headers: {
       Authorization: oauthHeader,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ text: tweetText }),
+    body: body ? JSON.stringify(body) : undefined,
   });
 
   const responseText = await response.text();
-  console.log("Twitter API response status:", response.status);
+  console.log(`Twitter API ${method} ${path} status:`, response.status);
 
   if (!response.ok) {
     console.error("Twitter API error:", responseText);
     throw new Error(`Twitter API error: ${response.status} - ${responseText}`);
   }
 
-  return JSON.parse(responseText);
+  return responseText ? JSON.parse(responseText) : null;
+}
+
+async function verifyCredentials() {
+  // Fast sanity check: if this fails with 401, the issue is credentials/app settings (not tweet text)
+  return twitterRequest("GET", "/users/me");
+}
+
+async function sendTweet(tweetText: string): Promise<any> {
+  console.log("Sending tweet:", tweetText.substring(0, 50) + "...");
+  return twitterRequest("POST", "/tweets", { text: tweetText });
 }
 
 serve(async (req) => {
@@ -148,10 +155,13 @@ serve(async (req) => {
       tweetText = tweetText.substring(0, 277) + "...";
     }
 
-    console.log("Final tweet text:", tweetText);
-    
-    const tweetResult = await sendTweet(tweetText);
-    console.log("Tweet posted successfully:", tweetResult);
+     console.log("Final tweet text:", tweetText);
+
+     // Step 1: verify credentials before attempting to tweet (gives clearer failure signal)
+     await verifyCredentials();
+
+     const tweetResult = await sendTweet(tweetText);
+     console.log("Tweet posted successfully:", tweetResult);
 
     // Update blog post with twitter post id if blogPostId provided
     if (blogPostId && tweetResult.data?.id) {
