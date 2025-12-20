@@ -31,15 +31,20 @@ function generateOAuthSignature(
   consumerSecret: string,
   tokenSecret: string
 ): string {
-  const signatureBaseString = `${method}&${encodeURIComponent(url)}&${encodeURIComponent(
-    Object.entries(params)
-      .sort()
-      .map(([k, v]) => `${k}=${v}`)
-      .join("&")
-  )}`;
+  // OAuth 1.0a requires each key/value to be percent-encoded when building the base string.
+  const normalizedParams = Object.entries(params)
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+    .sort()
+    .join("&");
+
+  const signatureBaseString = `${method.toUpperCase()}&${encodeURIComponent(url)}&${encodeURIComponent(normalizedParams)}`;
   const signingKey = `${encodeURIComponent(consumerSecret)}&${encodeURIComponent(tokenSecret)}`;
+
   const hmacSha1 = createHmac("sha1", signingKey);
   const signature = hmacSha1.update(signatureBaseString).digest("base64");
+
+  console.log("OAuth signature base string:", signatureBaseString);
+
   return signature;
 }
 
@@ -78,7 +83,7 @@ function generateOAuthHeader(method: string, url: string): string {
   );
 }
 
-const BASE_URL = "https://api.x.com/2";
+const BASE_URL = "https://api.twitter.com/2";
 
 async function sendTweet(tweetText: string): Promise<any> {
   const url = `${BASE_URL}/tweets`;
