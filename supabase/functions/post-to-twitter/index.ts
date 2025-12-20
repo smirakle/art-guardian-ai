@@ -83,7 +83,7 @@ function generateOAuthHeader(method: string, url: string): string {
   );
 }
 
-const BASE_URL = "https://api.twitter.com/2";
+const BASE_URL = "https://api.x.com/2";
 
 async function twitterRequest(method: string, path: string, body?: unknown) {
   const url = `${BASE_URL}${path}`;
