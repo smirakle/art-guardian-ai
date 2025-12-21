@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { Plus, Edit, Trash2, Send, Twitter, Eye, Calendar, Loader2 } from "lucide-react";
 import { format } from "date-fns";
+import SocialMediaPreview from "./SocialMediaPreview";
 
 interface BlogPost {
   id: string;
@@ -32,6 +33,7 @@ const BlogManagement = () => {
   const queryClient = useQueryClient();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
+  const [previewPost, setPreviewPost] = useState<BlogPost | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
@@ -132,7 +134,7 @@ const BlogManagement = () => {
   });
 
   const postToTwitterMutation = useMutation({
-    mutationFn: async (post: BlogPost) => {
+    mutationFn: async ({ post, hashtags, mentions }: { post: BlogPost; hashtags: string[]; mentions: string[] }) => {
       const blogUrl = `${window.location.origin}/blog/${post.slug}`;
       
       const { data, error } = await supabase.functions.invoke('post-to-twitter', {
@@ -140,7 +142,9 @@ const BlogManagement = () => {
           title: post.title,
           excerpt: post.excerpt,
           url: blogUrl,
-          blogPostId: post.id
+          blogPostId: post.id,
+          hashtags,
+          mentions
         }
       });
       
@@ -150,12 +154,17 @@ const BlogManagement = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-blog-posts'] });
-      toast.success("Posted to Twitter successfully!");
+      setPreviewPost(null);
+      toast.success("Posted to X successfully!");
     },
     onError: (error) => {
-      toast.error(`Failed to post to Twitter: ${error.message}`);
+      toast.error(`Failed to post to X: ${error.message}`);
     }
   });
+  
+  const handlePostToTwitter = (post: BlogPost, hashtags: string[], mentions: string[]) => {
+    postToTwitterMutation.mutate({ post, hashtags, mentions });
+  };
 
   const resetForm = () => {
     setFormData({
@@ -428,17 +437,10 @@ const BlogManagement = () => {
                   <Button
                     size="sm"
                     className="h-7 text-xs ml-auto"
-                    onClick={() => postToTwitterMutation.mutate(post)}
-                    disabled={postToTwitterMutation.isPending}
+                    onClick={() => setPreviewPost(post)}
                   >
-                    {postToTwitterMutation.isPending ? (
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                    ) : (
-                      <>
-                        <Send className="h-3 w-3 mr-1" />
-                        Post to X
-                      </>
-                    )}
+                    <Send className="h-3 w-3 mr-1" />
+                    Post to X
                   </Button>
                 )}
               </div>
@@ -446,6 +448,14 @@ const BlogManagement = () => {
           ))
         )}
       </div>
+      
+      <SocialMediaPreview
+        post={previewPost}
+        open={!!previewPost}
+        onOpenChange={(open) => !open && setPreviewPost(null)}
+        onPost={handlePostToTwitter}
+        isPosting={postToTwitterMutation.isPending}
+      />
     </div>
   );
 };
