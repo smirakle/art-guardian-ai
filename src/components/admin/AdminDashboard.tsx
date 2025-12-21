@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { CopyrightDiagnostics } from "./CopyrightDiagnostics";
 import { EnhancedCopyrightDiagnostics } from "./EnhancedCopyrightDiagnostics";
 import OperatingCostsWidget from "./OperatingCostsWidget";
+import NewUsersWidget from "./NewUsersWidget";
 
 import { 
   Shield, 
@@ -368,8 +369,9 @@ const AdminDashboard = () => {
               </Card>
             </div>
 
-            {/* System Health, Operating Costs, and Active Alerts */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* New Users Widget */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              <NewUsersWidget />
               <OperatingCostsWidget />
               
               <Card>
