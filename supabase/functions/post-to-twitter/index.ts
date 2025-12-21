@@ -31,7 +31,6 @@ function generateOAuthSignature(
   consumerSecret: string,
   tokenSecret: string
 ): string {
-  // OAuth 1.0a requires each key/value to be percent-encoded when building the base string.
   const normalizedParams = Object.entries(params)
     .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
     .sort()
@@ -110,13 +109,49 @@ async function twitterRequest(method: string, path: string, body?: unknown) {
 }
 
 async function verifyCredentials() {
-  // Fast sanity check: if this fails with 401, the issue is credentials/app settings (not tweet text)
   return twitterRequest("GET", "/users/me");
 }
 
 async function sendTweet(tweetText: string): Promise<any> {
   console.log("Sending tweet:", tweetText.substring(0, 50) + "...");
   return twitterRequest("POST", "/tweets", { text: tweetText });
+}
+
+function buildTweetText(
+  title: string,
+  excerpt: string | null,
+  url: string | null,
+  hashtags: string[],
+  mentions: string[]
+): string {
+  let tweetText = `📝 New Blog Post: ${title}`;
+  
+  if (excerpt) {
+    const maxExcerptLength = 100;
+    const truncatedExcerpt = excerpt.length > maxExcerptLength 
+      ? excerpt.substring(0, maxExcerptLength - 3) + "..."
+      : excerpt;
+    tweetText += `\n\n${truncatedExcerpt}`;
+  }
+  
+  if (url) {
+    tweetText += `\n\n${url}`;
+  }
+  
+  if (hashtags && hashtags.length > 0) {
+    tweetText += `\n\n${hashtags.join(' ')}`;
+  }
+  
+  if (mentions && mentions.length > 0) {
+    tweetText += `\n\ncc ${mentions.join(' ')}`;
+  }
+
+  // Ensure tweet is within character limit
+  if (tweetText.length > 280) {
+    tweetText = tweetText.substring(0, 277) + "...";
+  }
+  
+  return tweetText;
 }
 
 serve(async (req) => {
@@ -127,41 +162,22 @@ serve(async (req) => {
   try {
     validateEnvironmentVariables();
     
-    const { title, excerpt, url, blogPostId } = await req.json();
+    const { title, excerpt, url, blogPostId, hashtags = [], mentions = [] } = await req.json();
     
     if (!title) {
       throw new Error("Title is required");
     }
 
-    // Create tweet text with blog post info
-    let tweetText = `📝 New Blog Post: ${title}`;
-    
-    if (excerpt) {
-      const maxExcerptLength = 200 - tweetText.length - (url ? url.length + 2 : 0);
-      if (maxExcerptLength > 20) {
-        const truncatedExcerpt = excerpt.length > maxExcerptLength 
-          ? excerpt.substring(0, maxExcerptLength - 3) + "..."
-          : excerpt;
-        tweetText += `\n\n${truncatedExcerpt}`;
-      }
-    }
-    
-    if (url) {
-      tweetText += `\n\n${url}`;
-    }
+    const tweetText = buildTweetText(title, excerpt, url, hashtags, mentions);
 
-    // Ensure tweet is within character limit
-    if (tweetText.length > 280) {
-      tweetText = tweetText.substring(0, 277) + "...";
-    }
+    console.log("Final tweet text:", tweetText);
+    console.log("Character count:", tweetText.length);
 
-     console.log("Final tweet text:", tweetText);
+    // Verify credentials before attempting to tweet
+    await verifyCredentials();
 
-     // Step 1: verify credentials before attempting to tweet (gives clearer failure signal)
-     await verifyCredentials();
-
-     const tweetResult = await sendTweet(tweetText);
-     console.log("Tweet posted successfully:", tweetResult);
+    const tweetResult = await sendTweet(tweetText);
+    console.log("Tweet posted successfully:", tweetResult);
 
     // Update blog post with twitter post id if blogPostId provided
     if (blogPostId && tweetResult.data?.id) {
@@ -181,7 +197,8 @@ serve(async (req) => {
     return new Response(JSON.stringify({ 
       success: true, 
       tweet: tweetResult,
-      tweetId: tweetResult.data?.id 
+      tweetId: tweetResult.data?.id,
+      tweetText: tweetText
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
