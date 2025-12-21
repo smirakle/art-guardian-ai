@@ -187,8 +187,25 @@ const SocialMediaPreview = ({ post, open, onOpenChange, onPost, isPosting }: Soc
           </div>
           
           {/* Character Count */}
-          <div className="flex justify-end">
-            <span className={`text-sm font-medium ${isOverLimit ? 'text-destructive' : charCount > 250 ? 'text-yellow-500' : 'text-muted-foreground'}`}>
+          <div className="flex items-center justify-between">
+            {isOverLimit ? (
+              <span className="text-xs text-destructive">
+                Too long by {charCount - 280} characters. Shorten the excerpt/hashtags.
+              </span>
+            ) : (
+              <span className="text-xs text-muted-foreground">
+                Tip: keep it under 280 characters.
+              </span>
+            )}
+            <span
+              className={`text-sm font-medium ${
+                isOverLimit
+                  ? "text-destructive"
+                  : charCount > 250
+                    ? "text-muted-foreground"
+                    : "text-muted-foreground"
+              }`}
+            >
               {charCount}/280
             </span>
           </div>
@@ -206,6 +223,7 @@ const SocialMediaPreview = ({ post, open, onOpenChange, onPost, isPosting }: Soc
                   <button
                     onClick={() => handleRemoveHashtag(tag)}
                     className="ml-1 hover:bg-muted rounded-full p-0.5"
+                    type="button"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -220,7 +238,7 @@ const SocialMediaPreview = ({ post, open, onOpenChange, onPost, isPosting }: Soc
                 onKeyDown={(e) => e.key === 'Enter' && handleAddHashtag()}
                 className="h-8 text-sm"
               />
-              <Button size="sm" variant="outline" onClick={handleAddHashtag} className="h-8">
+              <Button size="sm" variant="outline" onClick={handleAddHashtag} className="h-8" type="button">
                 <Plus className="h-3 w-3" />
               </Button>
             </div>
@@ -248,7 +266,7 @@ const SocialMediaPreview = ({ post, open, onOpenChange, onPost, isPosting }: Soc
           
           {/* Action Buttons */}
           <div className="flex gap-2 pt-2">
-            <Button onClick={handlePost} disabled={isPosting || isOverLimit} className="flex-1">
+            <Button onClick={handlePost} disabled={isPosting} className="flex-1" type="button">
               {isPosting ? (
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               ) : (
@@ -256,7 +274,7 @@ const SocialMediaPreview = ({ post, open, onOpenChange, onPost, isPosting }: Soc
               )}
               Post to X
             </Button>
-            <Button variant="outline" onClick={handleCopy}>
+            <Button variant="outline" onClick={handleCopy} type="button">
               {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
             </Button>
           </div>
