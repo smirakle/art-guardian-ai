@@ -1,4 +1,4 @@
-import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search, Briefcase, UserCheck, Copyright, TrendingUp, Key, DollarSign, Send, Gavel, Zap, FileCheck, Wallet, FileImage, FolderSearch, AlertTriangle, Lock as LockIcon, BookOpen, ShieldAlert } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search, Briefcase, UserCheck, Copyright, TrendingUp, Key, DollarSign, Send, Gavel, Zap, FileCheck, Wallet, FileImage, FolderSearch, AlertTriangle, Lock as LockIcon, BookOpen, ShieldAlert, Camera } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
@@ -87,6 +87,12 @@ export function AppSidebar() {
     { path: "/tax-management", label: "Tax Management", icon: DollarSign },
     { path: "/marketing-flyer", label: "Marketing Flyer", icon: FileImage },
     { path: "/blog-management", label: "Blog Management", icon: BookOpen },
+  ];
+
+  const solutionsItems = [
+    { path: "/protect-photos", label: "For Photographers", icon: Camera },
+    { path: "/stop-art-theft", label: "Stop Art Theft", icon: Shield },
+    { path: "/ai-protection-artists", label: "AI Protection", icon: ShieldAlert },
   ];
 
   const secondaryNavItems = [
@@ -230,6 +236,30 @@ export function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
           )}
+
+          {/* Solutions for specific audiences */}
+          <SidebarGroup>
+            <SidebarGroupLabel>Solutions</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {solutionsItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <SidebarMenuItem key={item.path}>
+                      <SidebarMenuButton
+                        onClick={() => navigate(item.path)}
+                        isActive={isActive(item.path)}
+                        className="flex items-center gap-2"
+                      >
+                        <Icon className="w-4 h-4" />
+                        {!collapsed && <span>{item.label}</span>}
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
 
           {interfaceMode === 'advanced' && (
           <SidebarGroup>
