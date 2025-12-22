@@ -92,7 +92,6 @@ export function AppSidebar() {
   const solutionsItems = [
     { path: "/protect-photos", label: "For Photographers", icon: Camera },
     { path: "/stop-art-theft", label: "Stop Art Theft", icon: Shield },
-    { path: "/ai-protection-artists", label: "AI Protection", icon: ShieldAlert },
   ];
 
   const secondaryNavItems = [

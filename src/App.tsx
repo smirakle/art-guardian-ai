@@ -94,7 +94,7 @@ import LegalResources from "./pages/LegalResources";
 import Support from "./pages/Support";
 import ReverseImageSearch from "./pages/ReverseImageSearch";
 import StopArtTheft from "./pages/StopArtTheft";
-import AIProtectionArtists from "./pages/AIProtectionArtists";
+
 import ProtectPhotos from "./pages/ProtectPhotos";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
@@ -276,7 +276,7 @@ const App = () => {
             <Route path="/support" element={<Support />} />
             <Route path="/reverse-image-search" element={<ReverseImageSearch />} />
             <Route path="/stop-art-theft" element={<StopArtTheft />} />
-            <Route path="/ai-protection-artists" element={<AIProtectionArtists />} />
+            
             <Route path="/protect-photos" element={<ProtectPhotos />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
