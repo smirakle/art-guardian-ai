@@ -209,6 +209,63 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_company_policies: {
+        Row: {
+          company_name: string
+          company_slug: string
+          crawler_name: string | null
+          created_at: string | null
+          has_opt_out_program: boolean | null
+          id: string
+          is_active: boolean | null
+          last_verified: string | null
+          legal_cases: Json | null
+          logo_url: string | null
+          notes: string | null
+          opt_out_effectiveness: string | null
+          opt_out_url: string | null
+          policy_sources: Json | null
+          respects_robots_txt: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          company_name: string
+          company_slug: string
+          crawler_name?: string | null
+          created_at?: string | null
+          has_opt_out_program?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          last_verified?: string | null
+          legal_cases?: Json | null
+          logo_url?: string | null
+          notes?: string | null
+          opt_out_effectiveness?: string | null
+          opt_out_url?: string | null
+          policy_sources?: Json | null
+          respects_robots_txt?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          company_name?: string
+          company_slug?: string
+          crawler_name?: string | null
+          created_at?: string | null
+          has_opt_out_program?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          last_verified?: string | null
+          legal_cases?: Json | null
+          logo_url?: string | null
+          notes?: string | null
+          opt_out_effectiveness?: string | null
+          opt_out_url?: string | null
+          policy_sources?: Json | null
+          respects_robots_txt?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       ai_detection_results: {
         Row: {
           ai_model_used: string
@@ -7854,6 +7911,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      robots_txt_monitoring: {
+        Row: {
+          ai_crawlers_blocked: string[] | null
+          check_count: number | null
+          compliance_status: Json | null
+          created_at: string | null
+          domain: string
+          evidence_generated: boolean | null
+          evidence_pdf_path: string | null
+          id: string
+          last_checked: string | null
+          missing_crawlers: string[] | null
+          robots_txt_content: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          ai_crawlers_blocked?: string[] | null
+          check_count?: number | null
+          compliance_status?: Json | null
+          created_at?: string | null
+          domain: string
+          evidence_generated?: boolean | null
+          evidence_pdf_path?: string | null
+          id?: string
+          last_checked?: string | null
+          missing_crawlers?: string[] | null
+          robots_txt_content?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          ai_crawlers_blocked?: string[] | null
+          check_count?: number | null
+          compliance_status?: Json | null
+          created_at?: string | null
+          domain?: string
+          evidence_generated?: boolean | null
+          evidence_pdf_path?: string | null
+          id?: string
+          last_checked?: string | null
+          missing_crawlers?: string[] | null
+          robots_txt_content?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       scan_execution_log: {
         Row: {
