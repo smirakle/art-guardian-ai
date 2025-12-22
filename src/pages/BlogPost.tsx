@@ -18,6 +18,7 @@ import {
   Loader2,
   FileText
 } from "lucide-react";
+import { SocialShareButtons } from "@/components/SocialShareButtons";
 
 interface BlogPostData {
   slug: string;
@@ -430,7 +431,16 @@ const BlogPost = () => {
         <meta property="og:title" content={post.title} />
         <meta property="og:description" content={post.excerpt} />
         <meta property="og:type" content="article" />
+        <meta property="og:url" content={`https://tsmo.lovable.app/blog/${post.slug}`} />
+        <meta property="og:site_name" content="TSMO" />
+        <meta property="og:image" content="https://tsmo.lovable.app/og-image.png" />
         <meta property="article:published_time" content={post.date} />
+        <meta property="article:author" content={post.author} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@tsmowatch" />
+        <meta name="twitter:title" content={post.title} />
+        <meta name="twitter:description" content={post.excerpt} />
+        <meta name="twitter:image" content="https://tsmo.lovable.app/og-image.png" />
         <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
       </Helmet>
 
@@ -508,30 +518,17 @@ const BlogPost = () => {
               </article>
 
               {/* Share */}
-              <div className="mt-12 pt-8 border-t flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Share2 className="h-4 w-4" />
-                  <span>Share this article</span>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" asChild>
-                    <a 
-                      href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`https://tsmo.lovable.app/blog/${post.slug}`)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Twitter
-                    </a>
-                  </Button>
-                  <Button variant="outline" size="sm" asChild>
-                    <a 
-                      href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(`https://tsmo.lovable.app/blog/${post.slug}`)}&title=${encodeURIComponent(post.title)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      LinkedIn
-                    </a>
-                  </Button>
+              <div className="mt-12 pt-8 border-t">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Share2 className="h-4 w-4" />
+                    <span>Share this article</span>
+                  </div>
+                  <SocialShareButtons 
+                    url={`https://tsmo.lovable.app/blog/${post.slug}`}
+                    title={post.title}
+                    description={post.excerpt}
+                  />
                 </div>
               </div>
             </div>

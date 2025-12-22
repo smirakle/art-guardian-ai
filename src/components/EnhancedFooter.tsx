@@ -11,9 +11,11 @@ import {
   Instagram, 
   Youtube,
   ArrowRight,
-  CheckCircle2
+  CheckCircle2,
+  Loader2
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import tsmoLogo from '@/assets/tsmo-transparent-logo.png';
 
 export const EnhancedFooter = () => {
@@ -21,17 +23,70 @@ export const EnhancedFooter = () => {
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      setIsSubscribed(true);
-      toast({
-        title: "Subscribed!",
-        description: "You'll receive our latest updates and tips.",
-      });
+    if (!email) return;
+
+    setIsLoading(true);
+    try {
+      // Check if email already exists
+      const { data: existing } = await supabase
+        .from('email_subscribers')
+        .select('id, status')
+        .eq('email', email.toLowerCase())
+        .single();
+
+      if (existing) {
+        if (existing.status === 'subscribed') {
+          toast({
+            title: "Already subscribed!",
+            description: "This email is already on our list.",
+          });
+        } else {
+          // Reactivate subscription
+          await supabase
+            .from('email_subscribers')
+            .update({ status: 'subscribed', updated_at: new Date().toISOString() })
+            .eq('id', existing.id);
+          
+          setIsSubscribed(true);
+          toast({
+            title: "Welcome back!",
+            description: "Your subscription has been reactivated.",
+          });
+        }
+      } else {
+        // Insert new subscriber
+        const { error } = await supabase
+          .from('email_subscribers')
+          .insert([{
+            email: email.toLowerCase(),
+            status: 'subscribed',
+            metadata: { source: 'footer_newsletter' }
+          }]);
+
+        if (error) throw error;
+
+        setIsSubscribed(true);
+        toast({
+          title: "Subscribed!",
+          description: "You'll receive our latest updates and tips.",
+        });
+      }
+      
       setEmail('');
       setTimeout(() => setIsSubscribed(false), 3000);
+    } catch (error) {
+      console.error('Newsletter subscription error:', error);
+      toast({
+        title: "Subscription failed",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -84,8 +139,10 @@ export const EnhancedFooter = () => {
                 className="flex-1"
                 required
               />
-              <Button type="submit" className="whitespace-nowrap">
-                {isSubscribed ? (
+              <Button type="submit" className="whitespace-nowrap" disabled={isLoading}>
+                {isLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : isSubscribed ? (
                   <>
                     <CheckCircle2 className="w-4 h-4 mr-2" />
                     Subscribed
