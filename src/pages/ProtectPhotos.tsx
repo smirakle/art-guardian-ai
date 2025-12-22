@@ -13,28 +13,30 @@ import {
 } from "@/components/landing";
 
 const ProtectPhotos = () => {
+  // Note: These stats represent the problem scope, not TSMO platform metrics
   const stats = [
-    { value: "2.5M+", label: "Photos Protected" },
-    { value: "94%", label: "Takedown Success" },
-    { value: "24/7", label: "Monitoring" },
-    { value: "50+", label: "Platforms Scanned" },
+    { value: "2.5B", label: "Images Stolen Daily" },
+    { value: "85%", label: "Used Without License" },
+    { value: "23%", label: "Of All DMCA Claims" },
+    { value: "48hr", label: "Avg. Takedown Time" },
   ];
 
+  // Verified statistics from Copytrack Global Infringement Report 2019 and DMCA Authority
   const problemStats = [
     {
       icon: TrendingUp,
-      value: "73% of Photographers",
-      description: "Have had their work stolen and used without permission online.",
+      value: "2.5 Billion Daily",
+      description: "Images are stolen worldwide every day according to the Copytrack Global Infringement Report.",
     },
     {
       icon: Scale,
-      value: "$1.2 Billion",
-      description: "Lost annually by photographers to image theft and unauthorized usage.",
+      value: "85% Unlicensed",
+      description: "Of the 3 billion images shared online daily, 85% are used without a valid license.",
     },
     {
       icon: AlertTriangle,
-      value: "Stock Site Abuse",
-      description: "Your photos end up on stock sites being sold by thieves who profit from your work.",
+      value: "USA Leads Theft",
+      description: "The United States accounts for 23% of all global image copyright infringement cases.",
     },
   ];
 
