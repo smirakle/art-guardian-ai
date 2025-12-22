@@ -58,14 +58,14 @@ export const EnhancedFooter = () => {
           });
         }
       } else {
-        // Insert new subscriber
+        // Insert new subscriber (user_id is nullable for anonymous signups)
         const { error } = await supabase
           .from('email_subscribers')
-          .insert([{
+          .insert({
             email: email.toLowerCase(),
             status: 'subscribed',
             metadata: { source: 'footer_newsletter' }
-          }]);
+          } as any);
 
         if (error) throw error;
 
