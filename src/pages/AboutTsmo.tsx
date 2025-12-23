@@ -68,6 +68,9 @@ const AboutTsmo = () => {
               </p>
               
               <div className="mt-12 pt-8 border-t border-border">
+                <p className="text-lg text-muted-foreground text-center mb-6">
+                  TSMO Watch was created by Shirleena Cunningham, a member of Harvard Innovation Labs (i-lab), to help creators protect their portfolios in the AI era.
+                </p>
                 <p className="text-xl font-medium text-primary text-center">
                   Thank you for joining TSMO.
                 </p>
