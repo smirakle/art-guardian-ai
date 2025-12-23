@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import ContextualHelp from "@/components/help-system/ContextualHelp";
 import { BugReportButton } from "@/components/BugReportButton";
-import { Shield, Eye, Search, ArrowRight, Zap, Globe, FileText, Play, ChevronRight, Scale, Bell, Upload, BookOpen, Clock } from "lucide-react";
+import { Shield, Eye, Search, ArrowRight, Zap, Globe, FileText, Play, ChevronRight, Scale, Bell, Upload, BookOpen, Clock, Download, Check, X, Cloud } from "lucide-react";
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import { useQuery } from "@tanstack/react-query";
 import bizWeeklyBanner from "@/assets/Biz_Weekly.png";
@@ -233,9 +233,17 @@ const Index = () => {
             Stop Online Art Theft. Protect Your Portfolio.
           </h1>
           
-          <p className="text-base sm:text-lg text-muted-foreground/80 mb-8 max-w-2xl mx-auto italic font-sans text-center font-light">
+          <p className="text-base sm:text-lg text-muted-foreground/80 mb-6 max-w-2xl mx-auto italic font-sans text-center font-light">
             Protect your art from AI training. Apply style cloaking, download, and share safely. Monitor 24/7 with reverse image search.
           </p>
+
+          {/* No Download Badge */}
+          <div className="flex items-center justify-center gap-2 mb-8">
+            <Badge variant="outline" className="bg-emerald-500/10 border-emerald-500/40 text-emerald-700 dark:text-emerald-400 px-4 py-1.5 text-sm font-medium">
+              <Cloud className="w-4 h-4 mr-2" />
+              No Software Download Required — Works Instantly in Your Browser
+            </Badge>
+          </div>
 
           {/* Primary Sign-Up CTA */}
           <div className="max-w-md mx-auto mb-6">
@@ -365,6 +373,132 @@ const Index = () => {
         </div>
       </section>
 
+
+      {/* TSMO vs Glaze Comparison */}
+      <section className="py-16 px-4 bg-background">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-10">
+            <Badge variant="outline" className="mb-4 bg-primary/10 border-primary/30 text-primary">
+              Why Choose TSMO?
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-bold mb-3">TSMO vs Traditional Tools</h2>
+            <p className="text-lg text-muted-foreground">See how our web-based platform compares to desktop software like Glaze</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* TSMO Card */}
+            <Card className="border-primary/40 bg-gradient-to-br from-primary/5 to-accent/5 relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-bl-lg">
+                RECOMMENDED
+              </div>
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2">
+                  <img src={tsmoLogo} alt="TSMO" className="h-8 w-8 object-contain" />
+                  TSMO
+                </CardTitle>
+                <CardDescription>All-in-one web platform</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                    <Check className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <span className="text-sm"><strong>No download required</strong> — works in browser</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                    <Check className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <span className="text-sm">Cloud processing — fast on any device</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                    <Check className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <span className="text-sm">Style cloaking + watermarking + monitoring</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                    <Check className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <span className="text-sm">24/7 reverse image search & alerts</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                    <Check className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <span className="text-sm">Automated DMCA takedown assistance</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                    <Check className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <span className="text-sm">Works on Windows, Mac, Linux, mobile</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Glaze Card */}
+            <Card className="border-border/50">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2">
+                  <Download className="h-6 w-6 text-muted-foreground" />
+                  Desktop Tools (Glaze, etc.)
+                </CardTitle>
+                <CardDescription>Traditional desktop software</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center">
+                    <X className="w-4 h-4 text-destructive" />
+                  </div>
+                  <span className="text-sm text-muted-foreground">Requires software download & install</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center">
+                    <X className="w-4 h-4 text-destructive" />
+                  </div>
+                  <span className="text-sm text-muted-foreground">Local processing — slow on older hardware</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                    <Check className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <span className="text-sm">Style cloaking only (research-grade)</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center">
+                    <X className="w-4 h-4 text-destructive" />
+                  </div>
+                  <span className="text-sm text-muted-foreground">No theft monitoring or alerts</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center">
+                    <X className="w-4 h-4 text-destructive" />
+                  </div>
+                  <span className="text-sm text-muted-foreground">No DMCA or legal assistance</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center">
+                    <X className="w-4 h-4 text-destructive" />
+                  </div>
+                  <span className="text-sm text-muted-foreground">Windows/Mac only, no mobile</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center mt-8">
+            <p className="text-sm text-muted-foreground mb-4">
+              💡 <strong>Pro tip:</strong> For maximum protection, use both! Apply Glaze locally, then upload to TSMO for monitoring & enforcement.
+            </p>
+            <Button size="lg" className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90" onClick={() => navigate("/upload")}>
+              Try TSMO Free — No Download Needed
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </section>
 
       {/* Trust Badges */}
       <TrustBadges />
