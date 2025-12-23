@@ -51,6 +51,7 @@ export function AppSidebar() {
     { path: "/dmca-center", label: "Alerts", icon: AlertTriangle },
     { path: "/legal-resources", label: "Legal Resources", icon: Scale },
     { path: "/support", label: "Support", icon: HelpCircle },
+    { path: "/about-tsmo", label: "About TSMO", icon: Info },
     { path: "/settings", label: "Settings", icon: Settings },
   ];
 
