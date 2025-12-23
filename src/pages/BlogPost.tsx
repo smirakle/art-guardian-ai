@@ -19,6 +19,7 @@ import {
   FileText
 } from "lucide-react";
 import { SocialShareButtons } from "@/components/SocialShareButtons";
+import { BlogComments } from "@/components/blog/BlogComments";
 
 interface BlogPostData {
   slug: string;
@@ -375,6 +376,7 @@ const BlogPost = () => {
   const hardcodedPost = slug ? blogPostsData[slug] : null;
   
   const post = dbPost ? {
+    id: dbPost.id,
     slug: dbPost.slug,
     title: dbPost.title,
     excerpt: dbPost.excerpt || '',
@@ -384,7 +386,10 @@ const BlogPost = () => {
     date: dbPost.published_at || dbPost.created_at,
     author: 'TSMO Team',
     icon: getIconForCategory(dbPost.tags?.[0] || '')
-  } : hardcodedPost;
+  } : hardcodedPost ? {
+    ...hardcodedPost,
+    id: hardcodedPost.slug // Use slug as ID for hardcoded posts
+  } : null;
 
   if (isLoading) {
     return (
@@ -516,6 +521,9 @@ const BlogPost = () => {
                   />
                 </div>
               </div>
+
+              {/* Comments Section */}
+              <BlogComments postId={post.id} />
             </div>
           </div>
         </section>
