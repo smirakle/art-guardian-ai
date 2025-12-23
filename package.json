@@ -54,7 +54,6 @@
     "@types/qrcode": "^1.5.5",
     "@types/react-helmet": "^6.1.11",
     "@vercel/analytics": "^1.5.0",
-    "@wagmi/core": "^2.18.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
@@ -89,8 +88,6 @@
     "tailwindcss-animate": "^1.0.7",
     "tesseract.js": "^6.0.1",
     "vaul": "^0.9.3",
-    "viem": "^2.33.2",
-    "wagmi": "^2.16.1",
     "web-audio-api": "^0.2.2",
     "web-vitals": "^5.1.0",
     "zod": "^3.23.8"
