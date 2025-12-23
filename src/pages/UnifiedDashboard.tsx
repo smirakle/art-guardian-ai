@@ -32,7 +32,6 @@ import { useQuery } from '@tanstack/react-query';
 // Lazy load tab components for better performance
 const ProductionDashboard = lazy(() => import('@/components/dashboard/ProductionDashboard').then(m => ({ default: m.ProductionDashboard })));
 const AIDetectionDashboard = lazy(() => import('@/components/phase1/AIDetectionDashboard').then(m => ({ default: m.AIDetectionDashboard })));
-const BlockchainOwnershipRegistry = lazy(() => import('@/components/blockchain/BlockchainOwnershipRegistry').then(m => ({ default: m.BlockchainOwnershipRegistry })));
 const GlobalLegalNetwork = lazy(() => import('@/components/legal/GlobalLegalNetwork').then(m => ({ default: m.GlobalLegalNetwork })));
 const RealTimeLegalDashboard = lazy(() => import('@/components/legal/RealTimeLegalDashboard').then(m => ({ default: m.RealTimeLegalDashboard })));
 const CreatorEconomy = lazy(() => import('@/components/phase2/CreatorEconomy').then(m => ({ default: m.CreatorEconomy })));
@@ -360,7 +359,7 @@ const UnifiedDashboard = () => {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
             Overview
@@ -372,10 +371,6 @@ const UnifiedDashboard = () => {
           <TabsTrigger value="legal" className="flex items-center gap-2">
             <Scale className="h-4 w-4" />
             Legal
-          </TabsTrigger>
-          <TabsTrigger value="blockchain" className="flex items-center gap-2">
-            <Link2 className="h-4 w-4" />
-            Blockchain
           </TabsTrigger>
         </TabsList>
 
@@ -498,13 +493,6 @@ const UnifiedDashboard = () => {
         <TabsContent value="legal" className="space-y-6">
           <Suspense fallback={<div className="animate-pulse h-64 bg-muted rounded-lg" />}>
             <GlobalLegalNetwork />
-          </Suspense>
-        </TabsContent>
-
-        {/* Blockchain - Lazy loaded */}
-        <TabsContent value="blockchain" className="space-y-6">
-          <Suspense fallback={<div className="animate-pulse h-64 bg-muted rounded-lg" />}>
-            <BlockchainOwnershipRegistry />
           </Suspense>
         </TabsContent>
       </Tabs>

@@ -10,7 +10,6 @@ import SystemManagement from "@/components/admin/SystemManagement";
 import RealTimeMonitoring from "@/components/RealTimeMonitoring";
 import MonitoringDashboard from "@/components/MonitoringDashboard";
 import LiveFeed from "@/components/LiveFeed";
-import BlockchainReadiness from "@/components/admin/BlockchainReadiness";
 import MonitoringReadiness from "@/components/admin/MonitoringReadiness";
 import AITPReadiness from "@/components/admin/AITPReadiness";
 import GovernmentDefenseMonitoring from "@/components/admin/GovernmentDefenseMonitoring";
@@ -44,7 +43,6 @@ const Admin = () => {
                 <TabsTrigger value="gov-defense" className="px-4 py-2 text-sm font-medium bg-primary/10 border border-primary/20">Gov/Defense</TabsTrigger>
                 <TabsTrigger value="gov-api" className="px-4 py-2 text-sm font-medium">Gov API</TabsTrigger>
                 <TabsTrigger value="system" className="px-4 py-2 text-sm font-medium">System</TabsTrigger>
-                <TabsTrigger value="blockchain" className="px-4 py-2 text-sm font-medium">Blockchain</TabsTrigger>
                 <TabsTrigger value="ai-training" className="px-4 py-2 text-sm font-medium">AI Training</TabsTrigger>
                 <TabsTrigger value="live-support" className="px-4 py-2 text-sm font-medium bg-green-500/10 border border-green-500/20">Live Support</TabsTrigger>
                 <TabsTrigger value="live-feed" className="px-4 py-2 text-sm font-medium">Live Feed</TabsTrigger>
@@ -98,10 +96,6 @@ const Admin = () => {
 
             <TabsContent value="system" className="space-y-6">
               <SystemManagement />
-            </TabsContent>
-
-            <TabsContent value="blockchain" className="space-y-6">
-              <BlockchainReadiness />
             </TabsContent>
 
             <TabsContent value="ai-training" className="space-y-6">

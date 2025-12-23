@@ -4,8 +4,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom";
-import { WagmiProvider } from 'wagmi'
-import { wagmiConfig } from '@/lib/blockchain/config'
 import { useRealUserMonitoring } from "@/hooks/useRealUserMonitoring";
 import { GuestUploadConverter } from "@/components/GuestUploadConverter";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -15,7 +13,6 @@ import { useMaintenanceMode } from "@/lib/maintenance";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { UserPreferencesProvider } from "@/contexts/UserPreferencesContext";
-import { BlockchainProvider } from "@/contexts/BlockchainContext";
 import SecurityHeaders from "@/components/security/SecurityHeaders";
 import Index from "./pages/Index";
 import AboutTsmo from "./pages/AboutTsmo";
@@ -29,7 +26,6 @@ import Auth from "./pages/Auth";
 import B2BLogin from "./pages/B2BLogin";
 import Contact from "./pages/Contact";
 import DeepWebScan from "./components/DeepWebScan";
-import BlockchainVerification from "./components/BlockchainVerification";
 import Community from "./pages/Community";
 import Certificate from "./pages/Certificate";
 import Lawyers from "./pages/Lawyers";
@@ -53,7 +49,6 @@ import TestRealtimeMonitoring from "./pages/TestRealtimeMonitoring";
 
 import CustomIntegrationsComingSoon from "./pages/CustomIntegrationsComingSoon";
 import { EnterpriseAPIAccess } from "./components/EnterpriseAPIAccess";
-import Wallet from "./pages/Wallet";
 // Legacy routes maintained for backward compatibility
 import InvestorHub from "./pages/InvestorHub";
 import Roadmap from "./pages/Roadmap";
@@ -112,64 +107,58 @@ const App = () => {
   // If maintenance mode is enabled, show only the maintenance page
   if (isMaintenanceMode) {
     return (
-      <WagmiProvider config={wagmiConfig}>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <AuthProvider>
-              <Toaster />
-              <Sonner />
-              <MaintenanceMode />
-            </AuthProvider>
-          </TooltipProvider>
-        </QueryClientProvider>
-      </WagmiProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <AuthProvider>
+            <Toaster />
+            <Sonner />
+            <MaintenanceMode />
+          </AuthProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
     );
   }
 
   // Normal app when maintenance mode is disabled
   return (
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <UserPreferencesProvider>
-            <BlockchainProvider>
-              <SecurityHeaders />
-              <GuestUploadConverter />
-            <Toaster />
-            <Sonner />
-            <SmartOnboarding />
-            <HelpWidget />
-            <SidebarProvider>
-              <div className="min-h-screen flex w-full">
-                <AppSidebar />
-                <main className="flex-1 flex flex-col">
-                  <header className="h-12 flex items-center justify-between border-b bg-background/95 backdrop-blur-sm px-4">
-                    <SidebarTrigger />
-                    <RealTimeNotifications />
-                  </header>
-                   <div className="p-4 flex-1">
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/about-tsmo" element={<AboutTsmo />} />
-                      <Route path="/faq" element={<FAQ />} />
-                      <Route path="/settings" element={<Settings />} />
-                      <Route path="/profile" element={<Profile />} />
-                      <Route path="/auth" element={<Auth />} />
-                      <Route path="/b2b-login" element={<B2BLogin />} />
-                      <Route path="/contact" element={<Contact />} />
-                      <Route path="/upload" element={<Upload />} />
-                      <Route path="/admin" element={
-                        <ProtectedRoute requiredRole="admin">
-                          <Admin />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="/checkout" element={<Checkout />} />
-                      <Route path="/success" element={<Success />} />
-                      <Route path="/deep-scan" element={<DeepWebScan />} />
-                      <Route path="/blockchain" element={<BlockchainVerification />} />
-                      <Route path="/wallet" element={<Wallet />} />
-                      <Route path="/community" element={<Community />} />
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <UserPreferencesProvider>
+          <SecurityHeaders />
+          <GuestUploadConverter />
+          <Toaster />
+          <Sonner />
+          <SmartOnboarding />
+          <HelpWidget />
+          <SidebarProvider>
+            <div className="min-h-screen flex w-full">
+              <AppSidebar />
+              <main className="flex-1 flex flex-col">
+                <header className="h-12 flex items-center justify-between border-b bg-background/95 backdrop-blur-sm px-4">
+                  <SidebarTrigger />
+                  <RealTimeNotifications />
+                </header>
+                 <div className="p-4 flex-1">
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/about-tsmo" element={<AboutTsmo />} />
+                    <Route path="/faq" element={<FAQ />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/b2b-login" element={<B2BLogin />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/upload" element={<Upload />} />
+                    <Route path="/admin" element={
+                      <ProtectedRoute requiredRole="admin">
+                        <Admin />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/checkout" element={<Checkout />} />
+                    <Route path="/success" element={<Success />} />
+                    <Route path="/deep-scan" element={<DeepWebScan />} />
+                    <Route path="/community" element={<Community />} />
                      <Route path="/deepfake-detection" element={<DeepfakeDetection />} />
                      <Route path="/deepfake-match/:matchId" element={<DeepfakeMatchDetails />} />
                       <Route path="/lawyers" element={<Lawyers />} />
@@ -287,19 +276,17 @@ const App = () => {
               </ProtectedRoute>
             } />
             
-                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                       <Route path="*" element={<NotFound />} />
-                    </Routes>
-                   </div>
-                   <CopyrightFooter />
-                </main>
-               </div>
-            </SidebarProvider>
-            </BlockchainProvider>
-          </UserPreferencesProvider>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                     <Route path="*" element={<NotFound />} />
+                  </Routes>
+                 </div>
+                 <CopyrightFooter />
+              </main>
+             </div>
+          </SidebarProvider>
+        </UserPreferencesProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 };
 
