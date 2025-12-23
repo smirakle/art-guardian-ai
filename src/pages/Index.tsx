@@ -21,6 +21,7 @@ import DemoEnvironment from "@/components/investor/DemoEnvironment";
 import TrustBadges from "@/components/TrustBadges";
 import { InstantProtectModal } from "@/components/InstantProtectModal";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
+import AlertExampleSection from "@/components/AlertExampleSection";
 
 // Blog Section Component that fetches from database
 const BlogSection = ({ navigate }: { navigate: (path: string) => void }) => {
@@ -234,7 +235,7 @@ const Index = () => {
           </h1>
           
           <p className="text-base sm:text-lg text-muted-foreground/80 mb-6 max-w-2xl mx-auto italic font-sans text-center font-light">
-            Protect your art from AI training. Apply style cloaking, download, and share safely. Monitor 24/7 with reverse image search.
+            Style cloaking + 24/7 monitoring + alerts when your art appears elsewhere.
           </p>
 
           {/* No Download Badge */}
@@ -245,7 +246,22 @@ const Index = () => {
             </Badge>
           </div>
 
-          {/* Primary Sign-Up CTA */}
+          {/* Primary CTA - Try It Now */}
+          <div className="mb-6">
+            <Button 
+              size="lg" 
+              className="h-14 px-10 text-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg"
+              onClick={() => setShowInstantProtect(true)}
+            >
+              <Shield className="mr-2 h-5 w-5" />
+              Try It Now — No Signup Required
+            </Button>
+            <p className="text-xs text-muted-foreground mt-2">
+              Protect 1 image instantly • See results in seconds
+            </p>
+          </div>
+
+          {/* Secondary CTA - Email Capture */}
           <div className="max-w-md mx-auto mb-6">
             <div className="flex flex-col sm:flex-row gap-3">
               <Input 
@@ -257,7 +273,8 @@ const Index = () => {
               />
               <Button 
                 size="lg" 
-                className="h-12 px-8 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 whitespace-nowrap" 
+                variant="outline"
+                className="h-12 px-8 whitespace-nowrap" 
                 onClick={() => navigate(`/auth?email=${encodeURIComponent(signupEmail)}&tab=signup`)}
               >
                 Start Free
@@ -267,40 +284,22 @@ const Index = () => {
             <p className="text-xs text-muted-foreground mt-2">No credit card required</p>
           </div>
 
-          {/* Secondary CTAs */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
-            <Button variant="outline" size="lg" onClick={() => setShowLiveDemo(true)}>
-              <Play className="mr-2 h-4 w-4" />
-              Watch Live Demo
-            </Button>
-            <Button size="lg" className="bg-gradient-to-r from-primary via-secondary to-primary hover:from-primary/90 hover:via-secondary/90 hover:to-primary/90" onClick={() => navigate('/demo/visual')}>
-              <Zap className="mr-2 h-4 w-4" />
-              2-Min Visual Demo
-            </Button>
-          </div>
-
-          {/* Try It Now - Guest Mode CTA */}
-          <div className="border-t border-border/30 pt-6 mb-8">
-            <p className="text-sm text-muted-foreground mb-3">Want to see it work first?</p>
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border-emerald-500/40 hover:border-emerald-500/60 hover:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
-              onClick={() => setShowInstantProtect(true)}
+          {/* Demo Link - Text only */}
+          <div className="mb-8">
+            <button 
+              onClick={() => setShowLiveDemo(true)}
+              className="text-sm text-primary hover:underline inline-flex items-center gap-1"
             >
-              <Shield className="mr-2 h-4 w-4" />
-              Try It Now — No Signup Required
-            </Button>
-            <p className="text-xs text-muted-foreground mt-2">
-              Protect 1 image instantly • See results in seconds
-            </p>
+              <Play className="w-3 h-3" />
+              Watch 2-minute demo
+            </button>
           </div>
 
           {/* Key Features */}
           <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-8">
             <div className="text-center">
               <Search className="w-6 h-6 sm:w-8 sm:h-8 mx-auto text-primary mb-1" />
-              <div className="text-xs sm:text-sm text-muted-foreground">Reverse Image Search</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">24/7 Monitoring + Alerts</div>
             </div>
             <div className="text-center">
               <Shield className="w-6 h-6 sm:w-8 sm:h-8 mx-auto text-primary mb-1" />
@@ -317,15 +316,36 @@ const Index = () => {
 
       {/* As Seen On Banner */}
       <section className="py-6 px-4 bg-background">
-        <div className="container mx-auto max-w-2xl">
-          <img 
-            src={bizWeeklyBanner} 
-            alt="As seen on BizWeekly" 
-            className="w-full max-w-sm mx-auto h-auto object-contain"
-            loading="lazy"
-          />
-          <p className="text-center text-sm text-muted-foreground mt-4">
+        <div className="container mx-auto max-w-2xl text-center">
+          <a 
+            href="https://www.bizweekly.com/suddenly-fighting-shadows-creative-leaders-respond-to-the-dark-side-of-generative-ai/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-block hover:opacity-90 transition-opacity"
+          >
+            <img 
+              src={bizWeeklyBanner} 
+              alt="As seen on BizWeekly" 
+              className="w-full max-w-sm mx-auto h-auto object-contain"
+              loading="lazy"
+            />
+          </a>
+          <p className="text-sm text-muted-foreground mt-3">
+            Featured: "Suddenly Fighting Shadows..." (BizWeekly)
+          </p>
+          <a 
+            href="https://www.bizweekly.com/suddenly-fighting-shadows-creative-leaders-respond-to-the-dark-side-of-generative-ai/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-sm text-primary hover:underline inline-flex items-center gap-1 mt-1"
+          >
+            Read the feature <ChevronRight className="w-3 h-3" />
+          </a>
+          <p className="text-sm text-muted-foreground mt-4">
             Founder is a Harvard Innovation Labs (i-lab) member.
+          </p>
+          <p className="text-xs text-muted-foreground/70 mt-1">
+            Harvard Innovation Labs / Harvard University does not endorse or sponsor TSMO Watch.
           </p>
         </div>
       </section>
@@ -362,7 +382,7 @@ const Index = () => {
               <div className="w-14 h-14 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-3">
                 <Shield className="h-6 w-6 text-white" />
               </div>
-              <h3 className="font-semibold">Take It Down</h3>
+              <h3 className="font-semibold">Take Action</h3>
             </div>
           </div>
 
@@ -499,6 +519,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Alert Example - Proof of Product */}
+      <AlertExampleSection />
 
       {/* Trust Badges */}
       <TrustBadges />
