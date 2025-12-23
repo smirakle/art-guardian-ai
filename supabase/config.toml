@@ -93,9 +93,6 @@ verify_jwt = true
 [functions.admin-performance-metrics]
 verify_jwt = true
 
-[functions.real-nft-minting]
-verify_jwt = true
-
 [functions.portfolio-realtime-data]
 verify_jwt = true
 
@@ -113,12 +110,6 @@ verify_jwt = true
 
 [functions.international-compliance-checker]
 verify_jwt = true
-
-[functions.real-blockchain-registration]
-verify_jwt = true
-
-[functions.blockchain-verification]
-verify_jwt = false
 
 [functions.automated-dmca-filing]
 verify_jwt = true
@@ -144,7 +135,6 @@ verify_jwt = true
 [functions.verify-license-payment]
 verify_jwt = true
 
-# New functions
 [functions.secure-enterprise-api]
 verify_jwt = true
 
@@ -175,7 +165,6 @@ verify_jwt = false
 [functions.gov-defense-cyber-ip-api]
 verify_jwt = true
 
-# Real Trademark Monitoring Functions
 [functions.real-trademark-search]
 verify_jwt = true
 
@@ -227,9 +216,6 @@ verify_jwt = true
 [functions.test-openai-api]
 verify_jwt = true
 
-[functions.test-openai-api]
-verify_jwt = true
-
 [functions.scan-plagiarism-copyscape]
 verify_jwt = true
 
@@ -238,4 +224,3 @@ verify_jwt = false
 
 [functions.post-to-twitter]
 verify_jwt = true
-
