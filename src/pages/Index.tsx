@@ -427,7 +427,7 @@ const Index = () => {
                   <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
                     <Check className="w-4 h-4 text-emerald-500" />
                   </div>
-                  <span className="text-sm">Automated DMCA takedown assistance</span>
+                  <span className="text-sm">Automated DMCA takedown assistance <Badge variant="outline" className="ml-1 text-[10px] px-1.5 py-0 bg-amber-500/10 border-amber-500/40 text-amber-600 dark:text-amber-400">Coming Soon</Badge></span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
