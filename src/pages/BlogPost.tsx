@@ -485,37 +485,22 @@ const BlogPost = () => {
         <section className="py-12">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
-              <article className="prose prose-lg dark:prose-invert max-w-none">
-                {post.content.split('\n').map((line, index) => {
-                  if (line.startsWith('## ')) {
-                    return <h2 key={index} className="text-2xl font-bold mt-8 mb-4">{line.replace('## ', '')}</h2>;
-                  }
-                  if (line.startsWith('### ')) {
-                    return <h3 key={index} className="text-xl font-semibold mt-6 mb-3">{line.replace('### ', '')}</h3>;
-                  }
-                  if (line.startsWith('- ')) {
-                    return <li key={index} className="ml-4">{line.replace('- ', '')}</li>;
-                  }
-                  if (line.match(/^\d+\. /)) {
-                    return <li key={index} className="ml-4 list-decimal">{line.replace(/^\d+\. /, '')}</li>;
-                  }
-                  if (line.trim() === '') {
-                    return <br key={index} />;
-                  }
-                  // Handle bold text
-                  const parts = line.split(/(\*\*[^*]+\*\*)/g);
-                  return (
-                    <p key={index} className="mb-4">
-                      {parts.map((part, i) => {
-                        if (part.startsWith('**') && part.endsWith('**')) {
-                          return <strong key={i}>{part.slice(2, -2)}</strong>;
-                        }
-                        return part;
-                      })}
-                    </p>
-                  );
-                })}
-              </article>
+              <article 
+                className="prose prose-lg dark:prose-invert max-w-none
+                  [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mt-8 [&_h1]:mb-4
+                  [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-8 [&_h2]:mb-4
+                  [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mt-6 [&_h3]:mb-3
+                  [&_p]:mb-4 [&_p]:leading-relaxed
+                  [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4
+                  [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4
+                  [&_li]:mb-2
+                  [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-4
+                  [&_a]:text-primary [&_a]:underline [&_a]:hover:text-primary/80
+                  [&_strong]:font-bold
+                  [&_em]:italic
+                  [&_u]:underline"
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
 
               {/* Share */}
               <div className="mt-12 pt-8 border-t">
