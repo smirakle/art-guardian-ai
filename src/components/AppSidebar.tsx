@@ -1,4 +1,4 @@
-import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search, Briefcase, UserCheck, Copyright, TrendingUp, Key, DollarSign, Send, Gavel, Zap, FileCheck, Wallet, FileImage, FolderSearch, AlertTriangle, Lock as LockIcon, BookOpen, ShieldAlert, Camera } from "lucide-react";
+import { Shield, Upload, Activity, Home, Users, Link2, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, FileText, HelpCircle, Eye, Monitor, BarChart3, ShieldCheck, Settings, Search, Briefcase, UserCheck, Copyright, TrendingUp, Key, DollarSign, Send, Gavel, Zap, FileCheck, FileImage, FolderSearch, AlertTriangle, Lock as LockIcon, BookOpen, ShieldAlert, Camera } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
@@ -61,7 +61,6 @@ export function AppSidebar() {
     { path: "/aitpa-analysis", label: "AITPA Analysis", icon: ShieldAlert },
     { path: "/monitoring-hub", label: "Monitoring Hub", icon: Monitor },
     { path: "/findings", label: "My Findings", icon: FolderSearch },
-    { path: "/wallet", label: "Wallet", icon: Wallet },
     { path: "/upload", label: "Upload & Protect", icon: Upload },
     { path: "/deepfake-detection", label: "Deepfake Detection", icon: Eye },
     { path: "/forgery-detection", label: "Forgery Detection", icon: Search },

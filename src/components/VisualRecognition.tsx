@@ -8,14 +8,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import UploadArea from "./visual-recognition/UploadArea";
 import ImageAnalysisCard from "./visual-recognition/ImageAnalysisCard";
 import RealTimeMonitoring from "./RealTimeMonitoring";
-import BlockchainVerification from "./BlockchainVerification";
 import EnhancedMonitoringOverview from "./monitoring/EnhancedMonitoringOverview";
 import { useArtworkLimit } from "@/hooks/useArtworkLimit";
 import { ArtworkLimitIndicator } from "./artwork/ArtworkLimitIndicator";
 
 import { watermarkService, InvisibleWatermark } from "@/lib/watermark";
 import { enhancedWatermarkService, EnhancedWatermarkOptions, EnhancedWatermarkSystem } from "@/lib/enhancedWatermark";
-import { Eye, Camera, Shield, HelpCircle, Key, Brain } from "lucide-react";
+import { Eye, Camera, Shield, HelpCircle, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -616,7 +615,7 @@ const VisualRecognition = () => {
       <div className="space-y-6">
 
         <Tabs defaultValue="quick-analysis" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 h-auto overflow-x-auto scrollbar-hide"
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 h-auto overflow-x-auto scrollbar-hide"
             style={{ 
               scrollbarWidth: 'none', 
               msOverflowStyle: 'none'
@@ -657,19 +656,6 @@ const VisualRecognition = () => {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>View enhanced monitoring across 1M+ sources including dark web</p>
-                </TooltipContent>
-              </Tooltip>
-            </TabsTrigger>
-            <TabsTrigger value="blockchain" className="flex items-center gap-2">
-              <Key className="w-4 h-4" />
-              <span className="hidden sm:inline">Blockchain Verification</span>
-              <span className="sm:hidden">Blockchain</span>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <HelpCircle className="w-3 h-3 ml-1 text-muted-foreground" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Create immutable blockchain certificates for your artwork</p>
                 </TooltipContent>
               </Tooltip>
             </TabsTrigger>
@@ -720,10 +706,6 @@ const VisualRecognition = () => {
 
           <TabsContent value="enhanced" className="space-y-6">
             <EnhancedMonitoringOverview />
-          </TabsContent>
-
-          <TabsContent value="blockchain" className="space-y-6">
-            <BlockchainVerification />
           </TabsContent>
 
           <TabsContent value="existing" className="space-y-6">

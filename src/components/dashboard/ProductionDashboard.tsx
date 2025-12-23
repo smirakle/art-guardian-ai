@@ -25,8 +25,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { RealTimeBlockchainWidget } from '@/components/dashboard/RealTimeBlockchainWidget';
-import NFTMintingWidget from '@/components/nft/NFTMintingWidget';
 import { UnifiedScanResults } from '@/components/dashboard/UnifiedScanResults';
 import ScheduledScansManager from '@/components/ScheduledScansManager';
 import { WhiteLabelManager } from '@/components/WhiteLabelManager';
@@ -303,7 +301,7 @@ export const ProductionDashboard = () => {
         {/* Main Dashboard Content - Organized in Tabs */}
         <Tabs defaultValue="monitoring" className="space-y-6">
           <div className="flex items-center justify-between">
-            <TabsList className="grid w-full grid-cols-8 lg:w-auto lg:grid-cols-8">
+            <TabsList className="grid w-full grid-cols-7 lg:w-auto lg:grid-cols-7">
               <TabsTrigger value="monitoring" className="flex items-center gap-2">
                 <Activity className="w-4 h-4" />
                 <span className="hidden sm:inline">Monitoring</span>
@@ -315,10 +313,6 @@ export const ProductionDashboard = () => {
               <TabsTrigger value="scanning" className="flex items-center gap-2">
                 <Search className="w-4 h-4" />
                 <span className="hidden sm:inline">Scanning</span>
-              </TabsTrigger>
-              <TabsTrigger value="blockchain" className="flex items-center gap-2">
-                <Crown className="w-4 h-4" />
-                <span className="hidden sm:inline">Blockchain</span>
               </TabsTrigger>
               <TabsTrigger value="notifications" className="flex items-center gap-2">
                 <Bell className="w-4 h-4" />
@@ -658,40 +652,6 @@ export const ProductionDashboard = () => {
                 </CardContent>
               </Card>
             </div>
-          </TabsContent>
-
-          {/* Blockchain Tab */}
-          <TabsContent value="blockchain" className="space-y-6">
-            <FeatureGuard feature="blockchain">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Crown className="w-5 h-5" />
-                      Blockchain Protection
-                    </CardTitle>
-                    <CardDescription>
-                      Immutable proof of ownership and creation
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <RealTimeBlockchainWidget />
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>NFT Management</CardTitle>
-                    <CardDescription>
-                      Mint and manage your NFTs with blockchain verification
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <NFTMintingWidget />
-                  </CardContent>
-                </Card>
-              </div>
-            </FeatureGuard>
           </TabsContent>
 
           {/* Notifications Tab */}
