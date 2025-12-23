@@ -324,6 +324,9 @@ const Index = () => {
             className="w-full max-w-sm mx-auto h-auto object-contain"
             loading="lazy"
           />
+          <p className="text-center text-sm text-muted-foreground mt-4">
+            Founder is a Harvard Innovation Labs (i-lab) member.
+          </p>
         </div>
       </section>
 
