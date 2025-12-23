@@ -318,7 +318,7 @@ const Index = () => {
       <section className="py-6 px-4 bg-background">
         <div className="container mx-auto max-w-2xl text-center">
           <a 
-            href="https://www.bizweekly.com/suddenly-fighting-shadows-creative-leaders-respond-to-the-dark-side-of-generative-ai/" 
+            href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/" 
             target="_blank" 
             rel="noopener noreferrer"
             className="inline-block hover:opacity-90 transition-opacity"
@@ -331,10 +331,10 @@ const Index = () => {
             />
           </a>
           <p className="text-sm text-muted-foreground mt-3">
-            Featured: "Suddenly Fighting Shadows..." (BizWeekly)
+            Featured: "Suddenly Fighting Shadows: One Artist's Mission to Protect Creators in the AI Age"
           </p>
           <a 
-            href="https://www.bizweekly.com/suddenly-fighting-shadows-creative-leaders-respond-to-the-dark-side-of-generative-ai/" 
+            href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/" 
             target="_blank" 
             rel="noopener noreferrer"
             className="text-sm text-primary hover:underline inline-flex items-center gap-1 mt-1"
