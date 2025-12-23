@@ -489,9 +489,6 @@ const Index = () => {
           </div>
 
           <div className="text-center mt-8">
-            <p className="text-sm text-muted-foreground mb-4">
-              💡 <strong>Pro tip:</strong> For maximum protection, use both! Apply Glaze locally, then upload to TSMO for monitoring & enforcement.
-            </p>
             <Button size="lg" className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90" onClick={() => navigate("/upload")}>
               Try TSMO Free — No Download Needed
               <ArrowRight className="ml-2 h-4 w-4" />
