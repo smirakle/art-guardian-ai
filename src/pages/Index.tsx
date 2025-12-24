@@ -249,11 +249,11 @@ const Index = () => {
           {/* Primary CTA - Try It Now */}
           <div className="mb-6">
             <Button 
-              size="lg" 
-              className="h-14 px-10 text-lg bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white shadow-lg"
+              size="default" 
+              className="h-11 px-7 text-base bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white shadow-lg"
               onClick={() => setShowInstantProtect(true)}
             >
-              <Shield className="mr-2 h-5 w-5" />
+              <Shield className="mr-2 h-4 w-4" />
               Try It Now — No Signup Required
             </Button>
             <p className="text-xs text-muted-foreground mt-2">
