@@ -71,7 +71,6 @@ export function AppSidebar() {
   const supportItems = [
     { path: "/support", label: "Support", icon: HelpCircle },
     { path: "/community", label: "Community", icon: Users },
-    { path: "/roadmap", label: "Roadmap", icon: TrendingUp },
     { path: "/about-tsmo", label: "About TSMO", icon: Info },
   ];
 
