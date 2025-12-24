@@ -51,7 +51,7 @@ import CustomIntegrationsComingSoon from "./pages/CustomIntegrationsComingSoon";
 import { EnterpriseAPIAccess } from "./components/EnterpriseAPIAccess";
 // Legacy routes maintained for backward compatibility
 import InvestorHub from "./pages/InvestorHub";
-import Roadmap from "./pages/Roadmap";
+
 import CreatorMarkets from "./pages/CreatorMarkets";
 import ForgeryDetection from "./pages/ForgeryDetection";
 import TermsAndPrivacy from "./pages/TermsAndPrivacy";
@@ -194,7 +194,7 @@ const App = () => {
             } />
             <Route path="/partner-success" element={<PartnerSuccessPage />} />
             <Route path="/forgery-detection" element={<ForgeryDetection />} />
-            <Route path="/roadmap" element={<Roadmap />} />
+            
             <Route path="/terms-and-privacy" element={<TermsAndPrivacy />} />
             <Route path="/refund-policy" element={<RefundPolicy />} />
             <Route path="/attorney-packet" element={
