@@ -251,7 +251,7 @@ const ProtectionHub = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5" />
-                  AI Training Protection
+                  AI Scraping Resistance
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>
