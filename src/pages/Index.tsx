@@ -310,31 +310,6 @@ const Index = () => {
               <div className="text-xs sm:text-sm text-muted-foreground">Monitoring</div>
             </div>
           </div>
-
-          {/* Sample Alert Proof Card */}
-          <div className="max-w-xs mx-auto mb-4">
-            <Card className="border-border/50 bg-muted/30 p-3">
-              <p className="text-xs font-semibold text-foreground mb-2">Sample Alert</p>
-              <div className="space-y-1 text-xs text-muted-foreground">
-                <div className="flex justify-between">
-                  <span>Match found:</span>
-                  <span className="text-foreground">pinterest.com</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Confidence:</span>
-                  <span className="text-foreground">94%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Detected:</span>
-                  <span className="text-foreground">2 min ago</span>
-                </div>
-              </div>
-              <Button size="sm" variant="outline" className="w-full mt-2 h-7 text-xs">
-                <Download className="w-3 h-3 mr-1" />
-                Download Evidence Pack
-              </Button>
-            </Card>
-          </div>
         </div>
       </section>
 
