@@ -70,18 +70,32 @@ const getSessionId = (): string => {
   return sessionStorage.getItem(SESSION_ID_KEY) || createSessionId();
 };
 
+// Check if running on Lovable editing platform or development environment
+const isLovableEditingPlatform = (): boolean => {
+  const hostname = window.location.hostname;
+  return (
+    hostname.includes('lovableproject.com') ||
+    hostname.includes('lovable.app') ||
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1'
+  );
+};
+
 export const useVisitorTracking = () => {
   const location = useLocation();
   const { user } = useAuth();
   const sessionInitialized = useRef(false);
   const currentPageStart = useRef(Date.now());
   const lastPath = useRef<string | null>(null);
+  
+  // Skip all tracking on Lovable editing platform
+  const shouldSkipTracking = isLovableEditingPlatform();
 
   // Initialize session
   const initSession = useCallback(async () => {
+    if (shouldSkipTracking) return;
     if (sessionInitialized.current) return;
     sessionInitialized.current = true;
-
     const visitorId = getOrCreateVisitorId();
     const sessionId = createSessionId();
     const deviceInfo = getDeviceInfo();
@@ -111,7 +125,7 @@ export const useVisitorTracking = () => {
 
     // Track initial page view
     trackPageView(sessionId, visitorId, window.location.pathname);
-  }, [user?.id]);
+  }, [user?.id, shouldSkipTracking]);
 
   // Track page view
   const trackPageView = useCallback(async (
@@ -198,8 +212,8 @@ export const useVisitorTracking = () => {
 
   // Initialize on mount
   useEffect(() => {
+    if (shouldSkipTracking) return;
     initSession();
-
     // Handle page unload
     const handleBeforeUnload = () => {
       endSession();
@@ -220,12 +234,12 @@ export const useVisitorTracking = () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [initSession, endSession, updateSessionDuration, updatePreviousPageTime]);
+  }, [shouldSkipTracking, initSession, endSession, updateSessionDuration, updatePreviousPageTime]);
 
   // Track page changes
   useEffect(() => {
+    if (shouldSkipTracking) return;
     if (!sessionInitialized.current) return;
-    
     const sessionId = getSessionId();
     const visitorId = getOrCreateVisitorId();
     const currentPath = location.pathname;
@@ -240,7 +254,7 @@ export const useVisitorTracking = () => {
       currentPageStart.current = Date.now();
       sessionStorage.setItem(LAST_PAGE_TIME_KEY, Date.now().toString());
     }
-  }, [location.pathname, trackPageView, updatePreviousPageTime]);
+  }, [shouldSkipTracking, location.pathname, trackPageView, updatePreviousPageTime]);
 
   return {
     getVisitorId: getOrCreateVisitorId,
