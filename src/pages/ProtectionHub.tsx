@@ -28,6 +28,7 @@ import { AITrainingSettings } from '@/components/AITrainingSettings';
 import { BugReportButton } from '@/components/BugReportButton';
 import { UserGuide } from '@/components/UserGuide';
 import { protectionHubGuide } from '@/data/userGuides';
+import { ProtectionDisclaimer } from '@/components/protection/ProtectionDisclaimer';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -106,6 +107,9 @@ const ProtectionHub = () => {
             Stop AI from copying your art. Upload, protect, and monitor your creative work.
           </p>
         </div>
+
+        {/* Protection Disclaimer */}
+        <ProtectionDisclaimer />
 
         {/* Quick Stats - Real Data */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
