@@ -116,7 +116,7 @@ const Contact = () => {
             Protect Your Creative Work
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join thousands of artists who trust TSMO to protect their creative work. 
+            Join creators using TSMO to monitor for unauthorized copies. 
             Start your free trial today and see the difference.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

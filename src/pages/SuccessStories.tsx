@@ -276,7 +276,7 @@ const SuccessStories = () => {
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold mb-4">Start Your Success Story</h2>
             <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-              Join thousands of artists who trust TSMO to protect their creative work. 
+              Join artists protecting their creative work with TSMO. 
               Your art deserves protection.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -329,7 +329,7 @@ const Checkout = () => {
             />
           </div>
           <p className="text-lg text-muted-foreground">
-            Join thousands of artists protecting their creative work with TSMO
+            Join artists protecting their creative work with TSMO.
           </p>
         </div>
 

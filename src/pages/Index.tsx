@@ -538,7 +538,7 @@ const Index = () => {
             Ready to Protect Your Creative Work?
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Join thousands of artists who trust TSMO to safeguard their digital creations
+            Join creators using TSMO to monitor for unauthorized copies.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="px-8 h-12 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90" onClick={() => navigate("/upload")}>

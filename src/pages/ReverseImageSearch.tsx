@@ -240,7 +240,7 @@ const ReverseImageSearch = () => {
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold mb-4">Start Protecting Your Work Today</h2>
             <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-              Join thousands of artists, photographers, and designers who trust TSMO to protect their creative work.
+              Join artists, photographers, and designers protecting their creative work with TSMO.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" variant="secondary" asChild className="gap-2">
