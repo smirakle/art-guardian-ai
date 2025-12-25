@@ -20,6 +20,7 @@ import AdminLiveChatDashboard from "@/components/admin/AdminLiveChatDashboard";
 import AllUploadsAndScans from "@/components/admin/AllUploadsAndScans";
 import GuestUploadsTracking from "@/components/admin/GuestUploadsTracking";
 import BlogManagement from "@/components/admin/BlogManagement";
+import { RetentionDashboard } from "@/components/admin/RetentionDashboard";
 
 const Admin = () => {
    const [activeTab, setActiveTab] = useState("dashboard");
@@ -48,7 +49,7 @@ const Admin = () => {
                 <TabsTrigger value="live-feed" className="px-4 py-2 text-sm font-medium">Live Feed</TabsTrigger>
                 <TabsTrigger value="uploads-scans" className="px-4 py-2 text-sm font-medium">Uploads & Scans</TabsTrigger>
                 <TabsTrigger value="guest-uploads" className="px-4 py-2 text-sm font-medium">Guest Uploads</TabsTrigger>
-                
+                <TabsTrigger value="retention" className="px-4 py-2 text-sm font-medium bg-blue-500/10 border border-blue-500/20">Retention</TabsTrigger>
               </TabsList>
             </div>
 
@@ -116,6 +117,10 @@ const Admin = () => {
 
             <TabsContent value="guest-uploads" className="space-y-6">
               <GuestUploadsTracking />
+            </TabsContent>
+
+            <TabsContent value="retention" className="space-y-6">
+              <RetentionDashboard />
             </TabsContent>
 
           </Tabs>
