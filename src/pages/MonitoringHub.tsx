@@ -32,6 +32,7 @@ import {
 const MonitoringHub = () => {
   const [activeTab, setActiveTab] = useState('portfolio');
   const [stats, setStats] = useState({ matches: 0, protected: 0, resolutionRate: null as number | null });
+  const [recentMatches, setRecentMatches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -45,7 +46,7 @@ const MonitoringHub = () => {
 
       try {
         // Fetch matches and resolution data
-        const [matchesRes, threatsRes, artworkRes, protectionRes, resolvedMatchesRes, resolvedThreatsRes] = await Promise.all([
+        const [matchesRes, threatsRes, artworkRes, protectionRes, resolvedMatchesRes, resolvedThreatsRes, recentMatchesRes] = await Promise.all([
           supabase
             .from('copyright_matches')
             .select('id', { count: 'exact', head: true }),
@@ -69,7 +70,12 @@ const MonitoringHub = () => {
             .from('ai_threat_detections')
             .select('id', { count: 'exact', head: true })
             .eq('user_id', user.id)
-            .eq('status', 'resolved')
+            .eq('status', 'resolved'),
+          supabase
+            .from('copyright_matches')
+            .select('id, source_url, source_domain, thumbnail_url, image_url, match_confidence, detected_at, threat_level')
+            .order('detected_at', { ascending: false })
+            .limit(5)
         ]);
 
         const totalMatches = (matchesRes.count || 0) + (threatsRes.count || 0);
@@ -87,6 +93,8 @@ const MonitoringHub = () => {
           protected: protectedCount,
           resolutionRate
         });
+        
+        setRecentMatches(recentMatchesRes.data || []);
       } catch (error) {
         console.error('Error fetching stats:', error);
       } finally {
@@ -165,6 +173,96 @@ const MonitoringHub = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Recent Matches */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Eye className="h-5 w-5 text-primary" />
+            Recent Matches
+          </CardTitle>
+          <CardDescription>Latest detected copies of your content</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : recentMatches.length > 0 ? (
+            <div className="space-y-3">
+              {recentMatches.map((match) => (
+                <div 
+                  key={match.id} 
+                  className="flex items-center gap-4 p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+                >
+                  {/* Thumbnail */}
+                  <div className="w-12 h-12 rounded-md overflow-hidden bg-muted flex-shrink-0">
+                    {match.thumbnail_url || match.image_url ? (
+                      <img 
+                        src={match.thumbnail_url || match.image_url} 
+                        alt="Match thumbnail"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Image className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm truncate">
+                      {match.source_domain || new URL(match.source_url).hostname}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(match.detected_at).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })}
+                    </p>
+                  </div>
+                  
+                  {/* Confidence Badge */}
+                  <Badge 
+                    variant={match.match_confidence >= 80 ? "destructive" : match.match_confidence >= 50 ? "default" : "secondary"}
+                    className="flex-shrink-0"
+                  >
+                    {Math.round(match.match_confidence)}%
+                  </Badge>
+                  
+                  {/* View Button */}
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => navigate('/ai-protection')}
+                  >
+                    View
+                  </Button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 space-y-4">
+              <div className="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+                <Search className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <div>
+                <p className="font-medium">No matches yet</p>
+                <p className="text-sm text-muted-foreground">Run a Quick Scan to start monitoring your content.</p>
+              </div>
+              <Button onClick={() => setActiveTab('portfolio')}>
+                <Zap className="h-4 w-4 mr-2" />
+                Start Quick Scan
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
