@@ -14,17 +14,24 @@ import {
   CheckCircle,
   Zap,
   Briefcase,
-  Loader2
+  Loader2,
+  HelpCircle
 } from 'lucide-react';
 import { BugReportButton } from '@/components/BugReportButton';
 import { PortfolioDashboard } from '@/components/portfolio/PortfolioDashboard';
 import { MonitoringDisclaimer } from '@/components/monitoring/MonitoringDisclaimer';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 const MonitoringHub = () => {
   const [activeTab, setActiveTab] = useState('portfolio');
-  const [stats, setStats] = useState({ threats: 0, protected: 0, rate: 0 });
+  const [stats, setStats] = useState({ matches: 0, protected: 0, resolutionRate: null as number | null });
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -37,8 +44,8 @@ const MonitoringHub = () => {
       }
 
       try {
-        // Fetch threats (copyright matches + AI threat detections)
-        const [matchesRes, threatsRes, artworkRes, protectionRes] = await Promise.all([
+        // Fetch matches and resolution data
+        const [matchesRes, threatsRes, artworkRes, protectionRes, resolvedMatchesRes, resolvedThreatsRes] = await Promise.all([
           supabase
             .from('copyright_matches')
             .select('id', { count: 'exact', head: true }),
@@ -53,21 +60,32 @@ const MonitoringHub = () => {
           supabase
             .from('ai_protection_records')
             .select('id', { count: 'exact', head: true })
+            .eq('user_id', user.id),
+          supabase
+            .from('copyright_matches')
+            .select('id', { count: 'exact', head: true })
+            .eq('is_reviewed', true),
+          supabase
+            .from('ai_threat_detections')
+            .select('id', { count: 'exact', head: true })
             .eq('user_id', user.id)
+            .eq('status', 'resolved')
         ]);
 
-        const threatCount = (matchesRes.count || 0) + (threatsRes.count || 0);
+        const totalMatches = (matchesRes.count || 0) + (threatsRes.count || 0);
+        const resolvedMatches = (resolvedMatchesRes.count || 0) + (resolvedThreatsRes.count || 0);
         const protectedCount = (artworkRes.count || 0) + (protectionRes.count || 0);
         
-        // Calculate protection rate (items without high threats / total items)
-        const rate = protectedCount > 0 
-          ? Math.max(0, Math.round(((protectedCount - threatCount) / protectedCount) * 100))
-          : 100;
+        // Calculate resolution rate (resolved / total matches)
+        // Show null if no matches to calculate from
+        const resolutionRate = totalMatches > 0 
+          ? Math.round((resolvedMatches / totalMatches) * 100)
+          : null;
 
         setStats({
-          threats: threatCount,
+          matches: totalMatches,
           protected: protectedCount,
-          rate: Math.min(100, Math.max(0, rate))
+          resolutionRate
         });
       } catch (error) {
         console.error('Error fetching stats:', error);
@@ -103,9 +121,9 @@ const MonitoringHub = () => {
             {loading ? (
               <Loader2 className="h-6 w-6 mx-auto animate-spin" />
             ) : (
-              <div className="text-2xl font-bold">{stats.threats}</div>
+              <div className="text-2xl font-bold">{stats.matches}</div>
             )}
-            <p className="text-sm text-muted-foreground">Threats Found</p>
+            <p className="text-sm text-muted-foreground">Matches Found</p>
           </CardContent>
         </Card>
         <Card className="border-l-4 border-l-blue-500">
@@ -125,9 +143,25 @@ const MonitoringHub = () => {
             {loading ? (
               <Loader2 className="h-6 w-6 mx-auto animate-spin" />
             ) : (
-              <div className="text-2xl font-bold">{stats.rate}%</div>
+              <div className="text-2xl font-bold">
+                {stats.resolutionRate !== null ? `${stats.resolutionRate}%` : '—'}
+              </div>
             )}
-            <p className="text-sm text-muted-foreground">Protection Rate</p>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <p className="text-sm text-muted-foreground flex items-center justify-center gap-1 cursor-help">
+                    Resolution Rate
+                    <HelpCircle className="h-3 w-3" />
+                  </p>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-[250px]">
+                  <p className="text-xs">
+                    Resolution Rate = % of flagged matches marked resolved (removed, credited, or closed).
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </CardContent>
         </Card>
       </div>
@@ -253,7 +287,7 @@ const MonitoringHub = () => {
           <AlertTriangle className="h-5 w-5 mr-2 text-orange-500" />
           <div className="text-left">
             <div className="font-semibold">View Alerts</div>
-            <div className="text-xs text-muted-foreground">{stats.threats} threats found</div>
+            <div className="text-xs text-muted-foreground">{stats.matches} matches found</div>
           </div>
         </Button>
       </div>
