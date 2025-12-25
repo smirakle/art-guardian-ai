@@ -329,14 +329,16 @@ const Index = () => {
               loading="lazy"
             />
           </a>
-          <a 
-            href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-sm text-primary hover:underline inline-flex items-center gap-1 mt-2"
-          >
-            Read the feature <ChevronRight className="w-3 h-3" />
-          </a>
+          <div className="mt-1">
+            <a 
+              href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-sm text-primary hover:underline inline-flex items-center gap-1"
+            >
+              Read the feature <ChevronRight className="w-3 h-3" />
+            </a>
+          </div>
           <p className="text-sm text-muted-foreground mt-3">
             Founder is a Harvard Innovation Labs (i-lab) member.
           </p>
