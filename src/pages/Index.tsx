@@ -299,12 +299,11 @@ const Index = () => {
           <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-8">
             <div className="text-center">
               <Search className="w-6 h-6 sm:w-8 sm:h-8 mx-auto text-primary mb-1" />
-              <div className="text-xs sm:text-sm text-muted-foreground">24/7 Monitoring + Alerts</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">AI Training Protection</div>
             </div>
             <div className="text-center">
               <Shield className="w-6 h-6 sm:w-8 sm:h-8 mx-auto text-primary mb-1" />
-              <div className="text-xs sm:text-sm text-muted-foreground">Ownership Timestamps</div>
-              <div className="text-[10px] text-muted-foreground/60 mt-0.5">Not a crypto product</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Forgery Detection</div>
             </div>
             <div className="text-center">
               <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">24/7</div>
