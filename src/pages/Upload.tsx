@@ -80,7 +80,6 @@ const Upload = () => {
   const [tagInput, setTagInput] = useState("");
   const [licenseType, setLicenseType] = useState("");
   const [enableWatermark, setEnableWatermark] = useState(true);
-  const [enableBlockchain, setEnableBlockchain] = useState(false);
   const [isProtecting, setIsProtecting] = useState(false);
   const [urlInput, setUrlInput] = useState("");
   const [urls, setUrls] = useState<string[]>([]);
@@ -418,7 +417,6 @@ const Upload = () => {
             license_type: licenseType || null,
             file_paths: allPaths,
             enable_watermark: enableWatermark,
-            enable_blockchain: enableBlockchain,
             status: 'protected'
           })
           .select()
@@ -478,60 +476,14 @@ const Upload = () => {
       }));
       setFiles(finalFiles);
 
-      // Handle blockchain registration if enabled (only if user is authenticated)
-      if (enableBlockchain && user && artwork) {
-        try {
-          toast({
-            title: "Blockchain Registration Started",
-            description: "Creating immutable proof of ownership...",
-          });
-
-          const { data: certificateData, error: blockchainError } = await supabase.functions.invoke('blockchain-registration', {
-            body: {
-              artworkId: artwork.id,
-              title: artworkTitle,
-              description: description || null,
-              category,
-              filePaths: allPaths,
-              userEmail: user.email || 'unknown@example.com',
-              userId: user.id
-            }
-          });
-
-          if (blockchainError) {
-            console.error('Blockchain registration error:', blockchainError);
-            toast({
-              title: "Blockchain Registration Failed",
-              description: "Artwork is protected but blockchain registration failed. You can retry later.",
-              variant: "destructive",
-            });
-          } else if (certificateData?.certificate) {
-            toast({
-              title: "Blockchain Certificate Created!",
-              description: `Certificate ID: ${certificateData.certificate.certificateId}`,
-            });
-            
-            console.log("Blockchain certificate created:", certificateData.certificate);
-          }
-        } catch (blockchainError: any) {
-          console.error('Blockchain registration exception:', blockchainError);
-          toast({
-            title: "Blockchain Registration Error",
-            description: "Continuing with standard protection. Blockchain registration can be retried.",
-            variant: "destructive",
-          });
-        }
-      }
-
       // Success notification
       const totalItems = files.length + urls.length;
-      const blockchainMessage = enableBlockchain ? " with blockchain certificate" : "";
       
       setCompletedTabs(prev => new Set(prev).add('upload').add('analyze'));
       
       toast({
         title: "Protection Complete!",
-        description: `${totalItems} item(s) are now protected and being monitored 24/7${blockchainMessage}`,
+        description: `${totalItems} item(s) are now protected and being monitored 24/7`,
       });
 
       console.log("Protection applied with:", {
@@ -542,7 +494,6 @@ const Upload = () => {
         tags,
         licenseType,
         watermark: enableWatermark,
-        blockchain: enableBlockchain,
         files: files.length
       });
 
@@ -586,7 +537,7 @@ const Upload = () => {
                 {!user ? (
                   <>
                     <span className="font-medium">Free Access:</span> You can upload and protect artwork without signing in. 
-                    Sign in for full features like monitoring and blockchain verification. 
+                    Sign in for full features like monitoring and alerts. 
                   </>
                 ) : (
                   <>
@@ -868,17 +819,6 @@ const Upload = () => {
                       />
                       <Label htmlFor="watermark" className="cursor-pointer">Enable Watermarking</Label>
                     </div>
-                    
-                    {user && (
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="blockchain"
-                          checked={enableBlockchain}
-                          onCheckedChange={(checked) => setEnableBlockchain(checked === true)}
-                        />
-                        <Label htmlFor="blockchain" className="cursor-pointer">Blockchain Verification</Label>
-                      </div>
-                    )}
                   </div>
 
                   {/* Summary Section */}
@@ -905,12 +845,6 @@ const Upload = () => {
                           <span className="text-muted-foreground">Watermark:</span>
                           <span className="font-medium">{enableWatermark ? 'Yes' : 'No'}</span>
                         </div>
-                        {user && (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Blockchain:</span>
-                            <span className="font-medium">{enableBlockchain ? 'Yes' : 'No'}</span>
-                          </div>
-                        )}
                       </div>
                       <Button 
                         variant="ghost" 
