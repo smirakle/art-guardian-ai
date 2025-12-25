@@ -231,11 +231,11 @@ const Index = () => {
           </div>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
-            Stop Online Art Theft. Protect Your Portfolio.
+            Know When Your Art Shows Up Somewhere Else.
           </h1>
           
           <p className="text-base sm:text-lg text-muted-foreground/80 mb-6 max-w-2xl mx-auto italic font-sans text-center font-light">
-            Style cloaking + 24/7 monitoring + alerts when your art appears elsewhere.
+            Upload once. Get alerts. Take action.
           </p>
 
           {/* No Download Badge */}
