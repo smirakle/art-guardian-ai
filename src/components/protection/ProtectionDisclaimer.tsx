@@ -14,17 +14,16 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 const PROTECTION_METHODS = [
-  { name: 'Glaze', status: 'active', description: 'Style cloaking technology' },
-  { name: 'Nightshade', status: 'active', description: 'Adversarial protection' },
-  { name: 'IPTC Metadata', status: 'active', description: 'Copyright embedding' },
-  { name: 'C2PA', status: 'active', description: 'Content authenticity' },
-  { name: 'Fingerprinting', status: 'active', description: 'Unique file signatures' },
+  { name: 'Style Cloak', status: 'active', description: 'Invisible AI-resistant perturbations' },
+  { name: 'Invisible Watermark', status: 'active', description: 'Steganographic ownership proof' },
+  { name: 'Fingerprinting', status: 'active', description: 'Unique content signatures' },
+  { name: 'Metadata Embed', status: 'active', description: 'EXIF copyright data' },
 ];
 
 const PROTECTION_FEATURES = [
-  { feature: 'Style Cloaking', description: 'Adds invisible perturbations' },
-  { feature: 'Metadata Injection', description: 'Embeds copyright info' },
-  { feature: 'Crawler Blocking', description: 'Blocks AI scrapers' },
+  { feature: 'Style Cloak', description: 'Invisible perturbations that resist AI training' },
+  { feature: 'Invisible Watermarks', description: 'Steganographic proof of ownership' },
+  { feature: 'Content Fingerprinting', description: 'Unique signatures for detection' },
 ];
 
 export const ProtectionDisclaimer = () => {
@@ -98,8 +97,8 @@ export const ProtectionDisclaimer = () => {
           <Alert variant="default" className="border-amber-500/30 bg-amber-500/5">
             <AlertTriangle className="h-4 w-4 text-amber-500" />
             <AlertDescription className="text-xs">
-              Protection methods are designed to deter AI training but cannot guarantee 100% prevention. 
-              Effectiveness varies by AI model and scraping method. We recommend combining multiple protection layers.
+              TSMO's proprietary protection methods are designed to deter unauthorized AI training but cannot guarantee 100% prevention. 
+              Effectiveness varies by AI model and scraping method. All protection layers are applied simultaneously for maximum coverage.
             </AlertDescription>
           </Alert>
         </CollapsibleContent>
