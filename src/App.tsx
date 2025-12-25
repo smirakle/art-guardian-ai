@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom";
 import { useRealUserMonitoring } from "@/hooks/useRealUserMonitoring";
+import { useVisitorTracking } from "@/hooks/useVisitorTracking";
 import { GuestUploadConverter } from "@/components/GuestUploadConverter";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
@@ -103,6 +104,9 @@ const App = () => {
   
   // Activate Real User Monitoring for all pages
   const { trackUserAction } = useRealUserMonitoring();
+  
+  // Activate Visitor Tracking for retention analytics
+  useVisitorTracking();
 
   // If maintenance mode is enabled, show only the maintenance page
   if (isMaintenanceMode) {
