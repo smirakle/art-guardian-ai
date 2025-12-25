@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { Plus, Edit, Trash2, Send, Twitter, Eye, Calendar, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import SocialMediaPreview from "./SocialMediaPreview";
-import RichTextEditor from "./RichTextEditor";
+import { TipTapEditor } from "./TipTapEditor";
 
 interface BlogPost {
   id: string;
@@ -285,7 +285,7 @@ const BlogManagement = () => {
               
               <div className="space-y-2">
                 <Label htmlFor="content">Content *</Label>
-                <RichTextEditor
+                <TipTapEditor
                   value={formData.content}
                   onChange={(content) => setFormData({ ...formData, content })}
                   placeholder="Write your blog post content..."

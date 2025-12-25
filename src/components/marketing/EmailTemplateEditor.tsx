@@ -3,13 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Save, Eye, Code, Palette, Type, Image, Link, Plus, Trash2 } from 'lucide-react';
+import { Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { TipTapEditor } from '@/components/admin/TipTapEditor';
 
 interface EmailTemplate {
   id: string;
@@ -176,14 +173,11 @@ export const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
           </div>
 
           <div>
-            <Label htmlFor="content">Email Content (HTML)</Label>
-            <Textarea
-              id="content"
+            <Label htmlFor="content">Email Content</Label>
+            <TipTapEditor
               value={formData.html_content}
-              onChange={(e) => setFormData(prev => ({ ...prev, html_content: e.target.value }))}
-              placeholder="<h1>Welcome!</h1><p>Thank you for joining us...</p>"
-              rows={15}
-              className="font-mono text-sm"
+              onChange={(content) => setFormData(prev => ({ ...prev, html_content: content }))}
+              placeholder="Write your email content..."
             />
           </div>
 
