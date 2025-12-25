@@ -45,8 +45,8 @@ const Hero = () => {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-8 max-w-4xl mx-auto">
             <div className="text-center p-4">
               <Shield className="w-10 h-10 text-primary mb-2 mx-auto" />
-              <h3 className="font-semibold mb-1">24/7 Monitoring</h3>
-              <p className="text-muted-foreground text-sm">Continuous surveillance</p>
+              <h3 className="font-semibold mb-1">AI Training Protection</h3>
+              <p className="text-muted-foreground text-sm">Block unauthorized AI use</p>
             </div>
             
             <div className="text-center p-4">
@@ -57,8 +57,8 @@ const Hero = () => {
             
             <div className="text-center p-4">
               <Palette className="w-10 h-10 text-secondary mb-2 mx-auto" />
-              <h3 className="font-semibold mb-1">Artist-First</h3>
-              <p className="text-muted-foreground text-sm">Built for creators</p>
+              <h3 className="font-semibold mb-1">Forgery Detection</h3>
+              <p className="text-muted-foreground text-sm">Verify authenticity</p>
             </div>
 
             <div className="text-center p-4">
