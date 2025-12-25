@@ -232,7 +232,7 @@ export const AITrainingSettings: React.FC = () => {
                   <div>
                     <h4 className="font-medium">Global AI Protection</h4>
                     <p className="text-sm text-muted-foreground">
-                      Enable protection for all uploaded content
+                      Applies resistance methods automatically to new uploads (you can exclude files anytime).
                     </p>
                   </div>
                   <Switch
