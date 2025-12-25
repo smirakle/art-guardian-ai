@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import { BugReportButton } from '@/components/BugReportButton';
 import { PortfolioDashboard } from '@/components/portfolio/PortfolioDashboard';
-import { MonitoringDisclaimer } from '@/components/monitoring/MonitoringDisclaimer';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -117,9 +116,6 @@ const MonitoringHub = () => {
           Scan the web to find unauthorized copies of your content
         </p>
       </div>
-
-      {/* API Disclaimer */}
-      <MonitoringDisclaimer />
 
       {/* Stats with real data */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
