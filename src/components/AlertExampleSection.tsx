@@ -1,9 +1,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, ExternalLink, Calendar, Download, ChevronRight } from "lucide-react";
+import { AlertTriangle, ExternalLink, Calendar, Download, ChevronRight, Link } from "lucide-react";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const AlertExampleSection = () => {
+  const [showDemoModal, setShowDemoModal] = useState(false);
+
   return (
     <section className="py-16 px-4 bg-muted/30">
       <div className="container mx-auto max-w-4xl">
@@ -15,7 +25,10 @@ const AlertExampleSection = () => {
           <p className="text-lg text-muted-foreground">When we find a copy of your art, you'll get a detailed alert like this</p>
         </div>
 
-        <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-orange-500/5 max-w-2xl mx-auto">
+        <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-orange-500/5 max-w-2xl mx-auto relative">
+          <Badge variant="secondary" className="absolute top-3 right-3 text-xs bg-muted/80">
+            Sample alert
+          </Badge>
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center gap-2">
@@ -36,7 +49,8 @@ const AlertExampleSection = () => {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center gap-2 text-sm">
                   <ExternalLink className="w-4 h-4 text-muted-foreground" />
-                  <span className="font-medium">pinterest.com/pins/123456</span>
+                  <span className="font-medium">example.com/listing/tsmo-sample</span>
+                  <Badge variant="outline" className="text-[10px] px-1.5 py-0">Sample URL</Badge>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Calendar className="w-4 h-4" />
@@ -50,14 +64,30 @@ const AlertExampleSection = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap gap-3">
-              <Button size="sm" variant="outline" className="flex-1">
-                <Download className="w-4 h-4 mr-2" />
-                Save Evidence
-              </Button>
-              <Button size="sm" className="flex-1 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
-                Take Action
-                <ChevronRight className="w-4 h-4 ml-2" />
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-3">
+                <div className="flex-1 space-y-1">
+                  <Button size="sm" variant="outline" className="w-full">
+                    <Download className="w-4 h-4 mr-2" />
+                    Download Evidence Pack
+                  </Button>
+                  <p className="text-[11px] text-muted-foreground text-center">
+                    Includes source link, timestamp, and snapshot for your records.
+                  </p>
+                </div>
+                <Button size="sm" className="flex-1 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
+                  Next Steps
+                  <ChevronRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="w-full text-muted-foreground hover:text-foreground"
+                onClick={() => setShowDemoModal(true)}
+              >
+                <Link className="w-4 h-4 mr-2" />
+                Open source page
               </Button>
             </div>
 
@@ -67,6 +97,17 @@ const AlertExampleSection = () => {
           </CardContent>
         </Card>
       </div>
+
+      <Dialog open={showDemoModal} onOpenChange={setShowDemoModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Demo Mode</DialogTitle>
+            <DialogDescription>
+              In real alerts, this opens the source link where your artwork was found. You'll be able to view the infringing content directly and take appropriate action.
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
