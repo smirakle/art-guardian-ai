@@ -239,15 +239,15 @@ const Index = () => {
           </p>
 
           {/* No Download Badge */}
-          <div className="flex items-center justify-center gap-2 mb-8">
+          <div className="flex items-center justify-center gap-2 mb-6">
             <Badge variant="outline" className="bg-emerald-500/10 border-emerald-500/40 text-emerald-700 dark:text-emerald-400 px-4 py-1.5 text-sm font-medium">
               <Cloud className="w-4 h-4 mr-2" />
-              No Software Download Required — Works Instantly in Your Browser
+              Works instantly in your browser — no download
             </Badge>
           </div>
 
           {/* Primary CTA - Try It Now */}
-          <div className="mb-6">
+          <div className="mb-4">
             <Button 
               size="default" 
               className="h-11 px-7 text-base bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white shadow-lg"
@@ -257,12 +257,12 @@ const Index = () => {
               Try It Now — No Signup Required
             </Button>
             <p className="text-xs text-muted-foreground mt-2">
-              Protect 1 image instantly • See results in seconds
+              Upload 1 image → we scan the web → you see matches in seconds.
             </p>
           </div>
 
           {/* Secondary CTA - Email Capture */}
-          <div className="max-w-md mx-auto mb-6">
+          <div className="max-w-md mx-auto mb-4">
             <div className="flex flex-col sm:flex-row gap-3">
               <Input 
                 type="email" 
@@ -285,7 +285,7 @@ const Index = () => {
           </div>
 
           {/* Demo Link - Text only */}
-          <div className="mb-8">
+          <div className="mb-6">
             <button 
               onClick={() => setShowLiveDemo(true)}
               className="text-sm text-primary hover:underline inline-flex items-center gap-1"
@@ -296,25 +296,50 @@ const Index = () => {
           </div>
 
           {/* Key Features */}
-          <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-8">
+          <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-4">
             <div className="text-center">
               <Search className="w-6 h-6 sm:w-8 sm:h-8 mx-auto text-primary mb-1" />
-              <div className="text-xs sm:text-sm text-muted-foreground">AI Training Protection</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">AI Training Resistance</div>
             </div>
             <div className="text-center">
               <Shield className="w-6 h-6 sm:w-8 sm:h-8 mx-auto text-primary mb-1" />
-              <div className="text-xs sm:text-sm text-muted-foreground">Forgery Detection</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Copy Detection</div>
             </div>
             <div className="text-center">
               <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">24/7</div>
               <div className="text-xs sm:text-sm text-muted-foreground">Monitoring</div>
             </div>
           </div>
+
+          {/* Sample Alert Proof Card */}
+          <div className="max-w-xs mx-auto mb-4">
+            <Card className="border-border/50 bg-muted/30 p-3">
+              <p className="text-xs font-semibold text-foreground mb-2">Sample Alert</p>
+              <div className="space-y-1 text-xs text-muted-foreground">
+                <div className="flex justify-between">
+                  <span>Match found:</span>
+                  <span className="text-foreground">pinterest.com</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Confidence:</span>
+                  <span className="text-foreground">94%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Detected:</span>
+                  <span className="text-foreground">2 min ago</span>
+                </div>
+              </div>
+              <Button size="sm" variant="outline" className="w-full mt-2 h-7 text-xs">
+                <Download className="w-3 h-3 mr-1" />
+                Download Evidence Pack
+              </Button>
+            </Card>
+          </div>
         </div>
       </section>
 
-      {/* As Seen On Banner */}
-      <section className="py-6 px-4 bg-background">
+      {/* As Seen On Banner - Moved closer to hero */}
+      <section className="py-4 px-4 bg-background -mt-4">
         <div className="container mx-auto max-w-2xl text-center">
           <a 
             href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/" 
@@ -325,25 +350,22 @@ const Index = () => {
             <img 
               src={bizWeeklyBanner} 
               alt="As seen on BizWeekly" 
-              className="w-full max-w-sm mx-auto h-auto object-contain"
+              className="w-full max-w-xs mx-auto h-auto object-contain"
               loading="lazy"
             />
           </a>
-          <p className="text-sm text-muted-foreground mt-3">
-            Featured: "Suddenly Fighting Shadows: One Artist's Mission to Protect Creators in the AI Age"
-          </p>
           <a 
             href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="text-sm text-primary hover:underline inline-flex items-center gap-1 mt-1"
+            className="text-sm text-primary hover:underline inline-flex items-center gap-1 mt-2"
           >
             Read the feature <ChevronRight className="w-3 h-3" />
           </a>
-          <p className="text-sm text-muted-foreground mt-4">
+          <p className="text-sm text-muted-foreground mt-3">
             Founder is a Harvard Innovation Labs (i-lab) member.
           </p>
-          <p className="text-xs text-muted-foreground/70 mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Harvard Innovation Labs / Harvard University does not endorse or sponsor TSMO Watch.
           </p>
         </div>
