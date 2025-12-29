@@ -231,7 +231,7 @@ const Index = () => {
           </div>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
-            Know When Your Art Shows Up Somewhere Else.
+            Stop Online Art Theft.
           </h1>
           
           <p className="text-base sm:text-lg text-muted-foreground/80 mb-6 max-w-2xl mx-auto italic font-sans text-center font-light">
