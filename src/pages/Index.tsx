@@ -20,7 +20,7 @@ import DemoEnvironment from "@/components/investor/DemoEnvironment";
 
 import TrustBadges from "@/components/TrustBadges";
 import { InstantProtectModal } from "@/components/InstantProtectModal";
-import { TestimonialsSection } from "@/components/TestimonialsSection";
+
 import AlertExampleSection from "@/components/AlertExampleSection";
 
 // Blog Section Component that fetches from database
@@ -524,8 +524,6 @@ const Index = () => {
       {/* Trust Badges */}
       <TrustBadges />
 
-      {/* Testimonials Section */}
-      <TestimonialsSection />
 
       {/* Blog Section */}
       <BlogSection navigate={navigate} />
