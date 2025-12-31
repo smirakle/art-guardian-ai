@@ -94,6 +94,7 @@ import StopArtTheft from "./pages/StopArtTheft";
 import ProtectPhotos from "./pages/ProtectPhotos";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import ProductHunt from "./pages/ProductHunt";
 import SuccessStories from "./pages/SuccessStories";
 import BlogManagementPage from "./pages/BlogManagementPage";
 const queryClient = new QueryClient();
@@ -274,6 +275,7 @@ const App = () => {
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/success-stories" element={<SuccessStories />} />
+            <Route path="/product-hunt" element={<ProductHunt />} />
             <Route path="/blog-management" element={
               <ProtectedRoute requiredRole="admin">
                 <BlogManagementPage />
