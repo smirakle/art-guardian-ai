@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Handshake } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 import SecurityAuditLog from "@/components/admin/SecurityAuditLog";
 import UserManagement from "@/components/admin/UserManagement";
@@ -23,6 +26,7 @@ import BlogManagement from "@/components/admin/BlogManagement";
 import { RetentionDashboard } from "@/components/admin/RetentionDashboard";
 
 const Admin = () => {
+   const navigate = useNavigate();
    const [activeTab, setActiveTab] = useState("dashboard");
    const [isMonitoring, setIsMonitoring] = useState(true);
 
@@ -30,6 +34,22 @@ const Admin = () => {
     <div className="min-h-screen bg-background pt-20 pb-12">
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto">
+          {/* Quick Links */}
+          <div className="flex items-center justify-between gap-3 mb-4 pb-4 border-b">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Quick Links:</span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/admin/partnerships")}
+                className="gap-2"
+              >
+                <Handshake className="h-4 w-4" />
+                Partnerships
+              </Button>
+            </div>
+          </div>
+
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <div className="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
               <TabsList className="flex w-max min-w-full gap-2 px-4 py-2 bg-muted/50 backdrop-blur-sm border border-border/50 rounded-lg shadow-sm">
