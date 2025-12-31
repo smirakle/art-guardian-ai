@@ -96,6 +96,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import SuccessStories from "./pages/SuccessStories";
 import BlogManagementPage from "./pages/BlogManagementPage";
+import PartnershipsOverview from "./pages/PartnershipsOverview";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -277,6 +278,11 @@ const App = () => {
             <Route path="/blog-management" element={
               <ProtectedRoute requiredRole="admin">
                 <BlogManagementPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/partnerships" element={
+              <ProtectedRoute requiredRole="admin">
+                <PartnershipsOverview />
               </ProtectedRoute>
             } />
             
