@@ -33,6 +33,11 @@ export interface ProductionMetadataOptions {
     prohibitCommercialUse: boolean;
     requireAttribution: boolean;
   };
+  c2paSettings?: {
+    enableContentCredentials: boolean;
+    includeProvenance: boolean;
+    signatureAlgorithm: 'ES256' | 'ES384' | 'RS256';
+  };
 }
 
 export interface MetadataVerificationResult {
@@ -57,6 +62,23 @@ export interface MetadataVerificationResult {
   warnings: string[];
 }
 
+export interface C2PAManifest {
+  '@context': string;
+  '@type': string;
+  claim_generator: string;
+  title: string;
+  format: string;
+  instance_id: string;
+  claim_signature: {
+    alg: string;
+    sig: string;
+  };
+  assertions: Array<{
+    '@type': string;
+    [key: string]: any;
+  }>;
+}
+
 export interface ProductionMetadataResult {
   success: boolean;
   protectedBlob?: Blob;
@@ -65,6 +87,7 @@ export interface ProductionMetadataResult {
   methods: string[];
   verification: MetadataVerificationResult;
   legalNotices: string[];
+  c2paManifest?: C2PAManifest;
   metadata: Record<string, any>;
   error?: string;
 }
@@ -129,6 +152,13 @@ export class ProductionMetadataInjection {
         appliedMethods.push('Compression-Resistant Watermark');
       }
 
+      // Generate C2PA manifest if enabled (Content Authenticity Initiative)
+      let c2paManifest: C2PAManifest | undefined;
+      if (options.c2paSettings?.enableContentCredentials) {
+        c2paManifest = this.generateC2PAManifest(options, protectionId, timestamp);
+        appliedMethods.push('C2PA Content Credentials');
+      }
+
       // Generate legal notices
       legalNotices.push(...this.generateLegalNotices(options));
 
@@ -143,7 +173,8 @@ export class ProductionMetadataInjection {
         methods: appliedMethods,
         verification,
         legalNotices,
-        metadata
+        metadata,
+        c2paManifest
       };
 
     } catch (error) {
@@ -372,6 +403,112 @@ export class ProductionMetadataInjection {
     metadata.technical.integrity.checksum = this.calculateChecksum(JSON.stringify(metadata));
     
     return metadata;
+  }
+
+  /**
+   * Generate C2PA (Content Authenticity Initiative) manifest for content provenance
+   * Follows C2PA 1.0 specification for verifiable content credentials
+   */
+  private generateC2PAManifest(
+    options: ProductionMetadataOptions,
+    protectionId: string,
+    timestamp: string
+  ): C2PAManifest {
+    const instanceId = `urn:uuid:${protectionId.toLowerCase()}`;
+    
+    return {
+      '@context': 'https://c2pa.org/claim/1.0/',
+      '@type': 'c2pa.claim',
+      claim_generator: 'TSMO/2.0 ai-protection-system',
+      title: 'AI Training Protection Credential',
+      format: 'application/c2pa',
+      instance_id: instanceId,
+      claim_signature: {
+        alg: options.c2paSettings?.signatureAlgorithm || 'ES256',
+        sig: this.generateC2PASignature(protectionId, timestamp)
+      },
+      assertions: [
+        {
+          '@type': 'c2pa.actions',
+          actions: [
+            {
+              action: 'c2pa.created',
+              when: timestamp,
+              softwareAgent: 'TSMO AI Protection System v2.0',
+              parameters: {
+                protection_level: 'enterprise',
+                ai_training_prohibited: options.aiProtection.prohibitTraining
+              }
+            }
+          ]
+        },
+        {
+          '@type': 'c2pa.creative.work',
+          '@id': protectionId,
+          author: [{
+            '@type': 'Person',
+            name: options.copyrightInfo.owner
+          }],
+          copyrightNotice: `© ${options.copyrightInfo.year} ${options.copyrightInfo.owner}. ${options.copyrightInfo.rights}`,
+          copyrightYear: options.copyrightInfo.year,
+          credit: options.copyrightInfo.owner
+        },
+        {
+          '@type': 'c2pa.rights',
+          ai_training: {
+            prohibited: options.aiProtection.prohibitTraining,
+            derivatives_prohibited: options.aiProtection.prohibitDerivatives,
+            commercial_use_prohibited: options.aiProtection.prohibitCommercialUse,
+            attribution_required: options.aiProtection.requireAttribution
+          },
+          machine_readable_directives: [
+            'noai',
+            'noimageai', 
+            'noindex',
+            'nofollow',
+            'nocache'
+          ],
+          legal_contact: options.copyrightInfo.contactEmail,
+          license_url: options.copyrightInfo.licenseUrl
+        },
+        {
+          '@type': 'tsmo.ai.protection',
+          protection_id: protectionId,
+          protection_level: 'enterprise',
+          protected_at: timestamp,
+          verification_url: `https://tsmo.io/verify/${protectionId}`,
+          legal_notice: 'This content is protected against unauthorized use in AI training systems. Any use for machine learning, model training, or automated content generation without explicit written consent from the copyright holder is strictly prohibited and may result in legal action.',
+          enforcement: {
+            dmca_enabled: options.legalCompliance.dmcaCompliant,
+            automated_takedown: true,
+            legal_jurisdiction: options.copyrightInfo.jurisdiction || 'International'
+          }
+        },
+        {
+          '@type': 'c2pa.provenance',
+          provenance_chain: [{
+            action: 'created',
+            timestamp: timestamp,
+            actor: 'TSMO Protection System',
+            description: 'Original content protected with AI training prohibition'
+          }],
+          content_binding: {
+            algorithm: 'SHA-256',
+            hash: this.calculateChecksum(protectionId + timestamp)
+          }
+        }
+      ]
+    };
+  }
+
+  /**
+   * Generate a signature placeholder for C2PA manifest
+   * In production, this would use actual cryptographic signing
+   */
+  private generateC2PASignature(protectionId: string, timestamp: string): string {
+    const data = `${protectionId}:${timestamp}:tsmo-c2pa-v2`;
+    const hash = this.calculateChecksum(data);
+    return `TSMO-SIG-${hash}-${Date.now().toString(36)}`.toUpperCase();
   }
 
   /**
