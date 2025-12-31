@@ -248,19 +248,42 @@ const Index = () => {
             </Badge>
           </div>
 
-          {/* Primary CTA - Try It Now */}
-          <div className="mb-4">
+          {/* Primary CTA - Try It Now with Animation */}
+          <div className="mb-6">
             <Button 
-              size="default" 
-              className="h-11 px-7 text-base bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white shadow-lg"
+              size="lg" 
+              className="h-14 px-10 text-lg bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white shadow-xl animate-pulse-glow"
               onClick={() => setShowInstantProtect(true)}
             >
-              <Shield className="mr-2 h-4 w-4" />
-              Try It Now — No Signup Required
+              <Upload className="mr-2 h-5 w-5" />
+              Scan Your Art Free — 5 Seconds
             </Button>
-            <p className="text-xs text-muted-foreground mt-2">
-              Upload 1 image → we scan the web → you see matches in seconds.
+            <p className="text-sm text-muted-foreground mt-3 flex items-center justify-center gap-2">
+              <span className="inline-flex items-center gap-1">
+                <Check className="w-4 h-4 text-emerald-500" />
+                No signup
+              </span>
+              <span className="text-muted-foreground/50">•</span>
+              <span className="inline-flex items-center gap-1">
+                <Check className="w-4 h-4 text-emerald-500" />
+                No download
+              </span>
+              <span className="text-muted-foreground/50">•</span>
+              <span className="inline-flex items-center gap-1">
+                <Check className="w-4 h-4 text-emerald-500" />
+                Instant results
+              </span>
             </p>
+            <p className="text-xs text-primary/80 mt-2 font-medium">
+              ✓ 2,400+ scans completed this month
+            </p>
+          </div>
+
+          {/* Divider */}
+          <div className="flex items-center gap-4 max-w-md mx-auto mb-6">
+            <div className="flex-1 h-px bg-border"></div>
+            <span className="text-xs text-muted-foreground uppercase tracking-wide">or create an account</span>
+            <div className="flex-1 h-px bg-border"></div>
           </div>
 
           {/* Secondary CTA - Email Capture */}
