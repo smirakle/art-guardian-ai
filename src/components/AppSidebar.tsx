@@ -1,4 +1,4 @@
-import { Shield, Upload, Home, Users, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, HelpCircle, Eye, Monitor, BarChart3, Settings, Search, TrendingUp, Key, DollarSign, Send, Gavel, FileCheck, FileImage, FolderSearch, AlertTriangle, Lock as LockIcon, BookOpen, ShieldAlert, Camera, ChevronDown, Rocket } from "lucide-react";
+import { Shield, Upload, Home, Users, UserCog, Mail, MessageSquare, LogIn, LogOut, Scale, Info, HelpCircle, Eye, Monitor, BarChart3, Settings, Search, TrendingUp, Key, DollarSign, Send, Gavel, FileCheck, FileImage, FolderSearch, AlertTriangle, Lock as LockIcon, BookOpen, ShieldAlert, Camera, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TestPhasePopup } from "@/components/TestPhasePopup";
 import { useState } from "react";
@@ -76,7 +76,6 @@ export function AppSidebar() {
 
   // Admin-only items
   const adminOnlyItems = [
-    { path: "/product-hunt", label: "Product Hunt Launch", icon: Rocket },
     { path: "/email-marketing", label: "Email Marketing", icon: Send },
     { path: "/tax-management", label: "Tax Management", icon: DollarSign },
     { path: "/marketing-flyer", label: "Marketing Flyer", icon: FileImage },
