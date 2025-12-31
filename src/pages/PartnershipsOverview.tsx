@@ -36,7 +36,8 @@ const partnershipCategories = [
         potential: "$750K-1.2M ARR",
         description: "Plugin integration for Photoshop/Illustrator with automatic AI protection on export. Adobe has 30M+ Creative Cloud subscribers; even 0.1% adoption = 30K users",
         contacts: "Adobe Exchange Partner Portal",
-        nextStep: "Submit Technology Partner application via exchangeprogram.adobe.com"
+        contactUrl: "https://partners.adobe.com/exchangeprogram/creativecloud",
+        nextStep: "Submit Technology Partner application"
       },
       {
         name: "Canva",
@@ -44,8 +45,9 @@ const partnershipCategories = [
         status: "prospecting",
         potential: "$400K-600K ARR",
         description: "Embedded protection for 170M+ monthly active Canva users. Target Pro/Teams segment (~15M users)",
-        contacts: "Canva Apps Marketplace team",
-        nextStep: "Apply via canva.com/developers"
+        contacts: "Canva Apps Marketplace",
+        contactUrl: "https://www.canva.dev/docs/apps/",
+        nextStep: "Apply via developer portal"
       },
       {
         name: "Figma",
@@ -53,7 +55,8 @@ const partnershipCategories = [
         status: "researching",
         potential: "$200K-350K ARR",
         description: "Design asset protection for 4M+ Figma users. Focus on enterprise teams with IP concerns",
-        contacts: "Figma Community plugins program",
+        contacts: "Figma Community",
+        contactUrl: "https://www.figma.com/community",
         nextStep: "Develop Figma plugin MVP, submit to community"
       },
       {
@@ -62,7 +65,8 @@ const partnershipCategories = [
         status: "researching",
         potential: "$500K-800K ARR",
         description: "AI-generated content verification and provenance tracking. Growing market as AI art ownership becomes critical",
-        contacts: "Direct outreach to AI art platforms",
+        contacts: "Direct outreach",
+        contactUrl: "https://www.midjourney.com",
         nextStep: "Build proof-of-concept for AI art verification"
       }
     ]
@@ -79,7 +83,8 @@ const partnershipCategories = [
         status: "researching",
         potential: "$1.5M-2.5M ARR",
         description: "Getty has 500M+ images and paid $1.3B lawsuit to settle AI training disputes. Strong need for protection tech",
-        contacts: "Getty Licensing & Legal team",
+        contacts: "Getty Enterprise Solutions",
+        contactUrl: "https://www.gettyimages.com/solutions/enterprise",
         nextStep: "Develop enterprise white-label demo"
       },
       {
@@ -88,7 +93,8 @@ const partnershipCategories = [
         status: "researching",
         potential: "$1M-1.8M ARR",
         description: "Shutterstock has 400M+ assets, recently partnered with OpenAI. Need for contributor protection tools",
-        contacts: "Contributor Services team",
+        contacts: "Shutterstock Contributors",
+        contactUrl: "https://submit.shutterstock.com",
         nextStep: "Pitch contributor protection suite"
       },
       {
@@ -97,25 +103,28 @@ const partnershipCategories = [
         status: "prospecting",
         potential: "$150K-250K ARR",
         description: "19 museums, 21 libraries, 9 research centers. 155M+ items in collections. Digital preservation priority",
-        contacts: "Smithsonian Digital Access team",
+        contacts: "Smithsonian Open Access",
+        contactUrl: "https://www.si.edu/openaccess",
         nextStep: "Submit vendor proposal for digital collection protection"
       },
       {
-        name: "News Media Publishers (AP, Reuters, AFP)",
+        name: "Associated Press (AP)",
         type: "Enterprise License",
         status: "prospecting",
         potential: "$800K-1.2M ARR",
         description: "Wire services generate millions of images daily. AP alone distributes 4M+ photos yearly",
-        contacts: "News media licensing departments",
+        contacts: "AP Licensing",
+        contactUrl: "https://www.ap.org/solutions/artificial-intelligence",
         nextStep: "Develop news media workflow integration"
       },
       {
-        name: "Penguin Random House / HarperCollins",
+        name: "Penguin Random House",
         type: "Publishing License",
         status: "researching",
         potential: "$300K-500K ARR",
         description: "Major publishers need book cover, illustration, and author photo protection. Combined catalog of 100K+ titles",
-        contacts: "Digital Rights Management teams",
+        contacts: "PRH Digital Rights",
+        contactUrl: "https://www.penguinrandomhouse.com/about-us/our-story",
         nextStep: "Create publishing-specific protection features"
       }
     ]
@@ -132,7 +141,8 @@ const partnershipCategories = [
         status: "prospecting",
         potential: "Access to 120K+ artists",
         description: "Largest visual artists rights organization in US. Represents estates of Picasso, Warhol, and 120K+ artists worldwide",
-        contacts: "ARS Membership Services (212-420-9160)",
+        contacts: "ARS Membership",
+        contactUrl: "https://arsny.com/contact/",
         nextStep: "Schedule meeting with Executive Director"
       },
       {
@@ -141,16 +151,18 @@ const partnershipCategories = [
         status: "prospecting",
         potential: "2,000+ professional members",
         description: "Professional union for graphic artists. Members actively concerned about AI art theft",
-        contacts: "Guild Executive Committee",
+        contacts: "GAG Partnership",
+        contactUrl: "https://graphicartistsguild.org/contact/",
         nextStep: "Propose exclusive member discount (30% off)"
       },
       {
-        name: "AIGA (Professional Association for Design)",
+        name: "AIGA",
         type: "Association Partner",
         status: "researching",
         potential: "25,000+ members",
         description: "Oldest and largest professional design organization. Strong advocacy for designer rights",
-        contacts: "AIGA Partnerships team",
+        contacts: "AIGA Partnerships",
+        contactUrl: "https://www.aiga.org/membership/corporate-partners",
         nextStep: "Sponsor AIGA Design Conference 2025"
       },
       {
@@ -159,7 +171,8 @@ const partnershipCategories = [
         status: "prospecting",
         potential: "30,000+ photographer members",
         description: "Largest photo association globally. Members extremely concerned about AI training on their work",
-        contacts: "PPA Vendor Partnership program",
+        contacts: "PPA Partnerships",
+        contactUrl: "https://www.ppa.com/partners",
         nextStep: "Exhibit at Imaging USA 2025 conference"
       },
       {
@@ -169,6 +182,7 @@ const partnershipCategories = [
         potential: "Industry Standard Alignment",
         description: "Adobe-led coalition for content provenance (900+ members including BBC, Microsoft, Nikon). C2PA standard adoption",
         contacts: "CAI Membership",
+        contactUrl: "https://contentauthenticity.org/how-to-get-involved",
         nextStep: "Apply for CAI membership, align with C2PA standards"
       }
     ]
@@ -185,7 +199,8 @@ const partnershipCategories = [
         status: "active",
         potential: "$75K-150K ARR",
         description: "Top 10 IP litigation firm. Handle major AI copyright cases. Can refer clients needing evidence collection",
-        contacts: "IP Litigation partners",
+        contacts: "MoFo IP Practice",
+        contactUrl: "https://www.mofo.com/capabilities/intellectual-property",
         nextStep: "Formalize referral agreement with retainer"
       },
       {
@@ -194,7 +209,8 @@ const partnershipCategories = [
         status: "prospecting",
         potential: "$100K-175K ARR",
         description: "Global law firm with strong IP practice. Represented clients in AI training lawsuits",
-        contacts: "IP Transactions practice group",
+        contacts: "LW IP Practice",
+        contactUrl: "https://www.lw.com/en/practices/intellectual-property",
         nextStep: "Schedule pitch meeting with IP practice leads"
       },
       {
@@ -203,16 +219,18 @@ const partnershipCategories = [
         status: "prospecting",
         potential: "Policy Influence",
         description: "Coalition of 40+ organizations advocating for copyright. Members include RIAA, MPAA, Authors Guild",
-        contacts: "Copyright Alliance membership team",
+        contacts: "Copyright Alliance",
+        contactUrl: "https://copyrightalliance.org/about/members/",
         nextStep: "Apply for associate membership ($2,500/year)"
       },
       {
-        name: "DMCA Agents Network",
-        type: "Enforcement Network",
+        name: "US Copyright Office",
+        type: "Regulatory Body",
         status: "active",
-        potential: "$50K-100K ARR",
+        potential: "Compliance & Policy",
         description: "Network of registered DMCA agents for takedown processing. 500+ platform contacts",
-        contacts: "Various platform legal teams",
+        contacts: "DMCA Agent Directory",
+        contactUrl: "https://www.copyright.gov/dmca-directory/",
         nextStep: "Continue building agent relationship database"
       }
     ]
@@ -229,7 +247,8 @@ const partnershipCategories = [
         status: "researching",
         potential: "$200K-400K ARR",
         description: "4.4M+ Shopify stores. E-commerce sellers need product image protection from scraping and AI training",
-        contacts: "Shopify Partner Program",
+        contacts: "Shopify Partners",
+        contactUrl: "https://www.shopify.com/partners",
         nextStep: "Build Shopify app with watermarking for product photos"
       },
       {
@@ -238,17 +257,19 @@ const partnershipCategories = [
         status: "researching",
         potential: "$100K-200K ARR",
         description: "810M+ websites run WordPress (43% of web). Plugin could protect media libraries globally",
-        contacts: "WordPress.org plugin team",
+        contacts: "WordPress Plugin Directory",
+        contactUrl: "https://developer.wordpress.org/plugins/",
         nextStep: "Develop WordPress plugin for media protection"
       },
       {
-        name: "Squarespace / Wix",
+        name: "Squarespace",
         type: "App Marketplace",
         status: "researching",
         potential: "$75K-150K ARR",
         description: "Combined 10M+ websites. Artists and photographers heavily use these platforms for portfolios",
-        contacts: "Platform developer programs",
-        nextStep: "Research Squarespace/Wix developer APIs"
+        contacts: "Squarespace Developers",
+        contactUrl: "https://developers.squarespace.com",
+        nextStep: "Research Squarespace developer APIs"
       },
       {
         name: "DeviantArt",
@@ -256,7 +277,8 @@ const partnershipCategories = [
         status: "prospecting",
         potential: "$150K-250K ARR",
         description: "61M+ registered users, 500M+ artworks. Already launched DreamUp AI but facing creator backlash",
-        contacts: "DeviantArt Product team",
+        contacts: "DeviantArt Business",
+        contactUrl: "https://www.deviantart.com/developers/",
         nextStep: "Propose creator protection integration"
       }
     ]
@@ -268,12 +290,13 @@ const partnershipCategories = [
     bgColor: "bg-slate-500/10",
     partners: [
       {
-        name: "US Copyright Office",
+        name: "US Copyright Office AI Initiative",
         type: "Government Partner",
         status: "researching",
         potential: "Regulatory Alignment",
         description: "Copyright Office seeking tech solutions for AI registration challenges. Congressional hearings ongoing",
-        contacts: "Office of Public Information",
+        contacts: "AI Registration Study",
+        contactUrl: "https://www.copyright.gov/ai/",
         nextStep: "Monitor AI copyright rulemaking, submit comments"
       },
       {
@@ -282,7 +305,8 @@ const partnershipCategories = [
         status: "researching",
         potential: "$250K-500K Phase II",
         description: "DoD concerned about deepfakes and disinformation. SBIR grants for verification tech",
-        contacts: "Defense Innovation Unit",
+        contacts: "SBIR Portal",
+        contactUrl: "https://www.sbir.gov/topics",
         nextStep: "Research applicable SBIR topics for FY2025"
       },
       {
@@ -291,7 +315,8 @@ const partnershipCategories = [
         status: "prospecting",
         potential: "$100K-175K ARR",
         description: "170M+ items in collection. Active digitization efforts need protection",
-        contacts: "Digital Collections team",
+        contacts: "LOC Digital Initiatives",
+        contactUrl: "https://www.loc.gov/programs/digital-collections-management/",
         nextStep: "Submit vendor capability statement"
       }
     ]
@@ -451,10 +476,15 @@ const PartnershipsOverview: React.FC = () => {
                               <DollarSign className="w-4 h-4" />
                               {partner.potential}
                             </span>
-                            <span className="flex items-center gap-1 text-muted-foreground">
-                              <Mail className="w-4 h-4" />
+                            <a 
+                              href={partner.contactUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1 text-primary hover:underline"
+                            >
+                              <ExternalLink className="w-4 h-4" />
                               {partner.contacts}
-                            </span>
+                            </a>
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-2 min-w-[200px]">
