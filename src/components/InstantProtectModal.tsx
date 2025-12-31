@@ -482,13 +482,22 @@ export const InstantProtectModal = ({ open, onOpenChange }: InstantProtectModalP
               </TabsContent>
             </Tabs>
 
-            {/* CTA */}
-            <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 space-y-2">
-              <h4 className="text-sm font-medium">Save & Monitor This Image</h4>
-              <Button onClick={handleCreateAccount} className="w-full" size="sm">
-                Create Free Account
+            {/* CTA - Stronger urgency messaging */}
+            <div className="bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/30 rounded-lg p-4 space-y-3">
+              <div className="flex items-start gap-2">
+                <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-muted-foreground">
+                  This protection is temporary. Create a free account to save it permanently and get email alerts when your art is found.
+                </p>
+              </div>
+              <h4 className="text-sm font-semibold">Save + Get 50 More Free Protections</h4>
+              <Button onClick={handleCreateAccount} className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white" size="sm">
+                Create Free Account — Keep My Protection
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
+              <p className="text-xs text-center text-muted-foreground">
+                No credit card required
+              </p>
             </div>
 
             <div className="flex gap-2">
