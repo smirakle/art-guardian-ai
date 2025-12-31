@@ -1,5 +1,8 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Handshake } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import UserManagement from "./UserManagement";
 import SecurityAuditLog from "./SecurityAuditLog";
 import AdminDashboard from "./AdminDashboard";
@@ -11,9 +14,25 @@ import GovernmentDefenseMonitoring from "./GovernmentDefenseMonitoring";
 import GovernmentApiPanel from "./GovernmentApiPanel";
 
 const AdminPanel: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-background pt-20 pb-12">
       <div className="container mx-auto px-4">
+        {/* Quick Links Bar */}
+        <div className="flex items-center gap-2 mb-4 pb-4 border-b">
+          <span className="text-sm text-muted-foreground mr-2">Quick Links:</span>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => navigate('/admin/partnerships')}
+            className="gap-2"
+          >
+            <Handshake className="h-4 w-4" />
+            Partnerships
+          </Button>
+        </div>
+
         <Tabs defaultValue="dashboard" className="w-full">
           <TabsList className="flex w-full overflow-x-auto">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
