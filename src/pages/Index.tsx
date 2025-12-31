@@ -22,6 +22,7 @@ import TrustBadges from "@/components/TrustBadges";
 import { InstantProtectModal } from "@/components/InstantProtectModal";
 
 import AlertExampleSection from "@/components/AlertExampleSection";
+import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 
 // Blog Section Component that fetches from database
 const BlogSection = ({ navigate }: { navigate: (path: string) => void }) => {
@@ -208,6 +209,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       <ContextualHelp />
+      <ExitIntentPopup />
       <InstantProtectModal open={showInstantProtect} onOpenChange={setShowInstantProtect} />
       
       {/* Live Demo Modal */}
@@ -281,7 +283,7 @@ const Index = () => {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">No credit card required</p>
+            <p className="text-xs text-muted-foreground mt-2">50 free protections + email alerts. No credit card.</p>
           </div>
 
           {/* Demo Link - Text only */}
@@ -391,6 +393,39 @@ const Index = () => {
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
+        </div>
+      </section>
+
+      {/* Inline Signup Section - After How It Works */}
+      <section className="py-12 px-4 bg-background">
+        <div className="container mx-auto max-w-2xl">
+          <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-accent/5">
+            <CardContent className="text-center py-8 px-6">
+              <h3 className="text-2xl font-bold mb-2">Ready to protect your portfolio?</h3>
+              <p className="text-muted-foreground mb-6">
+                Join artists who sleep better knowing their work is monitored 24/7
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                <Input 
+                  type="email" 
+                  placeholder="Enter your email" 
+                  className="flex-1 h-12" 
+                  value={signupEmail}
+                  onChange={(e) => setSignupEmail(e.target.value)}
+                />
+                <Button 
+                  size="lg"
+                  className="h-12 px-6 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white"
+                  onClick={() => navigate(`/auth?email=${encodeURIComponent(signupEmail)}&tab=signup`)}
+                >
+                  Get Started Free
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-3">
+                50 free protections. Email alerts. No credit card.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
