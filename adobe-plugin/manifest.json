@@ -1,0 +1,56 @@
+{
+  "manifestVersion": 5,
+  "id": "com.tsmo.aiprotection",
+  "name": "TSMO AI Training Protection",
+  "version": "1.0.0",
+  "main": "index.html",
+  "icons": [
+    { "width": 24, "height": 24, "path": "icons/icon-24.png" },
+    { "width": 48, "height": 48, "path": "icons/icon-48.png" }
+  ],
+  "host": [
+    {
+      "app": "PS",
+      "minVersion": "24.0.0"
+    },
+    {
+      "app": "AI",
+      "minVersion": "27.0.0"
+    }
+  ],
+  "entrypoints": [
+    {
+      "type": "panel",
+      "id": "tsmoProtectionPanel",
+      "label": {
+        "default": "TSMO Protection"
+      },
+      "minimumSize": {
+        "width": 280,
+        "height": 400
+      },
+      "maximumSize": {
+        "width": 500,
+        "height": 800
+      },
+      "preferredDockedSize": {
+        "width": 300,
+        "height": 500
+      },
+      "preferredFloatingSize": {
+        "width": 320,
+        "height": 520
+      }
+    }
+  ],
+  "requiredPermissions": {
+    "localFileSystem": "request",
+    "clipboard": "readAndWrite",
+    "network": {
+      "domains": [
+        "https://utneaqmbyjwxaqrrarpc.supabase.co",
+        "https://*.supabase.co"
+      ]
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "tsmo-protection-plugin",
+  "version": "1.0.0",
+  "description": "TSMO AI Training Protection Plugin for Adobe Creative Cloud",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Use Adobe UXP Developer Tools to package'",
+    "package": "echo 'Run: npx @anthropic/uxp-pack create-package'"
+  },
+  "author": "TSMO Inc.",
+  "license": "MIT",
+  "keywords": [
+    "adobe",
+    "uxp",
+    "photoshop",
+    "illustrator",
+    "ai-protection",
+    "c2pa",
+    "copyright"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tsmo/adobe-plugin"
+  }
+}

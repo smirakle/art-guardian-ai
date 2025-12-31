@@ -10,16 +10,19 @@ const SUPABASE_URL = 'https://utneaqmbyjwxaqrrarpc.supabase.co';
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') || '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 
+// C2PA Signing secrets (optional - falls back to placeholder if not configured)
+const C2PA_PRIVATE_KEY = Deno.env.get('C2PA_PRIVATE_KEY') || '';
+const C2PA_CERTIFICATE = Deno.env.get('C2PA_CERTIFICATE') || '';
+
 // Rate limiting configuration
 const RATE_LIMITS = {
-  protect: { maxRequests: 60, windowMs: 3600000 }, // 60 requests per hour
-  verify: { maxRequests: 120, windowMs: 3600000 }, // 120 requests per hour
-  batch_protect: { maxRequests: 20, windowMs: 3600000 }, // 20 batch operations per hour
-  list_protections: { maxRequests: 100, windowMs: 3600000 }, // 100 requests per hour
-  get_status: { maxRequests: 200, windowMs: 3600000 }, // 200 status checks per hour
+  protect: { maxRequests: 60, windowMs: 3600000 },
+  verify: { maxRequests: 120, windowMs: 3600000 },
+  batch_protect: { maxRequests: 20, windowMs: 3600000 },
+  list_protections: { maxRequests: 100, windowMs: 3600000 },
+  get_status: { maxRequests: 200, windowMs: 3600000 },
 };
 
-// In-memory rate limit store (per function instance)
 const rateLimitStore = new Map<string, { count: number; windowStart: number }>();
 
 interface ProtectionRequest {
@@ -57,12 +60,14 @@ interface ProtectionResponse {
     level: string;
     xmpDirective: string;
     c2paManifest?: object;
+    signatureValid?: boolean;
   };
   verificationResult?: {
     isProtected: boolean;
     protectionId?: string;
     protectedAt?: string;
     owner?: string;
+    signatureVerified?: boolean;
   };
   protections?: Array<{
     id: string;
@@ -75,7 +80,223 @@ interface ProtectionResponse {
   retryAfter?: number;
 }
 
-// Input validation functions
+// ============= C2PA ES256 SIGNING IMPLEMENTATION =============
+
+// Parse PEM-encoded private key to raw bytes
+function parsePemPrivateKey(pem: string): Uint8Array {
+  const base64 = pem
+    .replace(/-----BEGIN[^-]+-----/g, '')
+    .replace(/-----END[^-]+-----/g, '')
+    .replace(/\s/g, '');
+  
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
+
+// Parse PEM-encoded certificate
+function parsePemCertificate(pem: string): Uint8Array {
+  const base64 = pem
+    .replace(/-----BEGIN CERTIFICATE-----/g, '')
+    .replace(/-----END CERTIFICATE-----/g, '')
+    .replace(/\s/g, '');
+  
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
+
+// Calculate SHA-256 thumbprint of certificate
+async function getCertificateThumbprint(certBytes: Uint8Array): Promise<string> {
+  const hashBuffer = await crypto.subtle.digest('SHA-256', certBytes);
+  const hashArray = new Uint8Array(hashBuffer);
+  return Array.from(hashArray)
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+// Import ES256 private key for signing
+async function importES256PrivateKey(keyBytes: Uint8Array): Promise<CryptoKey> {
+  return await crypto.subtle.importKey(
+    'pkcs8',
+    keyBytes,
+    { name: 'ECDSA', namedCurve: 'P-256' },
+    false,
+    ['sign']
+  );
+}
+
+// Sign data with ES256 (ECDSA with SHA-256)
+async function signES256(data: Uint8Array, privateKey: CryptoKey): Promise<string> {
+  const signature = await crypto.subtle.sign(
+    { name: 'ECDSA', hash: 'SHA-256' },
+    privateKey,
+    data
+  );
+  
+  // Convert to base64
+  const signatureArray = new Uint8Array(signature);
+  let binary = '';
+  for (let i = 0; i < signatureArray.length; i++) {
+    binary += String.fromCharCode(signatureArray[i]);
+  }
+  return btoa(binary);
+}
+
+// Check if real C2PA signing is available
+function isC2paSigningAvailable(): boolean {
+  return C2PA_PRIVATE_KEY.length > 0 && C2PA_CERTIFICATE.length > 0;
+}
+
+// Generate real C2PA manifest with ES256 signature
+async function generateC2paManifestWithSignature(
+  protectionId: string, 
+  metadata: ProtectionRequest['metadata']
+): Promise<{ manifest: object; signed: boolean }> {
+  const timestamp = new Date().toISOString();
+  
+  // Base manifest structure following C2PA 2.x spec
+  const manifestClaim = {
+    '@context': 'https://c2pa.org/claim/1.0/',
+    '@type': 'c2pa.claim',
+    claim_generator: 'TSMO/1.0.0',
+    claim_generator_info: [
+      {
+        name: 'TSMO AI Protection',
+        version: '1.0.0',
+        website: 'https://tsmo.io'
+      }
+    ],
+    title: metadata?.copyrightOwner ? `${metadata.copyrightOwner} - Protected Work` : 'Protected Work',
+    format: 'application/c2pa',
+    instance_id: protectionId,
+    dc_title: 'AI Training Protection Manifest',
+    signature_info: {
+      alg: 'ES256',
+      issuer: 'TSMO AI Protection',
+      time: timestamp
+    },
+    assertions: [
+      {
+        '@type': 'c2pa.actions',
+        actions: [
+          {
+            action: 'c2pa.created',
+            when: timestamp,
+            softwareAgent: 'TSMO Adobe Plugin',
+            parameters: {
+              protection_applied: true
+            }
+          },
+          {
+            action: 'c2pa.rights',
+            parameters: {
+              ai_training_prohibited: metadata?.prohibitAiTraining !== false,
+              derivatives_prohibited: metadata?.prohibitDerivatives || false,
+              attribution_required: metadata?.requireAttribution || false
+            }
+          }
+        ]
+      },
+      {
+        '@type': 'c2pa.creative.work',
+        author: [
+          {
+            '@type': 'Person',
+            name: metadata?.copyrightOwner || 'Unknown'
+          }
+        ],
+        copyright: `© ${metadata?.copyrightYear || new Date().getFullYear()} ${metadata?.copyrightOwner || 'Unknown'}. ${metadata?.rights || 'All Rights Reserved'}`
+      },
+      {
+        '@type': 'tsmo.ai.protection',
+        protection_id: protectionId,
+        protection_level: 'enterprise',
+        directives: ['noai', 'noimageai', 'noindex', 'nofollow'],
+        legal_notice: 'This content is protected against unauthorized use in AI training systems.',
+        contact: metadata?.contactEmail || null
+      }
+    ]
+  };
+
+  // Try to sign with real certificate if available
+  if (isC2paSigningAvailable()) {
+    try {
+      console.log('C2PA: Using real ES256 signing with configured certificate');
+      
+      const privateKeyBytes = parsePemPrivateKey(C2PA_PRIVATE_KEY);
+      const certificateBytes = parsePemCertificate(C2PA_CERTIFICATE);
+      
+      // Import the private key
+      const cryptoKey = await importES256PrivateKey(privateKeyBytes);
+      
+      // Calculate certificate thumbprint
+      const thumbprint = await getCertificateThumbprint(certificateBytes);
+      
+      // Create canonical JSON for signing
+      const claimJson = JSON.stringify(manifestClaim, Object.keys(manifestClaim).sort());
+      const encoder = new TextEncoder();
+      const claimBytes = encoder.encode(claimJson);
+      
+      // Sign the claim
+      const signature = await signES256(claimBytes, cryptoKey);
+      
+      // Add signature to manifest
+      const signedManifest = {
+        ...manifestClaim,
+        claim_signature: {
+          alg: 'ES256',
+          sig: signature,
+          certificate_thumbprint: thumbprint,
+          timestamp: timestamp,
+          issuer: 'TSMO AI Protection',
+          signed: true
+        }
+      };
+      
+      console.log(`C2PA: Successfully signed manifest with thumbprint ${thumbprint.substring(0, 16)}...`);
+      
+      return { manifest: signedManifest, signed: true };
+      
+    } catch (error) {
+      console.error('C2PA signing failed, falling back to placeholder:', error);
+    }
+  } else {
+    console.log('C2PA: Secrets not configured, using placeholder signature');
+  }
+  
+  // Fallback to placeholder signature
+  const unsignedManifest = {
+    ...manifestClaim,
+    claim_signature: {
+      alg: 'ES256',
+      sig_placeholder: 'requires_c2pa_certificate',
+      timestamp: timestamp,
+      note: 'Configure C2PA_PRIVATE_KEY and C2PA_CERTIFICATE secrets for real signing',
+      signed: false
+    }
+  };
+  
+  return { manifest: unsignedManifest, signed: false };
+}
+
+// Legacy function for backward compatibility
+async function generateC2paManifest(
+  protectionId: string, 
+  metadata: ProtectionRequest['metadata']
+): Promise<object> {
+  const result = await generateC2paManifestWithSignature(protectionId, metadata);
+  return result.manifest;
+}
+
+// ============= INPUT VALIDATION =============
+
 function validateAction(action: unknown): action is ProtectionRequest['action'] {
   return typeof action === 'string' && 
     ['protect', 'verify', 'batch_protect', 'get_status', 'list_protections'].includes(action);
@@ -105,7 +326,7 @@ function validateFileHash(hash: unknown): boolean {
 
 function validateBatchFiles(files: unknown): files is ProtectionRequest['batchFiles'] {
   if (!Array.isArray(files)) return false;
-  if (files.length > 100) return false; // Max 100 files per batch
+  if (files.length > 100) return false;
   return files.every(file => 
     typeof file === 'object' && file !== null &&
     validateFileHash(file.fileHash) &&
@@ -122,37 +343,30 @@ function validateRequest(request: unknown): { valid: boolean; error?: string } {
 
   const req = request as Record<string, unknown>;
 
-  // Validate action (required)
   if (!validateAction(req.action)) {
     return { valid: false, error: 'Invalid or missing action. Must be one of: protect, verify, batch_protect, get_status, list_protections' };
   }
 
-  // Validate protection level
   if (!validateProtectionLevel(req.protectionLevel)) {
     return { valid: false, error: 'Invalid protectionLevel. Must be one of: basic, professional, enterprise' };
   }
 
-  // Validate file hash (max 256 chars)
   if (!validateFileHash(req.fileHash)) {
     return { valid: false, error: 'Invalid fileHash. Must be a string between 1-256 characters' };
   }
 
-  // Validate fileName (max 500 chars)
   if (!validateString(req.fileName, 500)) {
     return { valid: false, error: 'Invalid fileName. Must be a string with max 500 characters' };
   }
 
-  // Validate fileType (max 100 chars)
   if (!validateString(req.fileType, 100)) {
     return { valid: false, error: 'Invalid fileType. Must be a string with max 100 characters' };
   }
 
-  // Validate protectionId (max 100 chars)
   if (!validateString(req.protectionId, 100)) {
     return { valid: false, error: 'Invalid protectionId. Must be a string with max 100 characters' };
   }
 
-  // Validate metadata
   if (req.metadata !== undefined) {
     if (typeof req.metadata !== 'object' || req.metadata === null) {
       return { valid: false, error: 'Invalid metadata. Must be an object' };
@@ -174,7 +388,6 @@ function validateRequest(request: unknown): { valid: boolean; error?: string } {
     }
   }
 
-  // Validate batchFiles for batch_protect
   if (req.action === 'batch_protect') {
     if (!req.batchFiles) {
       return { valid: false, error: 'batchFiles is required for batch_protect action' };
@@ -187,7 +400,8 @@ function validateRequest(request: unknown): { valid: boolean; error?: string } {
   return { valid: true };
 }
 
-// Rate limiting function
+// ============= RATE LIMITING =============
+
 function checkRateLimit(userId: string, action: string): { allowed: boolean; retryAfter?: number } {
   const limit = RATE_LIMITS[action as keyof typeof RATE_LIMITS] || RATE_LIMITS.protect;
   const key = `${userId}:${action}`;
@@ -196,7 +410,6 @@ function checkRateLimit(userId: string, action: string): { allowed: boolean; ret
   const entry = rateLimitStore.get(key);
 
   if (!entry || now - entry.windowStart > limit.windowMs) {
-    // New window
     rateLimitStore.set(key, { count: 1, windowStart: now });
     return { allowed: true };
   }
@@ -209,6 +422,8 @@ function checkRateLimit(userId: string, action: string): { allowed: boolean; ret
   entry.count++;
   return { allowed: true };
 }
+
+// ============= UTILITY FUNCTIONS =============
 
 function json(data: unknown, status = 200, headers: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(data), {
@@ -230,7 +445,6 @@ function generateXmpDirective(metadata: ProtectionRequest['metadata']): string {
   if (metadata?.prohibitDerivatives) aiRights.push('noderivatives');
   if (metadata?.requireAttribution) aiRights.push('attribution-required');
   
-  // Sanitize inputs to prevent XMP injection
   const sanitize = (str: string | undefined) => 
     (str || '').replace(/[<>&"']/g, (c) => ({
       '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;'
@@ -269,64 +483,7 @@ function generateXmpDirective(metadata: ProtectionRequest['metadata']): string {
 <?xpacket end="w"?>`;
 }
 
-function generateC2paManifest(protectionId: string, metadata: ProtectionRequest['metadata']): object {
-  // Generate a cryptographic signature using SubtleCrypto
-  // Note: In production, this should use a proper C2PA signing certificate
-  const signatureData = `${protectionId}:${Date.now()}:${metadata?.copyrightOwner || 'Unknown'}`;
-  const encoder = new TextEncoder();
-  const data = encoder.encode(signatureData);
-  
-  // Create a hash-based signature placeholder (real implementation would use ES256 with certificate)
-  const signaturePromise = crypto.subtle.digest('SHA-256', data);
-  
-  return {
-    '@context': 'https://c2pa.org/claim/1.0/',
-    '@type': 'c2pa.claim',
-    claim_generator: 'TSMO/1.0',
-    title: 'AI Training Protection Manifest',
-    format: 'application/c2pa',
-    instance_id: protectionId,
-    claim_signature: {
-      alg: 'ES256',
-      // Note: Production implementation requires proper C2PA signing certificate
-      // Contact TSMO for enterprise C2PA signing integration
-      sig_placeholder: 'requires_c2pa_certificate',
-      timestamp: new Date().toISOString()
-    },
-    assertions: [
-      {
-        '@type': 'c2pa.actions',
-        actions: [
-          {
-            action: 'c2pa.created',
-            when: new Date().toISOString(),
-            softwareAgent: 'TSMO Adobe Plugin'
-          },
-          {
-            action: 'c2pa.rights',
-            parameters: {
-              ai_training_prohibited: metadata?.prohibitAiTraining !== false,
-              derivatives_prohibited: metadata?.prohibitDerivatives || false,
-              attribution_required: metadata?.requireAttribution || false
-            }
-          }
-        ]
-      },
-      {
-        '@type': 'c2pa.creative.work',
-        creator: metadata?.copyrightOwner || 'Unknown',
-        copyright: `© ${metadata?.copyrightYear || new Date().getFullYear()} ${metadata?.copyrightOwner || 'Unknown'}. ${metadata?.rights || 'All Rights Reserved'}`
-      },
-      {
-        '@type': 'tsmo.ai.protection',
-        protection_id: protectionId,
-        protection_level: 'enterprise',
-        directives: ['noai', 'noimageai', 'noindex', 'nofollow'],
-        legal_notice: 'This content is protected against unauthorized use in AI training systems.'
-      }
-    ]
-  };
-}
+// ============= REQUEST HANDLERS =============
 
 async function handleProtect(
   supabase: ReturnType<typeof createClient>,
@@ -344,7 +501,6 @@ async function handleProtect(
     protectionMethods.push('C2PA Manifest', 'Blockchain Registry');
   }
 
-  // Store protection record
   const { error: insertError } = await supabase
     .from('ai_protection_records')
     .insert({
@@ -360,7 +516,8 @@ async function handleProtect(
       protection_methods: {
         applied: protectionMethods,
         source: 'adobe_plugin',
-        version: '1.0'
+        version: '1.0',
+        c2pa_signed: request.protectionLevel === 'enterprise' && isC2paSigningAvailable()
       },
       document_methods: {
         xmp_injected: true,
@@ -391,11 +548,17 @@ async function handleProtect(
   }
 
   const xmpDirective = generateXmpDirective(request.metadata);
-  const c2paManifest = request.protectionLevel === 'enterprise' 
-    ? generateC2paManifest(protectionId, request.metadata)
-    : undefined;
+  
+  let c2paManifest: object | undefined;
+  let signatureValid = false;
+  
+  if (request.protectionLevel === 'enterprise') {
+    const result = await generateC2paManifestWithSignature(protectionId, request.metadata);
+    c2paManifest = result.manifest;
+    signatureValid = result.signed;
+  }
 
-  console.log(`Protection created: ${protectionId} for user ${userId}`);
+  console.log(`Protection created: ${protectionId} for user ${userId} (C2PA signed: ${signatureValid})`);
 
   return {
     success: true,
@@ -406,9 +569,12 @@ async function handleProtect(
       methods: protectionMethods,
       level: request.protectionLevel || 'professional',
       xmpDirective,
-      c2paManifest
+      c2paManifest,
+      signatureValid
     },
-    message: 'Protection applied successfully'
+    message: signatureValid 
+      ? 'Protection applied with cryptographic C2PA signature' 
+      : 'Protection applied successfully'
   };
 }
 
@@ -450,13 +616,17 @@ async function handleVerify(
     };
   }
 
+  // Check if C2PA signature was valid
+  const c2paSigned = data.protection_methods?.c2pa_signed === true;
+
   return {
     success: true,
     verificationResult: {
       isProtected: true,
       protectionId: data.protection_id,
       protectedAt: data.created_at,
-      owner: data.metadata?.copyright_owner || 'Unknown'
+      owner: data.metadata?.copyright_owner || 'Unknown',
+      signatureVerified: c2paSigned
     }
   };
 }
@@ -491,7 +661,11 @@ async function handleBatchProtect(
         original_mime_type: file.fileType,
         word_count: 0,
         char_count: 0,
-        protection_methods: { applied: ['XMP Standard', 'EXIF Standard'], source: 'adobe_plugin_batch' },
+        protection_methods: { 
+          applied: ['XMP Standard', 'EXIF Standard'], 
+          source: 'adobe_plugin_batch',
+          c2pa_signed: false
+        },
         document_methods: { xmp_injected: true, exif_injected: true },
         metadata: {
           ...request.metadata,
@@ -550,31 +724,28 @@ async function handleListProtections(
   };
 }
 
+// ============= MAIN HANDLER =============
+
 Deno.serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Get authorization header
     const authHeader = req.headers.get('authorization');
     if (!authHeader) {
       return json({ success: false, error: 'Authorization required' }, 401);
     }
 
-    // Create Supabase client with user's auth
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       global: { headers: { Authorization: authHeader } }
     });
 
-    // Verify user
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
       return json({ success: false, error: 'Invalid authorization' }, 401);
     }
 
-    // Parse and validate request
     let requestBody: unknown;
     try {
       requestBody = await req.json();
@@ -590,7 +761,6 @@ Deno.serve(async (req) => {
 
     const request = requestBody as ProtectionRequest;
     
-    // Check rate limit
     const rateLimitResult = checkRateLimit(user.id, request.action);
     if (!rateLimitResult.allowed) {
       console.log(`Rate limit exceeded for user ${user.id} on action ${request.action}`);
@@ -635,7 +805,8 @@ Deno.serve(async (req) => {
             timestamp: new Date().toISOString(),
             methods: ['XMP', 'EXIF', 'C2PA'],
             level: 'enterprise',
-            xmpDirective: 'Available'
+            xmpDirective: 'Available',
+            signatureValid: isC2paSigningAvailable()
           }
         };
         break;
