@@ -58,6 +58,9 @@ import ForgeryDetection from "./pages/ForgeryDetection";
 import TermsAndPrivacy from "./pages/TermsAndPrivacy";
 import RefundPolicy from "./pages/RefundPolicy";
 import AttorneyPacket from "./pages/AttorneyPacket";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import AdobeIntegration from "./pages/AdobeIntegration";
 import ProductionDashboard from "./components/production/ProductionDashboard";
 import { PartnerPricingManager } from "./components/partner/PartnerPricingManager";
 import { PartnerSuccessPage } from "./components/partner/PartnerSuccessPage";
@@ -285,6 +288,9 @@ const App = () => {
                 <PartnershipsOverview />
               </ProtectedRoute>
             } />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/adobe-integration" element={<AdobeIntegration />} />
             
                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                      <Route path="*" element={<NotFound />} />
