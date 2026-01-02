@@ -114,7 +114,7 @@ async function createRealMonitoringStats() {
     const { data: deepfakeData } = await supabase
       .from('deepfake_matches')
       .select('threat_level, manipulation_type')
-      .gte('recorded_at', last24Hours);
+      .gte('detected_at', last24Hours);
     
     // Calculate real statistics
     const totalScans = scanData?.length || 0;
