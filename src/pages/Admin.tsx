@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Handshake, FileImage } from "lucide-react";
+import { Handshake, FileImage, Monitor } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 import SecurityAuditLog from "@/components/admin/SecurityAuditLog";
@@ -25,6 +25,7 @@ import GuestUploadsTracking from "@/components/admin/GuestUploadsTracking";
 import BlogManagement from "@/components/admin/BlogManagement";
 import { RetentionDashboard } from "@/components/admin/RetentionDashboard";
 import AdobePluginSimulator from "@/components/admin/AdobePluginSimulator";
+import PhotoshopPluginMockup from "@/components/admin/PhotoshopPluginMockup";
 
 const Admin = () => {
    const navigate = useNavigate();
@@ -74,6 +75,10 @@ const Admin = () => {
                 <TabsTrigger value="adobe-plugin" className="px-4 py-2 text-sm font-medium bg-purple-500/10 border border-purple-500/20">
                   <FileImage className="h-4 w-4 mr-1" />
                   Adobe Plugin
+                </TabsTrigger>
+                <TabsTrigger value="photoshop-preview" className="px-4 py-2 text-sm font-medium bg-orange-500/10 border border-orange-500/20">
+                  <Monitor className="h-4 w-4 mr-1" />
+                  Photoshop Preview
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -150,6 +155,10 @@ const Admin = () => {
 
             <TabsContent value="adobe-plugin" className="space-y-6">
               <AdobePluginSimulator />
+            </TabsContent>
+
+            <TabsContent value="photoshop-preview" className="space-y-6">
+              <PhotoshopPluginMockup />
             </TabsContent>
 
           </Tabs>
