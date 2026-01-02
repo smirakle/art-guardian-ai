@@ -48,8 +48,7 @@
     "clipboard": "readAndWrite",
     "network": {
       "domains": [
-        "https://utneaqmbyjwxaqrrarpc.supabase.co",
-        "https://*.supabase.co"
+        "https://utneaqmbyjwxaqrrarpc.supabase.co"
       ]
     }
   }
