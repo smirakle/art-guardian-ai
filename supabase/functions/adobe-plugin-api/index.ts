@@ -26,7 +26,7 @@ const RATE_LIMITS = {
 const rateLimitStore = new Map<string, { count: number; windowStart: number }>();
 
 interface ProtectionRequest {
-  action: 'protect' | 'verify' | 'batch_protect' | 'get_status' | 'list_protections';
+  action: 'protect' | 'verify' | 'batch_protect' | 'get_status' | 'list_protections' | 'health';
   protectionLevel?: 'basic' | 'professional' | 'enterprise';
   fileHash?: string;
   fileName?: string;
@@ -48,6 +48,50 @@ interface ProtectionRequest {
     fileSize: number;
   }>;
   protectionId?: string;
+}
+
+// ============= HEALTH CHECK (NO AUTH REQUIRED) =============
+
+function handleHealthCheck(): Response {
+  const c2paConfigured = C2PA_PRIVATE_KEY.length > 0 && C2PA_CERTIFICATE.length > 0;
+  
+  const healthResponse = {
+    status: 'healthy',
+    api: {
+      name: 'Adobe Plugin API',
+      version: '1.0.0',
+      environment: 'production'
+    },
+    c2pa: {
+      configured: c2paConfigured,
+      algorithm: 'ES256',
+      status: c2paConfigured ? 'real_signing_enabled' : 'placeholder_mode',
+      message: c2paConfigured 
+        ? 'C2PA signing with real credentials is active'
+        : 'C2PA_PRIVATE_KEY and C2PA_CERTIFICATE not configured - using placeholder signatures'
+    },
+    capabilities: {
+      protect: true,
+      verify: true,
+      batch_protect: true,
+      list_protections: true,
+      c2pa_signing: c2paConfigured
+    },
+    rateLimit: {
+      protect: '60/hour',
+      verify: '120/hour',
+      batch_protect: '20/hour',
+      list_protections: '100/hour'
+    },
+    timestamp: new Date().toISOString()
+  };
+
+  console.log('Health check requested:', JSON.stringify(healthResponse));
+  
+  return new Response(JSON.stringify(healthResponse), {
+    status: 200,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
 }
 
 interface ProtectionResponse {
@@ -732,6 +776,25 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Handle health check BEFORE auth (no auth required)
+    const url = new URL(req.url);
+    if (url.searchParams.get('action') === 'health') {
+      return handleHealthCheck();
+    }
+    
+    // For POST requests, check body for health action before requiring auth
+    if (req.method === 'POST') {
+      const clonedReq = req.clone();
+      try {
+        const body = await clonedReq.json();
+        if (body && typeof body === 'object' && body.action === 'health') {
+          return handleHealthCheck();
+        }
+      } catch {
+        // Not JSON or invalid, continue to normal flow
+      }
+    }
+
     const authHeader = req.headers.get('authorization');
     if (!authHeader) {
       return json({ success: false, error: 'Authorization required' }, 401);
