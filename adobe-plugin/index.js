@@ -19,21 +19,32 @@ let settings = {
   showNotifications: true
 };
 
-// DOM Elements
-const loginPanel = document.getElementById('loginPanel');
-const mainPanel = document.getElementById('mainPanel');
-const loadingOverlay = document.getElementById('loadingOverlay');
-const loadingText = document.getElementById('loadingText');
-const statusSection = document.getElementById('statusSection');
-const statusMessage = document.getElementById('statusMessage');
+// DOM Elements (with null safety)
+let loginPanel, mainPanel, loadingOverlay, loadingText, statusSection, statusMessage;
+
+// Initialize DOM references safely
+function initDomElements() {
+  loginPanel = document.getElementById('loginPanel');
+  mainPanel = document.getElementById('mainPanel');
+  loadingOverlay = document.getElementById('loadingOverlay');
+  loadingText = document.getElementById('loadingText');
+  statusSection = document.getElementById('statusSection');
+  statusMessage = document.getElementById('statusMessage');
+}
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
-  loadSettings();
-  checkAuth();
-  checkForUpdates();
-  setupEventListeners();
-  setupExportListener();
+  try {
+    initDomElements();
+    loadSettings();
+    checkAuth();
+    checkForUpdates();
+    setupEventListeners();
+    setupExportListener();
+    console.log('TSMO Plugin initialized successfully');
+  } catch (error) {
+    console.error('TSMO Plugin initialization error:', error);
+  }
 });
 
 // ============= SETTINGS =============
