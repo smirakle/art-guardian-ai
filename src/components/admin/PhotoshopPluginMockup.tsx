@@ -661,6 +661,36 @@ const PhotoshopPluginMockup = () => {
                       </button>
                     ))}
                   </div>
+                  
+                  {/* Features List */}
+                  <div className="mt-2 bg-[#1e1e1e] rounded p-1.5 text-[9px]">
+                    {protectionLevel === "basic" && (
+                      <div className="space-y-0.5">
+                        <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> Metadata Embed</div>
+                        <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> File Fingerprint</div>
+                        <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> EXIF Protection</div>
+                        <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> Hash Generation</div>
+                      </div>
+                    )}
+                    {protectionLevel === "professional" && (
+                      <div className="space-y-0.5">
+                        <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> All Basic features</div>
+                        <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> Style Cloaking</div>
+                        <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> Invisible Watermark</div>
+                        <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> AI Training Block</div>
+                        <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> Color Jitter Defense</div>
+                      </div>
+                    )}
+                    {protectionLevel === "enterprise" && (
+                      <div className="space-y-0.5">
+                        <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> All Pro features</div>
+                        <div className="text-[#fbbf24] flex items-center gap-1"><span className="text-[#fbbf24]">★</span> Blockchain Certificate</div>
+                        <div className="text-[#fbbf24] flex items-center gap-1"><span className="text-[#fbbf24]">★</span> Legal Evidence Package</div>
+                        <div className="text-[#fbbf24] flex items-center gap-1"><span className="text-[#fbbf24]">★</span> DMCA Toolkit</div>
+                        <div className="text-[#fbbf24] flex items-center gap-1"><span className="text-[#fbbf24]">★</span> Priority Support</div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Copyright Info Row */}
