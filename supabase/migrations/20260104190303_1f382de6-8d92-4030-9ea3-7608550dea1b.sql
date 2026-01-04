@@ -1,5 +1,0 @@
--- SECURITY HARDENING MIGRATION - PART 1: Extensions
-CREATE SCHEMA IF NOT EXISTS extensions;
-DROP EXTENSION IF EXISTS pg_net;
-CREATE EXTENSION IF NOT EXISTS pg_net SCHEMA extensions;
-GRANT USAGE ON SCHEMA extensions TO anon, authenticated, service_role;
