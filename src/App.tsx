@@ -100,7 +100,6 @@ import BlogPost from "./pages/BlogPost";
 import SuccessStories from "./pages/SuccessStories";
 import BlogManagementPage from "./pages/BlogManagementPage";
 import PartnershipsOverview from "./pages/PartnershipsOverview";
-import MarketingAssetsPage from "./pages/admin/MarketingAssetsPage";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -287,11 +286,6 @@ const App = () => {
             <Route path="/admin/partnerships" element={
               <ProtectedRoute requiredRole="admin">
                 <PartnershipsOverview />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/marketing-assets" element={
-              <ProtectedRoute requiredRole="admin">
-                <MarketingAssetsPage />
               </ProtectedRoute>
             } />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
