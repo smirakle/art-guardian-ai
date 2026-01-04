@@ -1,12 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Shield, FileImage, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatDistanceToNow } from 'date-fns';
+import { useState, useEffect } from 'react';
 
 interface ProtectionRecord {
   id: string;
@@ -15,7 +15,10 @@ interface ProtectionRecord {
   content_type: string;
   created_at: string;
   artwork_id: string | null;
-  metadata: Record<string, unknown>;
+  metadata: {
+    thumbnailPath?: string;
+    [key: string]: unknown;
+  };
 }
 
 export const ProtectedItemsGallery = () => {
@@ -100,22 +103,7 @@ export const ProtectedItemsGallery = () => {
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {protectionRecords.map((record) => (
-            <div key={record.id} className="relative group">
-              <div className="aspect-square bg-muted rounded-lg flex items-center justify-center border-2 border-dashed border-border">
-                <FileImage className="h-12 w-12 text-muted-foreground" />
-              </div>
-              <Badge 
-                className={`absolute top-2 right-2 ${getProtectionLevelColor(record.protection_level)}`}
-              >
-                {record.protection_level || 'Protected'}
-              </Badge>
-              <p className="mt-2 font-medium truncate text-sm">
-                {record.original_filename}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {formatDistanceToNow(new Date(record.created_at), { addSuffix: true })}
-              </p>
-            </div>
+            <ThumbnailCard key={record.id} record={record} getProtectionLevelColor={getProtectionLevelColor} />
           ))}
           <button
             onClick={() => navigate('/protection-hub')}
@@ -127,5 +115,73 @@ export const ProtectedItemsGallery = () => {
         </div>
       </CardContent>
     </Card>
+  );
+};
+
+// Separate component for thumbnail loading
+const ThumbnailCard = ({ 
+  record, 
+  getProtectionLevelColor 
+}: { 
+  record: ProtectionRecord; 
+  getProtectionLevelColor: (level: string) => string;
+}) => {
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadThumbnail = async () => {
+      const thumbnailPath = record.metadata?.thumbnailPath;
+      
+      if (thumbnailPath && typeof thumbnailPath === 'string') {
+        try {
+          const { data } = supabase.storage
+            .from('artwork')
+            .getPublicUrl(thumbnailPath);
+          
+          if (data?.publicUrl) {
+            setThumbnailUrl(data.publicUrl);
+          }
+        } catch (error) {
+          console.error('Failed to load thumbnail:', error);
+        }
+      }
+      setIsLoading(false);
+    };
+
+    loadThumbnail();
+  }, [record.metadata?.thumbnailPath]);
+
+  return (
+    <div className="relative group">
+      <div className="aspect-square bg-muted rounded-lg flex items-center justify-center border overflow-hidden">
+        {isLoading ? (
+          <div className="animate-pulse w-full h-full bg-muted" />
+        ) : thumbnailUrl ? (
+          <img 
+            src={thumbnailUrl} 
+            alt={record.original_filename}
+            className="w-full h-full object-cover"
+            onError={() => setThumbnailUrl(null)}
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center text-muted-foreground">
+            <FileImage className="h-10 w-10 mb-1" />
+            <span className="text-[10px]">Local File</span>
+          </div>
+        )}
+      </div>
+      <Badge 
+        className={`absolute top-2 right-2 ${getProtectionLevelColor(record.protection_level)}`}
+      >
+        {record.protection_level || 'Protected'}
+      </Badge>
+      <p className="mt-2 font-medium truncate text-sm">
+        {record.original_filename}
+      </p>
+      <p className="text-xs text-muted-foreground">
+        {formatDistanceToNow(new Date(record.created_at), { addSuffix: true })}
+      </p>
+    </div>
   );
 };
