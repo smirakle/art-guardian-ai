@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Handshake } from "lucide-react";
+import { Handshake, Image } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UserManagement from "./UserManagement";
 import SecurityAuditLog from "./SecurityAuditLog";
@@ -30,6 +30,15 @@ const AdminPanel: React.FC = () => {
           >
             <Handshake className="h-4 w-4" />
             Partnerships
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => navigate('/admin/marketing-assets')}
+            className="gap-2"
+          >
+            <Image className="h-4 w-4" />
+            Marketing Assets
           </Button>
         </div>
 
