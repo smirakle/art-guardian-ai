@@ -178,6 +178,38 @@ const PhotoshopPluginMockup = () => {
   const [currentStep, setCurrentStep] = useState(-1);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  
+  // Login panel states
+  const [showLoginPanel, setShowLoginPanel] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+
+  // Handle mock login
+  const handleLogin = () => {
+    if (!loginEmail || !loginPassword) {
+      setLoginError("Please enter email and password");
+      return;
+    }
+    // Simulate successful login
+    setIsLoggedIn(true);
+    setIsFirstRun(false);
+    setShowLoginPanel(false);
+    setLoginError("");
+    toast({
+      title: "Signed in successfully",
+      description: `Welcome back, ${loginEmail}`,
+    });
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setIsFirstRun(true);
+    setLoginEmail("");
+    setLoginPassword("");
+  };
 
   // Animated protection sequence for instant "aha" moment
   const handleProtect = () => {
@@ -723,8 +755,68 @@ const PhotoshopPluginMockup = () => {
 
               {/* TSMO Content - Redesigned for "Aha" Moment */}
               <div className="p-2 space-y-2 max-h-[220px] overflow-y-auto">
-                {/* First-Run Demo Mode */}
-                {isFirstRun && !isProtecting && !protectionStatus ? (
+                {/* Login Panel */}
+                {showLoginPanel ? (
+                  <div className="space-y-3">
+                    <div className="text-center mb-2">
+                      <div className="text-xl mb-1">🛡️</div>
+                      <div className="text-sm font-medium text-[#eee]">Sign In to TSMO</div>
+                    </div>
+                    
+                    {loginError && (
+                      <div className="bg-red-500/20 border border-red-500/50 text-red-400 text-[10px] px-2 py-1.5 rounded">
+                        {loginError}
+                      </div>
+                    )}
+                    
+                    <div className="space-y-2">
+                      <div>
+                        <label className="text-[9px] text-[#888] uppercase tracking-wide">Email</label>
+                        <input 
+                          type="email" 
+                          value={loginEmail}
+                          onChange={(e) => setLoginEmail(e.target.value)}
+                          placeholder="your@email.com"
+                          className="w-full bg-[#1e1e1e] border border-[#454545] focus:border-[#2997ff] rounded px-2 py-1.5 text-[10px] text-[#eee] outline-none transition-colors"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[9px] text-[#888] uppercase tracking-wide">Password</label>
+                        <input 
+                          type="password"
+                          value={loginPassword}
+                          onChange={(e) => setLoginPassword(e.target.value)}
+                          placeholder="••••••••"
+                          className="w-full bg-[#1e1e1e] border border-[#454545] focus:border-[#2997ff] rounded px-2 py-1.5 text-[10px] text-[#eee] outline-none transition-colors"
+                        />
+                      </div>
+                    </div>
+                    
+                    <button 
+                      onClick={handleLogin}
+                      className="w-full bg-[#2997ff] hover:bg-[#2080e0] text-white py-2 rounded text-[10px] font-medium transition-colors"
+                    >
+                      Sign In
+                    </button>
+                    
+                    <button 
+                      onClick={() => {
+                        setShowLoginPanel(false);
+                        setLoginError("");
+                      }}
+                      className="w-full bg-[#454545] hover:bg-[#545454] text-[#ccc] py-1.5 rounded text-[10px] transition-colors"
+                    >
+                      ← Back
+                    </button>
+                    
+                    <p className="text-[9px] text-[#666] text-center">
+                      Don't have an account?{" "}
+                      <a href="/auth" target="_blank" className="text-[#2997ff] hover:underline">
+                        Sign up
+                      </a>
+                    </p>
+                  </div>
+                ) : isFirstRun && !isProtecting && !protectionStatus ? (
                   <div className="space-y-3">
                     {/* Big Instant Demo Button */}
                     <button
@@ -742,7 +834,10 @@ const PhotoshopPluginMockup = () => {
                       <div className="flex-1 h-px bg-[#454545]" />
                     </div>
                     
-                    <button className="w-full bg-[#454545] hover:bg-[#545454] text-[#ccc] py-2 rounded text-[10px] transition-colors">
+                    <button 
+                      onClick={() => setShowLoginPanel(true)}
+                      className="w-full bg-[#454545] hover:bg-[#545454] text-[#ccc] py-2 rounded text-[10px] transition-colors"
+                    >
                       Sign in with TSMO account
                     </button>
                   </div>
