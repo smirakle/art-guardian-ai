@@ -152,9 +152,12 @@ const ThumbnailCard = ({
     loadThumbnail();
   }, [record.metadata?.thumbnailPath]);
 
+  // Get file extension for display
+  const fileExt = record.original_filename?.split('.').pop()?.toUpperCase() || 'IMG';
+
   return (
     <div className="relative group">
-      <div className="aspect-square bg-muted rounded-lg flex items-center justify-center border overflow-hidden">
+      <div className="aspect-square bg-gradient-to-br from-muted to-muted/50 rounded-lg flex items-center justify-center border overflow-hidden">
         {isLoading ? (
           <div className="animate-pulse w-full h-full bg-muted" />
         ) : thumbnailUrl ? (
@@ -165,9 +168,12 @@ const ThumbnailCard = ({
             onError={() => setThumbnailUrl(null)}
           />
         ) : (
-          <div className="flex flex-col items-center justify-center text-muted-foreground">
-            <FileImage className="h-10 w-10 mb-1" />
-            <span className="text-[10px]">Local File</span>
+          <div className="flex flex-col items-center justify-center text-muted-foreground p-2">
+            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-2">
+              <FileImage className="h-6 w-6 text-primary/60" />
+            </div>
+            <span className="text-[10px] font-medium uppercase">{fileExt}</span>
+            <span className="text-[9px] opacity-60">Protected Locally</span>
           </div>
         )}
       </div>
