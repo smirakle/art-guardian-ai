@@ -4,6 +4,7 @@ import {
   Monitor, X, Menu, Plus, Minus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 // Custom SVG Tool Icons matching real Photoshop
 const ToolIcons = {
@@ -161,6 +162,7 @@ const PROTECTION_STEPS = [
 ];
 
 const PhotoshopPluginMockup = () => {
+  const { toast } = useToast();
   const [protectionLevel, setProtectionLevel] = useState("professional");
   const [copyrightOwner, setCopyrightOwner] = useState("Artist Name");
   const [copyrightYear, setCopyrightYear] = useState("2026");
@@ -867,7 +869,16 @@ const PhotoshopPluginMockup = () => {
                         <div className="text-[#888] text-[9px] mb-2">
                           Your art is now protected from AI training.
                         </div>
-                        <button className="w-full bg-[#2e7d32] hover:bg-[#388e3c] text-white py-1.5 rounded text-[10px] font-medium transition-colors">
+                        <button 
+                          className="w-full bg-[#2e7d32] hover:bg-[#388e3c] text-white py-1.5 rounded text-[10px] font-medium transition-colors"
+                          onClick={() => {
+                            toast({
+                              title: "Saved to Portfolio",
+                              description: "Your protected artwork is now available in your TSMO dashboard.",
+                            });
+                            setProtectionStatus(null);
+                          }}
+                        >
                           Save to TSMO Account →
                         </button>
                       </div>

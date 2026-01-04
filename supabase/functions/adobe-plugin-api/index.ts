@@ -622,6 +622,74 @@ async function handleProtect(
   };
 }
 
+async function handleSaveToPortfolio(
+  supabaseClient: ReturnType<typeof createClient>,
+  userId: string,
+  request: ProtectionRequest
+): Promise<ProtectionResponse> {
+  const { protectionId, filename, metadata } = request;
+  
+  if (!protectionId) {
+    return { success: false, error: 'Protection ID is required' };
+  }
+  
+  // Find the protection record
+  const { data: protectionRecord, error: fetchError } = await supabaseClient
+    .from('ai_protection_records')
+    .select('*')
+    .eq('protection_id', protectionId)
+    .eq('user_id', userId)
+    .single();
+  
+  if (fetchError || !protectionRecord) {
+    return { success: false, error: 'Protection record not found' };
+  }
+  
+  // Check if artwork already exists for this protection record
+  const { data: existingArtwork } = await supabaseClient
+    .from('artwork')
+    .select('id')
+    .eq('protection_record_id', protectionRecord.id)
+    .single();
+  
+  if (existingArtwork) {
+    return { 
+      success: true, 
+      artworkId: existingArtwork.id,
+      message: 'Already saved to portfolio'
+    };
+  }
+  
+  // Create artwork entry linked to protection
+  const { data: artwork, error: artworkError } = await supabaseClient
+    .from('artwork')
+    .insert({
+      user_id: userId,
+      title: filename || protectionRecord.original_filename || 'Untitled Artwork',
+      category: 'digital-art',
+      file_paths: protectionRecord.protected_file_path ? [protectionRecord.protected_file_path] : [],
+      ai_protection_enabled: true,
+      ai_protection_level: protectionRecord.protection_level,
+      ai_protection_methods: protectionRecord.protection_methods,
+      protection_record_id: protectionRecord.id,
+      status: 'active',
+      description: `Protected via Adobe Plugin. Copyright: ${metadata?.copyrightOwner || 'Unknown'} ${metadata?.copyrightYear || new Date().getFullYear()}`
+    })
+    .select('id')
+    .single();
+  
+  if (artworkError) {
+    console.error('Failed to create artwork:', artworkError);
+    return { success: false, error: 'Failed to save to portfolio' };
+  }
+  
+  return { 
+    success: true, 
+    artworkId: artwork.id,
+    message: 'Saved to portfolio successfully'
+  };
+}
+
 async function handleVerify(
   supabase: ReturnType<typeof createClient>,
   request: ProtectionRequest

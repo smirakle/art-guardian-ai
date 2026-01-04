@@ -325,6 +325,10 @@ async function protectCurrentDocument() {
     hideLoading();
     
     if (result.success) {
+      // Store protection ID for save to account
+      localStorage.setItem('tsmo_last_protection_id', result.protectionId || '');
+      localStorage.setItem('tsmo_last_protection_filename', docInfo.name);
+      
       // Inject XMP metadata into document
       await injectXmpMetadata(result.protectionCertificate.xmpDirective);
       
@@ -332,6 +336,9 @@ async function protectCurrentDocument() {
         ? ' (C2PA signed)' 
         : '';
       showStatus(`Protected! ID: ${result.protectionId}${signedMsg}`, 'success');
+      
+      // Show success section with save button
+      if (successSection) successSection.classList.remove('hidden');
       
       if (settings.showNotifications) {
         showNotification('Protection Applied', `Your document is now protected with ID: ${result.protectionId}`);
@@ -658,15 +665,67 @@ function setupEventListeners() {
     });
   }
   
-  // Save to account
+  // Save to account - connects to TSMO portfolio
   const saveToAccountBtn = document.getElementById('saveToAccountBtn');
   if (saveToAccountBtn) {
-    saveToAccountBtn.addEventListener('click', () => {
+    saveToAccountBtn.addEventListener('click', async () => {
       if (!authToken) {
         showLoginPanel();
-      } else {
-        showStatus('Protection saved to your TSMO account', 'success');
-        if (successSection) successSection.classList.add('hidden');
+        return;
+      }
+      
+      const protectionId = localStorage.getItem('tsmo_last_protection_id');
+      const filename = localStorage.getItem('tsmo_last_protection_filename') || 'Untitled';
+      
+      if (!protectionId) {
+        showStatus('No protection to save. Please protect a document first.', 'error');
+        return;
+      }
+      
+      // Show loading state
+      saveToAccountBtn.disabled = true;
+      saveToAccountBtn.textContent = 'Saving...';
+      
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({
+            action: 'save_to_portfolio',
+            protectionId: protectionId,
+            filename: filename,
+            metadata: {
+              copyrightOwner: settings.copyrightOwner,
+              copyrightYear: settings.copyrightYear
+            }
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          showStatus('Saved to your portfolio! View it in your TSMO dashboard.', 'success');
+          saveToAccountBtn.textContent = 'Saved ✓';
+          saveToAccountBtn.classList.add('saved');
+          
+          // Clear stored protection ID
+          localStorage.removeItem('tsmo_last_protection_id');
+          localStorage.removeItem('tsmo_last_protection_filename');
+          
+          // Hide success section after delay
+          setTimeout(() => {
+            if (successSection) successSection.classList.add('hidden');
+          }, 2000);
+        } else {
+          throw new Error(result.error || 'Failed to save');
+        }
+      } catch (error) {
+        showStatus('Failed to save: ' + error.message, 'error');
+        saveToAccountBtn.disabled = false;
+        saveToAccountBtn.textContent = 'Save to TSMO Account';
       }
     });
   }
