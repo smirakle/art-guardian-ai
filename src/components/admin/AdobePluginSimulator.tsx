@@ -582,6 +582,24 @@ const AdobePluginSimulator = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 pt-4">
+              {/* Primary CTA */}
+              <div className="space-y-2">
+                <Button 
+                  onClick={protectDocument} 
+                  disabled={isLoading} 
+                  className="w-full gap-2 h-12 text-base font-semibold"
+                  size="lg"
+                >
+                  <Shield className="h-5 w-5" />
+                  Protected Export
+                </Button>
+                <p className="text-xs text-muted-foreground text-center">
+                  Protects this work (metadata + invisible watermark + style cloak) and creates a certificate.
+                </p>
+              </div>
+              
+              <Separator />
+              
               {/* Protection Level */}
               <div className="space-y-2">
                 <Label>Protection Level</Label>
@@ -645,27 +663,23 @@ const AdobePluginSimulator = () => {
               
               <Separator />
               
-              {/* Action Buttons */}
-              <div className="grid grid-cols-2 gap-2">
-                <Button onClick={protectDocument} disabled={isLoading} className="gap-2">
-                  <Shield className="h-4 w-4" />
-                  Protect
-                </Button>
-                <Button onClick={verifyDocument} disabled={isLoading} variant="secondary" className="gap-2">
-                  <FileCheck className="h-4 w-4" />
+              {/* Secondary Actions */}
+              <div className="grid grid-cols-3 gap-2">
+                <Button onClick={verifyDocument} disabled={isLoading} variant="secondary" size="sm" className="gap-1">
+                  <FileCheck className="h-3 w-3" />
                   Verify
                 </Button>
-                <Button onClick={batchProtect} disabled={isLoading} variant="outline" className="gap-2">
-                  <Layers className="h-4 w-4" />
-                  Batch Protect
+                <Button onClick={batchProtect} disabled={isLoading} variant="outline" size="sm" className="gap-1">
+                  <Layers className="h-3 w-3" />
+                  Batch
                 </Button>
-                <Button onClick={listProtections} disabled={isLoading} variant="outline" className="gap-2">
-                  <List className="h-4 w-4" />
+                <Button onClick={listProtections} disabled={isLoading} variant="outline" size="sm" className="gap-1">
+                  <List className="h-3 w-3" />
                   List
                 </Button>
               </div>
               
-              <Button onClick={getStatus} disabled={isLoading} variant="ghost" className="w-full gap-2">
+              <Button onClick={getStatus} disabled={isLoading} variant="ghost" size="sm" className="w-full gap-2">
                 <Activity className="h-4 w-4" />
                 Get API Status
               </Button>
