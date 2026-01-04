@@ -11,8 +11,10 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 // State
 let authToken = null;
 let userEmail = null;
+let protectionCount = 0;
+const BASIC_TIER_LIMIT = 50;
 let settings = {
-  protectionLevel: 'professional',
+  protectionLevel: 'basic',
   copyrightOwner: '',
   copyrightYear: new Date().getFullYear(),
   autoProtect: true,
@@ -99,8 +101,8 @@ function loadSettings() {
   // Update current level display
   const currentLevelEl = document.getElementById('currentLevel');
   if (currentLevelEl) {
-    const levelNames = { basic: 'Basic', professional: 'Professional', enterprise: 'Enterprise' };
-    currentLevelEl.textContent = levelNames[settings.protectionLevel] || 'Professional';
+    const levelNames = { basic: 'Basic (Free)', pro: 'Pro ($29/mo)' };
+    currentLevelEl.textContent = levelNames[settings.protectionLevel] || 'Basic (Free)';
   }
 }
 

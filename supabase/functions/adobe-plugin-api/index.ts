@@ -27,7 +27,7 @@ const rateLimitStore = new Map<string, { count: number; windowStart: number }>()
 
 interface ProtectionRequest {
   action: 'protect' | 'verify' | 'batch_protect' | 'get_status' | 'list_protections' | 'health';
-  protectionLevel?: 'basic' | 'professional' | 'enterprise';
+  protectionLevel?: 'basic' | 'pro';
   fileHash?: string;
   fileName?: string;
   fileType?: string;
@@ -346,9 +346,9 @@ function validateAction(action: unknown): action is ProtectionRequest['action'] 
     ['protect', 'verify', 'batch_protect', 'get_status', 'list_protections'].includes(action);
 }
 
-function validateProtectionLevel(level: unknown): level is 'basic' | 'professional' | 'enterprise' {
+function validateProtectionLevel(level: unknown): level is 'basic' | 'pro' {
   return level === undefined || 
-    (typeof level === 'string' && ['basic', 'professional', 'enterprise'].includes(level));
+    (typeof level === 'string' && ['basic', 'pro'].includes(level));
 }
 
 function validateEmail(email: unknown): boolean {
@@ -537,12 +537,25 @@ async function handleProtect(
   const protectionId = generateProtectionId();
   const timestamp = new Date().toISOString();
   
-  const protectionMethods = ['XMP Standard', 'EXIF Standard'];
-  if (request.protectionLevel === 'professional' || request.protectionLevel === 'enterprise') {
-    protectionMethods.push('LSB Steganography', 'Compression-Resistant Watermark');
+  // Check protection count for basic tier limit (50 pieces)
+  if (request.protectionLevel === 'basic' || !request.protectionLevel) {
+    const { count, error: countError } = await supabase
+      .from('ai_protection_records')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId);
+    
+    if (!countError && count !== null && count >= 50) {
+      return {
+        success: false,
+        error: 'Basic tier limit reached (50 pieces). Upgrade to Pro for unlimited protections.',
+        message: 'UPGRADE_REQUIRED'
+      };
+    }
   }
-  if (request.protectionLevel === 'enterprise') {
-    protectionMethods.push('C2PA Manifest', 'Blockchain Registry');
+  
+  const protectionMethods = ['XMP Standard', 'EXIF Standard'];
+  if (request.protectionLevel === 'pro') {
+    protectionMethods.push('LSB Steganography', 'Compression-Resistant Watermark', 'Style Cloaking', 'AI Training Block');
   }
 
   const { error: insertError } = await supabase
@@ -552,7 +565,7 @@ async function handleProtect(
       protection_id: protectionId,
       original_filename: request.fileName || 'unknown',
       file_fingerprint: request.fileHash || protectionId,
-      protection_level: request.protectionLevel || 'professional',
+      protection_level: request.protectionLevel || 'basic',
       content_type: 'image',
       original_mime_type: request.fileType || 'image/jpeg',
       word_count: 0,
@@ -561,12 +574,12 @@ async function handleProtect(
         applied: protectionMethods,
         source: 'adobe_plugin',
         version: '1.0',
-        c2pa_signed: request.protectionLevel === 'enterprise' && isC2paSigningAvailable()
+        c2pa_signed: request.protectionLevel === 'pro' && isC2paSigningAvailable()
       },
       document_methods: {
         xmp_injected: true,
         exif_injected: true,
-        c2pa_enabled: request.protectionLevel === 'enterprise'
+        c2pa_enabled: request.protectionLevel === 'pro'
       },
       metadata: {
         copyright_owner: request.metadata?.copyrightOwner,
@@ -596,7 +609,7 @@ async function handleProtect(
   let c2paManifest: object | undefined;
   let signatureValid = false;
   
-  if (request.protectionLevel === 'enterprise') {
+  if (request.protectionLevel === 'pro') {
     const result = await generateC2paManifestWithSignature(protectionId, request.metadata);
     c2paManifest = result.manifest;
     signatureValid = result.signed;
@@ -611,7 +624,7 @@ async function handleProtect(
       id: protectionId,
       timestamp,
       methods: protectionMethods,
-      level: request.protectionLevel || 'professional',
+      level: request.protectionLevel || 'basic',
       xmpDirective,
       c2paManifest,
       signatureValid
@@ -768,7 +781,7 @@ async function handleBatchProtect(
         protection_id: protectionId,
         original_filename: file.fileName,
         file_fingerprint: file.fileHash,
-        protection_level: request.protectionLevel || 'professional',
+        protection_level: request.protectionLevel || 'basic',
         content_type: 'image',
         original_mime_type: file.fileType,
         word_count: 0,
@@ -791,7 +804,7 @@ async function handleBatchProtect(
         id: protectionId,
         fileName: file.fileName,
         protectedAt: timestamp,
-        level: request.protectionLevel || 'professional'
+        level: request.protectionLevel || 'basic'
       });
     }
   }

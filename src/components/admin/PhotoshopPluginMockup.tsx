@@ -163,7 +163,7 @@ const PROTECTION_STEPS = [
 
 const PhotoshopPluginMockup = () => {
   const { toast } = useToast();
-  const [protectionLevel, setProtectionLevel] = useState("professional");
+  const [protectionLevel, setProtectionLevel] = useState("basic");
   const [copyrightOwner, setCopyrightOwner] = useState("Artist Name");
   const [copyrightYear, setCopyrightYear] = useState("2026");
   const [autoProtect, setAutoProtect] = useState(true);
@@ -762,25 +762,25 @@ const PhotoshopPluginMockup = () => {
                         <>
                           <div className="flex gap-1">
                             {[
-                              { value: "basic", label: "Basic" },
-                              { value: "professional", label: "Pro" },
-                              { value: "enterprise", label: "Enterprise" },
+                              { value: "basic", label: "Basic (Free)", sublabel: "50 pieces" },
+                              { value: "pro", label: "Pro ($29/mo)", sublabel: "Unlimited" },
                             ].map((level) => (
                               <button
                                 key={level.value}
                                 onClick={() => setProtectionLevel(level.value)}
-                                className={`flex-1 py-1 px-1.5 text-[10px] rounded transition-colors ${
+                                className={`flex-1 py-1.5 px-1.5 text-[10px] rounded transition-colors flex flex-col items-center ${
                                   protectionLevel === level.value
                                     ? "bg-[#2997ff] text-white"
                                     : "bg-[#1e1e1e] text-[#888] hover:bg-[#454545]"
                                 }`}
                               >
-                                {level.label}
+                                <span className="font-medium">{level.label}</span>
+                                <span className="text-[8px] opacity-70">{level.sublabel}</span>
                               </button>
                             ))}
                           </div>
                           
-                          {/* Features List - Updated Enterprise with C2PA */}
+                          {/* Features List - 2 Tier System */}
                           <div className="mt-2 bg-[#1e1e1e] rounded p-1.5 text-[9px]">
                             {protectionLevel === "basic" && (
                               <div className="space-y-0.5">
@@ -788,24 +788,19 @@ const PhotoshopPluginMockup = () => {
                                 <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> File Fingerprint</div>
                                 <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> EXIF Protection</div>
                                 <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> Hash Generation</div>
+                                <div className="text-[#666] text-[8px] mt-1 pt-1 border-t border-[#333]">Limited to 50 protected pieces</div>
                               </div>
                             )}
-                            {protectionLevel === "professional" && (
+                            {protectionLevel === "pro" && (
                               <div className="space-y-0.5">
                                 <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> All Basic features</div>
                                 <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> Style Cloaking</div>
                                 <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> Invisible Watermark</div>
                                 <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> AI Training Block</div>
                                 <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> Color Jitter Defense</div>
-                              </div>
-                            )}
-                            {protectionLevel === "enterprise" && (
-                              <div className="space-y-0.5">
-                                <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> All Pro features</div>
-                                <div className="text-[#fbbf24] flex items-center gap-1"><span className="text-[#fbbf24]">★</span> C2PA Manifest Signing</div>
-                                <div className="text-[#fbbf24] flex items-center gap-1"><span className="text-[#fbbf24]">★</span> C2PA Verification Badge</div>
-                                <div className="text-[#fbbf24] flex items-center gap-1"><span className="text-[#fbbf24]">★</span> Legal Evidence Package</div>
-                                <div className="text-[#fbbf24] flex items-center gap-1"><span className="text-[#fbbf24]">★</span> Priority Support</div>
+                                <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> C2PA Signing (when available)</div>
+                                <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> Legal Evidence Package</div>
+                                <div className="text-[#4ade80] text-[8px] mt-1 pt-1 border-t border-[#333]">Unlimited protected pieces</div>
                               </div>
                             )}
                           </div>
