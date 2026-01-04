@@ -324,8 +324,6 @@ async function protectCurrentDocument() {
     
     const result = await response.json();
     
-    hideLoading();
-    
     if (result.success) {
       // Store protection ID for save to account
       localStorage.setItem('tsmo_last_protection_id', result.protectionId || '');
@@ -333,6 +331,11 @@ async function protectCurrentDocument() {
       
       // Inject XMP metadata into document
       await injectXmpMetadata(result.protectionCertificate.xmpDirective);
+      
+      // Generate and upload thumbnail for dashboard display
+      await uploadThumbnail(result.protectionId, docInfo);
+      
+      hideLoading();
       
       const signedMsg = result.protectionCertificate?.signatureValid 
         ? ' (C2PA signed)' 
@@ -346,6 +349,7 @@ async function protectCurrentDocument() {
         showNotification('Protection Applied', `Your document is now protected with ID: ${result.protectionId}`);
       }
     } else {
+      hideLoading();
       showStatus(result.error || 'Protection failed', 'error');
     }
   } catch (error) {
@@ -353,6 +357,137 @@ async function protectCurrentDocument() {
     showStatus('Error: ' + error.message, 'error');
     console.error('Protection error:', error);
   }
+}
+
+// Generate thumbnail and upload to server for dashboard display
+async function uploadThumbnail(protectionId, docInfo) {
+  try {
+    // Generate thumbnail from document
+    const thumbnailData = await generateThumbnail(docInfo);
+    
+    if (!thumbnailData) {
+      console.log('Could not generate thumbnail');
+      return;
+    }
+    
+    // Upload thumbnail to server
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`
+      },
+      body: JSON.stringify({
+        action: 'upload_thumbnail',
+        protectionId: protectionId,
+        thumbnailData: thumbnailData
+      })
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      console.log('Thumbnail uploaded successfully:', result.thumbnailPath);
+    } else {
+      console.log('Thumbnail upload failed:', result.error);
+    }
+  } catch (error) {
+    console.log('Thumbnail upload error:', error);
+    // Non-blocking - protection still succeeded
+  }
+}
+
+// Generate a base64 thumbnail from the current document
+async function generateThumbnail(docInfo) {
+  try {
+    if (typeof require !== 'undefined') {
+      const app = require('photoshop').app;
+      const fs = require('uxp').storage.localFileSystem;
+      
+      if (app.activeDocument) {
+        // Create a temporary folder for the thumbnail
+        const tempFolder = await fs.getTemporaryFolder();
+        const thumbFile = await tempFolder.createFile('tsmo_thumb.jpg', { overwrite: true });
+        
+        // Export a small JPEG thumbnail
+        const exportOptions = {
+          quality: 60,
+          width: 400,
+          height: 400,
+          resampleMethod: 'bicubic'
+        };
+        
+        // Save as JPEG to temp file
+        await app.activeDocument.saveAs.jpg(thumbFile, exportOptions);
+        
+        // Read the file as base64
+        const fileData = await thumbFile.read({ format: 'binary' });
+        const base64 = btoa(String.fromCharCode(...new Uint8Array(fileData)));
+        
+        // Clean up
+        await thumbFile.delete();
+        
+        return `data:image/jpeg;base64,${base64}`;
+      }
+    }
+  } catch (e) {
+    console.log('Could not generate Photoshop thumbnail:', e);
+  }
+  
+  try {
+    if (typeof require !== 'undefined') {
+      const app = require('illustrator').app;
+      const fs = require('uxp').storage.localFileSystem;
+      
+      if (app.activeDocument) {
+        // For Illustrator, export as PNG
+        const tempFolder = await fs.getTemporaryFolder();
+        const thumbFile = await tempFolder.createFile('tsmo_thumb.png', { overwrite: true });
+        
+        // Export to temp file
+        await app.activeDocument.exportFile(thumbFile, 'png', { artBoardClipping: true });
+        
+        // Read as base64
+        const fileData = await thumbFile.read({ format: 'binary' });
+        const base64 = btoa(String.fromCharCode(...new Uint8Array(fileData)));
+        
+        await thumbFile.delete();
+        
+        return `data:image/png;base64,${base64}`;
+      }
+    }
+  } catch (e) {
+    console.log('Could not generate Illustrator thumbnail:', e);
+  }
+  
+  // Fallback: Create a simple placeholder canvas thumbnail for testing
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = 200;
+    canvas.height = 200;
+    const ctx = canvas.getContext('2d');
+    
+    // Draw a gradient placeholder
+    const gradient = ctx.createLinearGradient(0, 0, 200, 200);
+    gradient.addColorStop(0, '#6366f1');
+    gradient.addColorStop(1, '#8b5cf6');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 200, 200);
+    
+    // Add document name
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(docInfo.name?.substring(0, 20) || 'Protected', 100, 100);
+    ctx.font = '10px Arial';
+    ctx.fillText('TSMO Protected', 100, 120);
+    
+    return canvas.toDataURL('image/jpeg', 0.7);
+  } catch (e) {
+    console.log('Could not generate fallback thumbnail:', e);
+  }
+  
+  return null;
 }
 
 async function batchProtect() {
