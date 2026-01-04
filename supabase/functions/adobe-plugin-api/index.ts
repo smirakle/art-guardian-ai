@@ -26,10 +26,11 @@ const RATE_LIMITS = {
 const rateLimitStore = new Map<string, { count: number; windowStart: number }>();
 
 interface ProtectionRequest {
-  action: 'protect' | 'verify' | 'batch_protect' | 'get_status' | 'list_protections' | 'health';
+  action: 'protect' | 'verify' | 'batch_protect' | 'get_status' | 'list_protections' | 'health' | 'upload_thumbnail' | 'save_to_portfolio';
   protectionLevel?: 'basic' | 'pro';
   fileHash?: string;
   fileName?: string;
+  filename?: string; // Alias for save_to_portfolio
   fileType?: string;
   fileSize?: number;
   metadata?: {
@@ -48,6 +49,7 @@ interface ProtectionRequest {
     fileSize: number;
   }>;
   protectionId?: string;
+  thumbnailData?: string; // Base64 encoded thumbnail image
 }
 
 // ============= HEALTH CHECK (NO AUTH REQUIRED) =============
@@ -343,7 +345,7 @@ async function generateC2paManifest(
 
 function validateAction(action: unknown): action is ProtectionRequest['action'] {
   return typeof action === 'string' && 
-    ['protect', 'verify', 'batch_protect', 'get_status', 'list_protections'].includes(action);
+    ['protect', 'verify', 'batch_protect', 'get_status', 'list_protections', 'upload_thumbnail', 'save_to_portfolio'].includes(action);
 }
 
 function validateProtectionLevel(level: unknown): level is 'basic' | 'pro' {
@@ -849,6 +851,93 @@ async function handleListProtections(
   };
 }
 
+// ============= THUMBNAIL UPLOAD HANDLER =============
+
+async function handleUploadThumbnail(
+  supabaseClient: ReturnType<typeof createClient>,
+  userId: string,
+  request: ProtectionRequest
+): Promise<ProtectionResponse> {
+  const { protectionId, thumbnailData } = request;
+  
+  if (!protectionId) {
+    return { success: false, error: 'Protection ID is required' };
+  }
+  
+  if (!thumbnailData) {
+    return { success: false, error: 'Thumbnail data is required' };
+  }
+  
+  // Find the protection record
+  const { data: protectionRecord, error: fetchError } = await supabaseClient
+    .from('ai_protection_records')
+    .select('id, metadata')
+    .eq('protection_id', protectionId)
+    .eq('user_id', userId)
+    .single();
+  
+  if (fetchError || !protectionRecord) {
+    console.error('Protection record not found:', fetchError);
+    return { success: false, error: 'Protection record not found' };
+  }
+  
+  // Decode base64 thumbnail
+  let thumbnailBytes: Uint8Array;
+  try {
+    // Remove data URL prefix if present
+    const base64Data = thumbnailData.replace(/^data:image\/\w+;base64,/, '');
+    const binaryString = atob(base64Data);
+    thumbnailBytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      thumbnailBytes[i] = binaryString.charCodeAt(i);
+    }
+  } catch (e) {
+    console.error('Failed to decode thumbnail:', e);
+    return { success: false, error: 'Invalid thumbnail data' };
+  }
+  
+  // Create service role client for storage upload
+  const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  
+  // Upload to storage
+  const thumbnailPath = `thumbnails/${userId}/${protectionId}.jpg`;
+  const { error: uploadError } = await supabaseAdmin.storage
+    .from('artwork')
+    .upload(thumbnailPath, thumbnailBytes, {
+      contentType: 'image/jpeg',
+      upsert: true
+    });
+  
+  if (uploadError) {
+    console.error('Failed to upload thumbnail:', uploadError);
+    return { success: false, error: 'Failed to upload thumbnail' };
+  }
+  
+  // Update protection record metadata with thumbnail path
+  const updatedMetadata = {
+    ...(protectionRecord.metadata || {}),
+    thumbnailPath: thumbnailPath
+  };
+  
+  const { error: updateError } = await supabaseClient
+    .from('ai_protection_records')
+    .update({ metadata: updatedMetadata })
+    .eq('id', protectionRecord.id);
+  
+  if (updateError) {
+    console.error('Failed to update metadata:', updateError);
+    return { success: false, error: 'Failed to save thumbnail reference' };
+  }
+  
+  console.log(`Thumbnail uploaded for protection ${protectionId}: ${thumbnailPath}`);
+  
+  return {
+    success: true,
+    message: 'Thumbnail uploaded successfully',
+    thumbnailPath
+  };
+}
+
 // ============= MAIN HANDLER =============
 
 Deno.serve(async (req) => {
@@ -938,6 +1027,14 @@ Deno.serve(async (req) => {
       
       case 'list_protections':
         response = await handleListProtections(supabase, user.id);
+        break;
+      
+      case 'upload_thumbnail':
+        response = await handleUploadThumbnail(supabase, user.id, request);
+        break;
+      
+      case 'save_to_portfolio':
+        response = await handleSaveToPortfolio(supabase, user.id, request);
         break;
       
       case 'get_status':
