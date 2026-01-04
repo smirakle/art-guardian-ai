@@ -8,12 +8,64 @@
 </head>
 <body>
   <div id="app">
-    <!-- Login Panel -->
-    <div id="loginPanel" class="panel">
+    <!-- First-Run Demo Panel (New "Aha" Moment) -->
+    <div id="demoPanel" class="panel">
       <div class="logo-section">
         <div class="logo">🛡️</div>
         <h1>TSMO Protection</h1>
         <p class="subtitle">AI Training Protection for Creators</p>
+      </div>
+      
+      <button id="instantDemoBtn" class="btn btn-primary btn-full btn-large">
+        <span class="icon">🛡️</span>
+        Try Protection Instantly
+        <small>See how it works in 2 seconds</small>
+      </button>
+      
+      <div class="divider-text">
+        <span>or sign in for full features</span>
+      </div>
+      
+      <button id="showLoginBtn" class="btn btn-secondary btn-full">
+        Sign in with TSMO account
+      </button>
+    </div>
+
+    <!-- Animated Protection Overlay (New) -->
+    <div id="protectionOverlay" class="protection-overlay hidden">
+      <div class="protection-modal">
+        <div class="protection-icon">🛡️</div>
+        <div class="protection-title">Protecting...</div>
+        <div class="protection-steps" id="protectionSteps">
+          <div class="step" data-step="metadata">
+            <span class="step-indicator">○</span>
+            <span class="step-icon">📋</span>
+            <span class="step-label">Metadata Embed</span>
+          </div>
+          <div class="step" data-step="watermark">
+            <span class="step-indicator">○</span>
+            <span class="step-icon">💧</span>
+            <span class="step-label">Invisible Watermark</span>
+          </div>
+          <div class="step" data-step="stylecloak">
+            <span class="step-indicator">○</span>
+            <span class="step-icon">🎭</span>
+            <span class="step-label">Style Cloak</span>
+          </div>
+          <div class="step" data-step="aiblock">
+            <span class="step-indicator">○</span>
+            <span class="step-icon">🛡️</span>
+            <span class="step-label">AI Training Block</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Panel -->
+    <div id="loginPanel" class="panel hidden">
+      <div class="logo-section compact">
+        <div class="logo small">🛡️</div>
+        <h1>Sign In</h1>
       </div>
       
       <div class="form-group">
@@ -30,6 +82,10 @@
         Sign In
       </button>
       
+      <button id="backToDemoBtn" class="btn btn-outline btn-full">
+        ← Back to Demo
+      </button>
+      
       <p class="help-text">
         Don't have an account? <a href="https://tsmo.io/signup" target="_blank">Sign up</a>
       </p>
@@ -44,47 +100,55 @@
         </div>
       </div>
 
-      <div class="protection-section">
-        <h2>Protection Level</h2>
-        <div class="level-selector">
-          <label class="level-option">
-            <input type="radio" name="level" value="basic" />
-            <span class="level-label">
-              <strong>Basic</strong>
-              <small>XMP + EXIF</small>
-            </span>
-          </label>
-          <label class="level-option selected">
-            <input type="radio" name="level" value="professional" checked />
-            <span class="level-label">
-              <strong>Professional</strong>
-              <small>+ Watermark</small>
-            </span>
-          </label>
-          <label class="level-option">
-            <input type="radio" name="level" value="enterprise" />
-            <span class="level-label">
-              <strong>Enterprise</strong>
-              <small>+ C2PA</small>
-            </span>
-          </label>
-        </div>
+      <!-- Advanced Settings Toggle -->
+      <div class="advanced-toggle" id="advancedToggle">
+        <span class="toggle-arrow">▶</span>
+        <span>Protection Level: </span>
+        <span id="currentLevel" class="current-level">Professional</span>
       </div>
 
-      <div class="metadata-section">
-        <h2>Copyright Info</h2>
-        <div class="form-group">
-          <label for="copyrightOwner">Owner Name</label>
-          <input type="text" id="copyrightOwner" placeholder="Your Name" />
+      <!-- Advanced Options (collapsed by default) -->
+      <div id="advancedOptions" class="advanced-options hidden">
+        <div class="protection-section">
+          <div class="level-selector">
+            <label class="level-option">
+              <input type="radio" name="level" value="basic" />
+              <span class="level-label">
+                <strong>Basic</strong>
+                <small>XMP + EXIF</small>
+              </span>
+            </label>
+            <label class="level-option selected">
+              <input type="radio" name="level" value="professional" checked />
+              <span class="level-label">
+                <strong>Pro</strong>
+                <small>+ Watermark</small>
+              </span>
+            </label>
+            <label class="level-option">
+              <input type="radio" name="level" value="enterprise" />
+              <span class="level-label">
+                <strong>Enterprise</strong>
+                <small>+ C2PA</small>
+              </span>
+            </label>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="copyrightYear">Year</label>
-          <input type="number" id="copyrightYear" value="2025" min="1900" max="2100" />
+
+        <div class="metadata-section">
+          <div class="form-group">
+            <label for="copyrightOwner">Owner Name</label>
+            <input type="text" id="copyrightOwner" placeholder="Your Name" />
+          </div>
+          <div class="form-group">
+            <label for="copyrightYear">Year</label>
+            <input type="number" id="copyrightYear" value="2025" min="1900" max="2100" />
+          </div>
         </div>
       </div>
 
       <div class="actions-section">
-        <button id="protectBtn" class="btn btn-primary btn-full">
+        <button id="protectBtn" class="btn btn-primary btn-full btn-large">
           <span class="icon">🛡️</span>
           Protect Current Document
         </button>
@@ -102,15 +166,22 @@
       </div>
 
       <div class="settings-section">
-        <h2>Settings</h2>
         <label class="toggle-option">
           <input type="checkbox" id="autoProtect" checked />
           <span>Auto-protect on export</span>
         </label>
-        <label class="toggle-option">
-          <input type="checkbox" id="showNotifications" checked />
-          <span>Show notifications</span>
-        </label>
+      </div>
+
+      <!-- Success State with Save CTA -->
+      <div id="successSection" class="success-section hidden">
+        <div class="success-header">
+          <span class="success-icon">✓</span>
+          <span>Protected successfully!</span>
+        </div>
+        <p class="success-message">Your art is now protected from AI training.</p>
+        <button id="saveToAccountBtn" class="btn btn-success btn-full">
+          Save to TSMO Account →
+        </button>
       </div>
 
       <div id="statusSection" class="status-section hidden">

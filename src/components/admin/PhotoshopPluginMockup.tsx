@@ -152,6 +152,14 @@ const ToolIcons = {
 // Tool has nested menu indicator
 const hasNested = [1, 2, 3, 5, 7, 8, 9, 10, 12, 13, 14, 15];
 
+// Protection steps for animated sequence
+const PROTECTION_STEPS = [
+  { id: 'metadata', label: 'Metadata Embed', icon: '📋' },
+  { id: 'watermark', label: 'Invisible Watermark', icon: '💧' },
+  { id: 'stylecloak', label: 'Style Cloak', icon: '🎭' },
+  { id: 'aiblock', label: 'AI Training Block', icon: '🛡️' },
+];
+
 const PhotoshopPluginMockup = () => {
   const [protectionLevel, setProtectionLevel] = useState("professional");
   const [copyrightOwner, setCopyrightOwner] = useState("Artist Name");
@@ -162,15 +170,42 @@ const PhotoshopPluginMockup = () => {
   const [protectionStatus, setProtectionStatus] = useState<string | null>(null);
   const [selectedTool, setSelectedTool] = useState(0);
   const [layersPanelOpen, setLayersPanelOpen] = useState(true);
+  
+  // New states for "aha" moment
+  const [isFirstRun, setIsFirstRun] = useState(true);
+  const [currentStep, setCurrentStep] = useState(-1);
+  const [completedSteps, setCompletedSteps] = useState<string[]>([]);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
+  // Animated protection sequence for instant "aha" moment
   const handleProtect = () => {
     setIsProtecting(true);
     setProtectionStatus(null);
+    setCurrentStep(0);
+    setCompletedSteps([]);
+    
+    // Animate through each step
+    PROTECTION_STEPS.forEach((step, index) => {
+      setTimeout(() => {
+        setCurrentStep(index);
+        setTimeout(() => {
+          setCompletedSteps(prev => [...prev, step.id]);
+        }, 250);
+      }, index * 400);
+    });
+    
+    // Complete protection
     setTimeout(() => {
       setIsProtecting(false);
+      setCurrentStep(-1);
       setProtectionStatus("success");
-      setTimeout(() => setProtectionStatus(null), 3000);
-    }, 2000);
+      setIsFirstRun(false);
+    }, PROTECTION_STEPS.length * 400 + 300);
+  };
+
+  // Instant demo for first-run experience
+  const handleInstantDemo = () => {
+    handleProtect();
   };
 
   const toolsColumn1 = [
@@ -433,10 +468,12 @@ const PhotoshopPluginMockup = () => {
                         <div className="text-center text-white">
                           <div className="text-5xl font-bold tracking-tight mb-1">ARTWORK</div>
                           <div className="text-lg opacity-90">Protected by TSMO</div>
-                          <div className="mt-3 flex items-center justify-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                            <span className="text-xs opacity-80">AI Training Protection Active</span>
-                          </div>
+                          {protectionStatus === "success" && (
+                            <div className="mt-3 flex items-center justify-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                              <span className="text-xs opacity-80">AI Training Protection Active</span>
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -450,11 +487,56 @@ const PhotoshopPluginMockup = () => {
                       <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-white border border-black cursor-w-resize" />
                       <div className="absolute top-1/2 -right-1 -translate-y-1/2 w-2 h-2 bg-white border border-black cursor-e-resize" />
 
-                      {/* Protection status overlay */}
+                      {/* Enhanced Protection Badge with animation */}
                       {protectionStatus === "success" && (
-                        <div className="absolute top-3 right-3 bg-[#2e7d32] text-white px-2 py-1 rounded text-xs flex items-center gap-1.5 shadow-lg">
-                          <div className="w-1.5 h-1.5 rounded-full bg-white" />
-                          Protected
+                        <div className="absolute top-3 right-3 animate-scale-in">
+                          <div className="bg-gradient-to-r from-[#2e7d32] to-[#4caf50] text-white px-3 py-1.5 rounded-lg text-xs flex items-center gap-2 shadow-xl border border-white/20">
+                            <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
+                              <span className="text-sm">🛡️</span>
+                            </div>
+                            <div>
+                              <div className="font-semibold">Protected</div>
+                              <div className="text-[10px] opacity-80">AI-Safe</div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Animated protection overlay during protection */}
+                      {isProtecting && (
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center animate-fade-in">
+                          <div className="bg-[#1e1e1e]/95 rounded-lg p-4 shadow-2xl border border-[#2997ff]/50">
+                            <div className="text-center mb-3">
+                              <div className="text-2xl mb-1">🛡️</div>
+                              <div className="text-white text-sm font-medium">Protecting...</div>
+                            </div>
+                            <div className="space-y-2 min-w-[180px]">
+                              {PROTECTION_STEPS.map((step, index) => (
+                                <div 
+                                  key={step.id}
+                                  className={`flex items-center gap-2 text-xs transition-all duration-300 ${
+                                    completedSteps.includes(step.id) 
+                                      ? 'text-[#4ade80]' 
+                                      : currentStep === index 
+                                        ? 'text-[#2997ff]' 
+                                        : 'text-[#666]'
+                                  }`}
+                                >
+                                  <div className="w-4 h-4 flex items-center justify-center">
+                                    {completedSteps.includes(step.id) ? (
+                                      <span className="text-[#4ade80]">✓</span>
+                                    ) : currentStep === index ? (
+                                      <div className="w-3 h-3 border-2 border-[#2997ff] border-t-transparent rounded-full animate-spin" />
+                                    ) : (
+                                      <span className="text-[#666]">○</span>
+                                    )}
+                                  </div>
+                                  <span>{step.icon}</span>
+                                  <span>{step.label}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -637,130 +719,185 @@ const PhotoshopPluginMockup = () => {
                 </div>
               </div>
 
-              {/* TSMO Content - Compact */}
-              <div className="p-2 space-y-2 max-h-[200px] overflow-y-auto">
-                {/* Protection Level */}
-                <div>
-                  <div className="text-[#888] text-[9px] uppercase tracking-wide mb-1">Protection Level</div>
-                  <div className="flex gap-1">
-                    {[
-                      { value: "basic", label: "Basic" },
-                      { value: "professional", label: "Pro" },
-                      { value: "enterprise", label: "Enterprise" },
-                    ].map((level) => (
-                      <button
-                        key={level.value}
-                        onClick={() => setProtectionLevel(level.value)}
-                        className={`flex-1 py-1 px-1.5 text-[10px] rounded transition-colors ${
-                          protectionLevel === level.value
-                            ? "bg-[#2997ff] text-white"
-                            : "bg-[#1e1e1e] text-[#888] hover:bg-[#454545]"
-                        }`}
+              {/* TSMO Content - Redesigned for "Aha" Moment */}
+              <div className="p-2 space-y-2 max-h-[220px] overflow-y-auto">
+                {/* First-Run Demo Mode */}
+                {isFirstRun && !isProtecting && !protectionStatus ? (
+                  <div className="space-y-3">
+                    {/* Big Instant Demo Button */}
+                    <button
+                      onClick={handleInstantDemo}
+                      className="w-full bg-gradient-to-r from-[#2997ff] to-[#0077ed] hover:from-[#1a7fd4] hover:to-[#0066cc] text-white py-3 rounded-lg text-[12px] font-semibold flex flex-col items-center justify-center gap-1 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      <span className="text-lg">🛡️</span>
+                      <span>Try Protection Instantly</span>
+                      <span className="text-[9px] opacity-80 font-normal">See how it works in 2 seconds</span>
+                    </button>
+                    
+                    <div className="flex items-center gap-2 text-[10px] text-[#666]">
+                      <div className="flex-1 h-px bg-[#454545]" />
+                      <span>or sign in for full features</span>
+                      <div className="flex-1 h-px bg-[#454545]" />
+                    </div>
+                    
+                    <button className="w-full bg-[#454545] hover:bg-[#545454] text-[#ccc] py-2 rounded text-[10px] transition-colors">
+                      Sign in with TSMO account
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    {/* Protection Level - Now collapsible as "advanced" */}
+                    <div>
+                      <button 
+                        onClick={() => setShowAdvanced(!showAdvanced)}
+                        className="flex items-center gap-1 text-[#888] text-[9px] uppercase tracking-wide mb-1 hover:text-[#ccc] transition-colors"
                       >
-                        {level.label}
+                        {showAdvanced ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+                        Protection Level: <span className="text-[#2997ff] capitalize">{protectionLevel}</span>
                       </button>
-                    ))}
-                  </div>
-                  
-                  {/* Features List */}
-                  <div className="mt-2 bg-[#1e1e1e] rounded p-1.5 text-[9px]">
-                    {protectionLevel === "basic" && (
-                      <div className="space-y-0.5">
-                        <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> Metadata Embed</div>
-                        <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> File Fingerprint</div>
-                        <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> EXIF Protection</div>
-                        <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> Hash Generation</div>
-                      </div>
-                    )}
-                    {protectionLevel === "professional" && (
-                      <div className="space-y-0.5">
-                        <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> All Basic features</div>
-                        <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> Style Cloaking</div>
-                        <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> Invisible Watermark</div>
-                        <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> AI Training Block</div>
-                        <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> Color Jitter Defense</div>
-                      </div>
-                    )}
-                    {protectionLevel === "enterprise" && (
-                      <div className="space-y-0.5">
-                        <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> All Pro features</div>
-                        <div className="text-[#fbbf24] flex items-center gap-1"><span className="text-[#fbbf24]">★</span> Blockchain Certificate</div>
-                        <div className="text-[#fbbf24] flex items-center gap-1"><span className="text-[#fbbf24]">★</span> Legal Evidence Package</div>
-                        <div className="text-[#fbbf24] flex items-center gap-1"><span className="text-[#fbbf24]">★</span> DMCA Toolkit</div>
-                        <div className="text-[#fbbf24] flex items-center gap-1"><span className="text-[#fbbf24]">★</span> Priority Support</div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Copyright Info Row */}
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <label className="text-[#888] text-[9px] block mb-0.5">Owner</label>
-                    <input
-                      type="text"
-                      value={copyrightOwner}
-                      onChange={(e) => setCopyrightOwner(e.target.value)}
-                      className="w-full bg-[#1e1e1e] border border-[#545454] rounded px-1.5 py-1 text-[#e8e8e8] text-[10px] focus:border-[#2997ff] focus:outline-none"
-                    />
-                  </div>
-                  <div className="w-16">
-                    <label className="text-[#888] text-[9px] block mb-0.5">Year</label>
-                    <input
-                      type="number"
-                      value={copyrightYear}
-                      onChange={(e) => setCopyrightYear(e.target.value)}
-                      className="w-full bg-[#1e1e1e] border border-[#545454] rounded px-1.5 py-1 text-[#e8e8e8] text-[10px] focus:border-[#2997ff] focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                {/* Main Action Button */}
-                <button
-                  onClick={handleProtect}
-                  disabled={isProtecting}
-                  className="w-full bg-[#2997ff] hover:bg-[#1a7fd4] disabled:opacity-50 text-white py-2 rounded text-[11px] font-medium flex items-center justify-center gap-1.5 transition-colors"
-                >
-                  {isProtecting ? (
-                    <>
-                      <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Protecting...
-                    </>
-                  ) : (
-                    <>
-                      <span>🛡️</span>
-                      Protect Document
-                    </>
-                  )}
-                </button>
-
-                {/* Secondary Actions */}
-                <div className="flex gap-1">
-                  <button className="flex-1 bg-[#454545] hover:bg-[#545454] text-[#ccc] py-1.5 rounded text-[10px] flex items-center justify-center gap-1 transition-colors">
-                    📚 Batch
-                  </button>
-                  <button className="flex-1 bg-[#454545] hover:bg-[#545454] text-[#ccc] py-1.5 rounded text-[10px] flex items-center justify-center gap-1 transition-colors">
-                    ✓ Verify
-                  </button>
-                </div>
-
-                {/* Settings Toggles */}
-                <div className="space-y-1">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <div className={`w-6 h-3 rounded-full transition-colors ${autoProtect ? "bg-[#2997ff]" : "bg-[#545454]"}`}>
-                      <div className={`w-2.5 h-2.5 bg-white rounded-full mt-[1px] transition-transform ${autoProtect ? "translate-x-3" : "translate-x-0.5"}`} />
+                      
+                      {showAdvanced && (
+                        <>
+                          <div className="flex gap-1">
+                            {[
+                              { value: "basic", label: "Basic" },
+                              { value: "professional", label: "Pro" },
+                              { value: "enterprise", label: "Enterprise" },
+                            ].map((level) => (
+                              <button
+                                key={level.value}
+                                onClick={() => setProtectionLevel(level.value)}
+                                className={`flex-1 py-1 px-1.5 text-[10px] rounded transition-colors ${
+                                  protectionLevel === level.value
+                                    ? "bg-[#2997ff] text-white"
+                                    : "bg-[#1e1e1e] text-[#888] hover:bg-[#454545]"
+                                }`}
+                              >
+                                {level.label}
+                              </button>
+                            ))}
+                          </div>
+                          
+                          {/* Features List - Updated Enterprise with C2PA */}
+                          <div className="mt-2 bg-[#1e1e1e] rounded p-1.5 text-[9px]">
+                            {protectionLevel === "basic" && (
+                              <div className="space-y-0.5">
+                                <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> Metadata Embed</div>
+                                <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> File Fingerprint</div>
+                                <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> EXIF Protection</div>
+                                <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> Hash Generation</div>
+                              </div>
+                            )}
+                            {protectionLevel === "professional" && (
+                              <div className="space-y-0.5">
+                                <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> All Basic features</div>
+                                <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> Style Cloaking</div>
+                                <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> Invisible Watermark</div>
+                                <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> AI Training Block</div>
+                                <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> Color Jitter Defense</div>
+                              </div>
+                            )}
+                            {protectionLevel === "enterprise" && (
+                              <div className="space-y-0.5">
+                                <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> All Pro features</div>
+                                <div className="text-[#fbbf24] flex items-center gap-1"><span className="text-[#fbbf24]">★</span> C2PA Manifest Signing</div>
+                                <div className="text-[#fbbf24] flex items-center gap-1"><span className="text-[#fbbf24]">★</span> C2PA Verification Badge</div>
+                                <div className="text-[#fbbf24] flex items-center gap-1"><span className="text-[#fbbf24]">★</span> Legal Evidence Package</div>
+                                <div className="text-[#fbbf24] flex items-center gap-1"><span className="text-[#fbbf24]">★</span> Priority Support</div>
+                              </div>
+                            )}
+                          </div>
+                          
+                          {/* Copyright Info Row - Now in advanced */}
+                          <div className="flex gap-2 mt-2">
+                            <div className="flex-1">
+                              <label className="text-[#888] text-[9px] block mb-0.5">Owner</label>
+                              <input
+                                type="text"
+                                value={copyrightOwner}
+                                onChange={(e) => setCopyrightOwner(e.target.value)}
+                                className="w-full bg-[#1e1e1e] border border-[#545454] rounded px-1.5 py-1 text-[#e8e8e8] text-[10px] focus:border-[#2997ff] focus:outline-none"
+                              />
+                            </div>
+                            <div className="w-16">
+                              <label className="text-[#888] text-[9px] block mb-0.5">Year</label>
+                              <input
+                                type="number"
+                                value={copyrightYear}
+                                onChange={(e) => setCopyrightYear(e.target.value)}
+                                className="w-full bg-[#1e1e1e] border border-[#545454] rounded px-1.5 py-1 text-[#e8e8e8] text-[10px] focus:border-[#2997ff] focus:outline-none"
+                              />
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
-                    <span className="text-[#ccc] text-[10px]">Auto-protect on export</span>
-                  </label>
-                </div>
 
-                {/* Status */}
-                {protectionStatus === "success" && (
-                  <div className="bg-[#2e7d32]/30 border border-[#2e7d32]/50 rounded p-1.5">
-                    <div className="text-[#66bb6a] text-[10px] font-medium flex items-center gap-1">
-                      <span>✓</span> Protected successfully
+                    {/* Main Action Button - Always visible */}
+                    <button
+                      onClick={handleProtect}
+                      disabled={isProtecting}
+                      className="w-full bg-[#2997ff] hover:bg-[#1a7fd4] disabled:opacity-50 text-white py-2.5 rounded-lg text-[11px] font-medium flex items-center justify-center gap-1.5 transition-all shadow-md"
+                    >
+                      {isProtecting ? (
+                        <>
+                          <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          Protecting...
+                        </>
+                      ) : protectionStatus === "success" ? (
+                        <>
+                          <span>✓</span>
+                          Re-Protect Document
+                        </>
+                      ) : (
+                        <>
+                          <span>🛡️</span>
+                          Protect Document
+                        </>
+                      )}
+                    </button>
+
+                    {/* Success State with Save CTA */}
+                    {protectionStatus === "success" && (
+                      <div className="bg-gradient-to-r from-[#2e7d32]/30 to-[#4caf50]/20 border border-[#2e7d32]/50 rounded-lg p-2 animate-scale-in">
+                        <div className="text-[#66bb6a] text-[11px] font-medium flex items-center gap-2 mb-1.5">
+                          <span className="text-base">✓</span>
+                          <span>Protected successfully!</span>
+                        </div>
+                        <div className="text-[#888] text-[9px] mb-2">
+                          Your art is now protected from AI training.
+                        </div>
+                        <button className="w-full bg-[#2e7d32] hover:bg-[#388e3c] text-white py-1.5 rounded text-[10px] font-medium transition-colors">
+                          Save to TSMO Account →
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Secondary Actions */}
+                    {!protectionStatus && (
+                      <div className="flex gap-1">
+                        <button className="flex-1 bg-[#454545] hover:bg-[#545454] text-[#ccc] py-1.5 rounded text-[10px] flex items-center justify-center gap-1 transition-colors">
+                          📚 Batch
+                        </button>
+                        <button className="flex-1 bg-[#454545] hover:bg-[#545454] text-[#ccc] py-1.5 rounded text-[10px] flex items-center justify-center gap-1 transition-colors">
+                          ✓ Verify
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Settings Toggles */}
+                    <div className="space-y-1 pt-1 border-t border-[#454545]">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <div 
+                          onClick={() => setAutoProtect(!autoProtect)}
+                          className={`w-6 h-3 rounded-full transition-colors cursor-pointer ${autoProtect ? "bg-[#2997ff]" : "bg-[#545454]"}`}
+                        >
+                          <div className={`w-2.5 h-2.5 bg-white rounded-full mt-[1px] transition-transform ${autoProtect ? "translate-x-3" : "translate-x-0.5"}`} />
+                        </div>
+                        <span className="text-[#ccc] text-[10px]">Auto-protect on export</span>
+                      </label>
                     </div>
-                  </div>
+                  </>
                 )}
               </div>
             </div>

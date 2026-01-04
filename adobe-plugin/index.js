@@ -20,16 +20,34 @@ let settings = {
 };
 
 // DOM Elements (with null safety)
-let loginPanel, mainPanel, loadingOverlay, loadingText, statusSection, statusMessage;
+let demoPanel, loginPanel, mainPanel, loadingOverlay, loadingText, statusSection, statusMessage;
+let protectionOverlay, protectionSteps, advancedToggle, advancedOptions, successSection;
+
+// First-run state
+let isFirstRun = true;
+
+// Protection steps for animated sequence
+const PROTECTION_STEPS = [
+  { id: 'metadata', label: 'Metadata Embed' },
+  { id: 'watermark', label: 'Invisible Watermark' },
+  { id: 'stylecloak', label: 'Style Cloak' },
+  { id: 'aiblock', label: 'AI Training Block' },
+];
 
 // Initialize DOM references safely
 function initDomElements() {
+  demoPanel = document.getElementById('demoPanel');
   loginPanel = document.getElementById('loginPanel');
   mainPanel = document.getElementById('mainPanel');
   loadingOverlay = document.getElementById('loadingOverlay');
   loadingText = document.getElementById('loadingText');
   statusSection = document.getElementById('statusSection');
   statusMessage = document.getElementById('statusMessage');
+  protectionOverlay = document.getElementById('protectionOverlay');
+  protectionSteps = document.getElementById('protectionSteps');
+  advancedToggle = document.getElementById('advancedToggle');
+  advancedOptions = document.getElementById('advancedOptions');
+  successSection = document.getElementById('successSection');
 }
 
 // Initialize
@@ -37,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     initDomElements();
     loadSettings();
-    checkAuth();
+    checkInitialState();
     checkForUpdates();
     setupEventListeners();
     setupExportListener();
@@ -65,15 +83,25 @@ function loadSettings() {
     console.log('Could not load settings:', e);
   }
   
-  // Apply settings to UI
-  document.getElementById('copyrightOwner').value = settings.copyrightOwner;
-  document.getElementById('copyrightYear').value = settings.copyrightYear;
-  document.getElementById('autoProtect').checked = settings.autoProtect;
-  document.getElementById('showNotifications').checked = settings.showNotifications;
+  // Apply settings to UI (with null checks)
+  const copyrightOwnerEl = document.getElementById('copyrightOwner');
+  const copyrightYearEl = document.getElementById('copyrightYear');
+  const autoProtectEl = document.getElementById('autoProtect');
+  
+  if (copyrightOwnerEl) copyrightOwnerEl.value = settings.copyrightOwner;
+  if (copyrightYearEl) copyrightYearEl.value = settings.copyrightYear;
+  if (autoProtectEl) autoProtectEl.checked = settings.autoProtect;
   
   // Set protection level
   const levelRadio = document.querySelector(`input[name="level"][value="${settings.protectionLevel}"]`);
   if (levelRadio) levelRadio.checked = true;
+  
+  // Update current level display
+  const currentLevelEl = document.getElementById('currentLevel');
+  if (currentLevelEl) {
+    const levelNames = { basic: 'Basic', professional: 'Professional', enterprise: 'Enterprise' };
+    currentLevelEl.textContent = levelNames[settings.protectionLevel] || 'Professional';
+  }
 }
 
 function saveSettings() {
@@ -92,25 +120,37 @@ function saveSettings() {
   }
 }
 
-// ============= AUTH =============
+// ============= AUTH & PANEL MANAGEMENT =============
 
-function checkAuth() {
+function checkInitialState() {
+  // Check if user is already logged in
   if (authToken && userEmail) {
     showMainPanel();
+  } else if (isFirstRun) {
+    showDemoPanel();
   } else {
     showLoginPanel();
   }
 }
 
+function showDemoPanel() {
+  if (demoPanel) demoPanel.classList.remove('hidden');
+  if (loginPanel) loginPanel.classList.add('hidden');
+  if (mainPanel) mainPanel.classList.add('hidden');
+}
+
 function showLoginPanel() {
-  loginPanel.classList.remove('hidden');
-  mainPanel.classList.add('hidden');
+  if (demoPanel) demoPanel.classList.add('hidden');
+  if (loginPanel) loginPanel.classList.remove('hidden');
+  if (mainPanel) mainPanel.classList.add('hidden');
 }
 
 function showMainPanel() {
-  loginPanel.classList.add('hidden');
-  mainPanel.classList.remove('hidden');
-  document.getElementById('userEmail').textContent = userEmail || 'User';
+  if (demoPanel) demoPanel.classList.add('hidden');
+  if (loginPanel) loginPanel.classList.add('hidden');
+  if (mainPanel) mainPanel.classList.remove('hidden');
+  const userEmailEl = document.getElementById('userEmail');
+  if (userEmailEl) userEmailEl.textContent = userEmail || 'User';
 }
 
 async function login() {
@@ -162,7 +202,74 @@ function logout() {
   userEmail = null;
   localStorage.removeItem('tsmo_auth_token');
   localStorage.removeItem('tsmo_user_email');
-  showLoginPanel();
+  isFirstRun = true;
+  showDemoPanel();
+}
+
+// ============= ANIMATED PROTECTION (AHA MOMENT) =============
+
+async function runAnimatedProtection(isDemo = false) {
+  // Show animated protection overlay
+  if (protectionOverlay) protectionOverlay.classList.remove('hidden');
+  
+  // Reset all steps
+  const steps = protectionSteps?.querySelectorAll('.step');
+  steps?.forEach(step => {
+    step.classList.remove('active', 'complete');
+    const indicator = step.querySelector('.step-indicator');
+    if (indicator) indicator.textContent = '○';
+  });
+  
+  // Animate through each step
+  for (let i = 0; i < PROTECTION_STEPS.length; i++) {
+    const stepEl = protectionSteps?.querySelector(`[data-step="${PROTECTION_STEPS[i].id}"]`);
+    if (stepEl) {
+      // Set active
+      stepEl.classList.add('active');
+      const indicator = stepEl.querySelector('.step-indicator');
+      if (indicator) indicator.innerHTML = '<span class="spinner-small"></span>';
+      
+      await sleep(350);
+      
+      // Complete step
+      stepEl.classList.remove('active');
+      stepEl.classList.add('complete');
+      if (indicator) indicator.textContent = '✓';
+    }
+  }
+  
+  await sleep(300);
+  
+  // Hide overlay
+  if (protectionOverlay) protectionOverlay.classList.add('hidden');
+  
+  // Show success
+  if (!isDemo) {
+    showSuccessState();
+  } else {
+    // For demo, redirect to main panel with success
+    isFirstRun = false;
+    showMainPanel();
+    showSuccessState();
+  }
+}
+
+function showSuccessState() {
+  if (successSection) {
+    successSection.classList.remove('hidden');
+    // Hide after 10 seconds
+    setTimeout(() => {
+      successSection.classList.add('hidden');
+    }, 10000);
+  }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function instantDemo() {
+  await runAnimatedProtection(true);
 }
 
 // ============= PROTECTION =============
@@ -516,11 +623,53 @@ function showNotification(title, message) {
 // ============= EVENT LISTENERS =============
 
 function setupEventListeners() {
-  document.getElementById('loginBtn').addEventListener('click', login);
-  document.getElementById('logoutBtn').addEventListener('click', logout);
-  document.getElementById('protectBtn').addEventListener('click', protectCurrentDocument);
-  document.getElementById('batchBtn').addEventListener('click', batchProtect);
-  document.getElementById('verifyBtn').addEventListener('click', verifyProtection);
+  // Demo panel
+  const instantDemoBtn = document.getElementById('instantDemoBtn');
+  if (instantDemoBtn) instantDemoBtn.addEventListener('click', instantDemo);
+  
+  const showLoginBtn = document.getElementById('showLoginBtn');
+  if (showLoginBtn) showLoginBtn.addEventListener('click', showLoginPanel);
+  
+  const backToDemoBtn = document.getElementById('backToDemoBtn');
+  if (backToDemoBtn) backToDemoBtn.addEventListener('click', showDemoPanel);
+  
+  // Auth
+  const loginBtn = document.getElementById('loginBtn');
+  if (loginBtn) loginBtn.addEventListener('click', login);
+  
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) logoutBtn.addEventListener('click', logout);
+  
+  // Protection actions
+  const protectBtn = document.getElementById('protectBtn');
+  if (protectBtn) protectBtn.addEventListener('click', protectCurrentDocument);
+  
+  const batchBtn = document.getElementById('batchBtn');
+  if (batchBtn) batchBtn.addEventListener('click', batchProtect);
+  
+  const verifyBtn = document.getElementById('verifyBtn');
+  if (verifyBtn) verifyBtn.addEventListener('click', verifyProtection);
+  
+  // Advanced toggle
+  if (advancedToggle) {
+    advancedToggle.addEventListener('click', () => {
+      advancedToggle.classList.toggle('open');
+      if (advancedOptions) advancedOptions.classList.toggle('hidden');
+    });
+  }
+  
+  // Save to account
+  const saveToAccountBtn = document.getElementById('saveToAccountBtn');
+  if (saveToAccountBtn) {
+    saveToAccountBtn.addEventListener('click', () => {
+      if (!authToken) {
+        showLoginPanel();
+      } else {
+        showStatus('Protection saved to your TSMO account', 'success');
+        if (successSection) successSection.classList.add('hidden');
+      }
+    });
+  }
   
   // Save settings on change
   document.querySelectorAll('input').forEach(input => {
@@ -531,12 +680,22 @@ function setupEventListeners() {
   document.querySelectorAll('input[name="level"]').forEach(radio => {
     radio.addEventListener('change', (e) => {
       document.querySelectorAll('.level-option').forEach(opt => opt.classList.remove('selected'));
-      e.target.closest('.level-option').classList.add('selected');
+      e.target.closest('.level-option')?.classList.add('selected');
+      
+      // Update current level display
+      const currentLevelEl = document.getElementById('currentLevel');
+      if (currentLevelEl) {
+        const levelNames = { basic: 'Basic', professional: 'Professional', enterprise: 'Enterprise' };
+        currentLevelEl.textContent = levelNames[e.target.value] || 'Professional';
+      }
     });
   });
   
   // Enter key for login
-  document.getElementById('password').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') login();
-  });
+  const passwordEl = document.getElementById('password');
+  if (passwordEl) {
+    passwordEl.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') login();
+    });
+  }
 }
