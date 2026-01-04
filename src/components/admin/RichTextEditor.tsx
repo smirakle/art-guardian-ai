@@ -1,4 +1,5 @@
 import { useRef, useCallback } from "react";
+import DOMPurify from "dompurify";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
@@ -10,20 +11,30 @@ interface RichTextEditorProps {
   placeholder?: string;
 }
 
+// Configure DOMPurify to allow safe HTML tags for rich text editing
+const sanitizeConfig = {
+  ALLOWED_TAGS: ['p', 'br', 'b', 'i', 'u', 'strong', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
+    'ul', 'ol', 'li', 'blockquote', 'a', 'span', 'div', 'font'],
+  ALLOWED_ATTR: ['href', 'target', 'rel', 'style', 'class', 'face', 'size'],
+  ALLOW_DATA_ATTR: false,
+};
+
 const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorProps) => {
   const editorRef = useRef<HTMLDivElement>(null);
 
   const execCommand = useCallback((command: string, value?: string) => {
     document.execCommand(command, false, value);
     if (editorRef.current) {
-      onChange(editorRef.current.innerHTML);
+      const sanitized = DOMPurify.sanitize(editorRef.current.innerHTML, sanitizeConfig);
+      onChange(sanitized);
     }
     editorRef.current?.focus();
   }, [onChange]);
 
   const handleInput = useCallback(() => {
     if (editorRef.current) {
-      onChange(editorRef.current.innerHTML);
+      const sanitized = DOMPurify.sanitize(editorRef.current.innerHTML, sanitizeConfig);
+      onChange(sanitized);
     }
   }, [onChange]);
 
@@ -233,7 +244,7 @@ const RichTextEditor = ({ value, onChange, placeholder }: RichTextEditorProps) =
         contentEditable
         className="min-h-[250px] p-4 focus:outline-none prose prose-sm max-w-none dark:prose-invert"
         onInput={handleInput}
-        dangerouslySetInnerHTML={{ __html: value }}
+        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(value, sanitizeConfig) }}
         data-placeholder={placeholder}
         style={{
           minHeight: '250px',
