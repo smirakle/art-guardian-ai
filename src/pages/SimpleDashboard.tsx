@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { SimpleAIProtection } from '@/components/beginner/SimpleAIProtection';
 import { useAIProtectionStats } from '@/hooks/useAIProtectionStats';
 import { MobileCommunity } from '@/components/mobile/MobileCommunity';
+import { ProtectedItemsGallery } from '@/components/dashboard/ProtectedItemsGallery';
 
 const SimpleDashboard = () => {
   const navigate = useNavigate();
@@ -179,6 +180,9 @@ const SimpleDashboard = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Plugin Protected Items */}
+      <ProtectedItemsGallery />
 
       {/* AI Training Protection Section */}
       <SimpleAIProtection />
