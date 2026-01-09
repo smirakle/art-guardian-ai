@@ -1055,18 +1055,72 @@ const PhotoshopPluginMockup = () => {
 
                     {/* Verification Result */}
                     {verifyResult === 'valid' && (
-                      <div className="bg-gradient-to-r from-[#1976d2]/30 to-[#2196f3]/20 border border-[#1976d2]/50 rounded-lg p-2 animate-in fade-in duration-300">
+                      <div className="bg-gradient-to-r from-[#1976d2]/30 to-[#2196f3]/20 border border-[#1976d2]/50 rounded-lg p-3 animate-in fade-in duration-300 space-y-2">
+                        {/* Header */}
                         <div className="text-[#64b5f6] text-[11px] font-medium flex items-center gap-1">
                           ✓ Protection Verified
                         </div>
-                        <div className="text-[#888] text-[9px] mt-1 space-y-0.5">
-                          <div>Protected: Jan 9, 2026</div>
-                          <div>Owner: {copyrightOwner}</div>
-                          <div>Level: {protectionLevel === 'pro' ? 'Pro (Full Suite)' : 'Basic'}</div>
+                        
+                        {/* Metadata Section */}
+                        <div className="bg-[#1a1a1a]/60 rounded p-2 space-y-1">
+                          <div className="text-[#64b5f6] text-[9px] font-medium uppercase tracking-wide">Metadata</div>
+                          <div className="text-[#aaa] text-[9px] space-y-0.5">
+                            <div className="flex justify-between">
+                              <span className="text-[#666]">XMP Rights:</span>
+                              <span className="text-[#4ade80]">✓ Embedded</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-[#666]">EXIF Copyright:</span>
+                              <span className="text-[#4ade80]">✓ Present</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-[#666]">IPTC Data:</span>
+                              <span className="text-[#4ade80]">✓ Valid</span>
+                            </div>
+                            {protectionLevel === 'pro' && (
+                              <div className="flex justify-between">
+                                <span className="text-[#666]">C2PA Manifest:</span>
+                                <span className="text-[#4ade80]">✓ Signed</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
+
+                        {/* Proof of Protection Section */}
+                        <div className="bg-[#1a1a1a]/60 rounded p-2 space-y-1">
+                          <div className="text-[#64b5f6] text-[9px] font-medium uppercase tracking-wide">Proof of Protection</div>
+                          <div className="text-[#aaa] text-[9px] space-y-0.5">
+                            <div className="flex justify-between">
+                              <span className="text-[#666]">Protected:</span>
+                              <span>Jan 9, 2026 14:32 UTC</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-[#666]">Owner:</span>
+                              <span>{copyrightOwner}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-[#666]">Level:</span>
+                              <span>{protectionLevel === 'pro' ? 'Pro (Full Suite)' : 'Basic'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-[#666]">Watermark:</span>
+                              <span className="text-[#4ade80]">✓ Invisible</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-[#666]">Certificate ID:</span>
+                              <span className="font-mono text-[8px] text-[#888]">TSMO-2026-A7X9</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Fingerprint */}
+                        <div className="bg-[#0a0a0a] rounded p-1.5 font-mono text-[8px] text-[#666] break-all">
+                          SHA256: 8f4a2b...c9d1e3
+                        </div>
+
                         <button 
                           onClick={() => setVerifyResult(null)}
-                          className="text-[#64b5f6] text-[9px] mt-1 hover:underline"
+                          className="text-[#64b5f6] text-[9px] hover:underline"
                         >
                           Dismiss
                         </button>
