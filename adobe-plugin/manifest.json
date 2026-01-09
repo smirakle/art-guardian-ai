@@ -6,7 +6,8 @@
   "main": "index.html",
   "icons": [
     { "width": 24, "height": 24, "path": "icons/icon-24.png" },
-    { "width": 48, "height": 48, "path": "icons/icon-48.png" }
+    { "width": 48, "height": 48, "path": "icons/icon-48.png" },
+    { "width": 512, "height": 512, "path": "icons/icon-512.png" }
   ],
   "host": [
     {
