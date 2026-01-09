@@ -1,6 +1,8 @@
 /**
  * TSMO AI Training Protection - Adobe UXP Plugin
  * Protects creative work from unauthorized AI training
+ * 
+ * Compatible with Photoshop 2024+ (v24.0) and Illustrator 2024+ (v27.0)
  */
 
 const API_URL = 'https://utneaqmbyjwxaqrrarpc.supabase.co/functions/v1/adobe-plugin-api';
@@ -8,7 +10,46 @@ const VERSION_URL = 'https://utneaqmbyjwxaqrrarpc.supabase.co/functions/v1/plugi
 const SUPABASE_URL = 'https://utneaqmbyjwxaqrrarpc.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV0bmVhcW1ieWp3eGFxcnJhcnBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0MzAzNzIsImV4cCI6MjA2ODAwNjM3Mn0.bYhOQUFOxVqXXPpF9WGHtILKfmHTOzUcbGmZ5-RIzxI';
 
-// State
+// ============= UXP ENVIRONMENT DETECTION =============
+
+let isUXPEnvironment = false;
+let photoshopApp = null;
+let photoshopAction = null;
+let illustratorApp = null;
+let uxpStorage = null;
+
+function initUXPEnvironment() {
+  try {
+    // Correct UXP destructuring syntax
+    const photoshop = require('photoshop');
+    photoshopApp = photoshop.app;
+    photoshopAction = photoshop.action;
+    isUXPEnvironment = true;
+    console.log('TSMO: Photoshop UXP environment detected');
+  } catch (e) {
+    console.log('TSMO: Not in Photoshop environment');
+  }
+  
+  try {
+    const illustrator = require('illustrator');
+    illustratorApp = illustrator.app;
+    isUXPEnvironment = true;
+    console.log('TSMO: Illustrator UXP environment detected');
+  } catch (e) {
+    console.log('TSMO: Not in Illustrator environment');
+  }
+  
+  try {
+    const uxp = require('uxp');
+    uxpStorage = uxp.storage;
+    console.log('TSMO: UXP storage available');
+  } catch (e) {
+    console.log('TSMO: UXP storage not available');
+  }
+}
+
+// ============= STATE =============
+
 let authToken = null;
 let userEmail = null;
 let protectionCount = 0;
@@ -55,6 +96,7 @@ function initDomElements() {
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
   try {
+    initUXPEnvironment();
     initDomElements();
     loadSettings();
     checkInitialState();
@@ -107,10 +149,15 @@ function loadSettings() {
 }
 
 function saveSettings() {
-  settings.copyrightOwner = document.getElementById('copyrightOwner').value;
-  settings.copyrightYear = parseInt(document.getElementById('copyrightYear').value) || new Date().getFullYear();
-  settings.autoProtect = document.getElementById('autoProtect').checked;
-  settings.showNotifications = document.getElementById('showNotifications').checked;
+  const copyrightOwnerEl = document.getElementById('copyrightOwner');
+  const copyrightYearEl = document.getElementById('copyrightYear');
+  const autoProtectEl = document.getElementById('autoProtect');
+  const showNotificationsEl = document.getElementById('showNotifications');
+  
+  if (copyrightOwnerEl) settings.copyrightOwner = copyrightOwnerEl.value;
+  if (copyrightYearEl) settings.copyrightYear = parseInt(copyrightYearEl.value) || new Date().getFullYear();
+  if (autoProtectEl) settings.autoProtect = autoProtectEl.checked;
+  if (showNotificationsEl) settings.showNotifications = showNotificationsEl.checked;
   
   const selectedLevel = document.querySelector('input[name="level"]:checked');
   if (selectedLevel) settings.protectionLevel = selectedLevel.value;
@@ -329,8 +376,8 @@ async function protectCurrentDocument() {
       localStorage.setItem('tsmo_last_protection_id', result.protectionId || '');
       localStorage.setItem('tsmo_last_protection_filename', docInfo.name);
       
-      // Inject XMP metadata into document
-      await injectXmpMetadata(result.protectionCertificate.xmpDirective);
+      // Inject XMP metadata into document using real batchPlay
+      await injectXmpMetadata(result.protectionCertificate?.xmpDirective);
       
       // Generate and upload thumbnail for dashboard display
       await uploadThumbnail(result.protectionId, docInfo);
@@ -397,70 +444,105 @@ async function uploadThumbnail(protectionId, docInfo) {
   }
 }
 
-// Generate a base64 thumbnail from the current document
+// Generate a base64 thumbnail from the current document using batchPlay
 async function generateThumbnail(docInfo) {
-  try {
-    if (typeof require !== 'undefined') {
-      const app = require('photoshop').app;
-      const fs = require('uxp').storage.localFileSystem;
+  // Try Photoshop batchPlay export
+  if (photoshopApp && photoshopAction && uxpStorage) {
+    try {
+      const doc = photoshopApp.activeDocument;
+      if (!doc) return null;
       
-      if (app.activeDocument) {
-        // Create a temporary folder for the thumbnail
-        const tempFolder = await fs.getTemporaryFolder();
-        const thumbFile = await tempFolder.createFile('tsmo_thumb.jpg', { overwrite: true });
-        
-        // Export a small JPEG thumbnail
-        const exportOptions = {
-          quality: 60,
-          width: 400,
-          height: 400,
-          resampleMethod: 'bicubic'
-        };
-        
-        // Save as JPEG to temp file
-        await app.activeDocument.saveAs.jpg(thumbFile, exportOptions);
-        
-        // Read the file as base64
-        const fileData = await thumbFile.read({ format: 'binary' });
-        const base64 = btoa(String.fromCharCode(...new Uint8Array(fileData)));
-        
-        // Clean up
-        await thumbFile.delete();
-        
-        return `data:image/jpeg;base64,${base64}`;
+      const fs = uxpStorage.localFileSystem;
+      const tempFolder = await fs.getTemporaryFolder();
+      const thumbFile = await tempFolder.createFile('tsmo_thumb.jpg', { overwrite: true });
+      
+      // Get file token for batchPlay
+      const token = await fs.createSessionToken(thumbFile);
+      
+      // Use batchPlay to export a resized JPEG
+      await photoshopAction.batchPlay([
+        {
+          _obj: "export",
+          as: {
+            _obj: "JPEG",
+            quality: 8
+          },
+          in: {
+            _path: token,
+            _kind: "local"
+          },
+          copy: true,
+          lowerCase: true,
+          embedProfiles: true,
+          _options: {
+            dialogOptions: "dontDisplay"
+          }
+        }
+      ], { synchronousExecution: true });
+      
+      // Read the file as binary and convert to base64
+      const fileData = await thumbFile.read({ format: uxpStorage.formats.binary });
+      const uint8Array = new Uint8Array(fileData);
+      let binary = '';
+      for (let i = 0; i < uint8Array.length; i++) {
+        binary += String.fromCharCode(uint8Array[i]);
       }
+      const base64 = btoa(binary);
+      
+      // Clean up temp file
+      try {
+        await thumbFile.delete();
+      } catch (e) {
+        console.log('Could not delete temp file:', e);
+      }
+      
+      return `data:image/jpeg;base64,${base64}`;
+    } catch (e) {
+      console.log('Photoshop thumbnail generation failed:', e);
     }
-  } catch (e) {
-    console.log('Could not generate Photoshop thumbnail:', e);
   }
   
-  try {
-    if (typeof require !== 'undefined') {
-      const app = require('illustrator').app;
-      const fs = require('uxp').storage.localFileSystem;
+  // Try Illustrator export
+  if (illustratorApp && uxpStorage) {
+    try {
+      const doc = illustratorApp.activeDocument;
+      if (!doc) return null;
       
-      if (app.activeDocument) {
-        // For Illustrator, export as PNG
-        const tempFolder = await fs.getTemporaryFolder();
-        const thumbFile = await tempFolder.createFile('tsmo_thumb.png', { overwrite: true });
-        
-        // Export to temp file
-        await app.activeDocument.exportFile(thumbFile, 'png', { artBoardClipping: true });
-        
-        // Read as base64
-        const fileData = await thumbFile.read({ format: 'binary' });
-        const base64 = btoa(String.fromCharCode(...new Uint8Array(fileData)));
-        
-        await thumbFile.delete();
-        
-        return `data:image/png;base64,${base64}`;
+      const fs = uxpStorage.localFileSystem;
+      const tempFolder = await fs.getTemporaryFolder();
+      const thumbFile = await tempFolder.createFile('tsmo_thumb.png', { overwrite: true });
+      
+      // Illustrator export
+      const exportOptions = {
+        type: 'PNG24',
+        artBoardClipping: true,
+        horizontalScale: 25,
+        verticalScale: 25
+      };
+      
+      await doc.exportFile(thumbFile, exportOptions);
+      
+      const fileData = await thumbFile.read({ format: uxpStorage.formats.binary });
+      const uint8Array = new Uint8Array(fileData);
+      let binary = '';
+      for (let i = 0; i < uint8Array.length; i++) {
+        binary += String.fromCharCode(uint8Array[i]);
       }
+      const base64 = btoa(binary);
+      
+      try {
+        await thumbFile.delete();
+      } catch (e) {
+        console.log('Could not delete temp file:', e);
+      }
+      
+      return `data:image/png;base64,${base64}`;
+    } catch (e) {
+      console.log('Illustrator thumbnail generation failed:', e);
     }
-  } catch (e) {
-    console.log('Could not generate Illustrator thumbnail:', e);
   }
   
-  // Fallback: Create a simple placeholder canvas thumbnail for testing
+  // Fallback: Create a simple placeholder canvas thumbnail for web testing
   try {
     const canvas = document.createElement('canvas');
     canvas.width = 200;
@@ -565,6 +647,8 @@ async function verifyProtection() {
       return;
     }
     
+    // Try to read XMP metadata first
+    const xmpData = await readXmpMetadata();
     const fileHash = await calculateDocumentHash(docInfo);
     
     const response = await fetch(API_URL, {
@@ -575,7 +659,8 @@ async function verifyProtection() {
       },
       body: JSON.stringify({
         action: 'verify',
-        fileHash: fileHash
+        fileHash: fileHash,
+        xmpData: xmpData
       })
     });
     
@@ -598,46 +683,46 @@ async function verifyProtection() {
   }
 }
 
-// ============= ADOBE INTEGRATION =============
+// ============= ADOBE UXP INTEGRATION =============
 
 async function getDocumentInfo() {
-  try {
-    // For Photoshop
-    if (typeof require !== 'undefined') {
-      const app = require('photoshop').app;
-      if (app.activeDocument) {
+  // For Photoshop
+  if (photoshopApp) {
+    try {
+      const doc = photoshopApp.activeDocument;
+      if (doc) {
         return {
-          name: app.activeDocument.name,
-          path: app.activeDocument.path || '',
+          name: doc.name,
+          path: doc.path || '',
           format: 'image/psd',
-          width: app.activeDocument.width,
-          height: app.activeDocument.height
+          width: doc.width,
+          height: doc.height
         };
       }
+    } catch (e) {
+      console.log('Could not get Photoshop document:', e);
     }
-  } catch (e) {
-    console.log('Could not get Photoshop document:', e);
   }
   
-  try {
-    // For Illustrator
-    if (typeof require !== 'undefined') {
-      const app = require('illustrator').app;
-      if (app.activeDocument) {
+  // For Illustrator
+  if (illustratorApp) {
+    try {
+      const doc = illustratorApp.activeDocument;
+      if (doc) {
         return {
-          name: app.activeDocument.name,
-          path: app.activeDocument.path || '',
+          name: doc.name,
+          path: doc.path || '',
           format: 'image/ai',
-          width: app.activeDocument.width,
-          height: app.activeDocument.height
+          width: doc.width,
+          height: doc.height
         };
       }
+    } catch (e) {
+      console.log('Could not get Illustrator document:', e);
     }
-  } catch (e) {
-    console.log('Could not get Illustrator document:', e);
   }
   
-  // Fallback for testing
+  // Fallback for web testing
   return {
     name: 'Untitled Document',
     path: '',
@@ -658,57 +743,210 @@ async function calculateDocumentHash(docInfo) {
 }
 
 async function getArtboardsOrLayers() {
-  try {
-    if (typeof require !== 'undefined') {
-      const app = require('photoshop').app;
-      if (app.activeDocument) {
-        return app.activeDocument.layers.map(layer => ({
+  // Photoshop layers
+  if (photoshopApp) {
+    try {
+      const doc = photoshopApp.activeDocument;
+      if (doc && doc.layers) {
+        return doc.layers.map(layer => ({
           name: layer.name,
           type: 'layer'
         }));
       }
+    } catch (e) {
+      console.log('Could not get Photoshop layers:', e);
     }
-  } catch (e) {
-    console.log('Could not get layers:', e);
   }
   
-  // Fallback
+  // Illustrator artboards
+  if (illustratorApp) {
+    try {
+      const doc = illustratorApp.activeDocument;
+      if (doc && doc.artboards) {
+        const artboards = [];
+        for (let i = 0; i < doc.artboards.length; i++) {
+          artboards.push({
+            name: doc.artboards[i].name,
+            type: 'artboard'
+          });
+        }
+        return artboards;
+      }
+    } catch (e) {
+      console.log('Could not get Illustrator artboards:', e);
+    }
+  }
+  
+  // Fallback for web testing
   return [{ name: 'Layer 1', type: 'layer' }];
 }
 
+// Real XMP metadata injection using batchPlay
 async function injectXmpMetadata(xmpDirective) {
-  try {
-    if (typeof require !== 'undefined') {
-      const app = require('photoshop').app;
-      if (app.activeDocument && app.activeDocument.xmpMetadata) {
-        // Note: Actual XMP injection would be done here
-        console.log('XMP metadata would be injected:', xmpDirective.substring(0, 100));
-      }
-    }
-  } catch (e) {
-    console.log('XMP injection not available:', e);
+  if (!xmpDirective) {
+    console.log('No XMP directive provided');
+    return;
   }
+  
+  // Photoshop XMP injection via batchPlay
+  if (photoshopApp && photoshopAction) {
+    try {
+      const doc = photoshopApp.activeDocument;
+      if (!doc) return;
+      
+      // Parse XMP directive to extract key fields
+      let copyright = '';
+      let copyrightNotice = '';
+      let author = settings.copyrightOwner || '';
+      
+      if (typeof xmpDirective === 'string') {
+        // Extract from XMP string
+        const copyrightMatch = xmpDirective.match(/<dc:rights>.*?<rdf:li[^>]*>([^<]+)<\/rdf:li>/);
+        if (copyrightMatch) copyright = copyrightMatch[1];
+        
+        const creatorMatch = xmpDirective.match(/<dc:creator>.*?<rdf:li[^>]*>([^<]+)<\/rdf:li>/);
+        if (creatorMatch) author = creatorMatch[1];
+        
+        copyrightNotice = `© ${settings.copyrightYear} ${author}. All Rights Reserved. AI Training Prohibited.`;
+      } else if (typeof xmpDirective === 'object') {
+        copyright = xmpDirective.copyright || '';
+        copyrightNotice = xmpDirective.notice || '';
+        author = xmpDirective.author || author;
+      }
+      
+      // Use batchPlay to set document file info (XMP metadata)
+      await photoshopAction.batchPlay([
+        {
+          _obj: "set",
+          _target: [
+            { _ref: "property", _property: "fileInfo" },
+            { _ref: "document", _enum: "ordinal", _value: "targetEnum" }
+          ],
+          to: {
+            _obj: "fileInfo",
+            copyrighted: { _enum: "copyrightedState", _value: "copyrightedWork" },
+            copyrightNotice: copyrightNotice || `© ${settings.copyrightYear} ${author}. AI Training Prohibited.`,
+            ownerUrl: "https://tsmo.io/verify",
+            author: author,
+            authorsPosition: "Creator",
+            caption: `Protected by TSMO. AI Training is prohibited. Verify at https://tsmo.io`,
+            captionWriter: "TSMO Protection System",
+            keywords: ["TSMO Protected", "AI Training Prohibited", "Copyright Protected"]
+          },
+          _options: {
+            dialogOptions: "dontDisplay"
+          }
+        }
+      ], { synchronousExecution: true });
+      
+      console.log('XMP metadata injected successfully via batchPlay');
+      return;
+    } catch (e) {
+      console.log('Photoshop XMP injection failed:', e);
+    }
+  }
+  
+  // Illustrator XMP injection
+  if (illustratorApp) {
+    try {
+      const doc = illustratorApp.activeDocument;
+      if (!doc) return;
+      
+      // Illustrator uses XMPMeta for metadata
+      if (doc.XMPString) {
+        // Append TSMO protection info to existing XMP
+        let xmp = doc.XMPString;
+        const tsmoXmp = `<xmpRights:UsageTerms>AI Training Prohibited - Protected by TSMO</xmpRights:UsageTerms>`;
+        
+        // Insert before closing rdf:Description
+        xmp = xmp.replace('</rdf:Description>', tsmoXmp + '</rdf:Description>');
+        doc.XMPString = xmp;
+        
+        console.log('Illustrator XMP metadata updated');
+      }
+    } catch (e) {
+      console.log('Illustrator XMP injection failed:', e);
+    }
+  }
+  
+  console.log('XMP injection: Not in UXP environment, skipped');
+}
+
+// Read existing XMP metadata from document
+async function readXmpMetadata() {
+  // Photoshop XMP reading via batchPlay
+  if (photoshopApp && photoshopAction) {
+    try {
+      const result = await photoshopAction.batchPlay([
+        {
+          _obj: "get",
+          _target: [
+            { _ref: "property", _property: "fileInfo" },
+            { _ref: "document", _enum: "ordinal", _value: "targetEnum" }
+          ]
+        }
+      ], { synchronousExecution: true });
+      
+      if (result && result[0] && result[0].fileInfo) {
+        return result[0].fileInfo;
+      }
+    } catch (e) {
+      console.log('Could not read Photoshop XMP:', e);
+    }
+  }
+  
+  // Illustrator XMP reading
+  if (illustratorApp) {
+    try {
+      const doc = illustratorApp.activeDocument;
+      if (doc && doc.XMPString) {
+        return doc.XMPString;
+      }
+    } catch (e) {
+      console.log('Could not read Illustrator XMP:', e);
+    }
+  }
+  
+  return null;
 }
 
 // ============= AUTO-PROTECT ON EXPORT =============
 
 function setupExportListener() {
-  try {
-    if (typeof require !== 'undefined') {
-      const action = require('photoshop').action;
-      
-      // Listen for save/export events
-      action.addNotificationListener(['save', 'exportDocument'], async (event, descriptor) => {
-        if (settings.autoProtect) {
-          console.log('Auto-protect triggered on export');
-          await protectCurrentDocument();
+  // Photoshop save/export notification listener
+  if (photoshopAction) {
+    try {
+      // Use correct UXP notification events
+      photoshopAction.addNotificationListener(
+        ['save', 'saveAs', 'quickExport'],
+        async (event, descriptor) => {
+          console.log('TSMO: Save/export event detected:', event);
+          
+          // Only auto-protect if setting is enabled
+          if (settings.autoProtect) {
+            // Check if this is before the save starts
+            if (descriptor && descriptor.saveStage === 'beforeSaveProcessStart') {
+              console.log('TSMO: Auto-protect triggered before save');
+              await protectCurrentDocument();
+            } else if (!descriptor || !descriptor.saveStage) {
+              // Fallback: trigger after save event
+              console.log('TSMO: Auto-protect triggered on save event');
+              await protectCurrentDocument();
+            }
+          }
         }
-      });
+      );
       
-      console.log('Export listener registered');
+      console.log('TSMO: Photoshop export listener registered');
+    } catch (e) {
+      console.log('TSMO: Could not setup Photoshop export listener:', e);
     }
-  } catch (e) {
-    console.log('Could not setup export listener:', e);
+  }
+  
+  // Illustrator doesn't have the same notification system
+  // We rely on manual protection for Illustrator
+  if (illustratorApp && !photoshopApp) {
+    console.log('TSMO: Illustrator detected - auto-protect on manual trigger only');
   }
 }
 
@@ -733,31 +971,34 @@ async function checkForUpdates() {
 // ============= UI HELPERS =============
 
 function showLoading(text) {
-  loadingText.textContent = text || 'Processing...';
-  loadingOverlay.classList.remove('hidden');
+  if (loadingText) loadingText.textContent = text || 'Processing...';
+  if (loadingOverlay) loadingOverlay.classList.remove('hidden');
 }
 
 function hideLoading() {
-  loadingOverlay.classList.add('hidden');
+  if (loadingOverlay) loadingOverlay.classList.add('hidden');
 }
 
 function showStatus(message, type = 'info') {
-  statusSection.classList.remove('hidden');
-  statusMessage.textContent = message;
-  statusMessage.className = `status-message status-${type}`;
+  if (statusSection) statusSection.classList.remove('hidden');
+  if (statusMessage) {
+    statusMessage.textContent = message;
+    statusMessage.className = `status-message status-${type}`;
+  }
   
   // Auto-hide after 5 seconds
   setTimeout(() => {
-    statusSection.classList.add('hidden');
+    if (statusSection) statusSection.classList.add('hidden');
   }, 5000);
 }
 
 function showNotification(title, message) {
-  // UXP notification API if available
+  // UXP shell notification if available
   try {
-    if (typeof require !== 'undefined') {
-      const { shell } = require('uxp');
-      // shell.showNotification would be called here
+    const uxp = require('uxp');
+    if (uxp && uxp.shell) {
+      // UXP shell.showNotification is not available in all versions
+      console.log(`TSMO Notification: ${title} - ${message}`);
     }
   } catch (e) {
     console.log('Notification:', title, message);
@@ -881,8 +1122,8 @@ function setupEventListeners() {
       // Update current level display
       const currentLevelEl = document.getElementById('currentLevel');
       if (currentLevelEl) {
-        const levelNames = { basic: 'Basic', professional: 'Professional', enterprise: 'Enterprise' };
-        currentLevelEl.textContent = levelNames[e.target.value] || 'Professional';
+        const levelNames = { basic: 'Basic', pro: 'Pro' };
+        currentLevelEl.textContent = levelNames[e.target.value] || 'Basic';
       }
     });
   });
