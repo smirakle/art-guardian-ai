@@ -193,7 +193,7 @@ const PhotoshopPluginMockup = () => {
   const [isBatchProcessing, setIsBatchProcessing] = useState(false);
   const [batchProgress, setBatchProgress] = useState(0);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [verifyResult, setVerifyResult] = useState<'valid' | 'invalid' | null>(null);
+  const [verifyResult, setVerifyResult] = useState<'valid' | 'invalid' | 'collapsed' | null>(null);
 
   // Handle batch protection simulation
   const handleBatch = async () => {
@@ -1056,9 +1056,17 @@ const PhotoshopPluginMockup = () => {
                     {/* Verification Result */}
                     {verifyResult === 'valid' && (
                       <div className="bg-gradient-to-r from-[#1976d2]/30 to-[#2196f3]/20 border border-[#1976d2]/50 rounded-lg p-3 animate-in fade-in duration-300 space-y-2">
-                        {/* Header */}
-                        <div className="text-[#64b5f6] text-[11px] font-medium flex items-center gap-1">
-                          ✓ Protection Verified
+                        {/* Header with Collapse Button */}
+                        <div className="flex items-center justify-between">
+                          <div className="text-[#64b5f6] text-[11px] font-medium flex items-center gap-1">
+                            ✓ Protection Verified
+                          </div>
+                          <button 
+                            onClick={() => setVerifyResult(verifyResult === 'valid' ? 'collapsed' : 'valid')}
+                            className="text-[#64b5f6] text-[9px] hover:text-[#90caf9] transition-colors flex items-center gap-0.5"
+                          >
+                            <span className="text-[10px]">▼</span> Collapse
+                          </button>
                         </div>
                         
                         {/* Metadata Section */}
@@ -1124,6 +1132,31 @@ const PhotoshopPluginMockup = () => {
                         >
                           Dismiss
                         </button>
+                      </div>
+                    )}
+
+                    {/* Collapsed Verification Result */}
+                    {verifyResult === 'collapsed' && (
+                      <div className="bg-gradient-to-r from-[#1976d2]/30 to-[#2196f3]/20 border border-[#1976d2]/50 rounded-lg p-3 animate-in fade-in duration-300">
+                        <div className="flex items-center justify-between">
+                          <div className="text-[#64b5f6] text-[11px] font-medium flex items-center gap-1">
+                            ✓ Protection Verified
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button 
+                              onClick={() => setVerifyResult('valid')}
+                              className="text-[#64b5f6] text-[9px] hover:text-[#90caf9] transition-colors flex items-center gap-0.5"
+                            >
+                              <span className="text-[10px]">▶</span> Expand
+                            </button>
+                            <button 
+                              onClick={() => setVerifyResult(null)}
+                              className="text-[#888] text-[9px] hover:text-[#aaa]"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     )}
 
