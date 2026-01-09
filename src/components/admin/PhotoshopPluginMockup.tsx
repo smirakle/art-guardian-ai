@@ -1073,6 +1073,14 @@ const PhotoshopPluginMockup = () => {
                       </div>
                     )}
 
+                    {/* View in TSMO Watch Button */}
+                    <button 
+                      onClick={() => window.open('https://www.tsmowatch.com', '_blank')}
+                      className="w-full bg-gradient-to-r from-[#1976d2] to-[#2196f3] hover:from-[#1565c0] hover:to-[#1976d2] text-white py-1.5 rounded text-[10px] flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                    >
+                      🌐 View in TSMO Watch
+                    </button>
+
                     {/* Secondary Actions */}
                     {!protectionStatus && !verifyResult && (
                       <div className="flex gap-1">
