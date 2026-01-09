@@ -188,6 +188,59 @@ const PhotoshopPluginMockup = () => {
   
   // Screenshot mode - hides demo controls for clean marketing captures
   const [screenshotMode, setScreenshotMode] = useState(false);
+  
+  // Batch and Verify states
+  const [isBatchProcessing, setIsBatchProcessing] = useState(false);
+  const [batchProgress, setBatchProgress] = useState(0);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verifyResult, setVerifyResult] = useState<'valid' | 'invalid' | null>(null);
+
+  // Handle batch protection simulation
+  const handleBatch = async () => {
+    setIsBatchProcessing(true);
+    setBatchProgress(0);
+    setVerifyResult(null);
+    
+    toast({
+      title: "Batch Protection Started",
+      description: "Processing 5 open documents...",
+    });
+
+    // Simulate batch progress
+    for (let i = 0; i <= 100; i += 20) {
+      await new Promise(resolve => setTimeout(resolve, 400));
+      setBatchProgress(i);
+    }
+
+    setIsBatchProcessing(false);
+    setBatchProgress(0);
+    
+    toast({
+      title: "✓ Batch Complete",
+      description: "5 files protected successfully with metadata + watermark.",
+    });
+  };
+
+  // Handle verify simulation
+  const handleVerify = async () => {
+    setIsVerifying(true);
+    setVerifyResult(null);
+    
+    toast({
+      title: "Verifying Protection",
+      description: "Scanning document for TSMO signatures...",
+    });
+
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    setIsVerifying(false);
+    setVerifyResult('valid');
+    
+    toast({
+      title: "✓ Protection Verified",
+      description: `Valid signature found - Protected by ${copyrightOwner}`,
+    });
+  };
 
   // Handle mock login
   const handleLogin = () => {
@@ -1000,14 +1053,42 @@ const PhotoshopPluginMockup = () => {
                       </div>
                     )}
 
-                    {/* Secondary Actions */}
-                    {!protectionStatus && (
-                      <div className="flex gap-1">
-                        <button className="flex-1 bg-[#454545] hover:bg-[#545454] text-[#ccc] py-1.5 rounded text-[10px] flex items-center justify-center gap-1 transition-colors">
-                          📚 Batch
+                    {/* Verification Result */}
+                    {verifyResult === 'valid' && (
+                      <div className="bg-gradient-to-r from-[#1976d2]/30 to-[#2196f3]/20 border border-[#1976d2]/50 rounded-lg p-2 animate-in fade-in duration-300">
+                        <div className="text-[#64b5f6] text-[11px] font-medium flex items-center gap-1">
+                          ✓ Protection Verified
+                        </div>
+                        <div className="text-[#888] text-[9px] mt-1 space-y-0.5">
+                          <div>Protected: Jan 9, 2026</div>
+                          <div>Owner: {copyrightOwner}</div>
+                          <div>Level: {protectionLevel === 'pro' ? 'Pro (Full Suite)' : 'Basic'}</div>
+                        </div>
+                        <button 
+                          onClick={() => setVerifyResult(null)}
+                          className="text-[#64b5f6] text-[9px] mt-1 hover:underline"
+                        >
+                          Dismiss
                         </button>
-                        <button className="flex-1 bg-[#454545] hover:bg-[#545454] text-[#ccc] py-1.5 rounded text-[10px] flex items-center justify-center gap-1 transition-colors">
-                          ✓ Verify
+                      </div>
+                    )}
+
+                    {/* Secondary Actions */}
+                    {!protectionStatus && !verifyResult && (
+                      <div className="flex gap-1">
+                        <button 
+                          onClick={handleBatch}
+                          disabled={isBatchProcessing || isVerifying || isProtecting}
+                          className="flex-1 bg-[#454545] hover:bg-[#545454] disabled:opacity-50 disabled:cursor-not-allowed text-[#ccc] py-1.5 rounded text-[10px] flex items-center justify-center gap-1 transition-colors"
+                        >
+                          📚 {isBatchProcessing ? `${batchProgress}%` : 'Batch'}
+                        </button>
+                        <button 
+                          onClick={handleVerify}
+                          disabled={isVerifying || isBatchProcessing || isProtecting}
+                          className="flex-1 bg-[#454545] hover:bg-[#545454] disabled:opacity-50 disabled:cursor-not-allowed text-[#ccc] py-1.5 rounded text-[10px] flex items-center justify-center gap-1 transition-colors"
+                        >
+                          {isVerifying ? '⏳' : '✓'} {isVerifying ? 'Checking...' : 'Verify'}
                         </button>
                       </div>
                     )}
