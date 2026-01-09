@@ -185,6 +185,9 @@ const PhotoshopPluginMockup = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState("");
+  
+  // Screenshot mode - hides demo controls for clean marketing captures
+  const [screenshotMode, setScreenshotMode] = useState(false);
 
   // Handle mock login
   const handleLogin = () => {
@@ -281,17 +284,40 @@ const PhotoshopPluginMockup = () => {
   ];
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">Photoshop Plugin Preview</h2>
-          <p className="text-muted-foreground">How TSMO appears when docked in Adobe Photoshop 2024</p>
+    <div className="space-y-4 relative">
+      {/* Screenshot Mode Exit Button - Floating */}
+      {screenshotMode && (
+        <div className="absolute -top-2 right-0 z-50">
+          <Button 
+            size="sm" 
+            variant="secondary"
+            className="gap-2 shadow-lg"
+            onClick={() => setScreenshotMode(false)}
+          >
+            <X className="h-4 w-4" />
+            Exit Screenshot Mode
+          </Button>
         </div>
-        <Button variant="outline" size="sm" className="gap-2">
-          <Monitor className="h-4 w-4" />
-          Screenshot Mode
-        </Button>
-      </div>
+      )}
+
+      {/* Header - Hidden in Screenshot Mode */}
+      {!screenshotMode && (
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold">Photoshop Plugin Preview</h2>
+            <p className="text-muted-foreground">How TSMO appears when docked in Adobe Photoshop 2024</p>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="gap-2"
+            onClick={() => setScreenshotMode(true)}
+          >
+            <Monitor className="h-4 w-4" />
+            Screenshot Mode
+          </Button>
+        </div>
+      )}
 
       {/* Photoshop Window */}
       <div className="rounded-lg overflow-hidden border border-[#1a1a1a] shadow-2xl">
