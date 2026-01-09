@@ -1057,9 +1057,8 @@ const PhotoshopPluginMockup = () => {
                     {verifyResult === 'valid' && (
                       <div className="bg-gradient-to-r from-[#1976d2]/30 to-[#2196f3]/20 border border-[#1976d2]/50 rounded-lg p-3 animate-in fade-in duration-300 space-y-2">
                         {/* Header */}
-                        <div className="text-[#64b5f6] text-[11px] font-medium flex items-center gap-2">
-                          <span>✓ Protection Verified</span>
-                          <span className="bg-[#1976d2] text-white text-[8px] px-1.5 py-0.5 rounded font-semibold uppercase tracking-wide">C2PA</span>
+                        <div className="text-[#64b5f6] text-[11px] font-medium flex items-center gap-1">
+                          ✓ Protection Verified
                         </div>
                         
                         {/* Metadata Section */}
