@@ -432,11 +432,38 @@ async function analyzeWithOpenAI(imageSource: string) {
   
   if (!openaiApiKey) {
     console.log('OpenAI API key not configured');
-    return null;
+    return { error: 'missing_api_key' };
   }
 
   try {
     console.log('Calling OpenAI Vision API for AI detection...');
+    
+    // If it's a URL (not already base64), fetch and convert to base64
+    // This is necessary because OpenAI Vision API cannot access private URLs (like Supabase storage)
+    let imageData = imageSource;
+    if (imageSource.startsWith('http')) {
+      console.log('Fetching image from URL to convert to base64...');
+      try {
+        const imageResponse = await fetch(imageSource);
+        if (!imageResponse.ok) {
+          console.error('Failed to fetch image:', imageResponse.status, imageResponse.statusText);
+          return { error: 'image_fetch_failed' };
+        }
+        const arrayBuffer = await imageResponse.arrayBuffer();
+        const uint8Array = new Uint8Array(arrayBuffer);
+        let binaryString = '';
+        for (let i = 0; i < uint8Array.length; i++) {
+          binaryString += String.fromCharCode(uint8Array[i]);
+        }
+        const base64 = btoa(binaryString);
+        const contentType = imageResponse.headers.get('content-type') || 'image/png';
+        imageData = `data:${contentType};base64,${base64}`;
+        console.log('Successfully converted image to base64, length:', base64.length);
+      } catch (fetchError) {
+        console.error('Error fetching image for base64 conversion:', fetchError);
+        return { error: 'image_fetch_failed' };
+      }
+    }
     
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -475,7 +502,7 @@ Respond with ONLY valid JSON:
               {
                 type: 'image_url',
                 image_url: {
-                  url: imageSource,
+                  url: imageData,
                   detail: 'high'
                 }
               }
@@ -490,7 +517,7 @@ Respond with ONLY valid JSON:
     if (!response.ok) {
       const errorText = await response.text();
       console.error('OpenAI API error:', response.status, errorText);
-      return null;
+      return { error: 'openai_api_error', details: errorText };
     }
 
     const data = await response.json();
@@ -506,10 +533,10 @@ Respond with ONLY valid JSON:
     }
     
     console.error('Could not extract JSON from OpenAI response');
-    return null;
+    return { error: 'parse_failed' };
   } catch (error) {
     console.error('OpenAI analysis error:', error);
-    return null;
+    return { error: 'unknown_error', details: error.message };
   }
 }
 
@@ -524,8 +551,54 @@ function combineAnalyses(
   
   console.log('Combining analyses - OpenAI result:', openai);
   
-  // If OpenAI analysis is available, trust it heavily (it's trained for this)
-  if (openai) {
+  // Check for specific error types from OpenAI
+  if (openai?.error) {
+    let errorMessage = 'AI detection analysis unavailable';
+    
+    switch (openai.error) {
+      case 'missing_api_key':
+        errorMessage = 'AI detection requires OpenAI API key - please configure to enable accurate analysis';
+        break;
+      case 'image_fetch_failed':
+        errorMessage = 'Could not access the image for AI analysis - please try uploading directly';
+        break;
+      case 'openai_api_error':
+        errorMessage = 'AI analysis service temporarily unavailable - please try again later';
+        break;
+      case 'parse_failed':
+        errorMessage = 'AI analysis completed but could not parse results - please try again';
+        break;
+      default:
+        errorMessage = 'AI detection encountered an error - please try again';
+    }
+    
+    console.log('OpenAI error detected:', openai.error, '- showing message:', errorMessage);
+    
+    return {
+      isAIGenerated: false,
+      confidence: 0,
+      indicators: {
+        frequencyAnomalies: 0,
+        pixelPatterns: 0,
+        metadataSignatures: 0,
+        stylometricAnalysis: 0,
+        neuralArtifacts: 0,
+      },
+      detectionMethod: 'analysis_unavailable',
+      aiModel: null,
+      generationConfidence: 0,
+      artifacts: [errorMessage],
+      technicalAnalysis: {
+        compressionArtifacts: false,
+        noisePatterns: 'unknown',
+        colorSpace: 'unknown',
+        frequencyDomain: 'unknown'
+      }
+    };
+  }
+  
+  // If OpenAI analysis is available and successful, trust it heavily (it's trained for this)
+  if (openai && openai.isAIGenerated !== undefined) {
     const finalConfidence = openai.confidence;
     const isAIGenerated = openai.isAIGenerated;
     
