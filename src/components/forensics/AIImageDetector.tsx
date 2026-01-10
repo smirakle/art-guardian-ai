@@ -66,6 +66,15 @@ const AIImageDetector: React.FC = () => {
     setResult(null);
   };
 
+  const convertFileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
   const analyzeImage = async () => {
     if (!file && !imageUrl) {
       toast({
@@ -81,39 +90,20 @@ const AIImageDetector: React.FC = () => {
     setResult(null);
 
     try {
-      let finalImageUrl = imageUrl;
+      let imageData: string | undefined;
+      let finalImageUrl: string | undefined;
       
-      // If user uploaded a file, upload it to storage first
+      // If user uploaded a file, convert to base64 directly
       if (file) {
-        console.log('Uploading image to storage...');
+        console.log('Converting image to base64...');
         setProgress(10);
         
-        // Get current user
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          throw new Error('Authentication required - please sign in');
-        }
-        
-        // Upload image to Supabase Storage - path must start with user ID to satisfy RLS policy
-        const filePath = `${user.id}/ai-detection/${Date.now()}_${file.name}`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('artwork')
-          .upload(filePath, file, { upsert: true });
-        
-        if (uploadError) {
-          console.error('Upload error:', uploadError);
-          throw new Error(`Upload failed: ${uploadError.message}`);
-        }
-        
-        // Get public URL
-        const { data: { publicUrl } } = supabase.storage
-          .from('artwork')
-          .getPublicUrl(filePath);
-        
-        finalImageUrl = publicUrl;
-        console.log('Image uploaded, public URL:', publicUrl);
+        imageData = await convertFileToBase64(file);
+        console.log('Image converted to base64, length:', imageData.length);
         setProgress(30);
       } else {
+        // User provided a URL
+        finalImageUrl = imageUrl;
         setProgress(20);
       }
 
@@ -122,10 +112,11 @@ const AIImageDetector: React.FC = () => {
         setProgress(prev => Math.min(prev + 10, 90));
       }, 500);
 
-      console.log('Calling AI detection function with URL:', finalImageUrl);
+      console.log('Calling AI detection function...');
       const { data, error } = await supabase.functions.invoke('ai-image-detector', {
         body: {
           imageUrl: finalImageUrl,
+          imageData: imageData,
         },
       });
 
