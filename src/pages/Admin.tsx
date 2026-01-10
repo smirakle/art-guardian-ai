@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Handshake, FileImage, Monitor } from "lucide-react";
+import { Handshake, Plug } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 import SecurityAuditLog from "@/components/admin/SecurityAuditLog";
@@ -24,8 +24,7 @@ import AllUploadsAndScans from "@/components/admin/AllUploadsAndScans";
 import GuestUploadsTracking from "@/components/admin/GuestUploadsTracking";
 import BlogManagement from "@/components/admin/BlogManagement";
 import { RetentionDashboard } from "@/components/admin/RetentionDashboard";
-import AdobePluginSimulator from "@/components/admin/AdobePluginSimulator";
-import PhotoshopPluginMockup from "@/components/admin/PhotoshopPluginMockup";
+import AdminPluginsSection from "@/components/admin/AdminPluginsSection";
 
 const Admin = () => {
    const navigate = useNavigate();
@@ -72,13 +71,9 @@ const Admin = () => {
                 <TabsTrigger value="uploads-scans" className="px-4 py-2 text-sm font-medium">Uploads & Scans</TabsTrigger>
                 <TabsTrigger value="guest-uploads" className="px-4 py-2 text-sm font-medium">Guest Uploads</TabsTrigger>
                 <TabsTrigger value="retention" className="px-4 py-2 text-sm font-medium bg-blue-500/10 border border-blue-500/20">Retention</TabsTrigger>
-                <TabsTrigger value="adobe-plugin" className="px-4 py-2 text-sm font-medium bg-purple-500/10 border border-purple-500/20">
-                  <FileImage className="h-4 w-4 mr-1" />
-                  Adobe Plugin
-                </TabsTrigger>
-                <TabsTrigger value="photoshop-preview" className="px-4 py-2 text-sm font-medium bg-orange-500/10 border border-orange-500/20">
-                  <Monitor className="h-4 w-4 mr-1" />
-                  Photoshop Preview
+                <TabsTrigger value="plugins" className="px-4 py-2 text-sm font-medium bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20">
+                  <Plug className="h-4 w-4 mr-1" />
+                  Plugins
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -153,12 +148,8 @@ const Admin = () => {
               <RetentionDashboard />
             </TabsContent>
 
-            <TabsContent value="adobe-plugin" className="space-y-6">
-              <AdobePluginSimulator />
-            </TabsContent>
-
-            <TabsContent value="photoshop-preview" className="space-y-6">
-              <PhotoshopPluginMockup />
+            <TabsContent value="plugins" className="space-y-6">
+              <AdminPluginsSection />
             </TabsContent>
 
           </Tabs>
