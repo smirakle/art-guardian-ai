@@ -68,6 +68,16 @@ const partnershipCategories = [
         contacts: "Direct outreach",
         contactUrl: "https://www.midjourney.com",
         nextStep: "Build proof-of-concept for AI art verification"
+      },
+      {
+        name: "Hugging Face",
+        type: "Verification Partner",
+        status: "researching",
+        potential: "$400K-700K ARR",
+        description: "Leading AI model hub with 500K+ models. Growing need for training data provenance and opt-out compliance tools. Can help enforce artist opt-outs across hosted models.",
+        contacts: "Hugging Face Business",
+        contactUrl: "https://huggingface.co/contact",
+        nextStep: "Build proof-of-concept for opt-out registry integration with model cards"
       }
     ]
   },
@@ -280,6 +290,46 @@ const partnershipCategories = [
         contacts: "DeviantArt Business",
         contactUrl: "https://www.deviantart.com/developers/",
         nextStep: "Propose creator protection integration"
+      },
+      {
+        name: "Cara",
+        type: "Platform Partnership",
+        status: "prospecting",
+        potential: "$200K-350K ARR",
+        description: "Anti-AI art platform with 1M+ artists who fled Instagram/ArtStation. Perfectly aligned audience actively seeking AI protection tools. High engagement, mission-aligned community.",
+        contacts: "Cara Team / Jingna Zhang (founder)",
+        contactUrl: "https://cara.app/about",
+        nextStep: "Reach out to founder via platform or LinkedIn for integration discussion"
+      },
+      {
+        name: "ArtStation",
+        type: "Platform Partnership",
+        status: "prospecting",
+        potential: "$300K-500K ARR",
+        description: "10M+ artists, owned by Epic Games. Already has 'NoAI' tag system but lacks enforcement tools. Perfect partnership for protection integration.",
+        contacts: "ArtStation Business",
+        contactUrl: "https://www.artstation.com/about",
+        nextStep: "Propose protection enforcement tool integration via Epic Games partnership team"
+      },
+      {
+        name: "Patreon",
+        type: "Platform Partnership",
+        status: "prospecting",
+        potential: "$500K-800K ARR",
+        description: "250K+ active creators, 8M+ paying patrons. Creators share exclusive art that needs protection from leaks and AI scraping. Premium creator segment highly receptive.",
+        contacts: "Patreon for Developers",
+        contactUrl: "https://www.patreon.com/portal",
+        nextStep: "Apply to developer platform, propose creator protection toolkit integration"
+      },
+      {
+        name: "Redbubble",
+        type: "Platform Partnership",
+        status: "prospecting",
+        potential: "$250K-400K ARR",
+        description: "700K+ independent artists, 100M+ product listings. Art theft is massive problem on POD platforms. Protection tools could be major differentiator.",
+        contacts: "Redbubble Artist Relations",
+        contactUrl: "https://www.redbubble.com/about",
+        nextStep: "Pitch automated design protection and theft detection for artist uploads"
       }
     ]
   },
@@ -339,10 +389,10 @@ const getStatusBadge = (status: string) => {
 };
 
 const PartnershipsOverview: React.FC = () => {
-  const totalPotentialARR = "$8-15M";
+  const totalPotentialARR = "$10-18M";
   const activePartners = 2;
-  const prospectingPartners = 11;
-  const researchingPartners = 14;
+  const prospectingPartners = 15;
+  const researchingPartners = 15;
   const totalPartners = partnershipCategories.reduce((acc, cat) => acc + cat.partners.length, 0);
 
   return (
