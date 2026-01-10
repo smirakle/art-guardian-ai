@@ -348,9 +348,9 @@ function validateAction(action: unknown): action is ProtectionRequest['action'] 
     ['protect', 'verify', 'batch_protect', 'get_status', 'list_protections', 'upload_thumbnail', 'save_to_portfolio'].includes(action);
 }
 
-function validateProtectionLevel(level: unknown): level is 'basic' | 'pro' {
+function validateProtectionLevel(level: unknown): level is 'basic' | 'professional' | 'enterprise' | 'pro' {
   return level === undefined || 
-    (typeof level === 'string' && ['basic', 'pro'].includes(level));
+    (typeof level === 'string' && ['basic', 'professional', 'enterprise', 'pro'].includes(level));
 }
 
 function validateEmail(email: unknown): boolean {
@@ -394,7 +394,7 @@ function validateRequest(request: unknown): { valid: boolean; error?: string } {
   }
 
   if (!validateProtectionLevel(req.protectionLevel)) {
-    return { valid: false, error: 'Invalid protectionLevel. Must be one of: basic, professional, enterprise' };
+    return { valid: false, error: 'Invalid protectionLevel. Must be one of: basic, professional, enterprise, pro' };
   }
 
   if (!validateFileHash(req.fileHash)) {
