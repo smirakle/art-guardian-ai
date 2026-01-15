@@ -187,8 +187,28 @@
       <div class="spinner"></div>
       <p id="loadingText">Processing...</p>
     </div>
+    
+    <!-- Debug Footer (helps verify correct plugin is loaded) -->
+    <div id="debugFooter" class="debug-footer">
+      <span>v1.0.2</span> · <span id="iconStatus">checking icons...</span>
+    </div>
   </div>
 
+  <script>
+    // Quick icon load check for debugging
+    document.addEventListener('DOMContentLoaded', () => {
+      const testImg = new Image();
+      testImg.onload = () => {
+        document.getElementById('iconStatus').textContent = '✓ icons loaded';
+        document.getElementById('iconStatus').style.color = '#4ade80';
+      };
+      testImg.onerror = () => {
+        document.getElementById('iconStatus').textContent = '✗ icons missing';
+        document.getElementById('iconStatus').style.color = '#f87171';
+      };
+      testImg.src = 'icons/icon-48.png';
+    });
+  </script>
   <script src="index.js"></script>
 </body>
 </html>
