@@ -92,8 +92,41 @@
       </button>
       
       <p class="help-text">
-        Don't have an account? <a href="https://www.tsmowatch.com/auth?tab=signup" target="_blank">Sign up</a>
+        Don't have an account? <button id="showSignupBtn" class="link-btn">Create one</button>
       </p>
+    </div>
+
+    <!-- Signup Panel -->
+    <div id="signupPanel" class="panel hidden">
+      <div class="logo-section compact">
+        <div class="logo small"><img src="icons/icon-48.png" alt="TSMO" width="32" height="32" /></div>
+        <h1>Create Account</h1>
+        <p class="subtitle">Start protecting your art for free</p>
+      </div>
+      
+      <div class="form-group">
+        <label for="signupEmail">Email</label>
+        <input type="email" id="signupEmail" placeholder="your@email.com" />
+      </div>
+      
+      <div class="form-group">
+        <label for="signupPassword">Password</label>
+        <input type="password" id="signupPassword" placeholder="Min. 6 characters" />
+      </div>
+      
+      <div class="free-features">
+        <div class="feature-item">✓ 50 free protections</div>
+        <div class="feature-item">✓ AI training resistance</div>
+        <div class="feature-item">✓ Email alerts</div>
+      </div>
+      
+      <button id="signupBtn" class="btn btn-primary btn-full">
+        Create Free Account
+      </button>
+      
+      <button id="backToLoginBtn" class="btn btn-outline btn-full">
+        ← Back to Sign In
+      </button>
     </div>
 
     <!-- Main Panel -->

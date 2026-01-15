@@ -91,7 +91,7 @@ let settings = {
 };
 
 // DOM Elements (with null safety)
-let demoPanel, loginPanel, mainPanel, loadingOverlay, loadingText, statusSection, statusMessage;
+let demoPanel, loginPanel, signupPanel, mainPanel, loadingOverlay, loadingText, statusSection, statusMessage;
 let protectionOverlay, protectionSteps, advancedToggle, advancedOptions, successSection;
 let offlinePanel, apiErrorPanel, upgradePanelOverlay;
 
@@ -114,6 +114,7 @@ const PROTECTION_STEPS = [
 function initDomElements() {
   demoPanel = document.getElementById('demoPanel');
   loginPanel = document.getElementById('loginPanel');
+  signupPanel = document.getElementById('signupPanel');
   mainPanel = document.getElementById('mainPanel');
   loadingOverlay = document.getElementById('loadingOverlay');
   loadingText = document.getElementById('loadingText');
@@ -197,6 +198,7 @@ function hideUpgradeModal() {
 function hideAllPanels() {
   if (demoPanel) demoPanel.classList.add('hidden');
   if (loginPanel) loginPanel.classList.add('hidden');
+  if (signupPanel) signupPanel.classList.add('hidden');
   if (mainPanel) mainPanel.classList.add('hidden');
   if (offlinePanel) offlinePanel.classList.add('hidden');
   if (apiErrorPanel) apiErrorPanel.classList.add('hidden');
@@ -297,20 +299,22 @@ function checkInitialState() {
 }
 
 function showDemoPanel() {
+  hideAllPanels();
   if (demoPanel) demoPanel.classList.remove('hidden');
-  if (loginPanel) loginPanel.classList.add('hidden');
-  if (mainPanel) mainPanel.classList.add('hidden');
 }
 
 function showLoginPanel() {
-  if (demoPanel) demoPanel.classList.add('hidden');
+  hideAllPanels();
   if (loginPanel) loginPanel.classList.remove('hidden');
-  if (mainPanel) mainPanel.classList.add('hidden');
+}
+
+function showSignupPanel() {
+  hideAllPanels();
+  if (signupPanel) signupPanel.classList.remove('hidden');
 }
 
 function showMainPanel() {
-  if (demoPanel) demoPanel.classList.add('hidden');
-  if (loginPanel) loginPanel.classList.add('hidden');
+  hideAllPanels();
   if (mainPanel) mainPanel.classList.remove('hidden');
   const userEmailEl = document.getElementById('userEmail');
   if (userEmailEl) userEmailEl.textContent = userEmail || 'User';
@@ -367,6 +371,70 @@ function logout() {
   localStorage.removeItem('tsmo_user_email');
   isFirstRun = true;
   showDemoPanel();
+}
+
+async function signup() {
+  const email = document.getElementById('signupEmail').value;
+  const password = document.getElementById('signupPassword').value;
+  
+  if (!email || !password) {
+    showStatus('Please enter email and password', 'error');
+    return;
+  }
+  
+  if (password.length < 6) {
+    showStatus('Password must be at least 6 characters', 'error');
+    return;
+  }
+  
+  showLoading('Creating account...');
+  
+  try {
+    const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify({ 
+        email, 
+        password,
+        data: { account_type: 'free' }
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (data.access_token) {
+      // User signed up and auto-confirmed (or email confirmation disabled)
+      authToken = data.access_token;
+      userEmail = email;
+      
+      localStorage.setItem('tsmo_auth_token', authToken);
+      localStorage.setItem('tsmo_user_email', userEmail);
+      
+      hideLoading();
+      showMainPanel();
+      showStatus('Account created! Welcome to TSMO.', 'success');
+    } else if (data.id && !data.access_token) {
+      // Email confirmation required
+      hideLoading();
+      showLoginPanel();
+      showStatus('Check your email to confirm your account, then sign in.', 'success');
+    } else {
+      hideLoading();
+      const errorMsg = data.error_description || data.msg || 'Signup failed';
+      showStatus(errorMsg, 'error');
+    }
+  } catch (error) {
+    hideLoading();
+    if (isNetworkError(error)) {
+      showOfflinePanel();
+    } else {
+      showStatus('Connection error. Please try again.', 'error');
+    }
+    console.error('Signup error:', error);
+  }
 }
 
 // ============= ANIMATED PROTECTION (AHA MOMENT) =============
@@ -1474,12 +1542,22 @@ function setupEventListeners() {
   const backToDemoBtn = document.getElementById('backToDemoBtn');
   if (backToDemoBtn) backToDemoBtn.addEventListener('click', showDemoPanel);
   
-  // Auth
+  // Auth - Login
   const loginBtn = document.getElementById('loginBtn');
   if (loginBtn) loginBtn.addEventListener('click', login);
   
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) logoutBtn.addEventListener('click', logout);
+  
+  // Auth - Signup
+  const showSignupBtn = document.getElementById('showSignupBtn');
+  if (showSignupBtn) showSignupBtn.addEventListener('click', showSignupPanel);
+  
+  const signupBtn = document.getElementById('signupBtn');
+  if (signupBtn) signupBtn.addEventListener('click', signup);
+  
+  const backToLoginBtn = document.getElementById('backToLoginBtn');
+  if (backToLoginBtn) backToLoginBtn.addEventListener('click', showLoginPanel);
   
   // Protection actions
   const protectBtn = document.getElementById('protectBtn');
