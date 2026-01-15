@@ -192,27 +192,60 @@
       <div class="spinner"></div>
       <p id="loadingText">Processing...</p>
     </div>
-    
-    <!-- Debug Footer (helps verify correct plugin is loaded) -->
-    <div id="debugFooter" class="debug-footer">
-      <span>v1.0.2</span> · <span id="iconStatus">checking icons...</span>
+
+    <!-- Error State: Offline -->
+    <div id="offlinePanel" class="error-panel hidden">
+      <div class="error-icon">📡</div>
+      <h3>No Connection</h3>
+      <p>Please check your internet connection and try again.</p>
+      <button id="retryConnectionBtn" class="btn btn-primary btn-full">
+        Retry Connection
+      </button>
+    </div>
+
+    <!-- Error State: API Error -->
+    <div id="apiErrorPanel" class="error-panel hidden">
+      <div class="error-icon">⚠️</div>
+      <h3>Service Unavailable</h3>
+      <p id="apiErrorMessage">TSMO protection service is temporarily unavailable.</p>
+      <button id="retryApiBtn" class="btn btn-primary btn-full">
+        Try Again
+      </button>
+      <a href="https://www.tsmowatch.com/support" target="_blank" class="help-link">
+        Contact Support
+      </a>
+    </div>
+
+    <!-- Error State: Rate Limit / Upgrade Modal -->
+    <div id="upgradePanelOverlay" class="upgrade-overlay hidden">
+      <div class="upgrade-modal">
+        <button id="closeUpgradeBtn" class="close-btn">×</button>
+        <div class="upgrade-icon">🚀</div>
+        <h3>You've Reached Your Limit</h3>
+        <p class="upgrade-message">You've used all 50 free protections this month.</p>
+        <div class="upgrade-features">
+          <div class="feature-item">✓ Unlimited protections</div>
+          <div class="feature-item">✓ Full pixel protection (Style Cloak)</div>
+          <div class="feature-item">✓ Invisible watermarking</div>
+          <div class="feature-item">✓ AI training block</div>
+          <div class="feature-item">✓ Priority support</div>
+        </div>
+        <a href="https://www.tsmowatch.com/pricing" target="_blank" class="btn btn-success btn-full btn-large">
+          Upgrade to Pro — $29/mo
+        </a>
+        <p class="upgrade-note">Cancel anytime. 30-day money-back guarantee.</p>
+      </div>
+    </div>
+
+    <!-- Help Footer -->
+    <div id="helpFooter" class="help-footer">
+      <a href="https://www.tsmowatch.com/support" target="_blank">Need help?</a>
     </div>
   </div>
 
   <script>
-    // Quick icon load check for debugging
-    document.addEventListener('DOMContentLoaded', () => {
-      const testImg = new Image();
-      testImg.onload = () => {
-        document.getElementById('iconStatus').textContent = '✓ icons loaded';
-        document.getElementById('iconStatus').style.color = '#4ade80';
-      };
-      testImg.onerror = () => {
-        document.getElementById('iconStatus').textContent = '✗ icons missing';
-        document.getElementById('iconStatus').style.color = '#f87171';
-      };
-      testImg.src = 'icons/icon-48.png';
-    });
+    // Production mode check - hide debug elements
+    const isDevMode = window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1');
   </script>
   <script src="index.js"></script>
 </body>
