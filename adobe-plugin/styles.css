@@ -63,6 +63,33 @@ body {
   margin-bottom: var(--spacing-sm);
 }
 
+.logo img {
+  display: block;
+  margin: 0 auto;
+  border-radius: 8px;
+}
+
+.logo.small img {
+  width: 32px;
+  height: 32px;
+}
+
+.icon img {
+  vertical-align: middle;
+  border-radius: 4px;
+}
+
+.protection-icon img {
+  display: block;
+  margin: 0 auto;
+  border-radius: 12px;
+}
+
+.step-icon img {
+  vertical-align: middle;
+  border-radius: 3px;
+}
+
 .logo-section h1 {
   font-size: 18px;
   font-weight: 600;
