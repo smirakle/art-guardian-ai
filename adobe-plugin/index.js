@@ -760,8 +760,9 @@ async function getDocumentInfo() {
 }
 
 async function calculateDocumentHash(docInfo) {
-  // Create a hash from document properties
-  const hashData = `${docInfo.name}-${docInfo.width}-${docInfo.height}-${Date.now()}`;
+  // DETERMINISTIC hash - same document = same hash every time
+  // Only use stable properties: name, dimensions, format (NO timestamps or random values)
+  const hashData = `tsmo-${docInfo.name}-${docInfo.width}-${docInfo.height}-${docInfo.format || 'psd'}`;
   
   // Try Web Crypto API first (may not be available in UXP)
   if (typeof crypto !== 'undefined' && crypto.subtle) {
@@ -776,16 +777,13 @@ async function calculateDocumentHash(docInfo) {
     }
   }
   
-  // Fallback: Simple hash function for UXP environment
-  let hash = 0;
+  // Fallback: FNV-1a hash (deterministic, no randomness)
+  let hash = 2166136261; // FNV offset basis
   for (let i = 0; i < hashData.length; i++) {
-    const char = hashData.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32bit integer
+    hash ^= hashData.charCodeAt(i);
+    hash = (hash * 16777619) >>> 0; // FNV prime, convert to unsigned
   }
-  // Convert to hex string and pad to look like a proper hash
-  const hexHash = Math.abs(hash).toString(16).padStart(8, '0');
-  return hexHash + '-' + Date.now().toString(16) + '-' + Math.random().toString(16).substring(2, 10);
+  return 'tsmo-' + hash.toString(16).padStart(8, '0');
 }
 
 async function getArtboardsOrLayers() {
