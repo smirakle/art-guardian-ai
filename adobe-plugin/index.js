@@ -93,9 +93,13 @@ let settings = {
 // DOM Elements (with null safety)
 let demoPanel, loginPanel, mainPanel, loadingOverlay, loadingText, statusSection, statusMessage;
 let protectionOverlay, protectionSteps, advancedToggle, advancedOptions, successSection;
+let offlinePanel, apiErrorPanel, upgradePanelOverlay;
 
 // First-run state
 let isFirstRun = true;
+
+// Connection state
+let isOnline = navigator.onLine;
 
 // Protection steps for animated sequence - NOW REAL PROTECTION
 const PROTECTION_STEPS = [
@@ -120,6 +124,9 @@ function initDomElements() {
   advancedToggle = document.getElementById('advancedToggle');
   advancedOptions = document.getElementById('advancedOptions');
   successSection = document.getElementById('successSection');
+  offlinePanel = document.getElementById('offlinePanel');
+  apiErrorPanel = document.getElementById('apiErrorPanel');
+  upgradePanelOverlay = document.getElementById('upgradePanelOverlay');
 }
 
 // Initialize
@@ -128,6 +135,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initUXPEnvironment();
     initDomElements();
     loadSettings();
+    setupConnectionListeners();
     checkInitialState();
     checkForUpdates();
     setupEventListeners();
@@ -137,6 +145,83 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('TSMO Plugin initialization error:', error);
   }
 });
+
+// ============= CONNECTION & ERROR HANDLING =============
+
+function setupConnectionListeners() {
+  window.addEventListener('online', () => {
+    isOnline = true;
+    hideOfflinePanel();
+    console.log('TSMO: Connection restored');
+  });
+  
+  window.addEventListener('offline', () => {
+    isOnline = false;
+    showOfflinePanel();
+    console.log('TSMO: Connection lost');
+  });
+}
+
+function showOfflinePanel() {
+  hideAllPanels();
+  if (offlinePanel) offlinePanel.classList.remove('hidden');
+}
+
+function hideOfflinePanel() {
+  if (offlinePanel) offlinePanel.classList.add('hidden');
+  checkInitialState();
+}
+
+function showApiErrorPanel(message) {
+  hideAllPanels();
+  if (apiErrorPanel) {
+    apiErrorPanel.classList.remove('hidden');
+    const msgEl = document.getElementById('apiErrorMessage');
+    if (msgEl && message) msgEl.textContent = message;
+  }
+}
+
+function hideApiErrorPanel() {
+  if (apiErrorPanel) apiErrorPanel.classList.add('hidden');
+  checkInitialState();
+}
+
+function showUpgradeModal() {
+  if (upgradePanelOverlay) upgradePanelOverlay.classList.remove('hidden');
+}
+
+function hideUpgradeModal() {
+  if (upgradePanelOverlay) upgradePanelOverlay.classList.add('hidden');
+}
+
+function hideAllPanels() {
+  if (demoPanel) demoPanel.classList.add('hidden');
+  if (loginPanel) loginPanel.classList.add('hidden');
+  if (mainPanel) mainPanel.classList.add('hidden');
+  if (offlinePanel) offlinePanel.classList.add('hidden');
+  if (apiErrorPanel) apiErrorPanel.classList.add('hidden');
+}
+
+// Check if error is a rate limit / quota exceeded error
+function isRateLimitError(error, response) {
+  if (response && response.status === 429) return true;
+  if (typeof error === 'string') {
+    const lowerError = error.toLowerCase();
+    return lowerError.includes('limit') || 
+           lowerError.includes('quota') || 
+           lowerError.includes('exceeded') ||
+           lowerError.includes('50 pieces');
+  }
+  return false;
+}
+
+// Check if error is a network/connection error
+function isNetworkError(error) {
+  if (!navigator.onLine) return true;
+  if (error instanceof TypeError && error.message.includes('fetch')) return true;
+  if (typeof error === 'string' && error.toLowerCase().includes('network')) return true;
+  return false;
+}
 
 // ============= SETTINGS =============
 
@@ -713,7 +798,15 @@ async function protectCurrentDocument() {
     }
   } catch (error) {
     hideProtectionOverlay();
-    showStatus('Error: ' + error.message, 'error');
+    
+    // Handle specific error types
+    if (isNetworkError(error)) {
+      showOfflinePanel();
+    } else if (isRateLimitError(error.message)) {
+      showUpgradeModal();
+    } else {
+      showStatus('Error: ' + error.message, 'error');
+    }
     console.error('Protection error:', error);
   }
 }
@@ -934,11 +1027,23 @@ async function batchProtect() {
     if (result.success) {
       showStatus(result.message, 'success');
     } else {
-      showStatus(result.error || 'Batch protection failed', 'error');
+      // Check for rate limit error in response
+      if (isRateLimitError(result.error)) {
+        showUpgradeModal();
+      } else {
+        showStatus(result.error || 'Batch protection failed', 'error');
+      }
     }
   } catch (error) {
     hideLoading();
-    showStatus('Error: ' + error.message, 'error');
+    
+    if (isNetworkError(error)) {
+      showOfflinePanel();
+    } else if (isRateLimitError(error.message)) {
+      showUpgradeModal();
+    } else {
+      showStatus('Error: ' + error.message, 'error');
+    }
     console.error('Batch protection error:', error);
   }
 }
@@ -1484,6 +1589,39 @@ function setupEventListeners() {
   if (passwordEl) {
     passwordEl.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') login();
+    });
+  }
+  
+  // Error panel buttons
+  const retryConnectionBtn = document.getElementById('retryConnectionBtn');
+  if (retryConnectionBtn) {
+    retryConnectionBtn.addEventListener('click', () => {
+      if (navigator.onLine) {
+        hideOfflinePanel();
+      } else {
+        showStatus('Still offline. Please check your connection.', 'warning');
+      }
+    });
+  }
+  
+  const retryApiBtn = document.getElementById('retryApiBtn');
+  if (retryApiBtn) {
+    retryApiBtn.addEventListener('click', () => {
+      hideApiErrorPanel();
+    });
+  }
+  
+  const closeUpgradeBtn = document.getElementById('closeUpgradeBtn');
+  if (closeUpgradeBtn) {
+    closeUpgradeBtn.addEventListener('click', hideUpgradeModal);
+  }
+  
+  // Close upgrade modal on overlay click
+  if (upgradePanelOverlay) {
+    upgradePanelOverlay.addEventListener('click', (e) => {
+      if (e.target === upgradePanelOverlay) {
+        hideUpgradeModal();
+      }
     });
   }
 }
