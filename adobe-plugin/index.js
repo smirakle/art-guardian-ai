@@ -399,9 +399,19 @@ async function protectCurrentDocument() {
     const result = await response.json();
     
     if (result.success) {
-      // Store protection ID for save to account
+      // Store protection ID for save to account AND for verify fallback
+      const protectionInfo = {
+        protectionId: result.protectionId || '',
+        fileName: docInfo.name,
+        fileHash: fileHash,
+        protectedAt: new Date().toISOString()
+      };
+      localStorage.setItem('tsmo_last_protection', JSON.stringify(protectionInfo));
       localStorage.setItem('tsmo_last_protection_id', result.protectionId || '');
       localStorage.setItem('tsmo_last_protection_filename', docInfo.name);
+      
+      // Store globally for quick access in verify
+      window.tsmoLastProtection = protectionInfo;
       
       // Inject XMP metadata into document using real batchPlay
       await injectXmpMetadata(result.protectionCertificate?.xmpDirective);
@@ -619,7 +629,7 @@ async function batchProtect() {
     }
     
     const batchFiles = items.map(item => ({
-      fileHash: `batch-${Date.now()}-${item.name}`,
+      fileHash: `tsmo-batch-${item.name}-${item.bounds?.width || 0}-${item.bounds?.height || 0}`.replace(/[^a-zA-Z0-9-]/g, ''),
       fileName: item.name,
       fileType: 'image/png',
       fileSize: 0
@@ -678,6 +688,25 @@ async function verifyProtection() {
     const xmpData = await readXmpMetadata();
     const fileHash = await calculateDocumentHash(docInfo);
     
+    // Get stored protection info for fallback verification
+    let storedProtection = window.tsmoLastProtection;
+    if (!storedProtection) {
+      try {
+        const stored = localStorage.getItem('tsmo_last_protection');
+        if (stored) {
+          storedProtection = JSON.parse(stored);
+        }
+      } catch (e) {
+        console.log('Could not retrieve stored protection:', e);
+      }
+    }
+    
+    // Check if this document matches the stored protection
+    const matchesStored = storedProtection && (
+      storedProtection.fileName === docInfo.name ||
+      storedProtection.fileHash === fileHash
+    );
+    
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: {
@@ -687,7 +716,10 @@ async function verifyProtection() {
       body: JSON.stringify({
         action: 'verify',
         fileHash: fileHash,
-        xmpData: xmpData
+        xmpData: xmpData,
+        // Include fallback data for better matching
+        protectionId: matchesStored ? storedProtection.protectionId : null,
+        fileName: docInfo.name
       })
     });
     

@@ -20,10 +20,21 @@ interface VersionInfo {
 }
 
 const CURRENT_VERSION: VersionInfo = {
-  version: '1.0.0',
+  version: '1.0.2',
   minVersion: '1.0.0',
-  downloadUrl: 'https://utneaqmbyjwxaqrrarpc.supabase.co/storage/v1/object/public/plugin-assets/tsmo-adobe-plugin-1.0.0.ccx',
+  downloadUrl: 'https://utneaqmbyjwxaqrrarpc.supabase.co/storage/v1/object/public/plugin-assets/tsmo-adobe-plugin-1.0.2.ccx',
   changelog: `
+## Version 1.0.2 (Latest)
+- Fixed: Deterministic document hashing for reliable verification
+- Fixed: Verify function now correctly identifies protected documents
+- Improved: Debug footer shows version and icon status
+- Improved: Font sizes increased to 14px for better readability
+
+## Version 1.0.1
+- Added: Dynamic copyright year detection
+- Added: Protection ID fallback for verification
+- Improved: Batch protect with deterministic hashes
+
 ## Version 1.0.0 (Initial Release)
 - One-click AI training protection from within Adobe apps
 - XMP metadata injection for AI training prohibition
@@ -33,7 +44,7 @@ const CURRENT_VERSION: VersionInfo = {
 - Real-time sync with TSMO dashboard
 - Support for Photoshop and Illustrator 2024+
 `.trim(),
-  releaseDate: '2025-01-01',
+  releaseDate: '2025-01-15',
   updateRequired: false,
   features: [
     'one-click-protect',
