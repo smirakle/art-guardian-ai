@@ -10,6 +10,33 @@ const VERSION_URL = 'https://utneaqmbyjwxaqrrarpc.supabase.co/functions/v1/plugi
 const SUPABASE_URL = 'https://utneaqmbyjwxaqrrarpc.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV0bmVhcW1ieWp3eGFxcnJhcnBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0MzAzNzIsImV4cCI6MjA2ODAwNjM3Mn0.bYhOQUFOxVqXXPpF9WGHtILKfmHTOzUcbGmZ5-RIzxI';
 
+// ============= UXP POLYFILLS =============
+// TextEncoder polyfill for UXP environment (not available in Adobe UXP)
+if (typeof TextEncoder === 'undefined') {
+  window.TextEncoder = class TextEncoder {
+    encode(str) {
+      const utf8 = unescape(encodeURIComponent(str));
+      const result = new Uint8Array(utf8.length);
+      for (let i = 0; i < utf8.length; i++) {
+        result[i] = utf8.charCodeAt(i);
+      }
+      return result;
+    }
+  };
+}
+
+if (typeof TextDecoder === 'undefined') {
+  window.TextDecoder = class TextDecoder {
+    decode(bytes) {
+      let result = '';
+      for (let i = 0; i < bytes.length; i++) {
+        result += String.fromCharCode(bytes[i]);
+      }
+      return decodeURIComponent(escape(result));
+    }
+  };
+}
+
 // ============= UXP ENVIRONMENT DETECTION =============
 
 let isUXPEnvironment = false;
@@ -735,11 +762,30 @@ async function getDocumentInfo() {
 async function calculateDocumentHash(docInfo) {
   // Create a hash from document properties
   const hashData = `${docInfo.name}-${docInfo.width}-${docInfo.height}-${Date.now()}`;
-  const encoder = new TextEncoder();
-  const data = encoder.encode(hashData);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = new Uint8Array(hashBuffer);
-  return Array.from(hashArray).map(b => b.toString(16).padStart(2, '0')).join('');
+  
+  // Try Web Crypto API first (may not be available in UXP)
+  if (typeof crypto !== 'undefined' && crypto.subtle) {
+    try {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(hashData);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = new Uint8Array(hashBuffer);
+      return Array.from(hashArray).map(b => b.toString(16).padStart(2, '0')).join('');
+    } catch (e) {
+      console.log('crypto.subtle not available, using fallback hash');
+    }
+  }
+  
+  // Fallback: Simple hash function for UXP environment
+  let hash = 0;
+  for (let i = 0; i < hashData.length; i++) {
+    const char = hashData.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  // Convert to hex string and pad to look like a proper hash
+  const hexHash = Math.abs(hash).toString(16).padStart(8, '0');
+  return hexHash + '-' + Date.now().toString(16) + '-' + Math.random().toString(16).substring(2, 10);
 }
 
 async function getArtboardsOrLayers() {
