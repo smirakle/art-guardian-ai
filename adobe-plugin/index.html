@@ -8,7 +8,7 @@
 </head>
 <body>
   <div id="app">
-    <!-- First-Run Demo Panel (New "Aha" Moment) -->
+    <!-- Welcome Panel (Clean Auth Flow) -->
     <div id="demoPanel" class="panel">
       <div class="logo-section">
         <div class="logo"><img src="icons/icon-48.png" alt="TSMO" width="48" height="48" /></div>
@@ -16,19 +16,23 @@
         <p class="subtitle">AI Training Protection for Creators</p>
       </div>
       
-      <button id="instantDemoBtn" class="btn btn-primary btn-full btn-large">
-        <span class="icon"><img src="icons/icon-24.png" alt="" width="20" height="20" /></span>
-        Try Protection Instantly
-        <small>See how it works in 2 seconds</small>
+      <button id="showLoginBtn" class="btn btn-primary btn-full btn-large">
+        Sign In
       </button>
       
       <div class="divider-text">
-        <span>or sign in for full features</span>
+        <span>or</span>
       </div>
       
-      <button id="showLoginBtn" class="btn btn-secondary btn-full">
-        Sign in with TSMO account
+      <button id="showSignupFromWelcomeBtn" class="btn btn-secondary btn-full">
+        Create Free Account
       </button>
+      
+      <div class="free-features">
+        <div class="feature-item">✓ 50 free protections</div>
+        <div class="feature-item">✓ AI training resistance</div>
+        <div class="feature-item">✓ Works in Photoshop & Illustrator</div>
+      </div>
     </div>
 
     <!-- Animated Protection Overlay (New) -->
@@ -88,7 +92,7 @@
       </button>
       
       <button id="backToDemoBtn" class="btn btn-outline btn-full">
-        ← Back to Demo
+        ← Back
       </button>
       
       <p class="help-text">

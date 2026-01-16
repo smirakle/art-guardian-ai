@@ -499,9 +499,7 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function instantDemo() {
-  await runAnimatedProtection(true);
-}
+// instantDemo() removed - replaced with clean auth flow per Adobe requirements
 
 // ============= REAL PROTECTION STEP HELPERS =============
 
@@ -1532,12 +1530,12 @@ function showNotification(title, message) {
 // ============= EVENT LISTENERS =============
 
 function setupEventListeners() {
-  // Demo panel
-  const instantDemoBtn = document.getElementById('instantDemoBtn');
-  if (instantDemoBtn) instantDemoBtn.addEventListener('click', instantDemo);
-  
+  // Welcome panel - clean auth flow
   const showLoginBtn = document.getElementById('showLoginBtn');
   if (showLoginBtn) showLoginBtn.addEventListener('click', showLoginPanel);
+  
+  const showSignupFromWelcomeBtn = document.getElementById('showSignupFromWelcomeBtn');
+  if (showSignupFromWelcomeBtn) showSignupFromWelcomeBtn.addEventListener('click', showSignupPanel);
   
   const backToDemoBtn = document.getElementById('backToDemoBtn');
   if (backToDemoBtn) backToDemoBtn.addEventListener('click', showDemoPanel);

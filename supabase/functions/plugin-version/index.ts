@@ -20,11 +20,18 @@ interface VersionInfo {
 }
 
 const CURRENT_VERSION: VersionInfo = {
-  version: '1.0.2',
+  version: '1.0.3',
   minVersion: '1.0.0',
-  downloadUrl: 'https://utneaqmbyjwxaqrrarpc.supabase.co/storage/v1/object/public/plugin-assets/tsmo-adobe-plugin-1.0.2.ccx',
+  downloadUrl: 'https://utneaqmbyjwxaqrrarpc.supabase.co/storage/v1/object/public/plugin-assets/tsmo-adobe-plugin-1.0.3.ccx',
   changelog: `
-## Version 1.0.2 (Latest)
+## Version 1.0.3 (Latest)
+- Fixed: Panel icons now use correct 23x23 size per Adobe requirements
+- Fixed: Separate dark/light theme icons for proper toolbar display
+- Fixed: Simplified UI with consistent Sign In / Create Account flow
+- Removed: Demo mode for cleaner authentication experience
+- Improved: 2x scale icons for retina displays
+
+## Version 1.0.2
 - Fixed: Deterministic document hashing for reliable verification
 - Fixed: Verify function now correctly identifies protected documents
 - Improved: Debug footer shows version and icon status
@@ -44,7 +51,7 @@ const CURRENT_VERSION: VersionInfo = {
 - Real-time sync with TSMO dashboard
 - Support for Photoshop and Illustrator 2024+
 `.trim(),
-  releaseDate: '2025-01-15',
+  releaseDate: '2025-01-16',
   updateRequired: false,
   features: [
     'one-click-protect',
