@@ -1,288 +1,253 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TSMO Protection</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div id="app">
-    <!-- Welcome Panel (Clean Auth Flow) -->
-    <div id="demoPanel" class="panel">
-      <div class="logo-section">
-        <div class="logo"><img src="icons/icon-48.png" alt="TSMO" width="48" height="48" /></div>
-        <h1>TSMO Protection <span class="beta-badge">Beta</span></h1>
-        <p class="subtitle">AI Training Protection for Creators</p>
+  <!-- Header -->
+  <div id="header" class="header">
+    <div class="header-left">
+      <span class="header-title">TSMO <span class="beta-badge">Beta</span></span>
+    </div>
+    <div class="header-right">
+      <span id="userEmail" class="user-email"></span>
+      <span id="planBadge" class="plan-badge plan-basic" style="display:none;">Basic</span>
+      <button id="logoutBtn" class="btn-link" style="display:none;">Logout</button>
+    </div>
+  </div>
+
+  <!-- Login Panel -->
+  <div id="loginPanel" class="panel">
+    <div class="panel-content">
+      <div class="welcome-section">
+        <div class="logo-container">
+          <div class="logo-icon">🚀</div>
+        </div>
+        <h2>Welcome to TSMO</h2>
+        <p class="welcome-subtitle">Protect your artwork from AI training</p>
       </div>
       
-      <button id="showLoginBtn" class="btn btn-primary btn-full btn-large">
-        Sign In
-      </button>
+      <div class="form-group">
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email">
+      </div>
       
-      <div class="divider-text">
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+      </div>
+      
+      <button id="loginBtn" class="btn btn-primary btn-full">Sign In</button>
+      
+      <div class="divider">
         <span>or</span>
       </div>
       
-      <button id="showSignupFromWelcomeBtn" class="btn btn-secondary btn-full">
-        Create Free Account
-      </button>
+      <button id="showSignupBtn" class="btn btn-outline btn-full">Create Free Account</button>
       
-      <div class="free-features">
-        <div class="feature-item">✓ 50 free protections</div>
-        <div class="feature-item">✓ AI training resistance</div>
-        <div class="feature-item">✓ Works in Photoshop & Illustrator</div>
-      </div>
-    </div>
-
-    <!-- Animated Protection Overlay (New) -->
-    <div id="protectionOverlay" class="protection-overlay hidden">
-      <div class="protection-modal">
-        <div class="protection-icon"><img src="icons/icon-48.png" alt="Protecting" width="48" height="48" /></div>
-        <div class="protection-title">Protecting...</div>
-        <div class="protection-steps" id="protectionSteps">
-          <div class="step" data-step="export">
-            <span class="step-indicator">✓</span>
-            <span class="step-label">Exporting Document...</span>
-          </div>
-          <div class="step" data-step="stylecloak">
-            <span class="step-indicator">—</span>
-            <span class="step-label">Applying Style Cloak...</span>
-          </div>
-          <div class="step" data-step="watermark">
-            <span class="step-indicator">—</span>
-            <span class="step-label">Embedding Watermark...</span>
-          </div>
-          <div class="step" data-step="aiblock">
-            <span class="step-indicator">—</span>
-            <span class="step-label">Adding AI Block...</span>
-          </div>
-          <div class="step" data-step="metadata">
-            <span class="step-indicator">✓</span>
-            <span class="step-label">Saving Metadata...</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Login Panel -->
-    <div id="loginPanel" class="panel hidden">
-      <div class="logo-section compact">
-        <div class="logo small"><img src="icons/icon-48.png" alt="TSMO" width="32" height="32" /></div>
-        <h1>Sign In</h1>
-      </div>
+      <div id="statusMessage" class="status-message"></div>
       
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" placeholder="your@email.com" />
-      </div>
-      
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" placeholder="••••••••" />
-      </div>
-      
-      <button id="loginBtn" class="btn btn-primary btn-full">
-        Sign In
-      </button>
-      
-      <button id="backToDemoBtn" class="btn btn-outline btn-full">
-        ← Back
-      </button>
-      
-      <p class="help-text">
-        Don't have an account? <button id="showSignupBtn" class="link-btn">Create one</button>
+      <p class="help-link">
+        <a href="https://www.tsmowatch.com/help" target="_blank">Need help?</a>
       </p>
     </div>
-
-    <!-- Signup Panel -->
-    <div id="signupPanel" class="panel hidden">
-      <div class="logo-section compact">
-        <div class="logo small"><img src="icons/icon-48.png" alt="TSMO" width="32" height="32" /></div>
-        <h1>Create Account</h1>
-        <p class="subtitle">Start protecting your art for free</p>
+  </div>
+  
+  <!-- Signup Panel -->
+  <div id="signupPanel" class="panel" style="display:none;">
+    <div class="panel-content">
+      <div class="welcome-section">
+        <div class="logo-container">
+          <div class="logo-icon">🚀</div>
+        </div>
+        <h2>Create Account</h2>
+        <p class="welcome-subtitle">Start protecting your art today</p>
       </div>
       
       <div class="form-group">
         <label for="signupEmail">Email</label>
-        <input type="email" id="signupEmail" placeholder="your@email.com" />
+        <input type="email" id="signupEmail" placeholder="your@email.com" autocomplete="email">
       </div>
       
       <div class="form-group">
         <label for="signupPassword">Password</label>
-        <input type="password" id="signupPassword" placeholder="8+ chars with letters & numbers" />
+        <input type="password" id="signupPassword" placeholder="8+ chars with letters & numbers" autocomplete="new-password">
+        <div class="password-hint">Minimum 8 characters with letters and numbers</div>
       </div>
       
-      <div class="free-features">
-        <div class="feature-item">✓ 50 free protections</div>
-        <div class="feature-item">✓ AI training resistance</div>
-        <div class="feature-item">✓ Email alerts</div>
-      </div>
+      <button id="signupBtn" class="btn btn-primary btn-full">Create Free Account</button>
       
-      <button id="signupBtn" class="btn btn-primary btn-full">
-        Create Free Account
-      </button>
+      <div id="signupStatusMessage" class="status-message"></div>
       
-      <button id="backToLoginBtn" class="btn btn-outline btn-full">
-        ← Back to Sign In
+      <button id="showLoginBtn" class="btn-link btn-full" style="margin-top: 12px;">
+        Already have an account? Sign In
       </button>
     </div>
+  </div>
 
-    <!-- Main Panel -->
-    <div id="mainPanel" class="panel hidden">
-      <div class="header">
-        <div class="user-info">
-          <span id="userEmail" class="user-email">user@example.com</span>
-          <span id="planBadge" class="plan-badge plan-basic">Basic</span>
-        </div>
-        <button id="logoutBtn" class="btn btn-small btn-outline">Logout</button>
-      </div>
-
-      <!-- Advanced Settings Toggle -->
-      <div class="advanced-toggle" id="advancedToggle">
-        <span class="toggle-arrow">▶</span>
-        <span>Protection Level: </span>
-        <span id="currentLevel" class="current-level">Professional</span>
-      </div>
-
-      <!-- Advanced Options (collapsed by default) -->
-      <div id="advancedOptions" class="advanced-options hidden">
-        <div class="protection-section">
-          <div class="level-selector">
-            <label class="level-option">
-              <input type="radio" name="level" value="basic" checked />
-              <span class="level-label">
-                <strong>Basic</strong>
-                <small>Free · 50 pieces</small>
-              </span>
-            </label>
-            <label class="level-option">
-              <input type="radio" name="level" value="pro" />
-              <span class="level-label">
-                <strong>Pro</strong>
-                <small>$29/mo · Unlimited</small>
-              </span>
-            </label>
-          </div>
-        </div>
-
-        <div class="metadata-section">
-          <div class="form-group">
-            <label for="copyrightOwner">Owner Name</label>
-            <input type="text" id="copyrightOwner" placeholder="Your Name" />
-          </div>
-          <div class="form-group">
-            <label for="copyrightYear">Year</label>
-            <input type="number" id="copyrightYear" min="1900" max="2100" />
-          </div>
+  <!-- Main Panel (Authenticated) -->
+  <div id="mainPanel" class="panel" style="display:none;">
+    <div class="panel-content">
+      <!-- Protection Level Selection -->
+      <div class="section">
+        <label class="section-label">* Protection Level <a id="learnMoreLink" href="https://www.tsmowatch.com/help" target="_blank" class="learn-more">How it works</a></label>
+        
+        <div class="protection-options">
+          <label class="protection-option">
+            <input type="radio" name="protectionLevel" value="basic" checked>
+            <span class="option-label">Basic</span>
+            <span class="option-desc">Metadata protection</span>
+          </label>
+          <label class="protection-option pro-option">
+            <input type="radio" name="protectionLevel" value="pro">
+            <span class="option-label">Pro <span class="pro-badge">PRO</span></span>
+            <span class="option-desc">Full pixel protection</span>
+          </label>
         </div>
       </div>
-
+      
+      <!-- Copyright Info -->
+      <div class="section">
+        <div class="form-group">
+          <label for="ownerName">Owner Name</label>
+          <input type="text" id="ownerName" placeholder="Your name or studio">
+        </div>
+        
+        <div class="form-group">
+          <label for="copyrightYear">Year</label>
+          <input type="number" id="copyrightYear" value="2026" min="1900" max="2100">
+        </div>
+      </div>
+      
+      <!-- Main Actions -->
       <div class="actions-section">
         <button id="protectBtn" class="btn btn-primary btn-full btn-large">
-          <span class="icon"><img src="icons/icon-24.png" alt="" width="20" height="20" /></span>
-          Protect Current Document
+          🛡️ Protect Current Document
         </button>
         
-        <div class="action-row">
-          <button id="batchBtn" class="btn btn-secondary">
-            <span class="icon">📚</span>
-            Batch
-          </button>
-          <button id="verifyBtn" class="btn btn-secondary">
-            <span class="icon">✓</span>
-            Verify
-          </button>
+        <div class="secondary-actions">
+          <button id="batchBtn" class="btn btn-outline">📦 Batch</button>
+          <button id="verifyBtn" class="btn btn-outline">✓ Verify</button>
         </div>
       </div>
-
-      <div class="settings-section">
-        <label class="toggle-option">
-          <input type="checkbox" id="autoProtect" checked />
-          <span>Auto-protect on export</span>
+      
+      <!-- Protection Progress -->
+      <div id="protectionProgress" class="protection-progress" style="display:none;">
+        <div class="progress-header">
+          <div class="progress-icon">🛡️</div>
+          <div class="progress-title">Protecting...</div>
+        </div>
+        <div class="progress-steps" id="progressSteps">
+          <div class="step" data-step="export">
+            <span class="step-indicator">○</span>
+            <span class="step-label">Exporting Document...</span>
+          </div>
+          <div class="step" data-step="stylecloak">
+            <span class="step-indicator">○</span>
+            <span class="step-label">Applying Style Cloak...</span>
+          </div>
+          <div class="step" data-step="watermark">
+            <span class="step-indicator">○</span>
+            <span class="step-label">Embedding Watermark...</span>
+          </div>
+          <div class="step" data-step="aiblock">
+            <span class="step-indicator">○</span>
+            <span class="step-label">Adding AI Block...</span>
+          </div>
+          <div class="step" data-step="metadata">
+            <span class="step-indicator">○</span>
+            <span class="step-label">Saving Metadata...</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Result Panel -->
+      <div id="resultPanel" class="result-panel" style="display:none;">
+        <div class="result-header">
+          <div class="result-icon success">🛡️</div>
+          <div class="result-title">Protected successfully!</div>
+        </div>
+        <div class="result-message">Your art is now protected from AI training.</div>
+        <div class="result-actions">
+          <button id="saveToAccountBtn" class="btn btn-outline btn-full">Save to TSMO Account</button>
+          <button id="viewInTsmoBtn" class="btn btn-primary btn-full">View in TSMO Watch</button>
+        </div>
+      </div>
+      
+      <!-- Save to TSMO checkbox -->
+      <div class="section" style="margin-top: 16px;">
+        <label class="checkbox-label">
+          <input type="checkbox" id="autoSaveToTsmo" checked>
+          <span>Automatically save to TSMO Watch</span>
         </label>
       </div>
-
-      <!-- Success State with Save CTA -->
-      <div id="successSection" class="success-section hidden">
-        <div class="success-header">
-          <span class="success-icon">✓</span>
-          <span>Protected successfully!</span>
-        </div>
-        <p class="success-message">Your art is now protected from AI training.</p>
-        <button id="saveToAccountBtn" class="btn btn-success btn-full">
-          Save to TSMO Account →
-        </button>
+    </div>
+  </div>
+  
+  <!-- Verify Result Panel -->
+  <div id="verifyResultPanel" class="panel" style="display:none;">
+    <div class="panel-content">
+      <div class="result-header">
+        <div class="result-icon" id="verifyIcon">🔍</div>
+        <div class="result-title" id="verifyTitle">Verification Result</div>
       </div>
-
-      <div id="statusSection" class="status-section hidden">
-        <div id="statusMessage" class="status-message"></div>
+      <div id="verifyDetails" class="verify-details"></div>
+      <button id="closeVerifyBtn" class="btn btn-outline btn-full" style="margin-top: 16px;">Close</button>
+    </div>
+  </div>
+  
+  <!-- Error Panel -->
+  <div id="errorPanel" class="panel error-panel" style="display:none;">
+    <div class="panel-content">
+      <div class="error-header">
+        <div class="error-icon">⚠️</div>
+        <div class="error-title" id="errorTitle">Connection Error</div>
       </div>
+      <div class="error-message" id="errorMessage">Unable to connect. Please check your internet connection.</div>
+      <div class="error-details" id="errorDetails" style="display:none;"></div>
+      <button id="retryBtn" class="btn btn-primary btn-full">Retry</button>
+      <button id="showErrorDetailsBtn" class="btn-link" style="margin-top: 8px;">Show details</button>
     </div>
-
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay hidden">
-      <div class="spinner"></div>
-      <p id="loadingText">Processing...</p>
-    </div>
-
-    <!-- Error State: Offline -->
-    <div id="offlinePanel" class="error-panel hidden">
-      <div class="error-icon">📡</div>
-      <h3>No Connection</h3>
-      <p>Please check your internet connection and try again.</p>
-      <button id="retryConnectionBtn" class="btn btn-primary btn-full">
-        Retry Connection
-      </button>
-    </div>
-
-    <!-- Error State: API Error -->
-    <div id="apiErrorPanel" class="error-panel hidden">
-      <div class="error-icon">⚠️</div>
-      <h3>Service Unavailable</h3>
-      <p id="apiErrorMessage">TSMO protection service is temporarily unavailable.</p>
-      <button id="retryApiBtn" class="btn btn-primary btn-full">
-        Try Again
-      </button>
-      <a href="https://www.tsmowatch.com/support" target="_blank" class="help-link">
-        Contact Support
-      </a>
-    </div>
-
-    <!-- Error State: Rate Limit / Upgrade Modal -->
-    <div id="upgradePanelOverlay" class="upgrade-overlay hidden">
-      <div class="upgrade-modal">
-        <button id="closeUpgradeBtn" class="close-btn">×</button>
-        <div class="upgrade-icon">🚀</div>
-        <h3>Upgrade to Pro</h3>
-        <p class="upgrade-message">Unlock unlimited protections and advanced features.</p>
-        <div class="upgrade-features">
-          <div class="feature-item">✓ Unlimited protections</div>
+  </div>
+  
+  <!-- Upgrade Modal Overlay -->
+  <div id="upgradePanelOverlay" class="modal-overlay" style="display:none;">
+    <div class="modal-content upgrade-modal">
+      <button id="closeUpgradeBtn" class="modal-close">×</button>
+      <div class="upgrade-header">
+        <div class="logo-icon">🚀</div>
+        <h2>Upgrade to Pro</h2>
+        <p>Unlock unlimited protections and advanced features.</p>
+      </div>
+      <div class="upgrade-features">
+        <div class="user-info" id="upgradeUserInfo"></div>
+        <div class="feature-list">
           <div class="feature-item">✓ Full pixel protection (Style Cloak)</div>
           <div class="feature-item">✓ Invisible watermarking</div>
           <div class="feature-item">✓ AI training block</div>
           <div class="feature-item">✓ Priority support</div>
         </div>
-        <a id="upgradeLink" href="https://www.tsmowatch.com/pricing?source=adobe_plugin" target="_blank" class="btn btn-success btn-full btn-large">
+        <button id="upgradeLink" class="btn btn-success btn-full btn-large">
           Upgrade to Pro — $29/mo
-        </a>
+        </button>
         <button id="refreshTierBtn" class="btn btn-outline btn-full" style="margin-top: 8px;">
           I upgraded — Refresh status
         </button>
         <p class="upgrade-note">Cancel anytime. 30-day money-back guarantee.</p>
       </div>
     </div>
-
-    <!-- Help Footer -->
-    <div id="helpFooter" class="help-footer">
-      <a href="https://www.tsmowatch.com/support" target="_blank">Need help?</a>
-    </div>
+  </div>
+  
+  <!-- Footer -->
+  <div class="footer">
+    <a href="https://www.tsmowatch.com" target="_blank">www.tsmowatch.com</a>
+    <span class="footer-divider">|</span>
+    <span id="footerCopyright">© <script>document.write(new Date().getFullYear())</script> TSMO Technology Inc.</span>
   </div>
 
-  <script>
-    // Production mode check - hide debug elements
-    const isDevMode = window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1');
-  </script>
   <script src="index.js"></script>
 </body>
 </html>
