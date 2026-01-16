@@ -61,6 +61,7 @@ let protectionProgress, progressSteps, resultPanel;
 let statusMessage, signupStatusMessage;
 let upgradeOverlay, upgradeLink, refreshTierBtn, closeUpgradeBtn;
 let planBadge, userEmailEl;
+let settingsToggle, settingsPanel, tierIndicator, tierLabel;
 
 // ============= INITIALIZATION =============
 document.addEventListener('DOMContentLoaded', () => {
@@ -106,6 +107,12 @@ function initializeElements() {
   // Header elements
   planBadge = document.getElementById('planBadge');
   userEmailEl = document.getElementById('userEmail');
+  
+  // Settings elements
+  settingsToggle = document.getElementById('settingsToggle');
+  settingsPanel = document.getElementById('settingsPanel');
+  tierIndicator = document.getElementById('tierIndicator');
+  tierLabel = document.getElementById('tierLabel');
 }
 
 function attachEventListeners() {
@@ -189,6 +196,15 @@ function attachEventListeners() {
     localStorage.setItem('tsmo_auto_save', settings.autoSave);
   });
   
+  // Owner name persistence
+  document.getElementById('ownerName')?.addEventListener('blur', (e) => {
+    settings.ownerName = e.target.value?.trim() || '';
+    localStorage.setItem('tsmo_owner_name', settings.ownerName);
+  });
+  
+  // Settings toggle
+  settingsToggle?.addEventListener('click', toggleSettings);
+  
   // External links
   document.getElementById('learnMoreLink')?.addEventListener('click', (e) => {
     e.preventDefault();
@@ -204,6 +220,31 @@ function attachEventListeners() {
     e.preventDefault();
     openExternalLink('https://www.tsmowatch.com');
   });
+}
+
+// ============= SETTINGS TOGGLE =============
+function toggleSettings() {
+  const isOpen = !settingsPanel.classList.contains('collapsed');
+  
+  if (isOpen) {
+    settingsPanel.classList.add('collapsed');
+    settingsToggle.classList.remove('open');
+  } else {
+    settingsPanel.classList.remove('collapsed');
+    settingsToggle.classList.add('open');
+  }
+}
+
+function updateTierIndicator() {
+  if (tierIndicator && tierLabel) {
+    if (userTier === 'pro') {
+      tierIndicator.className = 'tier-indicator pro';
+      tierLabel.textContent = 'Pro Protection';
+    } else {
+      tierIndicator.className = 'tier-indicator basic';
+      tierLabel.textContent = 'Basic Protection';
+    }
+  }
 }
 
 // ============= EXTERNAL LINKS =============
@@ -361,6 +402,20 @@ function updateTierDisplay() {
     planBadge.style.display = 'inline-block';
     planBadge.textContent = userTier === 'pro' ? 'Pro' : 'Basic';
     planBadge.className = `plan-badge ${userTier === 'pro' ? 'plan-pro' : 'plan-basic'}`;
+  }
+  
+  // Update tier indicator in one-click section
+  updateTierIndicator();
+  
+  // Auto-select protection level based on tier
+  if (userTier === 'pro') {
+    settings.protectionLevel = 'pro';
+    const proRadio = document.querySelector('input[name="protectionLevel"][value="pro"]');
+    if (proRadio) proRadio.checked = true;
+  } else {
+    settings.protectionLevel = 'basic';
+    const basicRadio = document.querySelector('input[name="protectionLevel"][value="basic"]');
+    if (basicRadio) basicRadio.checked = true;
   }
 }
 
@@ -589,6 +644,14 @@ function showMainPanel() {
   const ownerInput = document.getElementById('ownerName');
   if (ownerInput && settings.ownerName) {
     ownerInput.value = settings.ownerName;
+  }
+  
+  // Ensure settings panel is collapsed by default
+  if (settingsPanel) {
+    settingsPanel.classList.add('collapsed');
+  }
+  if (settingsToggle) {
+    settingsToggle.classList.remove('open');
   }
 }
 
