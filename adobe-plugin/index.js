@@ -61,7 +61,7 @@ let protectionProgress, progressSteps, resultPanel;
 let statusMessage, signupStatusMessage;
 let upgradeOverlay, upgradeLink, refreshTierBtn, closeUpgradeBtn;
 let planBadge, userEmailEl;
-let settingsToggle, settingsPanel, tierIndicator, tierLabel;
+let settingsToggle, settingsPanel, tierIndicator, tierLabel, tierUpgradeLink;
 
 // ============= INITIALIZATION =============
 document.addEventListener('DOMContentLoaded', () => {
@@ -113,6 +113,7 @@ function initializeElements() {
   settingsPanel = document.getElementById('settingsPanel');
   tierIndicator = document.getElementById('tierIndicator');
   tierLabel = document.getElementById('tierLabel');
+  tierUpgradeLink = document.getElementById('tierUpgradeLink');
 }
 
 function attachEventListeners() {
@@ -205,6 +206,12 @@ function attachEventListeners() {
   // Settings toggle
   settingsToggle?.addEventListener('click', toggleSettings);
   
+  // Tier upgrade link
+  tierUpgradeLink?.addEventListener('click', (e) => {
+    e.preventDefault();
+    showUpgradeModal();
+  });
+  
   // External links
   document.getElementById('learnMoreLink')?.addEventListener('click', (e) => {
     e.preventDefault();
@@ -240,9 +247,11 @@ function updateTierIndicator() {
     if (userTier === 'pro') {
       tierIndicator.className = 'tier-indicator pro';
       tierLabel.textContent = 'Pro Protection';
+      if (tierUpgradeLink) tierUpgradeLink.style.display = 'none';
     } else {
       tierIndicator.className = 'tier-indicator basic';
       tierLabel.textContent = 'Basic Protection';
+      if (tierUpgradeLink) tierUpgradeLink.style.display = 'inline';
     }
   }
 }
