@@ -662,6 +662,59 @@ function hideError() {
   errorPanel.style.display = 'none';
 }
 
+// ============= APPLY PROTECTED IMAGE TO DOCUMENT =============
+async function applyProtectedImageToDocument(base64ImageData) {
+  try {
+    const { app, core } = require('photoshop');
+    const batchPlay = require('photoshop').action.batchPlay;
+    const fs = require('uxp').storage.localFileSystem;
+    
+    // Remove data URL prefix if present
+    const base64 = base64ImageData.replace(/^data:image\/\w+;base64,/, '');
+    
+    // Convert base64 to binary
+    const binaryString = atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    
+    // Create temporary file
+    const tempFolder = await fs.getTemporaryFolder();
+    const tempFile = await tempFolder.createFile('tsmo_protected_' + Date.now() + '.png', { overwrite: true });
+    await tempFile.write(bytes.buffer);
+    
+    // Place the protected image as a new layer using executeAsModal
+    await core.executeAsModal(async () => {
+      // Place the image file as a new layer
+      await batchPlay([{
+        _obj: 'placeEvent',
+        null: {
+          _path: tempFile.nativePath,
+          _kind: 'local'
+        },
+        freeTransformCenterState: { _enum: 'quadCenterState', _value: 'QCSAverage' },
+        linked: false
+      }], { synchronousExecution: true });
+      
+      // Rename the layer to indicate it's protected
+      await batchPlay([{
+        _obj: 'set',
+        _target: [{ _ref: 'layer', _enum: 'ordinal', _value: 'targetEnum' }],
+        to: { _obj: 'layer', name: 'TSMO Protected' }
+      }], { synchronousExecution: true });
+      
+    }, { commandName: 'TSMO Apply Protection' });
+    
+    console.log('TSMO: Protected layer successfully added to document');
+    return true;
+  } catch (e) {
+    console.error('TSMO: Failed to apply protected image to document:', e);
+    // Don't fail the whole protection flow if layer creation fails
+    return false;
+  }
+}
+
 // ============= PROTECTION FLOW =============
 async function protectDocument() {
   if (!authToken) {
@@ -736,6 +789,12 @@ async function protectDocument() {
           if (pixelResult.success && pixelResult.protectedImage) {
             documentData.protectedImageData = `data:image/png;base64,${pixelResult.protectedImage}`;
             console.log('TSMO: Real pixel protection applied');
+            
+            // Apply the protected image back to Photoshop as a new layer
+            const applied = await applyProtectedImageToDocument(pixelResult.protectedImage);
+            if (applied) {
+              console.log('TSMO: Protected layer created in document');
+            }
           } else {
             console.log('TSMO: Pixel protection failed:', pixelResult.error);
           }
