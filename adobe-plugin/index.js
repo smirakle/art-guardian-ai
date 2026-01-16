@@ -509,6 +509,8 @@ function resetProtectionSteps() {
     step.classList.remove('active', 'complete', 'skipped');
     const indicator = step.querySelector('.step-indicator');
     if (indicator) indicator.textContent = '○';
+    const label = step.querySelector('.step-label');
+    if (label) label.style.opacity = '1';
   });
 }
 
