@@ -99,6 +99,23 @@ body {
   border-radius: 8px;
 }
 
+/* Beta Badge - Subtle inline label */
+.beta-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  padding: 2px 5px;
+  margin-left: 6px;
+  vertical-align: middle;
+  opacity: 0.7;
+}
+
 .logo.small img {
   width: 32px;
   height: 32px;
