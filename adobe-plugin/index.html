@@ -88,49 +88,73 @@
     </div>
   </div>
 
-  <!-- Main Panel (Authenticated) -->
+  <!-- Main Panel (Authenticated) - One Click Protection -->
   <div id="mainPanel" class="panel" style="display:none;">
     <div class="panel-content">
-      <!-- Protection Level Selection -->
-      <div class="section">
-        <label class="section-label">* Protection Level <a id="learnMoreLink" href="https://www.tsmowatch.com/help" target="_blank" class="learn-more">How it works</a></label>
-        
-        <div class="protection-options">
-          <label class="protection-option">
-            <input type="radio" name="protectionLevel" value="basic" checked>
-            <span class="option-label">Basic</span>
-            <span class="option-desc">Metadata protection</span>
-          </label>
-          <label class="protection-option pro-option">
-            <input type="radio" name="protectionLevel" value="pro">
-            <span class="option-label">Pro <span class="pro-badge">PRO</span></span>
-            <span class="option-desc">Full pixel protection</span>
-          </label>
+      <!-- One-Click Protect Button -->
+      <div class="one-click-section">
+        <button id="protectBtn" class="btn btn-primary btn-full btn-hero">
+          <span class="hero-icon">🛡️</span>
+          <span class="hero-text">Protect</span>
+        </button>
+        <p class="hero-helper">One click to protect your current document</p>
+        <div id="tierIndicator" class="tier-indicator">
+          <span class="tier-dot"></span>
+          <span id="tierLabel">Basic Protection</span>
         </div>
       </div>
       
-      <!-- Copyright Info -->
-      <div class="section">
-        <div class="form-group">
-          <label for="ownerName">Owner Name</label>
-          <input type="text" id="ownerName" placeholder="Your name or studio">
-        </div>
-        
-        <div class="form-group">
-          <label for="copyrightYear">Year</label>
-          <input type="number" id="copyrightYear" value="2026" min="1900" max="2100">
-        </div>
+      <!-- Secondary Actions -->
+      <div class="secondary-actions">
+        <button id="batchBtn" class="btn btn-outline">📦 Batch</button>
+        <button id="verifyBtn" class="btn btn-outline">✓ Verify</button>
       </div>
       
-      <!-- Main Actions -->
-      <div class="actions-section">
-        <button id="protectBtn" class="btn btn-primary btn-full btn-large">
-          🛡️ Protect Current Document
+      <!-- Collapsible Settings -->
+      <div class="settings-toggle-section">
+        <button id="settingsToggle" class="settings-toggle">
+          <span class="toggle-icon">⚙️</span>
+          <span>Settings</span>
+          <span class="toggle-arrow">▼</span>
         </button>
         
-        <div class="secondary-actions">
-          <button id="batchBtn" class="btn btn-outline">📦 Batch</button>
-          <button id="verifyBtn" class="btn btn-outline">✓ Verify</button>
+        <div id="settingsPanel" class="settings-panel collapsed">
+          <div class="settings-content">
+            <!-- Protection Level -->
+            <div class="setting-group">
+              <label class="setting-label">Protection Level</label>
+              <div class="protection-options">
+                <label class="protection-option">
+                  <input type="radio" name="protectionLevel" value="basic" checked>
+                  <span class="option-label">Basic</span>
+                  <span class="option-desc">Metadata only</span>
+                </label>
+                <label class="protection-option pro-option">
+                  <input type="radio" name="protectionLevel" value="pro">
+                  <span class="option-label">Pro <span class="pro-badge">PRO</span></span>
+                  <span class="option-desc">Full pixel protection</span>
+                </label>
+              </div>
+            </div>
+            
+            <!-- Owner Name -->
+            <div class="setting-group">
+              <label for="ownerName" class="setting-label">Owner Name</label>
+              <input type="text" id="ownerName" placeholder="Your name or studio">
+            </div>
+            
+            <!-- Copyright Year -->
+            <div class="setting-group">
+              <label for="copyrightYear" class="setting-label">Year</label>
+              <input type="number" id="copyrightYear" value="2026" min="1900" max="2100">
+            </div>
+            
+            <!-- Auto-save -->
+            <label class="checkbox-label">
+              <input type="checkbox" id="autoSaveToTsmo" checked>
+              <span>Auto-save to TSMO Watch</span>
+            </label>
+          </div>
         </div>
       </div>
       
@@ -175,14 +199,6 @@
           <button id="saveToAccountBtn" class="btn btn-outline btn-full">Save to TSMO Account</button>
           <button id="viewInTsmoBtn" class="btn btn-primary btn-full">View in TSMO Watch</button>
         </div>
-      </div>
-      
-      <!-- Save to TSMO checkbox -->
-      <div class="section" style="margin-top: 16px;">
-        <label class="checkbox-label">
-          <input type="checkbox" id="autoSaveToTsmo" checked>
-          <span>Automatically save to TSMO Watch</span>
-        </label>
       </div>
     </div>
   </div>
