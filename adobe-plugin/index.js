@@ -609,6 +609,8 @@ function showStatus(message, type = 'info') {
     statusMessage.className = `status-message ${type}`;
     statusMessage.style.display = 'block';
   }
+  // Re-enable login button if it was disabled during loading
+  if (loginBtn) loginBtn.disabled = false;
 }
 
 function hideStatus() {
