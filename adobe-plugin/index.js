@@ -82,6 +82,7 @@ let authToken = null;
 let userEmail = null;
 let protectionCount = 0;
 const BASIC_TIER_LIMIT = 50;
+let userTier = 'basic'; // Server-verified tier: 'basic' or 'pro'
 let settings = {
   protectionLevel: 'basic',
   copyrightOwner: '',
@@ -321,7 +322,7 @@ function showMainPanel() {
 }
 
 async function login() {
-  const email = document.getElementById('email').value;
+  const email = document.getElementById('email').value?.trim();
   const password = document.getElementById('password').value;
   
   if (!email || !password) {
@@ -352,20 +353,85 @@ async function login() {
       
       hideLoading();
       showMainPanel();
+      
+      // Fetch subscription tier from server
+      await refreshSubscriptionTier();
+      
       showStatus('Signed in successfully', 'success');
     } else {
       hideLoading();
-      showStatus(data.error_description || 'Login failed', 'error');
+      const errorMsg = data.error_description || data.msg || data.message || 'Login failed';
+      showStatus(errorMsg, 'error');
     }
   } catch (error) {
     hideLoading();
-    showStatus('Connection error. Please try again.', 'error');
+    if (isNetworkError(error)) {
+      showOfflinePanel();
+    } else {
+      showStatus('Connection error. Please try again.', 'error');
+    }
     console.error('Login error:', error);
   }
 }
 
+// Fetch subscription tier from server
+async function refreshSubscriptionTier() {
+  if (!authToken) return;
+  
+  try {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`
+      },
+      body: JSON.stringify({ action: 'get_subscription' })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success && data.tier) {
+      userTier = data.tier;
+      settings.protectionLevel = data.tier;
+      
+      // Update UI to reflect tier
+      updateTierDisplay();
+      
+      // Save to local storage
+      localStorage.setItem('tsmo_user_tier', userTier);
+      
+      console.log('TSMO: Subscription tier:', userTier);
+    }
+  } catch (e) {
+    console.log('TSMO: Could not fetch subscription tier:', e);
+    // Use cached tier if available
+    const cachedTier = localStorage.getItem('tsmo_user_tier');
+    if (cachedTier) userTier = cachedTier;
+  }
+}
+
+// Update UI to reflect current tier
+function updateTierDisplay() {
+  const currentLevelEl = document.getElementById('currentLevel');
+  const planBadgeEl = document.getElementById('planBadge');
+  
+  if (currentLevelEl) {
+    currentLevelEl.textContent = userTier === 'pro' ? 'Pro ($29/mo)' : 'Basic (Free)';
+  }
+  
+  if (planBadgeEl) {
+    planBadgeEl.textContent = userTier === 'pro' ? 'Pro' : 'Basic';
+    planBadgeEl.className = `plan-badge plan-${userTier}`;
+  }
+  
+  // Update radio button state
+  const levelRadio = document.querySelector(`input[name="level"][value="${userTier}"]`);
+  if (levelRadio) levelRadio.checked = true;
+}
+
 function logout() {
   authToken = null;
+  userTier = 'basic';
   userEmail = null;
   localStorage.removeItem('tsmo_auth_token');
   localStorage.removeItem('tsmo_user_email');
@@ -415,9 +481,46 @@ async function signup() {
       body: JSON.stringify({ 
         email, 
         password,
-        data: { account_type: 'free' }
+        data: { account_type: 'free' },
+        options: {
+          emailRedirectTo: 'https://www.tsmowatch.com/auth'
+        }
       })
     });
+    
+    // Check HTTP status first
+    if (!response.ok) {
+      const statusCode = response.status;
+      let data = {};
+      try {
+        data = await response.json();
+      } catch (e) {
+        // JSON parse failed
+      }
+      
+      hideLoading();
+      
+      // Handle specific HTTP status codes
+      if (statusCode === 400) {
+        if (data.code === 'weak_password' || data.error_code === 'weak_password') {
+          showStatus('Password too weak. Use 8+ chars with letters & numbers.', 'error');
+        } else if (data.code === 'user_already_exists' || data.msg?.includes('already registered')) {
+          showLoginPanel();
+          showStatus('Email already registered. Please sign in instead.', 'error');
+        } else {
+          showStatus(`Signup failed (400): ${data.msg || data.message || 'Invalid request'}`, 'error');
+        }
+      } else if (statusCode === 403) {
+        showStatus('Signup blocked (403). Check Supabase Auth settings.', 'error');
+      } else if (statusCode === 422) {
+        showStatus(`Validation error: ${data.msg || 'Please check your email and password'}`, 'error');
+      } else if (statusCode >= 500) {
+        showStatus('Server error. Please try again later.', 'error');
+      } else {
+        showStatus(`Signup failed (${statusCode}): ${data.msg || data.message || 'Unknown error'}`, 'error');
+      }
+      return;
+    }
     
     const data = await response.json();
     
@@ -431,6 +534,11 @@ async function signup() {
       
       hideLoading();
       showMainPanel();
+      
+      // New users start on basic tier
+      userTier = 'basic';
+      updateTierDisplay();
+      
       showStatus('Account created! Welcome to TSMO.', 'success');
     } else if (data.id && !data.access_token) {
       // Email confirmation required
@@ -1670,9 +1778,28 @@ function setupEventListeners() {
     input.addEventListener('change', saveSettings);
   });
   
-  // Level selector styling
+  // Level selector - check tier before allowing Pro
   document.querySelectorAll('input[name="level"]').forEach(radio => {
     radio.addEventListener('change', (e) => {
+      const selectedLevel = e.target.value;
+      
+      // If user selects Pro but doesn't have Pro tier, show upgrade modal
+      if (selectedLevel === 'pro' && userTier !== 'pro') {
+        e.target.checked = false;
+        // Re-select basic
+        const basicRadio = document.querySelector('input[name="level"][value="basic"]');
+        if (basicRadio) basicRadio.checked = true;
+        
+        // Update upgrade link with user's email for prefill
+        const upgradeLink = document.getElementById('upgradeLink');
+        if (upgradeLink && userEmail) {
+          upgradeLink.href = `https://www.tsmowatch.com/pricing?source=adobe_plugin&email=${encodeURIComponent(userEmail)}`;
+        }
+        
+        showUpgradeModal();
+        return;
+      }
+      
       document.querySelectorAll('.level-option').forEach(opt => opt.classList.remove('selected'));
       e.target.closest('.level-option')?.classList.add('selected');
       
@@ -1715,6 +1842,27 @@ function setupEventListeners() {
   const closeUpgradeBtn = document.getElementById('closeUpgradeBtn');
   if (closeUpgradeBtn) {
     closeUpgradeBtn.addEventListener('click', hideUpgradeModal);
+  }
+  
+  // Refresh tier button in upgrade modal
+  const refreshTierBtn = document.getElementById('refreshTierBtn');
+  if (refreshTierBtn) {
+    refreshTierBtn.addEventListener('click', async () => {
+      refreshTierBtn.disabled = true;
+      refreshTierBtn.textContent = 'Checking...';
+      
+      await refreshSubscriptionTier();
+      
+      refreshTierBtn.disabled = false;
+      refreshTierBtn.textContent = 'I upgraded — Refresh status';
+      
+      if (userTier === 'pro') {
+        hideUpgradeModal();
+        showStatus('Pro subscription activated! 🎉', 'success');
+      } else {
+        showStatus('No Pro subscription found. Complete your purchase first.', 'warning');
+      }
+    });
   }
   
   // Close upgrade modal on overlay click

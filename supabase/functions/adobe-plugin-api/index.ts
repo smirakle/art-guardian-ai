@@ -26,7 +26,7 @@ const RATE_LIMITS = {
 const rateLimitStore = new Map<string, { count: number; windowStart: number }>();
 
 interface ProtectionRequest {
-  action: 'protect' | 'verify' | 'batch_protect' | 'get_status' | 'list_protections' | 'health' | 'upload_thumbnail' | 'save_to_portfolio';
+  action: 'protect' | 'verify' | 'batch_protect' | 'get_status' | 'list_protections' | 'health' | 'upload_thumbnail' | 'save_to_portfolio' | 'get_subscription';
   protectionLevel?: 'basic' | 'pro';
   fileHash?: string;
   fileName?: string;
@@ -345,7 +345,7 @@ async function generateC2paManifest(
 
 function validateAction(action: unknown): action is ProtectionRequest['action'] {
   return typeof action === 'string' && 
-    ['protect', 'verify', 'batch_protect', 'get_status', 'list_protections', 'upload_thumbnail', 'save_to_portfolio'].includes(action);
+    ['protect', 'verify', 'batch_protect', 'get_status', 'list_protections', 'upload_thumbnail', 'save_to_portfolio', 'get_subscription'].includes(action);
 }
 
 function validateProtectionLevel(level: unknown): level is 'basic' | 'professional' | 'enterprise' | 'pro' {
@@ -529,6 +529,59 @@ function generateXmpDirective(metadata: ProtectionRequest['metadata']): string {
 <?xpacket end="w"?>`;
 }
 
+// ============= SUBSCRIPTION HANDLER =============
+
+async function handleGetSubscription(
+  supabase: ReturnType<typeof createClient>,
+  userId: string
+): Promise<ProtectionResponse> {
+  try {
+    // Call the existing RPC that the web app uses
+    const { data: subscription, error } = await supabase.rpc('get_user_subscription');
+    
+    if (error) {
+      console.error('Subscription fetch error:', error);
+      // Default to basic if we can't fetch
+      return {
+        success: true,
+        tier: 'basic',
+        plan_id: null,
+        is_active: false,
+        message: 'Could not verify subscription, defaulting to basic'
+      };
+    }
+    
+    // Map subscription plan to plugin tier
+    // 'professional' or 'enterprise' = 'pro', everything else = 'basic'
+    const planId = subscription?.plan_id || null;
+    const isActive = subscription?.status === 'active';
+    let tier = 'basic';
+    
+    if (isActive && (planId === 'professional' || planId === 'enterprise')) {
+      tier = 'pro';
+    }
+    
+    console.log(`Subscription check for user ${userId}: plan=${planId}, tier=${tier}, active=${isActive}`);
+    
+    return {
+      success: true,
+      tier,
+      plan_id: planId,
+      is_active: isActive,
+      message: tier === 'pro' ? 'Pro subscription active' : 'Basic tier'
+    };
+  } catch (e) {
+    console.error('Subscription check error:', e);
+    return {
+      success: true,
+      tier: 'basic',
+      plan_id: null,
+      is_active: false,
+      message: 'Subscription check failed, defaulting to basic'
+    };
+  }
+}
+
 // ============= REQUEST HANDLERS =============
 
 async function handleProtect(
@@ -539,8 +592,29 @@ async function handleProtect(
   const protectionId = generateProtectionId();
   const timestamp = new Date().toISOString();
   
+  // Server-side tier enforcement: Check actual subscription
+  let serverTier = 'basic';
+  try {
+    const subResult = await handleGetSubscription(supabase, userId);
+    if (subResult.success && subResult.tier) {
+      serverTier = subResult.tier;
+    }
+  } catch (e) {
+    console.log('Could not verify subscription, using basic tier');
+  }
+  
+  // If user requests 'pro' but doesn't have Pro subscription, block
+  if ((request.protectionLevel === 'pro' || request.protectionLevel === 'professional') && serverTier !== 'pro') {
+    console.log(`User ${userId} requested pro protection but has ${serverTier} tier`);
+    return {
+      success: false,
+      error: 'Pro subscription required for advanced protection features.',
+      message: 'UPGRADE_REQUIRED'
+    };
+  }
+  
   // Check protection count for basic tier limit (50 pieces)
-  if (request.protectionLevel === 'basic' || !request.protectionLevel) {
+  if (serverTier === 'basic') {
     const { count, error: countError } = await supabase
       .from('ai_protection_records')
       .select('*', { count: 'exact', head: true })
@@ -1035,6 +1109,10 @@ Deno.serve(async (req) => {
       
       case 'save_to_portfolio':
         response = await handleSaveToPortfolio(supabase, user.id, request);
+        break;
+      
+      case 'get_subscription':
+        response = await handleGetSubscription(supabase, user.id);
         break;
       
       case 'get_status':
