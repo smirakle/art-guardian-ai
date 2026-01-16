@@ -374,7 +374,7 @@ function logout() {
 }
 
 async function signup() {
-  const email = document.getElementById('signupEmail').value;
+  const email = document.getElementById('signupEmail').value?.trim();
   const password = document.getElementById('signupPassword').value;
   
   if (!email || !password) {
@@ -382,8 +382,24 @@ async function signup() {
     return;
   }
   
-  if (password.length < 6) {
-    showStatus('Password must be at least 6 characters', 'error');
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    showStatus('Please enter a valid email address', 'error');
+    return;
+  }
+  
+  // Supabase requires stronger passwords - at least 8 chars with variety
+  if (password.length < 8) {
+    showStatus('Password must be at least 8 characters', 'error');
+    return;
+  }
+  
+  // Check for password strength (Supabase rejects weak passwords)
+  const hasLetter = /[a-zA-Z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  if (!hasLetter || !hasNumber) {
+    showStatus('Password must include letters and numbers', 'error');
     return;
   }
   
@@ -421,9 +437,16 @@ async function signup() {
       hideLoading();
       showLoginPanel();
       showStatus('Check your email to confirm your account, then sign in.', 'success');
+    } else if (data.code === 'weak_password' || data.error_code === 'weak_password') {
+      hideLoading();
+      showStatus('Password too weak. Use 8+ chars with letters & numbers.', 'error');
+    } else if (data.code === 'user_already_exists' || (data.msg && data.msg.includes('already registered'))) {
+      hideLoading();
+      showLoginPanel();
+      showStatus('Email already registered. Please sign in instead.', 'error');
     } else {
       hideLoading();
-      const errorMsg = data.error_description || data.msg || 'Signup failed';
+      const errorMsg = data.error_description || data.msg || data.message || 'Signup failed. Please try again.';
       showStatus(errorMsg, 'error');
     }
   } catch (error) {
