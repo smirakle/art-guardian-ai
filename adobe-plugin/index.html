@@ -133,8 +133,9 @@
       <div class="header">
         <div class="user-info">
           <span id="userEmail" class="user-email">user@example.com</span>
-          <button id="logoutBtn" class="btn btn-small btn-outline">Logout</button>
+          <span id="planBadge" class="plan-badge plan-basic">Basic</span>
         </div>
+        <button id="logoutBtn" class="btn btn-small btn-outline">Logout</button>
       </div>
 
       <!-- Advanced Settings Toggle -->
@@ -253,8 +254,8 @@
       <div class="upgrade-modal">
         <button id="closeUpgradeBtn" class="close-btn">×</button>
         <div class="upgrade-icon">🚀</div>
-        <h3>You've Reached Your Limit</h3>
-        <p class="upgrade-message">You've used all 50 free protections this month.</p>
+        <h3>Upgrade to Pro</h3>
+        <p class="upgrade-message">Unlock unlimited protections and advanced features.</p>
         <div class="upgrade-features">
           <div class="feature-item">✓ Unlimited protections</div>
           <div class="feature-item">✓ Full pixel protection (Style Cloak)</div>
@@ -262,9 +263,12 @@
           <div class="feature-item">✓ AI training block</div>
           <div class="feature-item">✓ Priority support</div>
         </div>
-        <a href="https://www.tsmowatch.com/pricing" target="_blank" class="btn btn-success btn-full btn-large">
+        <a id="upgradeLink" href="https://www.tsmowatch.com/pricing?source=adobe_plugin" target="_blank" class="btn btn-success btn-full btn-large">
           Upgrade to Pro — $29/mo
         </a>
+        <button id="refreshTierBtn" class="btn btn-outline btn-full" style="margin-top: 8px;">
+          I upgraded — Refresh status
+        </button>
         <p class="upgrade-note">Cancel anytime. 30-day money-back guarantee.</p>
       </div>
     </div>
