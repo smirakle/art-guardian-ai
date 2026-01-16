@@ -56,7 +56,7 @@ const settings = {
 // ============= DOM ELEMENTS =============
 let loginPanel, signupPanel, mainPanel, errorPanel, verifyResultPanel;
 let loginBtn, signupBtn, showSignupBtn, showLoginBtn, logoutBtn;
-let protectBtn, batchBtn, verifyBtn;
+let protectBtn, verifyBtn;
 let protectionProgress, progressSteps, resultPanel;
 let statusMessage, signupStatusMessage;
 let planBadge, userEmailEl;
@@ -85,7 +85,6 @@ function initializeElements() {
   showLoginBtn = document.getElementById('showLoginBtn');
   logoutBtn = document.getElementById('logoutBtn');
   protectBtn = document.getElementById('protectBtn');
-  batchBtn = document.getElementById('batchBtn');
   verifyBtn = document.getElementById('verifyBtn');
   
   // Progress elements
@@ -129,7 +128,6 @@ function attachEventListeners() {
   
   // Main actions
   protectBtn?.addEventListener('click', protectDocument);
-  batchBtn?.addEventListener('click', batchProtect);
   verifyBtn?.addEventListener('click', verifyDocument);
   
   // Enter key for login/signup
