@@ -1051,14 +1051,17 @@ const PhotoshopPluginMockup = () => {
                     <div className="flex items-center justify-center gap-1.5 text-[10px]">
                       <span className={`w-2 h-2 rounded-full ${protectionLevel === 'pro' ? 'bg-[#a78bfa]' : 'bg-[#4ade80]'}`}></span>
                       <span className="text-[#888]">{protectionLevel === 'pro' ? 'Pro Protection' : 'Basic Protection'}</span>
-                      {protectionLevel === 'basic' && (
-                        <button 
-                          onClick={() => window.open('https://www.tsmowatch.com/pricing', '_blank')}
-                          className="text-[#2997ff] hover:underline ml-1"
-                        >
-                          Upgrade
-                        </button>
-                      )}
+                  {protectionLevel === 'basic' && (
+                    <button 
+                      onClick={() => {
+                        const email = encodeURIComponent(loginEmail || '');
+                        window.open(`https://www.tsmowatch.com/pricing?source=adobe_plugin&email=${email}`, '_blank');
+                      }}
+                      className="text-[#2997ff] hover:underline ml-1"
+                    >
+                      Upgrade
+                    </button>
+                  )}
                     </div>
 
                     {/* Success State with Save CTA */}
