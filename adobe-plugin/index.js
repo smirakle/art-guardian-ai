@@ -1,6 +1,6 @@
 /**
  * TSMO Watch - Adobe Creative Cloud Plugin
- * Version: 1.0.4
+ * Version: 1.0.7
  * 
  * Protects artwork from AI training with Style Cloaking,
  * Invisible Watermarking, and AI Training Blocks.
@@ -114,6 +114,15 @@ function initializeElements() {
   tierIndicator = document.getElementById('tierIndicator');
   tierLabel = document.getElementById('tierLabel');
   tierUpgradeLink = document.getElementById('tierUpgradeLink');
+  
+  // Initialize dynamic values
+  const yearInput = document.getElementById('copyrightYear');
+  if (yearInput) yearInput.value = new Date().getFullYear();
+  
+  const footerCopyright = document.getElementById('footerCopyright');
+  if (footerCopyright) {
+    footerCopyright.textContent = `© ${new Date().getFullYear()} TSMO Technology Inc.`;
+  }
 }
 
 function attachEventListeners() {
@@ -191,6 +200,14 @@ function attachEventListeners() {
     }
   });
   
+  // Error details toggle
+  document.getElementById('showErrorDetailsBtn')?.addEventListener('click', () => {
+    const details = document.getElementById('errorDetails');
+    if (details) {
+      details.style.display = details.style.display === 'none' ? 'block' : 'none';
+    }
+  });
+  
   // Auto-save checkbox
   document.getElementById('autoSaveToTsmo')?.addEventListener('change', (e) => {
     settings.autoSave = e.target.checked;
@@ -231,6 +248,8 @@ function attachEventListeners() {
 
 // ============= SETTINGS TOGGLE =============
 function toggleSettings() {
+  if (!settingsPanel || !settingsToggle) return;
+  
   const isOpen = !settingsPanel.classList.contains('collapsed');
   
   if (isOpen) {
@@ -1219,4 +1238,4 @@ function sleep(ms) {
 }
 
 // ============= INITIALIZATION COMPLETE =============
-console.log('TSMO Watch Plugin v1.0.4 loaded');
+console.log('TSMO Watch Plugin v1.0.7 loaded');
