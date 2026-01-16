@@ -194,6 +194,16 @@ function attachEventListeners() {
     e.preventDefault();
     openExternalLink('https://www.tsmowatch.com/help');
   });
+  
+  document.getElementById('needHelpLink')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openExternalLink('https://www.tsmowatch.com/help');
+  });
+  
+  document.getElementById('websiteLink')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openExternalLink('https://www.tsmowatch.com');
+  });
 }
 
 // ============= EXTERNAL LINKS =============
