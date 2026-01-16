@@ -59,7 +59,6 @@ let loginBtn, signupBtn, showSignupBtn, showLoginBtn, logoutBtn;
 let protectBtn, batchBtn, verifyBtn;
 let protectionProgress, progressSteps, resultPanel;
 let statusMessage, signupStatusMessage;
-let upgradeOverlay, upgradeLink, refreshTierBtn, closeUpgradeBtn;
 let planBadge, userEmailEl;
 let settingsToggle, settingsPanel, tierIndicator, tierLabel, tierUpgradeLink;
 
@@ -98,11 +97,6 @@ function initializeElements() {
   statusMessage = document.getElementById('statusMessage');
   signupStatusMessage = document.getElementById('signupStatusMessage');
   
-  // Upgrade modal
-  upgradeOverlay = document.getElementById('upgradePanelOverlay');
-  upgradeLink = document.getElementById('upgradeLink');
-  refreshTierBtn = document.getElementById('refreshTierBtn');
-  closeUpgradeBtn = document.getElementById('closeUpgradeBtn');
   
   // Header elements
   planBadge = document.getElementById('planBadge');
@@ -150,33 +144,17 @@ function attachEventListeners() {
   document.querySelectorAll('input[name="protectionLevel"]').forEach(radio => {
     radio.addEventListener('change', (e) => {
       if (e.target.value === 'pro' && userTier !== 'pro') {
-        // Reset to basic and show upgrade modal
+        // Reset to basic and open upgrade page directly
         e.target.checked = false;
         document.querySelector('input[name="protectionLevel"][value="basic"]').checked = true;
         settings.protectionLevel = 'basic';
-        showUpgradeModal();
+        openUpgradeLink(e);
       } else {
         settings.protectionLevel = e.target.value;
       }
     });
   });
   
-  // Upgrade modal
-  upgradeLink?.addEventListener('click', openUpgradeLink);
-  refreshTierBtn?.addEventListener('click', async () => {
-    refreshTierBtn.textContent = 'Checking...';
-    refreshTierBtn.disabled = true;
-    await refreshSubscriptionTier();
-    refreshTierBtn.textContent = 'I upgraded — Refresh status';
-    refreshTierBtn.disabled = false;
-    if (userTier === 'pro') {
-      hideUpgradeModal();
-      showStatus('Pro status confirmed! 🎉', 'success');
-    } else {
-      showStatus('Still on Basic tier. Complete your upgrade first.', 'error');
-    }
-  });
-  closeUpgradeBtn?.addEventListener('click', hideUpgradeModal);
   
   // Result panel buttons
   document.getElementById('saveToAccountBtn')?.addEventListener('click', saveToAccount);
@@ -223,11 +201,8 @@ function attachEventListeners() {
   // Settings toggle
   settingsToggle?.addEventListener('click', toggleSettings);
   
-  // Tier upgrade link
-  tierUpgradeLink?.addEventListener('click', (e) => {
-    e.preventDefault();
-    showUpgradeModal();
-  });
+  // Tier upgrade link - directly opens pricing page
+  tierUpgradeLink?.addEventListener('click', openUpgradeLink);
   
   // External links
   document.getElementById('learnMoreLink')?.addEventListener('click', (e) => {
@@ -691,17 +666,6 @@ function hideAllPanels() {
   verifyResultPanel.style.display = 'none';
 }
 
-function showUpgradeModal() {
-  const userInfo = document.getElementById('upgradeUserInfo');
-  if (userInfo && currentUser) {
-    userInfo.innerHTML = `<strong>${currentUser.email}</strong><br>${new Date().getFullYear()}`;
-  }
-  upgradeOverlay.style.display = 'flex';
-}
-
-function hideUpgradeModal() {
-  upgradeOverlay.style.display = 'none';
-}
 
 // ============= STATUS MESSAGES =============
 function showStatus(message, type = 'info') {
