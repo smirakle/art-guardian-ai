@@ -2,7 +2,7 @@
   "manifestVersion": 5,
   "id": "2ae4a9c1",
   "name": "TSMO Watch",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "main": "index.html",
   "icons": [
     { "width": 24, "height": 24, "path": "icons/icon-24.png" },
@@ -32,16 +32,30 @@
         {
           "width": 23,
           "height": 23,
-          "path": "icons/icon-24.png",
+          "path": "icons/panel-dark-v3.png",
           "scale": [1],
-          "theme": ["darkest", "dark", "lightest", "light"]
+          "theme": ["darkest", "dark"]
         },
         {
           "width": 23,
           "height": 23,
-          "path": "icons/icon-48.png",
+          "path": "icons/panel-dark-v3@2x.png",
           "scale": [2],
-          "theme": ["darkest", "dark", "lightest", "light"]
+          "theme": ["darkest", "dark"]
+        },
+        {
+          "width": 23,
+          "height": 23,
+          "path": "icons/panel-light-v3.png",
+          "scale": [1],
+          "theme": ["lightest", "light"]
+        },
+        {
+          "width": 23,
+          "height": 23,
+          "path": "icons/panel-light-v3@2x.png",
+          "scale": [2],
+          "theme": ["lightest", "light"]
         }
       ],
       "minimumSize": {
