@@ -910,7 +910,7 @@ const PhotoshopPluginMockup = () => {
                   <div className="space-y-3">
                     {/* Welcome Hero */}
                     <div className="text-center py-2">
-                      <div className="text-2xl mb-2">🚀</div>
+                      <div className="text-2xl mb-2">🛡️</div>
                       <div className="text-sm font-medium text-[#eee]">Welcome to TSMO</div>
                       <div className="text-[10px] text-[#888] mt-1">Protect your artwork from AI training</div>
                     </div>
@@ -940,94 +940,11 @@ const PhotoshopPluginMockup = () => {
                   </div>
                 ) : (
                   <>
-                    {/* Settings Toggle - matches real plugin v1.0.7 */}
-                    <div>
-                      <button 
-                        onClick={() => setShowAdvanced(!showAdvanced)}
-                        className="flex items-center gap-1 text-[#888] text-[10px] mb-1 hover:text-[#ccc] transition-colors"
-                      >
-                        <span>⚙️</span>
-                        <span>Settings</span>
-                        <span className="text-[8px]">{showAdvanced ? '▲' : '▼'}</span>
-                      </button>
-                      
-                      {showAdvanced && (
-                        <>
-                          <div className="flex gap-1">
-                            {[
-                              { value: "basic", label: "Basic (Free)", sublabel: "50 pieces" },
-                              { value: "pro", label: "Pro ($29/mo)", sublabel: "Unlimited" },
-                            ].map((level) => (
-                              <button
-                                key={level.value}
-                                onClick={() => setProtectionLevel(level.value)}
-                                className={`flex-1 py-1.5 px-1.5 text-[10px] rounded transition-colors flex flex-col items-center ${
-                                  protectionLevel === level.value
-                                    ? "bg-[#2997ff] text-white"
-                                    : "bg-[#1e1e1e] text-[#888] hover:bg-[#454545]"
-                                }`}
-                              >
-                                <span className="font-medium">{level.label}</span>
-                                <span className="text-[8px] opacity-70">{level.sublabel}</span>
-                              </button>
-                            ))}
-                          </div>
-                          
-                          {/* Features List - 2 Tier System */}
-                          <div className="mt-2 bg-[#1e1e1e] rounded p-1.5 text-[9px]">
-                            {protectionLevel === "basic" && (
-                              <div className="space-y-0.5">
-                                <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> Metadata Embed</div>
-                                <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> File Fingerprint</div>
-                                <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> EXIF Protection</div>
-                                <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> Hash Generation</div>
-                                <div className="text-[#666] text-[8px] mt-1 pt-1 border-t border-[#333]">Limited to 50 protected pieces</div>
-                              </div>
-                            )}
-                            {protectionLevel === "pro" && (
-                              <div className="space-y-0.5">
-                                <div className="text-[#888] flex items-center gap-1"><span className="text-[#4ade80]">✓</span> All Basic features</div>
-                                <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> Style Cloaking</div>
-                                <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> Invisible Watermark</div>
-                                <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> AI Training Block</div>
-                                <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> Color Jitter Defense</div>
-                                <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> C2PA Signing (when available)</div>
-                                <div className="text-[#a78bfa] flex items-center gap-1"><span className="text-[#a78bfa]">★</span> Legal Evidence Package</div>
-                                <div className="text-[#4ade80] text-[8px] mt-1 pt-1 border-t border-[#333]">Unlimited protected pieces</div>
-                              </div>
-                            )}
-                          </div>
-                          
-                          {/* Copyright Info Row - Now in advanced */}
-                          <div className="flex gap-2 mt-2">
-                            <div className="flex-1">
-                              <label className="text-[#888] text-[9px] block mb-0.5">Owner</label>
-                              <input
-                                type="text"
-                                value={copyrightOwner}
-                                onChange={(e) => setCopyrightOwner(e.target.value)}
-                                className="w-full bg-[#1e1e1e] border border-[#545454] rounded px-1.5 py-1 text-[#e8e8e8] text-[10px] focus:border-[#2997ff] focus:outline-none"
-                              />
-                            </div>
-                            <div className="w-16">
-                              <label className="text-[#888] text-[9px] block mb-0.5">Year</label>
-                              <input
-                                type="number"
-                                value={copyrightYear}
-                                onChange={(e) => setCopyrightYear(e.target.value)}
-                                className="w-full bg-[#1e1e1e] border border-[#545454] rounded px-1.5 py-1 text-[#e8e8e8] text-[10px] focus:border-[#2997ff] focus:outline-none"
-                              />
-                            </div>
-                          </div>
-                        </>
-                      )}
-                    </div>
-
-                    {/* Main Action Button - Large hero style like real plugin v1.0.7 */}
+                    {/* Main Action Button - Large hero style like real plugin v1.0.12 */}
                     <button
                       onClick={handleProtect}
                       disabled={isProtecting}
-                      className="w-full bg-[#2997ff] hover:bg-[#1a7fd4] disabled:opacity-50 text-white py-4 rounded-lg text-[14px] font-semibold flex items-center justify-center gap-2 transition-all shadow-lg"
+                      className="w-full bg-gradient-to-r from-[#2997ff] to-[#1473e6] hover:from-[#1a7fd4] hover:to-[#0d5bba] disabled:opacity-50 text-white py-4 rounded-lg text-[14px] font-semibold flex items-center justify-center gap-2 transition-all shadow-lg"
                     >
                       {isProtecting ? (
                         <>
@@ -1047,22 +964,47 @@ const PhotoshopPluginMockup = () => {
                       )}
                     </button>
                     
-                    {/* Tier Indicator - matches real plugin v1.0.7 */}
+                    <p className="text-[10px] text-[#666] text-center">
+                      One click to protect your current document
+                    </p>
+                    
+                    {/* Tier Indicator - matches real plugin v1.0.12 */}
                     <div className="flex items-center justify-center gap-1.5 text-[10px]">
-                      <span className={`w-2 h-2 rounded-full ${protectionLevel === 'pro' ? 'bg-[#a78bfa]' : 'bg-[#4ade80]'}`}></span>
+                      <span className={`w-2 h-2 rounded-full ${protectionLevel === 'pro' ? 'bg-[#a78bfa]' : 'bg-[#888]'}`}></span>
                       <span className="text-[#888]">{protectionLevel === 'pro' ? 'Pro Protection' : 'Basic Protection'}</span>
-                  {protectionLevel === 'basic' && (
-                    <button 
-                      onClick={() => {
-                        const email = encodeURIComponent(loginEmail || '');
-                        window.open(`https://www.tsmowatch.com/pricing?source=adobe_plugin&email=${email}`, '_blank');
-                      }}
-                      className="text-[#2997ff] hover:underline ml-1"
-                    >
-                      Upgrade
-                    </button>
-                  )}
                     </div>
+                    
+                    {/* Upgrade to Pro Button - only for Basic users */}
+                    {protectionLevel !== 'pro' && (
+                      <button 
+                        onClick={() => {
+                          const email = encodeURIComponent(loginEmail || '');
+                          window.open(`https://www.tsmowatch.com/pricing?source=adobe_plugin&email=${email}`, '_blank');
+                        }}
+                        className="w-full bg-gradient-to-r from-[#a78bfa] to-[#8b5cf6] hover:from-[#9775f5] hover:to-[#7c4ce6] text-white py-2.5 rounded-lg text-[12px] font-semibold transition-all shadow-md"
+                      >
+                        Upgrade to Pro
+                      </button>
+                    )}
+                    
+                    {/* Verify Button */}
+                    <button
+                      onClick={handleVerify}
+                      disabled={isVerifying}
+                      className="w-full bg-transparent border border-[#545454] hover:border-[#666] text-[#ccc] py-2 rounded text-[10px] transition-colors flex items-center justify-center gap-1"
+                    >
+                      {isVerifying ? (
+                        <>
+                          <div className="w-3 h-3 border-2 border-[#888]/30 border-t-[#888] rounded-full animate-spin" />
+                          Verifying...
+                        </>
+                      ) : (
+                        <>
+                          <span>✓</span>
+                          Verify Protection
+                        </>
+                      )}
+                    </button>
 
                     {/* Success State with Save CTA */}
                     {protectionStatus === "success" && (
