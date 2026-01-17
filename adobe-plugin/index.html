@@ -24,7 +24,7 @@
     <div class="panel-content">
       <div class="welcome-section">
         <div class="logo-container">
-          <div class="logo-icon">🚀</div>
+          <div class="logo-icon">🛡️</div>
         </div>
         <h2>Welcome to TSMO</h2>
         <p class="welcome-subtitle">Protect your artwork from AI training</p>
@@ -61,7 +61,7 @@
     <div class="panel-content">
       <div class="welcome-section">
         <div class="logo-container">
-          <div class="logo-icon">🚀</div>
+          <div class="logo-icon">🛡️</div>
         </div>
         <h2>Create Account</h2>
         <p class="welcome-subtitle">Start protecting your art today</p>
@@ -101,61 +101,13 @@
         <div id="tierIndicator" class="tier-indicator">
           <span class="tier-dot"></span>
           <span id="tierLabel">Basic Protection</span>
-          <a href="#" id="tierUpgradeLink" class="tier-upgrade-link">Upgrade</a>
         </div>
+        <button id="upgradeBtn" class="btn btn-upgrade">Upgrade to Pro</button>
       </div>
       
       <!-- Secondary Actions -->
       <div class="secondary-actions">
         <button id="verifyBtn" class="btn btn-outline btn-full">✓ Verify Protection</button>
-      </div>
-      
-      <!-- Collapsible Settings -->
-      <div class="settings-toggle-section">
-        <button id="settingsToggle" class="settings-toggle">
-          <span class="toggle-icon">⚙️</span>
-          <span>Settings</span>
-          <span class="toggle-arrow">▼</span>
-        </button>
-        
-        <div id="settingsPanel" class="settings-panel collapsed">
-          <div class="settings-content">
-            <!-- Protection Level -->
-            <div class="setting-group">
-              <label class="setting-label">Protection Level</label>
-              <div class="protection-options">
-                <label class="protection-option">
-                  <input type="radio" name="protectionLevel" value="basic" checked>
-                  <span class="option-label">Basic</span>
-                  <span class="option-desc">Metadata only</span>
-                </label>
-                <label class="protection-option pro-option">
-                  <input type="radio" name="protectionLevel" value="pro">
-                  <span class="option-label">Pro <span class="pro-badge">PRO</span></span>
-                  <span class="option-desc">Full pixel protection</span>
-                </label>
-              </div>
-            </div>
-            
-            <!-- Owner Name -->
-            <div class="setting-group">
-              <label for="ownerName" class="setting-label">Owner Name</label>
-              <input type="text" id="ownerName" placeholder="Your name or studio">
-            </div>
-            
-            <!-- Copyright Year -->
-            <div class="setting-group">
-              <label for="copyrightYear" class="setting-label">Year</label>
-              <input type="number" id="copyrightYear" value="" min="1900" max="2100">
-            </div>
-            
-            <!-- Auto-save -->
-            <label class="checkbox-label">
-              <input type="checkbox" id="autoSaveToTsmo" checked>
-              <span>Auto-save to TSMO Watch</span>
-            </label>
-          </div>
-        </div>
       </div>
       
       <!-- Protection Progress -->

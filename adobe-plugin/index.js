@@ -60,7 +60,7 @@ let protectBtn, verifyBtn;
 let protectionProgress, progressSteps, resultPanel;
 let statusMessage, signupStatusMessage;
 let planBadge, userEmailEl;
-let settingsToggle, settingsPanel, tierIndicator, tierLabel, tierUpgradeLink;
+let tierIndicator, tierLabel, upgradeBtn;
 
 // ============= INITIALIZATION =============
 document.addEventListener('DOMContentLoaded', () => {
@@ -101,12 +101,10 @@ function initializeElements() {
   planBadge = document.getElementById('planBadge');
   userEmailEl = document.getElementById('userEmail');
   
-  // Settings elements
-  settingsToggle = document.getElementById('settingsToggle');
-  settingsPanel = document.getElementById('settingsPanel');
+  // Tier elements
   tierIndicator = document.getElementById('tierIndicator');
   tierLabel = document.getElementById('tierLabel');
-  tierUpgradeLink = document.getElementById('tierUpgradeLink');
+  upgradeBtn = document.getElementById('upgradeBtn');
   
   // Initialize dynamic values
   const yearInput = document.getElementById('copyrightYear');
@@ -196,11 +194,8 @@ function attachEventListeners() {
     localStorage.setItem('tsmo_owner_name', settings.ownerName);
   });
   
-  // Settings toggle
-  settingsToggle?.addEventListener('click', toggleSettings);
-  
-  // Tier upgrade link - directly opens pricing page
-  tierUpgradeLink?.addEventListener('click', openUpgradeLink);
+  // Upgrade button - directly opens pricing page
+  upgradeBtn?.addEventListener('click', openUpgradeLink);
   
   // External links
   document.getElementById('learnMoreLink')?.addEventListener('click', (e) => {
@@ -219,31 +214,17 @@ function attachEventListeners() {
   });
 }
 
-// ============= SETTINGS TOGGLE =============
-function toggleSettings() {
-  if (!settingsPanel || !settingsToggle) return;
-  
-  const isOpen = !settingsPanel.classList.contains('collapsed');
-  
-  if (isOpen) {
-    settingsPanel.classList.add('collapsed');
-    settingsToggle.classList.remove('open');
-  } else {
-    settingsPanel.classList.remove('collapsed');
-    settingsToggle.classList.add('open');
-  }
-}
-
+// ============= TIER INDICATOR =============
 function updateTierIndicator() {
   if (tierIndicator && tierLabel) {
     if (userTier === 'pro') {
       tierIndicator.className = 'tier-indicator pro';
       tierLabel.textContent = 'Pro Protection';
-      if (tierUpgradeLink) tierUpgradeLink.style.display = 'none';
+      if (upgradeBtn) upgradeBtn.style.display = 'none';
     } else {
       tierIndicator.className = 'tier-indicator basic';
       tierLabel.textContent = 'Basic Protection';
-      if (tierUpgradeLink) tierUpgradeLink.style.display = 'inline';
+      if (upgradeBtn) upgradeBtn.style.display = 'block';
     }
   }
 }
