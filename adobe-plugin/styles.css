@@ -421,15 +421,15 @@ h2 {
   flex-direction: column;
   gap: var(--spacing-sm);
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--accent-primary), #1473e6, #0d5bba);
-  box-shadow: 0 8px 24px rgba(38, 128, 235, 0.4);
+  background: linear-gradient(135deg, #ec4899, #f43f5e);
+  box-shadow: 0 8px 24px rgba(236, 72, 153, 0.4);
   min-height: 80px;
   transition: all 0.3s ease;
 }
 
 .btn-hero:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(38, 128, 235, 0.5);
+  box-shadow: 0 12px 32px rgba(236, 72, 153, 0.5);
 }
 
 .btn-hero:active {
@@ -495,7 +495,7 @@ h2 {
   padding: 10px 20px;
   font-size: 13px;
   font-weight: 600;
-  background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+  background: #374151;
   color: white;
   border: none;
   border-radius: 6px;
@@ -505,8 +505,7 @@ h2 {
 }
 
 .btn-upgrade:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+  background: #4b5563;
 }
 
 /* Secondary Actions */
