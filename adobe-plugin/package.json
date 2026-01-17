@@ -1,6 +1,6 @@
 {
   "name": "tsmo-protection-plugin",
-  "version": "1.0.0",
+  "version": "1.0.24",
   "description": "TSMO AI Training Protection Plugin for Adobe Creative Cloud",
   "main": "index.html",
   "scripts": {
@@ -20,6 +20,6 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/tsmo/adobe-plugin"
+    "url": "https://github.com/smirakle/art-guardian-ai"
   }
 }
