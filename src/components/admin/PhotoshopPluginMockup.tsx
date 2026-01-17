@@ -819,37 +819,49 @@ const PhotoshopPluginMockup = () => {
               )}
             </div>
 
-            {/* TSMO Plugin Panel */}
+            {/* TSMO Plugin Panel - Matches Real Plugin v1.0.23 */}
             <div className="border-t border-[#1a1a1a]">
-              {/* TSMO Header - matches real plugin v1.0.7 */}
+              {/* TSMO Header - matches real plugin exactly */}
               <div className="flex items-center justify-between px-2 py-1.5 bg-[#3a3a3a] border-b border-[#1a1a1a]">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm">🛡️</span>
-                  <span className="text-[#e8e8e8] text-[11px] font-medium">TSMO</span>
-                  <span className="text-[8px] bg-[#2997ff]/20 text-[#2997ff] px-1.5 py-0.5 rounded font-medium">Beta</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-[#e8e8e8] text-[11px] font-medium">TSMO Protection</span>
+                </div>
+                {isLoggedIn && (
+                  <button 
+                    onClick={handleLogout}
+                    className="text-[10px] bg-[#454545] hover:bg-[#545454] text-white px-2 py-1 rounded transition-colors"
+                  >
+                    Logout
+                  </button>
+                )}
+                <X className="h-3 w-3 text-[#666] hover:text-[#ccc] cursor-pointer" />
+              </div>
+              
+              {/* TSMO Beta subtitle */}
+              <div className="bg-[#2a2a2a] px-2 py-1 border-b border-[#1a1a1a] flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-[#ff4444]"></span>
+                  <span className="text-[10px] text-[#888]">TSMO Beta</span>
                 </div>
                 {isLoggedIn && (
                   <div className="flex items-center gap-2">
-                    <span className="text-[9px] text-[#888]">{loginEmail || 'demo@tsmo.io'}</span>
-                    <span className={`text-[8px] px-1.5 py-0.5 rounded ${protectionLevel === 'pro' ? 'bg-[#a78bfa]/20 text-[#a78bfa]' : 'bg-[#4ade80]/20 text-[#4ade80]'}`}>
-                      {protectionLevel === 'pro' ? 'PRO' : 'Basic'}
+                    <span className="text-[9px] text-[#888]">{loginEmail || 'shirleenacunningham@gmail.com'}</span>
+                    <span className={`text-[8px] px-1.5 py-0.5 rounded ${protectionLevel === 'pro' ? 'bg-[#a78bfa]/30 text-[#a78bfa]' : 'bg-[#888]/30 text-[#ccc]'}`}>
+                      {protectionLevel === 'pro' ? 'Pro' : 'Basic'}
                     </span>
                   </div>
                 )}
-                <div className="flex items-center gap-1">
-                  <Menu className="h-3 w-3 text-[#666] hover:text-[#ccc] cursor-pointer" />
-                  <X className="h-3 w-3 text-[#666] hover:text-[#ccc] cursor-pointer" />
-                </div>
               </div>
 
-              {/* TSMO Content - Redesigned for "Aha" Moment */}
-              <div className="p-2 space-y-2 max-h-[220px] overflow-y-auto">
+              {/* TSMO Content */}
+              <div className="p-3 space-y-3 max-h-[260px] overflow-y-auto bg-[#2a2a2a]">
                 {/* Login Panel */}
                 {showLoginPanel ? (
                   <div className="space-y-3">
                     <div className="text-center mb-2">
-                      <div className="text-xl mb-1">🛡️</div>
-                      <div className="text-sm font-medium text-[#eee]">Sign In to TSMO</div>
+                      <div className="w-2 h-2 rounded-full bg-[#ff4444] mx-auto mb-2"></div>
+                      <div className="text-sm font-medium text-[#eee]">Welcome to TSMO</div>
+                      <div className="text-[10px] text-[#888] mt-1">Protect your artwork from AI training</div>
                     </div>
                     
                     {loginError && (
@@ -860,65 +872,93 @@ const PhotoshopPluginMockup = () => {
                     
                     <div className="space-y-2">
                       <div>
-                        <label className="text-[9px] text-[#888] uppercase tracking-wide">Email</label>
+                        <label className="text-[10px] text-[#888] mb-1 block">Email</label>
                         <input 
                           type="email" 
                           value={loginEmail}
                           onChange={(e) => setLoginEmail(e.target.value)}
                           placeholder="your@email.com"
-                          className="w-full bg-[#1e1e1e] border border-[#454545] focus:border-[#2997ff] rounded px-2 py-1.5 text-[10px] text-[#eee] outline-none transition-colors"
+                          className="w-full bg-[#1e1e1e] border border-[#454545] focus:border-[#2997ff] rounded px-2 py-1.5 text-[11px] text-[#eee] outline-none transition-colors"
                         />
                       </div>
                       <div>
-                        <label className="text-[9px] text-[#888] uppercase tracking-wide">Password</label>
+                        <label className="text-[10px] text-[#888] mb-1 block">Password</label>
                         <input 
                           type="password"
                           value={loginPassword}
                           onChange={(e) => setLoginPassword(e.target.value)}
                           placeholder="••••••••"
-                          className="w-full bg-[#1e1e1e] border border-[#454545] focus:border-[#2997ff] rounded px-2 py-1.5 text-[10px] text-[#eee] outline-none transition-colors"
+                          className="w-full bg-[#1e1e1e] border border-[#454545] focus:border-[#2997ff] rounded px-2 py-1.5 text-[11px] text-[#eee] outline-none transition-colors"
                         />
                       </div>
                     </div>
                     
                     <button 
                       onClick={handleLogin}
-                      className="w-full bg-[#2997ff] hover:bg-[#2080e0] text-white py-2 rounded text-[10px] font-medium transition-colors"
+                      className="w-full bg-[#3b82f6] hover:bg-[#2563eb] text-white py-2 rounded text-[11px] font-medium transition-colors"
                     >
                       Sign In
                     </button>
                     
                     <button 
-                      onClick={() => {
-                        setShowLoginPanel(false);
-                        setLoginError("");
-                      }}
-                      className="w-full bg-[#454545] hover:bg-[#545454] text-[#ccc] py-1.5 rounded text-[10px] transition-colors"
+                      onClick={() => window.open('https://www.tsmowatch.com/auth?tab=signup', '_blank')}
+                      className="w-full bg-[#3b82f6] hover:bg-[#2563eb] text-white py-2 rounded text-[11px] font-medium transition-colors"
                     >
-                      ← Back
+                      Create Free Account
                     </button>
                     
-                    <p className="text-[9px] text-[#666] text-center">
-                      Don't have an account?{" "}
-                      <a href="/auth" target="_blank" className="text-[#2997ff] hover:underline">
-                        Sign up
-                      </a>
+                    <p className="text-[9px] text-[#2997ff] text-center hover:underline cursor-pointer">
+                      Need help?
                     </p>
                   </div>
                 ) : !isLoggedIn && !isProtecting && !protectionStatus ? (
-                  /* Welcome Screen - matches real plugin v1.0.7 */
+                  /* Welcome Screen - matches real plugin v1.0.23 exactly */
                   <div className="space-y-3">
-                    {/* Welcome Hero */}
-                    <div className="text-center py-2">
-                      <div className="text-2xl mb-2">🛡️</div>
+                    {/* Red dot indicator */}
+                    <div className="flex justify-center">
+                      <span className="w-2 h-2 rounded-full bg-[#ff4444]"></span>
+                    </div>
+                    
+                    {/* Welcome text */}
+                    <div className="text-center">
                       <div className="text-sm font-medium text-[#eee]">Welcome to TSMO</div>
                       <div className="text-[10px] text-[#888] mt-1">Protect your artwork from AI training</div>
                     </div>
                     
+                    {/* Email field */}
+                    <div>
+                      <label className="text-[10px] text-[#888] mb-1 block">Email</label>
+                      <input 
+                        type="email"
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                        placeholder="shirleenacunningham@gmail.com"
+                        className="w-full bg-[#1e1e1e] border border-[#454545] rounded px-2 py-1.5 text-[11px] text-[#eee] outline-none"
+                      />
+                    </div>
+                    
+                    {/* Password field */}
+                    <div>
+                      <label className="text-[10px] text-[#888] mb-1 block">Password</label>
+                      <input 
+                        type="password"
+                        value={loginPassword}
+                        onChange={(e) => setLoginPassword(e.target.value)}
+                        placeholder="••••••••••••"
+                        className="w-full bg-[#1e1e1e] border border-[#454545] rounded px-2 py-1.5 text-[11px] text-[#eee] outline-none"
+                      />
+                    </div>
+                    
                     {/* Sign In Button */}
                     <button 
-                      onClick={() => setShowLoginPanel(true)}
-                      className="w-full bg-[#2997ff] hover:bg-[#2080e0] text-white py-2.5 rounded text-[11px] font-medium transition-colors"
+                      onClick={() => {
+                        if (loginEmail && loginPassword) {
+                          handleLogin();
+                        } else {
+                          setShowLoginPanel(true);
+                        }
+                      }}
+                      className="w-full bg-[#3b82f6] hover:bg-[#2563eb] text-white py-2 rounded text-[11px] font-medium transition-colors"
                     >
                       Sign In
                     </button>
@@ -926,62 +966,56 @@ const PhotoshopPluginMockup = () => {
                     {/* Create Account Button */}
                     <button 
                       onClick={() => window.open('https://www.tsmowatch.com/auth?tab=signup', '_blank')}
-                      className="w-full bg-transparent border border-[#545454] hover:border-[#666] text-[#ccc] py-2 rounded text-[10px] transition-colors"
+                      className="w-full bg-[#3b82f6] hover:bg-[#2563eb] text-white py-2 rounded text-[11px] font-medium transition-colors"
                     >
                       Create Free Account
                     </button>
                     
                     {/* Help Link */}
-                    <p className="text-[9px] text-[#666] text-center">
-                      <a href="https://docs.tsmo.io" target="_blank" className="text-[#2997ff] hover:underline">
-                        Need help?
-                      </a>
+                    <p className="text-[9px] text-[#2997ff] text-center hover:underline cursor-pointer">
+                      Need help?
                     </p>
                   </div>
                 ) : (
+                  /* Main Panel - Logged In - matches real plugin v1.0.23 */
                   <>
-                    {/* Main Action Button - Large hero style like real plugin v1.0.12 */}
+                    {/* Protect Button - Red/Pink gradient like real plugin */}
                     <button
                       onClick={handleProtect}
                       disabled={isProtecting}
-                      className="w-full bg-gradient-to-r from-[#2997ff] to-[#1473e6] hover:from-[#1a7fd4] hover:to-[#0d5bba] disabled:opacity-50 text-white py-4 rounded-lg text-[14px] font-semibold flex items-center justify-center gap-2 transition-all shadow-lg"
+                      className="w-full bg-gradient-to-r from-[#ec4899] to-[#f43f5e] hover:from-[#db2777] hover:to-[#e11d48] disabled:opacity-50 text-white py-3 rounded text-[13px] font-semibold flex items-center justify-center gap-2 transition-all"
                     >
                       {isProtecting ? (
                         <>
                           <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                           Protecting...
                         </>
-                      ) : protectionStatus === "success" ? (
-                        <>
-                          <span>✓</span>
-                          Re-Protect
-                        </>
                       ) : (
                         <>
-                          <span className="text-lg">🛡️</span>
+                          <span>🛡️</span>
                           Protect
                         </>
                       )}
                     </button>
                     
-                    <p className="text-[10px] text-[#666] text-center">
+                    <p className="text-[10px] text-[#888] text-center">
                       One click to protect your current document
                     </p>
                     
-                    {/* Tier Indicator - matches real plugin v1.0.12 */}
+                    {/* Tier Indicator */}
                     <div className="flex items-center justify-center gap-1.5 text-[10px]">
                       <span className={`w-2 h-2 rounded-full ${protectionLevel === 'pro' ? 'bg-[#a78bfa]' : 'bg-[#888]'}`}></span>
                       <span className="text-[#888]">{protectionLevel === 'pro' ? 'Pro Protection' : 'Basic Protection'}</span>
                     </div>
                     
-                    {/* Upgrade to Pro Button - only for Basic users */}
+                    {/* Upgrade to Pro Button - Dark style like real plugin */}
                     {protectionLevel !== 'pro' && (
                       <button 
                         onClick={() => {
                           const email = encodeURIComponent(loginEmail || '');
                           window.open(`https://www.tsmowatch.com/pricing?source=adobe_plugin&email=${email}`, '_blank');
                         }}
-                        className="w-full bg-gradient-to-r from-[#a78bfa] to-[#8b5cf6] hover:from-[#9775f5] hover:to-[#7c4ce6] text-white py-2.5 rounded-lg text-[12px] font-semibold transition-all shadow-md"
+                        className="w-full bg-[#374151] hover:bg-[#4b5563] text-white py-2 rounded text-[11px] font-medium transition-colors"
                       >
                         Upgrade to Pro
                       </button>
@@ -991,7 +1025,7 @@ const PhotoshopPluginMockup = () => {
                     <button
                       onClick={handleVerify}
                       disabled={isVerifying}
-                      className="w-full bg-transparent border border-[#545454] hover:border-[#666] text-[#ccc] py-2 rounded text-[10px] transition-colors flex items-center justify-center gap-1"
+                      className="w-full bg-transparent border border-[#545454] hover:border-[#666] text-[#ccc] py-2 rounded text-[11px] transition-colors flex items-center justify-center gap-1"
                     >
                       {isVerifying ? (
                         <>
@@ -1006,19 +1040,19 @@ const PhotoshopPluginMockup = () => {
                       )}
                     </button>
 
-                    {/* Success State with Save CTA */}
+                    {/* Success State */}
                     {protectionStatus === "success" && (
-                      <div className="bg-gradient-to-r from-[#2e7d32]/30 to-[#4caf50]/20 border border-[#2e7d32]/50 rounded-lg p-2 animate-scale-in">
-                        <div className="text-[#66bb6a] text-[11px] font-medium flex items-center gap-2 mb-1.5">
-                          <span className="text-base">✓</span>
+                      <div className="bg-[#1a1a1a] border border-[#2e7d32]/50 rounded p-2">
+                        <div className="text-[#4ade80] text-[11px] font-medium flex items-center gap-2 mb-1.5">
+                          <span>🛡️</span>
                           <span>Protected successfully!</span>
                         </div>
                         <div className="text-[#888] text-[9px] mb-2">
                           Your art is now protected from AI training.
                         </div>
-                        <div className="flex gap-2">
+                        <div className="space-y-2">
                           <button 
-                            className="flex-1 bg-transparent border border-[#4ade80]/50 hover:bg-[#4ade80]/10 text-[#4ade80] py-1.5 rounded text-[10px] font-medium transition-colors"
+                            className="w-full bg-transparent border border-[#545454] hover:border-[#666] text-[#ccc] py-1.5 rounded text-[10px] transition-colors"
                             onClick={() => {
                               toast({
                                 title: "Saved to Portfolio",
@@ -1030,7 +1064,7 @@ const PhotoshopPluginMockup = () => {
                           </button>
                           <button 
                             onClick={() => window.open('https://www.tsmowatch.com', '_blank')}
-                            className="flex-1 bg-[#2e7d32] hover:bg-[#388e3c] text-white py-1.5 rounded text-[10px] font-medium transition-colors"
+                            className="w-full bg-[#3b82f6] hover:bg-[#2563eb] text-white py-1.5 rounded text-[10px] font-medium transition-colors"
                           >
                             View in TSMO Watch
                           </button>
@@ -1146,34 +1180,17 @@ const PhotoshopPluginMockup = () => {
                     )}
 
 
-                    {/* Secondary Actions - matches real plugin v1.0.7 */}
-                    {!protectionStatus && !verifyResult && (
-                      <div className="flex gap-1">
-                        <button 
-                          onClick={handleBatch}
-                          disabled={isBatchProcessing || isVerifying || isProtecting}
-                          className="flex-1 bg-[#454545] hover:bg-[#545454] disabled:opacity-50 disabled:cursor-not-allowed text-[#ccc] py-1.5 rounded text-[10px] flex items-center justify-center gap-1 transition-colors"
-                        >
-                          📦 {isBatchProcessing ? `${batchProgress}%` : 'Batch'}
-                        </button>
-                        <button 
-                          onClick={handleVerify}
-                          disabled={isVerifying || isBatchProcessing || isProtecting}
-                          className="flex-1 bg-[#454545] hover:bg-[#545454] disabled:opacity-50 disabled:cursor-not-allowed text-[#ccc] py-1.5 rounded text-[10px] flex items-center justify-center gap-1 transition-colors"
-                        >
-                          {isVerifying ? '⏳' : '✓'} {isVerifying ? 'Checking...' : 'Verify'}
-                        </button>
-                      </div>
-                    )}
-
-                    {/* Footer - matches real plugin v1.0.7 */}
-                    <div className="text-[9px] text-[#666] text-center pt-2 border-t border-[#454545] mt-2">
-                      <a href="https://www.tsmowatch.com" target="_blank" className="text-[#2997ff] hover:underline">www.tsmowatch.com</a>
-                      <span className="mx-1">|</span>
-                      <span>© {new Date().getFullYear()} TSMO Technology Inc.</span>
-                    </div>
                   </>
                 )}
+              </div>
+              
+              {/* Footer - matches real plugin v1.0.23 */}
+              <div className="px-3 py-2 border-t border-[#1a1a1a] bg-[#2a2a2a]">
+                <div className="text-[9px] text-[#666] text-center">
+                  <a href="https://www.tsmowatch.com" target="_blank" className="text-[#2997ff] hover:underline">www.tsmowatch.com</a>
+                  <span className="mx-1">|</span>
+                  <span>© {new Date().getFullYear()} TSMO Technology Inc.</span>
+                </div>
               </div>
             </div>
           </div>
