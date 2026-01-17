@@ -1,8 +1,8 @@
 {
   "manifestVersion": 5,
-  "id": "tsmo-watch-v2",
+  "id": "tsmo-watch-v3",
   "name": "TSMO Watch",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "main": "index.html",
   "icons": [
     { "width": 24, "height": 24, "path": "icons/icon-24.png" },
