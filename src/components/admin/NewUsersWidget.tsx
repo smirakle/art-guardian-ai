@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { UserPlus, Eye, Crown, Users, Loader2 } from "lucide-react";
+import { UserPlus, Eye, Crown, Users, Loader2, Palette, Globe } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
@@ -24,6 +24,9 @@ interface NewUser {
   username: string | null;
   created_at: string;
   role?: string;
+  email?: string;
+  plan_id?: string;
+  source_app?: string;
 }
 
 const NewUsersWidget = () => {
@@ -47,20 +50,51 @@ const NewUsersWidget = () => {
 
       if (error) throw error;
 
-      // Fetch roles for these users
       if (profiles && profiles.length > 0) {
         const userIds = profiles.map(p => p.user_id);
-        const { data: roles } = await supabase
-          .from('user_roles')
-          .select('user_id, role')
-          .in('user_id', userIds);
+        
+        // Fetch roles, subscriptions, protection records, and emails in parallel
+        const [rolesResult, subscriptionsResult, protectionResult, emailsResult] = await Promise.all([
+          supabase
+            .from('user_roles')
+            .select('user_id, role')
+            .in('user_id', userIds),
+          supabase
+            .from('subscriptions')
+            .select('user_id, plan_id')
+            .in('user_id', userIds),
+          supabase
+            .from('ai_protection_records')
+            .select('user_id, metadata')
+            .in('user_id', userIds),
+          supabase.functions.invoke('admin-user-details', {
+            body: { action: 'batchGetEmails', userIds }
+          })
+        ]);
 
-        const usersWithRoles = profiles.map(profile => ({
+        const roles = rolesResult.data || [];
+        const subscriptions = subscriptionsResult.data || [];
+        const protectionRecords = protectionResult.data || [];
+        const emails = emailsResult.data?.emails || {};
+
+        // Determine source app from protection records
+        const userSourceApps: Record<string, string> = {};
+        protectionRecords.forEach((record: { user_id: string; metadata: { source_app?: string } | null }) => {
+          const sourceApp = record.metadata?.source_app;
+          if (sourceApp && sourceApp.includes('Adobe')) {
+            userSourceApps[record.user_id] = 'Adobe Plugin';
+          }
+        });
+
+        const usersWithDetails = profiles.map(profile => ({
           ...profile,
-          role: roles?.find(r => r.user_id === profile.user_id)?.role || 'user'
+          role: roles.find(r => r.user_id === profile.user_id)?.role || 'user',
+          email: emails[profile.user_id] || undefined,
+          plan_id: subscriptions.find(s => s.user_id === profile.user_id)?.plan_id || 'free',
+          source_app: userSourceApps[profile.user_id] || 'Web'
         }));
 
-        setUsers(usersWithRoles);
+        setUsers(usersWithDetails);
       } else {
         setUsers([]);
       }
@@ -174,21 +208,51 @@ const NewUsersWidget = () => {
                   className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-8 w-8">
+                    <Avatar className="h-9 w-9">
                       <AvatarFallback className="text-xs bg-primary/10 text-primary">
                         {getInitials(user.full_name, user.username)}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium truncate">
                         {user.full_name || user.username || 'Anonymous'}
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        {formatDistanceToNow(new Date(user.created_at), { addSuffix: true })}
-                      </p>
+                      {user.email && (
+                        <p className="text-xs text-muted-foreground truncate">
+                          {user.email}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                        <Badge 
+                          variant={user.plan_id === 'pro' || user.plan_id === 'professional' ? 'default' : 'outline'} 
+                          className="text-[10px] px-1.5 py-0"
+                        >
+                          {user.plan_id === 'pro' || user.plan_id === 'professional' ? 'Pro' : 
+                           user.plan_id === 'enterprise' ? 'Enterprise' : 'Free'}
+                        </Badge>
+                        <Badge 
+                          variant="secondary" 
+                          className="text-[10px] px-1.5 py-0 flex items-center gap-0.5"
+                        >
+                          {user.source_app === 'Adobe Plugin' ? (
+                            <>
+                              <Palette className="w-2.5 h-2.5" />
+                              Adobe
+                            </>
+                          ) : (
+                            <>
+                              <Globe className="w-2.5 h-2.5" />
+                              Web
+                            </>
+                          )}
+                        </Badge>
+                        <span className="text-[10px] text-muted-foreground">
+                          • {formatDistanceToNow(new Date(user.created_at), { addSuffix: true })}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 flex-shrink-0">
                     <Button
                       variant="ghost"
                       size="icon"
