@@ -12,6 +12,7 @@ import { CopyrightDiagnostics } from "./CopyrightDiagnostics";
 import { EnhancedCopyrightDiagnostics } from "./EnhancedCopyrightDiagnostics";
 import OperatingCostsWidget from "./OperatingCostsWidget";
 import NewUsersWidget from "./NewUsersWidget";
+import PluginConversionAnalytics from "./PluginConversionAnalytics";
 
 import { 
   Shield, 
@@ -373,6 +374,11 @@ const AdminDashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
               <NewUsersWidget />
               <OperatingCostsWidget />
+              
+            {/* Plugin Conversion Analytics */}
+            <div className="lg:col-span-2">
+              <PluginConversionAnalytics />
+            </div>
               
               <Card>
                 <CardHeader>

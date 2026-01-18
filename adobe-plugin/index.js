@@ -194,8 +194,12 @@ function attachEventListeners() {
     localStorage.setItem('tsmo_owner_name', settings.ownerName);
   });
   
-  // Upgrade button - directly opens pricing page
-  upgradeBtn?.addEventListener('click', openUpgradeLink);
+// Upgrade button - directly opens pricing page with conversion tracking
+  upgradeBtn?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    await trackUpgradeClick();
+    openUpgradeLink();
+  });
   
   // External links
   document.getElementById('learnMoreLink')?.addEventListener('click', (e) => {
@@ -246,11 +250,43 @@ function openExternalLink(url) {
   window.open(url, '_blank');
 }
 
-function openUpgradeLink(e) {
-  e.preventDefault();
+function openUpgradeLink() {
   const email = encodeURIComponent(currentUser?.email || '');
-  const upgradeUrl = `https://www.tsmowatch.com/pricing?source=adobe_plugin&email=${email}`;
+  const upgradeUrl = `https://www.tsmowatch.com/pricing?source=adobe_plugin&email=${email}&plugin_version=${PLUGIN_VERSION}`;
   openExternalLink(upgradeUrl);
+}
+
+// ============= CONVERSION TRACKING =============
+async function trackUpgradeClick() {
+  try {
+    const protectionCount = localStorage.getItem('tsmo_protection_count') || '0';
+    
+    await fetch(`${API_BASE_URL}/adobe-plugin-api`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': authToken ? `Bearer ${authToken}` : '',
+        'x-adobe-plugin-version': PLUGIN_VERSION
+      },
+      body: JSON.stringify({
+        action: 'track_conversion_event',
+        eventType: 'upgrade_click',
+        source: 'adobe_plugin',
+        userEmail: currentUser?.email || '',
+        pluginVersion: PLUGIN_VERSION,
+        metadata: {
+          currentTier: userTier,
+          protectionsUsed: parseInt(protectionCount, 10),
+          timestamp: new Date().toISOString()
+        }
+      })
+    });
+    
+    console.log('Upgrade click tracked successfully');
+  } catch (error) {
+    // Don't block upgrade if tracking fails
+    console.log('Analytics tracking skipped:', error);
+  }
 }
 
 // ============= ONLINE STATUS =============

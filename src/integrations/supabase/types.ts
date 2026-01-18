@@ -6751,6 +6751,42 @@ export type Database = {
         }
         Relationships: []
       }
+      plugin_conversion_events: {
+        Row: {
+          created_at: string | null
+          event_type: string
+          id: string
+          metadata: Json | null
+          plugin_version: string | null
+          session_id: string | null
+          source: string
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          plugin_version?: string | null
+          session_id?: string | null
+          source?: string
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          plugin_version?: string | null
+          session_id?: string | null
+          source?: string
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       portfolio_alerts: {
         Row: {
           alert_type: string

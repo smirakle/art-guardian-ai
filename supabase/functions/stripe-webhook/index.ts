@@ -100,6 +100,37 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, supabas
   } else {
     console.log('Template purchase updated successfully');
   }
+  
+  // Track conversion event if from Adobe plugin
+  const source = session.metadata?.source;
+  if (source === 'adobe_plugin') {
+    try {
+      const { error: conversionError } = await supabase
+        .from('plugin_conversion_events')
+        .insert({
+          event_type: 'subscription_converted',
+          source: 'adobe_plugin',
+          user_email: session.customer_email,
+          plugin_version: session.metadata?.pluginVersion || null,
+          metadata: {
+            plan_id: session.metadata?.plan_id,
+            billing_cycle: session.metadata?.billing_cycle,
+            amount_total: session.amount_total,
+            currency: session.currency,
+            stripe_session_id: session.id,
+            converted_at: new Date().toISOString()
+          }
+        });
+      
+      if (conversionError) {
+        console.error('Error tracking conversion:', conversionError);
+      } else {
+        console.log('Subscription conversion tracked successfully for Adobe plugin user');
+      }
+    } catch (e) {
+      console.error('Conversion tracking failed:', e);
+    }
+  }
 }
 
 async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent, supabase: any) {

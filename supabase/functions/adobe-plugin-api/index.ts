@@ -26,7 +26,7 @@ const RATE_LIMITS = {
 const rateLimitStore = new Map<string, { count: number; windowStart: number }>();
 
 interface ProtectionRequest {
-  action: 'protect' | 'verify' | 'batch_protect' | 'get_status' | 'list_protections' | 'health' | 'upload_thumbnail' | 'save_to_portfolio' | 'get_subscription';
+  action: 'protect' | 'verify' | 'batch_protect' | 'get_status' | 'list_protections' | 'health' | 'upload_thumbnail' | 'save_to_portfolio' | 'get_subscription' | 'track_conversion_event';
   protectionLevel?: 'basic' | 'pro';
   fileHash?: string;
   fileName?: string;
@@ -345,7 +345,7 @@ async function generateC2paManifest(
 
 function validateAction(action: unknown): action is ProtectionRequest['action'] {
   return typeof action === 'string' && 
-    ['protect', 'verify', 'batch_protect', 'get_status', 'list_protections', 'upload_thumbnail', 'save_to_portfolio', 'get_subscription'].includes(action);
+    ['protect', 'verify', 'batch_protect', 'get_status', 'list_protections', 'upload_thumbnail', 'save_to_portfolio', 'get_subscription', 'track_conversion_event'].includes(action);
 }
 
 function validateProtectionLevel(level: unknown): level is 'basic' | 'professional' | 'enterprise' | 'pro' {
@@ -1012,6 +1012,56 @@ async function handleUploadThumbnail(
   };
 }
 
+// ============= CONVERSION TRACKING HANDLER =============
+
+async function handleConversionTracking(
+  supabase: ReturnType<typeof createClient>,
+  userId: string,
+  request: any,
+  req: Request
+): Promise<ProtectionResponse> {
+  try {
+    const { eventType, source, userEmail, pluginVersion, metadata } = request;
+    
+    console.log(`Tracking conversion event: ${eventType} from ${source} for user ${userId}`);
+    
+    // Use service role client for inserting analytics events
+    const serviceSupabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    
+    const { error } = await serviceSupabase
+      .from('plugin_conversion_events')
+      .insert({
+        event_type: eventType,
+        source: source || 'adobe_plugin',
+        user_email: userEmail || null,
+        user_id: userId,
+        plugin_version: pluginVersion || null,
+        metadata: {
+          ...metadata,
+          user_agent: req.headers.get('user-agent'),
+          tracked_at: new Date().toISOString()
+        }
+      });
+    
+    if (error) {
+      console.error('Conversion tracking insert error:', error);
+      // Don't fail the request if tracking fails
+      return { success: true, message: 'Event tracked (with warnings)' };
+    }
+    
+    console.log(`Conversion event ${eventType} tracked successfully`);
+    
+    return {
+      success: true,
+      message: 'Conversion event tracked'
+    };
+  } catch (e) {
+    console.error('Conversion tracking error:', e);
+    // Don't fail the request if tracking fails
+    return { success: true, message: 'Event tracking skipped' };
+  }
+}
+
 // ============= MAIN HANDLER =============
 
 Deno.serve(async (req) => {
@@ -1109,6 +1159,10 @@ Deno.serve(async (req) => {
       
       case 'save_to_portfolio':
         response = await handleSaveToPortfolio(supabase, user.id, request);
+        break;
+      
+      case 'track_conversion_event':
+        response = await handleConversionTracking(supabase, user.id, request, req);
         break;
       
       case 'get_subscription':
