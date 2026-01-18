@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,12 +8,13 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { CheckCircle, Star, Shield, Zap, Crown, Building2, User, Mail, Tag } from "lucide-react";
 import { SLAGuarantees } from "@/components/sla/SLAGuarantees";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
 const Pricing = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [promoCode, setPromoCode] = useState('');
@@ -24,6 +25,50 @@ const Pricing = () => {
     email: '',
   });
   const [emailError, setEmailError] = useState('');
+  const [conversionSource, setConversionSource] = useState<string | null>(null);
+  const [pluginVersion, setPluginVersion] = useState<string | null>(null);
+
+  // Track landing from Adobe plugin and capture conversion data
+  useEffect(() => {
+    const source = searchParams.get('source');
+    const email = searchParams.get('email');
+    const version = searchParams.get('plugin_version');
+    
+    // Pre-fill email if coming from plugin
+    if (email) {
+      setFormData(prev => ({ ...prev, email: decodeURIComponent(email) }));
+    }
+    
+    // Store source for checkout attribution
+    if (source === 'adobe_plugin') {
+      setConversionSource(source);
+      setPluginVersion(version);
+      sessionStorage.setItem('conversion_source', 'adobe_plugin');
+      if (version) sessionStorage.setItem('plugin_version', version);
+      
+      // Track pricing page landing
+      trackConversionEvent('pricing_landed', {
+        source: 'adobe_plugin',
+        plugin_version: version,
+        has_email: !!email
+      });
+    }
+  }, [searchParams]);
+
+  // Track conversion events
+  const trackConversionEvent = async (eventType: string, metadata: Record<string, any>) => {
+    try {
+      await supabase.from('plugin_conversion_events').insert({
+        event_type: eventType,
+        source: metadata.source || conversionSource || 'web',
+        user_email: formData.email || searchParams.get('email') || null,
+        plugin_version: metadata.plugin_version || pluginVersion,
+        metadata
+      });
+    } catch (error) {
+      console.log('Conversion tracking skipped:', error);
+    }
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -55,12 +100,28 @@ const Pricing = () => {
 
     setIsProcessing(true);
     
+    // Track checkout initiation
+    const source = sessionStorage.getItem('conversion_source') || conversionSource || 'web';
+    const version = sessionStorage.getItem('plugin_version') || pluginVersion;
+    
+    if (source === 'adobe_plugin') {
+      trackConversionEvent('checkout_started', {
+        plan_id: planId,
+        billing_cycle: billingCycle,
+        source,
+        plugin_version: version,
+        has_promo_code: !!promoCode.trim()
+      });
+    }
+    
     try {
       console.log('Calling create-checkout-session with:', {
         planId: planId.toLowerCase(),
         billingCycle,
         email: formData.email,
-        promoCode: promoCode.trim() || undefined
+        promoCode: promoCode.trim() || undefined,
+        source,
+        pluginVersion: version
       });
 
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
@@ -68,7 +129,9 @@ const Pricing = () => {
           planId: planId.toLowerCase(),
           billingCycle,
           email: formData.email,
-          promoCode: promoCode.trim() || undefined
+          promoCode: promoCode.trim() || undefined,
+          source,
+          pluginVersion: version
         }
       });
 
