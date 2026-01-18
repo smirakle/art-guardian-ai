@@ -1174,3 +1174,28 @@ h2 {
 .protection-steps .step.skipped .step-label {
   text-decoration: line-through;
 }
+
+/* Panel visibility - ensure only active panel shows */
+#loginPanel,
+#signupPanel,
+#mainPanel,
+#resultPanel,
+#errorPanel,
+#verificationResultPanel {
+  display: none;
+}
+
+#loginPanel.active,
+#signupPanel.active,
+#mainPanel.active,
+#resultPanel.active,
+#errorPanel.active,
+#verificationResultPanel.active,
+#loginPanel:not(.hidden),
+#signupPanel:not(.hidden),
+#mainPanel:not(.hidden),
+#resultPanel:not(.hidden),
+#errorPanel:not(.hidden),
+#verificationResultPanel:not(.hidden) {
+  display: flex;
+}
