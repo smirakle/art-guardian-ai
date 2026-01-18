@@ -1,8 +1,8 @@
 {
   "manifestVersion": 5,
-  "id": "tsmo-watch-v4",
+  "id": "tsmo-watch-v5",
   "name": "TSMO Watch",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "main": "index.html",
   "icons": [
     { "width": 24, "height": 24, "path": "icons/icon-24.png" },
@@ -14,11 +14,13 @@
   "host": [
     {
       "app": "PS",
-      "minVersion": "24.0.0"
+      "minVersion": "24.0.0",
+      "maxVersion": "99.0.0"
     },
     {
       "app": "AI",
-      "minVersion": "27.0.0"
+      "minVersion": "27.0.0",
+      "maxVersion": "99.0.0"
     }
   ],
   "entrypoints": [
