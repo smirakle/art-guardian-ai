@@ -164,14 +164,14 @@ serve(async (req) => {
     const offset = parseInt(searchParams.get('offset') || '0')
 
     // Get all users from auth.users
-    const { data: authUsersData, error: authError } = await supabase.auth.admin.listUsers({
+    const { data: authUsersData, error: listUsersError } = await supabase.auth.admin.listUsers({
       page: Math.floor(offset / limit) + 1,
       perPage: limit
     })
 
-    if (authError) {
-      console.error('Error listing auth users:', authError)
-      throw authError
+    if (listUsersError) {
+      console.error('Error listing auth users:', listUsersError)
+      throw listUsersError
     }
 
     const users = authUsersData?.users || []
