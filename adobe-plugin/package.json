@@ -1,6 +1,6 @@
 {
   "name": "tsmo-protection-plugin",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "TSMO AI Training Protection Plugin for Adobe Creative Cloud",
   "main": "index.html",
   "scripts": {
