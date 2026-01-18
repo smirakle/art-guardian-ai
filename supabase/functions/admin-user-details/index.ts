@@ -56,7 +56,26 @@ serve(async (req) => {
     const action = searchParams.get('action') || 'get'
 
     if (req.method === 'POST') {
-      const { userId: bodyUserId, action: bodyAction, data } = await req.json()
+      const body = await req.json()
+      const { userId: bodyUserId, action: bodyAction, data, userIds } = body
+      
+      // Batch fetch user emails for multiple users
+      if (bodyAction === 'batchGetEmails' && userIds && Array.isArray(userIds)) {
+        const emailMap: Record<string, string> = {}
+        
+        for (const uid of userIds) {
+          try {
+            const { data: authUser } = await supabase.auth.admin.getUserById(uid)
+            emailMap[uid] = authUser?.user?.email || 'Unknown'
+          } catch (e) {
+            emailMap[uid] = 'Unknown'
+          }
+        }
+        
+        return new Response(JSON.stringify({ emails: emailMap }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        })
+      }
       
       if (bodyAction === 'suspend') {
         // Update user role or add suspended flag
