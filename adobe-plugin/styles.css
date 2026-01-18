@@ -315,14 +315,9 @@ input::placeholder {
 
 .header-icon {
   font-size: 18px;
-  filter: hue-rotate (320deg) saturate(1.5);
+  filter: hue-rotate(320deg) saturate(1.5);
 }
 
-.header-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
 .header-title {
   font-size: 14px;
   font-weight: 600;
