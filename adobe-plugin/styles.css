@@ -307,6 +307,23 @@ input::placeholder {
   border-bottom: 1px solid var(--border-color);
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.header-icon {
+  font-size: 18px;
+  filter: hue-rotate(320deg) saturate(1.5);
+}
+
+.header-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
 .user-info {
   display: flex;
   align-items: center;
