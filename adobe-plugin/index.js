@@ -1,5 +1,5 @@
 /**
- * TSMO Protection - Adobe Creative Cloud Plugin
+ * TSMO Watch - Adobe Creative Cloud Plugin
  * Version: 1.1.0
  * 
  * Protects artwork from AI training with Style Cloaking,
