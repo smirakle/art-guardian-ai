@@ -31,25 +31,33 @@ serve(async (req) => {
     const { data: { user }, error: authError } = await supabase.auth.getUser(token)
     
     if (authError || !user) {
+      console.error('Auth error:', authError, 'User:', user)
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
     }
 
-    // Check if user is admin
-    const { data: userRole } = await supabase
+    console.log('Authenticated user ID:', user.id)
+
+    // Check if user is admin - use service role client to bypass RLS
+    const { data: userRole, error: roleError } = await supabase
       .from('user_roles')
       .select('role')
       .eq('user_id', user.id)
       .single()
 
+    console.log('User role lookup result:', { userRole, roleError, userId: user.id })
+
     if (!userRole || userRole.role !== 'admin') {
-      return new Response(JSON.stringify({ error: 'Admin access required' }), {
+      console.error('Admin check failed:', { userRole, roleError, userId: user.id })
+      return new Response(JSON.stringify({ error: 'Admin access required', debug: { userId: user.id, roleFound: userRole } }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
     }
+    
+    console.log('Admin access verified for user:', user.id)
 
     const { searchParams } = new URL(req.url)
     const userId = searchParams.get('userId')
