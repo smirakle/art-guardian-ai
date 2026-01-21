@@ -1,6 +1,6 @@
 {
   "manifestVersion": 5,
-  "id": "tsmo-protection-v6",
+  "id": "com.tsmo.protection",
   "name": "TSMO Protection",
   "version": "1.1.0",
   "main": "index.html",
