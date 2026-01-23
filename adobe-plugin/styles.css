@@ -464,6 +464,33 @@ h2 {
   letter-spacing: 0.5px;
 }
 
+/* Welcome Section */
+.welcome-section {
+  text-align: center;
+  padding: var(--spacing-lg) 0;
+}
+
+.welcome-section h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: none;
+  letter-spacing: normal;
+  margin-top: var(--spacing-sm);
+}
+
+.welcome-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: var(--spacing-xs);
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-sm);
+}
+
 /* One-Click Hero Section */
 .one-click-section {
   text-align: center;
