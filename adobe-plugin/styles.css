@@ -233,12 +233,12 @@ input::placeholder {
 }
 
 .btn-primary {
-  background-color: var(--accent-primary);
+  background-color: #3b82f6;
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: var(--accent-hover);
+  background-color: #2563eb;
 }
 
 .btn-secondary {
@@ -356,11 +356,6 @@ input::placeholder {
   color: var(--text-muted);
 }
 
-.status-dot-centered {
-  display: flex;
-  justify-content: center;
-  margin-bottom: var(--spacing-sm);
-}
 
 .header-title {
   font-size: 14px;
