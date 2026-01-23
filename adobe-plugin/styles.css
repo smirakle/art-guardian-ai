@@ -495,6 +495,9 @@ h2 {
 .one-click-section {
   text-align: center;
   padding: var(--spacing-lg) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .btn-hero {
