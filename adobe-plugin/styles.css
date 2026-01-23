@@ -477,6 +477,7 @@ h2 {
   text-transform: none;
   letter-spacing: normal;
   margin-top: var(--spacing-sm);
+  text-align: center;
 }
 
 .welcome-subtitle {
