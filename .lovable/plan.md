@@ -1,57 +1,56 @@
 
 
-## Update All Adobe Plugin Icons with Pink Shield Design
+## Fix Adobe Plugin Icons - Replace with Pink Shield Design
 
-### Overview
-Replace all plugin icons with the uploaded pink gradient shield design, creating properly sized versions for both main icons and panel toolbar icons.
+### Problem
+The current icon files in `adobe-plugin/icons/` are not displaying the pink shield design. As shown in your screenshot:
+- **Plugins panel**: Shows a gray square placeholder
+- **Plugin header**: Shows a small red/orange icon (not the pink gradient shield)
 
----
-
-### Files to Update
-
-**Main Plugin Icons** (used in Extensions menu and listings):
-| File | Size | Action |
-|------|------|--------|
-| `icon-24.png` | 24x24 | Replace with resized pink shield |
-| `icon-48.png` | 48x48 | Replace with resized pink shield |
-| `icon-96.png` | 96x96 | Replace with resized pink shield |
-| `icon-192.png` | 192x192 | Replace with resized pink shield |
-| `icon-512.png` | 512x512 | Replace with resized pink shield |
-
-**Panel Toolbar Icons** (small icons in panel header):
-| File | Size | Theme | Action |
-|------|------|-------|--------|
-| `panel-dark-v3.png` | 23x23 | Dark UI | Create simplified pink shield |
-| `panel-dark-v3@2x.png` | 46x46 | Dark UI (Retina) | Create simplified pink shield |
-| `panel-light-v3.png` | 23x23 | Light UI | Create simplified pink shield |
-| `panel-light-v3@2x.png` | 46x46 | Light UI (Retina) | Create simplified pink shield |
+### Solution
+Regenerate all icon files using the uploaded pink shield image as the source, ensuring they are properly saved as PNG files with the correct dimensions.
 
 ---
 
-### Technical Approach
+### Files to Regenerate
 
-1. **Main Icons**: Scale the uploaded pink shield to each required size (24, 48, 96, 192, 512px) maintaining the gradient and details
+**Main Plugin Icons** (for Extensions menu/listings):
+| File | Dimensions | Purpose |
+|------|------------|---------|
+| `icon-24.png` | 24x24px | Small menu icon |
+| `icon-48.png` | 48x48px | Standard menu icon |
+| `icon-96.png` | 96x96px | Large display |
+| `icon-192.png` | 192x192px | High-res display |
+| `icon-512.png` | 512x512px | Adobe Exchange listing |
 
-2. **Panel Icons**: Create 23x23px versions optimized for small size:
-   - **Dark theme**: Pink shield on transparent background (for dark Adobe UI)
-   - **Light theme**: Pink shield with slight outline for visibility on light backgrounds
-   - Include @2x (46x46) retina versions for both
-
-3. **Cleanup**: Remove legacy icon versions (panel-dark.png, panel-dark-v2.png, etc.) that are no longer referenced
+**Panel Toolbar Icons** (23x23px icons in panel header):
+| File | Dimensions | Theme |
+|------|------------|-------|
+| `panel-dark-v3.png` | 23x23px | Dark Adobe UI |
+| `panel-dark-v3@2x.png` | 46x46px | Dark UI (Retina) |
+| `panel-light-v3.png` | 23x23px | Light Adobe UI |
+| `panel-light-v3@2x.png` | 46x46px | Light UI (Retina) |
 
 ---
 
 ### Implementation Steps
 
-1. Use AI image generation to create properly sized versions of the pink shield
-2. Generate panel-specific variants optimized for 23x23px display
-3. Save all icons to `adobe-plugin/icons/` directory
-4. Optionally bump plugin version to verify icon updates loaded
+1. Use the uploaded pink shield image (`user-uploads://icon-24.jpg`) as the base design
+2. Generate properly sized PNG versions for each required dimension
+3. Ensure transparent backgrounds for all icons
+4. Save directly to `adobe-plugin/icons/` directory, overwriting existing files
 
 ---
 
-### Notes
-- Panel icons need to be legible at 23x23px - may need simplified design without fine details
-- Both dark and light theme panel icons will use the same pink gradient (it's visible on both backgrounds)
-- The @2x versions are for Retina/HiDPI displays
+### After Implementation
+
+Run the dev reload script to verify:
+```bash
+cd adobe-plugin
+./scripts/dev-reload.sh
+```
+
+Then reload the plugin in Photoshop and verify the pink shield appears in both:
+- The Plugins panel list
+- The plugin panel header
 
