@@ -8,24 +8,26 @@ import { toast } from "@/hooks/use-toast";
 
 interface IconConfig {
   name: string;
+  downloadName: string; // Cache-busted filename for manifest v1.1.5
   width: number;
   height: number;
   category: "main" | "panel";
   theme?: "dark" | "light";
 }
 
+// Cache-busted filenames to match manifest.json v1.1.5
 const ICON_CONFIGS: IconConfig[] = [
   // Main plugin icons
-  { name: "icon-24.png", width: 24, height: 24, category: "main" },
-  { name: "icon-48.png", width: 48, height: 48, category: "main" },
-  { name: "icon-96.png", width: 96, height: 96, category: "main" },
-  { name: "icon-192.png", width: 192, height: 192, category: "main" },
-  { name: "icon-512.png", width: 512, height: 512, category: "main" },
+  { name: "icon-24.png", downloadName: "icon-24.v1.1.5.png", width: 24, height: 24, category: "main" },
+  { name: "icon-48.png", downloadName: "icon-48.v1.1.5.png", width: 48, height: 48, category: "main" },
+  { name: "icon-96.png", downloadName: "icon-96.v1.1.5.png", width: 96, height: 96, category: "main" },
+  { name: "icon-192.png", downloadName: "icon-192.v1.1.5.png", width: 192, height: 192, category: "main" },
+  { name: "icon-512.png", downloadName: "icon-512.v1.1.5.png", width: 512, height: 512, category: "main" },
   // Panel toolbar icons
-  { name: "panel-dark-v3.png", width: 23, height: 23, category: "panel", theme: "dark" },
-  { name: "panel-dark-v3@2x.png", width: 46, height: 46, category: "panel", theme: "dark" },
-  { name: "panel-light-v3.png", width: 23, height: 23, category: "panel", theme: "light" },
-  { name: "panel-light-v3@2x.png", width: 46, height: 46, category: "panel", theme: "light" },
+  { name: "panel-dark.png", downloadName: "panel-dark.v1.1.5.png", width: 23, height: 23, category: "panel", theme: "dark" },
+  { name: "panel-dark@2x.png", downloadName: "panel-dark@2x.v1.1.5.png", width: 46, height: 46, category: "panel", theme: "dark" },
+  { name: "panel-light.png", downloadName: "panel-light.v1.1.5.png", width: 23, height: 23, category: "panel", theme: "light" },
+  { name: "panel-light@2x.png", downloadName: "panel-light@2x.v1.1.5.png", width: 46, height: 46, category: "panel", theme: "light" },
 ];
 
 interface GeneratedIcon {
@@ -179,13 +181,13 @@ const AdobeIconGenerator = () => {
 
   const downloadIcon = useCallback((icon: GeneratedIcon) => {
     const link = document.createElement("a");
-    link.download = icon.config.name;
+    link.download = icon.config.downloadName;
     link.href = icon.dataUrl;
     link.click();
 
     toast({
       title: "Downloaded",
-      description: `${icon.config.name} saved to downloads.`,
+      description: `${icon.config.downloadName} saved to downloads.`,
     });
   }, []);
 
@@ -202,7 +204,7 @@ const AdobeIconGenerator = () => {
     // Download each icon with a small delay
     for (const icon of generatedIcons) {
       const link = document.createElement("a");
-      link.download = icon.config.name;
+      link.download = icon.config.downloadName;
       link.href = icon.dataUrl;
       link.click();
       await new Promise((resolve) => setTimeout(resolve, 200));
@@ -331,7 +333,7 @@ const AdobeIconGenerator = () => {
                       className="gap-1"
                     >
                       <Download className="h-3 w-3" />
-                      {icon.config.name}
+                      {icon.config.downloadName}
                     </Button>
                   </div>
                 ))}
