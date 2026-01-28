@@ -3,9 +3,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Wrench, Monitor, ScrollText, ExternalLink, Plug, FileCode2, Palette } from "lucide-react";
+import { Wrench, Monitor, ScrollText, ExternalLink, Plug, FileCode2, Palette, ImageIcon } from "lucide-react";
 import AdobePluginSimulator from "./AdobePluginSimulator";
 import PhotoshopPluginMockup from "./PhotoshopPluginMockup";
+import AdobeIconGenerator from "./AdobeIconGenerator";
 
 const AdminPluginsSection = () => {
   const [activeSubTab, setActiveSubTab] = useState("simulator");
@@ -75,6 +76,10 @@ const AdminPluginsSection = () => {
             <Monitor className="h-4 w-4" />
             Photoshop Preview
           </TabsTrigger>
+          <TabsTrigger value="icons" className="gap-2 data-[state=active]:bg-pink-500/20">
+            <ImageIcon className="h-4 w-4" />
+            Icon Generator
+          </TabsTrigger>
           <TabsTrigger value="logs" className="gap-2 data-[state=active]:bg-blue-500/20">
             <ScrollText className="h-4 w-4" />
             API Logs
@@ -87,6 +92,10 @@ const AdminPluginsSection = () => {
 
         <TabsContent value="preview" className="mt-6">
           <PhotoshopPluginMockup />
+        </TabsContent>
+
+        <TabsContent value="icons" className="mt-6">
+          <AdobeIconGenerator />
         </TabsContent>
 
         <TabsContent value="logs" className="mt-6">
