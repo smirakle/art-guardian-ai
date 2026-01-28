@@ -3,10 +3,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Wrench, Monitor, ScrollText, ExternalLink, Plug, FileCode2, Palette, ImageIcon } from "lucide-react";
+import { Wrench, Monitor, ScrollText, ExternalLink, Plug, FileCode2, Palette, ImageIcon, FileCheck } from "lucide-react";
 import AdobePluginSimulator from "./AdobePluginSimulator";
 import PhotoshopPluginMockup from "./PhotoshopPluginMockup";
 import AdobeIconGenerator from "./AdobeIconGenerator";
+import AdobeIconValidator from "./AdobeIconValidator";
 
 const AdminPluginsSection = () => {
   const [activeSubTab, setActiveSubTab] = useState("simulator");
@@ -80,6 +81,10 @@ const AdminPluginsSection = () => {
             <ImageIcon className="h-4 w-4" />
             Icon Generator
           </TabsTrigger>
+          <TabsTrigger value="validator" className="gap-2 data-[state=active]:bg-green-500/20">
+            <FileCheck className="h-4 w-4" />
+            Icon Validator
+          </TabsTrigger>
           <TabsTrigger value="logs" className="gap-2 data-[state=active]:bg-blue-500/20">
             <ScrollText className="h-4 w-4" />
             API Logs
@@ -96,6 +101,10 @@ const AdminPluginsSection = () => {
 
         <TabsContent value="icons" className="mt-6">
           <AdobeIconGenerator />
+        </TabsContent>
+
+        <TabsContent value="validator" className="mt-6">
+          <AdobeIconValidator />
         </TabsContent>
 
         <TabsContent value="logs" className="mt-6">
