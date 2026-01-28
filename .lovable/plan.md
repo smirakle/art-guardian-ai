@@ -1,149 +1,86 @@
 
+## What’s actually wrong (why Photoshop still shows gray placeholders)
+In the repository right now, the icon files do **not** match what `adobe-plugin/manifest.json` is pointing to.
+
+- `manifest.json` (v1.1.5) expects icons at:
+  - `adobe-plugin/icons/icon-24.v1.1.5.png` (and 48/96/192/512)
+  - `adobe-plugin/icons/panel-dark.v1.1.5.png`, `panel-dark@2x.v1.1.5.png`, etc.
+
+But the repo currently contains (at the *root* of `adobe-plugin/`, not inside `adobe-plugin/icons/`):
+- `icon-24 (1).png`, `icon-48 (1).png`, `icon-96 (1).png`, `icon-192 (1).png`, `icon-512 (1).png`
+- `panel-dark-v3.png`, `panel-dark-v3@2x.png`, `panel-light-v3.png`, `panel-light-v3@2x.png`
+- and `adobe-plugin/icons/` is effectively empty
+
+So when Photoshop/UXP tries to load the icons from the manifest paths, it can’t find them (or finds the wrong ones), and it falls back to the gray placeholder.
+
 ## Goal
-Fix the Adobe UXP gray placeholder icons (both the Plugins panel icon and the panel toolbar icon) even though the files appear transparent and are in `adobe-plugin/icons/`.
+Make the repo’s on-disk icon files exactly match the manifest paths for v1.1.5 so UXP can load them reliably (no placeholders).
 
-Your screenshot shows UXP falling back to a generic placeholder, which typically means **UXP couldn’t load/decode the PNGs** or is **still using cached icon assets**.
+## Implementation plan (what I will change in the codebase)
+### 1) Put the correct 9 versioned icon PNGs into the correct folder
+- Ensure these 9 files exist in `adobe-plugin/icons/`:
+  - `icon-24.v1.1.5.png`
+  - `icon-48.v1.1.5.png`
+  - `icon-96.v1.1.5.png`
+  - `icon-192.v1.1.5.png`
+  - `icon-512.v1.1.5.png`
+  - `panel-dark.v1.1.5.png`
+  - `panel-dark@2x.v1.1.5.png`
+  - `panel-light.v1.1.5.png`
+  - `panel-light@2x.v1.1.5.png`
 
-## What I found in the codebase
-- `adobe-plugin/icons/` contains all 9 expected files with the exact names referenced by `adobe-plugin/manifest.json`.
-- `manifest.json` references:
-  - Main: `icons/icon-24.png`, `icons/icon-48.png`, `icons/icon-96.png`, `icons/icon-192.png`, `icons/icon-512.png`
-  - Panel: `icons/panel-dark-v3.png`, `icons/panel-dark-v3@2x.png`, `icons/panel-light-v3.png`, `icons/panel-light-v3@2x.png`
-- The in-app Icon Generator (`src/components/admin/AdobeIconGenerator.tsx`) generates:
-  - Main sizes: 24/48/96/192/512
-  - Panel sizes: 23 and 46 for “@2x”
-  - Uses `canvas.toDataURL("image/png")`, which should preserve alpha transparency.
+Source of truth will be the icons you already uploaded (the `user-uploads://...v1.1.5.png` set), because those are the intended cache-busted filenames.
 
-So the remaining likely causes are:
-1) **Wrong pixel dimensions** (especially the panel icons: @2x must be 46×46).  
-2) **PNG encoding incompatibility** (rare, but UXP can be picky: color profile, interlacing, indexed palette, etc.).  
-3) **UXP caching icons by path**, so even if you bump manifest version, it may still keep icon assets cached; changing filenames is often the only reliable cache-buster.
+### 2) Clean up conflicting/incorrect icon files (to prevent confusion)
+Inside `adobe-plugin/`, either remove or clearly deprecate the old/duplicate files:
+- `icon-24 (1).png`, `icon-48 (1).png`, `icon-96 (1).png`, `icon-192 (1).png`, `icon-512 (1).png`
+- `panel-*-v3*.png`
 
----
+Reason: These “near match” filenames often cause people to copy the wrong icons locally later, and makes it harder to validate what UXP is actually loading.
 
-## Step 1 (No code): Confirm the local icon files are valid for UXP
-On your local machine (the same folder you loaded in UXP Dev Tools), verify these facts:
+### 3) Fix the web Admin “Icon Validator” so it validates the current (v1.1.5) reality
+Right now `src/components/admin/AdobeIconValidator.tsx` still checks for the old names:
+- `icon-24.png` (etc)
+- `panel-dark-v3.png` (etc)
 
-### A) Confirm exact file names (no hidden “(1)” copies)
-In Finder, inside `adobe-plugin/icons/`, ensure the names are exactly:
-- `icon-24.png`
-- `icon-48.png`
-- `icon-96.png`
-- `icon-192.png`
-- `icon-512.png`
-- `panel-dark-v3.png`
-- `panel-dark-v3@2x.png`
-- `panel-light-v3.png`
-- `panel-light-v3@2x.png`
+I will update it to validate the versioned v1.1.5 names listed above, and expected sizes:
+- main: 24/48/96/192/512
+- panel: 23×23 and 46×46 (@2x)
 
-### B) Confirm pixel dimensions via Terminal (recommended)
-Run these in your local repo root:
-```bash
-sips -g pixelWidth -g pixelHeight adobe-plugin/icons/icon-24.png
-sips -g pixelWidth -g pixelHeight adobe-plugin/icons/panel-dark-v3.png
-sips -g pixelWidth -g pixelHeight adobe-plugin/icons/panel-dark-v3@2x.png
-```
+This gives you a reliable “repo sanity check” in /admin without guessing.
 
-Expected:
-- `icon-24.png` = 24×24
-- `panel-dark-v3.png` = 23×23
-- `panel-dark-v3@2x.png` = 46×46
+### 4) Align plugin UI version markers (optional but strongly recommended)
+Your `adobe-plugin/index.html` still shows `v1.1.4` and loads assets with `?v=1.1.4`.
+This doesn’t directly cause the icon placeholder problem, but it makes troubleshooting harder because you can’t easily confirm what is loaded.
 
-If any do not match, UXP often shows placeholders.
+I will update:
+- `styles.css?v=1.1.5`
+- `index.js?v=1.1.5`
+- footer badge `v1.1.5`
+(and any other visible version markers)
 
-### C) Confirm the files are real PNGs (not WebP renamed)
-```bash
-file adobe-plugin/icons/panel-dark-v3@2x.png
-```
-It should say `PNG image data ...`, not WebP/other.
-
-If you want, you can also open one in Preview → Tools → Show Inspector and confirm dimensions + alpha.
-
----
-
-## Step 2 (Code change): Add an “Icon Validator” in the web admin to verify repo icons
-Even if Finder/Preview looks okay, we’ll add a reliable validator inside the web app that:
-- loads the **actual files from the repo** (not the generated data URLs),
-- prints:
-  - pixel size (`naturalWidth`, `naturalHeight`)
-  - whether any pixel has alpha < 255 (true transparency test)
-  - whether the image can be decoded at all in a Chromium environment
-
-### Implementation approach
-1) Create a new admin component (or a new tab under the existing Admin → Plugins area) called something like **“Icon Validator”**.
-2) It will try to load each of the 9 icon assets from the repo path and then:
-   - display the image on a checkerboard
-   - show decoded dimensions
-   - run a quick transparency scan:
-     - draw to a canvas
-     - sample pixels (or scan a subset for performance)
-     - confirm presence of alpha channel usage
-3) If any asset fails to load or has wrong dimensions, it will be obvious immediately.
-
-This helps us distinguish:
-- “icons are correct, UXP is caching” vs
-- “icons are actually wrong/renamed/mis-sized in the repo/local copy”.
-
----
-
-## Step 3 (Code change): Hard cache-bust UXP icons by renaming and updating manifest paths
-If Step 1 & Step 2 show the icons are correct (sizes + alpha), then we treat this as a UXP icon cache issue.
-
-### Strategy
-UXP tends to cache icons strongly by file path. So we will:
-1) Add a version suffix to icon filenames in `adobe-plugin/icons/`, e.g.:
-   - `icon-24.v1.1.5.png`
-   - `panel-dark-v3.v1.1.5.png`
-   - `panel-dark-v3@2x.v1.1.5.png`
-2) Update `adobe-plugin/manifest.json` to reference the new paths.
-3) Bump the plugin version (e.g. 1.1.4 → 1.1.5).
-4) Optionally update any internal UI/version badge references if used.
-
-### Why this works
-Changing filenames forces UXP to fetch new files instead of serving the old cached bitmap, and avoids “I cleared cache but it still shows placeholder” loops.
-
----
-
-## Step 4: Local end-to-end test checklist in Photoshop (real results)
-After applying the above:
-1) Pull latest from GitHub (or re-sync from Lovable).
-2) Run:
+## How you’ll test end-to-end in Photoshop 2026 (after I implement)
+1) Pull latest repo locally (`git pull`)
+2) Confirm local folder now contains the exact manifest paths:
+   - `adobe-plugin/icons/icon-24.v1.1.5.png` etc (all 9)
+3) Run:
    ```bash
    cd adobe-plugin
    ./scripts/dev-reload.sh
    ```
-3) In UXP Dev Tools:
-   - remove the plugin
-   - add the plugin folder again
-   - reload
-4) Verify:
-   - Plugins panel list shows your pink shield icon
-   - The panel toolbar icon shows correctly
-   - Both dark/light variants render properly
+4) In UXP Developer Tools:
+   - Remove the plugin
+   - Add the plugin folder again
+   - Reload
+5) Verify in Photoshop:
+   - The Plugins panel entry shows the pink shield icon (not gray placeholder)
+   - The panel toolbar icon also shows correctly
 
----
+## Notes / likely outcome
+Given your screenshot still shows placeholders even after “dev reload”, the path mismatch is the most consistent explanation. Once the files exist at the exact manifest paths, UXP should stop falling back.
 
-## Edge cases we will account for
-- If the panel icon appears but main icon doesn’t (or vice versa): we’ll validate each specific file and ensure paths are correct.
-- If only @2x is broken: likely wrong 46×46 size, or wrong scale entry in manifest.
-- If decoding fails in browser validator: likely the PNG is not actually a valid PNG, or it’s corrupted, or includes something UXP can’t handle.
+## Small clarifying questions (to avoid rework)
+- When you “Add” the plugin in UXP Dev Tools, are you selecting the folder that contains `manifest.json` directly (the `adobe-plugin/` folder), not the repo root?
+- After pulling, did you see an `adobe-plugin/icons/` folder populated with the new `*.v1.1.5.png` files, or was it empty?
 
----
-
-## What I need from you (to proceed efficiently)
-If you can paste the output of these three commands, we’ll know immediately whether this is a size/format issue:
-```bash
-sips -g pixelWidth -g pixelHeight adobe-plugin/icons/panel-dark-v3.png
-sips -g pixelWidth -g pixelHeight adobe-plugin/icons/panel-dark-v3@2x.png
-file adobe-plugin/icons/panel-dark-v3@2x.png
-```
-
-Even without that, the plan above will still work; the validator + cache-busting rename will force a definitive result.
-
----
-
-## Technical notes (for later implementation)
-- The validator will use `new Image()` + `img.decode()` and a `<canvas>` readback.
-- Transparency test: sample a grid of pixels (for 512×512 don’t scan all pixels; scan e.g. every 8th pixel) and detect any alpha < 255.
-- We’ll follow existing Admin plugin tab patterns in `src/components/admin/AdminPluginsSection.tsx`.
-
+(These won’t block implementation, but they help confirm the fix will map to your local setup.)
