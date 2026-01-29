@@ -18,13 +18,13 @@ interface IconValidationResult {
 }
 
 const EXPECTED_ICONS = [
-  // Main plugin icons
-  { name: "icon-24.png", width: 24, height: 24, category: "main" },
-  { name: "icon-48.png", width: 48, height: 48, category: "main" },
-  { name: "icon-96.png", width: 96, height: 96, category: "main" },
-  { name: "icon-192.png", width: 192, height: 192, category: "main" },
-  { name: "icon-512.png", width: 512, height: 512, category: "main" },
-  // Panel toolbar icons
+  // Main plugin icons (files in adobe-plugin/ root)
+  { name: "icon-24 (1).png", width: 24, height: 24, category: "main" },
+  { name: "icon-48 (1).png", width: 48, height: 48, category: "main" },
+  { name: "icon-96 (1).png", width: 96, height: 96, category: "main" },
+  { name: "icon-192 (1).png", width: 192, height: 192, category: "main" },
+  { name: "icon-512 (1).png", width: 512, height: 512, category: "main" },
+  // Panel toolbar icons (files in adobe-plugin/ root)
   { name: "panel-dark-v3.png", width: 23, height: 23, category: "panel" },
   { name: "panel-dark-v3@2x.png", width: 46, height: 46, category: "panel" },
   { name: "panel-light-v3.png", width: 23, height: 23, category: "panel" },
@@ -64,7 +64,7 @@ const AdobeIconValidator = () => {
   const validateIcon = useCallback(async (icon: typeof EXPECTED_ICONS[0]): Promise<IconValidationResult> => {
     return new Promise((resolve) => {
       const img = new Image();
-      const basePath = "/adobe-plugin/icons/";
+      const basePath = "/adobe-plugin/";
       const cacheBuster = `?t=${Date.now()}`;
       
       img.onload = () => {
@@ -233,7 +233,7 @@ const AdobeIconValidator = () => {
           <div className="flex gap-3">
             <Info className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
             <div className="text-sm text-muted-foreground space-y-1">
-              <p>This validator checks the actual icon files in <code className="px-1 py-0.5 rounded bg-muted font-mono text-xs">/adobe-plugin/icons/</code></p>
+              <p>This validator checks the actual icon files in <code className="px-1 py-0.5 rounded bg-muted font-mono text-xs">/adobe-plugin/</code></p>
               <p>It verifies: ✓ File exists ✓ Correct dimensions ✓ Has alpha transparency</p>
               <p className="text-yellow-600 dark:text-yellow-400">
                 Note: Files must be accessible at the web path. After generating icons locally, 
