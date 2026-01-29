@@ -1,86 +1,52 @@
 
-## What’s actually wrong (why Photoshop still shows gray placeholders)
-In the repository right now, the icon files do **not** match what `adobe-plugin/manifest.json` is pointing to.
 
-- `manifest.json` (v1.1.5) expects icons at:
-  - `adobe-plugin/icons/icon-24.v1.1.5.png` (and 48/96/192/512)
-  - `adobe-plugin/icons/panel-dark.v1.1.5.png`, `panel-dark@2x.v1.1.5.png`, etc.
+## Problem Summary
+The Adobe UXP plugin still shows gray placeholder icons because the required icon files do not exist at the paths specified in `manifest.json`. Multiple previous attempts to fix this have not succeeded because:
 
-But the repo currently contains (at the *root* of `adobe-plugin/`, not inside `adobe-plugin/icons/`):
-- `icon-24 (1).png`, `icon-48 (1).png`, `icon-96 (1).png`, `icon-192 (1).png`, `icon-512 (1).png`
-- `panel-dark-v3.png`, `panel-dark-v3@2x.png`, `panel-light-v3.png`, `panel-light-v3@2x.png`
-- and `adobe-plugin/icons/` is effectively empty
+1. The `adobe-plugin/icons/` folder is essentially empty
+2. The icons that exist are in the wrong location (`adobe-plugin/` root) with wrong names (`icon-24 (1).png`, `panel-dark-v3.png`)
+3. The Lovable image generator cannot create files in arbitrary folders like `adobe-plugin/icons/`
 
-So when Photoshop/UXP tries to load the icons from the manifest paths, it can’t find them (or finds the wrong ones), and it falls back to the gray placeholder.
+## Solution: Two-Part Approach
 
-## Goal
-Make the repo’s on-disk icon files exactly match the manifest paths for v1.1.5 so UXP can load them reliably (no placeholders).
+### Part 1: Change manifest.json to use the icons that already exist
+Instead of trying to create new files, update `manifest.json` to reference the icons that are already in the repo:
 
-## Implementation plan (what I will change in the codebase)
-### 1) Put the correct 9 versioned icon PNGs into the correct folder
-- Ensure these 9 files exist in `adobe-plugin/icons/`:
-  - `icon-24.v1.1.5.png`
-  - `icon-48.v1.1.5.png`
-  - `icon-96.v1.1.5.png`
-  - `icon-192.v1.1.5.png`
-  - `icon-512.v1.1.5.png`
-  - `panel-dark.v1.1.5.png`
-  - `panel-dark@2x.v1.1.5.png`
-  - `panel-light.v1.1.5.png`
-  - `panel-light@2x.v1.1.5.png`
+| Current manifest path | Change to |
+|---|---|
+| `icons/icon-24.v1.1.5.png` | `icon-24 (1).png` |
+| `icons/icon-48.v1.1.5.png` | `icon-48 (1).png` |
+| `icons/icon-96.v1.1.5.png` | `icon-96 (1).png` |
+| `icons/icon-192.v1.1.5.png` | `icon-192 (1).png` |
+| `icons/icon-512.v1.1.5.png` | `icon-512 (1).png` |
+| `icons/panel-dark.v1.1.5.png` | `panel-dark-v3.png` |
+| `icons/panel-dark@2x.v1.1.5.png` | `panel-dark-v3@2x.png` |
+| `icons/panel-light.v1.1.5.png` | `panel-light-v3.png` |
+| `icons/panel-light@2x.v1.1.5.png` | `panel-light-v3@2x.png` |
 
-Source of truth will be the icons you already uploaded (the `user-uploads://...v1.1.5.png` set), because those are the intended cache-busted filenames.
+This makes the manifest point to files that actually exist, eliminating the path mismatch.
 
-### 2) Clean up conflicting/incorrect icon files (to prevent confusion)
-Inside `adobe-plugin/`, either remove or clearly deprecate the old/duplicate files:
-- `icon-24 (1).png`, `icon-48 (1).png`, `icon-96 (1).png`, `icon-192 (1).png`, `icon-512 (1).png`
-- `panel-*-v3*.png`
+### Part 2: Update the Admin Icon Validator
+Update `src/components/admin/AdobeIconValidator.tsx` to validate the actual filenames being used.
 
-Reason: These “near match” filenames often cause people to copy the wrong icons locally later, and makes it harder to validate what UXP is actually loading.
-
-### 3) Fix the web Admin “Icon Validator” so it validates the current (v1.1.5) reality
-Right now `src/components/admin/AdobeIconValidator.tsx` still checks for the old names:
-- `icon-24.png` (etc)
-- `panel-dark-v3.png` (etc)
-
-I will update it to validate the versioned v1.1.5 names listed above, and expected sizes:
-- main: 24/48/96/192/512
-- panel: 23×23 and 46×46 (@2x)
-
-This gives you a reliable “repo sanity check” in /admin without guessing.
-
-### 4) Align plugin UI version markers (optional but strongly recommended)
-Your `adobe-plugin/index.html` still shows `v1.1.4` and loads assets with `?v=1.1.4`.
-This doesn’t directly cause the icon placeholder problem, but it makes troubleshooting harder because you can’t easily confirm what is loaded.
-
-I will update:
-- `styles.css?v=1.1.5`
-- `index.js?v=1.1.5`
-- footer badge `v1.1.5`
-(and any other visible version markers)
-
-## How you’ll test end-to-end in Photoshop 2026 (after I implement)
-1) Pull latest repo locally (`git pull`)
-2) Confirm local folder now contains the exact manifest paths:
-   - `adobe-plugin/icons/icon-24.v1.1.5.png` etc (all 9)
-3) Run:
-   ```bash
-   cd adobe-plugin
-   ./scripts/dev-reload.sh
-   ```
-4) In UXP Developer Tools:
-   - Remove the plugin
+### Part 3: Your Local Action (After I Make Changes)
+After I update the manifest, you will need to:
+1. Pull the latest changes (`git pull`)
+2. In UXP Developer Tools:
+   - Remove the existing plugin
    - Add the plugin folder again
    - Reload
-5) Verify in Photoshop:
-   - The Plugins panel entry shows the pink shield icon (not gray placeholder)
-   - The panel toolbar icon also shows correctly
+3. Verify in Photoshop that the pink shield icons appear
 
-## Notes / likely outcome
-Given your screenshot still shows placeholders even after “dev reload”, the path mismatch is the most consistent explanation. Once the files exist at the exact manifest paths, UXP should stop falling back.
+## Technical Details
 
-## Small clarifying questions (to avoid rework)
-- When you “Add” the plugin in UXP Dev Tools, are you selecting the folder that contains `manifest.json` directly (the `adobe-plugin/` folder), not the repo root?
-- After pulling, did you see an `adobe-plugin/icons/` folder populated with the new `*.v1.1.5.png` files, or was it empty?
+### Files to modify:
+1. `adobe-plugin/manifest.json` - Update all icon paths to reference existing files
+2. `src/components/admin/AdobeIconValidator.tsx` - Update expected icon names to match
 
-(These won’t block implementation, but they help confirm the fix will map to your local setup.)
+### Why this will work:
+The existing icons (`icon-24 (1).png`, `panel-dark-v3.png`, etc.) are already in the repository and should be valid PNGs with transparency. By pointing the manifest to these files directly (without the `icons/` subfolder), UXP will be able to find and load them.
+
+### Future cleanup (optional):
+Once confirmed working, the files could be renamed to cleaner names and the `icons/` folder removed entirely, but this is lower priority than getting the plugin functional.
+
