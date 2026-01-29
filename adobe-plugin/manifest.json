@@ -5,11 +5,11 @@
   "version": "1.1.5",
   "main": "index.html",
   "icons": [
-    { "width": 24, "height": 24, "path": "icons/icon-24.v1.1.5.png" },
-    { "width": 48, "height": 48, "path": "icons/icon-48.v1.1.5.png" },
-    { "width": 96, "height": 96, "path": "icons/icon-96.v1.1.5.png" },
-    { "width": 192, "height": 192, "path": "icons/icon-192.v1.1.5.png" },
-    { "width": 512, "height": 512, "path": "icons/icon-512.v1.1.5.png" }
+    { "width": 24, "height": 24, "path": "icon-24 (1).png" },
+    { "width": 48, "height": 48, "path": "icon-48 (1).png" },
+    { "width": 96, "height": 96, "path": "icon-96 (1).png" },
+    { "width": 192, "height": 192, "path": "icon-192 (1).png" },
+    { "width": 512, "height": 512, "path": "icon-512 (1).png" }
   ],
   "host": [
     {
@@ -34,28 +34,28 @@
         {
           "width": 23,
           "height": 23,
-          "path": "icons/panel-dark.v1.1.5.png",
+          "path": "panel-dark-v3.png",
           "scale": [1],
           "theme": ["darkest", "dark"]
         },
         {
           "width": 23,
           "height": 23,
-          "path": "icons/panel-dark@2x.v1.1.5.png",
+          "path": "panel-dark-v3@2x.png",
           "scale": [2],
           "theme": ["darkest", "dark"]
         },
         {
           "width": 23,
           "height": 23,
-          "path": "icons/panel-light.v1.1.5.png",
+          "path": "panel-light-v3.png",
           "scale": [1],
           "theme": ["lightest", "light"]
         },
         {
           "width": 23,
           "height": 23,
-          "path": "icons/panel-light@2x.v1.1.5.png",
+          "path": "panel-light-v3@2x.png",
           "scale": [2],
           "theme": ["lightest", "light"]
         }
