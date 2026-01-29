@@ -1,52 +1,89 @@
 
 
 ## Problem Summary
-The Adobe UXP plugin still shows gray placeholder icons because the required icon files do not exist at the paths specified in `manifest.json`. Multiple previous attempts to fix this have not succeeded because:
+Adobe UXP cannot load icon files with **spaces or parentheses** in their filenames. The current icons are named `icon-24 (1).png`, `icon-48 (1).png`, etc., and this causes UXP to fall back to gray placeholder icons.
 
-1. The `adobe-plugin/icons/` folder is essentially empty
-2. The icons that exist are in the wrong location (`adobe-plugin/` root) with wrong names (`icon-24 (1).png`, `panel-dark-v3.png`)
-3. The Lovable image generator cannot create files in arbitrary folders like `adobe-plugin/icons/`
+## Solution: Rename Icons to Simple Filenames
 
-## Solution: Two-Part Approach
+### Step 1: Rename All Icon Files
+Remove spaces and parentheses from all icon filenames:
 
-### Part 1: Change manifest.json to use the icons that already exist
-Instead of trying to create new files, update `manifest.json` to reference the icons that are already in the repo:
-
-| Current manifest path | Change to |
+| Current Name | New Name |
 |---|---|
-| `icons/icon-24.v1.1.5.png` | `icon-24 (1).png` |
-| `icons/icon-48.v1.1.5.png` | `icon-48 (1).png` |
-| `icons/icon-96.v1.1.5.png` | `icon-96 (1).png` |
-| `icons/icon-192.v1.1.5.png` | `icon-192 (1).png` |
-| `icons/icon-512.v1.1.5.png` | `icon-512 (1).png` |
-| `icons/panel-dark.v1.1.5.png` | `panel-dark-v3.png` |
-| `icons/panel-dark@2x.v1.1.5.png` | `panel-dark-v3@2x.png` |
-| `icons/panel-light.v1.1.5.png` | `panel-light-v3.png` |
-| `icons/panel-light@2x.v1.1.5.png` | `panel-light-v3@2x.png` |
+| `icon-24 (1).png` | `icon-24.png` |
+| `icon-48 (1).png` | `icon-48.png` |
+| `icon-96 (1).png` | `icon-96.png` |
+| `icon-192 (1).png` | `icon-192.png` |
+| `icon-512 (1).png` | `icon-512.png` |
+| `panel-dark-v3.png` | `panel-dark.png` |
+| `panel-dark-v3@2x.png` | `panel-dark@2x.png` |
+| `panel-light-v3.png` | `panel-light.png` |
+| `panel-light-v3@2x.png` | `panel-light@2x.png` |
 
-This makes the manifest point to files that actually exist, eliminating the path mismatch.
+### Step 2: Update manifest.json
+Update all icon paths to reference the new simple filenames:
 
-### Part 2: Update the Admin Icon Validator
-Update `src/components/admin/AdobeIconValidator.tsx` to validate the actual filenames being used.
+```json
+"icons": [
+  { "width": 24, "height": 24, "path": "icon-24.png" },
+  { "width": 48, "height": 48, "path": "icon-48.png" },
+  { "width": 96, "height": 96, "path": "icon-96.png" },
+  { "width": 192, "height": 192, "path": "icon-192.png" },
+  { "width": 512, "height": 512, "path": "icon-512.png" }
+]
+```
 
-### Part 3: Your Local Action (After I Make Changes)
-After I update the manifest, you will need to:
-1. Pull the latest changes (`git pull`)
-2. In UXP Developer Tools:
-   - Remove the existing plugin
-   - Add the plugin folder again
-   - Reload
-3. Verify in Photoshop that the pink shield icons appear
+And for panel icons:
+```json
+"icons": [
+  { "width": 23, "height": 23, "path": "panel-dark.png", "scale": [1], "theme": ["darkest", "dark"] },
+  { "width": 23, "height": 23, "path": "panel-dark@2x.png", "scale": [2], "theme": ["darkest", "dark"] },
+  { "width": 23, "height": 23, "path": "panel-light.png", "scale": [1], "theme": ["lightest", "light"] },
+  { "width": 23, "height": 23, "path": "panel-light@2x.png", "scale": [2], "theme": ["lightest", "light"] }
+]
+```
 
-## Technical Details
+### Step 3: Update version to 1.1.6
+Bump the manifest version to ensure UXP sees this as a new version:
+- Change `"version": "1.1.5"` → `"version": "1.1.6"`
+- Update `index.html` asset references: `styles.css?v=1.1.6`, `index.js?v=1.1.6`
+- Update `styles.css` header comment to `v1.1.6`
 
-### Files to modify:
-1. `adobe-plugin/manifest.json` - Update all icon paths to reference existing files
-2. `src/components/admin/AdobeIconValidator.tsx` - Update expected icon names to match
+### Step 4: Update Admin Icon Validator
+Update `AdobeIconValidator.tsx` to expect the new simple filenames.
 
-### Why this will work:
-The existing icons (`icon-24 (1).png`, `panel-dark-v3.png`, etc.) are already in the repository and should be valid PNGs with transparency. By pointing the manifest to these files directly (without the `icons/` subfolder), UXP will be able to find and load them.
+### Files to Modify
 
-### Future cleanup (optional):
-Once confirmed working, the files could be renamed to cleaner names and the `icons/` folder removed entirely, but this is lower priority than getting the plugin functional.
+1. **adobe-plugin/manifest.json** - Update all icon paths and bump version
+2. **adobe-plugin/index.html** - Update version references in CSS/JS links
+3. **adobe-plugin/styles.css** - Update version in header comment
+4. **src/components/admin/AdobeIconValidator.tsx** - Update expected icon names
+
+### Your Local Action (After I Make Changes)
+
+Since I cannot rename files in the repo, you will need to:
+
+1. **Pull the latest changes** (`git pull`)
+2. **Locally rename the icon files** in your `adobe-plugin/` folder:
+   - Rename `icon-24 (1).png` → `icon-24.png`
+   - Rename `icon-48 (1).png` → `icon-48.png`
+   - Rename `icon-96 (1).png` → `icon-96.png`
+   - Rename `icon-192 (1).png` → `icon-192.png`
+   - Rename `icon-512 (1).png` → `icon-512.png`
+   - Rename `panel-dark-v3.png` → `panel-dark.png`
+   - Rename `panel-dark-v3@2x.png` → `panel-dark@2x.png`
+   - Rename `panel-light-v3.png` → `panel-light.png`
+   - Rename `panel-light-v3@2x.png` → `panel-light@2x.png`
+
+3. **Commit and push the renamed files** to update the repo
+4. **In UXP Developer Tools**: Remove and re-add the plugin folder
+5. **Verify in Photoshop** that the pink shield icons appear
+
+### Why This Will Work
+
+The `@` symbol in `panel-dark@2x.png` is standard convention and works fine in UXP. The problem is specifically:
+- **Spaces** (` `) in filenames
+- **Parentheses** (`(` and `)`) in filenames
+
+By removing these special characters, UXP will be able to locate and load the icon files correctly.
 
