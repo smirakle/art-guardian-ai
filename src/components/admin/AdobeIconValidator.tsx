@@ -19,16 +19,16 @@ interface IconValidationResult {
 
 const EXPECTED_ICONS = [
   // Main plugin icons (files in adobe-plugin/ root)
-  { name: "icon-24 (1).png", width: 24, height: 24, category: "main" },
-  { name: "icon-48 (1).png", width: 48, height: 48, category: "main" },
-  { name: "icon-96 (1).png", width: 96, height: 96, category: "main" },
-  { name: "icon-192 (1).png", width: 192, height: 192, category: "main" },
-  { name: "icon-512 (1).png", width: 512, height: 512, category: "main" },
+  { name: "icon-24.png", width: 24, height: 24, category: "main" },
+  { name: "icon-48.png", width: 48, height: 48, category: "main" },
+  { name: "icon-96.png", width: 96, height: 96, category: "main" },
+  { name: "icon-192.png", width: 192, height: 192, category: "main" },
+  { name: "icon-512.png", width: 512, height: 512, category: "main" },
   // Panel toolbar icons (files in adobe-plugin/ root)
-  { name: "panel-dark-v3.png", width: 23, height: 23, category: "panel" },
-  { name: "panel-dark-v3@2x.png", width: 46, height: 46, category: "panel" },
-  { name: "panel-light-v3.png", width: 23, height: 23, category: "panel" },
-  { name: "panel-light-v3@2x.png", width: 46, height: 46, category: "panel" },
+  { name: "panel-dark.png", width: 23, height: 23, category: "panel" },
+  { name: "panel-dark@2x.png", width: 46, height: 46, category: "panel" },
+  { name: "panel-light.png", width: 23, height: 23, category: "panel" },
+  { name: "panel-light@2x.png", width: 46, height: 46, category: "panel" },
 ];
 
 const AdobeIconValidator = () => {
