@@ -15,19 +15,19 @@ interface IconConfig {
   theme?: "dark" | "light";
 }
 
-// Cache-busted filenames to match manifest.json v1.1.5
+// Clean filenames matching manifest.json (v1.1.7) - no version suffix needed
 const ICON_CONFIGS: IconConfig[] = [
   // Main plugin icons
-  { name: "icon-24.png", downloadName: "icon-24.v1.1.5.png", width: 24, height: 24, category: "main" },
-  { name: "icon-48.png", downloadName: "icon-48.v1.1.5.png", width: 48, height: 48, category: "main" },
-  { name: "icon-96.png", downloadName: "icon-96.v1.1.5.png", width: 96, height: 96, category: "main" },
-  { name: "icon-192.png", downloadName: "icon-192.v1.1.5.png", width: 192, height: 192, category: "main" },
-  { name: "icon-512.png", downloadName: "icon-512.v1.1.5.png", width: 512, height: 512, category: "main" },
+  { name: "icon-24.png", downloadName: "icon-24.png", width: 24, height: 24, category: "main" },
+  { name: "icon-48.png", downloadName: "icon-48.png", width: 48, height: 48, category: "main" },
+  { name: "icon-96.png", downloadName: "icon-96.png", width: 96, height: 96, category: "main" },
+  { name: "icon-192.png", downloadName: "icon-192.png", width: 192, height: 192, category: "main" },
+  { name: "icon-512.png", downloadName: "icon-512.png", width: 512, height: 512, category: "main" },
   // Panel toolbar icons
-  { name: "panel-dark.png", downloadName: "panel-dark.v1.1.5.png", width: 23, height: 23, category: "panel", theme: "dark" },
-  { name: "panel-dark@2x.png", downloadName: "panel-dark@2x.v1.1.5.png", width: 46, height: 46, category: "panel", theme: "dark" },
-  { name: "panel-light.png", downloadName: "panel-light.v1.1.5.png", width: 23, height: 23, category: "panel", theme: "light" },
-  { name: "panel-light@2x.png", downloadName: "panel-light@2x.v1.1.5.png", width: 46, height: 46, category: "panel", theme: "light" },
+  { name: "panel-dark.png", downloadName: "panel-dark.png", width: 23, height: 23, category: "panel", theme: "dark" },
+  { name: "panel-dark@2x.png", downloadName: "panel-dark@2x.png", width: 46, height: 46, category: "panel", theme: "dark" },
+  { name: "panel-light.png", downloadName: "panel-light.png", width: 23, height: 23, category: "panel", theme: "light" },
+  { name: "panel-light@2x.png", downloadName: "panel-light@2x.png", width: 46, height: 46, category: "panel", theme: "light" },
 ];
 
 interface GeneratedIcon {
