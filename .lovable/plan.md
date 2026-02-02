@@ -1,75 +1,58 @@
 
+## Problem
 
-## Problem Summary
+The second icon (plugin list entry) is still gray because the **main plugin icons** (`icon-24.png`, `icon-48.png`) in your local folder are not the correct pink shield versions.
 
-The gray icons persist because there's a **sync mismatch** between the Lovable repository and your local folder:
-
-| Location | Files Present | UXP Can Load? |
-|---|---|---|
-| Lovable Repo | `icon-24.png`, `panel-dark.png` (clean names) | N/A |
-| Your Local Folder | `icon-24 (1).png`, `panel-dark-v3.png` (old names) | NO - UXP can't find what manifest expects |
-| manifest.json | Expects `icon-24.png`, `panel-dark.png` | - |
-
-UXP Developer Tools loads the plugin **directly from your local filesystem**, not from the Lovable preview URL. So even though:
-- The repo is correct
-- The Icon Validator passes
-- The manifest references the right filenames
-
-...your local folder hasn't been updated with the renamed files.
+| Icon Location | File Used | Current State |
+|---------------|-----------|---------------|
+| Plugins panel header | `panel-dark.png` | ✅ Pink |
+| Plugin list entry | `icon-24.png` or `icon-48.png` | ❌ Gray |
 
 ## Solution
 
-You need to sync your local folder with the repository. There are two ways:
+### Step 1: Generate Fresh Icons
 
-### Option A: Git Pull (Recommended)
+1. Go to **Admin → Plugins → Icons** tab in the web app
+2. Click **"Generate All Icons"**
+3. Click **"Download All"**
 
-If your local folder is a git clone of the repo:
+### Step 2: Rename Downloaded Files
 
-```bash
-cd /path/to/your/project
-git pull origin main
-```
+The generator downloads files with version suffixes. You need to remove them:
 
-This will pull the renamed files (`icon-24.png`, `panel-dark.png`, etc.) from the repo to your local machine.
+| Downloaded Name | Rename To |
+|-----------------|-----------|
+| `icon-24.v1.1.5.png` | `icon-24.png` |
+| `icon-48.v1.1.5.png` | `icon-48.png` |
+| `icon-96.v1.1.5.png` | `icon-96.png` |
+| `icon-192.v1.1.5.png` | `icon-192.png` |
+| `icon-512.v1.1.5.png` | `icon-512.png` |
 
-### Option B: Manual Rename
+*(Panel icons you already have working, but you can update them too if needed)*
 
-If your local folder is NOT a git clone (standalone copy), manually rename the files:
+### Step 3: Replace Local Files
 
-| Current Local Name | Rename To |
-|---|---|
-| `icon-24 (1).png` | `icon-24.png` |
-| `icon-48 (1).png` | `icon-48.png` |
-| `icon-96 (1).png` | `icon-96.png` |
-| `icon-192 (1).png` | `icon-192.png` |
-| `icon-512 (1).png` | `icon-512.png` |
-| `panel-dark-v3.png` | `panel-dark.png` |
-| `panel-dark-v3@2x.png` | `panel-dark@2x.png` |
-| `panel-light-v3.png` | `panel-light.png` |
-| `panel-light-v3@2x.png` | `panel-light@2x.png` |
+Copy the renamed files into your local `adobe-plugin/` folder, replacing the existing ones.
 
-### After Syncing
+### Step 4: Reload in UXP
 
-1. **Verify** the local folder has the clean filenames
-2. In UXP Developer Tools:
-   - **Remove** the existing plugin entry
-   - **Add** the folder again (click "Add" and select your `adobe-plugin/` folder)
-   - **Reload**
-3. Check Photoshop — the pink shield icons should now appear
+1. In UXP Developer Tools: **Remove** the plugin
+2. **Add** the `adobe-plugin/` folder again
+3. Click **Load**
+4. Both icons should now be pink
 
-## Why This Will Work
+## Technical Detail
 
-Once your local folder has files matching what `manifest.json` expects, UXP will be able to locate and load them:
+The Icon Generator uses Canvas to draw a pink gradient rounded rectangle (#ec4899 → #f43f5e) for all icon sizes. For icons ≥48px, it also adds a white shield symbol. For 24px, it's just the pink rounded square - which is what you see in the header already.
 
-```text
-manifest.json says:     "path": "icon-24.png"
-                              ↓
-Local folder contains:  icon-24.png  ✅ (found!)
-                              ↓
-UXP loads and displays the pink shield icon
-```
+## Alternative: Quick Fix
 
-## No Code Changes Needed
+If you just want to quickly fix the 24px icon, you can:
 
-The repository is already correct (v1.1.7 with clean filenames). This is purely a local sync issue on your machine.
+1. In Finder, duplicate `panel-dark.png` (which is 23px and pink)
+2. Open in Preview, resize to 24×24 pixels
+3. Save as `icon-24.png`
+4. Replace the file in your `adobe-plugin/` folder
+5. Reload in UXP
 
+This gets both icons pink with minimal effort.
