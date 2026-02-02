@@ -1,89 +1,63 @@
 
+Goal
+- Fix the Photoshop/Illustrator UXP plugin “default/gray placeholder” icons so they render the pink shield icons in the Plugins list and panel.
 
-## Problem Summary
-Adobe UXP cannot load icon files with **spaces or parentheses** in their filenames. The current icons are named `icon-24 (1).png`, `icon-48 (1).png`, etc., and this causes UXP to fall back to gray placeholder icons.
+What I found in your repo right now (why it’s still broken)
+- Your manifest is already updated to v1.1.6 and expects these files in adobe-plugin/:
+  - icon-24.png, icon-48.png, icon-96.png, icon-192.png, icon-512.png
+  - panel-dark.png, panel-dark@2x.png, panel-light.png, panel-light@2x.png
+- But your actual files currently present are still the old names with spaces/parentheses and “-v3”:
+  - icon-24 (1).png, icon-48 (1).png, icon-96 (1).png, icon-192 (1).png, icon-512 (1).png
+  - panel-dark-v3.png, panel-dark-v3@2x.png, panel-light-v3.png, panel-light-v3@2x.png
+- So UXP can’t find the icon files the manifest references, and it falls back to the gray placeholders.
+- Also, adobe-plugin/icons/ contains an odd nested path (“adobe-plugin/icons/adobe-plugin/icons”), which is a red flag for an accidental folder nesting issue. We should remove/clean that so it doesn’t confuse future tooling.
 
-## Solution: Rename Icons to Simple Filenames
+Fix strategy (repo-side, real assets, no mocks)
+1) Normalize the icon filenames inside the repository (not just in your local machine)
+   - Rename (git move) these existing files in adobe-plugin/:
+     - icon-24 (1).png  -> icon-24.png
+     - icon-48 (1).png  -> icon-48.png
+     - icon-96 (1).png  -> icon-96.png
+     - icon-192 (1).png -> icon-192.png
+     - icon-512 (1).png -> icon-512.png
+     - panel-dark-v3.png      -> panel-dark.png
+     - panel-dark-v3@2x.png   -> panel-dark@2x.png
+     - panel-light-v3.png     -> panel-light.png
+     - panel-light-v3@2x.png  -> panel-light@2x.png
+   - This makes the filesystem match what manifest.json already references.
 
-### Step 1: Rename All Icon Files
-Remove spaces and parentheses from all icon filenames:
+2) Clean up the stray nested icons directory
+   - Inspect what exactly is inside adobe-plugin/icons/adobe-plugin/icons (it likely shouldn’t exist).
+   - Remove the accidental nested directory if it’s empty or redundant.
+   - Keep either:
+     - Option A (recommended, simplest): store icons in adobe-plugin/ root (current manifest already does this), and keep adobe-plugin/icons empty or remove it if unused.
+     - Option B: store icons in adobe-plugin/icons/ and update manifest paths to “icons/icon-24.png”, etc. (only if you explicitly want that structure).
+   - Given your current manifest and validator are already aligned to “adobe-plugin/ root”, Option A is the least-risk change.
 
-| Current Name | New Name |
-|---|---|
-| `icon-24 (1).png` | `icon-24.png` |
-| `icon-48 (1).png` | `icon-48.png` |
-| `icon-96 (1).png` | `icon-96.png` |
-| `icon-192 (1).png` | `icon-192.png` |
-| `icon-512 (1).png` | `icon-512.png` |
-| `panel-dark-v3.png` | `panel-dark.png` |
-| `panel-dark-v3@2x.png` | `panel-dark@2x.png` |
-| `panel-light-v3.png` | `panel-light.png` |
-| `panel-light-v3@2x.png` | `panel-light@2x.png` |
+3) Keep existing version bump behavior, optionally bump again for stubborn caching
+   - You already bumped to 1.1.6 in manifest/index.html/styles.css.
+   - If you still see stale behavior after the filenames are fixed in the repo, bump to 1.1.7 (manifest + index.html query params + styles.css header) to fully break UXP caching.
 
-### Step 2: Update manifest.json
-Update all icon paths to reference the new simple filenames:
+4) Validation (in-app + in-UXP)
+   - In the Lovable Admin > Plugins > Icon Validator:
+     - It should report all required icons present with correct dimensions (23/46 and 24/48/96/192/512).
+   - In UXP Developer Tools:
+     - Remove plugin
+     - Add plugin folder (adobe-plugin/)
+     - Reload
+   - Confirm:
+     - Plugin list shows the custom icon (not gray placeholder)
+     - Panel icon in header/tool area shows correctly for dark/light themes
 
-```json
-"icons": [
-  { "width": 24, "height": 24, "path": "icon-24.png" },
-  { "width": 48, "height": 48, "path": "icon-48.png" },
-  { "width": 96, "height": 96, "path": "icon-96.png" },
-  { "width": 192, "height": 192, "path": "icon-192.png" },
-  { "width": 512, "height": 512, "path": "icon-512.png" }
-]
-```
+Expected outcome
+- Your screenshot’s gray placeholder icon will be replaced by the correct shield icon because UXP will finally find the files referenced by manifest.json.
 
-And for panel icons:
-```json
-"icons": [
-  { "width": 23, "height": 23, "path": "panel-dark.png", "scale": [1], "theme": ["darkest", "dark"] },
-  { "width": 23, "height": 23, "path": "panel-dark@2x.png", "scale": [2], "theme": ["darkest", "dark"] },
-  { "width": 23, "height": 23, "path": "panel-light.png", "scale": [1], "theme": ["lightest", "light"] },
-  { "width": 23, "height": 23, "path": "panel-light@2x.png", "scale": [2], "theme": ["lightest", "light"] }
-]
-```
+Implementation notes (what I’ll do after you approve this plan)
+- Perform the actual repo-side renames (so you don’t have to do it locally).
+- Clean up the accidental nested icons directory.
+- If needed, bump version to 1.1.7 to ensure caching is not hiding the fix.
 
-### Step 3: Update version to 1.1.6
-Bump the manifest version to ensure UXP sees this as a new version:
-- Change `"version": "1.1.5"` → `"version": "1.1.6"`
-- Update `index.html` asset references: `styles.css?v=1.1.6`, `index.js?v=1.1.6`
-- Update `styles.css` header comment to `v1.1.6`
-
-### Step 4: Update Admin Icon Validator
-Update `AdobeIconValidator.tsx` to expect the new simple filenames.
-
-### Files to Modify
-
-1. **adobe-plugin/manifest.json** - Update all icon paths and bump version
-2. **adobe-plugin/index.html** - Update version references in CSS/JS links
-3. **adobe-plugin/styles.css** - Update version in header comment
-4. **src/components/admin/AdobeIconValidator.tsx** - Update expected icon names
-
-### Your Local Action (After I Make Changes)
-
-Since I cannot rename files in the repo, you will need to:
-
-1. **Pull the latest changes** (`git pull`)
-2. **Locally rename the icon files** in your `adobe-plugin/` folder:
-   - Rename `icon-24 (1).png` → `icon-24.png`
-   - Rename `icon-48 (1).png` → `icon-48.png`
-   - Rename `icon-96 (1).png` → `icon-96.png`
-   - Rename `icon-192 (1).png` → `icon-192.png`
-   - Rename `icon-512 (1).png` → `icon-512.png`
-   - Rename `panel-dark-v3.png` → `panel-dark.png`
-   - Rename `panel-dark-v3@2x.png` → `panel-dark@2x.png`
-   - Rename `panel-light-v3.png` → `panel-light.png`
-   - Rename `panel-light-v3@2x.png` → `panel-light@2x.png`
-
-3. **Commit and push the renamed files** to update the repo
-4. **In UXP Developer Tools**: Remove and re-add the plugin folder
-5. **Verify in Photoshop** that the pink shield icons appear
-
-### Why This Will Work
-
-The `@` symbol in `panel-dark@2x.png` is standard convention and works fine in UXP. The problem is specifically:
-- **Spaces** (` `) in filenames
-- **Parentheses** (`(` and `)`) in filenames
-
-By removing these special characters, UXP will be able to locate and load the icon files correctly.
-
+Edge cases to watch
+- Case sensitivity: icon filenames must match exactly (Linux/macOS can be case-sensitive).
+- PNG format/transparency: icons must be true PNG with alpha (your existing “(1)” and “-v3” files appear to already be valid assets, so this should be fine).
+- Nested folder confusion: leaving the weird nested icons folder could keep future tools pointing to the wrong place, so we’ll remove it if it’s not intentionally used.
