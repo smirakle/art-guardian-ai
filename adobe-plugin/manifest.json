@@ -39,8 +39,8 @@
           "theme": ["darkest", "dark"]
         },
         {
-          "width": 23,
-          "height": 23,
+          "width": 46,
+          "height": 46,
           "path": "panel-dark@2x.png",
           "scale": [2],
           "theme": ["darkest", "dark"]
@@ -53,8 +53,8 @@
           "theme": ["lightest", "light"]
         },
         {
-          "width": 23,
-          "height": 23,
+          "width": 46,
+          "height": 46,
           "path": "panel-light@2x.png",
           "scale": [2],
           "theme": ["lightest", "light"]
