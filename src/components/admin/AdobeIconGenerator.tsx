@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Download, Sparkles, Check, ImageIcon, Package } from "lucide-react";
+import { Download, Sparkles, Check, ImageIcon, Package, AlertTriangle, CheckSquare } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 interface IconConfig {
@@ -405,18 +405,57 @@ const AdobeIconGenerator = () => {
             </CardContent>
           </Card>
 
-          {/* Instructions */}
+          {/* Critical Warning */}
+          <Card className="border-destructive/50 bg-destructive/5">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg flex items-center gap-2 text-destructive">
+                <AlertTriangle className="h-5 w-5" />
+                Important: Correct Folder Location
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm space-y-2">
+              <p className="font-medium">
+                Copy icons to <code className="px-1.5 py-0.5 rounded bg-destructive/10 font-mono text-destructive">adobe-plugin/</code> (root folder, next to <code className="px-1 py-0.5 rounded bg-muted font-mono">manifest.json</code>)
+              </p>
+              <p className="text-muted-foreground">
+                ⚠️ Do <strong>NOT</strong> put them in <code className="px-1 py-0.5 rounded bg-muted font-mono">adobe-plugin/icons/</code> — the manifest expects files in the root folder.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* UXP Installation Checklist */}
           <Card className="bg-muted/50">
             <CardHeader>
-              <CardTitle className="text-lg">Next Steps</CardTitle>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <CheckSquare className="h-5 w-5 text-primary" />
+                UXP Installation Checklist
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm text-muted-foreground">
-              <p>1. Download all icons using the button above</p>
-              <p>2. Copy the downloaded files to your local <code className="px-1 py-0.5 rounded bg-muted font-mono">adobe-plugin/icons/</code> folder</p>
-              <p>3. Run <code className="px-1 py-0.5 rounded bg-muted font-mono">./scripts/dev-reload.sh</code></p>
-              <p>4. Re-add the plugin in UXP Developer Tools</p>
-              <p className="text-green-600 dark:text-green-400 font-medium mt-4">
-                ✓ Icons now have transparent backgrounds - no more gray placeholders!
+            <CardContent className="space-y-3 text-sm">
+              <div className="space-y-2">
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input type="checkbox" className="mt-1 rounded" />
+                  <span>Download all icons using the button above</span>
+                </label>
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input type="checkbox" className="mt-1 rounded" />
+                  <span>Copy files to <code className="px-1 py-0.5 rounded bg-muted font-mono">adobe-plugin/</code> folder (same folder as <code className="px-1 py-0.5 rounded bg-muted font-mono">manifest.json</code>)</span>
+                </label>
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input type="checkbox" className="mt-1 rounded" />
+                  <span>Verify sizes in Finder: <code className="px-1 py-0.5 rounded bg-muted font-mono">panel-dark.png</code> = <strong>23×23</strong>, <code className="px-1 py-0.5 rounded bg-muted font-mono">panel-dark@2x.png</code> = <strong>46×46</strong></span>
+                </label>
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input type="checkbox" className="mt-1 rounded" />
+                  <span>In UXP Developer Tools: <strong>Remove</strong> plugin, then <strong>Add</strong>, then <strong>Load</strong> (not just Reload)</span>
+                </label>
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input type="checkbox" className="mt-1 rounded" />
+                  <span>Select the <code className="px-1 py-0.5 rounded bg-muted font-mono">adobe-plugin/</code> folder (not repo root) when adding</span>
+                </label>
+              </div>
+              <p className="text-green-600 dark:text-green-400 font-medium pt-2 border-t">
+                ✓ Follow all steps above to eliminate gray placeholder icons!
               </p>
             </CardContent>
           </Card>

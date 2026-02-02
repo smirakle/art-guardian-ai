@@ -381,23 +381,40 @@ const AdobeIconValidator = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-sm">
+                <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 mb-4">
+                  <p className="font-medium text-destructive">⚠️ Critical Path Requirement</p>
+                  <p className="text-muted-foreground mt-1">
+                    Icons must be placed in <code className="px-1 py-0.5 rounded bg-muted font-mono text-xs">adobe-plugin/</code> (root folder, next to <code className="px-1 py-0.5 rounded bg-muted font-mono text-xs">manifest.json</code>).
+                    <br />
+                    <strong>Do NOT use</strong> <code className="px-1 py-0.5 rounded bg-muted font-mono text-xs">adobe-plugin/icons/</code> — UXP will show gray placeholders.
+                  </p>
+                </div>
+
                 <p><strong>If icons show "Not Found":</strong></p>
                 <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
                   <li>Go to Icon Generator tab and generate new icons</li>
-                  <li>Download and place them in <code className="px-1 py-0.5 rounded bg-muted font-mono text-xs">adobe-plugin/icons/</code></li>
+                  <li>Download and place them in <code className="px-1 py-0.5 rounded bg-muted font-mono text-xs">adobe-plugin/</code> (same folder as manifest.json)</li>
                   <li>Commit and push to GitHub, then pull locally</li>
                 </ul>
                 
                 <p><strong>If icons show "Wrong Size":</strong></p>
                 <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
-                  <li>Regenerate the icons with the Icon Generator</li>
-                  <li>Ensure you're downloading the correct files</li>
+                  <li>Panel icons must be <strong>exactly</strong> 23×23 (1x) and 46×46 (2x)</li>
+                  <li>Use Finder → Get Info to verify pixel dimensions</li>
+                  <li>Regenerate with the Icon Generator if sizes don't match</li>
                 </ul>
                 
                 <p><strong>If icons show "No Transparency":</strong></p>
                 <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
                   <li>The PNG may have been saved with a solid background</li>
                   <li>Regenerate using the Icon Generator (uses true alpha)</li>
+                </ul>
+
+                <p><strong>Still seeing gray icons after copying?</strong></p>
+                <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                  <li>In UXP Developer Tools: <strong>Remove</strong> the plugin, <strong>Add</strong> it again, then <strong>Load</strong></li>
+                  <li>Make sure you select the <code className="px-1 py-0.5 rounded bg-muted font-mono text-xs">adobe-plugin/</code> folder (not the repository root)</li>
+                  <li>Clear UXP cache: <code className="px-1 py-0.5 rounded bg-muted font-mono text-xs">~/Library/Caches/Adobe/UXP</code></li>
                 </ul>
               </CardContent>
             </Card>
