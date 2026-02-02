@@ -1,58 +1,50 @@
 
+
 ## Problem
 
-The second icon (plugin list entry) is still gray because the **main plugin icons** (`icon-24.png`, `icon-48.png`) in your local folder are not the correct pink shield versions.
+The plugin list entry icon remains gray while the panel header icon is pink. This happens because:
 
-| Icon Location | File Used | Current State |
-|---------------|-----------|---------------|
-| Plugins panel header | `panel-dark.png` | ✅ Pink |
-| Plugin list entry | `icon-24.png` or `icon-48.png` | ❌ Gray |
+1. **Repository icons may be placeholders** - The `icon-24.png` and `icon-48.png` files in the repo might not be the actual pink gradient icons
+2. **Download names require renaming** - The Icon Generator downloads files as `icon-24.v1.1.5.png` requiring manual renaming to `icon-24.png`
 
 ## Solution
 
-### Step 1: Generate Fresh Icons
+### Part 1: Fix the Icon Generator Downloads
 
-1. Go to **Admin → Plugins → Icons** tab in the web app
-2. Click **"Generate All Icons"**
-3. Click **"Download All"**
+Update `AdobeIconGenerator.tsx` to download files with **clean filenames** (no version suffix):
 
-### Step 2: Rename Downloaded Files
-
-The generator downloads files with version suffixes. You need to remove them:
-
-| Downloaded Name | Rename To |
-|-----------------|-----------|
+| Current Download Name | New Download Name |
+|-----------------------|-------------------|
 | `icon-24.v1.1.5.png` | `icon-24.png` |
 | `icon-48.v1.1.5.png` | `icon-48.png` |
-| `icon-96.v1.1.5.png` | `icon-96.png` |
-| `icon-192.v1.1.5.png` | `icon-192.png` |
-| `icon-512.v1.1.5.png` | `icon-512.png` |
+| `panel-dark.v1.1.5.png` | `panel-dark.png` |
+| etc. | etc. |
 
-*(Panel icons you already have working, but you can update them too if needed)*
+This eliminates the need for manual renaming.
 
-### Step 3: Replace Local Files
+### Part 2: Add Pre-Generated Icons to Repository
 
-Copy the renamed files into your local `adobe-plugin/` folder, replacing the existing ones.
+Create a simple way to update the repository icons:
 
-### Step 4: Reload in UXP
+1. Add a "Copy to Clipboard as Base64" button in the generator
+2. Or provide a direct download link that matches exactly what the manifest expects
 
-1. In UXP Developer Tools: **Remove** the plugin
-2. **Add** the `adobe-plugin/` folder again
-3. Click **Load**
-4. Both icons should now be pink
+### Technical Changes
 
-## Technical Detail
+**File: `src/components/admin/AdobeIconGenerator.tsx`**
 
-The Icon Generator uses Canvas to draw a pink gradient rounded rectangle (#ec4899 → #f43f5e) for all icon sizes. For icons ≥48px, it also adds a white shield symbol. For 24px, it's just the pink rounded square - which is what you see in the header already.
+- Change `downloadName` in `ICON_CONFIGS` to use clean names:
+  ```typescript
+  { name: "icon-24.png", downloadName: "icon-24.png", width: 24, height: 24, category: "main" },
+  ```
 
-## Alternative: Quick Fix
+- The version comment can remain in the code for reference, but the actual download will use the manifest-compatible name
 
-If you just want to quickly fix the 24px icon, you can:
+### Outcome
 
-1. In Finder, duplicate `panel-dark.png` (which is 23px and pink)
-2. Open in Preview, resize to 24×24 pixels
-3. Save as `icon-24.png`
-4. Replace the file in your `adobe-plugin/` folder
-5. Reload in UXP
+After this change:
+1. User generates icons in the web app
+2. Downloads have clean names matching the manifest
+3. User copies files directly to `adobe-plugin/` folder (no renaming needed)
+4. Reload in UXP → both icons are pink
 
-This gets both icons pink with minimal effort.
