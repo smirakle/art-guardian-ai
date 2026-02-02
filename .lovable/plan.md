@@ -1,50 +1,52 @@
 
 
-## Problem
+## Problem Found
 
-The plugin list entry icon remains gray while the panel header icon is pink. This happens because:
+The `manifest.json` has incorrect dimensions for the `@2x` panel icons:
 
-1. **Repository icons may be placeholders** - The `icon-24.png` and `icon-48.png` files in the repo might not be the actual pink gradient icons
-2. **Download names require renaming** - The Icon Generator downloads files as `icon-24.v1.1.5.png` requiring manual renaming to `icon-24.png`
+| Icon File | Actual Size | Manifest Says | Issue |
+|-----------|-------------|---------------|-------|
+| `panel-dark.png` | 23×23 | 23×23 | ✅ Correct |
+| `panel-dark@2x.png` | 46×46 | **23×23** | ❌ Wrong |
+| `panel-light.png` | 23×23 | 23×23 | ✅ Correct |
+| `panel-light@2x.png` | 46×46 | **23×23** | ❌ Wrong |
+
+UXP validates that the declared dimensions match the actual file dimensions. When they don't match, it falls back to gray placeholder icons.
 
 ## Solution
 
-### Part 1: Fix the Icon Generator Downloads
+Update `adobe-plugin/manifest.json` to declare the correct dimensions for `@2x` icons (46×46 instead of 23×23).
 
-Update `AdobeIconGenerator.tsx` to download files with **clean filenames** (no version suffix):
+### Technical Change
 
-| Current Download Name | New Download Name |
-|-----------------------|-------------------|
-| `icon-24.v1.1.5.png` | `icon-24.png` |
-| `icon-48.v1.1.5.png` | `icon-48.png` |
-| `panel-dark.v1.1.5.png` | `panel-dark.png` |
-| etc. | etc. |
+**File:** `adobe-plugin/manifest.json`
 
-This eliminates the need for manual renaming.
+Change lines 44-46:
+```json
+{
+  "width": 46,
+  "height": 46,
+  "path": "panel-dark@2x.png",
+  "scale": [2],
+  "theme": ["darkest", "dark"]
+}
+```
 
-### Part 2: Add Pre-Generated Icons to Repository
+Change lines 56-60:
+```json
+{
+  "width": 46,
+  "height": 46,
+  "path": "panel-light@2x.png",
+  "scale": [2],
+  "theme": ["lightest", "light"]
+}
+```
 
-Create a simple way to update the repository icons:
+## After the Fix
 
-1. Add a "Copy to Clipboard as Base64" button in the generator
-2. Or provide a direct download link that matches exactly what the manifest expects
-
-### Technical Changes
-
-**File: `src/components/admin/AdobeIconGenerator.tsx`**
-
-- Change `downloadName` in `ICON_CONFIGS` to use clean names:
-  ```typescript
-  { name: "icon-24.png", downloadName: "icon-24.png", width: 24, height: 24, category: "main" },
-  ```
-
-- The version comment can remain in the code for reference, but the actual download will use the manifest-compatible name
-
-### Outcome
-
-After this change:
-1. User generates icons in the web app
-2. Downloads have clean names matching the manifest
-3. User copies files directly to `adobe-plugin/` folder (no renaming needed)
-4. Reload in UXP → both icons are pink
+1. Push the manifest change to GitHub
+2. Pull the changes to your local folder
+3. In UXP Developer Tools: **Remove** → **Add** → **Load**
+4. Both panel toolbar icons should now display as pink
 
