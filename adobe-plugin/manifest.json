@@ -1,0 +1,76 @@
+{
+  "manifestVersion": 5,
+  "id": "2ae4a9c1",
+  "name": "TSMO AI Protection",
+  "version": "2.0.0",
+  "main": "index.html",
+  "host": [
+    {
+      "app": "PS",
+      "minVersion": "24.0.0",
+      "maxVersion": "99.0.0"
+    },
+    {
+      "app": "AI",
+      "minVersion": "27.0.0",
+      "maxVersion": "99.0.0"
+    }
+  ],
+  "entrypoints": [
+    {
+      "type": "panel",
+      "id": "tsmoProtectionPanel",
+      "label": {
+        "default": "TSMO Protection"
+      },
+      "minimumSize": {
+        "width": 230,
+        "height": 400
+      },
+      "maximumSize": {
+        "width": 500,
+        "height": 900
+      },
+      "preferredDockedSize": {
+        "width": 280,
+        "height": 500
+      },
+      "preferredFloatingSize": {
+        "width": 280,
+        "height": 550
+      },
+      "icons": [
+        {
+          "width": 23,
+          "height": 23,
+          "path": "panel-dark.png",
+          "scale": [1, 2],
+          "theme": ["darkest", "dark", "medium"]
+        },
+        {
+          "width": 23,
+          "height": 23,
+          "path": "panel-light.png",
+          "scale": [1, 2],
+          "theme": ["lightest", "light"]
+        }
+      ]
+    }
+  ],
+  "requiredPermissions": {
+    "network": {
+      "domains": [
+        "https://utneaqmbyjwxaqrrarpc.supabase.co"
+      ]
+    },
+    "clipboard": "readAndWrite",
+    "allowCodeGenerationFromStrings": true
+  },
+  "icons": [
+    { "width": 24, "height": 24, "path": "icon-24.png" },
+    { "width": 48, "height": 48, "path": "icon-48.png" },
+    { "width": 96, "height": 96, "path": "icon-96.png" },
+    { "width": 192, "height": 192, "path": "icon-192.png" },
+    { "width": 512, "height": 512, "path": "icon-512.png" }
+  ]
+}
