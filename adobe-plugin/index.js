@@ -1,10 +1,12 @@
 /**
  * TSMO Watch - Adobe Creative Cloud Plugin
- * Version: 1.1.0
+ * Version: 1.1.9
  * 
  * Protects artwork from AI training with Style Cloaking,
  * Invisible Watermarking, and AI Training Blocks.
  */
+
+const PLUGIN_VERSION = '1.1.9';
 
 // ============= CONFIGURATION =============
 const SUPABASE_URL = 'https://utneaqmbyjwxaqrrarpc.supabase.co';
@@ -261,7 +263,7 @@ async function trackUpgradeClick() {
   try {
     const protectionCount = localStorage.getItem('tsmo_protection_count') || '0';
     
-    await fetch(`${API_BASE_URL}/adobe-plugin-api`, {
+    await fetch(`${API_URL}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1217,4 +1219,4 @@ function sleep(ms) {
 }
 
 // ============= INITIALIZATION COMPLETE =============
-console.log('TSMO Watch Plugin v1.0.7 loaded');
+console.log('TSMO Watch Plugin v1.1.9 loaded');
