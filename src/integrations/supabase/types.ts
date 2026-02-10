@@ -7833,7 +7833,10 @@ export type Database = {
           id: string
           image_fingerprints: string[] | null
           keywords_monitored: string[] | null
+          last_scan_at: string | null
+          platforms_enabled: string[] | null
           platforms_monitored: string[] | null
+          portfolio_id: string | null
           session_metadata: Json | null
           session_type: string
           started_at: string
@@ -7850,7 +7853,10 @@ export type Database = {
           id?: string
           image_fingerprints?: string[] | null
           keywords_monitored?: string[] | null
+          last_scan_at?: string | null
+          platforms_enabled?: string[] | null
           platforms_monitored?: string[] | null
+          portfolio_id?: string | null
           session_metadata?: Json | null
           session_type: string
           started_at?: string
@@ -7867,7 +7873,10 @@ export type Database = {
           id?: string
           image_fingerprints?: string[] | null
           keywords_monitored?: string[] | null
+          last_scan_at?: string | null
+          platforms_enabled?: string[] | null
           platforms_monitored?: string[] | null
+          portfolio_id?: string | null
           session_metadata?: Json | null
           session_type?: string
           started_at?: string
@@ -7881,6 +7890,13 @@ export type Database = {
             columns: ["artwork_id"]
             isOneToOne: false
             referencedRelation: "artwork"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "realtime_monitoring_sessions_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "portfolios"
             referencedColumns: ["id"]
           },
         ]
