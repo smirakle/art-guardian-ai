@@ -412,6 +412,8 @@ const AdobeIconValidator = () => {
 
                 <p><strong>Still seeing gray icons after copying?</strong></p>
                 <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                  <li>Manifest must declare panel icons at <strong>23×23</strong> with <code className="px-1 py-0.5 rounded bg-muted font-mono text-xs">scale: [1, 2]</code> — UXP auto-resolves the @2x file</li>
+                  <li>Do <strong>NOT</strong> declare separate 46×46 entries with <code className="px-1 py-0.5 rounded bg-muted font-mono text-xs">scale: [2]</code> — this confuses UXP</li>
                   <li>In UXP Developer Tools: <strong>Remove</strong> the plugin, <strong>Add</strong> it again, then <strong>Load</strong></li>
                   <li>Make sure you select the <code className="px-1 py-0.5 rounded bg-muted font-mono text-xs">adobe-plugin/</code> folder (not the repository root)</li>
                   <li>Clear UXP cache: <code className="px-1 py-0.5 rounded bg-muted font-mono text-xs">~/Library/Caches/Adobe/UXP</code></li>

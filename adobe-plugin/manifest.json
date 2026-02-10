@@ -35,28 +35,14 @@
           "width": 23,
           "height": 23,
           "path": "panel-dark.png",
-          "scale": [1],
-          "theme": ["darkest", "dark"]
-        },
-        {
-          "width": 46,
-          "height": 46,
-          "path": "panel-dark@2x.png",
-          "scale": [2],
+          "scale": [1, 2],
           "theme": ["darkest", "dark"]
         },
         {
           "width": 23,
           "height": 23,
           "path": "panel-light.png",
-          "scale": [1],
-          "theme": ["lightest", "light"]
-        },
-        {
-          "width": 46,
-          "height": 46,
-          "path": "panel-light@2x.png",
-          "scale": [2],
+          "scale": [1, 2],
           "theme": ["lightest", "light"]
         }
       ],
