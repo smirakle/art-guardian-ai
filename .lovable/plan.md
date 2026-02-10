@@ -1,63 +1,60 @@
 
 
-## Build Adobe UXP Plugin (Clean Rebuild)
+## Fix: Tier Not Updating + Verify Protection Not Working
 
-Rebuild the entire `adobe-plugin/` directory from scratch with all four required files, matching the UI shown in the admin panel's Photoshop Plugin Mockup and the uploaded screenshots.
+Two bugs were found in the Adobe plugin (`adobe-plugin/index.js`) and the edge function (`supabase/functions/adobe-plugin-api/index.ts`).
 
-### What Gets Built
+---
 
-**4 core files** in `adobe-plugin/`:
+### Bug 1: Tier Not Updating
 
-1. **manifest.json** - UXP manifest v5, ID `2ae4a9c1`, version `2.0.0`, supports Photoshop (PS 24+) and Illustrator (AI 27+), panel icon declarations with `scale: [1, 2]` and `medium` theme
-2. **index.html** - Plugin UI shell with cache-busting `?v=2.0.0` on asset links
-3. **styles.css** - Dark theme matching Adobe Spectrum design (dark backgrounds, pink gradient protect button, blue sign-in buttons)
-4. **index.js** - Full plugin logic with TextEncoder/TextDecoder polyfills, FNV-1a document hashing, Supabase API calls
+**Root Cause:** The plugin calls `action: "get_status"` to fetch the user's tier after login. But the `get_status` handler in the edge function (line 1172-1185) is a static health-check response -- it never queries the user's subscription. It just returns a hardcoded status message with no `tier` field.
 
-### UI Screens (matching screenshots)
+```text
+Plugin calls:   apiCall({ action: "get_status" })
+                        ↓
+Edge function:  Returns { success: true, message: "API is operational", ... }
+                        ↓
+Plugin reads:   data.tier → undefined → defaults to "basic"
+```
 
-**Login Screen:**
-- "TSMO Protection" header with red dot + "TSMO Beta" label
-- "Welcome to TSMO / Protect your artwork from AI training"
-- Email and Password fields
-- Blue "Sign In" button
-- Blue "Create Free Account" button (opens `https://www.tsmowatch.com/auth?tab=signup` via `uxp.shell.openExternal`)
-- "Need help?" link (opens `https://www.tsmowatch.com/support`)
+The actual subscription lookup exists as `action: "get_subscription"` (line 1168), but the plugin never calls it.
 
-**Main Panel (logged in):**
-- Header: "TSMO Protection" + Logout button
-- Subtitle bar: red dot, "TSMO Beta", user email, Basic/Pro badge
-- Pink gradient Protect button (#ec4899 to #f43f5e)
-- "One click to protect your current document" + tier indicator
-- "Upgrade to Pro" button (links to `https://www.tsmowatch.com/pricing`)
-- "Verify Protection" button with checkmark
-- Success state with "Save to TSMO Account" and "View in TSMO Watch" buttons
+**Fix:** Change the `get_status` handler in the edge function to also call `handleGetSubscription()` and include the `tier` in its response. This way the plugin's existing `fetchUserTier()` code will receive the correct tier without any plugin-side changes.
 
-**Footer:**
-- `www.tsmowatch.com` link (opens homepage via `uxp.shell.openExternal`)
-- Copyright 2026 TSMO Technology Inc.
-- Pink version badge `v2.0.0`
+---
 
-### Working Links
+### Bug 2: Verify Protection Not Working
 
-| Link | Destination | Method |
-|------|------------|--------|
-| www.tsmowatch.com | `https://www.tsmowatch.com` | `uxp.shell.openExternal` |
-| Create Free Account | `https://www.tsmowatch.com/auth?tab=signup` | `uxp.shell.openExternal` |
-| Need help? | `https://www.tsmowatch.com/support` | `uxp.shell.openExternal` |
-| Upgrade to Pro | `https://www.tsmowatch.com/pricing?source=adobe_plugin&email=...` | `uxp.shell.openExternal` |
-| View in TSMO Watch | `https://www.tsmowatch.com` | `uxp.shell.openExternal` |
+**Root Cause:** The plugin checks for `result.verified` or `result.is_protected` (line 293), but the edge function returns the verification result nested inside `result.verificationResult.isProtected` (line 815). The plugin never reads `verificationResult`, so it always falls through to "No protection found."
+
+```text
+Edge returns:   { success: true, verificationResult: { isProtected: true, ... } }
+                        ↓
+Plugin checks:  result.verified → undefined
+                result.is_protected → undefined
+                        ↓
+Result:         "No protection found" (false negative)
+```
+
+**Fix:** Update the plugin's `verifyProtection()` function to read from `result.verificationResult.isProtected` and extract the protection ID from `result.verificationResult.protectionId`.
+
+---
+
+### Changes
+
+| File | Change |
+|------|--------|
+| `supabase/functions/adobe-plugin-api/index.ts` | Update `get_status` case (lines 1172-1185) to call `handleGetSubscription()` and merge the tier into the response |
+| `adobe-plugin/index.js` | Fix `verifyProtection()` (line 293) to read `result.verificationResult.isProtected` instead of `result.verified` / `result.is_protected` |
 
 ### Technical Details
 
-- **API endpoint**: `https://utneaqmbyjwxaqrrarpc.supabase.co/functions/v1/adobe-plugin-api`
-- **Auth**: Supabase auth via API calls (login with email/password, get JWT token)
-- **Protection flow**: Export doc hash via batchPlay, call API with `action: "protect"`, inject XMP metadata, place protected layer for Pro tier
-- **Polyfills**: TextEncoder/TextDecoder for UXP environment
-- **Hash function**: FNV-1a fallback when Web Crypto is unavailable
-- **Version**: `2.0.0` (clean start after full deletion)
-- **No icon files included** - user must generate them via Admin Icon Generator and place them manually
+**Edge function change (get_status handler):**
+- Call `await handleGetSubscription(supabase, user.id)` inside the `get_status` case
+- Spread the subscription result (`tier`, `plan_id`, `is_active`) into the response object
 
-### Note on Icons
-
-The manifest will reference panel icons (`panel-dark.png`, `panel-dark@2x.png`, `panel-light.png`, `panel-light@2x.png`) but the PNG files themselves must be generated separately via the Admin Icon Generator at exact dimensions (23x23 and 46x46).
+**Plugin change (verifyProtection):**
+- Replace the condition `result.verified || result.is_protected` with `result.verificationResult?.isProtected`
+- Read protection ID from `result.verificationResult?.protectionId`
 
