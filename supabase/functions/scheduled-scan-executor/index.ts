@@ -173,13 +173,37 @@ async function executeMonitoringScan(artworkId: string) {
 
 async function executeDeepScan(artworkId: string) {
   console.log(`Executing deep scan for artwork: ${artworkId}`);
-  
-  // Call the comprehensive-web-scanner function
+
+  // 1. Fetch artwork from DB
+  const { data: artwork, error: artworkError } = await supabase
+    .from('artwork')
+    .select('id, user_id, title, tags, file_paths')
+    .eq('id', artworkId)
+    .maybeSingle();
+
+  if (artworkError) throw new Error(`Failed to fetch artwork: ${artworkError.message}`);
+  if (!artwork) throw new Error(`Artwork not found: ${artworkId}`);
+
+  // 2. Build signed URL for first file
+  let contentUrl: string | undefined;
+  if (artwork.file_paths?.length > 0) {
+    const { data: fileData } = await supabase.storage
+      .from('artwork')
+      .createSignedUrl(artwork.file_paths[0], 3600);
+    contentUrl = fileData?.signedUrl;
+  }
+
+  // 3. Build search terms from title + tags
+  const searchTerms = [artwork.title, ...(artwork.tags || [])].filter(Boolean);
+
+  // 4. Invoke with correct parameters
   const { data, error } = await supabase.functions.invoke('comprehensive-web-scanner', {
-    body: { 
-      artworkId,
+    body: {
+      contentType: 'photo',
+      contentUrl,
+      searchTerms,
       includeDeepWeb: true,
-      scanDepth: 'comprehensive'
+      userId: artwork.user_id
     }
   });
 
