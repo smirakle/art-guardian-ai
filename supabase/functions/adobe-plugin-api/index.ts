@@ -1169,10 +1169,14 @@ Deno.serve(async (req) => {
         response = await handleGetSubscription(supabase, user.id);
         break;
       
-      case 'get_status':
+      case 'get_status': {
+        const subscriptionData = await handleGetSubscription(supabase, user.id);
         response = {
           success: true,
           message: 'TSMO Adobe Plugin API is operational',
+          tier: subscriptionData.tier || subscriptionData.subscription_tier || 'basic',
+          plan_id: subscriptionData.plan_id,
+          is_active: subscriptionData.is_active,
           protectionCertificate: {
             id: 'STATUS_CHECK',
             timestamp: new Date().toISOString(),
@@ -1183,6 +1187,7 @@ Deno.serve(async (req) => {
           }
         };
         break;
+      }
       
       default:
         response = { success: false, error: 'Unknown action' };

@@ -290,9 +290,11 @@ async function verifyProtection() {
       protectionId,
     });
 
-    if (result.verified || result.is_protected) {
+    const verified = result.verified || result.is_protected || result.verificationResult?.isProtected;
+    if (verified) {
+      const verifiedId = result.protectionId || result.protection_id || result.verificationResult?.protectionId || protectionId;
       el.className = "verify-status status-success";
-      el.textContent = "✅ Protection verified — " + (result.protectionId || result.protection_id || protectionId);
+      el.textContent = "✅ Protection verified — " + verifiedId;
     } else {
       el.className = "verify-status status-error";
       el.textContent = "⚠️ No protection found for this document";
