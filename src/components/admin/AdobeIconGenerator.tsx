@@ -443,7 +443,7 @@ const AdobeIconGenerator = () => {
                 </label>
                 <label className="flex items-start gap-2 cursor-pointer">
                   <input type="checkbox" className="mt-1 rounded" />
-                  <span>Verify sizes in Finder: <code className="px-1 py-0.5 rounded bg-muted font-mono">panel-dark.png</code> = <strong>23×23</strong>, <code className="px-1 py-0.5 rounded bg-muted font-mono">panel-dark@2x.png</code> = <strong>46×46</strong></span>
+                  <span>Verify sizes in Finder: <code className="px-1 py-0.5 rounded bg-muted font-mono">panel-dark.png</code> = <strong>23×23</strong>, <code className="px-1 py-0.5 rounded bg-muted font-mono">panel-dark@2x.png</code> = <strong>46×46</strong>. Manifest declares logical size 23×23 with <code className="px-1 py-0.5 rounded bg-muted font-mono">scale: [1, 2]</code> — UXP auto-resolves the @2x file.</span>
                 </label>
                 <label className="flex items-start gap-2 cursor-pointer">
                   <input type="checkbox" className="mt-1 rounded" />
