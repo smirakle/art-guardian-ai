@@ -1,45 +1,63 @@
 
 
-## Clean Rebuild: Adobe Plugin Icons
+## Build Adobe UXP Plugin (Clean Rebuild)
 
-### Why Rebuild
-After multiple manifest fixes, the icons remain gray. This strongly suggests the PNG files themselves are the problem — possibly wrong dimensions, missing pixel data, or macOS metadata corruption. A fresh rebuild from scratch is the cleanest fix.
+Rebuild the entire `adobe-plugin/` directory from scratch with all four required files, matching the UI shown in the admin panel's Photoshop Plugin Mockup and the uploaded screenshots.
 
-### Steps
+### What Gets Built
 
-#### 1. Delete all existing icon files from `adobe-plugin/`
-Remove these files from your local `adobe-plugin/` folder:
-- `panel-dark.png`
-- `panel-dark@2x.png`
-- `panel-light.png`
-- `panel-light@2x.png`
+**4 core files** in `adobe-plugin/`:
 
-#### 2. Regenerate icons using the Admin Icon Generator
-1. Open the app and go to **Admin > Plugins > Icon Generator** tab
-2. Generate new panel icons at the correct sizes:
-   - `panel-dark.png` — exactly **23x23 px**, PNG, transparent background
-   - `panel-dark@2x.png` — exactly **46x46 px**, PNG, transparent background
-   - `panel-light.png` — exactly **23x23 px**, PNG, transparent background
-   - `panel-light@2x.png` — exactly **46x46 px**, PNG, transparent background
-3. Download each file and place them in your local `adobe-plugin/` folder (root level, not in a subfolder)
+1. **manifest.json** - UXP manifest v5, ID `2ae4a9c1`, version `2.0.0`, supports Photoshop (PS 24+) and Illustrator (AI 27+), panel icon declarations with `scale: [1, 2]` and `medium` theme
+2. **index.html** - Plugin UI shell with cache-busting `?v=2.0.0` on asset links
+3. **styles.css** - Dark theme matching Adobe Spectrum design (dark backgrounds, pink gradient protect button, blue sign-in buttons)
+4. **index.js** - Full plugin logic with TextEncoder/TextDecoder polyfills, FNV-1a document hashing, Supabase API calls
 
-#### 3. Verify the files before loading
-In Finder, right-click each PNG and choose **Get Info**. Confirm:
-- Dimensions match exactly (23x23 or 46x46)
-- File type is PNG
-- File size is more than 0 bytes
+### UI Screens (matching screenshots)
 
-#### 4. Bump version and reload
-I will bump `manifest.json` to **1.1.9** to force UXP to re-read everything. Then:
-1. Pull the updated manifest
-2. In UXP Dev Tools: **Remove** the plugin
-3. **Add** the `adobe-plugin/` folder again
-4. Click **Load**
+**Login Screen:**
+- "TSMO Protection" header with red dot + "TSMO Beta" label
+- "Welcome to TSMO / Protect your artwork from AI training"
+- Email and Password fields
+- Blue "Sign In" button
+- Blue "Create Free Account" button (opens `https://www.tsmowatch.com/auth?tab=signup` via `uxp.shell.openExternal`)
+- "Need help?" link (opens `https://www.tsmowatch.com/support`)
 
-### Code Change
-- `adobe-plugin/manifest.json`: bump version from `1.1.8` to `1.1.9`
-- `adobe-plugin/index.html`: update cache-busting query params from `1.1.7` to `1.1.9` and version badge to `v1.1.9`
+**Main Panel (logged in):**
+- Header: "TSMO Protection" + Logout button
+- Subtitle bar: red dot, "TSMO Beta", user email, Basic/Pro badge
+- Pink gradient Protect button (#ec4899 to #f43f5e)
+- "One click to protect your current document" + tier indicator
+- "Upgrade to Pro" button (links to `https://www.tsmowatch.com/pricing`)
+- "Verify Protection" button with checkmark
+- Success state with "Save to TSMO Account" and "View in TSMO Watch" buttons
 
-### No manifest icon format changes needed
-The current manifest format (23x23 logical with `scale: [1, 2]` and `"medium"` theme) is correct per Adobe docs. Only the PNG files need rebuilding.
+**Footer:**
+- `www.tsmowatch.com` link (opens homepage via `uxp.shell.openExternal`)
+- Copyright 2026 TSMO Technology Inc.
+- Pink version badge `v2.0.0`
+
+### Working Links
+
+| Link | Destination | Method |
+|------|------------|--------|
+| www.tsmowatch.com | `https://www.tsmowatch.com` | `uxp.shell.openExternal` |
+| Create Free Account | `https://www.tsmowatch.com/auth?tab=signup` | `uxp.shell.openExternal` |
+| Need help? | `https://www.tsmowatch.com/support` | `uxp.shell.openExternal` |
+| Upgrade to Pro | `https://www.tsmowatch.com/pricing?source=adobe_plugin&email=...` | `uxp.shell.openExternal` |
+| View in TSMO Watch | `https://www.tsmowatch.com` | `uxp.shell.openExternal` |
+
+### Technical Details
+
+- **API endpoint**: `https://utneaqmbyjwxaqrrarpc.supabase.co/functions/v1/adobe-plugin-api`
+- **Auth**: Supabase auth via API calls (login with email/password, get JWT token)
+- **Protection flow**: Export doc hash via batchPlay, call API with `action: "protect"`, inject XMP metadata, place protected layer for Pro tier
+- **Polyfills**: TextEncoder/TextDecoder for UXP environment
+- **Hash function**: FNV-1a fallback when Web Crypto is unavailable
+- **Version**: `2.0.0` (clean start after full deletion)
+- **No icon files included** - user must generate them via Admin Icon Generator and place them manually
+
+### Note on Icons
+
+The manifest will reference panel icons (`panel-dark.png`, `panel-dark@2x.png`, `panel-light.png`, `panel-light@2x.png`) but the PNG files themselves must be generated separately via the Admin Icon Generator at exact dimensions (23x23 and 46x46).
 
