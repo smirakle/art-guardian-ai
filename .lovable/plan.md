@@ -1,78 +1,51 @@
 
 
-## Fix: Comprehensive Web Scanner + Missing Database Columns
+## Fix: `real-copyright-monitor` 400 Bad Request
 
-There are two separate issues causing the recurring errors in the logs.
+### Root Cause
 
----
+The `executeMonitoringScan()` function in `scheduled-scan-executor` calls `real-copyright-monitor` with only `{ artworkId }`, but the monitor requires both `artworkId` and `imageUrl`. Without `imageUrl`, it returns a 400 Bad Request.
 
-### Issue 1: `comprehensive-web-scanner` receives wrong parameters
+### Fix
 
-The `scheduled-scan-executor` calls the scanner with `{ artworkId }`, but the scanner expects `{ contentType, contentUrl, searchTerms, userId }`. The artworkId is never translated into these fields, so `contentType` logs as `undefined` and the `web_scans` insert fails because `user_id` is null.
+Update `executeMonitoringScan()` in `supabase/functions/scheduled-scan-executor/index.ts` (lines 162-172) to:
 
-**Fix in `scheduled-scan-executor/index.ts`:** Update `executeDeepScan()` to look up the artwork record first, then pass the correct fields to the scanner.
+1. Fetch the artwork record to get `file_paths`
+2. Generate a signed URL from Supabase storage
+3. Pass both `artworkId` and `imageUrl` to `real-copyright-monitor`
 
-```text
-Before:  invoke('comprehensive-web-scanner', { body: { artworkId, includeDeepWeb: true, scanDepth: 'comprehensive' } })
-After:   1. Fetch artwork record (title, tags, file_paths, user_id)
-         2. Generate a signed URL for the first file
-         3. Invoke with { contentType: 'photo', contentUrl: signedUrl, searchTerms: [title, ...tags], includeDeepWeb: true, userId: artwork.user_id }
-```
-
-### Issue 2: `continuous-scan-scheduler` references missing columns
-
-The `realtime_monitoring_sessions` table is missing `portfolio_id`, `last_scan_at`, and `platforms_enabled` columns. The scheduler tries to join on `portfolios` via a nonexistent `portfolio_id` and read these fields, causing query failures.
-
-**Fix via migration:** Add the three missing columns to `realtime_monitoring_sessions`:
-- `portfolio_id` (uuid, nullable, FK to `portfolios.id` with `ON DELETE SET NULL`)
-- `last_scan_at` (timestamptz, nullable)
-- `platforms_enabled` (text[], nullable)
-
----
-
-### Changes Summary
-
-| File / Resource | Change |
-|---|---|
-| `supabase/functions/scheduled-scan-executor/index.ts` | Rewrite `executeDeepScan()` to fetch artwork, build a signed URL, and pass proper parameters to the scanner |
-| Database migration | Add `portfolio_id`, `last_scan_at`, `platforms_enabled` columns to `realtime_monitoring_sessions`; add FK constraint to `portfolios` |
-
-### Technical Details
-
-**scheduled-scan-executor `executeDeepScan` rewrite:**
+### Updated Code
 
 ```text
-async function executeDeepScan(artworkId: string) {
-  // 1. Fetch artwork from DB
-  const { data: artwork } = await supabase
+async function executeMonitoringScan(artworkId: string) {
+  console.log(`Executing monitoring scan for artwork: ${artworkId}`);
+
+  // Fetch artwork to get file path
+  const { data: artwork, error: artworkError } = await supabase
     .from('artwork')
-    .select('id, user_id, title, tags, file_paths')
+    .select('id, file_paths')
     .eq('id', artworkId)
     .maybeSingle();
 
-  if (!artwork) throw new Error('Artwork not found: ' + artworkId);
+  if (artworkError) throw new Error(`Failed to fetch artwork: ${artworkError.message}`);
+  if (!artwork) throw new Error(`Artwork not found: ${artworkId}`);
 
-  // 2. Build signed URL for first file
-  let contentUrl;
+  // Generate signed URL for the image
+  let imageUrl: string | undefined;
   if (artwork.file_paths?.length > 0) {
     const { data: fileData } = await supabase.storage
       .from('artwork')
       .createSignedUrl(artwork.file_paths[0], 3600);
-    contentUrl = fileData?.signedUrl;
+    imageUrl = fileData?.signedUrl;
   }
 
-  // 3. Build search terms from title + tags
-  const searchTerms = [artwork.title, ...(artwork.tags || [])].filter(Boolean);
+  if (!imageUrl) {
+    throw new Error(`No image URL available for artwork: ${artworkId}`);
+  }
 
-  // 4. Invoke with correct parameters
-  const { data, error } = await supabase.functions.invoke('comprehensive-web-scanner', {
-    body: {
-      contentType: 'photo',
-      contentUrl,
-      searchTerms,
-      includeDeepWeb: true,
-      userId: artwork.user_id
-    }
+  // Call with both required parameters
+  const { data, error } = await supabase.functions.invoke('real-copyright-monitor', {
+    body: { artworkId, imageUrl }
   });
 
   if (error) throw error;
@@ -80,12 +53,11 @@ async function executeDeepScan(artworkId: string) {
 }
 ```
 
-**Migration SQL:**
+### Changes Summary
 
-```sql
-ALTER TABLE realtime_monitoring_sessions
-  ADD COLUMN IF NOT EXISTS portfolio_id uuid REFERENCES portfolios(id) ON DELETE SET NULL,
-  ADD COLUMN IF NOT EXISTS last_scan_at timestamptz,
-  ADD COLUMN IF NOT EXISTS platforms_enabled text[];
-```
+| File | Change |
+|---|---|
+| `supabase/functions/scheduled-scan-executor/index.ts` | Update `executeMonitoringScan` to fetch artwork file path, generate signed URL, and pass `imageUrl` alongside `artworkId` |
+
+This is a single function replacement (lines 162-172) with no other files affected.
 
