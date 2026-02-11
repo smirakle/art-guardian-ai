@@ -21,6 +21,7 @@ import {
   Target
 } from 'lucide-react';
 import { ProductionMetadataOptions, productionMetadataInjection } from '@/lib/productionMetadataInjection';
+import C2PAValidationBadge from './C2PAValidationBadge';
 
 export const ProductionMetadataSettings: React.FC = () => {
   const { toast } = useToast();
@@ -184,8 +185,11 @@ export const ProductionMetadataSettings: React.FC = () => {
               className="cursor-pointer"
             />
             {processingFile && (
-              <div className="text-sm text-muted-foreground">
-                Selected: {processingFile.name} ({(processingFile.size / 1024 / 1024).toFixed(2)} MB)
+              <div className="space-y-2">
+                <div className="text-sm text-muted-foreground">
+                  Selected: {processingFile.name} ({(processingFile.size / 1024 / 1024).toFixed(2)} MB)
+                </div>
+                <C2PAValidationBadge file={processingFile} autoValidate />
               </div>
             )}
           </div>
