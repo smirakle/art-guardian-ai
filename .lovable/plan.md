@@ -1,39 +1,31 @@
 
 
-## Integrate C2PA Protection into the Upload and Protection Flow
+## Add C2PA Content Credentials to the Upload Page
 
-### What changes
+The C2PA Content Credentials feature was added to the Protection Hub (`/protection-hub`), but you're on the **Upload page** (`/upload`), which is a separate page. Here's the plan to bring it into the Upload flow.
 
-Move the C2PA Generator (sign + embed) functionality into the Protection Hub's **Protect** tab so that when a user uploads an image, C2PA Content Credentials are automatically applied alongside existing protections (Style Cloaking, metadata, etc.).
+### What will change
 
-Keep the `/admin/c2pa-conformance` page as an **admin-only conformance export tool** for the Security Architecture document and batch validation evidence -- these are only needed for the C2PA application, not for regular users.
+The `C2PAProtection` component (already built) will be added to the **Upload page** so users can apply Content Credentials directly as part of their upload workflow.
 
-### Approach
+### Where it will appear
 
-1. **Add a "Content Credentials (C2PA)" card to the Protect tab** in `ProtectionHub.tsx`
-   - Place it alongside the existing "Upload and Protect" and "Style Protection" cards
-   - Reuse the `GeneratorEvidence` component (or extract its core signing logic into a simpler user-facing component)
-   - Users upload an image, it gets signed with ES256, embedded with JUMBF, and they can download the protected file
+The Upload page currently has 3 tabs: **Upload**, **Watermark**, and **Analyze**. There are two options:
 
-2. **Simplify the UI for regular users**
-   - Create a new `C2PAProtection` component that wraps the signing/embedding logic but with simpler, non-technical labels (e.g., "Add Content Credentials" instead of "Generator Evidence")
-   - Hide conformance-specific details (certificate fingerprints, manifest hashes) behind an expandable "Technical Details" section
-   - Keep the download button for the protected image prominent
+**Option A (recommended):** Add a "Content Credentials" card inside the existing **Watermark** tab alongside the existing watermark protection, since both are protection steps applied to uploaded files.
 
-3. **Keep the admin conformance page unchanged**
-   - `/admin/c2pa-conformance` stays as-is for exporting the Security Architecture document, batch validator evidence, and full technical signing details needed for the C2PA conformance submission
+**Option B:** Add a 4th tab called "Credentials" between Watermark and Analyze.
 
-### Files to create/modify
+I'll go with **Option A** -- placing the C2PA card in the Watermark tab so users see all protection options together.
 
-- **Create** `src/components/ai-protection/C2PAProtection.tsx` -- user-friendly C2PA signing and embedding card
-- **Modify** `src/pages/ProtectionHub.tsx` -- add the C2PA card to the Protect tab grid
+### Files to modify
+
+- **`src/pages/Upload.tsx`**
+  - Import the existing `C2PAProtection` component
+  - Add a Card wrapping `C2PAProtection` in the Watermark tab content area, below or alongside the existing watermark controls
 
 ### Technical details
 
-The new `C2PAProtection` component will:
-- Import `signC2PAManifest` and `embedC2PAManifest` from `@/lib/c2paValidation`
-- Accept JPEG and PNG uploads
-- Run the sign-then-embed pipeline
-- Show a simple success state with a download button for the protected file
-- Optionally show technical details (manifest JSON, certificate info) in a collapsible section
-
+- Import `C2PAProtection from '@/components/ai-protection/C2PAProtection'`
+- Add a new Card with title "Content Credentials (C2PA)" containing the `<C2PAProtection />` component in the Watermark tab's `TabsContent`
+- No new files needed -- the component already exists and works
