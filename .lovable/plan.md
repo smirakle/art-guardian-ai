@@ -1,107 +1,88 @@
 
 
-# Add Missing C2PA Capabilities to TSMO
+# C2PA Conformance Evidence Generation
 
-## Overview
+## What the C2PA Team Needs
 
-TSMO currently generates C2PA manifest JSON and detects existing manifests in uploads, but is missing two critical capabilities needed for C2PA conformance:
+The C2PA Conformance team has requested three deliverables:
 
-1. **Real JUMBF Binary Embedding** -- Writing C2PA manifests into image files as proper JUMBF boxes (JPEG APP11 / PNG caBX chunks)
-2. **Cryptographic Signing** -- Replacing placeholder `TSMO-SIG-...` hashes with real ES256 (ECDSA P-256) signatures
-3. **Video C2PA Validation** -- Detecting C2PA manifests in MP4/MOV files (ISO BMFF JUMBF boxes)
+1. **Sample signed manifests and supporting JSON files** -- actual output from TSMO's Generator pipeline showing a file protected with embedded C2PA credentials
+2. **Validation results from their Conformant Image Library** -- proof that TSMO's Validator correctly detects C2PA manifests in 9 reference images (Pixel camera photos with existing C2PA credentials)
+3. **Generator Product Security Architecture Document** -- a comprehensive document covering TSMO's security architecture per the C2PA Requirements Document Appendix C template
 
-## What Changes
+## Current State
 
-### 1. New Edge Function: `embed-c2pa-manifest`
+- The signing (`sign-c2pa-manifest`), embedding (`embed-c2pa-manifest`), and validation (`validate-c2pa-manifest`) edge functions are deployed
+- The `c2pa_signing_logs` table exists but has zero entries -- the full pipeline has never been exercised
+- There is no admin UI or tool to batch-validate external files and export results
+- There is no way to export signed manifest JSON for submission
 
-A new edge function that takes the C2PA manifest JSON + image bytes and produces a properly structured output file with embedded JUMBF boxes.
+## Plan
 
-**For JPEG files:**
-- Construct a JUMBF superbox with the `c2pa` label
-- Wrap it in an APP11 marker segment (`0xFF 0xEB`)
-- Insert after SOI and before the first non-APP marker
+### Part 1: C2PA Conformance Test Page
 
-**For PNG files:**
-- Construct a JUMBF superbox with the `c2pa` label
-- Wrap it in a `caBX` ancillary chunk
-- Insert before the IEND chunk
+Create a new admin page at `/admin/c2pa-conformance` with three sections:
 
-The JUMBF structure follows ISO 19566-5:
+**Section A -- Generator Evidence**
+- Upload an image, run it through the full protection pipeline (sign + embed), and display the resulting:
+  - Signed C2PA manifest JSON (downloadable as `.json`)
+  - COSE Sign1 signature details (algorithm, fingerprint, mode)
+  - The protected image file with embedded JUMBF (downloadable)
+  - Signing log entry from the database
+- A "Download Evidence Package" button that bundles: the original file, the protected file, the manifest JSON, and a signing summary into a ZIP-like download set
 
-```text
-JUMBF Superbox:
-  Box Header: size (4 bytes) + type "jumb" (4 bytes)
-  Description Box: size + type "jumd" + label "c2pa" + toggles
-  Content Boxes:
-    Claim Box (CBOR-encoded claim)
-    Assertion Store Box
-    Signature Box (COSE Sign1)
-```
+**Section B -- Validator Evidence (Conformant Image Library)**
+- Ability to upload multiple files (the 9 reference images from the C2PA library)
+- Run each through the `validate-c2pa-manifest` edge function
+- Display results in a table: file name, C2PA detected (yes/no), claim generator, assertions found, format, raw box count
+- "Export Results" button to download a JSON report of all validation results
+- This proves TSMO can ingest and validate files with existing C2PA manifests as ingredients
 
-### 2. New Edge Function: `sign-c2pa-manifest`
+**Section C -- Security Architecture Export**
+- A structured form/document generator based on the C2PA Generator Product Security Architecture Document Template (Appendix C)
+- Pre-fills known information about TSMO's architecture:
+  - Signing algorithm (ES256 / ECDSA P-256)
+  - Key management (Supabase Edge Function secrets, self-signed fallback)
+  - JUMBF embedding approach (JPEG APP11, PNG caBX)
+  - Cloud environment (Supabase Edge Functions on Deno Deploy)
+  - Communication methods (HTTPS, Supabase auth)
+  - Third-party services (Supabase, content delivery)
+  - Target of Evaluation scope
+- Exportable as a structured document (JSON or formatted text)
 
-Handles cryptographic signing using ES256:
+### Part 2: Files to Create/Modify
 
-- Accepts the manifest claim as CBOR
-- Signs with the ECDSA P-256 private key (stored as a Supabase secret)
-- Returns a COSE Sign1 envelope
-- Initially uses a self-signed certificate; upgrades to CAI-issued cert when received
+| File | Action | Purpose |
+|------|--------|---------|
+| `src/pages/admin/C2PAConformance.tsx` | Create | Main conformance evidence page |
+| `src/components/admin/c2pa/GeneratorEvidence.tsx` | Create | Generator test and manifest export |
+| `src/components/admin/c2pa/ValidatorEvidence.tsx` | Create | Batch validation of reference images |
+| `src/components/admin/c2pa/SecurityArchitecture.tsx` | Create | Architecture document generator |
+| `src/App.tsx` | Modify | Add route for `/admin/c2pa-conformance` |
 
-This function requires three secrets:
-- `C2PA_SIGNING_CERT` -- X.509 certificate (PEM)
-- `C2PA_PRIVATE_KEY` -- ECDSA P-256 private key (PEM)
-- `C2PA_ISSUER_ID` -- CAI organization identifier
+### Part 3: Technical Details
 
-Until the user provides production certificates, the function will generate a self-signed keypair on first use and store it, allowing the full pipeline to work (manifests will be valid but not chain to the CAI trust list).
+**Generator Evidence Flow:**
+1. User uploads an image on the conformance page
+2. Frontend calls `signC2PAManifest()` to get a real ES256 signature
+3. Frontend calls `embedC2PAManifest()` to write JUMBF into the file
+4. Page displays the full manifest JSON, signature details, and offers downloads
+5. The signing log entry is fetched from `c2pa_signing_logs` and displayed
 
-### 3. Update `productionMetadataInjection.ts`
+**Validator Evidence Flow:**
+1. User uploads the 9 reference JPEG files from the Google Drive library
+2. Each file is sent to `validate-c2pa-manifest` edge function
+3. Results are collected and displayed in a summary table
+4. Export button generates a JSON report with all results, timestamps, and file details
 
-Modify the Generator flow to:
-- Call `sign-c2pa-manifest` to get a real COSE Sign1 signature instead of generating `TSMO-SIG-...` placeholders
-- Call `embed-c2pa-manifest` to write the signed JUMBF into the output file
-- Return the file with the manifest physically embedded in the binary
+**Security Architecture Data:**
+- Pre-populated from TSMO's actual implementation
+- Covers the Target of Evaluation (TOE) components: Supabase Edge Functions (Deno runtime), ECDSA P-256 key generation, COSE Sign1 envelope construction, JUMBF binary embedding, HTTPS transport, Supabase Auth (JWT), Supabase Secrets vault for key storage
+- Exportable for submission alongside the other evidence
 
-### 4. Update `validate-c2pa-manifest` for Video (MP4/MOV)
+### Outcome
 
-Add an ISO BMFF parser to the existing edge function:
-- MP4/MOV files use ISO Base Media File Format
-- C2PA manifests live in a top-level `uuid` box with the C2PA UUID
-- Scan top-level boxes for the C2PA UUID marker (`d8fec3d6-1b0e-483c-9297-58b3dabb223b`)
-- Extract and return detection results the same way as JPEG/PNG
-
-### 5. Database: `c2pa_signing_logs` table
-
-Track every signing operation for compliance:
-- `id`, `user_id`, `file_name`, `protection_id`, `signing_algorithm`, `certificate_fingerprint`, `manifest_hash`, `created_at`
-- RLS: users can only read their own logs
-
-## Files to Create/Modify
-
-| File | Action | Description |
-|------|--------|-------------|
-| `supabase/functions/embed-c2pa-manifest/index.ts` | Create | Binary JUMBF embedding for JPEG and PNG |
-| `supabase/functions/sign-c2pa-manifest/index.ts` | Create | ES256 cryptographic signing with COSE Sign1 |
-| `supabase/functions/validate-c2pa-manifest/index.ts` | Modify | Add MP4/MOV ISO BMFF scanning |
-| `src/lib/productionMetadataInjection.ts` | Modify | Replace placeholder signing with real edge function calls; add JUMBF embedding step |
-| `src/lib/c2paValidation.ts` | Modify | Add video MIME type support |
-| `src/components/ai-protection/C2PAValidationBadge.tsx` | Modify | Show video format detection results |
-| Database migration | Create | `c2pa_signing_logs` table with RLS |
-
-## Secrets Required
-
-Three secrets will be needed (can use self-signed initially):
-- `C2PA_SIGNING_CERT`
-- `C2PA_PRIVATE_KEY`
-- `C2PA_ISSUER_ID`
-
-The signing edge function will auto-generate a self-signed keypair if these are not yet configured, so the pipeline works immediately without blocking on CAI certificate issuance.
-
-## Outcome
-
-After implementation, TSMO will:
-- Physically embed C2PA JUMBF manifests into JPEG and PNG files (Generator)
-- Sign manifests with real ES256 cryptographic signatures (Generator)
-- Detect C2PA manifests in JPEG, PNG, MP4, and MOV files (Validator)
-- Log all signing and validation operations for audit compliance
-- Be ready for production CAI certificates when issued
-
+After implementation, you will be able to:
+1. Generate and download real signed manifest evidence to send to C2PA
+2. Upload the 9 reference images from their library and export validation results proving TSMO correctly detects C2PA credentials
+3. Export a Security Architecture Document describing TSMO's Generator TOE
