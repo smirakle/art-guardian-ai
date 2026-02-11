@@ -223,16 +223,91 @@ function scanPNGForC2PA(data: Uint8Array): C2PAResult {
   return result;
 }
 
+// C2PA UUID for ISO BMFF (MP4/MOV): d8fec3d6-1b0e-483c-9297-58b3dabb223b
+const C2PA_UUID = [
+  0xd8, 0xfe, 0xc3, 0xd6, 0x1b, 0x0e, 0x48, 0x3c,
+  0x92, 0x97, 0x58, 0xb3, 0xda, 0xbb, 0x22, 0x3b
+];
+
+function scanVideoForC2PA(data: Uint8Array): C2PAResult {
+  const result: C2PAResult = {
+    hasC2PA: false,
+    manifestFound: false,
+    claimGenerator: null,
+    assertions: [],
+    format: 'video',
+    rawBoxCount: 0,
+  };
+
+  // ISO BMFF: scan top-level boxes
+  let offset = 0;
+  while (offset < data.length - 8) {
+    const boxSize = readUint32BE(data, offset);
+    const boxType = String.fromCharCode(data[offset + 4], data[offset + 5], data[offset + 6], data[offset + 7]);
+
+    if (boxSize < 8 || offset + boxSize > data.length) break;
+
+    // Check for uuid box with C2PA UUID
+    if (boxType === 'uuid' && boxSize >= 24) {
+      let isC2PA = true;
+      for (let i = 0; i < 16; i++) {
+        if (data[offset + 8 + i] !== C2PA_UUID[i]) {
+          isC2PA = false;
+          break;
+        }
+      }
+      if (isC2PA) {
+        result.hasC2PA = true;
+        result.manifestFound = true;
+        result.rawBoxCount++;
+
+        // Search for claim generator and assertions within the uuid box data
+        const uuidDataStart = offset + 24;
+        const uuidDataEnd = Math.min(offset + boxSize, data.length);
+        const generator = extractNearbyString(data, uuidDataStart, Math.min(uuidDataEnd - uuidDataStart, 4000));
+        if (generator) result.claimGenerator = generator;
+
+        const assertionLabels = ['c2pa.actions', 'c2pa.hash.data', 'c2pa.thumbnail', 'stds.schema-org.CreativeWork', 'c2pa.ingredient'];
+        const decoder = new TextDecoder('utf-8', { fatal: false });
+        const boxText = decoder.decode(data.slice(uuidDataStart, Math.min(uuidDataEnd, uuidDataStart + 8000)));
+        for (const label of assertionLabels) {
+          if (boxText.includes(label)) {
+            result.assertions.push(label);
+          }
+        }
+      }
+    }
+
+    result.rawBoxCount++;
+    offset += boxSize;
+  }
+
+  return result;
+}
+
+function isVideoFormat(data: Uint8Array): boolean {
+  // Check for ISO BMFF: look for 'ftyp' box at offset 4
+  if (data.length >= 12) {
+    const boxType = String.fromCharCode(data[4], data[5], data[6], data[7]);
+    if (boxType === 'ftyp') return true;
+  }
+  return false;
+}
+
 function scanForC2PA(data: Uint8Array): C2PAResult {
   const format = detectFormat(data);
   
+  // Check video first since detectFormat won't catch it
+  if (format === 'unknown' && isVideoFormat(data)) {
+    return scanVideoForC2PA(data);
+  }
+
   switch (format) {
     case 'jpeg':
       return scanJPEGForC2PA(data);
     case 'png':
       return scanPNGForC2PA(data);
     case 'webp':
-      // WebP C2PA support is less common; do basic byte scan
       return {
         hasC2PA: false,
         manifestFound: false,
@@ -249,7 +324,7 @@ function scanForC2PA(data: Uint8Array): C2PAResult {
         assertions: [],
         format: 'unknown',
         rawBoxCount: 0,
-        error: 'Unsupported image format',
+        error: 'Unsupported format',
       };
   }
 }

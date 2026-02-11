@@ -1456,6 +1456,45 @@ export type Database = {
         }
         Relationships: []
       }
+      c2pa_signing_logs: {
+        Row: {
+          certificate_fingerprint: string | null
+          created_at: string
+          file_name: string
+          id: string
+          manifest_hash: string | null
+          metadata: Json | null
+          protection_id: string | null
+          signing_algorithm: string
+          signing_mode: string
+          user_id: string
+        }
+        Insert: {
+          certificate_fingerprint?: string | null
+          created_at?: string
+          file_name: string
+          id?: string
+          manifest_hash?: string | null
+          metadata?: Json | null
+          protection_id?: string | null
+          signing_algorithm?: string
+          signing_mode?: string
+          user_id: string
+        }
+        Update: {
+          certificate_fingerprint?: string | null
+          created_at?: string
+          file_name?: string
+          id?: string
+          manifest_hash?: string | null
+          metadata?: Json | null
+          protection_id?: string | null
+          signing_algorithm?: string
+          signing_mode?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       c2pa_validation_logs: {
         Row: {
           created_at: string

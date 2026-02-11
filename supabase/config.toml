@@ -233,3 +233,9 @@ verify_jwt = false
 
 [functions.validate-c2pa-manifest]
 verify_jwt = false
+
+[functions.sign-c2pa-manifest]
+verify_jwt = true
+
+[functions.embed-c2pa-manifest]
+verify_jwt = true

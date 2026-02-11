@@ -4,6 +4,7 @@
  */
 
 import * as exifr from 'exifr';
+import { signC2PAManifest, embedC2PAManifest, C2PASigningResult } from '@/lib/c2paValidation';
 
 export interface ProductionMetadataOptions {
   copyrightInfo: {
@@ -152,11 +153,43 @@ export class ProductionMetadataInjection {
         appliedMethods.push('Compression-Resistant Watermark');
       }
 
-      // Generate C2PA manifest if enabled (Content Authenticity Initiative)
+      // Generate and embed C2PA manifest if enabled (Content Authenticity Initiative)
       let c2paManifest: C2PAManifest | undefined;
       if (options.c2paSettings?.enableContentCredentials) {
         c2paManifest = this.generateC2PAManifest(options, protectionId, timestamp);
-        appliedMethods.push('C2PA Content Credentials');
+        
+        // Sign the manifest with real ES256 cryptographic signature
+        try {
+          const signingResult = await signC2PAManifest(
+            c2paManifest as unknown as Record<string, unknown>,
+            protectionId,
+            file.name
+          );
+          
+          // Update manifest with real signature
+          c2paManifest.claim_signature.sig = signingResult.signature;
+          
+          // Embed the signed manifest into the image binary as JUMBF
+          if (file.type === 'image/jpeg' || file.type === 'image/png') {
+            try {
+              const manifestJson = JSON.stringify(c2paManifest);
+              const embeddedBlob = await embedC2PAManifest(
+                new File([protectedBlob], file.name, { type: file.type }),
+                manifestJson,
+                signingResult.signature
+              );
+              protectedBlob = embeddedBlob;
+              appliedMethods.push('C2PA JUMBF Embedded');
+            } catch (embedErr) {
+              console.warn('[ProductionMetadata] JUMBF embedding failed, manifest generated but not embedded:', embedErr);
+            }
+          }
+          
+          appliedMethods.push(`C2PA Content Credentials (${signingResult.signingMode})`);
+        } catch (signErr) {
+          console.warn('[ProductionMetadata] C2PA signing failed, using placeholder:', signErr);
+          appliedMethods.push('C2PA Content Credentials (unsigned)');
+        }
       }
 
       // Generate legal notices
