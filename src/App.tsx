@@ -100,6 +100,7 @@ import BlogPost from "./pages/BlogPost";
 import SuccessStories from "./pages/SuccessStories";
 import BlogManagementPage from "./pages/BlogManagementPage";
 import PartnershipsOverview from "./pages/PartnershipsOverview";
+import C2PAConformance from "./pages/admin/C2PAConformance";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -281,6 +282,11 @@ const App = () => {
             <Route path="/blog-management" element={
               <ProtectedRoute requiredRole="admin">
                 <BlogManagementPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/c2pa-conformance" element={
+              <ProtectedRoute requiredRole="admin">
+                <C2PAConformance />
               </ProtectedRoute>
             } />
             <Route path="/admin/partnerships" element={
