@@ -30,7 +30,7 @@ const TrustBadges = () => {
       icon: Award,
       emoji: "🏅",
       label: "C2PA Member",
-      description: "Content Authenticity Initiative"
+      description: "Coalition for Content Provenance and Authenticity"
     }
   ];
 
