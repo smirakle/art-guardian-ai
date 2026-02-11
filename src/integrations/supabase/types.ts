@@ -1456,6 +1456,36 @@ export type Database = {
         }
         Relationships: []
       }
+      c2pa_validation_logs: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_type: string
+          has_c2pa: boolean
+          id: string
+          manifest_data: Json | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_type: string
+          has_c2pa?: boolean
+          id?: string
+          manifest_data?: Json | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_type?: string
+          has_c2pa?: boolean
+          id?: string
+          manifest_data?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       cache_statistics: {
         Row: {
           cache_key: string

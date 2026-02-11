@@ -17,6 +17,8 @@ import AIProtectionAuditLog from './AIProtectionAuditLog';
 import StyleCloak from './StyleCloak';
 import LegalPackGenerator from './LegalPackGenerator';
 import AITrainingEnforcementEngine from './AITrainingEnforcementEngine';
+import C2PAValidationBadge from './C2PAValidationBadge';
+import { C2PAValidationResult } from '@/lib/c2paValidation';
 
 interface ProtectionRecord {
   id: string;
@@ -54,6 +56,8 @@ const AITrainingProtectionDashboard = () => {
   const [violations, setViolations] = useState<Violation[]>([]);
   const [loading, setLoading] = useState(true);
   const [scanning, setScanning] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [c2paResult, setC2paResult] = useState<C2PAValidationResult | null>(null);
   const [stats, setStats] = useState({
     totalProtected: 0,
     activeViolations: 0,
@@ -171,7 +175,24 @@ const AITrainingProtectionDashboard = () => {
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      startProtection(file);
+      setUploadedFile(file);
+      setC2paResult(null);
+      // Protection starts after C2PA validation completes (or user proceeds)
+    }
+  };
+
+  const handleC2PAValidationComplete = (result: C2PAValidationResult) => {
+    setC2paResult(result);
+    if (result.hasC2PA) {
+      toast.info('Content Credentials (C2PA) detected in this image. Provenance chain will be preserved.');
+    }
+  };
+
+  const proceedWithProtection = () => {
+    if (uploadedFile) {
+      startProtection(uploadedFile);
+      setUploadedFile(null);
+      setC2paResult(null);
     }
   };
 
@@ -314,6 +335,31 @@ const AITrainingProtectionDashboard = () => {
           </Button>
         </div>
       </div>
+
+      {/* C2PA Validation on Upload */}
+      {uploadedFile && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">Uploading: {uploadedFile.name}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <C2PAValidationBadge
+              file={uploadedFile}
+              autoValidate
+              onValidationComplete={handleC2PAValidationComplete}
+            />
+            {c2paResult && (
+              <Button onClick={proceedWithProtection} className="w-full">
+                <Shield className="h-4 w-4 mr-2" />
+                {c2paResult.hasC2PA
+                  ? 'Proceed — Add TSMO Protection to Provenance Chain'
+                  : 'Apply TSMO Protection'}
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
 
       {/* API Info Banner */}
       <div className="flex flex-wrap items-center gap-3 p-4 bg-primary/5 border border-primary/20 rounded-lg">
