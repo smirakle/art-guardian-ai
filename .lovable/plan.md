@@ -1,109 +1,107 @@
 
 
-# C2PA Manifest Validation for Incoming Images
+# Add Missing C2PA Capabilities to TSMO
 
 ## Overview
-Add the ability to detect and read existing C2PA manifests in user-uploaded images before TSMO applies its own protection. This ensures TSMO acts as both a **Validator** and **Generator** per the C2PA administrator's guidance -- preserving provenance chains rather than silently discarding them.
 
-## Architecture
+TSMO currently generates C2PA manifest JSON and detects existing manifests in uploads, but is missing two critical capabilities needed for C2PA conformance:
 
-The solution has three layers:
+1. **Real JUMBF Binary Embedding** -- Writing C2PA manifests into image files as proper JUMBF boxes (JPEG APP11 / PNG caBX chunks)
+2. **Cryptographic Signing** -- Replacing placeholder `TSMO-SIG-...` hashes with real ES256 (ECDSA P-256) signatures
+3. **Video C2PA Validation** -- Detecting C2PA manifests in MP4/MOV files (ISO BMFF JUMBF boxes)
 
-1. **Edge Function** (`validate-c2pa-manifest`) -- Parses uploaded image bytes to detect JUMBF (ISO 19566-5) boxes containing C2PA manifest stores, extracts manifest JSON, and returns validation results
-2. **Client Library** (`src/lib/c2paValidation.ts`) -- Calls the edge function and provides typed results
-3. **UI Integration** -- Shows C2PA status on the upload/protection flow so users know if their image already carries content credentials
+## What Changes
 
-## Technical Approach
+### 1. New Edge Function: `embed-c2pa-manifest`
 
-### Why not `@contentauth/c2pa-node`?
-That library requires native Rust binaries and won't run in Deno/Supabase Edge Functions. Instead, we'll do **binary JUMBF box detection** directly:
+A new edge function that takes the C2PA manifest JSON + image bytes and produces a properly structured output file with embedded JUMBF boxes.
 
-- **JPEG**: Scan for APP11 markers (`0xFF, 0xEB`) with JUMBF content type `c2pa` at known offsets
-- **PNG**: Scan for `caBX` ancillary chunks (the C2PA-designated PNG chunk type)
-- The JUMBF superbox for C2PA uses the label `c2pa` (bytes `63 32 70 61`)
+**For JPEG files:**
+- Construct a JUMBF superbox with the `c2pa` label
+- Wrap it in an APP11 marker segment (`0xFF 0xEB`)
+- Insert after SOI and before the first non-APP marker
 
-This gives us reliable **detection** of whether a C2PA manifest exists and basic extraction of the manifest label/structure, without needing full cryptographic signature validation (which requires the CAI trust list and signing certificates).
+**For PNG files:**
+- Construct a JUMBF superbox with the `c2pa` label
+- Wrap it in a `caBX` ancillary chunk
+- Insert before the IEND chunk
 
-### What gets detected vs. validated
-- **Detected**: Presence of C2PA JUMBF boxes, manifest label, claim generator string
-- **Not validated** (yet): Cryptographic signature verification -- this requires production C2PA signing certificates which are pending from CAI
+The JUMBF structure follows ISO 19566-5:
 
-## Implementation Steps
+```text
+JUMBF Superbox:
+  Box Header: size (4 bytes) + type "jumb" (4 bytes)
+  Description Box: size + type "jumd" + label "c2pa" + toggles
+  Content Boxes:
+    Claim Box (CBOR-encoded claim)
+    Assertion Store Box
+    Signature Box (COSE Sign1)
+```
 
-### 1. New Edge Function: `validate-c2pa-manifest`
+### 2. New Edge Function: `sign-c2pa-manifest`
 
-Create `supabase/functions/validate-c2pa-manifest/index.ts`:
+Handles cryptographic signing using ES256:
 
-- Accepts multipart form upload (image file)
-- Reads raw bytes and scans for JUMBF markers based on image format
-- For JPEG: finds APP11 segments, checks for `JP\0\0` JUMBF magic and `c2pa` label
-- For PNG: finds `caBX` chunks
-- Returns JSON with:
-  - `hasC2PA`: boolean
-  - `manifestFound`: boolean
-  - `claimGenerator`: string (if extractable)
-  - `assertions`: array of detected assertion types
-  - `format`: detected image format
-  - `rawBoxCount`: number of JUMBF boxes found
+- Accepts the manifest claim as CBOR
+- Signs with the ECDSA P-256 private key (stored as a Supabase secret)
+- Returns a COSE Sign1 envelope
+- Initially uses a self-signed certificate; upgrades to CAI-issued cert when received
 
-### 2. Client Library: `src/lib/c2paValidation.ts`
+This function requires three secrets:
+- `C2PA_SIGNING_CERT` -- X.509 certificate (PEM)
+- `C2PA_PRIVATE_KEY` -- ECDSA P-256 private key (PEM)
+- `C2PA_ISSUER_ID` -- CAI organization identifier
 
-- `validateC2PAManifest(file: File)` -- calls the edge function
-- `C2PAValidationResult` interface with typed fields
-- Used by upload components to show C2PA status before protection
+Until the user provides production certificates, the function will generate a self-signed keypair on first use and store it, allowing the full pipeline to work (manifests will be valid but not chain to the CAI trust list).
 
-### 3. UI Integration
+### 3. Update `productionMetadataInjection.ts`
 
-Update the protection flow components to:
-- Call C2PA validation when a user uploads an image
-- Show a badge/banner if existing C2PA credentials are detected (e.g., "This image has Content Credentials from Adobe Photoshop")
-- Warn that applying TSMO protection will add a new manifest entry to the provenance chain
-- Display in `AITrainingProtectionDashboard` and `ProductionMetadataSettings`
+Modify the Generator flow to:
+- Call `sign-c2pa-manifest` to get a real COSE Sign1 signature instead of generating `TSMO-SIG-...` placeholders
+- Call `embed-c2pa-manifest` to write the signed JUMBF into the output file
+- Return the file with the manifest physically embedded in the binary
 
-### 4. Database: `c2pa_validation_logs` table
+### 4. Update `validate-c2pa-manifest` for Video (MP4/MOV)
 
-Track validation results for compliance/audit:
-- `id`, `user_id`, `file_name`, `file_type`, `has_c2pa`, `manifest_data` (JSONB), `created_at`
+Add an ISO BMFF parser to the existing edge function:
+- MP4/MOV files use ISO Base Media File Format
+- C2PA manifests live in a top-level `uuid` box with the C2PA UUID
+- Scan top-level boxes for the C2PA UUID marker (`d8fec3d6-1b0e-483c-9297-58b3dabb223b`)
+- Extract and return detection results the same way as JPEG/PNG
+
+### 5. Database: `c2pa_signing_logs` table
+
+Track every signing operation for compliance:
+- `id`, `user_id`, `file_name`, `protection_id`, `signing_algorithm`, `certificate_fingerprint`, `manifest_hash`, `created_at`
 - RLS: users can only read their own logs
-
-## Technical Details
-
-### JUMBF Detection in JPEG
-
-```text
-JPEG structure:
-  SOI (0xFFD8)
-  ...
-  APP11 marker (0xFFEB)
-    Length (2 bytes)
-    "JP" box: 4-byte size + "jumb" type
-    Content type box with label "c2pa"
-    Manifest store data
-  ...
-```
-
-### JUMBF Detection in PNG
-
-```text
-PNG structure:
-  Signature (8 bytes)
-  ...
-  caBX chunk:
-    Length (4 bytes)
-    Type: "caBX" (4 bytes)
-    JUMBF superbox data
-    CRC (4 bytes)
-  ...
-```
 
 ## Files to Create/Modify
 
-| File | Action |
-|------|--------|
-| `supabase/functions/validate-c2pa-manifest/index.ts` | Create -- JUMBF parser edge function |
-| `src/lib/c2paValidation.ts` | Create -- client library |
-| `src/components/ai-protection/C2PAValidationBadge.tsx` | Create -- UI badge component |
-| `src/components/ai-protection/AITrainingProtectionDashboard.tsx` | Modify -- add C2PA check on upload |
-| `src/components/ai-protection/ProductionMetadataSettings.tsx` | Modify -- show C2PA status |
-| Database migration | Create `c2pa_validation_logs` table with RLS |
+| File | Action | Description |
+|------|--------|-------------|
+| `supabase/functions/embed-c2pa-manifest/index.ts` | Create | Binary JUMBF embedding for JPEG and PNG |
+| `supabase/functions/sign-c2pa-manifest/index.ts` | Create | ES256 cryptographic signing with COSE Sign1 |
+| `supabase/functions/validate-c2pa-manifest/index.ts` | Modify | Add MP4/MOV ISO BMFF scanning |
+| `src/lib/productionMetadataInjection.ts` | Modify | Replace placeholder signing with real edge function calls; add JUMBF embedding step |
+| `src/lib/c2paValidation.ts` | Modify | Add video MIME type support |
+| `src/components/ai-protection/C2PAValidationBadge.tsx` | Modify | Show video format detection results |
+| Database migration | Create | `c2pa_signing_logs` table with RLS |
+
+## Secrets Required
+
+Three secrets will be needed (can use self-signed initially):
+- `C2PA_SIGNING_CERT`
+- `C2PA_PRIVATE_KEY`
+- `C2PA_ISSUER_ID`
+
+The signing edge function will auto-generate a self-signed keypair if these are not yet configured, so the pipeline works immediately without blocking on CAI certificate issuance.
+
+## Outcome
+
+After implementation, TSMO will:
+- Physically embed C2PA JUMBF manifests into JPEG and PNG files (Generator)
+- Sign manifests with real ES256 cryptographic signatures (Generator)
+- Detect C2PA manifests in JPEG, PNG, MP4, and MOV files (Validator)
+- Log all signing and validation operations for audit compliance
+- Be ready for production CAI certificates when issued
 
