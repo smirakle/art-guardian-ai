@@ -25,6 +25,12 @@ const TrustBadges = () => {
       emoji: "⏰",
       label: "Always On",
       description: "We never stop watching"
+    },
+    {
+      icon: Award,
+      emoji: "🏅",
+      label: "C2PA Member",
+      description: "Content Authenticity Initiative"
     }
   ];
 
