@@ -12,7 +12,8 @@ import {
   Settings,
   AlertTriangle,
   CheckCircle,
-  Info
+  Info,
+  Fingerprint
 } from 'lucide-react';
 import { MonitoringWrapper } from '@/components/MonitoringWrapper';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -21,6 +22,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { AIDetectionDashboard } from '@/components/phase1/AIDetectionDashboard';
 import VisualRecognition from '@/components/VisualRecognition';
 import StyleCloak from '@/components/ai-protection/StyleCloak';
+import C2PAProtection from '@/components/ai-protection/C2PAProtection';
 import { ProductionMetadataSettings } from '@/components/ai-protection/ProductionMetadataSettings';
 import { ProductionCrawlerBlockingSettings } from '@/components/ai-protection/ProductionCrawlerBlockingSettings';
 import { ProductionLikenessSettings } from '@/components/ai-protection/ProductionLikenessSettings';
@@ -245,6 +247,29 @@ const ProtectionHub = () => {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Content Credentials (C2PA) */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Fingerprint className="h-5 w-5" />
+                  Content Credentials (C2PA)
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="h-4 w-4 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p>Embeds tamper-evident provenance data into your images, proving you are the original creator using the C2PA standard.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <C2PAProtection />
+              </CardContent>
+            </Card>
 
             {/* AI Training Settings */}
             <Card>
