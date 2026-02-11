@@ -161,10 +161,33 @@ async function executeScheduledScan(scan: any) {
 
 async function executeMonitoringScan(artworkId: string) {
   console.log(`Executing monitoring scan for artwork: ${artworkId}`);
-  
-  // Call the real-copyright-monitor function
+
+  // Fetch artwork to get file path
+  const { data: artwork, error: artworkError } = await supabase
+    .from('artwork')
+    .select('id, file_paths')
+    .eq('id', artworkId)
+    .maybeSingle();
+
+  if (artworkError) throw new Error(`Failed to fetch artwork: ${artworkError.message}`);
+  if (!artwork) throw new Error(`Artwork not found: ${artworkId}`);
+
+  // Generate signed URL for the image
+  let imageUrl: string | undefined;
+  if (artwork.file_paths?.length > 0) {
+    const { data: fileData } = await supabase.storage
+      .from('artwork')
+      .createSignedUrl(artwork.file_paths[0], 3600);
+    imageUrl = fileData?.signedUrl;
+  }
+
+  if (!imageUrl) {
+    throw new Error(`No image URL available for artwork: ${artworkId}`);
+  }
+
+  // Call with both required parameters
   const { data, error } = await supabase.functions.invoke('real-copyright-monitor', {
-    body: { artworkId }
+    body: { artworkId, imageUrl }
   });
 
   if (error) throw error;
