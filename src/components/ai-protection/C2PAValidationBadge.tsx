@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { ShieldCheck, ShieldAlert, Loader2, FileSearch } from 'lucide-react';
-import { validateC2PAManifest, logC2PAValidation, C2PAValidationResult } from '@/lib/c2paValidation';
+import { ShieldCheck, ShieldAlert, Loader2, FileSearch, Film } from 'lucide-react';
+import { validateC2PAManifest, logC2PAValidation, C2PAValidationResult, isC2PASupportedType } from '@/lib/c2paValidation';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface C2PAValidationBadgeProps {
@@ -55,7 +55,9 @@ const C2PAValidationBadge: React.FC<C2PAValidationBadgeProps> = ({
     }
   }, [file, autoValidate]);
 
-  if (!file) return null;
+  if (!file || !isC2PASupportedType(file.type)) return null;
+
+  const isVideo = file.type.startsWith('video/');
 
   if (validating) {
     return (
@@ -95,7 +97,8 @@ const C2PAValidationBadge: React.FC<C2PAValidationBadgeProps> = ({
       <Alert className="border-green-500/50 bg-green-500/5">
         <ShieldCheck className="h-4 w-4 text-green-600" />
         <AlertDescription className="space-y-1">
-          <div className="font-medium text-sm">
+          <div className="font-medium text-sm flex items-center gap-1">
+            {result.format === 'video' && <Film className="h-3 w-3" />}
             Content Credentials Detected (C2PA)
           </div>
           {result.claimGenerator && (
