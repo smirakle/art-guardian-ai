@@ -49,6 +49,7 @@ import { UserGuide } from "@/components/UserGuide";
 import { uploadGuide } from "@/data/userGuides";
 import { BugReportButton } from "@/components/BugReportButton";
 import ImprovedUploadGuidance from "@/components/ImprovedUploadGuidance";
+import C2PAProtection from "@/components/ai-protection/C2PAProtection";
 
 interface UploadedFile {
   id: string;
@@ -932,7 +933,7 @@ const Upload = () => {
             )}
           </TabsContent>
 
-          <TabsContent value="watermark" className="mt-6">
+          <TabsContent value="watermark" className="mt-6 space-y-6">
             <AdvancedWatermarkProtection 
               files={rawFiles}
               onWatermarkComplete={(results) => {
@@ -944,6 +945,20 @@ const Upload = () => {
                 });
               }}
             />
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-primary" />
+                  Content Credentials (C2PA)
+                </CardTitle>
+                <CardDescription>
+                  Add tamper-evident provenance data to prove authenticity and ownership
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <C2PAProtection />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="analyze" className="mt-6">
