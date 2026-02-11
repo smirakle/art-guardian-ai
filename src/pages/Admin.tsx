@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Handshake, Plug } from "lucide-react";
+import { Handshake, Plug, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 import SecurityAuditLog from "@/components/admin/SecurityAuditLog";
@@ -47,6 +47,15 @@ const Admin = () => {
               >
                 <Handshake className="h-4 w-4" />
                 Partnerships
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/admin/c2pa-conformance")}
+                className="gap-2"
+              >
+                <ShieldCheck className="h-4 w-4" />
+                C2PA Conformance
               </Button>
             </div>
           </div>
