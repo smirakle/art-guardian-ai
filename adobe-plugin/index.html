@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <link rel="stylesheet" href="./styles.css?v=2.0.0" />
+  <link rel="stylesheet" href="./styles.css?v=2.1.0" />
 </head>
 <body>
 
@@ -59,7 +59,7 @@
         Protect Current Document
       </button>
       <p class="protect-hint">One click to protect your current document</p>
-      <p id="tier-indicator" class="tier-indicator">Basic Protection • Metadata Only</p>
+      <p id="tier-indicator" class="tier-indicator">Basic Protection • Metadata + C2PA</p>
     </div>
 
     <div id="protection-status" class="status-section" style="display:none;">
@@ -68,6 +68,16 @@
         <button id="btn-save-account" class="btn btn-save-account">💾 Save to TSMO Account</button>
         <button id="btn-view-tsmo" class="btn btn-view-tsmo">🔍 View in TSMO Watch</button>
       </div>
+    </div>
+
+    <!-- C2PA Content Credentials Status -->
+    <div id="c2pa-status" class="c2pa-section" style="display:none;">
+      <div class="c2pa-header">
+        <span id="c2pa-status-text" class="c2pa-status-text">Content Credentials: Pending</span>
+        <span id="c2pa-badge" class="c2pa-badge" style="display:none;">C2PA</span>
+      </div>
+      <button id="c2pa-details-toggle" class="c2pa-details-toggle">▸ Technical Details</button>
+      <pre id="c2pa-details-content" class="c2pa-details-content" style="display:none;"></pre>
     </div>
 
     <div class="action-buttons">
@@ -82,9 +92,9 @@
   <div class="footer">
     <a id="link-homepage" class="footer-link" href="#">www.tsmowatch.com</a>
     <p class="copyright">© 2026 TSMO Technology Inc.</p>
-    <span class="version-badge">v2.0.0</span>
+    <span class="version-badge">v2.1.0</span>
   </div>
 
-  <script src="./index.js?v=2.0.0"></script>
+  <script src="./index.js?v=2.1.0"></script>
 </body>
 </html>
