@@ -1,57 +1,55 @@
 
-# Exit Valuation Calculator - Admin Tab
+
+# Implement C2PA Content Credentials in the Photoshop Plugin
 
 ## Overview
-Add a new "Valuation" tab to the Admin page with an interactive calculator that lets you model TSMO's projected sale value based on milestones achieved, current ARR, and partnership status.
+Add C2PA signing and JUMBF embedding directly into the Adobe Photoshop plugin's protection workflow. When a user clicks "Protect Current Document," the plugin will sign a C2PA manifest via the existing edge function, then embed the credentials into the exported image file -- all within the UXP environment.
 
-## What It Will Include
+## How It Will Work
 
-### 1. Interactive Controls
-- **ARR Slider**: Adjust current Annual Recurring Revenue ($0 - $100M range with logarithmic scale)
-- **Growth Rate Selector**: Choose monthly growth rate (10%, 15%, 20%, 25%, 30%)
-- **Projection Year Selector**: View valuation at Year 1 through Year 10
+1. **User clicks "Protect"** in the plugin panel
+2. Plugin exports the active document as a temporary JPEG/PNG using Photoshop's batchPlay
+3. Plugin calls the `sign-c2pa-manifest` edge function to get an ES256 signature
+4. Plugin sends the image + manifest + signature to `embed-c2pa-manifest` to get the protected file back
+5. The protected image (with embedded JUMBF) is placed back as a new layer or saved alongside the PSD
+6. XMP metadata injection and database record creation continue as before
 
-### 2. Milestone Checklist (toggleable)
-Each milestone adds a multiplier to the base valuation:
-- Patent Granted (1.5x)
-- Adobe CAI Ecosystem Listed (1.3x)
-- Adobe Exchange Partner (2.0x)
-- Photoshop Plugin Live (1.8x)
-- Illustrator Plugin Live (1.4x)
-- EU AI Act Compliance Certified (1.6x)
-- C2PA Production Signing Active (1.5x)
-- RLS Security Warnings Resolved (1.2x)
-- 1,000+ Paying Customers (1.5x)
-- Enterprise Contract Signed (1.8x)
-- Government Contract (2.0x)
+## Changes
 
-### 3. Valuation Display
-- **Large headline number** showing projected valuation (Bear / Base / Bull cases)
-- **Revenue multiple used** (dynamically calculated based on milestones)
-- **Recharts line chart** showing valuation trajectory over 10 years
-- **Comparable exits table** (Figma $20B, Canva $26B, etc.)
+### 1. Modified: `adobe-plugin/index.js`
+Add a new `applyC2PA()` function that:
+- Uses batchPlay to export the active document as a temporary JPEG (`saveToJPEG` descriptor)
+- Reads the exported file bytes using UXP's `localFileSystem` API
+- Builds the C2PA claim JSON (matching the web app's claim structure: `c2pa.actions`, `c2pa.hash.data`)
+- Calls `sign-c2pa-manifest` edge function via fetch (same auth pattern as existing `apiCall`)
+- Calls `embed-c2pa-manifest` edge function with multipart/form-data (file + manifest + signature)
+- Receives the protected image bytes back
+- Writes the protected file to disk using UXP file API
+- Places the protected image as a new "TSMO C2PA Protected" layer via batchPlay `placeEvent`
 
-### 4. Scenario Cards
-- Bear Case, Base Case, Bull Case side-by-side cards with color coding
-- Each shows projected ARR, revenue multiple, and exit valuation
+Integrate this into `protectDocument()` so it runs automatically after the existing protection logic succeeds (for both Basic and Pro tiers).
 
-### 5. Partnership Status Section
-- Visual indicators for Adobe, C2PA, Government partnership stages
-- Each partnership tier shows its impact on valuation multiplier
+Add a C2PA status indicator in the UI showing "Content Credentials: Applied" after success.
 
-## Technical Details
+### 2. Modified: `adobe-plugin/index.html`
+- Add a C2PA status section below the protection status area:
+  - Shows "Content Credentials: Pending / Applied / Failed"
+  - Collapsible technical details (algorithm, manifest hash) matching the web app's pattern
+- Add a "C2PA" badge next to the protection status when credentials are embedded
 
-### New Files
-- `src/components/admin/ExitValuationCalculator.tsx` - Main calculator component with all interactive elements, using Recharts for the projection chart, Radix sliders/checkboxes for inputs, and the existing Card/Badge/Progress UI components
+### 3. Modified: `adobe-plugin/styles.css`
+- Style the C2PA status indicator and badge
+- Match existing plugin design language (dark theme, consistent spacing)
 
-### Modified Files
-- `src/pages/Admin.tsx` - Add new "Valuation" tab with a DollarSign icon, import and render the ExitValuationCalculator component
+### 4. Modified: `adobe-plugin/manifest.json`
+- Bump version to `2.1.0`
+- Add `localFilesystem` permission under `requiredPermissions` (needed for temp file read/write during export)
 
-### Valuation Formula
-```
-Base Valuation = Projected ARR x Base Multiple (7.5x)
-Milestone Multiplier = Product of all achieved milestone factors
-Final Valuation = Base Valuation x Milestone Multiplier x Stage Discount
-```
+## Technical Considerations
 
-The calculator uses real-time state -- adjusting any input instantly recalculates all projections and updates the chart. No mock data; all calculations are formula-driven from user inputs.
+- **UXP File API**: UXP provides `require('uxp').storage.localFileSystem` for file I/O. Temp files are written to a plugin-specific sandbox folder.
+- **Multipart FormData**: UXP supports the `FormData` API, which is required for the `embed-c2pa-manifest` edge function.
+- **File Size**: Photoshop documents can be large. The export will use JPEG quality 95 to balance fidelity and size within the edge function's limits.
+- **Fallback**: If C2PA embedding fails (network error, unsupported format), the protection still succeeds with XMP-only metadata -- C2PA is additive, not blocking.
+- **No new edge functions needed**: The existing `sign-c2pa-manifest` and `embed-c2pa-manifest` functions handle everything.
+
