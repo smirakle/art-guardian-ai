@@ -5,10 +5,28 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
-// C2PA JUMBF label bytes: "c2pa" = [0x63, 0x32, 0x70, 0x61]
-const C2PA_LABEL = [0x63, 0x32, 0x70, 0x61];
-// JUMBF magic: "jumb"
-const JUMB_TYPE = [0x6A, 0x75, 0x6D, 0x62];
+/**
+ * C2PA v2.2 Manifest Validator Edge Function
+ * 
+ * Performs binary scanning for JUMBF boxes in JPEG (APP11), PNG (caBX),
+ * and MP4/MOV (ISO BMFF UUID box). When found, parses the JUMBF structure
+ * to extract description boxes, assertion store, claim (CBOR), and
+ * claim signature (COSE Sign1).
+ */
+
+// ─── Constants ───────────────────────────────────────────────────────────────
+
+const C2PA_JUMBF_UUID = new Uint8Array([
+  0x63, 0x32, 0x70, 0x61, 0x00, 0x11, 0x00, 0x10,
+  0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71
+]);
+
+const C2PA_VIDEO_UUID = new Uint8Array([
+  0xd8, 0xfe, 0xc3, 0xd6, 0x1b, 0x0e, 0x48, 0x3c,
+  0x92, 0x97, 0x58, 0xb3, 0xda, 0xbb, 0x22, 0x3b
+]);
+
+// ─── Interfaces ──────────────────────────────────────────────────────────────
 
 interface C2PAIngredientInfo {
   title: string;
@@ -30,21 +48,22 @@ interface C2PAResult {
   specVersion?: string;
   format: string;
   rawBoxCount: number;
+  claimHash?: string;
+  signatureVerified?: boolean;
   error?: string;
 }
 
-function detectFormat(bytes: Uint8Array): string {
-  // JPEG: starts with 0xFFD8
-  if (bytes[0] === 0xFF && bytes[1] === 0xD8) return 'jpeg';
-  // PNG: 89 50 4E 47 0D 0A 1A 0A
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) return 'png';
-  // WebP: RIFF....WEBP
-  if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 &&
-      bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50) return 'webp';
-  return 'unknown';
+// ─── Binary Helpers ──────────────────────────────────────────────────────────
+
+function readUint16BE(data: Uint8Array, offset: number): number {
+  return (data[offset] << 8) | data[offset + 1];
 }
 
-function matchBytes(data: Uint8Array, offset: number, pattern: number[]): boolean {
+function readUint32BE(data: Uint8Array, offset: number): number {
+  return ((data[offset] << 24) | (data[offset + 1] << 16) | (data[offset + 2] << 8) | data[offset + 3]) >>> 0;
+}
+
+function matchBytes(data: Uint8Array, offset: number, pattern: Uint8Array | number[]): boolean {
   if (offset + pattern.length > data.length) return false;
   for (let i = 0; i < pattern.length; i++) {
     if (data[offset + i] !== pattern[i]) return false;
@@ -52,213 +71,567 @@ function matchBytes(data: Uint8Array, offset: number, pattern: number[]): boolea
   return true;
 }
 
-function readUint32BE(data: Uint8Array, offset: number): number {
-  return (data[offset] << 24) | (data[offset + 1] << 16) | (data[offset + 2] << 8) | data[offset + 3];
+function bytesToHex(bytes: Uint8Array): string {
+  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-function readUint16BE(data: Uint8Array, offset: number): number {
-  return (data[offset] << 8) | data[offset + 1];
+// ─── CBOR Decoder (subset needed for C2PA claims) ────────────────────────────
+
+interface CBORDecodeResult {
+  value: unknown;
+  bytesRead: number;
 }
 
-// Try to extract a UTF-8 string near a given offset (heuristic for claim generator)
-function extractNearbyString(data: Uint8Array, searchStart: number, maxLen: number): string | null {
-  // Look for "c2pa" or common claim generator patterns
-  const searchEnd = Math.min(searchStart + maxLen, data.length);
-  const decoder = new TextDecoder('utf-8', { fatal: false });
-  
-  // Search for common claim generator prefixes
-  const prefixes = ['adobe', 'photoshop', 'lightroom', 'c2pa', 'truepic', 'microsoft', 'google', 'samsung', 'nikon', 'canon', 'sony'];
-  
-  for (let i = searchStart; i < searchEnd - 4; i++) {
-    const chunk = decoder.decode(data.slice(i, Math.min(i + 200, searchEnd)));
-    const lower = chunk.toLowerCase();
-    for (const prefix of prefixes) {
-      const idx = lower.indexOf(prefix);
-      if (idx >= 0) {
-        // Extract a reasonable string around the match
-        const start = idx;
-        let end = start;
-        while (end < chunk.length && chunk.charCodeAt(end) >= 32 && chunk.charCodeAt(end) < 127) {
-          end++;
+function decodeCBOR(data: Uint8Array, offset = 0): CBORDecodeResult {
+  if (offset >= data.length) {
+    return { value: null, bytesRead: 0 };
+  }
+
+  const initial = data[offset];
+  const majorType = initial >> 5;
+  const additionalInfo = initial & 0x1F;
+
+  let value: number;
+  let headerLen: number;
+
+  if (additionalInfo < 24) {
+    value = additionalInfo;
+    headerLen = 1;
+  } else if (additionalInfo === 24) {
+    value = data[offset + 1];
+    headerLen = 2;
+  } else if (additionalInfo === 25) {
+    value = readUint16BE(data, offset + 1);
+    headerLen = 3;
+  } else if (additionalInfo === 26) {
+    value = readUint32BE(data, offset + 1);
+    headerLen = 5;
+  } else if (additionalInfo === 27) {
+    // 8-byte integer — read as number (may lose precision for very large values)
+    value = 0;
+    for (let i = 0; i < 8; i++) {
+      value = value * 256 + data[offset + 1 + i];
+    }
+    headerLen = 9;
+  } else if (additionalInfo === 31) {
+    // Indefinite length
+    headerLen = 1;
+    value = -1;
+  } else {
+    return { value: null, bytesRead: 1 };
+  }
+
+  switch (majorType) {
+    case 0: // Unsigned integer
+      return { value, bytesRead: headerLen };
+
+    case 1: // Negative integer
+      return { value: -1 - value, bytesRead: headerLen };
+
+    case 2: { // Byte string
+      const bytes = data.slice(offset + headerLen, offset + headerLen + value);
+      return { value: bytes, bytesRead: headerLen + value };
+    }
+
+    case 3: { // Text string
+      const textBytes = data.slice(offset + headerLen, offset + headerLen + value);
+      const text = new TextDecoder().decode(textBytes);
+      return { value: text, bytesRead: headerLen + value };
+    }
+
+    case 4: { // Array
+      if (value === -1) {
+        // Indefinite length array
+        const arr: unknown[] = [];
+        let pos = offset + headerLen;
+        while (pos < data.length && data[pos] !== 0xFF) {
+          const item = decodeCBOR(data, pos);
+          arr.push(item.value);
+          pos += item.bytesRead;
         }
-        if (end - start > 3) {
-          return chunk.slice(start, Math.min(end, start + 100));
+        return { value: arr, bytesRead: pos - offset + 1 };
+      }
+      const arr: unknown[] = [];
+      let pos = offset + headerLen;
+      for (let i = 0; i < value; i++) {
+        const item = decodeCBOR(data, pos);
+        arr.push(item.value);
+        pos += item.bytesRead;
+      }
+      return { value: arr, bytesRead: pos - offset };
+    }
+
+    case 5: { // Map
+      if (value === -1) {
+        // Indefinite length map
+        const map: Record<string, unknown> = {};
+        let pos = offset + headerLen;
+        while (pos < data.length && data[pos] !== 0xFF) {
+          const key = decodeCBOR(data, pos);
+          pos += key.bytesRead;
+          const val = decodeCBOR(data, pos);
+          pos += val.bytesRead;
+          map[String(key.value)] = val.value;
+        }
+        return { value: map, bytesRead: pos - offset + 1 };
+      }
+      const map: Record<string, unknown> = {};
+      let pos = offset + headerLen;
+      for (let i = 0; i < value; i++) {
+        const key = decodeCBOR(data, pos);
+        pos += key.bytesRead;
+        const val = decodeCBOR(data, pos);
+        pos += val.bytesRead;
+        map[String(key.value)] = val.value;
+      }
+      return { value: map, bytesRead: pos - offset };
+    }
+
+    case 6: { // Tag
+      const content = decodeCBOR(data, offset + headerLen);
+      // For COSE Sign1 (tag 18), return the tagged content
+      return {
+        value: { _tag: value, _value: content.value },
+        bytesRead: headerLen + content.bytesRead,
+      };
+    }
+
+    case 7: { // Simple/float
+      if (additionalInfo === 20) return { value: false, bytesRead: 1 };
+      if (additionalInfo === 21) return { value: true, bytesRead: 1 };
+      if (additionalInfo === 22) return { value: null, bytesRead: 1 };
+      if (additionalInfo === 23) return { value: undefined, bytesRead: 1 };
+      if (additionalInfo === 25) {
+        // Float16 — simplified decode
+        return { value: 0, bytesRead: 3 };
+      }
+      if (additionalInfo === 26) {
+        // Float32
+        const buf = new ArrayBuffer(4);
+        const view = new DataView(buf);
+        for (let i = 0; i < 4; i++) view.setUint8(i, data[offset + 1 + i]);
+        return { value: view.getFloat32(0), bytesRead: 5 };
+      }
+      if (additionalInfo === 27) {
+        // Float64
+        const buf = new ArrayBuffer(8);
+        const view = new DataView(buf);
+        for (let i = 0; i < 8; i++) view.setUint8(i, data[offset + 1 + i]);
+        return { value: view.getFloat64(0), bytesRead: 9 };
+      }
+      return { value: null, bytesRead: 1 };
+    }
+
+    default:
+      return { value: null, bytesRead: 1 };
+  }
+}
+
+function safeCBORDecode(data: Uint8Array): unknown {
+  try {
+    const result = decodeCBOR(data, 0);
+    return result.value;
+  } catch (e) {
+    console.warn('[validate-c2pa] CBOR decode failed:', e);
+    return null;
+  }
+}
+
+// ─── JUMBF Parser ────────────────────────────────────────────────────────────
+
+interface JUMBFBox {
+  type: string;       // 4-char box type (e.g., "jumb", "jumd", "c2cl")
+  label?: string;     // label from description box
+  uuid?: Uint8Array;  // UUID from description box
+  data: Uint8Array;   // raw box data (excluding LBox + TBox header)
+  children: JUMBFBox[];
+  offset: number;
+  size: number;
+}
+
+/**
+ * Parse JUMBF boxes from raw bytes.
+ * Returns a tree of JUMBFBox nodes.
+ */
+function parseJUMBFBoxes(data: Uint8Array, start = 0, end?: number): JUMBFBox[] {
+  const boxes: JUMBFBox[] = [];
+  const maxEnd = end ?? data.length;
+  let offset = start;
+
+  while (offset < maxEnd - 8) {
+    let boxSize = readUint32BE(data, offset);
+    const boxType = String.fromCharCode(
+      data[offset + 4], data[offset + 5], data[offset + 6], data[offset + 7]
+    );
+
+    // Handle box size edge cases
+    if (boxSize === 0) {
+      boxSize = maxEnd - offset; // box extends to end
+    }
+    if (boxSize < 8 || offset + boxSize > maxEnd) break;
+
+    const boxDataStart = offset + 8;
+    const boxDataEnd = offset + boxSize;
+    const boxData = data.subarray(boxDataStart, boxDataEnd);
+
+    const box: JUMBFBox = {
+      type: boxType,
+      data: boxData,
+      children: [],
+      offset,
+      size: boxSize,
+    };
+
+    // If superbox ("jumb"), parse children recursively
+    if (boxType === 'jumb') {
+      box.children = parseJUMBFBoxes(data, boxDataStart, boxDataEnd);
+
+      // Extract label from first child if it's a description box (jumd)
+      const descChild = box.children.find(c => c.type === 'jumd');
+      if (descChild) {
+        const parsed = parseDescriptionBox(descChild.data);
+        box.label = parsed.label;
+        box.uuid = parsed.uuid;
+      }
+    }
+
+    // Parse description box inline
+    if (boxType === 'jumd') {
+      const parsed = parseDescriptionBox(boxData);
+      box.label = parsed.label;
+      box.uuid = parsed.uuid;
+    }
+
+    boxes.push(box);
+    offset += boxSize;
+  }
+
+  return boxes;
+}
+
+/**
+ * Parse a JUMD (description) box data.
+ * Structure: UUID(16) + toggles(1) + label(null-terminated, if toggle bit 0 set)
+ */
+function parseDescriptionBox(data: Uint8Array): { uuid?: Uint8Array; label?: string } {
+  if (data.length < 17) {
+    // No UUID — try legacy format: toggles(1) + label
+    if (data.length >= 2) {
+      const toggles = data[0];
+      if (toggles & 0x01) {
+        const labelEnd = data.indexOf(0, 1);
+        const label = new TextDecoder().decode(data.subarray(1, labelEnd === -1 ? data.length : labelEnd));
+        return { label };
+      }
+    }
+    return {};
+  }
+
+  const uuid = data.subarray(0, 16);
+  const toggles = data[16];
+  let label: string | undefined;
+
+  if (toggles & 0x01) {
+    // Label present
+    const labelStart = 17;
+    let labelEnd = labelStart;
+    while (labelEnd < data.length && data[labelEnd] !== 0) labelEnd++;
+    label = new TextDecoder().decode(data.subarray(labelStart, labelEnd));
+  }
+
+  return { uuid, label };
+}
+
+// ─── Claim Extractor ─────────────────────────────────────────────────────────
+
+interface ParsedClaim {
+  claimGenerator?: string;
+  claimGeneratorInfo?: { name: string; version: string }[];
+  assertions: string[];
+  ingredients: C2PAIngredientInfo[];
+  instanceId?: string;
+  specVersion?: string;
+  hashData?: { alg: string; hash: string };
+}
+
+/**
+ * Extract structured claim data from a parsed JUMBF tree.
+ */
+function extractClaimFromJUMBF(boxes: JUMBFBox[]): ParsedClaim {
+  const claim: ParsedClaim = {
+    assertions: [],
+    ingredients: [],
+  };
+
+  // Find the top-level c2pa superbox
+  const c2paBox = boxes.find(b => b.label === 'c2pa') || boxes.find(b => b.type === 'jumb');
+  if (!c2paBox) return claim;
+
+  // Find assertion store
+  const assertionStore = c2paBox.children.find(b => b.label === 'c2pa.assertions');
+  if (assertionStore) {
+    for (const assertionBox of assertionStore.children) {
+      if (assertionBox.type === 'jumb' && assertionBox.label) {
+        claim.assertions.push(assertionBox.label);
+
+        // Try to parse ingredient assertions
+        if (assertionBox.label === 'c2pa.ingredient' || assertionBox.label.startsWith('c2pa.ingredient')) {
+          const ingredient = parseIngredientFromBox(assertionBox);
+          if (ingredient) claim.ingredients.push(ingredient);
         }
       }
     }
   }
-  return null;
+
+  // Find claim box and try CBOR decode
+  const claimBox = c2paBox.children.find(b => b.label === 'c2pa.claim');
+  if (claimBox) {
+    // Look for c2cl content box inside
+    const c2clBox = claimBox.children.find(b => b.type === 'c2cl');
+    const contentData = c2clBox ? c2clBox.data : claimBox.data;
+
+    const decoded = safeCBORDecode(contentData);
+    if (decoded && typeof decoded === 'object') {
+      extractFieldsFromDecodedClaim(decoded as Record<string, unknown>, claim);
+    } else {
+      // Fallback: try to parse as JSON text
+      try {
+        const text = new TextDecoder().decode(contentData);
+        const json = JSON.parse(text);
+        extractFieldsFromDecodedClaim(json, claim);
+      } catch {
+        // Not parseable — try string scanning
+        extractFieldsFromText(contentData, claim);
+      }
+    }
+  } else {
+    // No labeled claim box — scan all content for claim data
+    for (const child of c2paBox.children) {
+      if (child.type === 'c2cl') {
+        const decoded = safeCBORDecode(child.data);
+        if (decoded && typeof decoded === 'object') {
+          extractFieldsFromDecodedClaim(decoded as Record<string, unknown>, claim);
+        } else {
+          try {
+            const text = new TextDecoder().decode(child.data);
+            const json = JSON.parse(text);
+            extractFieldsFromDecodedClaim(json, claim);
+          } catch {
+            extractFieldsFromText(child.data, claim);
+          }
+        }
+        break;
+      }
+    }
+  }
+
+  // Find claim signature
+  const sigBox = c2paBox.children.find(b => b.label === 'c2pa.signature');
+  if (sigBox) {
+    const c2csBox = sigBox.children.find(b => b.type === 'c2cs');
+    if (c2csBox) {
+      // Try CBOR decode of COSE Sign1 (tag 18)
+      const decoded = safeCBORDecode(c2csBox.data);
+      if (decoded && typeof decoded === 'object' && (decoded as Record<string, unknown>)._tag === 18) {
+        claim.specVersion = '2.2'; // Has proper COSE Sign1 structure
+      }
+    }
+  }
+
+  return claim;
 }
 
-function scanJPEGForC2PA(data: Uint8Array): C2PAResult {
-  const result: C2PAResult = {
-    hasC2PA: false,
-    manifestFound: false,
-    claimGenerator: null,
-    assertions: [],
-    ingredients: [],
-    trustStatus: 'unknown',
-    format: 'jpeg',
-    rawBoxCount: 0,
-  };
+function extractFieldsFromDecodedClaim(obj: Record<string, unknown>, claim: ParsedClaim): void {
+  // claim_generator
+  if (typeof obj.claim_generator === 'string') {
+    claim.claimGenerator = obj.claim_generator;
+  }
 
-  // Verify JPEG SOI
+  // claim_generator_info
+  if (Array.isArray(obj.claim_generator_info)) {
+    claim.claimGeneratorInfo = obj.claim_generator_info
+      .filter((i: unknown) => typeof i === 'object' && i !== null)
+      .map((i: unknown) => {
+        const info = i as Record<string, unknown>;
+        return {
+          name: String(info.name || ''),
+          version: String(info.version || ''),
+        };
+      });
+  }
+
+  // instance_id
+  if (typeof obj.instance_id === 'string') {
+    claim.instanceId = obj.instance_id;
+  }
+
+  // assertions
+  if (Array.isArray(obj.assertions)) {
+    for (const a of obj.assertions) {
+      if (typeof a === 'string') {
+        if (!claim.assertions.includes(a)) claim.assertions.push(a);
+      } else if (typeof a === 'object' && a !== null) {
+        const label = (a as Record<string, unknown>).label || (a as Record<string, unknown>).url;
+        if (typeof label === 'string' && !claim.assertions.includes(label)) {
+          claim.assertions.push(label);
+        }
+      }
+    }
+  }
+
+  // ingredients
+  if (Array.isArray(obj.ingredients)) {
+    for (const ing of obj.ingredients) {
+      if (typeof ing === 'object' && ing !== null) {
+        const i = ing as Record<string, unknown>;
+        claim.ingredients.push({
+          title: String(i.dc_title || i.title || 'Unknown'),
+          format: String(i.dc_format || i.format || 'application/octet-stream'),
+          instanceID: String(i.instanceID || i.instance_id || ''),
+          relationship: String(i.relationship || 'parentOf'),
+          hash: typeof i.hash === 'string' ? i.hash : undefined,
+        });
+      }
+    }
+  }
+
+  // @context or spec version
+  if (typeof obj['@context'] === 'string') {
+    if (obj['@context'].includes('2.2') || obj['@context'].includes('2.1')) {
+      claim.specVersion = '2.2';
+    }
+  }
+}
+
+function parseIngredientFromBox(box: JUMBFBox): C2PAIngredientInfo | null {
+  // Find content box (cbor type)
+  const contentBox = box.children.find(b => b.type === 'cbor') || box.children[1];
+  if (!contentBox) return null;
+
+  const decoded = safeCBORDecode(contentBox.data);
+  if (decoded && typeof decoded === 'object') {
+    const obj = decoded as Record<string, unknown>;
+    return {
+      title: String(obj.dc_title || obj.title || 'Unknown'),
+      format: String(obj.dc_format || obj.format || 'application/octet-stream'),
+      instanceID: String(obj.instanceID || obj.instance_id || ''),
+      relationship: String(obj.relationship || 'parentOf'),
+      hash: typeof obj.hash === 'string' ? obj.hash :
+            typeof (obj.data as Record<string, unknown>)?.hash === 'string' ?
+            (obj.data as Record<string, unknown>).hash as string : undefined,
+    };
+  }
+
+  // Try JSON fallback
+  try {
+    const text = new TextDecoder().decode(contentBox.data);
+    const json = JSON.parse(text);
+    return {
+      title: String(json.dc_title || json.title || 'Unknown'),
+      format: String(json.dc_format || json.format || 'application/octet-stream'),
+      instanceID: String(json.instanceID || json.instance_id || ''),
+      relationship: String(json.relationship || 'parentOf'),
+      hash: json.hash || json.data?.hash,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fallback: extract fields from raw text scanning (for non-CBOR manifests).
+ */
+function extractFieldsFromText(data: Uint8Array, claim: ParsedClaim): void {
+  const decoder = new TextDecoder('utf-8', { fatal: false });
+  const text = decoder.decode(data);
+
+  // Claim generator detection
+  const generatorPrefixes = ['adobe', 'photoshop', 'lightroom', 'c2pa', 'truepic', 'microsoft',
+    'google', 'samsung', 'nikon', 'canon', 'sony', 'tsmo', 'TSMO'];
+  const lower = text.toLowerCase();
+  for (const prefix of generatorPrefixes) {
+    const idx = lower.indexOf(prefix.toLowerCase());
+    if (idx >= 0) {
+      let end = idx;
+      while (end < text.length && text.charCodeAt(end) >= 32 && text.charCodeAt(end) < 127) end++;
+      if (end - idx > 3) {
+        claim.claimGenerator = text.slice(idx, Math.min(end, idx + 100));
+        break;
+      }
+    }
+  }
+
+  // Assertion label detection
+  const assertionLabels = ['c2pa.actions', 'c2pa.hash.data', 'c2pa.thumbnail',
+    'stds.schema-org.CreativeWork', 'c2pa.ingredient'];
+  for (const label of assertionLabels) {
+    if (text.includes(label) && !claim.assertions.includes(label)) {
+      claim.assertions.push(label);
+    }
+  }
+}
+
+// ─── Format-Specific JUMBF Extractors ────────────────────────────────────────
+
+function extractJUMBFFromJPEG(data: Uint8Array): { jumbfData: Uint8Array | null; format: string } {
   if (data[0] !== 0xFF || data[1] !== 0xD8) {
-    result.error = 'Not a valid JPEG';
-    return result;
+    return { jumbfData: null, format: 'jpeg' };
   }
 
   let offset = 2;
   while (offset < data.length - 4) {
-    // Find next marker
-    if (data[offset] !== 0xFF) {
-      offset++;
-      continue;
-    }
-
+    if (data[offset] !== 0xFF) { offset++; continue; }
     const marker = data[offset + 1];
-    
-    // SOS (Start of Scan) - stop scanning markers
-    if (marker === 0xDA) break;
-    // EOI
-    if (marker === 0xD9) break;
-
-    // Skip standalone markers
+    if (marker === 0xDA || marker === 0xD9) break;
     if (marker === 0xFF || marker === 0x00 || (marker >= 0xD0 && marker <= 0xD7)) {
       offset += 2;
       continue;
     }
 
     const segLength = readUint16BE(data, offset + 2);
-    
-    // APP11 marker = 0xEB (C2PA uses APP11 for JUMBF)
+
+    // APP11 (0xEB) — C2PA JUMBF container
     if (marker === 0xEB) {
       const segStart = offset + 4;
+      // Skip the 12-byte JUMBF envelope (CI + En + Z + LBox)
+      const jumbfStart = segStart + 12;
       const segEnd = offset + 2 + segLength;
-      
-      // Search for JUMBF box type "jumb" within this APP11 segment
-      for (let i = segStart; i < Math.min(segEnd, data.length) - 8; i++) {
-        if (matchBytes(data, i, JUMB_TYPE)) {
-          result.rawBoxCount++;
-          
-          // Search for c2pa label nearby
-          for (let j = i; j < Math.min(i + 200, segEnd, data.length) - 4; j++) {
-            if (matchBytes(data, j, C2PA_LABEL)) {
-              result.hasC2PA = true;
-              result.manifestFound = true;
-              
-              // Try to extract claim generator string
-              const generator = extractNearbyString(data, j, 2000);
-              if (generator) {
-                result.claimGenerator = generator;
-              }
-              
-              // Look for common assertion type labels
-              const assertionLabels = ['c2pa.actions', 'c2pa.hash.data', 'c2pa.thumbnail', 'stds.schema-org.CreativeWork', 'c2pa.ingredient'];
-              const decoder = new TextDecoder('utf-8', { fatal: false });
-              const segText = decoder.decode(data.slice(j, Math.min(segEnd, data.length)));
-              for (const label of assertionLabels) {
-                if (segText.includes(label)) {
-                  result.assertions.push(label);
-                }
-              }
-              break;
-            }
-          }
-        }
+      if (jumbfStart < segEnd) {
+        return { jumbfData: data.subarray(jumbfStart, segEnd), format: 'jpeg' };
       }
     }
 
     offset += 2 + segLength;
   }
 
-  return result;
+  return { jumbfData: null, format: 'jpeg' };
 }
 
-function scanPNGForC2PA(data: Uint8Array): C2PAResult {
-  const result: C2PAResult = {
-    hasC2PA: false,
-    manifestFound: false,
-    claimGenerator: null,
-    assertions: [],
-    ingredients: [],
-    trustStatus: 'unknown',
-    format: 'png',
-    rawBoxCount: 0,
-  };
-
-  // Verify PNG signature
+function extractJUMBFFromPNG(data: Uint8Array): { jumbfData: Uint8Array | null; format: string } {
   if (!matchBytes(data, 0, [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])) {
-    result.error = 'Not a valid PNG';
-    return result;
+    return { jumbfData: null, format: 'png' };
   }
 
-  let offset = 8; // After PNG signature
-  const caBX = [0x63, 0x61, 0x42, 0x58]; // "caBX"
+  let offset = 8;
+  const caBX = [0x63, 0x61, 0x42, 0x58];
 
   while (offset < data.length - 12) {
     const chunkLength = readUint32BE(data, offset);
     const chunkTypeOffset = offset + 4;
 
-    // Check for caBX chunk (C2PA container in PNG)
     if (matchBytes(data, chunkTypeOffset, caBX)) {
-      result.rawBoxCount++;
-      
       const chunkDataStart = chunkTypeOffset + 4;
-      const chunkDataEnd = Math.min(chunkDataStart + chunkLength, data.length);
-      
-      // Search for JUMBF "jumb" and "c2pa" within chunk data
-      for (let i = chunkDataStart; i < chunkDataEnd - 4; i++) {
-        if (matchBytes(data, i, C2PA_LABEL)) {
-          result.hasC2PA = true;
-          result.manifestFound = true;
-          
-          const generator = extractNearbyString(data, i, 2000);
-          if (generator) result.claimGenerator = generator;
-          
-          // Look for assertion labels
-          const assertionLabels = ['c2pa.actions', 'c2pa.hash.data', 'c2pa.thumbnail', 'stds.schema-org.CreativeWork', 'c2pa.ingredient'];
-          const decoder = new TextDecoder('utf-8', { fatal: false });
-          const chunkText = decoder.decode(data.slice(i, chunkDataEnd));
-          for (const label of assertionLabels) {
-            if (chunkText.includes(label)) {
-              result.assertions.push(label);
-            }
-          }
-          break;
-        }
-      }
+      return { jumbfData: data.subarray(chunkDataStart, chunkDataStart + chunkLength), format: 'png' };
     }
 
-    // IEND chunk - stop
     if (matchBytes(data, chunkTypeOffset, [0x49, 0x45, 0x4E, 0x44])) break;
-
-    // Move to next chunk: length(4) + type(4) + data(chunkLength) + CRC(4)
     offset += 4 + 4 + chunkLength + 4;
   }
 
-  return result;
+  return { jumbfData: null, format: 'png' };
 }
 
-// C2PA UUID for ISO BMFF (MP4/MOV): d8fec3d6-1b0e-483c-9297-58b3dabb223b
-const C2PA_UUID = [
-  0xd8, 0xfe, 0xc3, 0xd6, 0x1b, 0x0e, 0x48, 0x3c,
-  0x92, 0x97, 0x58, 0xb3, 0xda, 0xbb, 0x22, 0x3b
-];
-
-function scanVideoForC2PA(data: Uint8Array): C2PAResult {
-  const result: C2PAResult = {
-    hasC2PA: false,
-    manifestFound: false,
-    claimGenerator: null,
-    assertions: [],
-    ingredients: [],
-    trustStatus: 'unknown',
-    format: 'video',
-    rawBoxCount: 0,
-  };
-
-  // ISO BMFF: scan top-level boxes
+function extractJUMBFFromVideo(data: Uint8Array): { jumbfData: Uint8Array | null; format: string } {
   let offset = 0;
   while (offset < data.length - 8) {
     const boxSize = readUint32BE(data, offset);
@@ -266,91 +639,114 @@ function scanVideoForC2PA(data: Uint8Array): C2PAResult {
 
     if (boxSize < 8 || offset + boxSize > data.length) break;
 
-    // Check for uuid box with C2PA UUID
     if (boxType === 'uuid' && boxSize >= 24) {
-      let isC2PA = true;
-      for (let i = 0; i < 16; i++) {
-        if (data[offset + 8 + i] !== C2PA_UUID[i]) {
-          isC2PA = false;
-          break;
-        }
-      }
-      if (isC2PA) {
-        result.hasC2PA = true;
-        result.manifestFound = true;
-        result.rawBoxCount++;
-
-        // Search for claim generator and assertions within the uuid box data
-        const uuidDataStart = offset + 24;
-        const uuidDataEnd = Math.min(offset + boxSize, data.length);
-        const generator = extractNearbyString(data, uuidDataStart, Math.min(uuidDataEnd - uuidDataStart, 4000));
-        if (generator) result.claimGenerator = generator;
-
-        const assertionLabels = ['c2pa.actions', 'c2pa.hash.data', 'c2pa.thumbnail', 'stds.schema-org.CreativeWork', 'c2pa.ingredient'];
-        const decoder = new TextDecoder('utf-8', { fatal: false });
-        const boxText = decoder.decode(data.slice(uuidDataStart, Math.min(uuidDataEnd, uuidDataStart + 8000)));
-        for (const label of assertionLabels) {
-          if (boxText.includes(label)) {
-            result.assertions.push(label);
-          }
-        }
+      if (matchBytes(data, offset + 8, C2PA_VIDEO_UUID)) {
+        return { jumbfData: data.subarray(offset + 24, offset + boxSize), format: 'video' };
       }
     }
 
-    result.rawBoxCount++;
     offset += boxSize;
+  }
+
+  return { jumbfData: null, format: 'video' };
+}
+
+// ─── Main Scanner ────────────────────────────────────────────────────────────
+
+function detectFormat(bytes: Uint8Array): string {
+  if (bytes[0] === 0xFF && bytes[1] === 0xD8) return 'jpeg';
+  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) return 'png';
+  if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 &&
+      bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50) return 'webp';
+  // ISO BMFF: ftyp box at offset 4
+  if (bytes.length >= 12 && String.fromCharCode(bytes[4], bytes[5], bytes[6], bytes[7]) === 'ftyp') return 'video';
+  return 'unknown';
+}
+
+function scanForC2PA(data: Uint8Array): C2PAResult {
+  const format = detectFormat(data);
+
+  const result: C2PAResult = {
+    hasC2PA: false,
+    manifestFound: false,
+    claimGenerator: null,
+    assertions: [],
+    ingredients: [],
+    trustStatus: 'unknown',
+    format,
+    rawBoxCount: 0,
+  };
+
+  if (format === 'webp' || format === 'unknown') {
+    if (format === 'unknown') result.error = 'Unsupported format';
+    return result;
+  }
+
+  // Extract raw JUMBF data from container format
+  let extracted: { jumbfData: Uint8Array | null; format: string };
+  switch (format) {
+    case 'jpeg':
+      extracted = extractJUMBFFromJPEG(data);
+      break;
+    case 'png':
+      extracted = extractJUMBFFromPNG(data);
+      break;
+    case 'video':
+      extracted = extractJUMBFFromVideo(data);
+      break;
+    default:
+      return result;
+  }
+
+  if (!extracted.jumbfData) {
+    return result;
+  }
+
+  result.hasC2PA = true;
+  result.manifestFound = true;
+
+  // Parse JUMBF box tree
+  try {
+    const boxes = parseJUMBFBoxes(extracted.jumbfData);
+    result.rawBoxCount = countBoxes(boxes);
+
+    // Extract structured claim data
+    const parsed = extractClaimFromJUMBF(boxes);
+
+    result.claimGenerator = parsed.claimGenerator || null;
+    result.claimGeneratorInfo = parsed.claimGeneratorInfo;
+    result.assertions = parsed.assertions;
+    result.ingredients = parsed.ingredients;
+    result.specVersion = parsed.specVersion;
+
+    // Determine trust status from signature structure
+    if (parsed.specVersion === '2.2') {
+      result.trustStatus = 'self-signed'; // Default until trust list verification
+      result.trustReason = 'Manifest has valid COSE Sign1 structure. Trust list verification pending.';
+    }
+
+    console.log(`[validate-c2pa] Parsed ${boxes.length} top-level boxes, ${result.assertions.length} assertions, ${result.ingredients.length} ingredients`);
+  } catch (e) {
+    console.warn('[validate-c2pa] JUMBF parse error, falling back to text scan:', e);
+    // Fallback: text-based scanning
+    const fallbackClaim: ParsedClaim = { assertions: [], ingredients: [] };
+    extractFieldsFromText(extracted.jumbfData, fallbackClaim);
+    result.claimGenerator = fallbackClaim.claimGenerator || null;
+    result.assertions = fallbackClaim.assertions;
   }
 
   return result;
 }
 
-function isVideoFormat(data: Uint8Array): boolean {
-  // Check for ISO BMFF: look for 'ftyp' box at offset 4
-  if (data.length >= 12) {
-    const boxType = String.fromCharCode(data[4], data[5], data[6], data[7]);
-    if (boxType === 'ftyp') return true;
+function countBoxes(boxes: JUMBFBox[]): number {
+  let count = boxes.length;
+  for (const box of boxes) {
+    count += countBoxes(box.children);
   }
-  return false;
+  return count;
 }
 
-function scanForC2PA(data: Uint8Array): C2PAResult {
-  const format = detectFormat(data);
-  
-  // Check video first since detectFormat won't catch it
-  if (format === 'unknown' && isVideoFormat(data)) {
-    return scanVideoForC2PA(data);
-  }
-
-  switch (format) {
-    case 'jpeg':
-      return scanJPEGForC2PA(data);
-    case 'png':
-      return scanPNGForC2PA(data);
-    case 'webp':
-      return {
-        hasC2PA: false,
-        manifestFound: false,
-        claimGenerator: null,
-        assertions: [],
-        ingredients: [],
-        trustStatus: 'unknown' as const,
-        format: 'webp',
-        rawBoxCount: 0,
-      };
-    default:
-      return {
-        hasC2PA: false,
-        manifestFound: false,
-        claimGenerator: null,
-        assertions: [],
-        ingredients: [],
-        trustStatus: 'unknown' as const,
-        format: 'unknown',
-        rawBoxCount: 0,
-        error: 'Unsupported format',
-      };
-  }
-}
+// ─── Edge Function Handler ───────────────────────────────────────────────────
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -359,7 +755,6 @@ serve(async (req) => {
 
   try {
     const contentType = req.headers.get('content-type') || '';
-
     if (!contentType.includes('multipart/form-data')) {
       return new Response(
         JSON.stringify({ error: 'Expected multipart/form-data with an image file' }),
@@ -381,7 +776,6 @@ serve(async (req) => {
 
     const arrayBuffer = await file.arrayBuffer();
     const bytes = new Uint8Array(arrayBuffer);
-
     const result = scanForC2PA(bytes);
 
     console.log(`[validate-c2pa-manifest] Result for ${file.name}:`, {
@@ -389,6 +783,9 @@ serve(async (req) => {
       format: result.format,
       rawBoxCount: result.rawBoxCount,
       claimGenerator: result.claimGenerator,
+      assertions: result.assertions,
+      ingredients: result.ingredients.length,
+      specVersion: result.specVersion,
     });
 
     return new Response(
