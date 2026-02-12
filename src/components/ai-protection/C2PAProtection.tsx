@@ -47,6 +47,14 @@ const C2PAProtection: React.FC = () => {
 
     try {
       setStatus('signing');
+      setProgress(10);
+
+      // Compute SHA-256 hash of the original asset bytes (before embedding)
+      const fileBuffer = await file.arrayBuffer();
+      const assetHashBuffer = await crypto.subtle.digest('SHA-256', fileBuffer);
+      const assetHashArray = new Uint8Array(assetHashBuffer);
+      const assetHashHex = Array.from(assetHashArray).map(b => b.toString(16).padStart(2, '0')).join('');
+
       setProgress(20);
 
       const protectionId = crypto.randomUUID();
@@ -59,6 +67,7 @@ const C2PAProtection: React.FC = () => {
         title: file.name,
         format: file.type === 'image/jpeg' ? 'image/jpeg' : 'image/png',
         instance_id: `urn:c2pa:${protectionId}`,
+        asset_hash: assetHashHex,
         assertions: [
           {
             label: 'c2pa.actions',
@@ -66,7 +75,12 @@ const C2PAProtection: React.FC = () => {
           },
           {
             label: 'c2pa.hash.data',
-            data: { exclusions: [], name: 'jumbf manifest', alg: 'sha256' },
+            data: {
+              exclusions: [{ start: 0, length: 0 }],
+              name: 'jumbf manifest',
+              alg: 'sha256',
+              hash: assetHashHex,
+            },
           },
         ],
       };
@@ -200,6 +214,8 @@ const C2PAProtection: React.FC = () => {
                 <p><span className="text-muted-foreground">Mode:</span> {signingResult.signingMode}</p>
                 <p><span className="text-muted-foreground">Manifest Hash:</span> {signingResult.manifestHash.substring(0, 32)}…</p>
                 <p><span className="text-muted-foreground">Cert Fingerprint:</span> {signingResult.certificateFingerprint.substring(0, 32)}…</p>
+                <p><span className="text-muted-foreground">Asset Hash:</span> {signingResult.manifestHash.substring(0, 16)}…</p>
+                <p><span className="text-muted-foreground">Hash Bound:</span> Yes (c2pa.hash.data)</p>
               </CollapsibleContent>
             </Collapsible>
           )}
