@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet';
 import GeneratorEvidence from '@/components/admin/c2pa/GeneratorEvidence';
 import ValidatorEvidence from '@/components/admin/c2pa/ValidatorEvidence';
 import SecurityArchitecture from '@/components/admin/c2pa/SecurityArchitecture';
+import TrustListViewer from '@/components/admin/c2pa/TrustListViewer';
 
 const C2PAConformance: React.FC = () => {
   return (
@@ -18,6 +19,7 @@ const C2PAConformance: React.FC = () => {
           </p>
         </div>
 
+        <TrustListViewer />
         <GeneratorEvidence />
         <ValidatorEvidence />
         <SecurityArchitecture />
