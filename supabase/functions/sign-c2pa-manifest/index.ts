@@ -307,7 +307,10 @@ serve(async (req) => {
       signing_mode: signingMode,
       metadata: {
         claim_generator: claim.claim_generator || 'TSMO/2.0',
+        claim_generator_info: claim.claim_generator_info || [{ name: 'TSMO AI Protection', version: '2.0' }],
         assertions_count: Array.isArray(claim.assertions) ? claim.assertions.length : 0,
+        ingredients_count: Array.isArray(claim.ingredients) ? claim.ingredients.length : 0,
+        spec_version: '2.2',
       }
     });
 

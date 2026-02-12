@@ -10,11 +10,24 @@ const C2PA_LABEL = [0x63, 0x32, 0x70, 0x61];
 // JUMBF magic: "jumb"
 const JUMB_TYPE = [0x6A, 0x75, 0x6D, 0x62];
 
+interface C2PAIngredientInfo {
+  title: string;
+  format: string;
+  instanceID: string;
+  relationship: string;
+  hash?: string;
+}
+
 interface C2PAResult {
   hasC2PA: boolean;
   manifestFound: boolean;
   claimGenerator: string | null;
+  claimGeneratorInfo?: { name: string; version: string }[];
   assertions: string[];
+  ingredients: C2PAIngredientInfo[];
+  trustStatus: 'trusted' | 'untrusted' | 'self-signed' | 'unknown';
+  trustReason?: string;
+  specVersion?: string;
   format: string;
   rawBoxCount: number;
   error?: string;
@@ -83,6 +96,8 @@ function scanJPEGForC2PA(data: Uint8Array): C2PAResult {
     manifestFound: false,
     claimGenerator: null,
     assertions: [],
+    ingredients: [],
+    trustStatus: 'unknown',
     format: 'jpeg',
     rawBoxCount: 0,
   };
@@ -166,6 +181,8 @@ function scanPNGForC2PA(data: Uint8Array): C2PAResult {
     manifestFound: false,
     claimGenerator: null,
     assertions: [],
+    ingredients: [],
+    trustStatus: 'unknown',
     format: 'png',
     rawBoxCount: 0,
   };
@@ -235,6 +252,8 @@ function scanVideoForC2PA(data: Uint8Array): C2PAResult {
     manifestFound: false,
     claimGenerator: null,
     assertions: [],
+    ingredients: [],
+    trustStatus: 'unknown',
     format: 'video',
     rawBoxCount: 0,
   };
@@ -313,6 +332,8 @@ function scanForC2PA(data: Uint8Array): C2PAResult {
         manifestFound: false,
         claimGenerator: null,
         assertions: [],
+        ingredients: [],
+        trustStatus: 'unknown' as const,
         format: 'webp',
         rawBoxCount: 0,
       };
@@ -322,6 +343,8 @@ function scanForC2PA(data: Uint8Array): C2PAResult {
         manifestFound: false,
         claimGenerator: null,
         assertions: [],
+        ingredients: [],
+        trustStatus: 'unknown' as const,
         format: 'unknown',
         rawBoxCount: 0,
         error: 'Unsupported format',

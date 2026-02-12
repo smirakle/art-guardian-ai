@@ -67,6 +67,7 @@ export interface C2PAManifest {
   '@context': string;
   '@type': string;
   claim_generator: string;
+  claim_generator_info?: Array<{ name: string; version: string; icon?: string }>;
   title: string;
   format: string;
   instance_id: string;
@@ -77,6 +78,10 @@ export interface C2PAManifest {
   assertions: Array<{
     '@type': string;
     [key: string]: any;
+  }>;
+  ingredients?: Array<{
+    label: string;
+    data: Record<string, unknown>;
   }>;
 }
 
@@ -447,12 +452,15 @@ export class ProductionMetadataInjection {
     protectionId: string,
     timestamp: string
   ): C2PAManifest {
-    const instanceId = `urn:uuid:${protectionId.toLowerCase()}`;
+    const instanceId = `urn:c2pa:${crypto.randomUUID()}`;
     
     return {
-      '@context': 'https://c2pa.org/claim/1.0/',
+      '@context': 'https://c2pa.org/specifications/specifications/2.2/specs/',
       '@type': 'c2pa.claim',
       claim_generator: 'TSMO/2.0 ai-protection-system',
+      claim_generator_info: [
+        { name: 'TSMO AI Protection', version: '2.0' }
+      ],
       title: 'AI Training Protection Credential',
       format: 'application/c2pa',
       instance_id: instanceId,

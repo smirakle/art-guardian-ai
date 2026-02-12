@@ -47,14 +47,17 @@ const GeneratorEvidence: React.FC = () => {
       const protectionId = generateProtectionId();
       const timestamp = new Date().toISOString();
 
-      // Build C2PA manifest claim
+      // Build C2PA v2.2 manifest claim
       const claim: Record<string, unknown> = {
-        '@context': 'https://c2pa.org/claim/1.0/',
+        '@context': 'https://c2pa.org/specifications/specifications/2.2/specs/',
         '@type': 'c2pa.claim',
         claim_generator: 'TSMO/2.0 ai-protection-system',
+        claim_generator_info: [
+          { name: 'TSMO AI Protection', version: '2.0' }
+        ],
         title: `TSMO Protection – ${file.name}`,
         format: file.type === 'image/jpeg' ? 'image/jpeg' : 'image/png',
-        instance_id: `urn:uuid:${protectionId.toLowerCase()}`,
+        instance_id: `urn:c2pa:${crypto.randomUUID()}`,
         assertions: [
           { '@type': 'c2pa.actions', actions: [{ action: 'c2pa.created', when: timestamp, softwareAgent: 'TSMO AI Protection System v2.0' }] },
           { '@type': 'c2pa.creative.work', '@id': protectionId, copyrightNotice: `© ${new Date().getFullYear()} Content Owner. All rights reserved.` },

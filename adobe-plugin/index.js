@@ -207,8 +207,14 @@ async function exportDocumentAsJPEG() {
  */
 function buildC2PAClaim(docName, fileHash, protectionId) {
   return {
+    "@context": "https://c2pa.org/specifications/specifications/2.2/specs/",
+    "claim_generator": "TSMO/2.0 ai-protection-system",
+    "claim_generator_info": [
+      { "name": "TSMO AI Protection", "version": "2.0" }
+    ],
     "dc:title": docName,
     "dc:format": "image/jpeg",
+    "instance_id": "urn:c2pa:" + crypto.randomUUID(),
     "c2pa.actions": [
       {
         action: "c2pa.created",
@@ -228,7 +234,18 @@ function buildC2PAClaim(docName, fileHash, protectionId) {
         hash: fileHash,
       },
     ],
-    "stds:schema": "http://c2pa.org/manifest/2",
+    "c2pa.ingredient": [
+      {
+        "dc_title": docName,
+        "dc_format": "image/vnd.adobe.photoshop",
+        "instanceID": "urn:c2pa:" + crypto.randomUUID(),
+        "relationship": "parentOf",
+        "data": {
+          "hash": fileHash,
+          "alg": "sha256",
+        },
+      },
+    ],
     "tsmo:protectionId": protectionId,
     "tsmo:protectedBy": "TSMO Technology Inc.",
     "tsmo:pluginVersion": PLUGIN_VERSION,
