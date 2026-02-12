@@ -4,6 +4,7 @@ import { Progress } from '@/components/ui/progress';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Shield, Upload, Download, CheckCircle, ChevronDown, FileImage, Loader2 } from 'lucide-react';
 import { signC2PAManifest, embedC2PAManifest, isC2PASupportedType } from '@/lib/c2paValidation';
+import { buildIngredient, ingredientToAssertion } from '@/lib/c2paIngredients';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
@@ -85,6 +86,18 @@ const C2PAProtection: React.FC = () => {
         ],
       };
 
+      setProgress(30);
+
+      // Build ingredient from the source file (self-referencing provenance)
+      const ingredient = await buildIngredient(file, 'parentOf');
+      const ingredientAssertion = ingredientToAssertion(ingredient);
+
+      // Add ingredient reference to claim
+      claim.assertions.push({
+        label: 'c2pa.ingredient',
+        data: ingredientAssertion.data as any,
+      });
+
       setProgress(40);
       const result = await signC2PAManifest(claim, protectionId, file.name);
       setSigningResult(result);
@@ -93,7 +106,11 @@ const C2PAProtection: React.FC = () => {
       setProgress(70);
 
       const manifestJson = JSON.stringify(claim);
-      const blob = await embedC2PAManifest(file, manifestJson, result.signature);
+      const ingredientsPayload = [{
+        label: 'c2pa.ingredient',
+        data: ingredientAssertion.data,
+      }];
+      const blob = await embedC2PAManifest(file, manifestJson, result.signature, ingredientsPayload);
 
       setProtectedBlob(blob);
       setProgress(100);

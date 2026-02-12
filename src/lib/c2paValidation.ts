@@ -102,12 +102,17 @@ export async function signC2PAManifest(
 export async function embedC2PAManifest(
   file: File,
   manifestJson: string,
-  signatureB64: string
+  signatureB64: string,
+  ingredients?: { label: string; data: Record<string, unknown> }[]
 ): Promise<Blob> {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('manifest', manifestJson);
   formData.append('signature', signatureB64);
+
+  if (ingredients && ingredients.length > 0) {
+    formData.append('ingredients', JSON.stringify(ingredients));
+  }
 
   const { data, error } = await supabase.functions.invoke('embed-c2pa-manifest', {
     body: formData,

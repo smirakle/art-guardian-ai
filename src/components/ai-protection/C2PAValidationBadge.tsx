@@ -115,6 +115,18 @@ const C2PAValidationBadge: React.FC<C2PAValidationBadgeProps> = ({
               ))}
             </div>
           )}
+          {result.ingredients && result.ingredients.length > 0 && (
+            <div className="mt-1.5 space-y-0.5">
+              <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Ingredients</div>
+              {result.ingredients.map((ing, i) => (
+                <div key={i} className="text-xs text-muted-foreground flex items-center gap-1.5">
+                  <span className="font-medium">{ing.title}</span>
+                  <span className="text-[10px]">({ing.relationship})</span>
+                  {ing.format && <Badge variant="outline" className="text-[9px] h-4 px-1">{ing.format}</Badge>}
+                </div>
+              ))}
+            </div>
+          )}
           <div className="text-xs text-muted-foreground mt-1">
             Applying TSMO protection will add a new entry to the provenance chain.
           </div>
