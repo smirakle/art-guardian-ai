@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Handshake, Plug, ShieldCheck } from "lucide-react";
+import { DollarSign, Handshake, Plug, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 import SecurityAuditLog from "@/components/admin/SecurityAuditLog";
@@ -25,6 +25,7 @@ import GuestUploadsTracking from "@/components/admin/GuestUploadsTracking";
 import BlogManagement from "@/components/admin/BlogManagement";
 import { RetentionDashboard } from "@/components/admin/RetentionDashboard";
 import AdminPluginsSection from "@/components/admin/AdminPluginsSection";
+import ExitValuationCalculator from "@/components/admin/ExitValuationCalculator";
 
 const Admin = () => {
    const navigate = useNavigate();
@@ -83,6 +84,10 @@ const Admin = () => {
                 <TabsTrigger value="plugins" className="px-4 py-2 text-sm font-medium bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20">
                   <Plug className="h-4 w-4 mr-1" />
                   Plugins
+                </TabsTrigger>
+                <TabsTrigger value="valuation" className="px-4 py-2 text-sm font-medium bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20">
+                  <DollarSign className="h-4 w-4 mr-1" />
+                  Valuation
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -159,6 +164,10 @@ const Admin = () => {
 
             <TabsContent value="plugins" className="space-y-6">
               <AdminPluginsSection />
+            </TabsContent>
+
+            <TabsContent value="valuation" className="space-y-6">
+              <ExitValuationCalculator />
             </TabsContent>
 
           </Tabs>
