@@ -1,136 +1,151 @@
+# C2PA v2.2 Full Conformance Plan
 
-
-# C2PA v2.2 Spec Conformance Upgrade
-
-## Current State: Non-Conformant
-
-After reviewing the full codebase against the C2PA v2.2 specification and the conformance explorer at spec.c2pa.org, here are the specific gaps:
-
-### Gap 1: Instance ID URN Format (Wrong)
-- **Current**: `urn:uuid:TSMO-ABCDEF123456` (custom format, deprecated scheme)
-- **Required**: `urn:c2pa:<valid-uuid-v4>` (e.g., `urn:c2pa:e65c8514-7101-b615-28e4-4bd337f3f986`)
-- **Files affected**: `src/lib/productionMetadataInjection.ts` (line 450), `src/components/admin/c2pa/GeneratorEvidence.tsx` (line 57), `src/components/ai-protection/C2PAProtection.tsx` (line 57), `adobe-plugin/index.js`
-
-### Gap 2: No `claim_generator_info` Field
-- **Current**: Only `claim_generator: 'TSMO/2.0'` (a plain string)
-- **Required (v2.2)**: `claim_generator_info` is a structured array with `name`, `version`, and optional `icon` fields. The old `claim_generator` string is still permitted but `claim_generator_info` is the v2.2 standard structure.
-- **Reference**: AWS MediaConvert uses `claim_generator_info: [{"name": "MediaConvert", "version": "1.0"}]`
-
-### Gap 3: No Ingredient Support
-- **Current**: The validator scans for the `c2pa.ingredient` label string but never parses it. The generator never creates ingredient entries.
-- **Required (v2.2)**: Ingredients are a core concept. When a file is used as input to a process, it should be referenced as an ingredient with its own hash, instance ID, and relationship (`parentOf` or `componentOf`). The generator must support creating ingredient references and the validator must parse them.
-
-### Gap 4: Manifest Context Version
-- **Current**: `@context: 'https://c2pa.org/claim/1.0/'`
-- **Required**: Should reference the v2.2 specification context
-
-### Gap 5: No Trust List Integration
-- **Current**: Self-signed fallback with no trust chain verification
-- **Required**: Validator should check signatures against the CAI trust list. The conformance explorer at `spec.c2pa.org/conformance-explorer/` is the authoritative registry.
-
-### Gap 6: Security Architecture Document Format
-- **Current**: JSON export with custom structure
-- **Required**: Should follow the C2PA Appendix C template format (structured document, not raw JSON)
+## Overview
+Bring TSMO's C2PA implementation to full v2.2 spec conformance across Generator and Validator products. Target: Assurance Level 1 (software-based ES256 signing).
 
 ---
 
-## Implementation Plan
+## Phase 1: JUMBF Superbox Structure Fix (Foundation)
+**Goal:** Make the JUMBF binary structure spec-compliant per ISO 19566-5 and C2PA v2.2 §6.
+**Priority:** HIGHEST — everything depends on correct binary format.
 
-### Phase 1: Fix URN Format and Claim Structure (All Files)
+### Tasks:
+1. **Add UUID type field to JUMD description box** — the C2PA JUMBF description box requires a 16-byte UUID (`6332 7061-0011-0010-8000-00AA00389B71`) before the label, per ISO 19566-5 §8.
+2. **Add Assertion Store superbox** — wrap assertion boxes (actions, ingredients, hash.data) inside a `c2as` (assertion store) JUMBF superbox, nested inside the main `c2pa` superbox.
+3. **Add Claim box (`c2cl`)** — CBOR-encoded claim referencing assertion URIs and hash bindings.
+4. **Add Claim Signature box (`c2cs`)** — COSE Sign1 envelope wrapping the claim hash.
+5. **Restructure `buildC2PASuperbox()`** — correct nesting: `c2pa` superbox → { description, assertion store, claim, claim signature }.
 
-Update every location that generates a C2PA manifest to use the correct v2.2 format:
+### Files:
+- `supabase/functions/embed-c2pa-manifest/index.ts` (major refactor)
 
-**Files to modify:**
-- `src/lib/productionMetadataInjection.ts` -- Change `instance_id` from `urn:uuid:${protectionId}` to `urn:c2pa:${crypto.randomUUID()}`
-- `src/components/admin/c2pa/GeneratorEvidence.tsx` -- Same URN fix, add `claim_generator_info` array
-- `src/components/ai-protection/C2PAProtection.tsx` -- Same URN fix, add `claim_generator_info` array
-- `adobe-plugin/index.js` -- Same URN fix in the `applyC2PA()` function
+---
 
-New claim structure:
-```text
-{
-  claim_generator: "TSMO/2.0 ai-protection-system",
-  claim_generator_info: [
-    { name: "TSMO AI Protection", version: "2.0" }
-  ],
-  instance_id: "urn:c2pa:<uuid-v4>",
-  ...
-}
+## Phase 2: CBOR Claim Parsing in Validator
+**Goal:** Replace string-pattern matching with proper CBOR deserialization.
+**Priority:** HIGH — needed for validator to understand the new structure.
+
+### Tasks:
+1. **Add CBOR decoding to `validate-c2pa-manifest`** — use lightweight CBOR decode to parse the claim box content from JUMBF.
+2. **Extract structured claim fields** — `dc:title`, `claim_generator`, `claim_generator_info[]`, `assertions[]` (with URIs and hashes), `ingredients[]`, `signature` reference.
+3. **Verify claim hash binding** — compute SHA-256 of the claim CBOR bytes and compare against the hash in the COSE Sign1 payload.
+4. **Return structured validation result** — populate `C2PAValidationResult` with parsed fields instead of regex-matched strings.
+
+### Files:
+- `supabase/functions/validate-c2pa-manifest/index.ts` (major update)
+- `src/lib/c2paValidation.ts` (update types if needed)
+
+---
+
+## Phase 3: Asset Hash Binding (`c2pa.hash.data`)
+**Goal:** Compute and verify the content hash that binds the manifest to the actual asset bytes.
+**Priority:** HIGH — core integrity mechanism required by spec.
+
+### Tasks:
+1. **Compute `c2pa.hash.data` during signing** — accept the file's SHA-256 hash (computed client-side) and include it as a `c2pa.hash.data` assertion in the claim. The hash covers the asset bytes excluding the manifest itself (exclusion ranges).
+2. **Define exclusion ranges** — for JPEG: exclude the APP11 segment bytes. For PNG: exclude the caBX chunk bytes. Store exclusion offset/length in the `c2pa.hash.data` assertion.
+3. **Verify hash on validation** — after extracting the manifest, recompute the asset hash with exclusion ranges and compare against the stored `c2pa.hash.data` value.
+4. **Client-side hash computation** — compute SHA-256 of the file before upload and pass to the signing edge function.
+
+### Files:
+- `src/components/ai-protection/C2PAProtection.tsx` (compute hash before upload)
+- `supabase/functions/sign-c2pa-manifest/index.ts` (include hash assertion)
+- `supabase/functions/embed-c2pa-manifest/index.ts` (record exclusion ranges)
+- `supabase/functions/validate-c2pa-manifest/index.ts` (verify hash)
+
+---
+
+## Phase 4: Ingredient Support (End-to-End)
+**Goal:** Wire ingredient data structures into the full pipeline: UI → manifest → JUMBF embedding.
+**Priority:** MEDIUM — builds on correct JUMBF + claim structure from Phases 1-3.
+
+### Tasks:
+1. **Add ingredient selector to C2PAProtection component** — allow users to attach source/parent files during protection. Compute SHA-256 hash of each ingredient file.
+2. **Include `c2pa.ingredient` assertions in manifest claim** — when signing, pass ingredient data to `sign-c2pa-manifest`. Build ingredient assertion boxes with `dc:title`, `dc:format`, `instanceID`, `relationship`, and `data.hash`.
+3. **Add ingredient boxes to JUMBF assertion store** — in `embed-c2pa-manifest`, serialize each ingredient assertion as a JUMBF content box inside the assertion store.
+4. **Update GeneratorEvidence** — show ingredient data in conformance evidence export.
+
+### Files:
+- `src/components/ai-protection/C2PAProtection.tsx` (update)
+- `src/lib/c2paIngredients.ts` (already exists, wire in)
+- `supabase/functions/sign-c2pa-manifest/index.ts` (update)
+- `supabase/functions/embed-c2pa-manifest/index.ts` (update)
+- `src/components/admin/c2pa/GeneratorEvidence.tsx` (update)
+
+---
+
+## Phase 5: Trust List Integration (Real Anchors)
+**Goal:** Replace hardcoded placeholder anchors with real CAI trust anchors and provide admin UI.
+**Priority:** MEDIUM — independent but needed for full validation.
+
+### Tasks:
+1. **Create `fetch-c2pa-trust-list` edge function** — proxy to fetch trust anchors from the CAI ecosystem. Returns structured JSON with fingerprints, orgs, validity dates.
+2. **Update `c2paTrustList.ts`** — consume the edge function instead of hardcoded anchors. Cache in localStorage with 24h TTL. Fallback to bundled snapshot if fetch fails.
+3. **Build Trust List Viewer component** — new section in C2PA Conformance admin page showing all anchors in a table (CN, Org, Fingerprint, Valid From/To, Status). Include refresh button.
+4. **Wire `verifyCertificateChain()` into validator results** — display trust status in validation UI with matched anchor details.
+
+### Files:
+- `supabase/functions/fetch-c2pa-trust-list/index.ts` (new)
+- `src/lib/c2paTrustList.ts` (update)
+- `src/components/admin/c2pa/TrustListViewer.tsx` (new)
+- `src/pages/admin/C2PAConformance.tsx` (update)
+
+---
+
+## Phase 6: Security Architecture Document Export
+**Goal:** Export a proper Security Architecture document (PDF) instead of raw JSON.
+**Priority:** LOW — documentation, can be done anytime.
+
+### Tasks:
+1. **Create PDF export using `@react-pdf/renderer`** (already installed):
+   - Title page with product name, version, date
+   - TOE (Target of Evaluation) description
+   - Cryptographic architecture (ES256, key storage in Supabase secrets)
+   - Trust model (trust list integration, certificate chain validation)
+   - Data flow diagrams (text-based)
+   - Threat model summary
+   - Conformance checklist (Generator + Validator requirements)
+2. **Add "Export PDF" button** to SecurityArchitecture component.
+3. **Structure matches C2PA Conformance Program Appendix C template format.**
+
+### Files:
+- `src/components/admin/c2pa/SecurityArchitecturePDF.tsx` (new)
+- `src/components/admin/c2pa/SecurityArchitecture.tsx` (update)
+
+---
+
+## Implementation Order
+```
+Phase 1 (JUMBF) → Phase 2 (CBOR) → Phase 3 (Hash Binding) → Phase 4 (Ingredients) → Phase 5 (Trust List) → Phase 6 (Security Doc)
 ```
 
-### Phase 2: Add Ingredient Support
-
-**New file: `src/lib/c2paIngredients.ts`**
-- Define ingredient data structure per v2.2 spec
-- Hash computation for ingredient assets (SHA-256)
-- Build ingredient assertion with `relationship`, `title`, `format`, `instanceID`, `hash`, and `thumbnail` fields
-- Support both `parentOf` (the asset this was derived from) and `componentOf` (an asset composited into this one) relationships
-
-**Modify: `src/components/ai-protection/C2PAProtection.tsx`**
-- Add an optional "Ingredients" section where users can attach source files
-- Each ingredient gets hashed and included in the manifest's `c2pa.ingredient` assertion
-- UI shows ingredient list with relationship type selector
-
-**Modify: `src/components/admin/c2pa/GeneratorEvidence.tsx`**
-- Support ingredient attachment in evidence generation
-- Include ingredient data in the exported manifest JSON
-
-**Modify: `supabase/functions/sign-c2pa-manifest/index.ts`**
-- Accept and validate ingredient references in the claim
-- Include ingredient hashes in the signed payload
-
-**Modify: `supabase/functions/validate-c2pa-manifest/index.ts`**
-- Parse ingredient assertions when found (currently only detects the label string)
-- Return structured ingredient data in validation results
-
-**Modify: `adobe-plugin/index.js`**
-- When protecting a document, the current document state before protection becomes an ingredient with `parentOf` relationship
-
-### Phase 3: Trust List Integration
-
-**New file: `src/lib/c2paTrustList.ts`**
-- Fetch and cache the CAI trust list
-- Certificate chain validation logic
-- Check signing certificate against known trust anchors
-
-**Modify: `supabase/functions/validate-c2pa-manifest/index.ts`**
-- After detecting a manifest, attempt to verify the signature against the trust list
-- Return trust chain status in validation result (trusted / untrusted / self-signed)
-
-**Modify: `src/lib/c2paValidation.ts`**
-- Add `trustStatus` field to `C2PAValidationResult` interface
-- Surface trust chain info in UI
-
-### Phase 4: Security Architecture Document Reformat
-
-**Modify: `src/components/admin/c2pa/SecurityArchitecture.tsx`**
-- Restructure the export to follow the C2PA Appendix C template format
-- Generate a proper document (PDF or structured text) rather than raw JSON
-- Include all required sections: Product Overview, Target of Evaluation, Cryptographic Implementation, Threat Model, etc. in the prescribed template layout
-
-### Phase 5: Update Spec References
-
-**Modify: All manifest-generating code**
-- Update `@context` from `'https://c2pa.org/claim/1.0/'` to reference v2.2
-- Ensure all assertion labels match v2.2 naming conventions
-- Update the `SecurityArchitecture.tsx` documentation to reference v2.2 throughout
-
----
+## Success Criteria
+- [ ] JUMBF superbox contains: description (with UUID), assertion store, claim (CBOR), claim signature (COSE Sign1)
+- [ ] Validator can CBOR-decode claims and verify COSE signatures
+- [ ] `c2pa.hash.data` binds manifest to asset bytes with correct exclusion ranges
+- [ ] Ingredients are attached via UI, serialized in claims, embedded in JUMBF
+- [ ] Trust list fetches real CAI anchors and validates certificate chains
+- [ ] Security Architecture exports as formatted PDF matching Appendix C
 
 ## Files Summary
 
-| Action | File | Changes |
-|--------|------|---------|
-| Modify | `src/lib/productionMetadataInjection.ts` | URN format, claim_generator_info, context version |
-| Modify | `src/components/ai-protection/C2PAProtection.tsx` | URN format, claim_generator_info, ingredient UI |
-| Modify | `src/components/admin/c2pa/GeneratorEvidence.tsx` | URN format, claim_generator_info, ingredient support |
-| Modify | `src/components/admin/c2pa/SecurityArchitecture.tsx` | Document format per Appendix C template, v2.2 refs |
-| Modify | `src/lib/c2paValidation.ts` | Add trustStatus to interface, ingredient parsing |
-| Modify | `supabase/functions/sign-c2pa-manifest/index.ts` | Accept ingredients, validate v2.2 claim structure |
-| Modify | `supabase/functions/validate-c2pa-manifest/index.ts` | Parse ingredients, trust chain check |
-| Modify | `supabase/functions/embed-c2pa-manifest/index.ts` | Ingredient JUMBF boxes in superbox |
-| Modify | `adobe-plugin/index.js` | URN format, claim_generator_info, ingredient (parentOf) |
-| Create | `src/lib/c2paIngredients.ts` | Ingredient hashing, structure, relationship types |
-| Create | `src/lib/c2paTrustList.ts` | Trust list fetching, certificate chain validation |
-
-This brings TSMO from a roughly v1.0-level implementation to full v2.2 conformance across all three surfaces (web app, edge functions, Photoshop plugin).
+| Phase | Action | File | Changes |
+|-------|--------|------|---------|
+| 1 | Refactor | `supabase/functions/embed-c2pa-manifest/index.ts` | Full JUMBF restructure with UUID, assertion store |
+| 2 | Update | `supabase/functions/validate-c2pa-manifest/index.ts` | CBOR decoding, structured claim parsing |
+| 2 | Update | `src/lib/c2paValidation.ts` | Type updates for parsed results |
+| 3 | Update | `src/components/ai-protection/C2PAProtection.tsx` | Client-side hash computation |
+| 3 | Update | `supabase/functions/sign-c2pa-manifest/index.ts` | Hash assertion in claim |
+| 3 | Update | `supabase/functions/embed-c2pa-manifest/index.ts` | Exclusion ranges |
+| 3 | Update | `supabase/functions/validate-c2pa-manifest/index.ts` | Hash verification |
+| 4 | Update | `src/components/ai-protection/C2PAProtection.tsx` | Ingredient selector UI |
+| 4 | Wire | `src/lib/c2paIngredients.ts` | Already exists, integrate |
+| 4 | Update | `supabase/functions/sign-c2pa-manifest/index.ts` | Ingredient assertions |
+| 4 | Update | `supabase/functions/embed-c2pa-manifest/index.ts` | Ingredient JUMBF boxes |
+| 4 | Update | `src/components/admin/c2pa/GeneratorEvidence.tsx` | Ingredient evidence |
+| 5 | Create | `supabase/functions/fetch-c2pa-trust-list/index.ts` | Trust list proxy |
+| 5 | Update | `src/lib/c2paTrustList.ts` | Real anchor fetching |
+| 5 | Create | `src/components/admin/c2pa/TrustListViewer.tsx` | Admin UI |
+| 5 | Update | `src/pages/admin/C2PAConformance.tsx` | Add viewer section |
+| 6 | Create | `src/components/admin/c2pa/SecurityArchitecturePDF.tsx` | PDF generator |
+| 6 | Update | `src/components/admin/c2pa/SecurityArchitecture.tsx` | PDF export button |
