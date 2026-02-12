@@ -26,6 +26,7 @@ import BlogManagement from "@/components/admin/BlogManagement";
 import { RetentionDashboard } from "@/components/admin/RetentionDashboard";
 import AdminPluginsSection from "@/components/admin/AdminPluginsSection";
 import ExitValuationCalculator from "@/components/admin/ExitValuationCalculator";
+import EUAIActCompliance from "@/components/admin/EUAIActCompliance";
 
 const Admin = () => {
    const navigate = useNavigate();
@@ -88,6 +89,10 @@ const Admin = () => {
                 <TabsTrigger value="valuation" className="px-4 py-2 text-sm font-medium bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20">
                   <DollarSign className="h-4 w-4 mr-1" />
                   Valuation
+                </TabsTrigger>
+                <TabsTrigger value="eu-ai-act" className="px-4 py-2 text-sm font-medium bg-blue-500/10 border border-blue-500/20">
+                  <ShieldCheck className="h-4 w-4 mr-1" />
+                  EU AI Act
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -168,6 +173,10 @@ const Admin = () => {
 
             <TabsContent value="valuation" className="space-y-6">
               <ExitValuationCalculator />
+            </TabsContent>
+
+            <TabsContent value="eu-ai-act" className="space-y-6">
+              <EUAIActCompliance />
             </TabsContent>
 
           </Tabs>
