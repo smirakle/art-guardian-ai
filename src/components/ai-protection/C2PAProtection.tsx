@@ -51,10 +51,14 @@ const C2PAProtection: React.FC = () => {
 
       const protectionId = crypto.randomUUID();
       const claim = {
-        claim_generator: 'TSMO/2.0',
+        '@context': 'https://c2pa.org/specifications/specifications/2.2/specs/',
+        claim_generator: 'TSMO/2.0 ai-protection-system',
+        claim_generator_info: [
+          { name: 'TSMO AI Protection', version: '2.0' }
+        ],
         title: file.name,
         format: file.type === 'image/jpeg' ? 'image/jpeg' : 'image/png',
-        instance_id: protectionId,
+        instance_id: `urn:c2pa:${protectionId}`,
         assertions: [
           {
             label: 'c2pa.actions',

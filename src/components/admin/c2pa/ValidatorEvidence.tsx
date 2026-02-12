@@ -53,6 +53,8 @@ const ValidatorEvidence: React.FC = () => {
             manifestFound: false,
             claimGenerator: null,
             assertions: [],
+            ingredients: [],
+            trustStatus: 'unknown' as const,
             format: 'unknown',
             rawBoxCount: 0,
             fileName: file.name,

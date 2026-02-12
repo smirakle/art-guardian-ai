@@ -1,10 +1,23 @@
 import { supabase } from '@/integrations/supabase/client';
 
+export interface C2PAIngredientInfo {
+  title: string;
+  format: string;
+  instanceID: string;
+  relationship: string;
+  hash?: string;
+}
+
 export interface C2PAValidationResult {
   hasC2PA: boolean;
   manifestFound: boolean;
   claimGenerator: string | null;
+  claimGeneratorInfo?: { name: string; version: string }[];
   assertions: string[];
+  ingredients: C2PAIngredientInfo[];
+  trustStatus: 'trusted' | 'untrusted' | 'self-signed' | 'unknown' | 'expired';
+  trustReason?: string;
+  specVersion?: string;
   format: string;
   rawBoxCount: number;
   fileName: string;
@@ -48,6 +61,8 @@ export async function validateC2PAManifest(file: File): Promise<C2PAValidationRe
       manifestFound: false,
       claimGenerator: null,
       assertions: [],
+      ingredients: [],
+      trustStatus: 'unknown' as const,
       format: 'unknown',
       rawBoxCount: 0,
       fileName: file.name,
