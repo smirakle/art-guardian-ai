@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, Shield, Server, Key, Lock, Globe } from 'lucide-react';
+import { Download, Shield, Server, Key, Lock, Globe, FileText, Loader2 } from 'lucide-react';
+import { pdf } from '@react-pdf/renderer';
+import SecurityArchitecturePDF from './SecurityArchitecturePDF';
 
 const ARCHITECTURE_DOC = {
   document_title: 'TSMO Generator Product Security Architecture Document',
@@ -114,6 +116,8 @@ const SECTIONS = [
 ] as const;
 
 const SecurityArchitecture: React.FC = () => {
+  const [generatingPdf, setGeneratingPdf] = useState(false);
+
   const exportDocument = () => {
     const blob = new Blob([JSON.stringify(ARCHITECTURE_DOC, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -122,6 +126,23 @@ const SecurityArchitecture: React.FC = () => {
     a.download = `tsmo-c2pa-security-architecture-${ARCHITECTURE_DOC.date}.json`;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const exportPDF = async () => {
+    setGeneratingPdf(true);
+    try {
+      const blob = await pdf(<SecurityArchitecturePDF />).toBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `tsmo-c2pa-security-architecture-${ARCHITECTURE_DOC.date}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('[SecurityArchitecture] PDF generation error:', err);
+    } finally {
+      setGeneratingPdf(false);
+    }
   };
 
   const renderValue = (val: unknown, depth = 0): React.ReactNode => {
@@ -167,9 +188,15 @@ const SecurityArchitecture: React.FC = () => {
         <CardDescription>Pre-populated from TSMO's implementation per C2PA Generator Product Requirements (Appendix C).</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <Button onClick={exportDocument} className="gap-2">
-          <Download className="h-4 w-4" /> Export Architecture Document (JSON)
-        </Button>
+        <div className="flex gap-3">
+          <Button onClick={exportPDF} className="gap-2" disabled={generatingPdf}>
+            {generatingPdf ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
+            {generatingPdf ? 'Generating PDF…' : 'Export PDF (Appendix C)'}
+          </Button>
+          <Button onClick={exportDocument} variant="outline" className="gap-2">
+            <Download className="h-4 w-4" /> Export JSON
+          </Button>
+        </div>
 
         <div className="grid gap-4">
           {SECTIONS.map(({ key, title, icon: Icon }) => (
