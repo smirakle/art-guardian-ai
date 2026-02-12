@@ -9,12 +9,14 @@ import { supabase } from '@/integrations/supabase/client';
 export interface TrustAnchor {
   commonName: string;
   organization: string;
+  country?: string;
   fingerprint: string;  // SHA-256 hex
   validFrom: string;
   validTo: string;
   issuerID?: string;
   status?: 'active' | 'expired' | 'revoked';
   anchorType?: 'root' | 'intermediate' | 'end-entity';
+  source?: string;
 }
 
 export interface TrustListData {
@@ -25,6 +27,7 @@ export interface TrustListData {
   totalAnchors?: number;
   activeAnchors?: number;
   source?: string;
+  errors?: string[];
 }
 
 export type TrustStatus = 'trusted' | 'untrusted' | 'self-signed' | 'unknown' | 'expired';
@@ -41,34 +44,16 @@ const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 // Bundled fallback snapshot (used if edge function fetch fails)
 const FALLBACK_ANCHORS: TrustAnchor[] = [
   {
-    commonName: 'C2PA Root CA',
-    organization: 'Content Authenticity Initiative',
-    fingerprint: 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2',
-    validFrom: '2023-01-01T00:00:00Z',
-    validTo: '2033-01-01T00:00:00Z',
-    issuerID: 'cai-root-ca',
+    commonName: 'TSMO AI Protection CA (Self-Signed)',
+    organization: 'TSMO Technology Inc.',
+    country: 'US',
+    fingerprint: 'tsmo-self-signed-placeholder',
+    validFrom: '2025-01-01T00:00:00Z',
+    validTo: '2035-01-01T00:00:00Z',
+    issuerID: 'tsmo-self-signed',
     status: 'active',
-    anchorType: 'root',
-  },
-  {
-    commonName: 'Adobe Content Authenticity CA',
-    organization: 'Adobe Inc.',
-    fingerprint: 'b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3',
-    validFrom: '2023-06-01T00:00:00Z',
-    validTo: '2033-06-01T00:00:00Z',
-    issuerID: 'adobe-content-auth',
-    status: 'active',
-    anchorType: 'root',
-  },
-  {
-    commonName: 'Microsoft Content Integrity CA',
-    organization: 'Microsoft Corporation',
-    fingerprint: 'c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4',
-    validFrom: '2023-09-01T00:00:00Z',
-    validTo: '2033-09-01T00:00:00Z',
-    issuerID: 'microsoft-ci',
-    status: 'active',
-    anchorType: 'root',
+    anchorType: 'end-entity',
+    source: 'Bundled',
   },
 ];
 
