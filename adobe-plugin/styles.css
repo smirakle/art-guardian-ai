@@ -334,3 +334,65 @@ body {
   padding: 2px 8px;
   border-radius: 10px;
 }
+
+/* ========== C2PA CONTENT CREDENTIALS ========== */
+.c2pa-section {
+  padding: 8px 0;
+  border-top: 1px solid #333;
+  margin-top: 4px;
+}
+.c2pa-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.c2pa-status-text {
+  font-size: 11px;
+  font-weight: 600;
+}
+.c2pa-pending {
+  color: #60a5fa;
+}
+.c2pa-applied {
+  color: #34d399;
+}
+.c2pa-failed {
+  color: #f87171;
+}
+.c2pa-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.c2pa-details-toggle {
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 10px;
+  cursor: pointer;
+  padding: 4px 0;
+  text-align: left;
+  width: 100%;
+}
+.c2pa-details-toggle:hover {
+  color: #bbb;
+}
+.c2pa-details-content {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 10px;
+  color: #888;
+  font-family: "SF Mono", "Consolas", monospace;
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin-top: 4px;
+}
