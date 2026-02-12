@@ -379,6 +379,12 @@ function extractClaimFromJUMBF(boxes: JUMBFBox[]): ParsedClaim {
           const ingredient = parseIngredientFromBox(assertionBox);
           if (ingredient) claim.ingredients.push(ingredient);
         }
+
+        // Extract c2pa.hash.data assertion
+        if (assertionBox.label === 'c2pa.hash.data') {
+          const hashInfo = parseHashDataFromBox(assertionBox);
+          if (hashInfo) claim.hashData = hashInfo;
+        }
       }
     }
   }
@@ -495,6 +501,26 @@ function extractFieldsFromDecodedClaim(obj: Record<string, unknown>, claim: Pars
     }
   }
 
+  // asset_hash (TSMO-specific field for pre-embedding hash)
+  if (typeof obj.asset_hash === 'string' && !claim.hashData) {
+    claim.hashData = { alg: 'sha256', hash: obj.asset_hash };
+  }
+
+  // Extract c2pa.hash.data from inline assertions
+  if (Array.isArray(obj.assertions)) {
+    for (const a of obj.assertions) {
+      if (typeof a === 'object' && a !== null) {
+        const aObj = a as Record<string, unknown>;
+        if (aObj.label === 'c2pa.hash.data' && typeof aObj.data === 'object' && aObj.data !== null) {
+          const hd = aObj.data as Record<string, unknown>;
+          if (typeof hd.hash === 'string') {
+            claim.hashData = { alg: String(hd.alg || 'sha256'), hash: hd.hash };
+          }
+        }
+      }
+    }
+  }
+
   // @context or spec version
   if (typeof obj['@context'] === 'string') {
     if (obj['@context'].includes('2.2') || obj['@context'].includes('2.1')) {
@@ -536,6 +562,34 @@ function parseIngredientFromBox(box: JUMBFBox): C2PAIngredientInfo | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * Parse c2pa.hash.data assertion from a JUMBF assertion box.
+ */
+function parseHashDataFromBox(box: JUMBFBox): { alg: string; hash: string } | null {
+  const contentBox = box.children.find(b => b.type === 'cbor') || box.children[1];
+  if (!contentBox) return null;
+
+  // Try CBOR decode
+  const decoded = safeCBORDecode(contentBox.data);
+  if (decoded && typeof decoded === 'object') {
+    const obj = decoded as Record<string, unknown>;
+    if (typeof obj.hash === 'string') {
+      return { alg: String(obj.alg || 'sha256'), hash: obj.hash };
+    }
+  }
+
+  // Try JSON fallback
+  try {
+    const text = new TextDecoder().decode(contentBox.data);
+    const json = JSON.parse(text);
+    if (typeof json.hash === 'string') {
+      return { alg: String(json.alg || 'sha256'), hash: json.hash };
+    }
+  } catch { /* ignore */ }
+
+  return null;
 }
 
 /**
@@ -719,13 +773,18 @@ function scanForC2PA(data: Uint8Array): C2PAResult {
     result.ingredients = parsed.ingredients;
     result.specVersion = parsed.specVersion;
 
+    // Include hash binding data
+    if (parsed.hashData) {
+      result.claimHash = parsed.hashData.hash;
+    }
+
     // Determine trust status from signature structure
     if (parsed.specVersion === '2.2') {
       result.trustStatus = 'self-signed'; // Default until trust list verification
       result.trustReason = 'Manifest has valid COSE Sign1 structure. Trust list verification pending.';
     }
 
-    console.log(`[validate-c2pa] Parsed ${boxes.length} top-level boxes, ${result.assertions.length} assertions, ${result.ingredients.length} ingredients`);
+    console.log(`[validate-c2pa] Parsed ${boxes.length} top-level boxes, ${result.assertions.length} assertions, ${result.ingredients.length} ingredients, hashBound: ${!!parsed.hashData}`);
   } catch (e) {
     console.warn('[validate-c2pa] JUMBF parse error, falling back to text scan:', e);
     // Fallback: text-based scanning
