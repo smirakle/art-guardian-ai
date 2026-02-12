@@ -1,31 +1,57 @@
 
+# Exit Valuation Calculator - Admin Tab
 
-## Add C2PA Content Credentials to the Upload Page
+## Overview
+Add a new "Valuation" tab to the Admin page with an interactive calculator that lets you model TSMO's projected sale value based on milestones achieved, current ARR, and partnership status.
 
-The C2PA Content Credentials feature was added to the Protection Hub (`/protection-hub`), but you're on the **Upload page** (`/upload`), which is a separate page. Here's the plan to bring it into the Upload flow.
+## What It Will Include
 
-### What will change
+### 1. Interactive Controls
+- **ARR Slider**: Adjust current Annual Recurring Revenue ($0 - $100M range with logarithmic scale)
+- **Growth Rate Selector**: Choose monthly growth rate (10%, 15%, 20%, 25%, 30%)
+- **Projection Year Selector**: View valuation at Year 1 through Year 10
 
-The `C2PAProtection` component (already built) will be added to the **Upload page** so users can apply Content Credentials directly as part of their upload workflow.
+### 2. Milestone Checklist (toggleable)
+Each milestone adds a multiplier to the base valuation:
+- Patent Granted (1.5x)
+- Adobe CAI Ecosystem Listed (1.3x)
+- Adobe Exchange Partner (2.0x)
+- Photoshop Plugin Live (1.8x)
+- Illustrator Plugin Live (1.4x)
+- EU AI Act Compliance Certified (1.6x)
+- C2PA Production Signing Active (1.5x)
+- RLS Security Warnings Resolved (1.2x)
+- 1,000+ Paying Customers (1.5x)
+- Enterprise Contract Signed (1.8x)
+- Government Contract (2.0x)
 
-### Where it will appear
+### 3. Valuation Display
+- **Large headline number** showing projected valuation (Bear / Base / Bull cases)
+- **Revenue multiple used** (dynamically calculated based on milestones)
+- **Recharts line chart** showing valuation trajectory over 10 years
+- **Comparable exits table** (Figma $20B, Canva $26B, etc.)
 
-The Upload page currently has 3 tabs: **Upload**, **Watermark**, and **Analyze**. There are two options:
+### 4. Scenario Cards
+- Bear Case, Base Case, Bull Case side-by-side cards with color coding
+- Each shows projected ARR, revenue multiple, and exit valuation
 
-**Option A (recommended):** Add a "Content Credentials" card inside the existing **Watermark** tab alongside the existing watermark protection, since both are protection steps applied to uploaded files.
+### 5. Partnership Status Section
+- Visual indicators for Adobe, C2PA, Government partnership stages
+- Each partnership tier shows its impact on valuation multiplier
 
-**Option B:** Add a 4th tab called "Credentials" between Watermark and Analyze.
+## Technical Details
 
-I'll go with **Option A** -- placing the C2PA card in the Watermark tab so users see all protection options together.
+### New Files
+- `src/components/admin/ExitValuationCalculator.tsx` - Main calculator component with all interactive elements, using Recharts for the projection chart, Radix sliders/checkboxes for inputs, and the existing Card/Badge/Progress UI components
 
-### Files to modify
+### Modified Files
+- `src/pages/Admin.tsx` - Add new "Valuation" tab with a DollarSign icon, import and render the ExitValuationCalculator component
 
-- **`src/pages/Upload.tsx`**
-  - Import the existing `C2PAProtection` component
-  - Add a Card wrapping `C2PAProtection` in the Watermark tab content area, below or alongside the existing watermark controls
+### Valuation Formula
+```
+Base Valuation = Projected ARR x Base Multiple (7.5x)
+Milestone Multiplier = Product of all achieved milestone factors
+Final Valuation = Base Valuation x Milestone Multiplier x Stage Discount
+```
 
-### Technical details
-
-- Import `C2PAProtection from '@/components/ai-protection/C2PAProtection'`
-- Add a new Card with title "Content Credentials (C2PA)" containing the `<C2PAProtection />` component in the Watermark tab's `TabsContent`
-- No new files needed -- the component already exists and works
+The calculator uses real-time state -- adjusting any input instantly recalculates all projections and updates the chart. No mock data; all calculations are formula-driven from user inputs.
