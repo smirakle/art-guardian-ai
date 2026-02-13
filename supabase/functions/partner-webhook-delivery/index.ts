@@ -1,7 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.192.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.5';
-import { createHmac } from "https://deno.land/std@0.192.0/node/crypto.ts";
+
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -65,7 +65,7 @@ serve(async (req) => {
     };
 
     // Generate signature
-    const signature = generateSignature(webhookPayload, webhook.secret_key);
+    const signature = await generateSignature(webhookPayload, webhook.secret_key);
 
     // Deliver webhook with retries
     const deliveryResult = await deliverWithRetry(
@@ -111,10 +111,17 @@ serve(async (req) => {
   }
 });
 
-function generateSignature(payload: any, secret: string): string {
-  const hmac = createHmac('sha256', secret);
-  hmac.update(JSON.stringify(payload));
-  return hmac.digest('hex');
+async function generateSignature(payload: any, secret: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(JSON.stringify(payload)));
+  return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 async function deliverWithRetry(
