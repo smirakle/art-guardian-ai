@@ -232,13 +232,19 @@ const MonitoringHub = () => {
                   </Badge>
                   
                   {/* View Button */}
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-onClick={() => window.open(match.source_url, '_blank', 'noopener,noreferrer')}
-                  >
-                    View
-                  </Button>
+                  {match.source_url && match.source_url.startsWith('http') && match.source_url.includes('.') ? (
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => window.open(match.source_url, '_blank', 'noopener,noreferrer')}
+                    >
+                      View
+                    </Button>
+                  ) : (
+                    <Badge variant="outline" className="flex-shrink-0 text-xs">
+                      {match.source_domain || 'Unknown'}
+                    </Badge>
+                  )}
                 </div>
               ))}
             </div>
