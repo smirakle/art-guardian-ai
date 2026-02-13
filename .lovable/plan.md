@@ -1,42 +1,91 @@
 
 
-# Address C2PA Conformance Review Deficiencies
+# Implement Real SCA, SBOM, and Dependency Hygiene for Edge Functions
 
-## What the Review Found
+## The Problem
 
-The conformance review flagged two requirements as **DOES NOT MEET**:
+The Security Architecture document claims SCA tooling, SBOM generation, and version-pinned dependencies exist -- but none of this is actually implemented:
 
-1. **O.3 - Claim Generator Protection (Req 6.3.1)**: No evidence of Software Composition Analysis (SCA), SBOM generation, or a 90-day patch policy for Critical/High vulnerabilities.
-2. **O.6 - Hosting Environment (Req 6.6.1)**: No vulnerability scanning for dependencies and API surfaces.
+- **No Dependabot or Snyk config** in the repository
+- **No deno.lock file** for integrity verification
+- **No SBOM generation** script or tooling
+- **Inconsistent version pinning**: Many functions use floating versions like `@supabase/supabase-js@2` instead of exact pins like `@2.50.5`
+- **Mixed std library versions**: Functions use `std@0.168.0`, `std@0.177.0`, `std@0.190.0`, and `std@0.192.0`
+
+Submitting documentation that claims these controls exist when they do not would be a conformance integrity issue.
 
 ## What Changes
 
-Both the **Security Architecture data** and the **PDF export** will be updated to document:
+### 1. Standardize all edge function imports (182 files)
 
-- **SCA/SBOM tooling**: Deno-native `deno info --json` for dependency analysis, plus integration with GitHub Dependabot / Snyk for continuous monitoring.
-- **Vulnerability Patch Policy**: Explicit 90-day remediation window for Critical/High CVEs, with defined escalation process.
-- **Dependency inventory**: Declaration that all edge function imports are version-pinned from `esm.sh` and `deno.land/std`, with lockfile tracking.
+Pin every import to a specific version across all edge functions:
+
+- `deno.land/std` -- standardize to `std@0.192.0` (latest used)
+- `@supabase/supabase-js` -- standardize to `@2.50.5` (latest used)
+- All other libraries pinned to their current exact versions
+
+### 2. Create a GitHub Dependabot configuration
+
+Add `.github/dependabot.yml` that monitors the repository for dependency vulnerabilities on a weekly schedule.
+
+### 3. Create an SBOM generation script
+
+Add `scripts/generate-sbom.sh` that:
+- Scans all edge function imports
+- Outputs a dependency inventory in JSON format
+- Can be run manually or in CI
+
+### 4. Create a dependency inventory edge function
+
+Add `supabase/functions/dependency-inventory/index.ts` that returns a live inventory of all edge function dependencies and their versions -- useful for auditors and the conformance review.
+
+### 5. Update Security Architecture documentation to be accurate
+
+Adjust the wording in `SecurityArchitecture.tsx` and `SecurityArchitecturePDF.tsx` to accurately reflect what is implemented rather than aspirational language.
 
 ## Technical Details
 
-### File 1: `src/components/admin/c2pa/SecurityArchitecture.tsx`
+### Dependency Standardization (182 edge function files)
 
-Add two new fields to `ARCHITECTURE_DOC`:
+Find and replace across all `supabase/functions/*/index.ts`:
 
-- In `section_3_cryptographic_implementation`, add `dependency_management` describing version-pinned imports and lockfile usage.
-- In `section_5_security_controls`, add:
-  - `software_composition_analysis`: describes SCA tooling (deno info, Dependabot/Snyk)
-  - `sbom_generation`: describes SBOM output format (CycloneDX JSON)
-  - `vulnerability_patch_policy`: documents the 90-day Critical/High CVE remediation mandate with escalation steps
+```
+# Standardize std library
+deno.land/std@0.168.0  -->  deno.land/std@0.192.0
+deno.land/std@0.177.0  -->  deno.land/std@0.192.0
+deno.land/std@0.190.0  -->  deno.land/std@0.192.0
 
-### File 2: `src/components/admin/c2pa/SecurityArchitecturePDF.tsx`
+# Standardize supabase-js
+@supabase/supabase-js@2"  -->  @supabase/supabase-js@2.50.5"
+@supabase/supabase-js@2.7.1  -->  @supabase/supabase-js@2.50.5
+@supabase/supabase-js@2.39.7  -->  @supabase/supabase-js@2.50.5
+@supabase/supabase-js@2.45.0  -->  @supabase/supabase-js@2.50.5
+```
 
-Add corresponding content to the PDF pages:
+### New File: `.github/dependabot.yml`
 
-- **Page 3 (Section 3)**: Add a "Dependency Management" subsection documenting version-pinned imports and lockfile tracking.
-- **Page 4 (Section 5)**: Add three new labeled entries:
-  - "Software Composition Analysis (SCA)" - tooling and scanning cadence
-  - "SBOM Generation" - CycloneDX JSON format, generated per deployment
-  - "Vulnerability Patch Policy" - 90-day Critical/High remediation window, 180-day for Medium, quarterly review cadence
+```yaml
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+```
 
-These additions directly address all three remediation steps called out in the review: implement SCA/scanning, define patch policy, and update the GPSA document.
+### New File: `scripts/generate-sbom.json`
+
+A static SBOM manifest listing all Deno dependencies used across edge functions, in a simplified CycloneDX-compatible format.
+
+### New Edge Function: `dependency-inventory`
+
+Returns a JSON response listing all pinned dependencies and their versions, for audit/conformance evidence.
+
+### Updated Documentation
+
+`SecurityArchitecture.tsx` and `SecurityArchitecturePDF.tsx` -- adjust text to accurately describe:
+- Dependabot is configured for weekly scanning
+- SBOM is maintained as a static inventory updated per release
+- All imports are version-pinned (after the standardization above)
+
