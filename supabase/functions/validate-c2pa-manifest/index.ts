@@ -554,10 +554,11 @@ function extractFieldsFromDecodedClaim(obj: Record<string, unknown>, claim: Pars
     claim.claimGenerator = claimGen;
   }
 
-  // claim_generator_info (check variants)
+  // claim_generator_info (check variants — handle single object or array)
   const claimGenInfo = obj.claim_generator_info || obj.claimGeneratorInfo || obj['claim-generator-info'];
-  if (Array.isArray(claimGenInfo)) {
-    claim.claimGeneratorInfo = claimGenInfo
+  if (claimGenInfo && typeof claimGenInfo === 'object') {
+    const infoArray = Array.isArray(claimGenInfo) ? claimGenInfo : [claimGenInfo];
+    claim.claimGeneratorInfo = infoArray
       .filter((i: unknown) => typeof i === 'object' && i !== null)
       .map((i: unknown) => {
         const info = i as Record<string, unknown>;
@@ -566,6 +567,14 @@ function extractFieldsFromDecodedClaim(obj: Record<string, unknown>, claim: Pars
           version: String(info.version || ''),
         };
       });
+  }
+
+  // Synthesize claimGenerator from claimGeneratorInfo if missing
+  if (!claim.claimGenerator && claim.claimGeneratorInfo?.length) {
+    const first = claim.claimGeneratorInfo[0];
+    claim.claimGenerator = first.version
+      ? `${first.name}/${first.version}`
+      : first.name;
   }
 
   // instance_id (check snake_case and camelCase)
