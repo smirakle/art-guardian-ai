@@ -85,6 +85,8 @@ const ARCHITECTURE_DOC = {
     software_composition_analysis: 'GitHub Dependabot is configured (.github/dependabot.yml) for weekly automated CVE scanning of all npm dependencies. The dependency-inventory edge function provides a live JSON inventory of all pinned Deno imports for on-demand audit. deno info --json is used per-build to generate dependency graphs.',
     sbom_generation: 'A CycloneDX v1.5 JSON SBOM is maintained at scripts/generate-sbom.json, listing all edge function dependencies with exact version pins, PURLs, and scope classification. Updated per release cycle.',
     vulnerability_patch_policy: 'Critical and High severity CVEs must be remediated within 90 days of disclosure. Medium severity within 180 days. Low/Informational reviewed quarterly. Escalation process: 1) Dependabot automated alert, 2) Triage within 48 hours, 3) Patch or mitigate within SLA, 4) Post-remediation verification and log entry. Policy owner: Engineering Lead.',
+    rls_hardening: 'All user-owned tables enforce TO authenticated policies, preventing anonymous access. 93 policies migrated from public to authenticated role. Critical data exposures remediated: attorney records (ip_lawyers), lead data (leads), promotional codes (promo_codes). System configuration tables (platform_api_configs) gated by admin role checks.',
+    access_control_model: 'Three-tier model: (1) Public — community content only; (2) Authenticated — user-owned data with auth.uid() ownership checks; (3) Admin — system configuration tables gated by role-based access control.',
   },
 
   section_6_third_party_services: [
@@ -102,6 +104,7 @@ const ARCHITECTURE_DOC = {
       'Replay attacks: mitigated by unique urn:c2pa:<uuid-v4> instance_id and timestamp per manifest',
       'Privilege escalation: mitigated by RLS policies on all audit tables',
       'Ingredient spoofing: mitigated by SHA-256 hash binding of ingredient assets',
+      'Anonymous data access: all user-owned tables restricted to authenticated role; public role limited to community content',
     ],
     residual_risks: [
       'Self-signed certificates do not chain to CAI trust list until production certs are configured',

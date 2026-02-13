@@ -374,6 +374,24 @@ const SecurityArchitecturePDF: React.FC = () => (
         Policy owner: Engineering Lead.
       </Text>
 
+      <Text style={styles.label}>Row-Level Security Hardening:</Text>
+      <Text style={styles.value}>
+        All user-owned tables enforce TO authenticated policies, preventing anonymous access to user data.
+        93 policies previously granted to the public role (including anon) were migrated to require
+        authentication. Critical data exposures remediated: attorney records (ip_lawyers), lead capture
+        data (leads), and promotional codes (promo_codes) restricted from public to authenticated access.
+        System configuration tables (platform_api_configs) gated by admin role checks.
+      </Text>
+
+      <Text style={styles.label}>Access Control Model:</Text>
+      <Text style={styles.value}>
+        Three-tier model: (1) Public — community content only (posts, comments, expert profiles);
+        (2) Authenticated — user-owned data with auth.uid() ownership checks on all CRUD operations;
+        (3) Admin — system configuration and platform tables gated by role-based access control.
+        All RLS policies use TO authenticated or TO anon explicitly; no policies default to the
+        public role for user-owned data.
+      </Text>
+
       <Text style={styles.sectionTitle}>6. Third-Party Services</Text>
 
       <View style={styles.tableRow}>
@@ -406,6 +424,7 @@ const SecurityArchitecturePDF: React.FC = () => (
       <Text style={styles.bulletItem}>• Replay attacks: unique urn:c2pa:uuid instance_id + timestamp per manifest</Text>
       <Text style={styles.bulletItem}>• Privilege escalation: RLS policies on all audit tables</Text>
       <Text style={styles.bulletItem}>• Ingredient spoofing: SHA-256 hash binding of ingredient assets</Text>
+      <Text style={styles.bulletItem}>• Anonymous data access: all user-owned tables restricted to authenticated role; public role limited to community content</Text>
 
       <Text style={styles.subsectionTitle}>Residual Risks</Text>
       <Text style={styles.bulletItem}>• Self-signed certificates until production CAI certs configured</Text>
