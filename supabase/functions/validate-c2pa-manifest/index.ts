@@ -627,12 +627,15 @@ function extractFieldsFromText(data: Uint8Array, claim: ParsedClaim): void {
 
 // ─── Format-Specific JUMBF Extractors ────────────────────────────────────────
 
-function extractJUMBFFromJPEG(data: Uint8Array): { jumbfData: Uint8Array | null; format: string } {
+function extractJUMBFFromJPEG(data: Uint8Array): { jumbfData: Uint8Array | null; format: string; segmentCount: number } {
   if (data[0] !== 0xFF || data[1] !== 0xD8) {
-    return { jumbfData: null, format: 'jpeg' };
+    return { jumbfData: null, format: 'jpeg', segmentCount: 0 };
   }
 
+  // Collect all APP11 segments for multi-segment reassembly
+  const app11Segments: { en: number; z: number; payload: Uint8Array }[] = [];
   let offset = 2;
+
   while (offset < data.length - 4) {
     if (data[offset] !== 0xFF) { offset++; continue; }
     const marker = data[offset + 1];
@@ -643,49 +646,104 @@ function extractJUMBFFromJPEG(data: Uint8Array): { jumbfData: Uint8Array | null;
     }
 
     const segLength = readUint16BE(data, offset + 2);
+    const segEnd = offset + 2 + segLength;
 
-    // APP11 (0xEB) — C2PA JUMBF container
-    if (marker === 0xEB) {
-      const segStart = offset + 4;
-      // Skip the 12-byte JUMBF envelope (CI + En + Z + LBox)
-      const jumbfStart = segStart + 12;
-      const segEnd = offset + 2 + segLength;
-      if (jumbfStart < segEnd) {
-        return { jumbfData: data.subarray(jumbfStart, segEnd), format: 'jpeg' };
+    // APP11 (0xEB) — C2PA JUMBF container per ISO 19566-5
+    if (marker === 0xEB && segLength > 10) {
+      const segStart = offset + 4; // past marker + length
+
+      // C2PA APP11 header: CI(2) = 0x4A50 "JP" + En(2) + Z(4) = 8 bytes total
+      const ci = readUint16BE(data, segStart);
+      if (ci === 0x4A50) { // "JP" Common Identifier
+        const en = readUint16BE(data, segStart + 2); // box instance number
+        const z = readUint32BE(data, segStart + 4);   // packet sequence number
+        const jumbfStart = segStart + 8; // 8-byte header, NOT 12
+        if (jumbfStart < segEnd) {
+          app11Segments.push({
+            en,
+            z,
+            payload: data.subarray(jumbfStart, segEnd),
+          });
+        }
+      } else {
+        // Fallback: try alternate offsets (some encoders use different padding)
+        // Try offset 4 (legacy CI=4 bytes), offset 6, offset 8, offset 10, offset 12
+        for (const skip of [4, 6, 10, 12]) {
+          const tryStart = segStart + skip;
+          if (tryStart < segEnd && segEnd - tryStart >= 8) {
+            const testSize = readUint32BE(data, tryStart);
+            const testType = String.fromCharCode(
+              data[tryStart + 4], data[tryStart + 5], data[tryStart + 6], data[tryStart + 7]
+            );
+            if (testType === 'jumb' || testType === 'jumd' || testSize > 8) {
+              app11Segments.push({
+                en: 1,
+                z: 0,
+                payload: data.subarray(tryStart, segEnd),
+              });
+              break;
+            }
+          }
+        }
       }
     }
 
     offset += 2 + segLength;
   }
 
-  return { jumbfData: null, format: 'jpeg' };
+  if (app11Segments.length === 0) {
+    return { jumbfData: null, format: 'jpeg', segmentCount: 0 };
+  }
+
+  // Sort by packet sequence number and reassemble
+  app11Segments.sort((a, b) => a.z - b.z);
+
+  if (app11Segments.length === 1) {
+    const seg = app11Segments[0];
+    console.log(`[validate-c2pa] JPEG: 1 APP11 segment, ${seg.payload.length} bytes, first 64: ${bytesToHex(seg.payload.subarray(0, 64))}`);
+    return { jumbfData: seg.payload, format: 'jpeg', segmentCount: 1 };
+  }
+
+  // Multi-segment: concatenate payloads
+  const totalLen = app11Segments.reduce((s, seg) => s + seg.payload.length, 0);
+  const reassembled = new Uint8Array(totalLen);
+  let pos = 0;
+  for (const seg of app11Segments) {
+    reassembled.set(seg.payload, pos);
+    pos += seg.payload.length;
+  }
+  console.log(`[validate-c2pa] JPEG: ${app11Segments.length} APP11 segments reassembled, ${totalLen} bytes, first 64: ${bytesToHex(reassembled.subarray(0, 64))}`);
+  return { jumbfData: reassembled, format: 'jpeg', segmentCount: app11Segments.length };
 }
 
-function extractJUMBFFromPNG(data: Uint8Array): { jumbfData: Uint8Array | null; format: string } {
+function extractJUMBFFromPNG(data: Uint8Array): { jumbfData: Uint8Array | null; format: string; segmentCount: number } {
   if (!matchBytes(data, 0, [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])) {
-    return { jumbfData: null, format: 'png' };
+    return { jumbfData: null, format: 'png', segmentCount: 0 };
   }
 
   let offset = 8;
   const caBX = [0x63, 0x61, 0x42, 0x58];
+  let segmentCount = 0;
 
   while (offset + 8 <= data.length) {
     const chunkLength = readUint32BE(data, offset);
     const chunkTypeOffset = offset + 4;
 
     if (matchBytes(data, chunkTypeOffset, caBX)) {
+      segmentCount++;
       const chunkDataStart = chunkTypeOffset + 4;
-      return { jumbfData: data.subarray(chunkDataStart, chunkDataStart + chunkLength), format: 'png' };
+      console.log(`[validate-c2pa] PNG: caBX chunk found, ${chunkLength} bytes, first 64: ${bytesToHex(data.subarray(chunkDataStart, chunkDataStart + 64))}`);
+      return { jumbfData: data.subarray(chunkDataStart, chunkDataStart + chunkLength), format: 'png', segmentCount };
     }
 
     if (matchBytes(data, chunkTypeOffset, [0x49, 0x45, 0x4E, 0x44])) break;
     offset += 4 + 4 + chunkLength + 4;
   }
 
-  return { jumbfData: null, format: 'png' };
+  return { jumbfData: null, format: 'png', segmentCount };
 }
 
-function extractJUMBFFromVideo(data: Uint8Array): { jumbfData: Uint8Array | null; format: string } {
+function extractJUMBFFromVideo(data: Uint8Array): { jumbfData: Uint8Array | null; format: string; segmentCount: number } {
   let offset = 0;
   while (offset < data.length - 8) {
     const boxSize = readUint32BE(data, offset);
@@ -695,14 +753,15 @@ function extractJUMBFFromVideo(data: Uint8Array): { jumbfData: Uint8Array | null
 
     if (boxType === 'uuid' && boxSize >= 24) {
       if (matchBytes(data, offset + 8, C2PA_VIDEO_UUID)) {
-        return { jumbfData: data.subarray(offset + 24, offset + boxSize), format: 'video' };
+        console.log(`[validate-c2pa] Video: UUID box found, ${boxSize - 24} bytes payload`);
+        return { jumbfData: data.subarray(offset + 24, offset + boxSize), format: 'video', segmentCount: 1 };
       }
     }
 
     offset += boxSize;
   }
 
-  return { jumbfData: null, format: 'video' };
+  return { jumbfData: null, format: 'video', segmentCount: 0 };
 }
 
 // ─── Main Scanner ────────────────────────────────────────────────────────────
@@ -737,7 +796,7 @@ function scanForC2PA(data: Uint8Array): C2PAResult {
   }
 
   // Extract raw JUMBF data from container format
-  let extracted: { jumbfData: Uint8Array | null; format: string };
+  let extracted: { jumbfData: Uint8Array | null; format: string; segmentCount: number };
   switch (format) {
     case 'jpeg':
       extracted = extractJUMBFFromJPEG(data);
@@ -758,11 +817,16 @@ function scanForC2PA(data: Uint8Array): C2PAResult {
 
   result.hasC2PA = true;
   result.manifestFound = true;
+  // Record segment count as minimum rawBoxCount even if parsing fails
+  result.rawBoxCount = Math.max(extracted.segmentCount, 1);
 
   // Parse JUMBF box tree
   try {
     const boxes = parseJUMBFBoxes(extracted.jumbfData);
-    result.rawBoxCount = countBoxes(boxes);
+    const boxCount = countBoxes(boxes);
+    if (boxCount > 0) {
+      result.rawBoxCount = boxCount;
+    }
 
     // Extract structured claim data
     const parsed = extractClaimFromJUMBF(boxes);
@@ -780,21 +844,89 @@ function scanForC2PA(data: Uint8Array): C2PAResult {
 
     // Determine trust status from signature structure
     if (parsed.specVersion === '2.2') {
-      result.trustStatus = 'self-signed'; // Default until trust list verification
+      result.trustStatus = 'self-signed';
       result.trustReason = 'Manifest has valid COSE Sign1 structure. Trust list verification pending.';
     }
 
-    console.log(`[validate-c2pa] Parsed ${boxes.length} top-level boxes, ${result.assertions.length} assertions, ${result.ingredients.length} ingredients, hashBound: ${!!parsed.hashData}`);
+    console.log(`[validate-c2pa] JUMBF parsed: ${boxes.length} top-level boxes, ${boxCount} total, ${result.assertions.length} assertions, ${result.ingredients.length} ingredients, claimGen: ${result.claimGenerator}, hashBound: ${!!parsed.hashData}`);
+
+    // If JUMBF parsing found boxes but no claim data, try JSON fallback on raw data
+    if (!result.claimGenerator && result.assertions.length === 0) {
+      console.log('[validate-c2pa] JUMBF boxes found but no claim data extracted — trying JSON fallback');
+      tryJSONFallback(extracted.jumbfData, result);
+    }
   } catch (e) {
-    console.warn('[validate-c2pa] JUMBF parse error, falling back to text scan:', e);
-    // Fallback: text-based scanning
+    console.warn('[validate-c2pa] JUMBF parse error:', e);
+    // Fallback 1: text-based scanning on JUMBF data
     const fallbackClaim: ParsedClaim = { assertions: [], ingredients: [] };
     extractFieldsFromText(extracted.jumbfData, fallbackClaim);
     result.claimGenerator = fallbackClaim.claimGenerator || null;
     result.assertions = fallbackClaim.assertions;
+
+    // Fallback 2: JSON manifest in the JUMBF data
+    if (!result.claimGenerator) {
+      tryJSONFallback(extracted.jumbfData, result);
+    }
+  }
+
+  // Final fallback: scan entire raw JUMBF for text patterns
+  if (!result.claimGenerator && result.assertions.length === 0) {
+    const textFallback: ParsedClaim = { assertions: [], ingredients: [] };
+    extractFieldsFromText(extracted.jumbfData, textFallback);
+    if (textFallback.claimGenerator) result.claimGenerator = textFallback.claimGenerator;
+    if (textFallback.assertions.length > 0) result.assertions = textFallback.assertions;
   }
 
   return result;
+}
+
+/**
+ * Try to find and parse a JSON-encoded manifest within the raw JUMBF data.
+ * This handles TSMO's own embedded manifests which use JSON instead of CBOR.
+ */
+function tryJSONFallback(jumbfData: Uint8Array, result: C2PAResult): void {
+  const text = new TextDecoder('utf-8', { fatal: false }).decode(jumbfData);
+  
+  // Look for JSON objects in the data
+  const jsonStarts: number[] = [];
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '{') jsonStarts.push(i);
+  }
+
+  for (const start of jsonStarts) {
+    try {
+      // Find matching closing brace
+      let depth = 0;
+      let end = start;
+      for (let i = start; i < text.length; i++) {
+        if (text[i] === '{') depth++;
+        if (text[i] === '}') depth--;
+        if (depth === 0) { end = i + 1; break; }
+      }
+      
+      const jsonStr = text.slice(start, end);
+      if (jsonStr.length < 10) continue;
+      
+      const json = JSON.parse(jsonStr);
+      if (typeof json !== 'object' || json === null) continue;
+
+      const claim: ParsedClaim = { assertions: [], ingredients: [] };
+      extractFieldsFromDecodedClaim(json as Record<string, unknown>, claim);
+
+      if (claim.claimGenerator || claim.assertions.length > 0) {
+        console.log(`[validate-c2pa] JSON fallback found manifest: claimGen=${claim.claimGenerator}, assertions=${claim.assertions.length}`);
+        result.claimGenerator = claim.claimGenerator || result.claimGenerator;
+        result.claimGeneratorInfo = claim.claimGeneratorInfo || result.claimGeneratorInfo;
+        if (claim.assertions.length > 0) result.assertions = claim.assertions;
+        if (claim.ingredients.length > 0) result.ingredients = claim.ingredients;
+        if (claim.specVersion) result.specVersion = claim.specVersion;
+        if (claim.hashData) result.claimHash = claim.hashData.hash;
+        return;
+      }
+    } catch {
+      continue;
+    }
+  }
 }
 
 function countBoxes(boxes: JUMBFBox[]): number {
