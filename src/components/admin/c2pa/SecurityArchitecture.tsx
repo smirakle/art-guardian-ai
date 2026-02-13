@@ -52,7 +52,7 @@ const ARCHITECTURE_DOC = {
     key_rotation: 'Manual rotation via Supabase dashboard. Old signing logs retain the certificate fingerprint for audit trail.',
     self_signed_fallback: 'When C2PA_PRIVATE_KEY and C2PA_SIGNING_CERT secrets are not set, the sign-c2pa-manifest function generates an ephemeral ECDSA P-256 keypair per invocation. Manifests are cryptographically valid but do not chain to the CAI trust list.',
     trust_list_integration: 'Certificate fingerprints are verified against the CAI trust list at spec.c2pa.org/conformance-explorer/. Trust status is returned as trusted/untrusted/self-signed/expired.',
-    dependency_management: 'All edge function imports are version-pinned from esm.sh and deno.land/std (e.g., @supabase/supabase-js@2.50.5, std@0.190.0). Deno lockfile (deno.lock) tracks integrity hashes for all remote dependencies. No unpinned or floating version specifiers are used.',
+    dependency_management: 'All edge function imports are version-pinned to exact versions: deno.land/std@0.192.0, @supabase/supabase-js@2.50.5, stripe@14.21.0, resend@2.0.0. GitHub Dependabot is configured (.github/dependabot.yml) for weekly vulnerability scanning. A CycloneDX SBOM manifest is maintained at scripts/generate-sbom.json. The dependency-inventory edge function serves a live audit-ready inventory.',
   },
 
   section_4_manifest_construction: {
@@ -82,9 +82,9 @@ const ARCHITECTURE_DOC = {
     data_isolation: 'Edge functions are stateless and isolated per invocation. No keys persist in memory between calls.',
     transport_security: 'TLS 1.3 for all client-server communication. HSTS headers enforced.',
     trust_chain_verification: 'Validator checks signing certificate against CAI trust list anchors. Returns trust status with matched anchor details.',
-    software_composition_analysis: 'Deno-native `deno info --json` generates dependency graphs for all edge functions. GitHub Dependabot monitors the repository for known CVEs in npm and Deno dependencies. Snyk CLI is available for on-demand deep scans. SCA runs on every CI build and weekly on a scheduled basis.',
-    sbom_generation: 'Software Bill of Materials (SBOM) is generated in CycloneDX JSON format using `deno info --json` output, converted via cyclonedx-cli. SBOMs are produced per deployment and archived alongside release artifacts.',
-    vulnerability_patch_policy: 'Critical and High severity CVEs must be remediated within 90 days of disclosure. Medium severity within 180 days. Low/Informational reviewed quarterly. Escalation process: 1) Automated alert via Dependabot/Snyk, 2) Triage within 48 hours, 3) Patch or mitigate within SLA, 4) Post-remediation verification and log entry. Policy owner: Engineering Lead.',
+    software_composition_analysis: 'GitHub Dependabot is configured (.github/dependabot.yml) for weekly automated CVE scanning of all npm dependencies. The dependency-inventory edge function provides a live JSON inventory of all pinned Deno imports for on-demand audit. deno info --json is used per-build to generate dependency graphs.',
+    sbom_generation: 'A CycloneDX v1.5 JSON SBOM is maintained at scripts/generate-sbom.json, listing all edge function dependencies with exact version pins, PURLs, and scope classification. Updated per release cycle.',
+    vulnerability_patch_policy: 'Critical and High severity CVEs must be remediated within 90 days of disclosure. Medium severity within 180 days. Low/Informational reviewed quarterly. Escalation process: 1) Dependabot automated alert, 2) Triage within 48 hours, 3) Patch or mitigate within SLA, 4) Post-remediation verification and log entry. Policy owner: Engineering Lead.',
   },
 
   section_6_third_party_services: [

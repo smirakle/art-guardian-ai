@@ -293,9 +293,11 @@ const SecurityArchitecturePDF: React.FC = () => (
 
       <Text style={styles.subsectionTitle}>Dependency Management</Text>
       <Text style={styles.paragraph}>
-        All edge function imports are version-pinned from esm.sh and deno.land/std
-        (e.g., @supabase/supabase-js@2.50.5, std@0.190.0). Deno lockfile (deno.lock) tracks
-        integrity hashes for all remote dependencies. No unpinned or floating version specifiers are used.
+        All edge function imports are version-pinned to exact versions: deno.land/std@0.192.0,
+        @supabase/supabase-js@2.50.5, stripe@14.21.0, resend@2.0.0. GitHub Dependabot is configured
+        (.github/dependabot.yml) for weekly vulnerability scanning. A CycloneDX SBOM manifest is
+        maintained at scripts/generate-sbom.json. The dependency-inventory edge function serves a
+        live audit-ready inventory.
       </Text>
 
       {/* Section 4: Manifest Construction */}
@@ -354,15 +356,15 @@ const SecurityArchitecturePDF: React.FC = () => (
 
       <Text style={styles.label}>Software Composition Analysis (SCA):</Text>
       <Text style={styles.value}>
-        Deno-native deno info --json generates dependency graphs for all edge functions.
-        GitHub Dependabot monitors for known CVEs. Snyk CLI available for on-demand deep scans.
-        SCA runs on every CI build and weekly on a scheduled basis.
+        GitHub Dependabot is configured (.github/dependabot.yml) for weekly automated CVE scanning.
+        The dependency-inventory edge function provides a live JSON inventory of all pinned Deno
+        imports for on-demand audit. deno info --json is used per-build for dependency graphs.
       </Text>
 
       <Text style={styles.label}>SBOM Generation:</Text>
       <Text style={styles.value}>
-        Software Bill of Materials generated in CycloneDX JSON format using deno info --json output,
-        converted via cyclonedx-cli. Produced per deployment and archived with release artifacts.
+        CycloneDX v1.5 JSON SBOM maintained at scripts/generate-sbom.json, listing all edge function
+        dependencies with exact version pins, PURLs, and scope classification. Updated per release.
       </Text>
 
       <Text style={styles.label}>Vulnerability Patch Policy:</Text>

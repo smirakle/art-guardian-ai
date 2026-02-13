@@ -1,0 +1,96 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:tsmo-sbom-2026-02-13",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-02-13T00:00:00Z",
+    "component": {
+      "type": "application",
+      "name": "TSMO Edge Functions",
+      "version": "2.0",
+      "description": "Supabase Edge Functions for TSMO AI Content Protection Platform"
+    },
+    "tools": [
+      {
+        "vendor": "Deno",
+        "name": "deno info",
+        "version": "1.x"
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "deno-std-http",
+      "version": "0.192.0",
+      "purl": "pkg:deno/std@0.192.0",
+      "scope": "required",
+      "description": "Deno standard library HTTP server module",
+      "source": "https://deno.land/std@0.192.0/http/server.ts"
+    },
+    {
+      "type": "library",
+      "name": "@supabase/supabase-js",
+      "version": "2.50.5",
+      "purl": "pkg:npm/%40supabase/supabase-js@2.50.5",
+      "scope": "required",
+      "description": "Supabase JavaScript client library",
+      "source": "https://esm.sh/@supabase/supabase-js@2.50.5"
+    },
+    {
+      "type": "library",
+      "name": "stripe",
+      "version": "14.21.0",
+      "purl": "pkg:npm/stripe@14.21.0",
+      "scope": "optional",
+      "description": "Stripe payment processing SDK",
+      "source": "https://esm.sh/stripe@14.21.0"
+    },
+    {
+      "type": "library",
+      "name": "resend",
+      "version": "2.0.0",
+      "purl": "pkg:npm/resend@2.0.0",
+      "scope": "optional",
+      "description": "Resend email API client",
+      "source": "npm:resend@2.0.0"
+    },
+    {
+      "type": "library",
+      "name": "resend",
+      "version": "4.0.0",
+      "purl": "pkg:npm/resend@4.0.0",
+      "scope": "optional",
+      "description": "Resend email API client (v4)",
+      "source": "npm:resend@4.0.0"
+    },
+    {
+      "type": "library",
+      "name": "deno-xhr-polyfill",
+      "version": "0.1.0",
+      "purl": "pkg:deno/xhr@0.1.0",
+      "scope": "optional",
+      "description": "XMLHttpRequest polyfill for Deno",
+      "source": "https://deno.land/x/xhr@0.1.0/mod.ts"
+    },
+    {
+      "type": "library",
+      "name": "@google/generative-ai",
+      "version": "0.21.0",
+      "purl": "pkg:npm/%40google/generative-ai@0.21.0",
+      "scope": "optional",
+      "description": "Google Generative AI SDK",
+      "source": "https://esm.sh/@google/generative-ai@0.21.0"
+    },
+    {
+      "type": "library",
+      "name": "deno-std-crypto",
+      "version": "0.192.0",
+      "purl": "pkg:deno/std@0.192.0/crypto",
+      "scope": "optional",
+      "description": "Deno standard library crypto/HMAC module",
+      "source": "https://deno.land/std@0.192.0/node/crypto.ts"
+    }
+  ]
+}
