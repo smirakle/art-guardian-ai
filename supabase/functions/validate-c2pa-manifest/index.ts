@@ -364,6 +364,9 @@ interface ParsedClaim {
   instanceId?: string;
   specVersion?: string;
   hashData?: { alg: string; hash: string };
+  title?: string;
+  dcFormat?: string;
+  signatureRef?: string;
 }
 
 /**
@@ -500,9 +503,15 @@ function extractClaimFromJUMBF(boxes: JUMBFBox[]): ParsedClaim {
     console.log(`[validate-c2pa] Claim content: ${contentData.length} bytes, first 32: ${bytesToHex(contentData.subarray(0, 32))}`);
 
     const decoded = robustCBORDecode(contentData);
+    // Debug logging: show decoded CBOR keys and preview
     if (decoded && typeof decoded === 'object') {
+      const keys = Object.keys(decoded as Record<string, unknown>);
+      console.log(`[validate-c2pa] CBOR decoded successfully. Type: ${typeof decoded}, Keys: [${keys.join(', ')}]`);
+      const preview = JSON.stringify(decoded, (_k, v) => v instanceof Uint8Array ? `<bytes:${v.length}>` : v);
+      console.log(`[validate-c2pa] CBOR preview: ${preview?.substring(0, 500)}`);
       extractFieldsFromDecodedClaim(decoded as Record<string, unknown>, claim);
     } else {
+      console.log(`[validate-c2pa] CBOR decode returned: ${decoded === null ? 'null' : typeof decoded}`);
       // Fallback: try string scanning
       extractFieldsFromText(contentData, claim);
     }
@@ -539,14 +548,16 @@ function extractClaimFromJUMBF(boxes: JUMBFBox[]): ParsedClaim {
 }
 
 function extractFieldsFromDecodedClaim(obj: Record<string, unknown>, claim: ParsedClaim): void {
-  // claim_generator
-  if (typeof obj.claim_generator === 'string') {
-    claim.claimGenerator = obj.claim_generator;
+  // claim_generator (check snake_case, camelCase, kebab-case)
+  const claimGen = obj.claim_generator || obj.claimGenerator || obj['claim-generator'];
+  if (typeof claimGen === 'string') {
+    claim.claimGenerator = claimGen;
   }
 
-  // claim_generator_info
-  if (Array.isArray(obj.claim_generator_info)) {
-    claim.claimGeneratorInfo = obj.claim_generator_info
+  // claim_generator_info (check variants)
+  const claimGenInfo = obj.claim_generator_info || obj.claimGeneratorInfo || obj['claim-generator-info'];
+  if (Array.isArray(claimGenInfo)) {
+    claim.claimGeneratorInfo = claimGenInfo
       .filter((i: unknown) => typeof i === 'object' && i !== null)
       .map((i: unknown) => {
         const info = i as Record<string, unknown>;
@@ -557,9 +568,28 @@ function extractFieldsFromDecodedClaim(obj: Record<string, unknown>, claim: Pars
       });
   }
 
-  // instance_id
-  if (typeof obj.instance_id === 'string') {
-    claim.instanceId = obj.instance_id;
+  // instance_id (check snake_case and camelCase)
+  const instId = obj.instance_id || obj.instanceID || obj.instanceId;
+  if (typeof instId === 'string') {
+    claim.instanceId = instId as string;
+  }
+
+  // dc:title
+  const dcTitle = obj['dc:title'] || obj.dc_title || obj.title;
+  if (typeof dcTitle === 'string') {
+    claim.title = dcTitle;
+  }
+
+  // dc:format
+  const dcFormat = obj['dc:format'] || obj.dc_format || obj.format;
+  if (typeof dcFormat === 'string') {
+    claim.dcFormat = dcFormat;
+  }
+
+  // signature reference
+  const sigRef = obj.signature || obj.signatureRef || obj['signature_ref'];
+  if (typeof sigRef === 'string') {
+    claim.signatureRef = sigRef;
   }
 
   // assertions
