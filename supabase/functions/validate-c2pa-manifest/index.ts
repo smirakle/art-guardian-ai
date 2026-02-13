@@ -486,11 +486,16 @@ function extractClaimFromJUMBF(boxes: JUMBFBox[]): ParsedClaim {
   }
 
   // Find claim box and decode
-  const claimBox = manifestBox.children.find(b => b.label === 'c2pa.claim');
+  const claimBox = manifestBox.children.find(b =>
+    b.label === 'c2pa.claim' || b.label === 'c2pa.claim.v2' ||
+    (b.label && b.label.startsWith('c2pa.claim'))
+  );
   if (claimBox) {
-    // Look for c2cl content box inside
-    const c2clBox = claimBox.children.find(b => b.type === 'c2cl');
-    const contentData = c2clBox ? c2clBox.data : claimBox.data;
+    // Look for c2cl or cbor content box inside
+    const contentBox = claimBox.children.find(b => b.type === 'c2cl') ||
+                       claimBox.children.find(b => b.type === 'cbor') ||
+                       claimBox.children.find(b => b.type !== 'jumd' && b.type !== 'jumb');
+    const contentData = contentBox ? contentBox.data : claimBox.data;
 
     console.log(`[validate-c2pa] Claim content: ${contentData.length} bytes, first 32: ${bytesToHex(contentData.subarray(0, 32))}`);
 
@@ -519,9 +524,11 @@ function extractClaimFromJUMBF(boxes: JUMBFBox[]): ParsedClaim {
   // Find claim signature
   const sigBox = manifestBox.children.find(b => b.label === 'c2pa.signature');
   if (sigBox) {
-    const c2csBox = sigBox.children.find(b => b.type === 'c2cs');
-    if (c2csBox) {
-      const decoded = safeCBORDecode(c2csBox.data);
+    const sigContentBox = sigBox.children.find(b => b.type === 'c2cs') ||
+                          sigBox.children.find(b => b.type === 'cbor') ||
+                          sigBox.children.find(b => b.type !== 'jumd' && b.type !== 'jumb');
+    if (sigContentBox) {
+      const decoded = safeCBORDecode(sigContentBox.data);
       if (decoded && typeof decoded === 'object' && (decoded as Record<string, unknown>)._tag === 18) {
         claim.specVersion = '2.2';
       }
