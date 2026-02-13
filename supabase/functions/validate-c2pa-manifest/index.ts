@@ -669,7 +669,7 @@ function extractJUMBFFromPNG(data: Uint8Array): { jumbfData: Uint8Array | null; 
   let offset = 8;
   const caBX = [0x63, 0x61, 0x42, 0x58];
 
-  while (offset < data.length - 12) {
+  while (offset + 8 <= data.length) {
     const chunkLength = readUint32BE(data, offset);
     const chunkTypeOffset = offset + 4;
 
