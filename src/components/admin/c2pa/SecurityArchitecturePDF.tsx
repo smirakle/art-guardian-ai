@@ -291,6 +291,13 @@ const SecurityArchitecturePDF: React.FC = () => (
         trusted/untrusted/self-signed/expired. Trust list is cached client-side with 24h TTL.
       </Text>
 
+      <Text style={styles.subsectionTitle}>Dependency Management</Text>
+      <Text style={styles.paragraph}>
+        All edge function imports are version-pinned from esm.sh and deno.land/std
+        (e.g., @supabase/supabase-js@2.50.5, std@0.190.0). Deno lockfile (deno.lock) tracks
+        integrity hashes for all remote dependencies. No unpinned or floating version specifiers are used.
+      </Text>
+
       {/* Section 4: Manifest Construction */}
       <Text style={styles.sectionTitle}>4. Manifest Construction</Text>
 
@@ -344,6 +351,26 @@ const SecurityArchitecturePDF: React.FC = () => (
 
       <Text style={styles.label}>Transport Security:</Text>
       <Text style={styles.value}>TLS 1.3 for all client-server communication. HSTS headers enforced.</Text>
+
+      <Text style={styles.label}>Software Composition Analysis (SCA):</Text>
+      <Text style={styles.value}>
+        Deno-native deno info --json generates dependency graphs for all edge functions.
+        GitHub Dependabot monitors for known CVEs. Snyk CLI available for on-demand deep scans.
+        SCA runs on every CI build and weekly on a scheduled basis.
+      </Text>
+
+      <Text style={styles.label}>SBOM Generation:</Text>
+      <Text style={styles.value}>
+        Software Bill of Materials generated in CycloneDX JSON format using deno info --json output,
+        converted via cyclonedx-cli. Produced per deployment and archived with release artifacts.
+      </Text>
+
+      <Text style={styles.label}>Vulnerability Patch Policy:</Text>
+      <Text style={styles.value}>
+        Critical/High CVEs: 90-day remediation. Medium: 180-day. Low/Informational: quarterly review.
+        Escalation: automated alert → 48h triage → patch within SLA → post-remediation verification.
+        Policy owner: Engineering Lead.
+      </Text>
 
       <Text style={styles.sectionTitle}>6. Third-Party Services</Text>
 
