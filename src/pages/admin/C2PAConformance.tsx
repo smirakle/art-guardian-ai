@@ -4,6 +4,7 @@ import GeneratorEvidence from '@/components/admin/c2pa/GeneratorEvidence';
 import ValidatorEvidence from '@/components/admin/c2pa/ValidatorEvidence';
 import SecurityArchitecture from '@/components/admin/c2pa/SecurityArchitecture';
 import TrustListViewer from '@/components/admin/c2pa/TrustListViewer';
+import ConformanceExporter from '@/components/admin/c2pa/ConformanceExporter';
 
 const C2PAConformance: React.FC = () => {
   return (
@@ -23,6 +24,7 @@ const C2PAConformance: React.FC = () => {
         <GeneratorEvidence />
         <ValidatorEvidence />
         <SecurityArchitecture />
+        <ConformanceExporter />
       </div>
     </>
   );
