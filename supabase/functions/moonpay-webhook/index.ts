@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.192.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.5';
-import { createHmac } from "https://deno.land/std@0.192.0/node/crypto.ts";
+
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -49,9 +49,18 @@ serve(async (req) => {
     const body = await req.text();
     
     if (signature) {
-      const hmac = createHmac('sha256', moonpaySecretKey);
-      hmac.update(body);
-      const expectedSignature = hmac.digest('hex');
+      const encoder = new TextEncoder();
+      const key = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(moonpaySecretKey),
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign']
+      );
+      const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(body));
+      const expectedSignature = Array.from(new Uint8Array(sig))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
       
       if (signature !== expectedSignature) {
         console.error('Invalid MoonPay signature');
