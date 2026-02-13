@@ -5,7 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Upload, Download, FileSearch, Loader2, CheckCircle2, XCircle } from 'lucide-react';
-import { validateC2PAManifest, C2PAValidationResult } from '@/lib/c2paValidation';
+import { validateC2PAManifest, logC2PAValidation, C2PAValidationResult } from '@/lib/c2paValidation';
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
 interface ValidationEntry {
@@ -18,6 +19,7 @@ interface ValidationEntry {
 
 const ValidatorEvidence: React.FC = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -43,6 +45,21 @@ const ValidatorEvidence: React.FC = () => {
           result,
           validatedAt: new Date().toISOString(),
         });
+        // Persist to database for conformance export
+        if (user?.id) {
+          await logC2PAValidation(user.id, file.name, file.type, result.hasC2PA, {
+            claimGenerator: result.claimGenerator,
+            claimGeneratorInfo: result.claimGeneratorInfo,
+            assertions: result.assertions,
+            ingredients: result.ingredients,
+            trustStatus: result.trustStatus,
+            trustReason: result.trustReason,
+            specVersion: result.specVersion,
+            format: result.format,
+            rawBoxCount: result.rawBoxCount,
+            error: result.error,
+          });
+        }
       } catch (err: any) {
         newEntries.push({
           fileName: file.name,
@@ -81,6 +98,10 @@ const ValidatorEvidence: React.FC = () => {
   const exportResults = () => {
     const report = {
       report_title: 'TSMO C2PA Validator Evidence – Conformant Image Library',
+      spec_version: '2.2',
+      product_name: 'TSMO AI Protection',
+      product_class: 'Backend',
+      product_roles: ['Generator', 'Validator'],
       generated_at: new Date().toISOString(),
       generator: 'TSMO/2.0 C2PA Conformance Tool',
       total_files: entries.length,
@@ -94,7 +115,12 @@ const ValidatorEvidence: React.FC = () => {
         has_c2pa: e.result.hasC2PA,
         manifest_found: e.result.manifestFound,
         claim_generator: e.result.claimGenerator,
+        claim_generator_info: e.result.claimGeneratorInfo || null,
         assertions: e.result.assertions,
+        ingredients: e.result.ingredients || [],
+        trust_status: e.result.trustStatus,
+        trust_reason: e.result.trustReason || null,
+        spec_version: e.result.specVersion || null,
         format: e.result.format,
         raw_box_count: e.result.rawBoxCount,
         error: e.result.error || null,
