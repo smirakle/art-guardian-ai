@@ -21,6 +21,7 @@ import { BugReportButton } from '@/components/BugReportButton';
 import { PortfolioDashboard } from '@/components/portfolio/PortfolioDashboard';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { buildMatchUrl } from '@/utils/buildMatchUrl';
 import {
   Tooltip,
   TooltipContent,
@@ -236,30 +237,8 @@ const MonitoringHub = () => {
                     size="sm" 
                     variant="outline"
                     onClick={() => {
-                      if (match.source_url && match.source_url.startsWith('http') && match.source_url.includes('.')) {
-                        window.open(match.source_url, '_blank', 'noopener,noreferrer');
-                      } else {
-                        const domain = (match.source_domain || '').split(' ')[0].toLowerCase();
-                        const platformUrls: Record<string, string> = {
-                          shutterstock: 'https://www.shutterstock.com',
-                          alamy: 'https://www.alamy.com',
-                          flickr: 'https://www.flickr.com',
-                          instagram: 'https://www.instagram.com',
-                          reddit: 'https://www.reddit.com',
-                          pinterest: 'https://www.pinterest.com',
-                          deviantart: 'https://www.deviantart.com',
-                          artstation: 'https://www.artstation.com',
-                          behance: 'https://www.behance.net',
-                          unsplash: 'https://www.unsplash.com',
-                          pexels: 'https://www.pexels.com',
-                          gettyimages: 'https://www.gettyimages.com',
-                          adobe: 'https://stock.adobe.com',
-                          twitter: 'https://www.twitter.com',
-                          facebook: 'https://www.facebook.com',
-                        };
-                        const url = platformUrls[domain] || `https://duckduckgo.com/?q=site:${domain}.com`;
-                        window.open(url, '_blank', 'noopener,noreferrer');
-                      }
+                      const url = buildMatchUrl(match.source_url, match.source_domain, match.source_title);
+                      window.open(url, '_blank', 'noopener,noreferrer');
                     }}
                   >
                     View

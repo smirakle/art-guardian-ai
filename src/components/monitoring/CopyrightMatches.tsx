@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { DMCAFormDialog } from "@/components/dmca/DMCAFormDialog";
 import { useToast } from "@/hooks/use-toast";
+import { buildMatchUrl } from "@/utils/buildMatchUrl";
 
 export default function CopyrightMatches() {
   const [matches, setMatches] = useState<Tables<"copyright_matches">[]>([]);
@@ -206,31 +207,8 @@ export default function CopyrightMatches() {
                   size="sm" 
                   className="w-full sm:w-auto"
                   onClick={() => {
-                    const url = match.source_url;
-                    if (url.startsWith('http') && url.includes('.')) {
-                      window.open(url, '_blank', 'noopener,noreferrer');
-                    } else {
-                      const domain = (match.source_domain || '').split(' ')[0].toLowerCase();
-                      const platformUrls: Record<string, string> = {
-                        shutterstock: 'https://www.shutterstock.com',
-                        alamy: 'https://www.alamy.com',
-                        flickr: 'https://www.flickr.com',
-                        instagram: 'https://www.instagram.com',
-                        reddit: 'https://www.reddit.com',
-                        pinterest: 'https://www.pinterest.com',
-                        deviantart: 'https://www.deviantart.com',
-                        artstation: 'https://www.artstation.com',
-                        behance: 'https://www.behance.net',
-                        unsplash: 'https://www.unsplash.com',
-                        pexels: 'https://www.pexels.com',
-                        gettyimages: 'https://www.gettyimages.com',
-                        adobe: 'https://stock.adobe.com',
-                        twitter: 'https://www.twitter.com',
-                        facebook: 'https://www.facebook.com',
-                      };
-                      const resolvedUrl = platformUrls[domain] || `https://duckduckgo.com/?q=site:${domain}.com`;
-                      window.open(resolvedUrl, '_blank', 'noopener,noreferrer');
-                    }
+                    const url = buildMatchUrl(match.source_url, match.source_domain, match.source_title);
+                    window.open(url, '_blank', 'noopener,noreferrer');
                   }}
                 >
                   <Link2 className="w-3 h-3 sm:w-4 sm:h-4" />
