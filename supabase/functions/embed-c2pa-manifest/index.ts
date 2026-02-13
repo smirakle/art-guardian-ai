@@ -288,7 +288,7 @@ function embedIntoPNG(pngData: Uint8Array, jumbfBox: Uint8Array): Uint8Array {
   // Find IEND chunk to insert before it
   let iendOffset = -1;
   let offset = 8;
-  while (offset < pngData.length - 12) {
+  while (offset + 8 <= pngData.length) {
     const chunkLen = readUint32BE(pngData, offset);
     const typeStr = String.fromCharCode(pngData[offset + 4], pngData[offset + 5], pngData[offset + 6], pngData[offset + 7]);
     if (typeStr === 'IEND') {
