@@ -1,40 +1,42 @@
 
 
-# Update Security Architecture PDF with RLS Hardening Evidence
+# Fix C2PA Validator PNG Scanner and Verify Full Pipeline
 
-## What's Missing
+## Problem
 
-The Security Architecture PDF (`SecurityArchitecturePDF.tsx`) currently documents:
-- SCA / Dependabot scanning
-- SBOM generation (CycloneDX v1.5)
-- Vulnerability patch policy (90/180-day SLAs)
-- Basic RLS mention for C2PA tables only
+The C2PA pipeline has two issues preventing reliable operation:
 
-It does **not** document the security hardening just completed:
-- Critical data exposure fixes (ip_lawyers, leads, promo_codes)
-- Migration of 93 policies from `public` to `authenticated` role
-- Admin-only restrictions on platform_api_configs
-- Elimination of anonymous access to user-owned data
+1. The **Validator** (`validate-c2pa-manifest`) has the same PNG chunk scanning bug that was fixed in the Embed function. Line 672 uses `while (offset < data.length - 12)` which can miss chunks (including caBX C2PA data) located near the end of a PNG file.
+
+2. The **Embed** function fix was deployed but has not been verified with a real file yet.
 
 ## Changes
 
-**File: `src/components/admin/c2pa/SecurityArchitecturePDF.tsx`**
+### File: `supabase/functions/validate-c2pa-manifest/index.ts`
 
-Update Section 5 (Security Controls) to add two new entries after the existing "Vulnerability Patch Policy" block:
+**Line 672** -- Fix the PNG chunk scanner loop condition:
 
-1. **Row-Level Security Hardening** -- Document that all user-owned tables enforce `TO authenticated` policies, critical data exposures (attorney records, lead data, promo codes) were remediated, and 93 anonymous-vulnerable policies were migrated to require authentication.
+```
+// Before:
+while (offset < data.length - 12) {
 
-2. **Access Control Model** -- Document the three-tier access model: public (community content only), authenticated (user-owned data with `auth.uid()` ownership checks), and admin (system configuration tables gated by role checks).
+// After:
+while (offset + 8 <= data.length) {
+```
 
-Update Section 7 (Threat Model) to add a new addressed threat:
+This matches the fix already applied to the embed function and ensures all PNG chunks (including those at the very end of the file) are scanned correctly.
 
-3. **Anonymous data access** -- Add bullet: "Anonymous data access: all user-owned tables restricted to authenticated role; public role limited to community content."
+### Deployment
 
-These additions ensure the exported PDF fully documents the RLS posture for C2PA conformance auditors reviewing Requirement O.6 (Hosting Environment Security).
+Redeploy both functions after the fix:
+- `validate-c2pa-manifest`
+- `embed-c2pa-manifest` (to confirm latest code is live)
+
+### Verification
+
+After deployment, test the Validator by calling it with a POST request to confirm it returns a valid response (not a 500 error) for PNG files.
 
 ## Technical Details
 
-- Only one file modified: `SecurityArchitecturePDF.tsx`
-- Adds approximately 20 lines of `<Text>` elements within the existing Section 5 and Section 7 page structures
-- No new pages needed; content fits within existing page layout
-- The on-page UI component (`SecurityArchitecture.tsx`) does not need changes since it renders the PDF component dynamically
+The PNG format stores data in chunks: 4-byte length + 4-byte type + N-byte data + 4-byte CRC. The old loop condition `offset < data.length - 12` would stop scanning before reaching the final chunks if the file size alignment left fewer than 12 bytes remaining, even though only 8 bytes (length + type) are needed to identify a chunk.
+
