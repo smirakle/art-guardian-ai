@@ -1,91 +1,135 @@
 
 
-# Implement Real SCA, SBOM, and Dependency Hygiene for Edge Functions
+# Security Hardening: Fix Critical Vulnerabilities and Anonymous Access Policies
 
-## The Problem
+## Scope
 
-The Security Architecture document claims SCA tooling, SBOM generation, and version-pinned dependencies exist -- but none of this is actually implemented:
+Fix **3 critical data exposure issues** and **93 anonymous-access-vulnerable policies** across the database, organized into 4 phases.
 
-- **No Dependabot or Snyk config** in the repository
-- **No deno.lock file** for integrity verification
-- **No SBOM generation** script or tooling
-- **Inconsistent version pinning**: Many functions use floating versions like `@supabase/supabase-js@2` instead of exact pins like `@2.50.5`
-- **Mixed std library versions**: Functions use `std@0.168.0`, `std@0.177.0`, `std@0.190.0`, and `std@0.192.0`
+---
 
-Submitting documentation that claims these controls exist when they do not would be a conformance integrity issue.
+## Phase 1: Fix 3 Critical Data Exposures
 
-## What Changes
+### 1A. `ip_lawyers` -- 16 attorney records publicly readable
 
-### 1. Standardize all edge function imports (182 files)
+**Current policy**: `"Everyone can view IP lawyers directory"` with `USING (true)` on `public` role
 
-Pin every import to a specific version across all edge functions:
+**Fix**: Restrict to authenticated users only.
 
-- `deno.land/std` -- standardize to `std@0.192.0` (latest used)
-- `@supabase/supabase-js` -- standardize to `@2.50.5` (latest used)
-- All other libraries pinned to their current exact versions
-
-### 2. Create a GitHub Dependabot configuration
-
-Add `.github/dependabot.yml` that monitors the repository for dependency vulnerabilities on a weekly schedule.
-
-### 3. Create an SBOM generation script
-
-Add `scripts/generate-sbom.sh` that:
-- Scans all edge function imports
-- Outputs a dependency inventory in JSON format
-- Can be run manually or in CI
-
-### 4. Create a dependency inventory edge function
-
-Add `supabase/functions/dependency-inventory/index.ts` that returns a live inventory of all edge function dependencies and their versions -- useful for auditors and the conformance review.
-
-### 5. Update Security Architecture documentation to be accurate
-
-Adjust the wording in `SecurityArchitecture.tsx` and `SecurityArchitecturePDF.tsx` to accurately reflect what is implemented rather than aspirational language.
-
-## Technical Details
-
-### Dependency Standardization (182 edge function files)
-
-Find and replace across all `supabase/functions/*/index.ts`:
-
-```
-# Standardize std library
-deno.land/std@0.168.0  -->  deno.land/std@0.192.0
-deno.land/std@0.177.0  -->  deno.land/std@0.192.0
-deno.land/std@0.190.0  -->  deno.land/std@0.192.0
-
-# Standardize supabase-js
-@supabase/supabase-js@2"  -->  @supabase/supabase-js@2.50.5"
-@supabase/supabase-js@2.7.1  -->  @supabase/supabase-js@2.50.5
-@supabase/supabase-js@2.39.7  -->  @supabase/supabase-js@2.50.5
-@supabase/supabase-js@2.45.0  -->  @supabase/supabase-js@2.50.5
+```sql
+DROP POLICY "Everyone can view IP lawyers directory" ON ip_lawyers;
+CREATE POLICY "Authenticated users can view IP lawyers"
+  ON ip_lawyers FOR SELECT TO authenticated
+  USING (true);
 ```
 
-### New File: `.github/dependabot.yml`
+### 1B. `leads` -- Anonymous insert allows spam/abuse
 
-```yaml
-version: 2
-updates:
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 10
+**Current policies**:
+- `"Enable insert for anonymous lead capture"` allows `anon` + `authenticated` with `WITH CHECK (true)`
+- `"Authenticated users can insert leads"` is redundant
+
+**Fix**: Remove anonymous insert. Keep authenticated-only insert. Require `user_id = auth.uid()`.
+
+```sql
+DROP POLICY "Enable insert for anonymous lead capture" ON leads;
+DROP POLICY "Authenticated users can insert leads" ON leads;
+CREATE POLICY "Authenticated users can insert their own leads"
+  ON leads FOR INSERT TO authenticated
+  WITH CHECK (auth.uid() IS NOT NULL AND user_id = auth.uid());
 ```
 
-### New File: `scripts/generate-sbom.json`
+### 1C. `promo_codes` -- Active codes (BETA200, STUDENTUSER) publicly visible
 
-A static SBOM manifest listing all Deno dependencies used across edge functions, in a simplified CycloneDX-compatible format.
+**Current policy**: `"Anyone can view active promo codes"` with `USING (is_active = true)` on `public` role
 
-### New Edge Function: `dependency-inventory`
+**Fix**: Only authenticated users can view promo codes, and only validate them server-side (the `validate_promo_code` RPC already exists for this).
 
-Returns a JSON response listing all pinned dependencies and their versions, for audit/conformance evidence.
+```sql
+DROP POLICY "Anyone can view active promo codes" ON promo_codes;
+CREATE POLICY "Authenticated users can view active promo codes"
+  ON promo_codes FOR SELECT TO authenticated
+  USING (is_active = true);
+```
 
-### Updated Documentation
+---
 
-`SecurityArchitecture.tsx` and `SecurityArchitecturePDF.tsx` -- adjust text to accurately describe:
-- Dependabot is configured for weekly scanning
-- SBOM is maintained as a static inventory updated per release
-- All imports are version-pinned (after the standardization above)
+## Phase 2: Fix 93 Anonymous-Vulnerable SELECT Policies
+
+These policies use `auth.uid() = user_id` but are granted to `public` (which includes `anon`). When `auth.uid()` is NULL (anonymous user), the comparison doesn't fail -- it returns NULL/false, which is safe in most cases, but the Supabase linter flags it because the policy **should explicitly require authentication**.
+
+**Pattern to apply across all 93 policies**:
+
+```sql
+-- Before (grants to public, no NULL check)
+USING (auth.uid() = user_id)
+
+-- After (grants to authenticated only)
+-- Option A: Change role target
+TO authenticated USING (auth.uid() = user_id)
+
+-- Option B: Add explicit NULL check
+USING (auth.uid() IS NOT NULL AND auth.uid() = user_id)
+```
+
+We will use **Option A** (change to `TO authenticated`) as it is cleaner and prevents any anonymous evaluation.
+
+This will be applied in batches of ~20 tables per migration:
+
+- **Batch 1**: `c2pa_signing_logs`, `c2pa_validation_logs`, `compliance_reminders`, `copyright_scan_results`, `daily_api_usage`, `dmca_notices`, `document_ai_analysis`, `document_monitoring_sessions`, `document_plagiarism_matches`, `document_scan_updates`, `document_takedown_notices`, `document_version_comparisons`, `email_automation_executions`, `email_detailed_events`, `enterprise_ai_analyses`, `enterprise_api_usage`, `gdpr_consent_logs`, `gov_defense_ip_monitoring`, `gov_defense_monitoring_sessions`, `gov_defense_security_alerts`
+
+- **Batch 2**: `government_agencies`, `government_api_keys`, `government_api_usage`, `government_filing_requests`, `government_security_events`, `legal_cases`, `legal_professionals`, `monitoring_results`, `portfolios`, `portfolio_monitoring_results`, `social_media_monitoring_results`, `subscriptions`, `support_conversations`, `support_messages`, `template_purchases`, and remaining tables
+
+- **Batch 3**: Any remaining tables from the 93 total
+
+---
+
+## Phase 3: Fix Overly Permissive Write Policies
+
+Tables with `WITH CHECK (true)` on INSERT that should restrict to `user_id = auth.uid()`:
+
+Key targets include:
+- `advanced_alerts`
+- `ai_detection_results`
+- `blockchain_verifications`
+- `document_protection_jobs`
+- `ai_training_violations`
+
+For "system-only" tables (logs, metrics, notifications), the `WITH CHECK (true)` is acceptable because these are written by SECURITY DEFINER functions, not directly by users. We will verify each case.
+
+---
+
+## Phase 4: Fix Remaining `USING (true)` SELECT Policies
+
+Tables with `USING (true)` SELECT on `public` role that are **not** legitimately public content:
+
+- `admin_online_status` -- should be admin-only
+- `admin_sessions` -- should be admin-only
+- `ai_company_policies` -- could be public (reference data)
+- `platform_api_configs` -- should be admin-only
+- `guest_uploads` -- should be session-scoped
+
+Legitimately public (keep as-is):
+- `community_posts`, `community_comments`, `community_votes` -- public forum
+- `expert_profiles`, `expert_advice` -- public directory
+
+---
+
+## Implementation Sequence
+
+1. Phase 1 first (3 migrations, immediate risk reduction)
+2. Phase 2 in 3 batches (largest volume)
+3. Phase 3 (review and fix write policies)
+4. Phase 4 (fix remaining USING(true) policies)
+
+Total estimated: ~8 SQL migrations executed sequentially.
+
+---
+
+## What Will NOT Change
+
+- Public community content policies (posts, comments, votes)
+- SECURITY DEFINER function insert policies (system-level writes)
+- Admin-gated policies already using `has_role()`
+- The `user_roles` table structure (already correct)
 
