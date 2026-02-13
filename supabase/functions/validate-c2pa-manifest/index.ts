@@ -342,6 +342,18 @@ function parseDescriptionBox(data: Uint8Array): { uuid?: Uint8Array; label?: str
   return { uuid, label };
 }
 
+// ─── Diagnostic Logging ──────────────────────────────────────────────────────
+
+function logBoxTree(boxes: JUMBFBox[], prefix = ''): void {
+  for (const box of boxes) {
+    const labelStr = box.label ? ` [label="${box.label}"]` : '';
+    console.log(`[validate-c2pa] ${prefix}${box.type}${labelStr} (${box.size} bytes, ${box.children.length} children)`);
+    if (box.children.length > 0) {
+      logBoxTree(box.children, prefix + '  ');
+    }
+  }
+}
+
 // ─── Claim Extractor ─────────────────────────────────────────────────────────
 
 interface ParsedClaim {
@@ -355,7 +367,84 @@ interface ParsedClaim {
 }
 
 /**
+ * Find the manifest box that contains c2pa.assertions, c2pa.claim, c2pa.signature.
+ * Handles both flat (TSMO) and nested (real-world v2.2) structures.
+ */
+function findManifestBox(c2paBox: JUMBFBox): JUMBFBox {
+  // Strategy 1: Direct children have c2pa.assertions (TSMO flat structure)
+  const directAssertions = c2paBox.children.find(b => b.label === 'c2pa.assertions');
+  if (directAssertions) {
+    console.log('[validate-c2pa] Found flat manifest structure (TSMO-style)');
+    return c2paBox;
+  }
+
+  // Strategy 2: Look one level deeper for urn:c2pa: manifest boxes (real-world v2.2)
+  for (const child of c2paBox.children) {
+    if (child.type === 'jumb') {
+      const nestedAssertions = child.children.find(b => b.label === 'c2pa.assertions');
+      if (nestedAssertions) {
+        console.log(`[validate-c2pa] Found nested manifest: ${child.label || '(unlabeled)'}`);
+        return child;
+      }
+    }
+  }
+
+  // Strategy 3: Search all jumb grandchildren (handles deep nesting)
+  for (const child of c2paBox.children) {
+    if (child.type === 'jumb') {
+      for (const grandchild of child.children) {
+        if (grandchild.type === 'jumb') {
+          const deepAssertions = grandchild.children.find(b => b.label === 'c2pa.assertions');
+          if (deepAssertions) {
+            console.log(`[validate-c2pa] Found deeply nested manifest: ${grandchild.label || '(unlabeled)'}`);
+            return grandchild;
+          }
+        }
+      }
+    }
+  }
+
+  // Fallback: return the c2pa box itself
+  console.log('[validate-c2pa] No manifest sub-box found, using c2pa box directly');
+  return c2paBox;
+}
+
+/**
+ * Enhanced CBOR decode with multiple strategies for real-world data.
+ */
+function robustCBORDecode(data: Uint8Array): unknown {
+  // Strategy 1: Direct decode from offset 0
+  const direct = safeCBORDecode(data);
+  if (direct && typeof direct === 'object') return direct;
+
+  // Strategy 2: Scan first 64 bytes for CBOR map markers and try from each
+  const scanLimit = Math.min(64, data.length);
+  for (let i = 1; i < scanLimit; i++) {
+    const byte = data[i];
+    // Small definite maps: 0xA0-0xB7, larger maps: 0xB8 (1-byte count), 0xB9 (2-byte count)
+    if ((byte >= 0xA1 && byte <= 0xB7) || byte === 0xB8 || byte === 0xB9 || byte === 0xBA) {
+      try {
+        const result = decodeCBOR(data, i);
+        if (result.value && typeof result.value === 'object' && result.bytesRead > 4) {
+          console.log(`[validate-c2pa] CBOR decoded from offset ${i}`);
+          return result.value;
+        }
+      } catch { /* try next offset */ }
+    }
+  }
+
+  // Strategy 3: JSON fallback
+  try {
+    const text = new TextDecoder().decode(data);
+    return JSON.parse(text);
+  } catch { /* not JSON either */ }
+
+  return null;
+}
+
+/**
  * Extract structured claim data from a parsed JUMBF tree.
+ * Handles both TSMO flat and real-world C2PA v2.2 nested structures.
  */
 function extractClaimFromJUMBF(boxes: JUMBFBox[]): ParsedClaim {
   const claim: ParsedClaim = {
@@ -363,12 +452,19 @@ function extractClaimFromJUMBF(boxes: JUMBFBox[]): ParsedClaim {
     ingredients: [],
   };
 
+  // Log the full box tree for diagnostics
+  console.log('[validate-c2pa] === Box Tree ===');
+  logBoxTree(boxes);
+
   // Find the top-level c2pa superbox
   const c2paBox = boxes.find(b => b.label === 'c2pa') || boxes.find(b => b.type === 'jumb');
   if (!c2paBox) return claim;
 
+  // Find the actual manifest box (handles nesting)
+  const manifestBox = findManifestBox(c2paBox);
+
   // Find assertion store
-  const assertionStore = c2paBox.children.find(b => b.label === 'c2pa.assertions');
+  const assertionStore = manifestBox.children.find(b => b.label === 'c2pa.assertions');
   if (assertionStore) {
     for (const assertionBox of assertionStore.children) {
       if (assertionBox.type === 'jumb' && assertionBox.label) {
@@ -389,42 +485,31 @@ function extractClaimFromJUMBF(boxes: JUMBFBox[]): ParsedClaim {
     }
   }
 
-  // Find claim box and try CBOR decode
-  const claimBox = c2paBox.children.find(b => b.label === 'c2pa.claim');
+  // Find claim box and decode
+  const claimBox = manifestBox.children.find(b => b.label === 'c2pa.claim');
   if (claimBox) {
     // Look for c2cl content box inside
     const c2clBox = claimBox.children.find(b => b.type === 'c2cl');
     const contentData = c2clBox ? c2clBox.data : claimBox.data;
 
-    const decoded = safeCBORDecode(contentData);
+    console.log(`[validate-c2pa] Claim content: ${contentData.length} bytes, first 32: ${bytesToHex(contentData.subarray(0, 32))}`);
+
+    const decoded = robustCBORDecode(contentData);
     if (decoded && typeof decoded === 'object') {
       extractFieldsFromDecodedClaim(decoded as Record<string, unknown>, claim);
     } else {
-      // Fallback: try to parse as JSON text
-      try {
-        const text = new TextDecoder().decode(contentData);
-        const json = JSON.parse(text);
-        extractFieldsFromDecodedClaim(json, claim);
-      } catch {
-        // Not parseable — try string scanning
-        extractFieldsFromText(contentData, claim);
-      }
+      // Fallback: try string scanning
+      extractFieldsFromText(contentData, claim);
     }
   } else {
-    // No labeled claim box — scan all content for claim data
-    for (const child of c2paBox.children) {
+    // No labeled claim box — scan all content boxes
+    for (const child of manifestBox.children) {
       if (child.type === 'c2cl') {
-        const decoded = safeCBORDecode(child.data);
+        const decoded = robustCBORDecode(child.data);
         if (decoded && typeof decoded === 'object') {
           extractFieldsFromDecodedClaim(decoded as Record<string, unknown>, claim);
         } else {
-          try {
-            const text = new TextDecoder().decode(child.data);
-            const json = JSON.parse(text);
-            extractFieldsFromDecodedClaim(json, claim);
-          } catch {
-            extractFieldsFromText(child.data, claim);
-          }
+          extractFieldsFromText(child.data, claim);
         }
         break;
       }
@@ -432,14 +517,13 @@ function extractClaimFromJUMBF(boxes: JUMBFBox[]): ParsedClaim {
   }
 
   // Find claim signature
-  const sigBox = c2paBox.children.find(b => b.label === 'c2pa.signature');
+  const sigBox = manifestBox.children.find(b => b.label === 'c2pa.signature');
   if (sigBox) {
     const c2csBox = sigBox.children.find(b => b.type === 'c2cs');
     if (c2csBox) {
-      // Try CBOR decode of COSE Sign1 (tag 18)
       const decoded = safeCBORDecode(c2csBox.data);
       if (decoded && typeof decoded === 'object' && (decoded as Record<string, unknown>)._tag === 18) {
-        claim.specVersion = '2.2'; // Has proper COSE Sign1 structure
+        claim.specVersion = '2.2';
       }
     }
   }
@@ -530,11 +614,13 @@ function extractFieldsFromDecodedClaim(obj: Record<string, unknown>, claim: Pars
 }
 
 function parseIngredientFromBox(box: JUMBFBox): C2PAIngredientInfo | null {
-  // Find content box (cbor type)
-  const contentBox = box.children.find(b => b.type === 'cbor') || box.children[1];
+  // Find content box: try 'cbor' type, then any non-jumd child, then index [1]
+  const contentBox = box.children.find(b => b.type === 'cbor') ||
+                     box.children.find(b => b.type !== 'jumd' && b.type !== 'jumb') ||
+                     box.children[1];
   if (!contentBox) return null;
 
-  const decoded = safeCBORDecode(contentBox.data);
+  const decoded = robustCBORDecode(contentBox.data);
   if (decoded && typeof decoded === 'object') {
     const obj = decoded as Record<string, unknown>;
     return {
@@ -548,46 +634,32 @@ function parseIngredientFromBox(box: JUMBFBox): C2PAIngredientInfo | null {
     };
   }
 
-  // Try JSON fallback
-  try {
-    const text = new TextDecoder().decode(contentBox.data);
-    const json = JSON.parse(text);
-    return {
-      title: String(json.dc_title || json.title || 'Unknown'),
-      format: String(json.dc_format || json.format || 'application/octet-stream'),
-      instanceID: String(json.instanceID || json.instance_id || ''),
-      relationship: String(json.relationship || 'parentOf'),
-      hash: json.hash || json.data?.hash,
-    };
-  } catch {
-    return null;
-  }
+  return null;
 }
 
 /**
  * Parse c2pa.hash.data assertion from a JUMBF assertion box.
  */
 function parseHashDataFromBox(box: JUMBFBox): { alg: string; hash: string } | null {
-  const contentBox = box.children.find(b => b.type === 'cbor') || box.children[1];
+  const contentBox = box.children.find(b => b.type === 'cbor') ||
+                     box.children.find(b => b.type !== 'jumd' && b.type !== 'jumb') ||
+                     box.children[1];
   if (!contentBox) return null;
 
-  // Try CBOR decode
-  const decoded = safeCBORDecode(contentBox.data);
+  const decoded = robustCBORDecode(contentBox.data);
   if (decoded && typeof decoded === 'object') {
     const obj = decoded as Record<string, unknown>;
     if (typeof obj.hash === 'string') {
       return { alg: String(obj.alg || 'sha256'), hash: obj.hash };
     }
-  }
-
-  // Try JSON fallback
-  try {
-    const text = new TextDecoder().decode(contentBox.data);
-    const json = JSON.parse(text);
-    if (typeof json.hash === 'string') {
-      return { alg: String(json.alg || 'sha256'), hash: json.hash };
+    // Handle exclusions array format used in real C2PA
+    if (Array.isArray(obj.exclusions) || obj.name || obj.alg) {
+      const hashBytes = obj.hash;
+      if (hashBytes instanceof Uint8Array) {
+        return { alg: String(obj.alg || 'sha256'), hash: bytesToHex(hashBytes) };
+      }
     }
-  } catch { /* ignore */ }
+  }
 
   return null;
 }
