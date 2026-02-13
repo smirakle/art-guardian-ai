@@ -235,7 +235,7 @@ const MonitoringHub = () => {
                   <Button 
                     size="sm" 
                     variant="outline"
-                    onClick={() => navigate('/ai-protection')}
+onClick={() => window.open(match.source_url, '_blank', 'noopener,noreferrer')}
                   >
                     View
                   </Button>
