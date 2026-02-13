@@ -1,10 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Upload, Download, FileSearch, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Upload, Download, FileSearch, Loader2, CheckCircle2, XCircle, ChevronDown, ChevronRight, Image as ImageIcon, Code2, Copy, Check } from 'lucide-react';
 import { validateC2PAManifest, logC2PAValidation, C2PAValidationResult } from '@/lib/c2paValidation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -15,6 +15,7 @@ interface ValidationEntry {
   fileMimeType: string;
   result: C2PAValidationResult;
   validatedAt: string;
+  thumbnailUrl?: string;
 }
 
 const ValidatorEvidence: React.FC = () => {
@@ -24,6 +25,21 @@ const ValidatorEvidence: React.FC = () => {
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [entries, setEntries] = useState<ValidationEntry[]>([]);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+
+  const createThumbnail = useCallback((file: File): Promise<string | undefined> => {
+    return new Promise((resolve) => {
+      if (!file.type.startsWith('image/')) {
+        resolve(undefined);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => resolve(undefined);
+      reader.readAsDataURL(file);
+    });
+  }, []);
 
   const handleFilesSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -37,15 +53,18 @@ const ValidatorEvidence: React.FC = () => {
       const file = files[i];
       setProgress(Math.round(((i) / files.length) * 100));
       try {
-        const result = await validateC2PAManifest(file);
+        const [result, thumbnailUrl] = await Promise.all([
+          validateC2PAManifest(file),
+          createThumbnail(file),
+        ]);
         newEntries.push({
           fileName: file.name,
           fileSize: file.size,
           fileMimeType: file.type,
           result,
           validatedAt: new Date().toISOString(),
+          thumbnailUrl,
         });
-        // Persist to database for conformance export
         if (user?.id) {
           await logC2PAValidation(user.id, file.name, file.type, result.hasC2PA, {
             claimGenerator: result.claimGenerator,
@@ -61,6 +80,7 @@ const ValidatorEvidence: React.FC = () => {
           });
         }
       } catch (err: any) {
+        const thumbnailUrl = await createThumbnail(file);
         newEntries.push({
           fileName: file.name,
           fileSize: file.size,
@@ -80,6 +100,7 @@ const ValidatorEvidence: React.FC = () => {
             error: err.message,
           },
           validatedAt: new Date().toISOString(),
+          thumbnailUrl,
         });
       }
     }
@@ -91,9 +112,27 @@ const ValidatorEvidence: React.FC = () => {
     const detected = newEntries.filter(e => e.result.hasC2PA).length;
     toast({ title: 'Validation complete', description: `${detected}/${newEntries.length} files have C2PA credentials.` });
 
-    // Reset input
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
+
+  const buildManifestJson = (entry: ValidationEntry) => ({
+    file_name: entry.fileName,
+    file_size_bytes: entry.fileSize,
+    file_mime_type: entry.fileMimeType,
+    validated_at: entry.validatedAt,
+    has_c2pa: entry.result.hasC2PA,
+    manifest_found: entry.result.manifestFound,
+    claim_generator: entry.result.claimGenerator,
+    claim_generator_info: entry.result.claimGeneratorInfo || null,
+    assertions: entry.result.assertions,
+    ingredients: entry.result.ingredients || [],
+    trust_status: entry.result.trustStatus,
+    trust_reason: entry.result.trustReason || null,
+    spec_version: entry.result.specVersion || null,
+    format: entry.result.format,
+    raw_box_count: entry.result.rawBoxCount,
+    error: entry.result.error || null,
+  });
 
   const exportResults = () => {
     const report = {
@@ -107,24 +146,7 @@ const ValidatorEvidence: React.FC = () => {
       total_files: entries.length,
       files_with_c2pa: entries.filter(e => e.result.hasC2PA).length,
       files_without_c2pa: entries.filter(e => !e.result.hasC2PA).length,
-      results: entries.map(e => ({
-        file_name: e.fileName,
-        file_size_bytes: e.fileSize,
-        file_mime_type: e.fileMimeType,
-        validated_at: e.validatedAt,
-        has_c2pa: e.result.hasC2PA,
-        manifest_found: e.result.manifestFound,
-        claim_generator: e.result.claimGenerator,
-        claim_generator_info: e.result.claimGeneratorInfo || null,
-        assertions: e.result.assertions,
-        ingredients: e.result.ingredients || [],
-        trust_status: e.result.trustStatus,
-        trust_reason: e.result.trustReason || null,
-        spec_version: e.result.specVersion || null,
-        format: e.result.format,
-        raw_box_count: e.result.rawBoxCount,
-        error: e.result.error || null,
-      })),
+      results: entries.map(buildManifestJson),
     };
     const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -133,6 +155,30 @@ const ValidatorEvidence: React.FC = () => {
     a.download = `tsmo-validator-evidence-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const copyManifestJson = (index: number) => {
+    const json = JSON.stringify(buildManifestJson(entries[index]), null, 2);
+    navigator.clipboard.writeText(json);
+    setCopiedIndex(index);
+    setTimeout(() => setCopiedIndex(null), 2000);
+  };
+
+  const downloadSingleJson = (entry: ValidationEntry) => {
+    const json = JSON.stringify(buildManifestJson(entry), null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${entry.fileName.replace(/\.[^.]+$/, '')}-manifest.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
   return (
@@ -150,7 +196,7 @@ const ValidatorEvidence: React.FC = () => {
           </Button>
           {entries.length > 0 && (
             <Button variant="outline" onClick={exportResults} className="gap-2">
-              <Download className="h-4 w-4" /> Export Results JSON
+              <Download className="h-4 w-4" /> Export All JSON
             </Button>
           )}
         </div>
@@ -165,43 +211,119 @@ const ValidatorEvidence: React.FC = () => {
               <Badge variant="secondary">{entries.length} Total</Badge>
             </div>
 
-            <div className="border rounded-md overflow-auto max-h-96">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>File</TableHead>
-                    <TableHead>C2PA</TableHead>
-                    <TableHead>Claim Generator</TableHead>
-                    <TableHead>Assertions</TableHead>
-                    <TableHead>Format</TableHead>
-                    <TableHead>Boxes</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {entries.map((entry, i) => (
-                    <TableRow key={i}>
-                      <TableCell className="font-mono text-xs max-w-[200px] truncate" title={entry.fileName}>{entry.fileName}</TableCell>
-                      <TableCell>
-                        {entry.result.hasC2PA ? (
-                          <CheckCircle2 className="h-4 w-4 text-green-600" />
+            <div className="space-y-2">
+              {entries.map((entry, i) => {
+                const isExpanded = expandedIndex === i;
+                const manifestJson = JSON.stringify(buildManifestJson(entry), null, 2);
+
+                return (
+                  <div key={i} className="border rounded-lg overflow-hidden">
+                    {/* Summary row */}
+                    <button
+                      onClick={() => setExpandedIndex(isExpanded ? null : i)}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-muted/50 transition-colors"
+                    >
+                      {/* Thumbnail */}
+                      <div className="flex-shrink-0 w-10 h-10 rounded bg-muted flex items-center justify-center overflow-hidden">
+                        {entry.thumbnailUrl ? (
+                          <img src={entry.thumbnailUrl} alt={entry.fileName} className="w-10 h-10 object-cover rounded" />
                         ) : (
-                          <XCircle className="h-4 w-4 text-muted-foreground" />
+                          <ImageIcon className="h-5 w-5 text-muted-foreground" />
                         )}
-                      </TableCell>
-                      <TableCell className="text-xs">{entry.result.claimGenerator || '—'}</TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1">
-                          {entry.result.assertions.length > 0
-                            ? entry.result.assertions.map((a, j) => <Badge key={j} variant="outline" className="text-[10px] h-5">{a}</Badge>)
-                            : <span className="text-xs text-muted-foreground">—</span>}
+                      </div>
+
+                      {/* File info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="font-mono text-xs truncate">{entry.fileName}</div>
+                        <div className="text-[10px] text-muted-foreground">
+                          {formatFileSize(entry.fileSize)} · {entry.result.format}
+                          {entry.result.claimGenerator && ` · ${entry.result.claimGenerator}`}
                         </div>
-                      </TableCell>
-                      <TableCell className="text-xs">{entry.result.format}</TableCell>
-                      <TableCell className="text-xs">{entry.result.rawBoxCount}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                      </div>
+
+                      {/* Status badges */}
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {entry.result.hasC2PA ? (
+                          <Badge variant="default" className="bg-green-600 text-[10px] h-5">
+                            <CheckCircle2 className="h-3 w-3 mr-1" />C2PA
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="text-[10px] h-5">
+                            <XCircle className="h-3 w-3 mr-1" />No C2PA
+                          </Badge>
+                        )}
+                        {entry.result.assertions.length > 0 && (
+                          <Badge variant="secondary" className="text-[10px] h-5">
+                            {entry.result.assertions.length} assertions
+                          </Badge>
+                        )}
+                        {isExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+                      </div>
+                    </button>
+
+                    {/* Expanded detail: image + JSON side by side */}
+                    {isExpanded && (
+                      <div className="border-t bg-muted/30 p-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {/* Image preview */}
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                              <ImageIcon className="h-3.5 w-3.5" /> Image Preview
+                            </div>
+                            <div className="border rounded-lg bg-background p-2 flex items-center justify-center min-h-[200px]">
+                              {entry.thumbnailUrl ? (
+                                <img
+                                  src={entry.thumbnailUrl}
+                                  alt={entry.fileName}
+                                  className="max-w-full max-h-[400px] rounded object-contain"
+                                />
+                              ) : (
+                                <div className="text-muted-foreground text-sm flex flex-col items-center gap-2">
+                                  <ImageIcon className="h-8 w-8" />
+                                  <span>Preview not available for {entry.fileMimeType}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* JSON manifest */}
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                                <Code2 className="h-3.5 w-3.5" /> Manifest JSON
+                              </div>
+                              <div className="flex gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-6 px-2 text-[10px]"
+                                  onClick={(e) => { e.stopPropagation(); copyManifestJson(i); }}
+                                >
+                                  {copiedIndex === i ? <Check className="h-3 w-3 mr-1" /> : <Copy className="h-3 w-3 mr-1" />}
+                                  {copiedIndex === i ? 'Copied' : 'Copy'}
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-6 px-2 text-[10px]"
+                                  onClick={(e) => { e.stopPropagation(); downloadSingleJson(entry); }}
+                                >
+                                  <Download className="h-3 w-3 mr-1" /> Download
+                                </Button>
+                              </div>
+                            </div>
+                            <ScrollArea className="border rounded-lg bg-background max-h-[400px]">
+                              <pre className="p-3 text-[11px] font-mono leading-relaxed whitespace-pre-wrap break-all">
+                                {manifestJson}
+                              </pre>
+                            </ScrollArea>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </>
         )}
