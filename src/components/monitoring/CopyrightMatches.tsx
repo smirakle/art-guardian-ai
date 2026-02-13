@@ -201,17 +201,41 @@ export default function CopyrightMatches() {
                 sourceTitle={match.source_title || "Untitled Source"}
               />
               {match.source_url && (
-                <Button variant="outline" size="sm" asChild className="w-full sm:w-auto">
-                  <a 
-                    href={match.source_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2"
-                  >
-                    <Link2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="text-xs sm:text-sm">View Source</span>
-                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
-                  </a>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full sm:w-auto"
+                  onClick={() => {
+                    const url = match.source_url;
+                    if (url.startsWith('http') && url.includes('.')) {
+                      window.open(url, '_blank', 'noopener,noreferrer');
+                    } else {
+                      const domain = (match.source_domain || '').split(' ')[0].toLowerCase();
+                      const platformUrls: Record<string, string> = {
+                        shutterstock: 'https://www.shutterstock.com',
+                        alamy: 'https://www.alamy.com',
+                        flickr: 'https://www.flickr.com',
+                        instagram: 'https://www.instagram.com',
+                        reddit: 'https://www.reddit.com',
+                        pinterest: 'https://www.pinterest.com',
+                        deviantart: 'https://www.deviantart.com',
+                        artstation: 'https://www.artstation.com',
+                        behance: 'https://www.behance.net',
+                        unsplash: 'https://www.unsplash.com',
+                        pexels: 'https://www.pexels.com',
+                        gettyimages: 'https://www.gettyimages.com',
+                        adobe: 'https://stock.adobe.com',
+                        twitter: 'https://www.twitter.com',
+                        facebook: 'https://www.facebook.com',
+                      };
+                      const resolvedUrl = platformUrls[domain] || `https://duckduckgo.com/?q=site:${domain}.com`;
+                      window.open(resolvedUrl, '_blank', 'noopener,noreferrer');
+                    }
+                  }}
+                >
+                  <Link2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="text-xs sm:text-sm">View Source</span>
+                  <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
                 </Button>
               )}
             </div>

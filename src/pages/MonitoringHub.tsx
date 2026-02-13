@@ -240,8 +240,25 @@ const MonitoringHub = () => {
                         window.open(match.source_url, '_blank', 'noopener,noreferrer');
                       } else {
                         const domain = (match.source_domain || '').split(' ')[0].toLowerCase();
-                        const searchUrl = `https://www.google.com/search?q=site:${domain}.com`;
-                        window.open(searchUrl, '_blank', 'noopener,noreferrer');
+                        const platformUrls: Record<string, string> = {
+                          shutterstock: 'https://www.shutterstock.com',
+                          alamy: 'https://www.alamy.com',
+                          flickr: 'https://www.flickr.com',
+                          instagram: 'https://www.instagram.com',
+                          reddit: 'https://www.reddit.com',
+                          pinterest: 'https://www.pinterest.com',
+                          deviantart: 'https://www.deviantart.com',
+                          artstation: 'https://www.artstation.com',
+                          behance: 'https://www.behance.net',
+                          unsplash: 'https://www.unsplash.com',
+                          pexels: 'https://www.pexels.com',
+                          gettyimages: 'https://www.gettyimages.com',
+                          adobe: 'https://stock.adobe.com',
+                          twitter: 'https://www.twitter.com',
+                          facebook: 'https://www.facebook.com',
+                        };
+                        const url = platformUrls[domain] || `https://duckduckgo.com/?q=site:${domain}.com`;
+                        window.open(url, '_blank', 'noopener,noreferrer');
                       }
                     }}
                   >
