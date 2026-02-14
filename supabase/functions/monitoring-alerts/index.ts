@@ -69,23 +69,28 @@ serve(async (req) => {
     );
   }
 });
+// Map code severity values to DB-allowed values (low, medium, high, critical)
+function mapSeverityToDb(severity: string): string {
+  switch (severity) {
+    case 'info': return 'low';
+    case 'warning': return 'medium';
+    case 'error': return 'high';
+    case 'critical': return 'critical';
+    default: return 'medium';
+  }
+}
 
 async function handleAlert(supabase: any, alert: Alert) {
   console.log('Processing alert:', alert.title, alert.severity);
 
-  // Only create alert if we have a user_id
-  if (!alert.user_id) {
-    console.warn('Alert skipped - no user_id provided:', alert.title);
-    return;
-  }
+  const dbSeverity = mapSeverityToDb(alert.severity);
 
-  // Store alert in advanced_alerts table
-  const { error: insertError } = await supabase
-    .from('advanced_alerts')
-    .insert({
+  // Only create alert if we have a user_id
+  if (alert.user_id) {
+    const { error } = await supabase.from('advanced_alerts').insert({
       user_id: alert.user_id,
       alert_type: alert.source,
-      severity: alert.severity,
+      severity: dbSeverity,
       title: alert.title,
       message: alert.message,
       source_data: alert.metadata || {},
@@ -93,9 +98,10 @@ async function handleAlert(supabase: any, alert: Alert) {
       delivery_status: {},
     });
 
-  if (insertError) {
-    console.error('Failed to insert alert:', insertError);
-    throw insertError;
+    if (error) {
+      console.error('Failed to insert alert:', error);
+      throw error;
+    }
   }
 
   // Send email for critical and error alerts
