@@ -23,6 +23,9 @@ import { AIDetectionDashboard } from '@/components/phase1/AIDetectionDashboard';
 import VisualRecognition from '@/components/VisualRecognition';
 import StyleCloak from '@/components/ai-protection/StyleCloak';
 import C2PAProtection from '@/components/ai-protection/C2PAProtection';
+import ValidatorEvidence from '@/components/admin/c2pa/ValidatorEvidence';
+import TrustListViewer from '@/components/admin/c2pa/TrustListViewer';
+import GeneratorEvidence from '@/components/admin/c2pa/GeneratorEvidence';
 import { ProductionMetadataSettings } from '@/components/ai-protection/ProductionMetadataSettings';
 import { ProductionCrawlerBlockingSettings } from '@/components/ai-protection/ProductionCrawlerBlockingSettings';
 import { ProductionLikenessSettings } from '@/components/ai-protection/ProductionLikenessSettings';
@@ -248,7 +251,7 @@ const ProtectionHub = () => {
               </Card>
             </div>
 
-            {/* Content Credentials (C2PA) */}
+            {/* Content Credentials (C2PA) - Full Conformance Suite */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -260,14 +263,33 @@ const ProtectionHub = () => {
                         <Info className="h-4 w-4 text-muted-foreground" />
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">
-                        <p>Embeds tamper-evident provenance data into your images, proving you are the original creator using the C2PA standard.</p>
+                        <p>Full C2PA conformance suite — generate, validate, inspect trust anchors, and download signed evidence packages.</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <C2PAProtection />
+                <Tabs defaultValue="generate" className="w-full">
+                  <TabsList className="grid w-full grid-cols-4">
+                    <TabsTrigger value="generate">Generate</TabsTrigger>
+                    <TabsTrigger value="validate">Validate</TabsTrigger>
+                    <TabsTrigger value="trust-list">Trust List</TabsTrigger>
+                    <TabsTrigger value="evidence">Evidence</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="generate">
+                    <C2PAProtection />
+                  </TabsContent>
+                  <TabsContent value="validate">
+                    <ValidatorEvidence />
+                  </TabsContent>
+                  <TabsContent value="trust-list">
+                    <TrustListViewer />
+                  </TabsContent>
+                  <TabsContent value="evidence">
+                    <GeneratorEvidence />
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
 
