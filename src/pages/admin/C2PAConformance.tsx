@@ -1,5 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import CAIReadinessWidget from '@/components/admin/c2pa/CAIReadinessWidget';
 import GeneratorEvidence from '@/components/admin/c2pa/GeneratorEvidence';
 import ValidatorEvidence from '@/components/admin/c2pa/ValidatorEvidence';
 import SecurityArchitecture from '@/components/admin/c2pa/SecurityArchitecture';
@@ -20,6 +21,7 @@ const C2PAConformance: React.FC = () => {
           </p>
         </div>
 
+        <CAIReadinessWidget />
         <TrustListViewer />
         <GeneratorEvidence />
         <ValidatorEvidence />
