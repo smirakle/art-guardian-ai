@@ -1,28 +1,65 @@
 
+# CAI Readiness Dashboard Widget
 
-# Add Full C2PA Conformance Suite to Protection Hub
+## Overview
+Add a dedicated "CAI Readiness" dashboard card to the top of the admin C2PA Conformance page. It will call a new edge function that checks whether the 3 production C2PA signing secrets are configured, plus verify that the signing and validation edge functions are reachable. The widget will show a clear green/red indicator for each requirement, plus an overall readiness status.
 
-## What Changes
+## Components
 
-The Protection Hub's "Content Credentials (C2PA)" section currently only lets users **generate** credentials. This plan adds the full suite from the admin conformance page -- **validation with side-by-side inspection**, **trust list viewer**, and **generator evidence with manifest downloads** -- directly into the Protection Hub's Protect tab.
+### 1. New Edge Function: `c2pa-readiness-check`
+A lightweight Deno edge function (following the same pattern as `monitoring-readiness-check`) that checks:
 
-## Layout
+| Check | Secret / Target | Description |
+|-------|----------------|-------------|
+| Private Key | `C2PA_PRIVATE_KEY` | ES256 signing key in PEM format |
+| Signing Certificate | `C2PA_SIGNING_CERT` | X.509 certificate from CAI trust anchor |
+| Issuer ID | `C2PA_ISSUER_ID` | CAI Organization / Issuer identifier |
+| Signing Function | `sign-c2pa-manifest` reachable | Confirms the generator pipeline is deployed |
+| Validation Function | `validate-c2pa-manifest` reachable | Confirms the validator pipeline is deployed |
 
-The existing C2PA card in the Protect tab (lines 251-272) will be expanded into a mini-tabbed section containing four sub-sections:
+Returns a JSON response with per-check status, overall readiness boolean, and actionable next-step recommendations.
 
-1. **Generate** -- The existing `C2PAProtection` component (unchanged)
-2. **Validate** -- The `ValidatorEvidence` component (image upload, side-by-side thumbnail + JSON, copy/download manifest, trust status badges, export all)
-3. **Trust List** -- The `TrustListViewer` component (shows CAI trust anchors used for verification)
-4. **Generator Evidence** -- The `GeneratorEvidence` component (signed manifest JSON, JUMBF embedding, evidence package download)
+### 2. New React Component: `CAIReadinessWidget`
+Location: `src/components/admin/c2pa/CAIReadinessWidget.tsx`
+
+- Card with title "CAI Certification Readiness"
+- "Run Readiness Check" button (follows the `MonitoringReadiness` pattern)
+- After check, displays:
+  - Overall status banner: green "Ready for Submission" or amber "Action Required"
+  - Per-check rows with green/red badges (same `Row` pattern as existing readiness widgets)
+  - Recommendations section for any missing items
+  - Link to Supabase Edge Function Secrets page for quick remediation
+
+### 3. Page Integration
+Update `C2PAConformance.tsx` to import and render `CAIReadinessWidget` as the first card on the page, above `TrustListViewer`.
 
 ## Technical Details
 
-**File: `src/pages/ProtectionHub.tsx`**
+### Edge Function (`supabase/functions/c2pa-readiness-check/index.ts`)
 
-- Import `ValidatorEvidence`, `TrustListViewer`, and `GeneratorEvidence` from `@/components/admin/c2pa/`
-- Replace the single `C2PAProtection` card (lines 251-272) with a new card containing inner `Tabs` for the four sub-sections
-- Each sub-tab renders the corresponding component directly -- no duplication of logic
-- The card header keeps the Fingerprint icon, "Content Credentials (C2PA)" title, and tooltip
+```text
+Request: GET/POST (no body needed)
+Response: {
+  status: "ok" | "needs_attention",
+  message: string,
+  checks: [{ name: string, ok: boolean, details?: object }],
+  recommendations: string[]
+}
+```
 
-The admin conformance page remains unchanged -- the Protection Hub simply reuses the same components, giving consumer users access to the full validation and evidence toolkit.
+- Uses `Deno.env.get()` to check each secret (same `has()` helper pattern)
+- Uses `fetch()` with OPTIONS to verify signing/validation functions are deployed
+- No database access required -- purely checks environment config
 
+### Widget Component
+- Follows exact same state/UI pattern as `MonitoringReadiness.tsx` and `AITPReadiness.tsx`
+- Calls `supabase.functions.invoke('c2pa-readiness-check')`
+- Shows results in a two-column grid: checks on the left, recommendations on the right
+- Overall status uses a colored Alert banner at the top of results
+
+### File Changes Summary
+| File | Action |
+|------|--------|
+| `supabase/functions/c2pa-readiness-check/index.ts` | Create -- new edge function |
+| `src/components/admin/c2pa/CAIReadinessWidget.tsx` | Create -- new React component |
+| `src/pages/admin/C2PAConformance.tsx` | Edit -- add import and render widget first |
