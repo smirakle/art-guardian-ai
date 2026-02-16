@@ -14,7 +14,16 @@ export function buildMatchUrl(
 
   const domainRaw = (sourceDomain || '').toLowerCase();
   const domainKey = domainRaw.split(/[\s·]+/)[0].trim();
-  const title = sourceTitle || '';
+
+  // Extract a fallback title from sourceDomain if sourceTitle is empty
+  // e.g. "YouTube · Gretchen Wilson" → "Gretchen Wilson"
+  let title = sourceTitle || '';
+  if (!title && sourceDomain) {
+    const parts = sourceDomain.split(/\s*·\s*/);
+    if (parts.length > 1) {
+      title = parts.slice(1).join(' ').trim();
+    }
+  }
   const encodedTitle = encodeURIComponent(title);
 
   // Extract subreddit from domain string like "Reddit · r/filmphotography"
