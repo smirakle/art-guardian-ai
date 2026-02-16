@@ -1,65 +1,50 @@
 
-# CAI Readiness Dashboard Widget
 
-## Overview
-Add a dedicated "CAI Readiness" dashboard card to the top of the admin C2PA Conformance page. It will call a new edge function that checks whether the 3 production C2PA signing secrets are configured, plus verify that the signing and validation edge functions are reachable. The widget will show a clear green/red indicator for each requirement, plus an overall readiness status.
+# Fix Findings Page Links to Navigate to Real Sources
 
-## Components
+## Problem
+The "See Where" button on the Simple Findings page opens the raw `source_url` from the database, which contains platform names (e.g., `"https://YouTube · SongsofHarry"`) rather than real URLs. The app already has a utility function (`buildMatchUrl`) that converts these into functional deep-links for YouTube, Instagram, Reddit, and other platforms -- but the Simple Findings page isn't using it.
 
-### 1. New Edge Function: `c2pa-readiness-check`
-A lightweight Deno edge function (following the same pattern as `monitoring-readiness-check`) that checks:
+## Solution
+Apply the `buildMatchUrl` utility to the Simple Findings page so that all "See Where" links resolve to real, clickable destinations on the actual platforms.
 
-| Check | Secret / Target | Description |
-|-------|----------------|-------------|
-| Private Key | `C2PA_PRIVATE_KEY` | ES256 signing key in PEM format |
-| Signing Certificate | `C2PA_SIGNING_CERT` | X.509 certificate from CAI trust anchor |
-| Issuer ID | `C2PA_ISSUER_ID` | CAI Organization / Issuer identifier |
-| Signing Function | `sign-c2pa-manifest` reachable | Confirms the generator pipeline is deployed |
-| Validation Function | `validate-c2pa-manifest` reachable | Confirms the validator pipeline is deployed |
+## Changes
 
-Returns a JSON response with per-check status, overall readiness boolean, and actionable next-step recommendations.
+### 1. Update `src/pages/SimpleFindings.tsx`
+- Import the `buildMatchUrl` utility from `@/utils/buildMatchUrl`
+- In the "See Where" button's `onClick` handler (around line 362), replace:
+  ```
+  window.open(finding.sourceUrl, '_blank')
+  ```
+  with:
+  ```
+  window.open(buildMatchUrl(finding.sourceUrl, finding.source, finding.title), '_blank', 'noopener,noreferrer')
+  ```
+- Store the `source_title` from the database in the `SimpleFinding` interface so `buildMatchUrl` has the title to construct proper search URLs. This means:
+  - Rename the existing `title` usage or add a new `sourceTitle` field to the `SimpleFinding` interface
+  - Populate `sourceTitle` from `c.source_title`, `d.source_title` (if available), and `v.source_domain` during the data loading step
 
-### 2. New React Component: `CAIReadinessWidget`
-Location: `src/components/admin/c2pa/CAIReadinessWidget.tsx`
+### 2. What This Fixes
+- **YouTube** links like `"YouTube · SongsofHarry"` will resolve to `https://www.youtube.com/results?search_query=...`
+- **Instagram** links like `"Instagram · circleapp"` will resolve to `https://www.instagram.com/circleapp/` or a search URL
+- **Reddit** links will deep-link to subreddit searches
+- **Unknown platforms** will fall back to a DuckDuckGo site-scoped search
 
-- Card with title "CAI Certification Readiness"
-- "Run Readiness Check" button (follows the `MonitoringReadiness` pattern)
-- After check, displays:
-  - Overall status banner: green "Ready for Submission" or amber "Action Required"
-  - Per-check rows with green/red badges (same `Row` pattern as existing readiness widgets)
-  - Recommendations section for any missing items
-  - Link to Supabase Edge Function Secrets page for quick remediation
+### Technical Details
+- The `buildMatchUrl` function already supports 13+ platforms (YouTube, Reddit, Alamy, Shutterstock, Getty, Adobe Stock, Flickr, DeviantArt, Pinterest, Unsplash, Pexels, ArtStation, Behance)
+- YouTube is not currently in the platform list, so we will add YouTube support to `buildMatchUrl` as well
+- Instagram is also missing and will be added
 
-### 3. Page Integration
-Update `C2PAConformance.tsx` to import and render `CAIReadinessWidget` as the first card on the page, above `TrustListViewer`.
-
-## Technical Details
-
-### Edge Function (`supabase/functions/c2pa-readiness-check/index.ts`)
-
-```text
-Request: GET/POST (no body needed)
-Response: {
-  status: "ok" | "needs_attention",
-  message: string,
-  checks: [{ name: string, ok: boolean, details?: object }],
-  recommendations: string[]
+### 3. Update `src/utils/buildMatchUrl.ts`
+Add support for YouTube and Instagram:
+```typescript
+if (domainKey === 'youtube') {
+  return `https://www.youtube.com/results?search_query=${encodedTitle}`;
+}
+if (domainKey === 'instagram') {
+  return `https://www.instagram.com/explore/tags/${encodedTitle}`;
 }
 ```
 
-- Uses `Deno.env.get()` to check each secret (same `has()` helper pattern)
-- Uses `fetch()` with OPTIONS to verify signing/validation functions are deployed
-- No database access required -- purely checks environment config
+This is a small, targeted fix that reuses existing infrastructure already proven in the Monitoring Hub's CopyrightMatches component.
 
-### Widget Component
-- Follows exact same state/UI pattern as `MonitoringReadiness.tsx` and `AITPReadiness.tsx`
-- Calls `supabase.functions.invoke('c2pa-readiness-check')`
-- Shows results in a two-column grid: checks on the left, recommendations on the right
-- Overall status uses a colored Alert banner at the top of results
-
-### File Changes Summary
-| File | Action |
-|------|--------|
-| `supabase/functions/c2pa-readiness-check/index.ts` | Create -- new edge function |
-| `src/components/admin/c2pa/CAIReadinessWidget.tsx` | Create -- new React component |
-| `src/pages/admin/C2PAConformance.tsx` | Edit -- add import and render widget first |
