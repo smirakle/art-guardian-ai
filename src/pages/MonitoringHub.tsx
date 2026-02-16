@@ -73,7 +73,7 @@ const MonitoringHub = () => {
             .eq('status', 'resolved'),
           supabase
             .from('copyright_matches')
-            .select('id, source_url, source_domain, thumbnail_url, image_url, match_confidence, detected_at, threat_level')
+            .select('id, source_url, source_domain, source_title, thumbnail_url, image_url, match_confidence, detected_at, threat_level')
             .order('detected_at', { ascending: false })
             .limit(5)
         ]);
