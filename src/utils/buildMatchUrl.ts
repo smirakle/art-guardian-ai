@@ -22,6 +22,22 @@ export function buildMatchUrl(
   const subreddit = subredditMatch ? subredditMatch[1] : null;
 
   // Platform-specific search URLs that deep-link to the matched content
+  if (domainKey === 'youtube') {
+    return `https://www.youtube.com/results?search_query=${encodedTitle}`;
+  }
+  if (domainKey === 'instagram') {
+    const handleMatch = (sourceDomain || '').match(/@?([a-zA-Z0-9._]+)/);
+    const handle = handleMatch ? handleMatch[1] : null;
+    return handle && handle !== 'instagram'
+      ? `https://www.instagram.com/${handle}/`
+      : `https://www.instagram.com/explore/tags/${encodedTitle}`;
+  }
+  if (domainKey === 'tiktok') {
+    return `https://www.tiktok.com/search?q=${encodedTitle}`;
+  }
+  if (domainKey === 'twitter' || domainKey === 'x') {
+    return `https://x.com/search?q=${encodedTitle}`;
+  }
   if (domainKey === 'reddit') {
     return subreddit
       ? `https://www.reddit.com/r/${subreddit}/search/?q=${encodedTitle}`
