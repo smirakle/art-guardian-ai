@@ -24,6 +24,10 @@ export function buildMatchUrl(
       title = parts.slice(1).join(' ').trim();
     }
   }
+
+  // Clean platform suffixes from title for better search results
+  title = title.replace(/\s*-\s*(YouTube|Wikipedia|Instagram|TikTok|Facebook|Twitter|Reddit|Pinterest)$/i, '').trim();
+
   const encodedTitle = encodeURIComponent(title);
 
   // Extract subreddit from domain string like "Reddit · r/filmphotography"
@@ -51,6 +55,9 @@ export function buildMatchUrl(
     return subreddit
       ? `https://www.reddit.com/r/${subreddit}/search/?q=${encodedTitle}`
       : `https://www.reddit.com/search/?q=${encodedTitle}`;
+  }
+  if (domainKey === 'wikipedia') {
+    return `https://en.wikipedia.org/wiki/Special:Search?search=${encodedTitle}`;
   }
   if (domainKey === 'alamy') {
     return `https://www.alamy.com/search?qt=${encodedTitle}`;
@@ -86,9 +93,16 @@ export function buildMatchUrl(
     return `https://www.behance.net/search/projects?search=${encodedTitle}`;
   }
 
-  // Fallback: DuckDuckGo site-scoped search with title
-  const domain = domainKey || 'unknown';
-  return title
-    ? `https://duckduckgo.com/?q=site:${domain}.com+${encodedTitle}`
-    : `https://duckduckgo.com/?q=site:${domain}.com`;
+  // Fallback: use site-scoped search only if domain looks like a real domain (contains a dot)
+  const fullDomain = (sourceDomain || '').trim();
+  const searchQuery = title || fullDomain;
+  const encodedQuery = encodeURIComponent(searchQuery);
+
+  if (domainKey.includes('.')) {
+    // Real domain like "foretheparty.com"
+    return `https://duckduckgo.com/?q=site:${domainKey}+${encodedQuery}`;
+  }
+
+  // Descriptive name like "Fore the Party" — just do a general search
+  return `https://duckduckgo.com/?q=${encodedQuery}`;
 }
