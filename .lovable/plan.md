@@ -1,50 +1,31 @@
 
 
-# Fix Findings Page Links to Navigate to Real Sources
+# Fix Empty Links on Recent Matches and My Findings Pages
 
 ## Problem
-The "See Where" button on the Simple Findings page opens the raw `source_url` from the database, which contains platform names (e.g., `"https://YouTube · SongsofHarry"`) rather than real URLs. The app already has a utility function (`buildMatchUrl`) that converts these into functional deep-links for YouTube, Instagram, Reddit, and other platforms -- but the Simple Findings page isn't using it.
+The "View" and "See Where" buttons open real platform pages but with **empty search queries**, showing no results. This happens because:
 
-## Solution
-Apply the `buildMatchUrl` utility to the Simple Findings page so that all "See Where" links resolve to real, clickable destinations on the actual platforms.
+1. **Monitoring Hub (Recent Matches)**: The database query fetches `source_url` and `source_domain` but **not** `source_title`. Without the title, `buildMatchUrl` constructs URLs like `youtube.com/results?search_query=` (empty search).
+2. **Simple Findings (My Findings)**: The fix from the last edit is correct, but the `sourceTitle` field may still be empty for some record types.
+
+The database actually has good `source_title` values (e.g., "Here for the Party - YouTube", "Circle.so Feature Review...") -- they just aren't being fetched or passed through.
 
 ## Changes
 
-### 1. Update `src/pages/SimpleFindings.tsx`
-- Import the `buildMatchUrl` utility from `@/utils/buildMatchUrl`
-- In the "See Where" button's `onClick` handler (around line 362), replace:
-  ```
-  window.open(finding.sourceUrl, '_blank')
-  ```
-  with:
-  ```
-  window.open(buildMatchUrl(finding.sourceUrl, finding.source, finding.title), '_blank', 'noopener,noreferrer')
-  ```
-- Store the `source_title` from the database in the `SimpleFinding` interface so `buildMatchUrl` has the title to construct proper search URLs. This means:
-  - Rename the existing `title` usage or add a new `sourceTitle` field to the `SimpleFinding` interface
-  - Populate `sourceTitle` from `c.source_title`, `d.source_title` (if available), and `v.source_domain` during the data loading step
+### 1. `src/pages/MonitoringHub.tsx` - Add `source_title` to the query
+- Add `source_title` to the select statement on line 76 so the Recent Matches section has access to real titles
+- Current: `'id, source_url, source_domain, thumbnail_url, image_url, match_confidence, detected_at, threat_level'`
+- Fixed: `'id, source_url, source_domain, source_title, thumbnail_url, image_url, match_confidence, detected_at, threat_level'`
 
-### 2. What This Fixes
-- **YouTube** links like `"YouTube · SongsofHarry"` will resolve to `https://www.youtube.com/results?search_query=...`
-- **Instagram** links like `"Instagram · circleapp"` will resolve to `https://www.instagram.com/circleapp/` or a search URL
-- **Reddit** links will deep-link to subreddit searches
-- **Unknown platforms** will fall back to a DuckDuckGo site-scoped search
+### 2. `src/pages/MonitoringHub.tsx` - Pass `source_title` to `buildMatchUrl`
+- The View button's onClick handler on line 240 already calls `buildMatchUrl(match.source_url, match.source_domain, match.source_title)` -- once `source_title` is fetched, this will work correctly.
 
-### Technical Details
-- The `buildMatchUrl` function already supports 13+ platforms (YouTube, Reddit, Alamy, Shutterstock, Getty, Adobe Stock, Flickr, DeviantArt, Pinterest, Unsplash, Pexels, ArtStation, Behance)
-- YouTube is not currently in the platform list, so we will add YouTube support to `buildMatchUrl` as well
-- Instagram is also missing and will be added
+### 3. `src/utils/buildMatchUrl.ts` - Extract title from `source_domain` as fallback
+- When `sourceTitle` is empty, extract a usable search term from `sourceDomain` (e.g., from `"YouTube · Gretchen Wilson"`, extract `"Gretchen Wilson"` as the title)
+- This ensures links always produce meaningful search results even if `source_title` is missing
 
-### 3. Update `src/utils/buildMatchUrl.ts`
-Add support for YouTube and Instagram:
-```typescript
-if (domainKey === 'youtube') {
-  return `https://www.youtube.com/results?search_query=${encodedTitle}`;
-}
-if (domainKey === 'instagram') {
-  return `https://www.instagram.com/explore/tags/${encodedTitle}`;
-}
-```
-
-This is a small, targeted fix that reuses existing infrastructure already proven in the Monitoring Hub's CopyrightMatches component.
+### What This Fixes
+- **"View" on Recent Matches**: Will open `youtube.com/results?search_query=Here+for+the+Party` instead of an empty search
+- **"See Where" on My Findings**: Same fix -- titles will populate the search queries
+- **Fallback**: If `source_title` is still empty, the utility will extract the creator/channel name from `source_domain` (e.g., "Gretchen Wilson" from "YouTube · Gretchen Wilson")
 
