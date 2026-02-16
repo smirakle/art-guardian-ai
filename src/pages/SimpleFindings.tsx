@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { FindingExplanationPopover } from '@/components/beginner/FindingExplanationPopover';
 import { GuestSignupCTA } from '@/components/beginner/GuestSignupCTA';
+import { buildMatchUrl } from '@/utils/buildMatchUrl';
 
 interface SimpleFinding {
   id: string;
@@ -27,6 +28,7 @@ interface SimpleFinding {
   description: string;
   source: string;
   sourceUrl: string;
+  sourceTitle: string;
   foundDate: string;
   isUrgent: boolean;
   isReviewed: boolean;
@@ -72,6 +74,7 @@ const SimpleFindings = () => {
             description: getDeepfakeDescription(d.manipulation_type),
             source: d.source_domain || 'Unknown website',
             sourceUrl: d.source_url,
+            sourceTitle: d.source_title || '',
             foundDate: formatDate(d.detected_at),
             isUrgent: d.threat_level === 'high',
             isReviewed: d.is_reviewed || false
@@ -98,6 +101,7 @@ const SimpleFindings = () => {
               description: getCopyrightDescription(c.match_type),
               source: c.source_domain || 'Unknown website',
               sourceUrl: c.source_url,
+              sourceTitle: c.source_title || '',
               foundDate: formatDate(c.detected_at),
               isUrgent: c.threat_level === 'high',
               isReviewed: c.is_reviewed || false
@@ -124,6 +128,7 @@ const SimpleFindings = () => {
               description: getAIDescription(v.violation_type),
               source: v.source_domain || 'AI Training Dataset',
               sourceUrl: v.source_url || '',
+              sourceTitle: '',
               foundDate: formatDate(v.detected_at),
               isUrgent: true,
               isReviewed: v.status === 'resolved'
@@ -359,7 +364,7 @@ const SimpleFindings = () => {
                         <Button
                           variant="outline"
                           className="flex-1"
-                          onClick={() => window.open(finding.sourceUrl, '_blank')}
+                          onClick={() => window.open(buildMatchUrl(finding.sourceUrl, finding.source, finding.sourceTitle || finding.title), '_blank', 'noopener,noreferrer')}
                         >
                           <ExternalLink className="h-4 w-4 mr-2" />
                           See Where
