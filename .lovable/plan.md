@@ -1,52 +1,36 @@
 
 
-# Fix Empty Fallback Links for Non-Platform Matches
+# Fix Generator Evidence to Output a PDF Document
 
-## Root Cause
-The `buildMatchUrl` fallback constructs URLs like `site:fore.com` or `site:wikipedia.com` by taking only the first word of the domain string and blindly appending `.com`. Since the database stores descriptive names (e.g., "Fore the Party", "Circle Internet Financial") instead of real domains, the fallback URLs point to wrong or non-existent sites.
+## Problem
+The Generator Evidence tool currently only outputs raw JSON files and a protected image. The C2PA conformance reviewers need a formatted **PDF document** (like the Security Architecture PDF you uploaded) that contains the manifest data, signing details, and evidence summary in a professional, readable format.
+
+## Solution
+Create a new PDF renderer component (`GeneratorEvidencePDF`) using `@react-pdf/renderer` (already installed) and add a "Download PDF" button to the Generator Evidence card. The PDF will match the style of the existing Security Architecture PDF.
+
+## PDF Contents
+The generated PDF will include:
+
+1. **Title Page** -- "C2PA Generator Evidence Report" with TSMO branding, date, and protection ID
+2. **Manifest Claim** -- The full C2PA v2.2 claim details (claim generator, assertions, rights, instance ID)
+3. **Signing Details** -- Algorithm (ES256), signing mode, certificate fingerprint, manifest hash
+4. **File Information** -- Original filename, file size, MIME type, protection timestamp
+5. **COSE Sign1 Signature** -- The base64-encoded signature value
+6. **Evidence Summary** -- Protection ID, conformance statement, spec version
 
 ## Changes
 
-### 1. `src/utils/buildMatchUrl.ts` - Fix the fallback to use a general web search
+### 1. New file: `src/components/admin/c2pa/GeneratorEvidencePDF.tsx`
+A `@react-pdf/renderer` Document component that renders all evidence fields into a multi-page A4 PDF, styled consistently with the existing `SecurityArchitecturePDF.tsx`.
 
-Instead of constructing a broken `site:xxx.com` URL, use a simple DuckDuckGo search with the source title. This always produces relevant results.
+### 2. Update: `src/components/admin/c2pa/GeneratorEvidence.tsx`
+- Import the new PDF component and `pdf` from `@react-pdf/renderer`
+- Add a "Download Evidence PDF" button in the results section
+- When clicked, generate the PDF blob and trigger a download with filename `c2pa-generator-evidence-{protectionId}.pdf`
+- The PDF will include all the data currently shown in the JSON preview plus the signing summary
 
-**Current broken fallback:**
-```
-https://duckduckgo.com/?q=site:fore.com+Home+-+Fore+the+Party
-```
-
-**Fixed fallback:**
-```
-https://duckduckgo.com/?q=Home+-+Fore+the+Party+-+Mobile+Mini+Golf
-```
-
-Only use `site:` scoping when the domain string looks like an actual domain (contains a dot, e.g., `example.com`).
-
-### 2. `src/utils/buildMatchUrl.ts` - Clean YouTube suffix from search titles
-
-Strip "- YouTube" from titles before searching YouTube, so the query is `Here for the Party` instead of `Here for the Party - YouTube`. This produces better search results.
-
-### 3. `src/utils/buildMatchUrl.ts` - Add Wikipedia support
-
-Add explicit handling for Wikipedia since it appears in the database:
-```
-https://en.wikipedia.org/wiki/Special:Search?search=Circle
-```
-
-### Technical Details
-
-The full changes to `buildMatchUrl.ts`:
-
-1. Add a title-cleaning step that removes platform suffixes like "- YouTube", "- Wikipedia" from `sourceTitle` before encoding
-2. Add Wikipedia to the platform-specific handlers
-3. Change the fallback from `site:${domainKey}.com+${title}` to just `${sourceDomain}+${title}` when the domain string doesn't contain a dot (indicating it's not a real domain)
-4. When the domain string contains a dot (e.g., `foretheparty.com`), keep the `site:` scoping since it's a real domain
-
-### What This Fixes
-- "Fore the Party" entries will search DuckDuckGo for the full title, finding the real site
-- "Wikipedia" entries will search Wikipedia directly
-- "Circle Internet Financial" entries will search for the real company
-- YouTube entries will search without the redundant "- YouTube" suffix
-- All links will produce meaningful, non-empty results
+## What This Fixes
+- Conformance reviewers get a properly formatted PDF document instead of raw JSON
+- The PDF matches the professional format of the Security Architecture document they already have
+- All manifest and signing evidence is presented in one readable document
 
