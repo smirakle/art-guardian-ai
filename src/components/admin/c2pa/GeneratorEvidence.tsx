@@ -3,9 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Upload, Download, ShieldCheck, Loader2, FileJson, Image as ImageIcon } from 'lucide-react';
+import { Upload, Download, ShieldCheck, Loader2, FileJson, Image as ImageIcon, FileText } from 'lucide-react';
 import { signC2PAManifest, embedC2PAManifest, C2PASigningResult } from '@/lib/c2paValidation';
 import { useToast } from '@/hooks/use-toast';
+import { pdf } from '@react-pdf/renderer';
+import GeneratorEvidencePDF from './GeneratorEvidencePDF';
 
 interface GeneratorResult {
   manifest: Record<string, unknown>;
@@ -114,9 +116,7 @@ const GeneratorEvidence: React.FC = () => {
 
   const downloadEvidencePackage = () => {
     if (!result) return;
-    // Download each file individually (no zip library needed)
     downloadJson(result.manifest, `c2pa-manifest-${result.protectionId}.json`);
-
     downloadJson({
       protectionId: result.protectionId,
       timestamp: result.timestamp,
@@ -129,11 +129,31 @@ const GeneratorEvidence: React.FC = () => {
       originalFileMime: result.originalFile.type,
       protectedFileSize: result.protectedBlob?.size ?? null,
     }, `signing-summary-${result.protectionId}.json`);
-
     if (result.protectedBlob) {
       const ext = result.originalFile.type === 'image/png' ? 'png' : 'jpg';
       downloadBlob(result.protectedBlob, `protected-${result.protectionId}.${ext}`);
     }
+  };
+
+  const downloadEvidencePdf = async () => {
+    if (!result) return;
+    const blob = await pdf(
+      <GeneratorEvidencePDF
+        manifest={result.manifest}
+        protectionId={result.protectionId}
+        timestamp={result.timestamp}
+        algorithm={result.signingResult.algorithm}
+        signingMode={result.signingResult.signingMode}
+        certificateFingerprint={result.signingResult.certificateFingerprint}
+        manifestHash={result.signingResult.manifestHash}
+        signature={result.signingResult.signature}
+        originalFileName={result.originalFile.name}
+        originalFileSize={result.originalFile.size}
+        originalFileMime={result.originalFile.type}
+        protectedFileSize={result.protectedBlob?.size ?? null}
+      />
+    ).toBlob();
+    downloadBlob(blob, `c2pa-generator-evidence-${result.protectionId}.pdf`);
   };
 
   return (
@@ -197,6 +217,9 @@ const GeneratorEvidence: React.FC = () => {
                   <ImageIcon className="h-3 w-3" /> Protected Image
                 </Button>
               )}
+              <Button size="sm" variant="outline" onClick={downloadEvidencePdf} className="gap-1">
+                <FileText className="h-3 w-3" /> Evidence PDF
+              </Button>
               <Button size="sm" onClick={downloadEvidencePackage} className="gap-1">
                 <Download className="h-3 w-3" /> Download Evidence Package
               </Button>
