@@ -116,6 +116,13 @@ const GeneratorEvidence: React.FC = () => {
 
   const downloadEvidencePackage = () => {
     if (!result) return;
+    if (!result.protectedBlob) {
+      toast({
+        title: 'JUMBF embedding missing',
+        description: 'The protected image with embedded manifest could not be generated. The evidence package will contain manifest JSON only. Conformance reviewers require a JUMBF-embedded image.',
+        variant: 'destructive',
+      });
+    }
     downloadJson(result.manifest, `c2pa-manifest-${result.protectionId}.json`);
     downloadJson({
       protectionId: result.protectionId,
@@ -174,9 +181,19 @@ const GeneratorEvidence: React.FC = () => {
         {result && (
           <div className="space-y-4">
             <div className="flex flex-wrap gap-2">
-              <Badge variant="default" className="bg-green-600">Signed ({result.signingResult.signingMode})</Badge>
+              {result.signingResult.signingMode === 'self-signed' ? (
+                <Badge variant="outline" className="border-amber-500 text-amber-700 bg-amber-50 dark:bg-amber-950/30 dark:text-amber-400">
+                  ⚠ Self-Signed — Not Conformance Ready
+                </Badge>
+              ) : (
+                <Badge variant="default" className="bg-green-600">✓ Production Signed</Badge>
+              )}
               <Badge variant="outline">{result.signingResult.algorithm}</Badge>
-              {result.protectedBlob && <Badge variant="outline">JUMBF Embedded</Badge>}
+              {result.protectedBlob ? (
+                <Badge variant="outline" className="border-green-600 text-green-700">JUMBF Embedded</Badge>
+              ) : (
+                <Badge variant="outline" className="border-amber-500 text-amber-700">⚠ JUMBF Failed</Badge>
+              )}
             </div>
 
             {/* Manifest preview */}
