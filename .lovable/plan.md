@@ -1,36 +1,83 @@
 
+# Why TSMO Is Not Passing C2PA Conformance
 
-# Fix Generator Evidence to Output a PDF Document
+## Root Cause Analysis
 
-## Problem
-The Generator Evidence tool currently only outputs raw JSON files and a protected image. The C2PA conformance reviewers need a formatted **PDF document** (like the Security Architecture PDF you uploaded) that contains the manifest data, signing details, and evidence summary in a professional, readable format.
+There are TWO distinct problems blocking conformance. One is a missing credential (external action required), and one is a fixable technical gap in the evidence package.
 
-## Solution
-Create a new PDF renderer component (`GeneratorEvidencePDF`) using `@react-pdf/renderer` (already installed) and add a "Download PDF" button to the Generator Evidence card. The PDF will match the style of the existing Security Architecture PDF.
+---
 
-## PDF Contents
-The generated PDF will include:
+## Problem 1: Missing Production Signing Credentials (Critical — External Action Required)
 
-1. **Title Page** -- "C2PA Generator Evidence Report" with TSMO branding, date, and protection ID
-2. **Manifest Claim** -- The full C2PA v2.2 claim details (claim generator, assertions, rights, instance ID)
-3. **Signing Details** -- Algorithm (ES256), signing mode, certificate fingerprint, manifest hash
-4. **File Information** -- Original filename, file size, MIME type, protection timestamp
-5. **COSE Sign1 Signature** -- The base64-encoded signature value
-6. **Evidence Summary** -- Protection ID, conformance statement, spec version
+The live readiness check confirms all 3 credentials are absent:
 
-## Changes
+| Secret | Status | Impact |
+|---|---|---|
+| `C2PA_PRIVATE_KEY` | Missing | Signatures use throwaway runtime keys |
+| `C2PA_SIGNING_CERT` | Missing | No trusted X.509 certificate chain |
+| `C2PA_ISSUER_ID` | Missing | Not registered with CAI |
 
-### 1. New file: `src/components/admin/c2pa/GeneratorEvidencePDF.tsx`
-A `@react-pdf/renderer` Document component that renders all evidence fields into a multi-page A4 PDF, styled consistently with the existing `SecurityArchitecturePDF.tsx`.
+Without these, every manifest is signed in **self-signed mode**. Any C2PA-compliant validator (including the CAI's own tools) will flag these as **"untrusted"** because the certificate is not chained to a recognized trust anchor.
 
-### 2. Update: `src/components/admin/c2pa/GeneratorEvidence.tsx`
-- Import the new PDF component and `pdf` from `@react-pdf/renderer`
-- Add a "Download Evidence PDF" button in the results section
-- When clicked, generate the PDF blob and trigger a download with filename `c2pa-generator-evidence-{protectionId}.pdf`
-- The PDF will include all the data currently shown in the JSON preview plus the signing summary
+**This cannot be fixed in code.** These credentials must be obtained from:
+- **SSL.com** or **DigiCert** for the X.509 signing certificate
+- **The Content Authenticity Initiative (CAI)** for the Issuer ID / Organization registration
 
-## What This Fixes
-- Conformance reviewers get a properly formatted PDF document instead of raw JSON
-- The PDF matches the professional format of the Security Architecture document they already have
-- All manifest and signing evidence is presented in one readable document
+---
 
+## Problem 2: Evidence Package Is Incomplete (Fixable Now)
+
+The conformance reviewers need both a **protected image** (a real image file with the JUMBF manifest embedded) AND a correctly structured **manifest JSON** side by side, exactly as shown in the uploaded PDF. Currently:
+
+- The Generator Evidence tool produces the PDF report — but the PDF shows `signing_mode: "self-signed"` which immediately flags the submission.
+- The evidence checklist in the PDF marks `✓ JUMBF Embedded` but this depends on whether the edge function succeeded. When it fails silently, the PDF still shows the checkmark.
+- The PDF's conformance checklist needs to honestly reflect the current signing mode — if self-signed, it must say **"Self-Signed (Production Credentials Required)"** instead of implying it is trusted.
+- The Conformance Exporter exports JSON only — but reviewers expect to also receive the actual protected image file alongside the manifest.
+
+---
+
+## What Will Be Fixed
+
+### Change 1: Update `GeneratorEvidencePDF.tsx`
+- In the **Evidence Summary** section, change the conformance checklist to reflect signing mode honestly:
+  - If `signingMode === 'self-signed'`, show a warning row: "⚠ Signing mode: SELF-SIGNED — Production credentials required for conformance"
+  - If `signingMode === 'production'`, show: "✓ Production certificate chain verified"
+- Add a dedicated **"Signing Mode"** alert box at the top of the signing details page so reviewers see it immediately.
+
+### Change 2: Update `GeneratorEvidence.tsx`
+- When downloading the evidence package, if `protectedBlob` is null (JUMBF embedding failed), show a clear toast warning rather than silently omitting the file.
+- Add a status indicator in the UI that explicitly shows **"Self-Signed Mode"** in amber/yellow (instead of the current green badge that looks like success) so the operator knows the submission is not yet production-ready.
+- Rename the green "Signed (self-signed)" badge to an amber **"Self-Signed — Not Conformance Ready"** badge when in self-signed mode.
+
+### Change 3: Add a Production Readiness Banner to `C2PAConformance.tsx`
+- Add a persistent top-of-page banner that reads: **"Production credentials are not configured. All manifests are self-signed and will not pass conformance review. Add C2PA_PRIVATE_KEY, C2PA_SIGNING_CERT, and C2PA_ISSUER_ID to your Supabase edge function secrets to enable production signing."**
+- Link directly to the Supabase secrets settings page.
+- Dismiss-able once the credentials are added (checks the readiness endpoint on load).
+
+---
+
+## Technical Summary
+
+```text
+Current State:
+  sign-c2pa-manifest → no C2PA_PRIVATE_KEY found → generates ephemeral keypair
+  → signs manifest → COSE Sign1 envelope is valid cryptographically
+  → but certificate has NO chain to CAI trust list
+  → any C2PA validator returns trustStatus: "untrusted" or "self-signed"
+  → CAI reviewer rejects submission
+
+Required State:
+  C2PA_PRIVATE_KEY (ES256 PEM) + C2PA_SIGNING_CERT (X.509 PEM from SSL.com/DigiCert)
+  → sign-c2pa-manifest uses production key
+  → certificate chains to recognized CAI trust anchor
+  → validator returns trustStatus: "trusted"
+  → submission passes
+```
+
+---
+
+## Files Changed
+
+1. `src/components/admin/c2pa/GeneratorEvidencePDF.tsx` — honest signing mode display
+2. `src/components/admin/c2pa/GeneratorEvidence.tsx` — amber badge for self-signed, warning on missing JUMBF
+3. `src/pages/admin/C2PAConformance.tsx` — production readiness banner at top of page
