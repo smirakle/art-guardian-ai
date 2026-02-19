@@ -208,6 +208,21 @@ const GeneratorEvidencePDF: React.FC<GeneratorEvidencePDFProps> = (props) => {
         )}
 
         <Text style={styles.sectionTitle}>2. Signing Details</Text>
+
+        {props.signingMode === 'self-signed' && (
+          <View style={{ backgroundColor: '#fff3cd', border: '1 solid #ffc107', padding: 8, marginBottom: 10, borderRadius: 2 }}>
+            <Text style={{ fontSize: 9, fontFamily: 'Helvetica-Bold', color: '#856404', marginBottom: 3 }}>
+              ⚠ WARNING: SELF-SIGNED MODE
+            </Text>
+            <Text style={{ fontSize: 9, color: '#856404' }}>
+              This manifest was signed with an ephemeral key — NOT a trusted CA-issued certificate.
+              C2PA validators will report trustStatus: "untrusted". This submission will NOT pass
+              conformance review until C2PA_PRIVATE_KEY, C2PA_SIGNING_CERT, and C2PA_ISSUER_ID
+              are configured with production credentials from SSL.com or DigiCert.
+            </Text>
+          </View>
+        )}
+
         <View style={styles.row}>
           <View style={styles.col}>
             <Text style={styles.label}>Algorithm</Text>
@@ -215,7 +230,9 @@ const GeneratorEvidencePDF: React.FC<GeneratorEvidencePDFProps> = (props) => {
           </View>
           <View style={styles.col}>
             <Text style={styles.label}>Signing Mode</Text>
-            <Text style={styles.value}>{props.signingMode}</Text>
+            <Text style={{ fontSize: 10, marginBottom: 6, color: props.signingMode === 'self-signed' ? '#856404' : '#166534', fontFamily: 'Helvetica-Bold' }}>
+              {props.signingMode === 'self-signed' ? '⚠ SELF-SIGNED (Not conformance ready)' : `✓ ${props.signingMode}`}
+            </Text>
           </View>
         </View>
 
@@ -310,8 +327,20 @@ const GeneratorEvidencePDF: React.FC<GeneratorEvidencePDFProps> = (props) => {
         <Text style={styles.bulletItem}>✓ c2pa.actions assertion with timestamp</Text>
         <Text style={styles.bulletItem}>✓ c2pa.creative.work assertion with copyright</Text>
         <Text style={styles.bulletItem}>✓ c2pa.rights assertion (AI training prohibition)</Text>
-        <Text style={styles.bulletItem}>✓ JUMBF embedding (ISO 19566-5) for JPEG/PNG</Text>
+        <Text style={{ ...styles.bulletItem, color: props.protectedFileSize ? '#166534' : '#b45309' }}>
+          {props.protectedFileSize ? '✓' : '⚠'} JUMBF embedding (ISO 19566-5) for JPEG/PNG
+          {!props.protectedFileSize ? ' — FAILED (manifest-only fallback)' : ''}
+        </Text>
         <Text style={styles.bulletItem}>✓ SHA-256 manifest hash for integrity verification</Text>
+        {props.signingMode === 'self-signed' ? (
+          <Text style={{ ...styles.bulletItem, color: '#b91c1c', fontFamily: 'Helvetica-Bold' }}>
+            ✗ Production certificate chain — MISSING (self-signed only)
+          </Text>
+        ) : (
+          <Text style={{ ...styles.bulletItem, color: '#166534' }}>
+            ✓ Production certificate chain verified
+          </Text>
+        )}
 
         <Text style={styles.subsectionTitle}>Product Information</Text>
         <View style={styles.row}>
