@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { DollarSign, Handshake, Plug, ShieldCheck } from "lucide-react";
+import { DollarSign, Handshake, Plug, ShieldCheck, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 import SecurityAuditLog from "@/components/admin/SecurityAuditLog";
@@ -27,6 +27,7 @@ import { RetentionDashboard } from "@/components/admin/RetentionDashboard";
 import AdminPluginsSection from "@/components/admin/AdminPluginsSection";
 import ExitValuationCalculator from "@/components/admin/ExitValuationCalculator";
 import EUAIActCompliance from "@/components/admin/EUAIActCompliance";
+import NSFSBIRGrant from "@/components/admin/NSFSBIRGrant";
 
 const Admin = () => {
    const navigate = useNavigate();
@@ -93,6 +94,10 @@ const Admin = () => {
                 <TabsTrigger value="eu-ai-act" className="px-4 py-2 text-sm font-medium bg-blue-500/10 border border-blue-500/20">
                   <ShieldCheck className="h-4 w-4 mr-1" />
                   EU AI Act
+                </TabsTrigger>
+                <TabsTrigger value="nsf-grant" className="px-4 py-2 text-sm font-medium bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border border-amber-500/20">
+                  <FileText className="h-4 w-4 mr-1" />
+                  NSF Grant
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -177,6 +182,10 @@ const Admin = () => {
 
             <TabsContent value="eu-ai-act" className="space-y-6">
               <EUAIActCompliance />
+            </TabsContent>
+
+            <TabsContent value="nsf-grant" className="space-y-6">
+              <NSFSBIRGrant />
             </TabsContent>
 
           </Tabs>
