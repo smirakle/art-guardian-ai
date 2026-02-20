@@ -66,6 +66,7 @@
     "crypto-js": "^4.2.0",
     "date-fns": "^3.6.0",
     "diff-match-patch": "^1.0.5",
+    "docx": "^9.5.3",
     "dompurify": "^3.3.1",
     "embla-carousel-react": "^8.3.0",
     "ethers": "^6.15.0",
