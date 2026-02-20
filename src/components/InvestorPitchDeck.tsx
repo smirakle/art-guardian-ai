@@ -22,8 +22,14 @@ import {
   BarChart3,
   PieChart,
   Briefcase,
-  Award
+  Award,
+  FileDown,
+  FileText,
+  Download
 } from 'lucide-react';
+import jsPDF from 'jspdf';
+import { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, BorderStyle, AlignmentType } from 'docx';
+import { toast } from 'sonner';
 
 interface Slide {
   id: string;
@@ -767,6 +773,390 @@ const InvestorPitchDeck = () => {
     setCurrentSlide(index);
   };
 
+  const addPDFPage = (doc: jsPDF, title: string, pageNum: number, totalPages: number) => {
+    const pw = doc.internal.pageSize.getWidth();
+    const ph = doc.internal.pageSize.getHeight();
+    // Header band
+    doc.setFillColor(30, 58, 138);
+    doc.rect(0, 0, pw, 18, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text('TSMO — Investor Pitch Deck', 14, 12);
+    doc.text(title, pw - 14, 12, { align: 'right' });
+    // Footer
+    doc.setFillColor(240, 240, 240);
+    doc.rect(0, ph - 14, pw, 14, 'F');
+    doc.setTextColor(100, 100, 100);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Page ${pageNum} of ${totalPages}`, pw / 2, ph - 5, { align: 'center' });
+    doc.text('CONFIDENTIAL — For Authorized Recipients Only', 14, ph - 5);
+    // Reset text color
+    doc.setTextColor(0, 0, 0);
+  };
+
+  const downloadPDF = () => {
+    toast.info('Generating PDF...');
+    try {
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pw = doc.internal.pageSize.getWidth();
+      const totalPages = 9;
+      let y = 0;
+
+      const addText = (text: string, x: number, yPos: number, opts?: { size?: number; style?: string; color?: number[] }) => {
+        doc.setFontSize(opts?.size ?? 11);
+        doc.setFont('helvetica', opts?.style ?? 'normal');
+        if (opts?.color) doc.setTextColor(opts.color[0], opts.color[1], opts.color[2]);
+        else doc.setTextColor(0, 0, 0);
+        doc.text(text, x, yPos);
+      };
+
+      // Page 1 — Cover
+      addPDFPage(doc, 'Cover', 1, totalPages);
+      y = 60;
+      addText('TSMO', pw / 2, y, { size: 36, style: 'bold', color: [30, 58, 138] }); y += 12;
+      addText('The Future of Digital IP Protection', pw / 2, y, { size: 16 }); y += 8;
+      addText('Protecting creators in the age of AI', pw / 2, y, { size: 12 }); y += 20;
+      doc.setDrawColor(200, 200, 200); doc.line(30, y, pw - 30, y); y += 12;
+      addText('Seeking:', 40, y, { size: 11, style: 'bold' });
+      addText('$100K Seed Round', pw - 40, y, { size: 14, style: 'bold', color: [30, 58, 138] }); y += 10;
+      addText('Pre-money Valuation:', 40, y, { size: 11, style: 'bold' });
+      addText('$1,000,000', pw - 40, y, { size: 14, style: 'bold' }); y += 10;
+      addText('Post-money Valuation:', 40, y, { size: 11, style: 'bold' });
+      addText('$1,100,000', pw - 40, y, { size: 14, style: 'bold' }); y += 10;
+      addText('Founded:', 40, y, { size: 11, style: 'bold' });
+      addText('2025  •  Seed Stage', pw - 40, y, { size: 11 }); y += 20;
+      addText('investors@tsmo.app  |  tsmo.app', pw / 2, y, { size: 10, color: [100, 100, 100] });
+
+      // Page 2 — Problem
+      doc.addPage();
+      addPDFPage(doc, 'The Problem', 2, totalPages);
+      y = 30;
+      addText('The $24.3B Problem: Creators Are Defenseless Against AI', 14, y, { size: 14, style: 'bold' }); y += 14;
+      const problems = [
+        'AI Training Theft: AI models trained on copyrighted content without permission or compensation.',
+        'Trademark Infringement: Up 400% since 2020 — creators cannot keep up manually.',
+        'Legal Costs: Taking legal action costs $50K–$500K and takes 18+ months.',
+        'Global Losses: $24.3B in annual losses to IP theft globally.',
+        'Current solutions are reactive, not preventive, and have no AI training protection.',
+      ];
+      problems.forEach(p => { addText(`• ${p}`, 14, y, { size: 11 }); y += 8; });
+
+      // Page 3 — Solution
+      doc.addPage();
+      addPDFPage(doc, 'Our Solution', 3, totalPages);
+      y = 30;
+      addText('Four-Layer Defense System™', 14, y, { size: 14, style: 'bold' }); y += 12;
+      const layers = [
+        ['1. AI Training Protection', 'Patent-pending fingerprinting technology, real-time AI training detection, proactive content cloaking.'],
+        ['2. Comprehensive Monitoring', '70+ platforms scanned continuously, multi-modal detection (image, text, video), 95%+ accuracy rate.'],
+        ['3. Instant Response', 'Automated DMCA filing, blockchain verification, legal document generation in <24 hours.'],
+        ['4. Legal Enforcement', 'Expert legal network integration, automated compliance workflows, government filing integration.'],
+      ];
+      layers.forEach(([title, body]) => {
+        addText(title, 14, y, { size: 12, style: 'bold', color: [30, 58, 138] }); y += 7;
+        const lines = doc.splitTextToSize(body, pw - 28);
+        lines.forEach((l: string) => { addText(l, 18, y, { size: 10 }); y += 6; });
+        y += 4;
+      });
+
+      // Page 4 — Market
+      doc.addPage();
+      addPDFPage(doc, 'Market Opportunity', 4, totalPages);
+      y = 30;
+      addText('$15.7B Total Addressable Market', 14, y, { size: 14, style: 'bold' }); y += 12;
+      [
+        ['Digital Content Creators', '$8.2B', '52% of market'],
+        ['Enterprise IP Management', '$4.7B', '30% of market'],
+        ['Legal Technology', '$2.8B', '18% of market'],
+      ].forEach(([seg, val, pct]) => {
+        addText(`${seg}:`, 14, y, { size: 11, style: 'bold' });
+        addText(`${val} (${pct})`, pw - 14, y, { size: 11, style: 'bold', color: [30, 58, 138] }); y += 9;
+      });
+      y += 6;
+      addText('Market Drivers:', 14, y, { size: 12, style: 'bold' }); y += 8;
+      ['Creator economy growing 23% annually', 'AI adoption accelerating IP theft', 'Regulatory pressure increasing globally', 'Global IP protection demand rising'].forEach(d => {
+        addText(`• ${d}`, 18, y, { size: 10 }); y += 7;
+      });
+
+      // Page 5 — Business Model
+      doc.addPage();
+      addPDFPage(doc, 'Business Model', 5, totalPages);
+      y = 30;
+      addText('Multiple Revenue Streams', 14, y, { size: 14, style: 'bold' }); y += 12;
+      addText('Subscription Tiers (70% of revenue):', 14, y, { size: 12, style: 'bold' }); y += 8;
+      [['Free', '$0/mo'], ['Student', '$19.99/mo'], ['Starter', '$29.99/mo'], ['Professional', '$199.99/mo'], ['Enterprise', '$5,000/mo']].forEach(([t, p]) => {
+        addText(`  ${t}:`, 18, y, { size: 10 }); addText(p, pw - 14, y, { size: 10, style: 'bold' }); y += 6;
+      });
+      y += 4;
+      addText('Transaction Fees (20%): 15–20% commission on legal docs, $25–$100/case DMCA.', 14, y, { size: 10 }); y += 8;
+      addText('Enterprise (10%): White-label $10K–$100K/yr, Custom integrations $25K–$250K.', 14, y, { size: 10 }); y += 12;
+      addText('Unit Economics:', 14, y, { size: 12, style: 'bold' }); y += 8;
+      [['CAC', '$15'], ['LTV', '$583'], ['LTV/CAC Ratio', '39x'], ['Payback Period', '0.4 months']].forEach(([k, v]) => {
+        addText(`${k}:`, 14, y, { size: 10, style: 'bold' }); addText(v, 80, y, { size: 10, color: [30, 58, 138] }); y += 7;
+      });
+
+      // Page 6 — Traction
+      doc.addPage();
+      addPDFPage(doc, 'Traction & Metrics', 6, totalPages);
+      y = 30;
+      addText('Strong Early Adoption', 14, y, { size: 14, style: 'bold' }); y += 12;
+      [
+        ['Monthly Recurring Revenue', '$200/mo (+45% MoM)'],
+        ['Active Users', '50+'],
+        ['Protected Artworks', '500+'],
+        ['Monitoring Scans Completed', '2,000+'],
+        ['DMCA Notices Filed', '25+'],
+        ['Customer Satisfaction', '94%'],
+        ['Monthly Retention Rate', '89%'],
+        ['Average Revenue Per User', '$85/month'],
+      ].forEach(([k, v]) => {
+        addText(`${k}:`, 14, y, { size: 11, style: 'bold' }); addText(v, 110, y, { size: 11, color: [30, 138, 58] }); y += 8;
+      });
+
+      // Page 7 — Financial Projections
+      doc.addPage();
+      addPDFPage(doc, 'Financial Projections', 7, totalPages);
+      y = 30;
+      addText('3-Year Financial Projections', 14, y, { size: 14, style: 'bold' }); y += 12;
+      // Table header
+      doc.setFillColor(30, 58, 138); doc.rect(14, y - 5, pw - 28, 9, 'F');
+      doc.setTextColor(255, 255, 255); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+      doc.text('Metric', 16, y); doc.text('Year 1', 80, y); doc.text('Year 2', 120, y); doc.text('Year 3', 160, y);
+      y += 8;
+      [
+        ['Customers', '120', '350', '750'],
+        ['ARPU', '$35', '$43', '$56'],
+        ['Monthly Recurring Revenue', '$4.2K', '$15K', '$42K'],
+        ['Annual Revenue', '$50K', '$180K', '$500K'],
+      ].forEach((row, i) => {
+        if (i % 2 === 0) { doc.setFillColor(245, 247, 255); doc.rect(14, y - 5, pw - 28, 9, 'F'); }
+        doc.setTextColor(0, 0, 0); doc.setFont('helvetica', i === 3 ? 'bold' : 'normal'); doc.setFontSize(10);
+        doc.text(row[0], 16, y); doc.text(row[1], 80, y); doc.text(row[2], 120, y); doc.text(row[3], 160, y);
+        y += 9;
+      });
+      y += 8;
+      doc.setTextColor(0, 0, 0); doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+      addText('Series A readiness: 15–18 months | Expected Series A Valuation: $3M–$10M', 14, y, { size: 10 });
+
+      // Page 8 — Investment
+      doc.addPage();
+      addPDFPage(doc, 'Investment Opportunity', 8, totalPages);
+      y = 30;
+      addText('Seed Investment Opportunity', 14, y, { size: 14, style: 'bold' }); y += 12;
+      [
+        ['Amount Seeking:', '$100,000'],
+        ['Pre-money Valuation:', '$1,000,000'],
+        ['Post-money Valuation:', '$1,100,000'],
+        ['Security Type:', 'Series A Preferred Stock'],
+        ['Option Pool:', '15%'],
+      ].forEach(([k, v]) => {
+        addText(k, 14, y, { size: 11, style: 'bold' }); addText(v, 100, y, { size: 11 }); y += 9;
+      });
+      y += 6;
+      addText('Use of Funds:', 14, y, { size: 12, style: 'bold' }); y += 8;
+      [['Product Development (50%)', '$50,000'], ['Customer Acquisition (30%)', '$30,000'], ['Operations & Legal (15%)', '$15,000'], ['Working Capital (5%)', '$5,000']].forEach(([k, v]) => {
+        addText(`  • ${k}:`, 14, y, { size: 10 }); addText(v, pw - 14, y, { size: 10, style: 'bold' }); y += 7;
+      });
+      y += 6;
+      addText('18-Month Milestones:', 14, y, { size: 12, style: 'bold' }); y += 8;
+      ['250 customers by month 6', '$4.2K MRR by month 12', '$50K ARR by month 18 → Series A ready'].forEach(m => {
+        addText(`  • ${m}`, 14, y, { size: 10 }); y += 7;
+      });
+
+      // Page 9 — Contact
+      doc.addPage();
+      addPDFPage(doc, 'Contact', 9, totalPages);
+      y = 70;
+      addText('Ready to Protect the Creator Economy?', pw / 2, y, { size: 16, style: 'bold' }); y += 14;
+      addText('Contact us to schedule a demo and access due diligence materials.', pw / 2, y, { size: 11 }); y += 20;
+      addText('Email:', 50, y, { size: 11, style: 'bold' }); addText('investors@tsmo.app', 80, y, { size: 11, color: [30, 58, 138] }); y += 10;
+      addText('Website:', 50, y, { size: 11, style: 'bold' }); addText('tsmo.app', 80, y, { size: 11, color: [30, 58, 138] }); y += 10;
+      addText('Founder:', 50, y, { size: 11, style: 'bold' }); addText('shirleena.cunningham@tsmowatch.com', 80, y, { size: 11 });
+
+      doc.save('TSMO_Investor_Pitch_Deck.pdf');
+      toast.success('PDF downloaded successfully!');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to generate PDF. Please try again.');
+    }
+  };
+
+  const downloadWord = async () => {
+    toast.info('Generating Word document...');
+    try {
+      const heading1 = (text: string) => new Paragraph({ text, heading: HeadingLevel.HEADING_1, spacing: { before: 300, after: 150 } });
+      const heading2 = (text: string) => new Paragraph({ text, heading: HeadingLevel.HEADING_2, spacing: { before: 200, after: 100 } });
+      const body = (text: string) => new Paragraph({ children: [new TextRun({ text, size: 22 })], spacing: { after: 100 } });
+      const bullet = (text: string) => new Paragraph({ children: [new TextRun({ text: `• ${text}`, size: 22 })], indent: { left: 360 }, spacing: { after: 80 } });
+      const pageBreak = () => new Paragraph({ children: [new TextRun({ text: '', break: 1 })] });
+
+      const makeTable = (headers: string[], rows: string[][]) => new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        rows: [
+          new TableRow({
+            children: headers.map(h => new TableCell({
+              children: [new Paragraph({ children: [new TextRun({ text: h, bold: true, size: 22 })] })],
+              shading: { fill: '1E3A8A', color: 'FFFFFF' },
+            })),
+            tableHeader: true,
+          }),
+          ...rows.map((row, ri) => new TableRow({
+            children: row.map(cell => new TableCell({
+              children: [new Paragraph({ children: [new TextRun({ text: cell, size: 22, bold: ri === rows.length - 1 })] })],
+              shading: { fill: ri % 2 === 0 ? 'F5F7FF' : 'FFFFFF' },
+            })),
+          })),
+        ],
+      });
+
+      const doc = new Document({
+        sections: [{
+          children: [
+            // Title Page
+            new Paragraph({ children: [new TextRun({ text: 'TSMO', bold: true, size: 72, color: '1E3A8A' })], alignment: AlignmentType.CENTER }),
+            new Paragraph({ children: [new TextRun({ text: 'The Future of Digital IP Protection', size: 36 })], alignment: AlignmentType.CENTER, spacing: { after: 100 } }),
+            new Paragraph({ children: [new TextRun({ text: 'Protecting creators in the age of AI', size: 28, italics: true })], alignment: AlignmentType.CENTER, spacing: { after: 400 } }),
+            new Paragraph({ children: [new TextRun({ text: 'Seeking: $100K Seed Round', bold: true, size: 28 })], alignment: AlignmentType.CENTER }),
+            new Paragraph({ children: [new TextRun({ text: 'Pre-money Valuation: $1,000,000  |  Post-money: $1,100,000', size: 24 })], alignment: AlignmentType.CENTER }),
+            new Paragraph({ children: [new TextRun({ text: 'Founded 2025  •  Seed Stage', size: 22 })], alignment: AlignmentType.CENTER, spacing: { after: 600 } }),
+            new Paragraph({ children: [new TextRun({ text: 'investors@tsmo.app  |  tsmo.app', size: 22, color: '1E3A8A' })], alignment: AlignmentType.CENTER }),
+            pageBreak(),
+
+            // Section 1 — Problem
+            heading1('1. The $24.3B Problem'),
+            body('Creators are defenseless against AI-era intellectual property theft.'),
+            bullet('AI Training Theft: AI models trained on copyrighted content without permission or compensation.'),
+            bullet('400% increase in trademark infringement since 2020.'),
+            bullet('Legal action costs $50K–$500K and takes 18+ months.'),
+            bullet('$24.3B in annual global IP theft losses.'),
+            bullet('Current solutions are reactive, expensive, and have no AI training protection.'),
+            pageBreak(),
+
+            // Section 2 — Solution
+            heading1('2. Our Solution: Four-Layer Defense System™'),
+            heading2('Layer 1: AI Training Protection'),
+            bullet('Patent-pending fingerprinting technology'),
+            bullet('Real-time AI training detection'),
+            bullet('Proactive content protection and cloaking'),
+            heading2('Layer 2: Comprehensive Monitoring'),
+            bullet('70+ platforms scanned continuously'),
+            bullet('Multi-modal detection (image, text, video)'),
+            bullet('95%+ accuracy rate'),
+            heading2('Layer 3: Instant Response'),
+            bullet('Automated DMCA filing'),
+            bullet('Blockchain verification'),
+            bullet('Legal document generation in <24 hours'),
+            heading2('Layer 4: Legal Enforcement'),
+            bullet('Expert legal network integration'),
+            bullet('Automated compliance workflows'),
+            bullet('Government filing integration'),
+            pageBreak(),
+
+            // Section 3 — Market
+            heading1('3. Market Opportunity: $15.7B TAM'),
+            makeTable(
+              ['Market Segment', 'Size', 'Share'],
+              [['Digital Content Creators', '$8.2B', '52%'], ['Enterprise IP Management', '$4.7B', '30%'], ['Legal Technology', '$2.8B', '18%'], ['Total Addressable Market', '$15.7B', '100%']]
+            ),
+            new Paragraph({ text: '' }),
+            heading2('Market Drivers'),
+            bullet('Creator economy growing 23% annually'),
+            bullet('AI adoption accelerating IP theft'),
+            bullet('Increasing regulatory pressure globally'),
+            bullet('Rising global demand for IP protection'),
+            pageBreak(),
+
+            // Section 4 — Business Model
+            heading1('4. Business Model'),
+            heading2('Subscription Tiers (70% of Revenue)'),
+            makeTable(['Tier', 'Price'], [['Free', '$0/mo'], ['Student', '$19.99/mo'], ['Starter', '$29.99/mo'], ['Professional', '$199.99/mo'], ['Enterprise', '$5,000/mo']]),
+            new Paragraph({ text: '' }),
+            heading2('Transaction Fees (20%)'),
+            bullet('15–20% commission on legal documents and consultations'),
+            bullet('$25–$100 per DMCA case'),
+            heading2('Enterprise Solutions (10%)'),
+            bullet('White-label licensing: $10K–$100K/year'),
+            bullet('Custom integrations: $25K–$250K'),
+            heading2('Unit Economics'),
+            makeTable(['Metric', 'Value'], [['Customer Acquisition Cost (CAC)', '$15'], ['Customer Lifetime Value (LTV)', '$583'], ['LTV/CAC Ratio', '39x'], ['Payback Period', '0.4 months']]),
+            pageBreak(),
+
+            // Section 5 — Traction
+            heading1('5. Traction & Metrics'),
+            makeTable(
+              ['Metric', 'Current Value'],
+              [
+                ['Monthly Recurring Revenue', '$200/mo (+45% MoM)'],
+                ['Active Users', '50+'],
+                ['Protected Artworks', '500+'],
+                ['Monitoring Scans', '2,000+'],
+                ['DMCA Notices Filed', '25+'],
+                ['Customer Satisfaction', '94%'],
+                ['Monthly Retention Rate', '89%'],
+                ['Average Revenue Per User', '$85/month'],
+              ]
+            ),
+            pageBreak(),
+
+            // Section 6 — Financials
+            heading1('6. Financial Projections'),
+            makeTable(
+              ['Metric', 'Year 1', 'Year 2', 'Year 3'],
+              [['Customers', '120', '350', '750'], ['ARPU', '$35', '$43', '$56'], ['Monthly Recurring Revenue', '$4.2K', '$15K', '$42K'], ['Annual Revenue', '$50K', '$180K', '$500K']]
+            ),
+            new Paragraph({ text: '' }),
+            bullet('Series A readiness: 15–18 months'),
+            bullet('Expected Series A valuation: $3M–$10M'),
+            bullet('Monthly growth rate: 15% (conservative)'),
+            bullet('Annual retention rate: 85%'),
+            pageBreak(),
+
+            // Section 7 — Investment
+            heading1('7. Investment Opportunity'),
+            heading2('Investment Terms'),
+            makeTable(
+              ['Term', 'Details'],
+              [['Amount Seeking', '$100,000'], ['Pre-money Valuation', '$1,000,000'], ['Post-money Valuation', '$1,100,000'], ['Security Type', 'Series A Preferred Stock'], ['Option Pool', '15%']]
+            ),
+            new Paragraph({ text: '' }),
+            heading2('Use of Funds'),
+            makeTable(
+              ['Category', 'Allocation', 'Amount'],
+              [['Product Development', '50%', '$50,000'], ['Customer Acquisition', '30%', '$30,000'], ['Operations & Legal', '15%', '$15,000'], ['Working Capital', '5%', '$5,000']]
+            ),
+            new Paragraph({ text: '' }),
+            heading2('18-Month Milestones'),
+            bullet('250 customers by month 6'),
+            bullet('$4.2K MRR by month 12'),
+            bullet('$50K ARR by month 18 → Series A ready'),
+            pageBreak(),
+
+            // Contact
+            heading1('Contact Information'),
+            body('Ready to protect the creator economy? Get in touch to schedule a demo and access due diligence materials.'),
+            new Paragraph({ children: [new TextRun({ text: 'Email: ', bold: true, size: 22 }), new TextRun({ text: 'investors@tsmo.app', size: 22, color: '1E3A8A' })] }),
+            new Paragraph({ children: [new TextRun({ text: 'Website: ', bold: true, size: 22 }), new TextRun({ text: 'tsmo.app', size: 22, color: '1E3A8A' })] }),
+            new Paragraph({ children: [new TextRun({ text: 'Founder: ', bold: true, size: 22 }), new TextRun({ text: 'shirleena.cunningham@tsmowatch.com', size: 22 })] }),
+          ],
+        }],
+      });
+
+      const blob = await Packer.toBlob(doc);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'TSMO_Investor_Pitch_Deck.docx';
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('Word document downloaded successfully!');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to generate Word document. Please try again.');
+    }
+  };
+
   return (
     <div className="bg-gradient-to-br from-background to-secondary/20 py-20 px-4">
       <div className="container mx-auto max-w-6xl">
@@ -853,8 +1243,36 @@ const InvestorPitchDeck = () => {
           </div>
         </div>
 
+        {/* Download Pitch Deck */}
+        <div className="mt-10">
+          <Card className="border-primary/20 bg-primary/5">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <Download className="h-6 w-6 text-primary" />
+                <h3 className="text-xl font-semibold">Download Pitch Deck</h3>
+              </div>
+              <p className="text-muted-foreground mb-5 text-sm">
+                Take a copy of the full TSMO investor presentation — all 8 slides, financial projections, and investment terms.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 mb-4">
+                <Button onClick={downloadPDF} className="gap-2">
+                  <FileText className="h-4 w-4" />
+                  Download PDF
+                </Button>
+                <Button onClick={downloadWord} variant="outline" className="gap-2">
+                  <FileDown className="h-4 w-4" />
+                  Download Word Doc (.docx)
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                PDF is print-ready · Word doc is fully editable · Both files are text-based and under 1 MB
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Contact Information */}
-        <div className="mt-12 text-center">
+        <div className="mt-8 text-center">
           <Card className="bg-primary/5 border-primary/20">
             <CardContent className="p-6">
               <h3 className="text-xl font-semibold mb-4">Ready to Learn More?</h3>
