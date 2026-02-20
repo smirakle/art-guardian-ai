@@ -1,83 +1,107 @@
 
-# Why TSMO Is Not Passing C2PA Conformance
+# NSF SBIR Grant Page — Admin Panel
 
-## Root Cause Analysis
+## Overview
 
-There are TWO distinct problems blocking conformance. One is a missing credential (external action required), and one is a fixable technical gap in the evidence package.
+A new **"NSF Grant"** tab will be added to the Admin panel (`src/pages/Admin.tsx`), housing a brand-new component `src/components/admin/NSFSBIRGrant.tsx`. The page will present the full NSF SBIR-formatted grant narrative for TSMO Watch, broken into the official required sections, with a copy-to-clipboard and PDF download capability.
 
 ---
 
-## Problem 1: Missing Production Signing Credentials (Critical — External Action Required)
+## NSF SBIR Required Sections (Content Plan)
 
-The live readiness check confirms all 3 credentials are absent:
+The grant page will include all required NSF SBIR Phase I sections in order:
 
-| Secret | Status | Impact |
+1. **Cover Summary** — One-paragraph abstract (300 words max), project title, duration, requested amount
+2. **Intellectual Merit** — What makes TSMO's technical approach novel and scientifically/technically significant
+3. **Broader Impacts** — Societal benefit, economic impact on independent creators, alignment with NSF's democratization goals
+4. **Commercial Potential** — Market size (TAM/SAM/SOM), revenue model, go-to-market strategy, competitive landscape
+5. **Use of Funds Breakdown** — Itemized budget with justification (C2PA credentials, AI model training, legal infrastructure, accessibility)
+6. **Technical Approach** — The C2PA/JUMBF pipeline, style cloaking, reverse image search, 24/7 monitoring
+7. **Team & Qualifications** — Placeholder for principal investigator and team credentials
+8. **Milestone Timeline** — Key deliverables mapped to Phase I 6-month period
+
+---
+
+## Files to Create / Edit
+
+### New File: `src/components/admin/NSFSBIRGrant.tsx`
+
+A rich, scrollable admin component with:
+- Section-by-section NSF SBIR narrative using `Card` + `CardHeader` + `CardContent`
+- Color-coded section badges (e.g., blue for Intellectual Merit, green for Broader Impacts, amber for Commercial Potential)
+- A **Copy Section** button on each card (copies just that section's text to clipboard via the `navigator.clipboard` API)
+- A **Download Full Grant as PDF** button at the top using `jsPDF` (already installed) that exports all sections into a print-ready PDF
+- A **Budget Table** for Use of Funds with line items, low/high estimates, and justification column
+- A **Milestone Table** with phase, deliverable, month, and success metric columns
+- All content pre-filled with TSMO-specific real data (no placeholder Lorem Ipsum)
+
+### Edit: `src/pages/Admin.tsx`
+
+- Import `NSFSBIRGrant` from `@/components/admin/NSFSBIRGrant`
+- Add a new `TabsTrigger` for `"nsf-grant"` styled with an amber/gold gradient to stand out:
+  ```
+  bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border border-amber-500/20
+  ```
+- Add the corresponding `TabsContent` that renders `<NSFSBIRGrant />`
+
+---
+
+## Grant Content Details
+
+### Section 1 — Project Summary (Abstract)
+- Title: "AI-Powered Creative IP Protection and Content Provenance for Independent Artists"
+- Duration: 6 months (Phase I)
+- Requested Amount: $275,000
+- One-paragraph overview covering style cloaking, C2PA provenance, monitoring, and legal automation
+
+### Section 2 — Intellectual Merit
+- Novel application of C2PA v2.2 + JUMBF metadata embedding to protect independent creators (not just enterprise)
+- First platform to combine adversarial style cloaking + cryptographic provenance in a single pipeline
+- Technical innovation in perceptual hashing across 47+ platforms simultaneously
+- Alignment with NSF priorities: trustworthy AI, human-centered computing, cybersecurity
+
+### Section 3 — Broader Impacts
+- 57 million independent creators in the US (BLS/Etsy data)
+- Economic harm from AI scraping estimated at $15B+ annually
+- TSMO reduces legal cost barrier from $5,000–$50,000 per DMCA case to near-zero via automation
+- Alignment with NSF broadening participation: designed for underserved creator communities
+- C2PA ecosystem contribution: open-standard implementation benefits the entire creative industry
+
+### Section 4 — Commercial Potential
+- TAM: $4.2B (global digital content protection market, 2024)
+- SAM: $820M (independent creator segment)
+- SOM: $41M (3-year realistic capture)
+- Revenue: SaaS tiers ($9.99–$49.99/mo) + enterprise licensing + government contracts
+- Competitors: Pixsy (detection only), Copytrack (detection only) — TSMO uniquely combines prevention + detection + legal automation
+
+### Section 5 — Use of Funds (Budget Table)
+
+| Line Item | Low Estimate | High Estimate | Justification |
+|---|---|---|---|
+| C2PA Production Signing Credentials | $3,000 | $8,000 | SSL.com/DigiCert X.509 cert + CAI issuer registration |
+| AI Detection Model Training | $15,000 | $40,000 | GPU compute + labeled training datasets |
+| Legal Automation Infrastructure | $10,000 | $25,000 | DMCA filing API integrations |
+| Platform Accessibility & Free Tier | $5,000 | $12,000 | Onboarding, UX, educator outreach |
+| Personnel (Principal Investigator) | $120,000 | $150,000 | Lead researcher/developer, 6 months |
+| Indirect Costs (F&A, ~26%) | $40,000 | $62,000 | Facilities & administration |
+| **Total** | **$193,000** | **$297,000** | |
+
+### Section 6 — Milestone Timeline (6-Month Phase I)
+
+| Month | Deliverable | Success Metric |
 |---|---|---|
-| `C2PA_PRIVATE_KEY` | Missing | Signatures use throwaway runtime keys |
-| `C2PA_SIGNING_CERT` | Missing | No trusted X.509 certificate chain |
-| `C2PA_ISSUER_ID` | Missing | Not registered with CAI |
-
-Without these, every manifest is signed in **self-signed mode**. Any C2PA-compliant validator (including the CAI's own tools) will flag these as **"untrusted"** because the certificate is not chained to a recognized trust anchor.
-
-**This cannot be fixed in code.** These credentials must be obtained from:
-- **SSL.com** or **DigiCert** for the X.509 signing certificate
-- **The Content Authenticity Initiative (CAI)** for the Issuer ID / Organization registration
+| 1–2 | C2PA production credential procurement & integration | `trustStatus: trusted` from CAI validator |
+| 2–3 | AI detection model v2 training complete | 92%+ accuracy on held-out test set |
+| 3–4 | Legal automation: DMCA filing API live | End-to-end filing time <5 minutes |
+| 4–5 | Free tier launch with 1,000 creator onboarding | 1,000 registered free-tier users |
+| 5–6 | Phase I report + Phase II proposal drafted | NSF-ready deliverables submitted |
 
 ---
 
-## Problem 2: Evidence Package Is Incomplete (Fixable Now)
+## Technical Implementation Notes
 
-The conformance reviewers need both a **protected image** (a real image file with the JUMBF manifest embedded) AND a correctly structured **manifest JSON** side by side, exactly as shown in the uploaded PDF. Currently:
-
-- The Generator Evidence tool produces the PDF report — but the PDF shows `signing_mode: "self-signed"` which immediately flags the submission.
-- The evidence checklist in the PDF marks `✓ JUMBF Embedded` but this depends on whether the edge function succeeded. When it fails silently, the PDF still shows the checkmark.
-- The PDF's conformance checklist needs to honestly reflect the current signing mode — if self-signed, it must say **"Self-Signed (Production Credentials Required)"** instead of implying it is trusted.
-- The Conformance Exporter exports JSON only — but reviewers expect to also receive the actual protected image file alongside the manifest.
-
----
-
-## What Will Be Fixed
-
-### Change 1: Update `GeneratorEvidencePDF.tsx`
-- In the **Evidence Summary** section, change the conformance checklist to reflect signing mode honestly:
-  - If `signingMode === 'self-signed'`, show a warning row: "⚠ Signing mode: SELF-SIGNED — Production credentials required for conformance"
-  - If `signingMode === 'production'`, show: "✓ Production certificate chain verified"
-- Add a dedicated **"Signing Mode"** alert box at the top of the signing details page so reviewers see it immediately.
-
-### Change 2: Update `GeneratorEvidence.tsx`
-- When downloading the evidence package, if `protectedBlob` is null (JUMBF embedding failed), show a clear toast warning rather than silently omitting the file.
-- Add a status indicator in the UI that explicitly shows **"Self-Signed Mode"** in amber/yellow (instead of the current green badge that looks like success) so the operator knows the submission is not yet production-ready.
-- Rename the green "Signed (self-signed)" badge to an amber **"Self-Signed — Not Conformance Ready"** badge when in self-signed mode.
-
-### Change 3: Add a Production Readiness Banner to `C2PAConformance.tsx`
-- Add a persistent top-of-page banner that reads: **"Production credentials are not configured. All manifests are self-signed and will not pass conformance review. Add C2PA_PRIVATE_KEY, C2PA_SIGNING_CERT, and C2PA_ISSUER_ID to your Supabase edge function secrets to enable production signing."**
-- Link directly to the Supabase secrets settings page.
-- Dismiss-able once the credentials are added (checks the readiness endpoint on load).
-
----
-
-## Technical Summary
-
-```text
-Current State:
-  sign-c2pa-manifest → no C2PA_PRIVATE_KEY found → generates ephemeral keypair
-  → signs manifest → COSE Sign1 envelope is valid cryptographically
-  → but certificate has NO chain to CAI trust list
-  → any C2PA validator returns trustStatus: "untrusted" or "self-signed"
-  → CAI reviewer rejects submission
-
-Required State:
-  C2PA_PRIVATE_KEY (ES256 PEM) + C2PA_SIGNING_CERT (X.509 PEM from SSL.com/DigiCert)
-  → sign-c2pa-manifest uses production key
-  → certificate chains to recognized CAI trust anchor
-  → validator returns trustStatus: "trusted"
-  → submission passes
-```
-
----
-
-## Files Changed
-
-1. `src/components/admin/c2pa/GeneratorEvidencePDF.tsx` — honest signing mode display
-2. `src/components/admin/c2pa/GeneratorEvidence.tsx` — amber badge for self-signed, warning on missing JUMBF
-3. `src/pages/admin/C2PAConformance.tsx` — production readiness banner at top of page
+- Component is purely presentational (no database queries needed)
+- PDF generation uses `jspdf` (already installed) — text-only PDF with section headers
+- Copy-to-clipboard uses native `navigator.clipboard.writeText()` with a toast confirmation via `sonner`
+- No new dependencies required
+- Follows the same pattern as `EUAIActCompliance.tsx` (cards, badges, progress indicators)
