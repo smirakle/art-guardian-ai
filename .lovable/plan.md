@@ -1,107 +1,140 @@
 
-# NSF SBIR Grant Page — Admin Panel
+# Editable Word Document Download — NSF SBIR Grant Page
 
 ## Overview
 
-A new **"NSF Grant"** tab will be added to the Admin panel (`src/pages/Admin.tsx`), housing a brand-new component `src/components/admin/NSFSBIRGrant.tsx`. The page will present the full NSF SBIR-formatted grant narrative for TSMO Watch, broken into the official required sections, with a copy-to-clipboard and PDF download capability.
+A **"Download Word Doc"** button will be added to the NSF Grant page alongside the existing PDF button. Clicking it will generate and download a fully editable `.docx` file containing all 8 grant sections, the budget table, and the milestone timeline — formatted and ready for submission editing in Microsoft Word or Google Docs.
 
 ---
 
-## NSF SBIR Required Sections (Content Plan)
+## Why a New Package Is Needed
 
-The grant page will include all required NSF SBIR Phase I sections in order:
-
-1. **Cover Summary** — One-paragraph abstract (300 words max), project title, duration, requested amount
-2. **Intellectual Merit** — What makes TSMO's technical approach novel and scientifically/technically significant
-3. **Broader Impacts** — Societal benefit, economic impact on independent creators, alignment with NSF's democratization goals
-4. **Commercial Potential** — Market size (TAM/SAM/SOM), revenue model, go-to-market strategy, competitive landscape
-5. **Use of Funds Breakdown** — Itemized budget with justification (C2PA credentials, AI model training, legal infrastructure, accessibility)
-6. **Technical Approach** — The C2PA/JUMBF pipeline, style cloaking, reverse image search, 24/7 monitoring
-7. **Team & Qualifications** — Placeholder for principal investigator and team credentials
-8. **Milestone Timeline** — Key deliverables mapped to Phase I 6-month period
+The project has `jsPDF` for PDF generation, but `.docx` files require a different format (Open XML). The standard pure-JavaScript library for this is **`docx`** (npm). It:
+- Runs entirely in the browser (no server needed)
+- Produces real `.docx` Open XML files editable in Word, Google Docs, LibreOffice
+- Has no backend or API key requirements
+- Is a well-maintained package (~2M weekly downloads)
 
 ---
 
-## Files to Create / Edit
+## Data Corrections Also Applied
 
-### New File: `src/components/admin/NSFSBIRGrant.tsx`
+The same corrections identified in the data-accuracy review will be applied in this same implementation pass:
 
-A rich, scrollable admin component with:
-- Section-by-section NSF SBIR narrative using `Card` + `CardHeader` + `CardContent`
-- Color-coded section badges (e.g., blue for Intellectual Merit, green for Broader Impacts, amber for Commercial Potential)
-- A **Copy Section** button on each card (copies just that section's text to clipboard via the `navigator.clipboard` API)
-- A **Download Full Grant as PDF** button at the top using `jsPDF` (already installed) that exports all sections into a print-ready PDF
-- A **Budget Table** for Use of Funds with line items, low/high estimates, and justification column
-- A **Milestone Table** with phase, deliverable, month, and success metric columns
-- All content pre-filled with TSMO-specific real data (no placeholder Lorem Ipsum)
-
-### Edit: `src/pages/Admin.tsx`
-
-- Import `NSFSBIRGrant` from `@/components/admin/NSFSBIRGrant`
-- Add a new `TabsTrigger` for `"nsf-grant"` styled with an amber/gold gradient to stand out:
-  ```
-  bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border border-amber-500/20
-  ```
-- Add the corresponding `TabsContent` that renders `<NSFSBIRGrant />`
-
----
-
-## Grant Content Details
-
-### Section 1 — Project Summary (Abstract)
-- Title: "AI-Powered Creative IP Protection and Content Provenance for Independent Artists"
-- Duration: 6 months (Phase I)
-- Requested Amount: $275,000
-- One-paragraph overview covering style cloaking, C2PA provenance, monitoring, and legal automation
-
-### Section 2 — Intellectual Merit
-- Novel application of C2PA v2.2 + JUMBF metadata embedding to protect independent creators (not just enterprise)
-- First platform to combine adversarial style cloaking + cryptographic provenance in a single pipeline
-- Technical innovation in perceptual hashing across 47+ platforms simultaneously
-- Alignment with NSF priorities: trustworthy AI, human-centered computing, cybersecurity
-
-### Section 3 — Broader Impacts
-- 57 million independent creators in the US (BLS/Etsy data)
-- Economic harm from AI scraping estimated at $15B+ annually
-- TSMO reduces legal cost barrier from $5,000–$50,000 per DMCA case to near-zero via automation
-- Alignment with NSF broadening participation: designed for underserved creator communities
-- C2PA ecosystem contribution: open-standard implementation benefits the entire creative industry
-
-### Section 4 — Commercial Potential
-- TAM: $4.2B (global digital content protection market, 2024)
-- SAM: $820M (independent creator segment)
-- SOM: $41M (3-year realistic capture)
-- Revenue: SaaS tiers ($9.99–$49.99/mo) + enterprise licensing + government contracts
-- Competitors: Pixsy (detection only), Copytrack (detection only) — TSMO uniquely combines prevention + detection + legal automation
-
-### Section 5 — Use of Funds (Budget Table)
-
-| Line Item | Low Estimate | High Estimate | Justification |
+| Field | Before | After | Source |
 |---|---|---|---|
-| C2PA Production Signing Credentials | $3,000 | $8,000 | SSL.com/DigiCert X.509 cert + CAI issuer registration |
-| AI Detection Model Training | $15,000 | $40,000 | GPU compute + labeled training datasets |
-| Legal Automation Infrastructure | $10,000 | $25,000 | DMCA filing API integrations |
-| Platform Accessibility & Free Tier | $5,000 | $12,000 | Onboarding, UX, educator outreach |
-| Personnel (Principal Investigator) | $120,000 | $150,000 | Lead researcher/developer, 6 months |
-| Indirect Costs (F&A, ~26%) | $40,000 | $62,000 | Facilities & administration |
-| **Total** | **$193,000** | **$297,000** | |
-
-### Section 6 — Milestone Timeline (6-Month Phase I)
-
-| Month | Deliverable | Success Metric |
-|---|---|---|
-| 1–2 | C2PA production credential procurement & integration | `trustStatus: trusted` from CAI validator |
-| 2–3 | AI detection model v2 training complete | 92%+ accuracy on held-out test set |
-| 3–4 | Legal automation: DMCA filing API live | End-to-end filing time <5 minutes |
-| 4–5 | Free tier launch with 1,000 creator onboarding | 1,000 registered free-tier users |
-| 5–6 | Phase I report + Phase II proposal drafted | NSF-ready deliverables submitted |
+| Creator count | 57M | 64M | MBO Partners / Upwork 2024 |
+| Economic harm | $15B+ (Creative Economy Coalition 2024) | $17.5B+ (UNESCO Creative Economy Report, 2026) |
+| TAM | $4.2B | $6.72B | MarketsandMarkets 2025 |
+| NSF Program badge | 47.084 | NSF 24-579 | NSF official solicitation |
+| Phase I max note | $275,000 | $275,000 (max: $305,000) | Solicitation NSF 24-579 |
+| Advisory board blurb | 57M creator segment | 64M creator segment | — |
 
 ---
 
-## Technical Implementation Notes
+## Files to Edit
 
-- Component is purely presentational (no database queries needed)
-- PDF generation uses `jspdf` (already installed) — text-only PDF with section headers
-- Copy-to-clipboard uses native `navigator.clipboard.writeText()` with a toast confirmation via `sonner`
-- No new dependencies required
-- Follows the same pattern as `EUAIActCompliance.tsx` (cards, badges, progress indicators)
+### 1. `src/components/admin/NSFSBIRGrant.tsx`
+
+#### a) Add `downloadWord` function
+
+Using the `docx` library, this function will construct a multi-section Word document with:
+
+- **Title page block** — Project title, applicant, program, duration, requested amount
+- **8 narrative sections** — Each section gets a bold heading + body paragraphs (pre-filled from the same `sections` constants already defined)
+- **Budget table** — A proper Word table with headers: Line Item / Low Estimate / High Estimate / Justification; totals row in bold
+- **Milestone table** — Month / Deliverable / Success Metric columns
+- **Page breaks** between major sections for clean printing
+
+The function saves as `TSMO_Watch_NSF_SBIR_Phase_I_Grant.docx`.
+
+#### b) Add "Download Word Doc" button in the header card
+
+Next to the existing amber "Download PDF" button, add a second button:
+```
+<Button onClick={downloadWord} variant="outline" className="gap-2 shrink-0">
+  <FileDown className="h-4 w-4" />
+  Download Word Doc
+</Button>
+```
+
+And a matching button in the bottom CTA row (currently only has the PDF button).
+
+#### c) Fix all inaccurate data in the same pass
+
+- `REQUESTED_AMOUNT` constant → `"$275,000 (Phase I max: $305,000)"`
+- `NSF_PROGRAM` constant → `"NSF SBIR Phase I — Solicitation NSF 24-579"`
+- Header badge → `"Program: NSF 24-579"`
+- Broader Impacts stat card: `"57 Million"` → `"64 Million"`, citation updated
+- Broader Impacts stat card: `"$15B+"` → `"$17.5B+"`, citation updated to UNESCO 2026
+- `sections.broaderImpacts` text string: same corrections
+- Commercial Potential TAM card: `"$4.2B"` → `"$6.72B"`, citation updated to MarketsandMarkets 2025
+- `sections.commercialPotential` text string: same correction
+- Team advisory board description: `"57M creator segment"` → `"64M creator segment"`
+
+### 2. `package.json` / `vite.config.ts`
+
+Install the `docx` package:
+```
+npm install docx
+```
+
+This is the only new dependency needed. No backend changes required.
+
+---
+
+## Word Document Structure
+
+```text
+TSMO Watch — NSF SBIR Phase I Grant Application
+================================================
+
+Project Title: AI-Powered Creative IP Protection...
+Small Business: TSMO Watch, Inc.
+Program: NSF SBIR Phase I — Solicitation NSF 24-579
+Duration: 6 months (Phase I)
+Requested Amount: $275,000 (Phase I max: $305,000)
+
+[Page Break]
+
+1. PROJECT SUMMARY / ABSTRACT
+-------------------------------
+[Full narrative text...]
+
+[Page Break]
+
+2. INTELLECTUAL MERIT
+----------------------
+[Full narrative text...]
+
+... (sections 3–6)
+
+7. USE OF FUNDS BREAKDOWN (TABLE)
+----------------------------------
+| Line Item | Low | High | Justification |
+|-----------|-----|------|---------------|
+| C2PA Credentials | $3,000 | $8,000 | ... |
+...
+| TOTAL | $193,000 | $297,000 | |
+
+8. MILESTONE TIMELINE (TABLE)
+-------------------------------
+| Month | Deliverable | Success Metric |
+| 1–2 | C2PA integration | trustStatus: trusted |
+...
+
+9. TEAM & QUALIFICATIONS
+-------------------------
+[Full narrative text...]
+```
+
+---
+
+## Technical Notes
+
+- The `docx` library generates Open XML `.docx` blobs in the browser via `Packer.toBlob()`
+- The blob is downloaded using `URL.createObjectURL()` — same pattern already used elsewhere in the codebase (e.g., `AIProtectedFilesManager.tsx`)
+- All section text comes from the same `sections` constants already defined — no content duplication
+- Budget and milestone data come from the same `budgetItems` and `milestones` arrays
+- No backend or Supabase changes required — purely frontend
+- The Word doc will be fully editable: all text, tables, and headings can be modified in Word or Google Docs before submission
