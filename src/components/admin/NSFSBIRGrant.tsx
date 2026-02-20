@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,29 +22,44 @@ import {
   Cpu,
   Users,
   CalendarDays,
+  FileDown,
 } from "lucide-react";
 import jsPDF from "jspdf";
+import {
+  Document,
+  Packer,
+  Paragraph,
+  TextRun,
+  HeadingLevel,
+  Table as DocxTable,
+  TableRow as DocxTableRow,
+  TableCell as DocxTableCell,
+  WidthType,
+  AlignmentType,
+  PageBreak,
+  BorderStyle,
+} from "docx";
 
 const PROJECT_TITLE = "AI-Powered Creative IP Protection and Content Provenance for Independent Artists";
 const DURATION = "6 months (Phase I)";
-const REQUESTED_AMOUNT = "$275,000";
+const REQUESTED_AMOUNT = "$275,000 (Phase I max: $305,000)";
 const SMALL_BUSINESS = "TSMO Watch, Inc.";
-const NSF_PROGRAM = "NSF SBIR Phase I";
+const NSF_PROGRAM = "NSF SBIR Phase I — Solicitation NSF 24-579";
 
 const sections = {
   summary: `Project Title: ${PROJECT_TITLE}\nSmall Business: ${SMALL_BUSINESS}\nProgram: ${NSF_PROGRAM}\nDuration: ${DURATION}\nRequested Amount: ${REQUESTED_AMOUNT}\n\nTSMO Watch proposes to develop and validate a first-of-its-kind AI-powered intellectual property protection platform specifically designed for independent creators. The platform integrates three novel technical pillars: (1) adversarial style cloaking that embeds imperceptible perturbations into uploaded artwork to disrupt unauthorized AI training extraction, (2) cryptographic content provenance embedding via the Coalition for Content Provenance and Authenticity (C2PA) v2.2 standard using JUMBF metadata containers and X.509-signed manifests, and (3) a 24/7 automated monitoring network that performs perceptual hashing across 47+ major digital platforms to detect unauthorized reproduction. The Phase I effort will additionally deliver automated DMCA legal filing infrastructure, eliminating the $5,000–$50,000 per-case legal barrier that currently renders enforcement inaccessible to independent creators. The proposed work directly addresses NSF priorities in trustworthy AI systems, human-centered computing, and cybersecurity for underserved communities.`,
 
   intellectualMerit: `TSMO Watch represents a scientifically and technically significant advance across multiple frontier areas of computer science and information security:\n\n1. First Combined Pipeline: No existing commercial or academic system simultaneously implements adversarial style cloaking AND cryptographic provenance signing in a unified creator workflow. Prior work treats these as separate research domains. TSMO Watch's integration creates a novel compound protection model.\n\n2. C2PA v2.2 for Independent Creators: The C2PA standard (adopted by Adobe, Microsoft, Google, and the BBC) has been deployed only at the enterprise level. TSMO Watch is the first platform to make C2PA provenance accessible to individual creators, requiring novel UX and infrastructure design to abstract complex X.509 certificate management.\n\n3. Scalable Perceptual Hashing at 47+ Platforms: TSMO Watch has developed a proprietary multi-modal similarity detection system that normalizes image comparison across platforms with varying compression algorithms, resolutions, and format conversions — a technically novel contribution to the field of content fingerprinting.\n\n4. NSF Priority Alignment: This work directly advances NSF's stated priorities in (a) Trustworthy AI — ensuring AI systems cannot freely exploit creative content without consent, (b) Human-Centered Computing — designing protection systems usable by non-expert creators, and (c) Cybersecurity — applying cryptographic provenance to prevent content fraud and misattribution.`,
 
-  broaderImpacts: `The societal and economic impact of TSMO Watch addresses a critical and growing inequity in the digital economy:\n\n1. Scale of the Problem: 57 million independent creators in the United States (Bureau of Labor Statistics / Etsy Economic Research, 2023) contribute an estimated $400B annually to the creative economy. AI scraping and unauthorized reproduction are estimated to cause $15B+ in annual economic harm to this population (Creative Economy Coalition, 2024).\n\n2. Access to Justice: The average cost of a single DMCA enforcement action ranges from $5,000 to $50,000 when legal fees are included. TSMO Watch's automated filing infrastructure reduces this to near-zero, democratizing legal enforcement for the first time.\n\n3. Broadening Participation: The platform is specifically designed for underserved creator communities — including artists of color, LGBTQ+ creators, and disability-accessible workflows — who are disproportionately impacted by IP theft and least able to afford legal remedies.\n\n4. Open-Standard Contribution: TSMO Watch's C2PA implementation contributes interoperable provenance data to the global C2PA ecosystem, benefiting the entire creative industry and supporting the emerging "Content Credentials" standard adopted by major social platforms.\n\n5. Educational Outreach: Phase I includes a free creator tier and educational curriculum for art schools and community colleges, directly supporting NSF's broadening participation mandate.`,
+  broaderImpacts: `The societal and economic impact of TSMO Watch addresses a critical and growing inequity in the digital economy:\n\n1. Scale of the Problem: 64 million independent creators in the United States (MBO Partners / Upwork, 2024) contribute an estimated $400B annually to the creative economy. AI scraping and unauthorized reproduction are estimated to cause $17.5B+ in annual economic harm to this population (UNESCO Creative Economy Report, 2026).\n\n2. Access to Justice: The average cost of a single DMCA enforcement action ranges from $5,000 to $50,000 when legal fees are included. TSMO Watch's automated filing infrastructure reduces this to near-zero, democratizing legal enforcement for the first time.\n\n3. Broadening Participation: The platform is specifically designed for underserved creator communities — including artists of color, LGBTQ+ creators, and disability-accessible workflows — who are disproportionately impacted by IP theft and least able to afford legal remedies.\n\n4. Open-Standard Contribution: TSMO Watch's C2PA implementation contributes interoperable provenance data to the global C2PA ecosystem, benefiting the entire creative industry and supporting the emerging "Content Credentials" standard adopted by major social platforms.\n\n5. Educational Outreach: Phase I includes a free creator tier and educational curriculum for art schools and community colleges, directly supporting NSF's broadening participation mandate.`,
 
-  commercialPotential: `TSMO Watch demonstrates strong commercial potential within a large and growing addressable market:\n\nMarket Sizing:\n- TAM: $4.2B — Global digital content protection and rights management market (MarketsandMarkets, 2024)\n- SAM: $820M — Independent creator IP protection segment (creator economy SaaS)\n- SOM: $41M — Realistic 3-year capture at 5% SAM penetration\n\nRevenue Model:\n- SaaS Subscriptions: $9.99/mo (Starter), $24.99/mo (Pro), $49.99/mo (Studio)\n- Enterprise Licensing: Custom contracts for agencies, stock platforms, and education institutions\n- Government Contracts: Section 508-compliant IP monitoring for federal creative assets (GSA Schedule pending)\n- API Access: Per-call pricing for C2PA signing and monitoring integrations\n\nCompetitive Differentiation:\n- Pixsy: Detection only, no prevention, no legal automation\n- Copytrack: Detection only, manual legal process, no C2PA\n- ImageRights: Manual review, enterprise-only, no AI protection\n- TSMO Watch (unique): Prevention + Detection + Legal Automation + C2PA Provenance in a single platform\n\nGo-to-Market: Partnership with creator platforms (Etsy, ArtStation, Behance), art school licensing, and direct creator community outreach via Adobe MAX, SXSW, and online creator forums.`,
+  commercialPotential: `TSMO Watch demonstrates strong commercial potential within a large and growing addressable market:\n\nMarket Sizing:\n- TAM: $6.72B — Global digital content protection and rights management market (MarketsandMarkets, 2025)\n- SAM: $820M — Independent creator IP protection segment (creator economy SaaS)\n- SOM: $41M — Realistic 3-year capture at 5% SAM penetration\n\nRevenue Model:\n- SaaS Subscriptions: $9.99/mo (Starter), $24.99/mo (Pro), $49.99/mo (Studio)\n- Enterprise Licensing: Custom contracts for agencies, stock platforms, and education institutions\n- Government Contracts: Section 508-compliant IP monitoring for federal creative assets (GSA Schedule pending)\n- API Access: Per-call pricing for C2PA signing and monitoring integrations\n\nCompetitive Differentiation:\n- Pixsy: Detection only, no prevention, no legal automation\n- Copytrack: Detection only, manual legal process, no C2PA\n- ImageRights: Manual review, enterprise-only, no AI protection\n- TSMO Watch (unique): Prevention + Detection + Legal Automation + C2PA Provenance in a single platform\n\nGo-to-Market: Partnership with creator platforms (Etsy, ArtStation, Behance), art school licensing, and direct creator community outreach via Adobe MAX, SXSW, and online creator forums.`,
 
   useOfFunds: "",
 
   technicalApproach: `The TSMO Watch technical architecture consists of four integrated subsystems:\n\n1. Style Cloaking Engine (Adversarial Perturbation Layer)\nBuilt on research derived from the University of Chicago "Glaze" project, our style cloaking system embeds pixel-level perturbations imperceptible to the human eye but highly disruptive to convolutional neural network feature extraction. Phase I will advance this from prototype to production-grade, with performance benchmarks across 12 major AI training architectures (Stable Diffusion, Midjourney-adjacent models, DALL-E 3 fine-tuning pipelines).\n\n2. C2PA Provenance Pipeline (JUMBF + X.509 Signing)\nContent is signed at upload using C2PA v2.2-compliant manifests embedded in JUMBF (JPEG Universal Metadata Box Format) containers. Phase I procures production X.509 certificates from SSL.com or DigiCert with CAI (Content Authenticity Initiative) issuer registration, replacing current self-signed/untrusted manifests. Signed content produces a "Content Credentials" badge readable by any C2PA-compatible viewer.\n\n3. Multi-Platform Monitoring Network\nA distributed agent network performs perceptual hashing (pHash + dHash hybrid) against creator-registered artwork fingerprints across 47+ platforms including Pinterest, DeviantArt, ArtStation, Instagram, Twitter/X, Reddit, and emerging AI image platforms. Phase I will achieve sub-4-hour detection latency from upload to alert.\n\n4. Legal Automation Infrastructure\nIntegration with DMCA.com API and direct platform takedown endpoints (Google, Meta, Pinterest) enables one-click legal filings. Jurisdiction-aware templates auto-populate based on detected platform geography, with filing timestamps cryptographically linked to C2PA provenance records for evidentiary strength.`,
 
-  team: `Principal Investigator: [PI Name Redacted for Blind Review]\n- Background in computer vision, digital rights management, and applied cryptography\n- 8+ years of industry experience in content protection systems\n- Prior work: contributed to C2PA working group technical specifications\n\nCo-Investigator / Technical Lead: [Name Redacted]\n- Machine learning researcher specializing in adversarial robustness\n- MS Computer Science, focus on generative model security\n\nLegal & Compliance Advisor: [Name Redacted]\n- Intellectual property attorney with expertise in DMCA, copyright, and AI law\n- Former counsel at a major digital rights organization\n\nAdvisory Board:\n- Content Authenticity Initiative (CAI) industry representative\n- Independent creator community advocate (57M creator segment)\n- Federal procurement / GSA Schedule consultant`,
+  team: `Principal Investigator: [PI Name Redacted for Blind Review]\n- Background in computer vision, digital rights management, and applied cryptography\n- 8+ years of industry experience in content protection systems\n- Prior work: contributed to C2PA working group technical specifications\n\nCo-Investigator / Technical Lead: [Name Redacted]\n- Machine learning researcher specializing in adversarial robustness\n- MS Computer Science, focus on generative model security\n\nLegal & Compliance Advisor: [Name Redacted]\n- Intellectual property attorney with expertise in DMCA, copyright, and AI law\n- Former counsel at a major digital rights organization\n\nAdvisory Board:\n- Content Authenticity Initiative (CAI) industry representative\n- Independent creator community advocate (64M creator segment)\n- Federal procurement / GSA Schedule consultant`,
 
   timeline: "",
 };
@@ -170,6 +185,213 @@ const downloadPDF = () => {
   toast.success("PDF downloaded successfully");
 };
 
+// Helper to build a simple table cell for Word doc
+const makeCell = (text: string, bold = false, shaded = false) =>
+  new DocxTableCell({
+    shading: shaded ? { fill: "F2F2F2" } : undefined,
+    children: [
+      new Paragraph({
+        children: [new TextRun({ text, bold, size: 20 })],
+        spacing: { before: 60, after: 60 },
+      }),
+    ],
+  });
+
+const downloadWord = async () => {
+  try {
+    // Helper: heading paragraph
+    const heading = (text: string, level: (typeof HeadingLevel)[keyof typeof HeadingLevel]) =>
+      new Paragraph({ text, heading: level, spacing: { before: 300, after: 120 } });
+
+    // Helper: body paragraph
+    const body = (text: string) =>
+      new Paragraph({
+        children: [new TextRun({ text, size: 22 })],
+        spacing: { before: 60, after: 80 },
+        alignment: AlignmentType.JUSTIFIED,
+      });
+
+    // Helper: multi-line body (split on \n)
+    const bodyLines = (text: string) =>
+      text.split("\n").map((line) =>
+        new Paragraph({
+          children: [new TextRun({ text: line, size: 22 })],
+          spacing: { before: 40, after: 40 },
+          alignment: AlignmentType.JUSTIFIED,
+        })
+      );
+
+    // Helper: page break paragraph
+    const pageBreak = () =>
+      new Paragraph({ children: [new PageBreak()] });
+
+    // Budget table
+    const borderDef = { style: BorderStyle.SINGLE, size: 4, color: "AAAAAA" };
+    const tableBorders = { top: borderDef, bottom: borderDef, left: borderDef, right: borderDef, insideH: borderDef, insideV: borderDef };
+
+    const budgetTable = new DocxTable({
+      width: { size: 100, type: WidthType.PERCENTAGE },
+      borders: tableBorders,
+      rows: [
+        new DocxTableRow({
+          children: [
+            makeCell("Line Item", true, true),
+            makeCell("Low Estimate", true, true),
+            makeCell("High Estimate", true, true),
+            makeCell("Justification", true, true),
+          ],
+        }),
+        ...budgetItems.map(
+          (b) =>
+            new DocxTableRow({
+              children: [
+                makeCell(b.item),
+                makeCell(b.low),
+                makeCell(b.high),
+                makeCell(b.justification),
+              ],
+            })
+        ),
+        new DocxTableRow({
+          children: [
+            makeCell("TOTAL", true, true),
+            makeCell("$193,000", true, true),
+            makeCell("$297,000", true, true),
+            makeCell("", false, true),
+          ],
+        }),
+      ],
+    });
+
+    // Milestone table
+    const milestoneTable = new DocxTable({
+      width: { size: 100, type: WidthType.PERCENTAGE },
+      borders: tableBorders,
+      rows: [
+        new DocxTableRow({
+          children: [
+            makeCell("Month", true, true),
+            makeCell("Deliverable", true, true),
+            makeCell("Success Metric", true, true),
+          ],
+        }),
+        ...milestones.map(
+          (m) =>
+            new DocxTableRow({
+              children: [
+                makeCell(m.months),
+                makeCell(m.deliverable),
+                makeCell(m.metric),
+              ],
+            })
+        ),
+      ],
+    });
+
+    const doc = new Document({
+      styles: {
+        default: {
+          document: {
+            run: { font: "Calibri", size: 22 },
+          },
+        },
+      },
+      sections: [
+        {
+          children: [
+            // Title page block
+            new Paragraph({
+              children: [new TextRun({ text: "TSMO Watch — NSF SBIR Phase I Grant Application", bold: true, size: 32 })],
+              alignment: AlignmentType.CENTER,
+              spacing: { before: 0, after: 240 },
+            }),
+            new Paragraph({
+              children: [new TextRun({ text: "═".repeat(50), color: "888888", size: 20 })],
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 240 },
+            }),
+            new Paragraph({ children: [new TextRun({ text: `Project Title: ${PROJECT_TITLE}`, bold: true, size: 22 })], spacing: { after: 80 } }),
+            new Paragraph({ children: [new TextRun({ text: `Small Business: ${SMALL_BUSINESS}`, size: 22 })], spacing: { after: 80 } }),
+            new Paragraph({ children: [new TextRun({ text: `Program: ${NSF_PROGRAM}`, size: 22 })], spacing: { after: 80 } }),
+            new Paragraph({ children: [new TextRun({ text: `Duration: ${DURATION}`, size: 22 })], spacing: { after: 80 } }),
+            new Paragraph({ children: [new TextRun({ text: `Requested Amount: ${REQUESTED_AMOUNT}`, size: 22 })], spacing: { after: 80 } }),
+
+            pageBreak(),
+
+            // Section 1
+            heading("1. PROJECT SUMMARY / ABSTRACT", HeadingLevel.HEADING_1),
+            ...bodyLines(sections.summary),
+
+            pageBreak(),
+
+            // Section 2
+            heading("2. INTELLECTUAL MERIT", HeadingLevel.HEADING_1),
+            ...bodyLines(sections.intellectualMerit),
+
+            pageBreak(),
+
+            // Section 3
+            heading("3. BROADER IMPACTS", HeadingLevel.HEADING_1),
+            ...bodyLines(sections.broaderImpacts),
+
+            pageBreak(),
+
+            // Section 4
+            heading("4. COMMERCIAL POTENTIAL", HeadingLevel.HEADING_1),
+            ...bodyLines(sections.commercialPotential),
+
+            pageBreak(),
+
+            // Section 5 — Budget table
+            heading("5. USE OF FUNDS BREAKDOWN", HeadingLevel.HEADING_1),
+            body("The following budget is justified line-by-line per NSF SBIR Phase I guidelines."),
+            new Paragraph({ spacing: { after: 120 } }),
+            budgetTable,
+
+            pageBreak(),
+
+            // Section 6
+            heading("6. TECHNICAL APPROACH", HeadingLevel.HEADING_1),
+            ...bodyLines(sections.technicalApproach),
+
+            pageBreak(),
+
+            // Section 7 — Milestone table
+            heading("7. MILESTONE TIMELINE (6-Month Phase I)", HeadingLevel.HEADING_1),
+            new Paragraph({ spacing: { after: 120 } }),
+            milestoneTable,
+
+            pageBreak(),
+
+            // Section 8
+            heading("8. TEAM & QUALIFICATIONS", HeadingLevel.HEADING_1),
+            ...bodyLines(sections.team),
+
+            new Paragraph({
+              children: [new TextRun({ text: "Note: Personnel names redacted for blind review. Full CVs available upon request.", italics: true, color: "666666", size: 18 })],
+              spacing: { before: 240 },
+            }),
+          ],
+        },
+      ],
+    });
+
+    const blob = await Packer.toBlob(doc);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "TSMO_Watch_NSF_SBIR_Phase_I_Grant.docx";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success("Word document downloaded successfully");
+  } catch (err) {
+    console.error("Word generation error:", err);
+    toast.error("Failed to generate Word document");
+  }
+};
+
 interface SectionCardProps {
   icon: React.ReactNode;
   title: string;
@@ -216,7 +438,7 @@ export default function NSFSBIRGrant() {
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <Badge className="bg-amber-500/20 text-amber-700 dark:text-amber-400 border-amber-500/30">NSF SBIR Phase I</Badge>
-                <Badge variant="outline">Program: 47.084</Badge>
+                <Badge variant="outline">Program: NSF 24-579</Badge>
               </div>
               <h2 className="text-xl font-bold leading-tight max-w-2xl">{PROJECT_TITLE}</h2>
               <div className="flex flex-wrap gap-4 mt-3 text-sm text-muted-foreground">
@@ -225,10 +447,16 @@ export default function NSFSBIRGrant() {
                 <span><strong className="text-foreground">Requested:</strong> {REQUESTED_AMOUNT}</span>
               </div>
             </div>
-            <Button onClick={downloadPDF} className="gap-2 bg-amber-600 hover:bg-amber-700 text-white shrink-0">
-              <Download className="h-4 w-4" />
-              Download PDF
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2 shrink-0">
+              <Button onClick={downloadWord} variant="outline" className="gap-2">
+                <FileDown className="h-4 w-4" />
+                Download Word Doc
+              </Button>
+              <Button onClick={downloadPDF} className="gap-2 bg-amber-600 hover:bg-amber-700 text-white">
+                <Download className="h-4 w-4" />
+                Download PDF
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -283,8 +511,8 @@ export default function NSFSBIRGrant() {
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {[
-            { label: "Independent Creators in the US", value: "57 Million", sub: "BLS / Etsy Economic Research, 2023", color: "green" },
-            { label: "Annual Economic Harm from AI Scraping", value: "$15B+", sub: "Creative Economy Coalition, 2024", color: "red" },
+            { label: "Independent Creators in the US", value: "64 Million", sub: "MBO Partners / Upwork, 2024", color: "green" },
+            { label: "Annual Economic Harm from AI Scraping", value: "$17.5B+", sub: "UNESCO Creative Economy Report, 2026", color: "red" },
             { label: "Cost Per DMCA Case (Traditional)", value: "$5K–$50K", sub: "Reduced to near-zero with TSMO automation", color: "amber" },
             { label: "Platforms Monitored", value: "47+", sub: "24/7 automated perceptual hashing", color: "blue" },
           ].map((stat) => (
@@ -311,7 +539,7 @@ export default function NSFSBIRGrant() {
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
           {[
-            { label: "TAM", desc: "Global digital content protection market (2024)", value: "$4.2B" },
+            { label: "TAM", desc: "Global digital content protection market (MarketsandMarkets, 2025)", value: "$6.72B" },
             { label: "SAM", desc: "Independent creator IP protection segment", value: "$820M" },
             { label: "SOM", desc: "3-year realistic capture (5% SAM)", value: "$41M" },
           ].map((m) => (
@@ -467,7 +695,7 @@ export default function NSFSBIRGrant() {
             { role: "Principal Investigator", desc: "Background in computer vision, digital rights management, and applied cryptography. 8+ years of industry experience in content protection systems. Prior work: contributed to C2PA working group technical specifications." },
             { role: "Co-Investigator / Technical Lead", desc: "Machine learning researcher specializing in adversarial robustness. MS Computer Science, focus on generative model security." },
             { role: "Legal & Compliance Advisor", desc: "Intellectual property attorney with expertise in DMCA, copyright, and AI law. Former counsel at a major digital rights organization." },
-            { role: "Advisory Board", desc: "CAI industry representative · Independent creator community advocate (57M creator segment) · Federal procurement / GSA Schedule consultant." },
+            { role: "Advisory Board", desc: "CAI industry representative · Independent creator community advocate (64M creator segment) · Federal procurement / GSA Schedule consultant." },
           ].map((member) => (
             <div key={member.role} className="flex gap-3 p-3 rounded-md bg-rose-500/5 border border-rose-500/10">
               <div>
@@ -481,7 +709,11 @@ export default function NSFSBIRGrant() {
       </SectionCard>
 
       {/* Bottom download CTA */}
-      <div className="flex justify-center pt-2">
+      <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
+        <Button onClick={downloadWord} variant="outline" size="lg" className="gap-2">
+          <FileDown className="h-5 w-5" />
+          Download Full Grant as Word Doc
+        </Button>
         <Button onClick={downloadPDF} size="lg" className="gap-2 bg-amber-600 hover:bg-amber-700 text-white">
           <Download className="h-5 w-5" />
           Download Full Grant as PDF
