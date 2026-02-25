@@ -10,6 +10,7 @@ import { SLAGuarantees } from "@/components/sla/SLAGuarantees";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import StripeDisclosure from "@/components/billing/StripeDisclosure";
 
 const Pricing = () => {
   const { toast } = useToast();
@@ -412,9 +413,7 @@ const Pricing = () => {
           {isProcessing ? "Processing..." : "Continue to Secure Checkout →"}
         </Button>
 
-        <p className="text-xs text-center text-muted-foreground mt-3">
-          🔒 Secure payment powered by Stripe
-        </p>
+        <StripeDisclosure className="mt-3 max-w-md mx-auto" />
       </div>
     );
   };

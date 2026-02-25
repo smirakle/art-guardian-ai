@@ -26,6 +26,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import FeatureGuard from '@/components/FeatureGuard';
+import StripeDisclosure from '@/components/billing/StripeDisclosure';
 
 interface PartnerTier {
   id: string;
@@ -502,6 +503,7 @@ export const PartnerPricingManager: React.FC = () => {
               </Card>
             ))}
           </div>
+          <StripeDisclosure className="max-w-md mx-auto" />
         </div>
 
         {/* Additional Information */}

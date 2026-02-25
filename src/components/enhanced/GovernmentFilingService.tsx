@@ -14,6 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import ComplianceNotice from '@/components/legal/ComplianceNotice';
+import StripeDisclosure from '@/components/billing/StripeDisclosure';
 
 const filingFormSchema = z.object({
   filingType: z.string().min(1, 'Filing type is required'),
@@ -519,6 +520,7 @@ const GovernmentFilingService: React.FC<GovernmentFilingServiceProps> = ({ userS
                   </>
                 )}
               </Button>
+              <StripeDisclosure />
             </div>
           </form>
         </CardContent>
