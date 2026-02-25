@@ -37,10 +37,11 @@ serve(async (req) => {
     // Define plan pricing (amounts in cents)
     const planPricing: Record<string, { monthly: number; yearly: number }> = {
       free: { monthly: 0, yearly: 0 },
-      student: { monthly: 1900, yearly: 19000 }, // $19/month, $190/year
-      starter: { monthly: 2900, yearly: 29000 }, // $29/month, $290/year  
-      professional: { monthly: 7900, yearly: 79000 }, // $79/month, $790/year
-      'pro-plus': { monthly: 14900, yearly: 149000 }, // $149/month, $1490/year
+      pro: { monthly: 2900, yearly: 29000 }, // $29/month, $290/year
+      student: { monthly: 1900, yearly: 19000 }, // $19/month, $190/year (legacy)
+      starter: { monthly: 2900, yearly: 29000 }, // $29/month, $290/year (legacy)
+      professional: { monthly: 7900, yearly: 79000 }, // $79/month, $790/year (legacy)
+      'pro-plus': { monthly: 14900, yearly: 149000 }, // $149/month, $1490/year (legacy)
     };
 
     // Handle free plan separately
