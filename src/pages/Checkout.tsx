@@ -21,12 +21,13 @@ import {
   Star,
   User,
   Users,
-  UserX
+  Building2
 } from "lucide-react";
 import { CheckoutTaxCalculation } from "@/components/billing/CheckoutTaxCalculation";
 import { UserGuide } from "@/components/UserGuide";
 import { checkoutGuide } from "@/data/userGuides";
 import { BetaTestingAgreement } from "@/components/checkout/BetaTestingAgreement";
+import StripeDisclosure from "@/components/billing/StripeDisclosure";
 import {
   Dialog,
   DialogContent,
@@ -37,17 +38,19 @@ import {
 
 interface PlanDetails {
   name: string;
-  price: number;
+  price: number | null;
+  originalPrice?: number | null;
   features: string[];
   badge?: string;
+  discount?: string;
+  isContactSales?: boolean;
 }
 
 const Checkout = () => {
   const { toast } = useToast();
   const { user, signIn, signUp } = useAuth();
-  const [selectedPlan, setSelectedPlan] = useState<string>("professional");
+  const [selectedPlan, setSelectedPlan] = useState<string>("pro");
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
-  const [paymentMethod, setPaymentMethod] = useState<"card" | "paypal">("card");
   const [socialMediaAddon, setSocialMediaAddon] = useState(false);
   const [aiTrainingAddon, setAiTrainingAddon] = useState(false);
   const [promoCode, setPromoCode] = useState("");
@@ -71,22 +74,53 @@ const Checkout = () => {
   });
 
   const plans: Record<string, PlanDetails> = {
-    student: {
-      name: "Student",
-      price: 19,
-      features: ["Up to 1,000 artworks", "Basic visual recognition", "Monthly reports", "Email support"],
-      badge: "Student Discount"
+    free: {
+      name: "Free",
+      price: 0,
+      features: [
+        "Up to 50 artworks protected",
+        "Basic image upload & storage",
+        "Basic monitoring",
+        "Email alerts",
+        "AI Training protection",
+        "Community support"
+      ],
     },
-    starter: {
-      name: "Starter",
+    pro: {
+      name: "Pro",
       price: 29,
-      features: ["Up to 3,500 artworks", "Basic visual recognition", "Weekly reports", "Email support"]
+      originalPrice: 49,
+      discount: "40% OFF",
+      badge: "Most Popular",
+      features: [
+        "Up to 50,000 artworks protected",
+        "Advanced image upload & storage",
+        "Real-time monitoring",
+        "Instant email & push alerts",
+        "AI Training protection",
+        "AI threat detection",
+        "Portfolio monitoring",
+        "Watermark protection",
+        "Blockchain verification",
+        "DMCA filing assistance",
+        "Priority support"
+      ],
     },
-    professional: {
-      name: "Professional",
-      price: 199,
-      features: ["Up to 250,000 artworks", "Advanced AI recognition", "Real-time monitoring", "Blockchain verification", "Deepfake detection included", "Automated DMCA", "Priority support"],
-      badge: "Most Popular"
+    enterprise: {
+      name: "Enterprise",
+      price: null,
+      isContactSales: true,
+      features: [
+        "Unlimited artworks protected",
+        "Everything in Pro, plus:",
+        "Custom AI model training",
+        "Dedicated account manager",
+        "Custom integrations & API",
+        "Team management",
+        "Advanced analytics",
+        "SLA guarantees",
+        "White-label options"
+      ],
     }
   };
 
@@ -99,16 +133,23 @@ const Checkout = () => {
   }, []);
 
   const currentPlan = plans[selectedPlan];
-  const yearlyDiscount = 0.2;
-  let basePrice = billingCycle === "yearly" 
-    ? currentPlan.price * 12 * (1 - yearlyDiscount)
-    : currentPlan.price;
   
-  // Add social media addon cost (available for all plans)
+  // Price calculations
+  const getBasePrice = () => {
+    if (!currentPlan.price) return 0;
+    if (billingCycle === "yearly") {
+      return selectedPlan === "pro" ? 290 : currentPlan.price * 12;
+    }
+    return currentPlan.price;
+  };
+
+  const basePrice = getBasePrice();
+  
+  // Add social media addon cost
   const socialAddonCost = socialMediaAddon ? (billingCycle === "yearly" ? 1188 : 99) : 0;
   const socialStartupFee = socialMediaAddon ? 199 : 0;
   
-  // Add AI training protection addon cost (available for all plans)
+  // Add AI training protection addon cost
   const aiTrainingAddonCost = aiTrainingAddon ? (billingCycle === "yearly" ? 588 : 49) : 0;
   const aiTrainingStartupFee = aiTrainingAddon ? 100 : 0;
   
@@ -195,7 +236,6 @@ const Checkout = () => {
     setIsProcessing(true);
     
     try {
-      // Get the current session to include the access token
       const { data: sessionData } = await supabase.auth.getSession();
       const accessToken = sessionData.session?.access_token;
       
@@ -227,7 +267,6 @@ const Checkout = () => {
           title: "Beta Access Activated!",
           description: "Welcome to your free 60-day trial.",
         });
-        // Redirect to success page
         setTimeout(() => {
           window.location.href = "/success?beta=true";
         }, 2000);
@@ -274,18 +313,43 @@ const Checkout = () => {
       return;
     }
 
+    // Handle free plan
+    if (selectedPlan === 'free') {
+      toast({
+        title: "Free Plan Activated!",
+        description: "Your free plan is now active.",
+      });
+      setTimeout(() => {
+        window.location.href = "/success?plan=free";
+      }, 1500);
+      setIsProcessing(false);
+      return;
+    }
+
+    // Handle enterprise plan
+    if (selectedPlan === 'enterprise') {
+      toast({
+        title: "Contact Sales",
+        description: "Our enterprise team will contact you within 24 hours.",
+      });
+      setTimeout(() => {
+        window.location.href = "/contact?plan=enterprise";
+      }, 1500);
+      setIsProcessing(false);
+      return;
+    }
+
     try {
-      // Create subscription after successful payment
-      const { data, error } = await supabase.functions.invoke('create-subscription', {
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: {
-          userId: user.id,
           planId: selectedPlan,
           billingCycle,
-          socialMediaAddon,
-          aiTrainingAddon,
+          email: user.email,
           promoCode: promoCode.trim() || undefined,
-          stripeCustomerId: 'demo_customer_' + Date.now(), // Demo mode
-          stripeSubscriptionId: 'demo_sub_' + Date.now() // Demo mode
+          socialMediaAddon,
+          deepfakeAddon: false,
+          aiTrainingAddon,
+          userId: user.id,
         }
       });
 
@@ -293,18 +357,23 @@ const Checkout = () => {
         throw new Error(error.message);
       }
 
-      toast({
-        title: "Payment Successful!",
-        description: `Welcome to TSMO ${currentPlan.name}! Your account is now active.`,
-      });
-      
-      // Redirect to monitoring dashboard
-      setTimeout(() => {
-        window.location.href = "/monitoring";
-      }, 2000);
+      if (data?.url) {
+        window.open(data.url, '_blank');
+        toast({
+          title: "Redirecting to Checkout",
+          description: "Opening secure Stripe payment page in a new tab...",
+        });
+      } else if (data?.message) {
+        toast({
+          title: "Success",
+          description: data.message,
+        });
+      } else {
+        throw new Error("No checkout URL received");
+      }
     } catch (error) {
       toast({
-        title: "Payment Failed",
+        title: "Checkout Error",
         description: error instanceof Error ? error.message : "Something went wrong. Please try again.",
         variant: "destructive",
       });
@@ -346,14 +415,34 @@ const Checkout = () => {
               <CardContent className="space-y-4">
                 <RadioGroup value={selectedPlan} onValueChange={setSelectedPlan}>
                   {Object.entries(plans).map(([key, plan]) => (
-                    <div key={key} className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-accent/50 transition-colors">
+                    <div key={key} className={`flex items-center space-x-2 p-3 border rounded-lg hover:bg-accent/50 transition-colors ${key === 'pro' ? 'ring-2 ring-primary' : ''}`}>
                       <RadioGroupItem value={key} id={key} />
                       <Label htmlFor={key} className="flex-1 cursor-pointer">
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="font-medium">{plan.name}</div>
+                            <div className="font-medium flex items-center gap-2">
+                              {plan.name}
+                              {plan.discount && (
+                                <Badge variant="destructive" className="text-xs">
+                                  {plan.discount}
+                                </Badge>
+                              )}
+                            </div>
                             <div className="text-sm text-muted-foreground">
-                              ${plan.price}/month
+                              {plan.isContactSales ? (
+                                "Contact Sales"
+                              ) : plan.price === 0 ? (
+                                "$0/month"
+                              ) : (
+                                <span className="flex items-center gap-1">
+                                  {plan.originalPrice && (
+                                    <span className="line-through text-muted-foreground/60">
+                                      ${plan.originalPrice}
+                                    </span>
+                                  )}
+                                  ${plan.price}/month
+                                </span>
+                              )}
                             </div>
                           </div>
                           {plan.badge && (
@@ -369,102 +458,94 @@ const Checkout = () => {
 
                 <Separator />
 
-                <div>
-                  <Label className="text-sm font-medium mb-3 block">Billing Cycle</Label>
-                  <RadioGroup value={billingCycle} onValueChange={(value) => setBillingCycle(value as "monthly" | "yearly")}>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="monthly" id="monthly" />
-                      <Label htmlFor="monthly">Monthly</Label>
+                {/* Billing Cycle - hide for free/enterprise */}
+                {selectedPlan === 'pro' && (
+                  <>
+                    <div>
+                      <Label className="text-sm font-medium mb-3 block">Billing Cycle</Label>
+                      <RadioGroup value={billingCycle} onValueChange={(value) => setBillingCycle(value as "monthly" | "yearly")}>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="monthly" id="monthly" />
+                          <Label htmlFor="monthly">Monthly - $29/mo</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="yearly" id="yearly" />
+                          <Label htmlFor="yearly" className="flex items-center gap-2">
+                            Yearly - $290/yr
+                            <Badge variant="secondary" className="text-xs">
+                              Save $58
+                            </Badge>
+                          </Label>
+                        </div>
+                      </RadioGroup>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="yearly" id="yearly" />
-                      <Label htmlFor="yearly" className="flex items-center gap-2">
-                        Yearly 
-                        <Badge variant="secondary" className="text-xs">
-                          Save 20%
-                        </Badge>
-                      </Label>
-                    </div>
-                  </RadioGroup>
-                </div>
 
-                <Separator />
+                    <Separator />
+                  </>
+                )}
 
-                {/* Social Media Monitoring Add-on */}
-                <div className="space-y-3">
-                  <Label className="text-sm font-medium">Add-ons</Label>
-                  
-                  {/* Social Media Monitoring Add-on - Available for all plans */}
-                  <div className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors">
-                    <div className="flex items-center space-x-3">
-                      <Checkbox 
-                        id="social-addon" 
-                        checked={socialMediaAddon}
-                        onCheckedChange={(checked) => setSocialMediaAddon(!!checked)}
-                      />
-                      <Label htmlFor="social-addon" className="cursor-pointer">
-                        <div className="flex items-center gap-2">
-                          <Users className="w-4 h-4 text-primary" />
-                          <div>
-                            <div className="font-medium">Social Media Monitoring</div>
-                            <div className="text-xs text-muted-foreground">
-                              Monitor unlimited social profiles for impersonation
-                            </div>
-                            <div className="text-xs text-orange-600 font-medium">
-                              Includes $199 one-time setup fee
+                {/* Add-ons - only for pro plan */}
+                {selectedPlan === 'pro' && (
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium">Add-ons</Label>
+                    
+                    {/* Social Media Monitoring Add-on */}
+                    <div className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors">
+                      <div className="flex items-center space-x-3">
+                        <Checkbox 
+                          id="social-addon" 
+                          checked={socialMediaAddon}
+                          onCheckedChange={(checked) => setSocialMediaAddon(!!checked)}
+                        />
+                        <Label htmlFor="social-addon" className="cursor-pointer">
+                          <div className="flex items-center gap-2">
+                            <Users className="w-4 h-4 text-primary" />
+                            <div>
+                              <div className="font-medium">Social Media Monitoring</div>
+                              <div className="text-xs text-muted-foreground">
+                                Monitor unlimited social profiles for impersonation
+                              </div>
+                              <div className="text-xs text-orange-600 font-medium">
+                                Includes $199 one-time setup fee
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </Label>
+                        </Label>
+                      </div>
+                      <div className="text-sm font-medium">
+                        +${billingCycle === "yearly" ? "1,188" : "99"}/{billingCycle === "yearly" ? "year" : "month"}
+                      </div>
                     </div>
-                    <div className="text-sm font-medium">
-                      +${billingCycle === "yearly" ? "1,188" : "99"}/{billingCycle === "yearly" ? "year" : "month"}
-                    </div>
-                  </div>
 
-                  {/* AI Training Protection Add-on */}
-                  <div className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors">
-                    <div className="flex items-center space-x-3">
-                      <Checkbox 
-                        id="aitraining-addon" 
-                        checked={aiTrainingAddon}
-                        onCheckedChange={(checked) => setAiTrainingAddon(!!checked)}
-                      />
-                      <Label htmlFor="aitraining-addon" className="cursor-pointer">
-                        <div className="flex items-center gap-2">
-                          <Shield className="w-4 h-4 text-primary" />
-                          <div>
-                            <div className="font-medium">AI Training Protection</div>
-                            <div className="text-xs text-muted-foreground">
-                              Advanced protection against AI training data harvesting
-                            </div>
-                            <div className="text-xs text-orange-600 font-medium">
-                              Includes $100 one-time setup fee
+                    {/* AI Training Protection Add-on */}
+                    <div className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors">
+                      <div className="flex items-center space-x-3">
+                        <Checkbox 
+                          id="aitraining-addon" 
+                          checked={aiTrainingAddon}
+                          onCheckedChange={(checked) => setAiTrainingAddon(!!checked)}
+                        />
+                        <Label htmlFor="aitraining-addon" className="cursor-pointer">
+                          <div className="flex items-center gap-2">
+                            <Shield className="w-4 h-4 text-primary" />
+                            <div>
+                              <div className="font-medium">AI Training Protection</div>
+                              <div className="text-xs text-muted-foreground">
+                                Advanced protection against AI training data harvesting
+                              </div>
+                              <div className="text-xs text-orange-600 font-medium">
+                                Includes $100 one-time setup fee
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </Label>
-                    </div>
-                    <div className="text-sm font-medium">
-                      +${billingCycle === "yearly" ? "588" : "49"}/{billingCycle === "yearly" ? "year" : "month"}
+                        </Label>
+                      </div>
+                      <div className="text-sm font-medium">
+                        +${billingCycle === "yearly" ? "588" : "49"}/{billingCycle === "yearly" ? "year" : "month"}
+                      </div>
                     </div>
                   </div>
-
-                  {/* Professional Plan Notice */}
-                  {selectedPlan === 'professional' && (
-                    <div className="p-3 border rounded-lg bg-green-50 border-green-200">
-                      <div className="flex items-center gap-2">
-                        <Shield className="w-4 h-4 text-green-600" />
-                        <div className="text-sm font-medium text-green-800">
-                          AI Training Protection included at no extra cost!
-                        </div>
-                      </div>
-                      <div className="text-xs text-green-600 mt-1">
-                        Social media monitoring and AI training protection available as add-ons
-                      </div>
-                    </div>
-                  )}
-                </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -630,20 +711,38 @@ const Checkout = () => {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-medium">{currentPlan.name} Plan</div>
+                    <div className="font-medium flex items-center gap-2">
+                      {currentPlan.name} Plan
+                      {currentPlan.discount && (
+                        <Badge variant="destructive" className="text-xs">{currentPlan.discount}</Badge>
+                      )}
+                    </div>
                     <div className="text-sm text-muted-foreground">
-                      {billingCycle === "yearly" ? "Annual" : "Monthly"} subscription
+                      {currentPlan.isContactSales
+                        ? "Custom pricing"
+                        : billingCycle === "yearly" ? "Annual subscription" : "Monthly subscription"}
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-medium">
-                      ${billingCycle === "yearly" ? Math.round(basePrice) : currentPlan.price}
-                      {billingCycle === "yearly" ? "/year" : "/month"}
-                    </div>
-                    {billingCycle === "yearly" && (
-                      <div className="text-sm text-green-600">
-                        Save ${Math.round(currentPlan.price * 12 - basePrice)}
-                      </div>
+                    {currentPlan.isContactSales ? (
+                      <div className="font-medium">Contact Sales</div>
+                    ) : (
+                      <>
+                        <div className="font-medium flex items-center gap-2">
+                          {currentPlan.originalPrice && (
+                            <span className="line-through text-muted-foreground/60 text-sm">
+                              ${billingCycle === "yearly" ? 490 : currentPlan.originalPrice}
+                            </span>
+                          )}
+                          ${basePrice}
+                          {billingCycle === "yearly" ? "/year" : "/month"}
+                        </div>
+                        {currentPlan.originalPrice && (
+                          <div className="text-sm text-green-600">
+                            You save ${billingCycle === "yearly" ? 200 : (currentPlan.originalPrice - (currentPlan.price || 0))}
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
@@ -739,27 +838,33 @@ const Checkout = () => {
 
                  <Separator />
 
-                 {/* Tax Calculation */}
-                 <CheckoutTaxCalculation 
-                   subtotal={subtotalPrice + totalStartupFees}
-                   onTaxCalculated={handleTaxCalculated}
-                 />
+                 {/* Tax Calculation - only for paid plans */}
+                 {selectedPlan === 'pro' && (
+                   <CheckoutTaxCalculation 
+                     subtotal={subtotalPrice + totalStartupFees}
+                     onTaxCalculated={handleTaxCalculated}
+                   />
+                 )}
 
                  <Separator />
 
                  {/* Total */}
-                 <div className="flex items-center justify-between text-lg font-bold">
-                   <span>Total {(socialMediaAddon || aiTrainingAddon) ? "(First Payment)" : ""}</span>
-                   <span>
-                     ${finalPrice + totalStartupFees}
-                     {billingCycle === "yearly" ? "/year" : "/month"}
-                   </span>
-                 </div>
+                 {!currentPlan.isContactSales && (
+                   <>
+                     <div className="flex items-center justify-between text-lg font-bold">
+                       <span>Total {(socialMediaAddon || aiTrainingAddon) ? "(First Payment)" : ""}</span>
+                       <span>
+                         ${currentPlan.price === 0 ? "0" : finalPrice}
+                         {currentPlan.price !== 0 && (billingCycle === "yearly" ? "/year" : "/month")}
+                       </span>
+                     </div>
 
-                 {(socialMediaAddon || aiTrainingAddon) && (
-                   <div className="text-sm text-muted-foreground">
-                     * Future payments will be ${taxCalculation.total > 0 ? taxCalculation.total : subtotalPrice}{billingCycle === "yearly" ? "/year" : "/month"} (without setup fees)
-                   </div>
+                     {(socialMediaAddon || aiTrainingAddon) && (
+                       <div className="text-sm text-muted-foreground">
+                         * Future payments will be ${taxCalculation.total > 0 ? taxCalculation.total : subtotalPrice}{billingCycle === "yearly" ? "/year" : "/month"} (without setup fees)
+                       </div>
+                     )}
+                   </>
                  )}
 
                 <Separator />
@@ -774,290 +879,155 @@ const Checkout = () => {
                   ))}
                 </div>
 
-                <div className="bg-muted/50 p-4 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Zap className="w-4 h-4 text-primary" />
-                    <span className="font-medium">5-Day Free Trial</span>
+                {selectedPlan !== 'free' && !currentPlan.isContactSales && (
+                  <div className="bg-muted/50 p-4 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Zap className="w-4 h-4 text-primary" />
+                      <span className="font-medium">5-Day Free Trial</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Try TSMO risk-free for 5 days. Cancel anytime during your trial period.
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    Try TSMO risk-free for 5 days. Cancel anytime during your trial period.
-                  </p>
-                </div>
+                )}
               </CardContent>
             </Card>
 
-            {/* Payment Form - Hidden for BETATESTER promo */}
+            {/* Payment Section - Stripe Redirect */}
             {promoCode.toLowerCase() !== 'betatester' && (
               <Card className="bg-card/50 backdrop-blur-sm border-border/50">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <CreditCard className="w-5 h-5 text-primary" />
-                    Payment Information
+                    {currentPlan.isContactSales ? "Contact Sales" : "Payment"}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Payment Method */}
-                  <div>
-                    <Label className="text-sm font-medium mb-3 block">Payment Method</Label>
-                    <RadioGroup value={paymentMethod} onValueChange={(value) => setPaymentMethod(value as "card" | "paypal")}>
-                      <div className="flex items-center space-x-2 p-3 border rounded-lg">
-                        <RadioGroupItem value="card" id="card" />
-                        <Label htmlFor="card" className="flex items-center gap-2 cursor-pointer">
-                          <CreditCard className="w-4 h-4" />
-                          Credit/Debit Card
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2 p-3 border rounded-lg">
-                        <RadioGroupItem value="paypal" id="paypal" />
-                        <Label htmlFor="paypal" className="cursor-pointer">
-                          PayPal
-                        </Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-
-                  {paymentMethod === "card" && (
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="cardName">Cardholder Name</Label>
-                        <Input 
-                          id="cardName" 
-                          placeholder="John Doe" 
-                          required 
-                        />
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="cardNumber">Card Number</Label>
-                        <Input 
-                          id="cardNumber" 
-                          placeholder="1234 5678 9012 3456" 
-                          required 
-                        />
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="expiry">Expiry Date</Label>
-                          <Input 
-                            id="expiry" 
-                            placeholder="MM/YY" 
-                            required 
-                          />
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Stripe Redirect Notice */}
+                    {!currentPlan.isContactSales && currentPlan.price !== 0 && (
+                      <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Shield className="w-5 h-5 text-primary" />
+                          <span className="font-semibold text-primary">Secure Checkout</span>
                         </div>
-                        <div>
-                          <Label htmlFor="cvv">CVV</Label>
-                          <Input 
-                            id="cvv" 
-                            placeholder="123" 
-                            required 
-                          />
-                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          You'll be redirected to Stripe's secure checkout to complete your payment. 
+                          Your payment information is handled securely by Stripe.
+                        </p>
                       </div>
-                    </div>
-                  )}
-
-                  {/* Billing Address */}
-                  <div className="space-y-4">
-                    <h3 className="font-medium">Billing Address</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Input id="firstName" required />
-                      </div>
-                      <div>
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Input id="lastName" required />
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="email">Email Address</Label>
-                      <Input id="email" type="email" required />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="address">Address</Label>
-                      <Input id="address" required />
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="city">City</Label>
-                        <Input id="city" required />
-                      </div>
-                      <div>
-                        <Label htmlFor="zipCode">ZIP Code</Label>
-                        <Input id="zipCode" required />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Terms */}
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="terms" required />
-                    <Label htmlFor="terms" className="text-sm">
-                      I agree to the{' '}
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <button type="button" className="text-primary underline hover:text-primary/80">
-                            Terms of Service
-                          </button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                          <DialogHeader>
-                            <DialogTitle>Terms of Service</DialogTitle>
-                          </DialogHeader>
-                          <div className="prose prose-sm max-w-none">
-                            <p className="text-muted-foreground mb-4">Last Updated: January 15, 2025</p>
-                            
-                            <h3 className="text-lg font-semibold mt-6 mb-3">1. Acceptance of Terms</h3>
-                            <p>By accessing and using TSMO Technology's services, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.</p>
-                            
-                            <h3 className="text-lg font-semibold mt-6 mb-3">2. Description of Service</h3>
-                            <p>TSMO Technology provides AI-powered content protection, monitoring, and legal support services for creators. Our services include but are not limited to:</p>
-                            <ul className="list-disc pl-6 space-y-1">
-                              <li>Real-time content monitoring across multiple platforms</li>
-                              <li>AI-powered deepfake detection</li>
-                              <li>Automated DMCA takedown notice generation and filing</li>
-                              <li>Legal document preparation and filing assistance</li>
-                            </ul>
-
-                            <h3 className="text-lg font-semibold mt-6 mb-3">3. User Responsibilities</h3>
-                            <p>You agree to:</p>
-                            <ul className="list-disc pl-6 space-y-1">
-                              <li>Provide accurate and complete information</li>
-                              <li>Maintain the security of your account credentials</li>
-                              <li>Use the service only for lawful purposes</li>
-                              <li>Not misuse or attempt to circumvent our security measures</li>
-                            </ul>
-
-                            <h3 className="text-lg font-semibold mt-6 mb-3">4. Payment and Billing</h3>
-                            <p>Subscription fees are billed in advance on a monthly or annual basis. You authorize us to charge your payment method for all fees. Refunds are provided in accordance with our refund policy.</p>
-
-                            <h3 className="text-lg font-semibold mt-6 mb-3">5. Intellectual Property</h3>
-                            <p>You retain all rights to your content. We claim no ownership over any content you submit. Our services and technology remain our intellectual property.</p>
-
-                            <h3 className="text-lg font-semibold mt-6 mb-3">6. Limitation of Liability</h3>
-                            <p>TSMO Technology provides services "as is" and makes no warranties. We are not liable for any indirect, incidental, or consequential damages arising from your use of our services.</p>
-
-                            <h3 className="text-lg font-semibold mt-6 mb-3">7. Termination</h3>
-                            <p>We reserve the right to suspend or terminate your account for violation of these terms or any applicable law.</p>
-
-                            <h3 className="text-lg font-semibold mt-6 mb-3">8. Changes to Terms</h3>
-                            <p>We may modify these terms at any time. Continued use of our services after changes constitutes acceptance of the modified terms.</p>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                      {' '}and{' '}
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <button type="button" className="text-primary underline hover:text-primary/80">
-                            Privacy Policy
-                          </button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                          <DialogHeader>
-                            <DialogTitle>Privacy Policy</DialogTitle>
-                          </DialogHeader>
-                          <div className="prose prose-sm max-w-none">
-                            <p className="text-muted-foreground mb-4">Last Updated: January 15, 2025</p>
-                            
-                            <h3 className="text-lg font-semibold mt-6 mb-3">1. Information We Collect</h3>
-                            <p>We collect information you provide directly to us, including:</p>
-                            <ul className="list-disc pl-6 space-y-1">
-                              <li>Account information (name, email, payment details)</li>
-                              <li>Content you upload for protection and monitoring</li>
-                              <li>Communications with our support team</li>
-                              <li>Usage data and analytics</li>
-                            </ul>
-
-                            <h3 className="text-lg font-semibold mt-6 mb-3">2. How We Use Your Information</h3>
-                            <p>We use your information to:</p>
-                            <ul className="list-disc pl-6 space-y-1">
-                              <li>Provide and improve our services</li>
-                              <li>Process payments and transactions</li>
-                              <li>Send service updates and notifications</li>
-                              <li>Monitor for unauthorized use of your content</li>
-                              <li>Comply with legal obligations</li>
-                            </ul>
-
-                            <h3 className="text-lg font-semibold mt-6 mb-3">3. Data Security</h3>
-                            <p>We implement industry-standard security measures including encryption, secure data storage, and regular security audits to protect your information.</p>
-
-                            <h3 className="text-lg font-semibold mt-6 mb-3">4. Data Sharing</h3>
-                            <p>We do not sell your personal information. We may share data with:</p>
-                            <ul className="list-disc pl-6 space-y-1">
-                              <li>Service providers who assist in our operations</li>
-                              <li>Legal authorities when required by law</li>
-                              <li>Third parties with your explicit consent</li>
-                            </ul>
-
-                            <h3 className="text-lg font-semibold mt-6 mb-3">5. Your Rights</h3>
-                            <p>You have the right to:</p>
-                            <ul className="list-disc pl-6 space-y-1">
-                              <li>Access your personal data</li>
-                              <li>Request corrections to your data</li>
-                              <li>Request deletion of your data</li>
-                              <li>Opt-out of marketing communications</li>
-                              <li>Export your data</li>
-                            </ul>
-
-                            <h3 className="text-lg font-semibold mt-6 mb-3">6. Cookies and Tracking</h3>
-                            <p>We use cookies and similar technologies to improve user experience, analyze usage patterns, and personalize content.</p>
-
-                            <h3 className="text-lg font-semibold mt-6 mb-3">7. International Data Transfers</h3>
-                            <p>Your data may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place for such transfers.</p>
-
-                            <h3 className="text-lg font-semibold mt-6 mb-3">8. Children's Privacy</h3>
-                            <p>Our services are not intended for users under 18. We do not knowingly collect information from children.</p>
-
-                            <h3 className="text-lg font-semibold mt-6 mb-3">9. Contact Us</h3>
-                            <p>For privacy-related questions, contact us at privacy@tsmotech.com</p>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </Label>
-                  </div>
-
-                  {/* Beta Testing Agreement */}
-                  <BetaTestingAgreement 
-                    accepted={betaAgreementAccepted}
-                    onAcceptedChange={setBetaAgreementAccepted}
-                  />
-
-                  {/* Security Notice */}
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/30 p-3 rounded-lg">
-                    <Lock className="w-4 h-4" />
-                    <span>Your payment information is encrypted and secure</span>
-                  </div>
-
-                  {/* Submit Button */}
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-gradient-to-r from-primary to-accent text-lg py-6"
-                    disabled={isProcessing || !betaAgreementAccepted}
-                  >
-                    {isProcessing ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                        Processing Payment...
-                      </>
-                    ) : (
-                      <>
-                        Start Free Trial
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                      </>
                     )}
-                  </Button>
 
-                  <div className="text-center text-sm text-muted-foreground">
-                    You won't be charged until your 5-day free trial ends
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
+                    {currentPlan.isContactSales && (
+                      <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Building2 className="w-5 h-5 text-primary" />
+                          <span className="font-semibold text-primary">Enterprise Solutions</span>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          Our enterprise team will create a custom solution tailored to your organization's needs.
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Terms */}
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="terms" required />
+                      <Label htmlFor="terms" className="text-sm">
+                        I agree to the{' '}
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <button type="button" className="text-primary underline hover:text-primary/80">
+                              Terms of Service
+                            </button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                            <DialogHeader>
+                              <DialogTitle>Terms of Service</DialogTitle>
+                            </DialogHeader>
+                            <div className="prose prose-sm max-w-none">
+                              <p className="text-muted-foreground mb-4">Last Updated: January 15, 2025</p>
+                              <h3 className="text-lg font-semibold mt-6 mb-3">1. Acceptance of Terms</h3>
+                              <p>By accessing and using TSMO Technology's services, you agree to be bound by these Terms of Service.</p>
+                              <h3 className="text-lg font-semibold mt-6 mb-3">2. Description of Service</h3>
+                              <p>TSMO Technology provides AI-powered content protection, monitoring, and legal support services for creators.</p>
+                              <h3 className="text-lg font-semibold mt-6 mb-3">3. Payment and Billing</h3>
+                              <p>Subscription fees are billed in advance on a monthly or annual basis. You authorize us to charge your payment method for all fees.</p>
+                              <h3 className="text-lg font-semibold mt-6 mb-3">4. Intellectual Property</h3>
+                              <p>You retain all rights to your content. We claim no ownership over any content you submit.</p>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                        {' '}and{' '}
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <button type="button" className="text-primary underline hover:text-primary/80">
+                              Privacy Policy
+                            </button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                            <DialogHeader>
+                              <DialogTitle>Privacy Policy</DialogTitle>
+                            </DialogHeader>
+                            <div className="prose prose-sm max-w-none">
+                              <p className="text-muted-foreground mb-4">Last Updated: January 15, 2025</p>
+                              <h3 className="text-lg font-semibold mt-6 mb-3">1. Information We Collect</h3>
+                              <p>We collect information you provide directly to us, including account information and content you upload.</p>
+                              <h3 className="text-lg font-semibold mt-6 mb-3">2. Data Security</h3>
+                              <p>We implement industry-standard security measures including encryption and secure data storage.</p>
+                              <h3 className="text-lg font-semibold mt-6 mb-3">3. Your Rights</h3>
+                              <p>You have the right to access, correct, delete, and export your personal data.</p>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      </Label>
+                    </div>
+
+                    {/* Beta Testing Agreement */}
+                    <BetaTestingAgreement 
+                      accepted={betaAgreementAccepted}
+                      onAcceptedChange={setBetaAgreementAccepted}
+                    />
+
+                    {/* Submit Button */}
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-gradient-to-r from-primary to-accent text-lg py-6"
+                      disabled={isProcessing || !betaAgreementAccepted}
+                    >
+                      {isProcessing ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                          Processing...
+                        </>
+                      ) : currentPlan.isContactSales ? (
+                        <>
+                          Contact Sales
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </>
+                      ) : currentPlan.price === 0 ? (
+                        <>
+                          Activate Free Plan
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </>
+                      ) : (
+                        <>
+                          Continue to Secure Checkout
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </>
+                      )}
+                    </Button>
+
+                    {selectedPlan === 'pro' && (
+                      <div className="text-center text-sm text-muted-foreground">
+                        You won't be charged until your 5-day free trial ends
+                      </div>
+                    )}
+
+                    <StripeDisclosure />
+                  </form>
+                </CardContent>
+              </Card>
             )}
 
             {/* BETATESTER Special Access */}
@@ -1081,7 +1051,6 @@ const Checkout = () => {
                       </p>
                     </div>
 
-                    {/* Beta Testing Agreement */}
                     <BetaTestingAgreement 
                       accepted={betaAgreementAccepted}
                       onAcceptedChange={setBetaAgreementAccepted}
