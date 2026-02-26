@@ -16,6 +16,7 @@ import { Shield, Eye, Search, ArrowRight, Zap, Globe, FileText, Play, ChevronRig
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import { useQuery } from "@tanstack/react-query";
 import bizWeeklyBanner from "@/assets/Biz_Weekly.png";
+import caiLogo from "@/assets/CAI_Lockup_RGB_Black.png";
 import DemoEnvironment from "@/components/investor/DemoEnvironment";
 
 import TrustBadges from "@/components/TrustBadges";
@@ -578,6 +579,20 @@ const Index = () => {
 
       {/* Alert Example - Proof of Product */}
       <AlertExampleSection />
+
+      {/* CAI Membership Banner */}
+      <section className="py-10 bg-background border-y border-border">
+        <div className="container mx-auto px-4 flex flex-col items-center gap-4">
+          <img
+            src={caiLogo}
+            alt="Content Authenticity Initiative"
+            className="h-12 md:h-16 object-contain dark:invert"
+          />
+          <p className="text-sm md:text-base text-muted-foreground text-center max-w-xl">
+            TSMO is a proud member of the <strong className="text-foreground">Content Authenticity Initiative (CAI)</strong> — building trust and transparency for digital content through the C2PA open standard.
+          </p>
+        </div>
+      </section>
 
       {/* Trust Badges */}
       <TrustBadges />
