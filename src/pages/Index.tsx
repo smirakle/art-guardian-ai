@@ -339,52 +339,57 @@ const Index = () => {
         </div>
       </section>
 
-      {/* As Seen On Banner - Moved closer to hero */}
-      <section className="py-4 px-4 bg-background -mt-4">
-        <div className="container mx-auto max-w-2xl text-center">
-          <a
-            href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block hover:opacity-90 transition-opacity">
-
-            <img
-              src={bizWeeklyBanner}
-              alt="As seen on BizWeekly"
-              className="w-full max-w-xs mx-auto h-auto object-contain"
-              loading="lazy" />
-
-          </a>
-          <div className="mt-1">
-            <a
-              href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-primary hover:underline inline-flex items-center gap-1">
-
-              Read the feature <ChevronRight className="w-3 h-3" />
-            </a>
+      {/* Trusted & Recognized — Unified Credibility Section */}
+      <section className="py-12 md:py-16 px-4 bg-gradient-to-b from-muted/40 to-background border-y border-border/50">
+        <div className="container mx-auto max-w-5xl">
+          {/* Section Header */}
+          <div className="text-center mb-10">
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">Credibility & Trust</p>
+            <h2 className="text-2xl md:text-3xl font-bold">Trusted & Recognized</h2>
           </div>
-          <p className="text-sm text-muted-foreground mt-3">
-            Founder is a Harvard Innovation Labs (i-lab) member.
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Harvard Innovation Labs / Harvard University does not endorse or sponsor TSMO Watch.
-          </p>
-        </div>
-      </section>
 
-      {/* CAI Membership Banner */}
-      <section className="py-10 bg-background border-y border-primary-foreground">
-        <div className="container mx-auto px-4 flex flex-col items-center gap-4">
-          <img
-            src={caiLogo}
-            alt="Content Authenticity Initiative"
-            className="h-12 md:h-16 object-contain dark:invert" />
+          {/* Two-column layout */}
+          <div className="grid md:grid-cols-2 gap-8 md:gap-0 items-stretch">
+            {/* BizWeekly Card */}
+            <div className="flex flex-col items-center justify-center text-center p-8 rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 md:rounded-r-none md:border-r-0">
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-4">As Seen On</p>
+              <a
+                href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block hover:opacity-90 transition-opacity mb-5">
+                <img
+                  src={bizWeeklyBanner}
+                  alt="As seen on BizWeekly"
+                  className="w-full max-w-sm mx-auto h-auto object-contain"
+                  loading="lazy" />
+              </a>
+              <a
+                href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium hover:bg-primary/20 transition-colors mb-4">
+                Read the feature <ChevronRight className="w-3.5 h-3.5" />
+              </a>
+              <p className="text-xs text-muted-foreground leading-relaxed max-w-xs">
+                Founder is a Harvard Innovation Labs (i-lab) member.
+                <br />
+                <span className="opacity-70">Harvard University does not endorse or sponsor TSMO Watch.</span>
+              </p>
+            </div>
 
-          <p className="text-sm md:text-base text-muted-foreground max-w-xl font-sans text-center">
-            TSMO is a proud member of the <strong className="text-foreground">Content Authenticity Initiative (CAI)</strong> — building trust and transparency for digital content through the C2PA open standard.
-          </p>
+            {/* CAI Card */}
+            <div className="flex flex-col items-center justify-center text-center p-8 rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 md:rounded-l-none">
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-4">Official Member</p>
+              <img
+                src={caiLogo}
+                alt="Content Authenticity Initiative"
+                className="h-16 md:h-20 object-contain dark:invert mb-5" />
+              <p className="text-sm md:text-base text-muted-foreground max-w-sm leading-relaxed">
+                TSMO is a proud member of the <strong className="text-foreground">Content Authenticity Initiative (CAI)</strong> — building trust and transparency through the C2PA open standard.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
