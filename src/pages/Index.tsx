@@ -26,17 +26,17 @@ import AlertExampleSection from "@/components/AlertExampleSection";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 
 // Blog Section Component that fetches from database
-const BlogSection = ({ navigate }: { navigate: (path: string) => void }) => {
+const BlogSection = ({ navigate }: {navigate: (path: string) => void;}) => {
   const { data: dbPosts, isLoading } = useQuery({
     queryKey: ['home-blog-posts'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('blog_posts')
-        .select('id, title, slug, excerpt, tags, created_at')
-        .eq('status', 'published')
-        .order('published_at', { ascending: false })
-        .limit(3);
-      
+      const { data, error } = await supabase.
+      from('blog_posts').
+      select('id, title, slug, excerpt, tags, created_at').
+      eq('status', 'published').
+      order('published_at', { ascending: false }).
+      limit(3);
+
       if (error) throw error;
       return data;
     }
@@ -44,38 +44,38 @@ const BlogSection = ({ navigate }: { navigate: (path: string) => void }) => {
 
   // Fallback posts if no database posts
   const fallbackPosts = [
-    {
-      slug: "how-to-find-if-your-art-is-being-stolen-online",
-      title: "How to Find If Your Art Is Being Stolen Online",
-      excerpt: "Learn the essential techniques to discover if your artwork is being used without permission across the internet.",
-      category: "Protection",
-      readTime: "8 min read"
-    },
-    {
-      slug: "ai-training-what-artists-need-to-know-2025",
-      title: "AI Training: What Artists Need to Know in 2025",
-      excerpt: "Understanding how AI companies use artwork for training and what you can do to protect your creative rights.",
-      category: "AI",
-      readTime: "10 min read"
-    },
-    {
-      slug: "dmca-takedown-guide-digital-artists",
-      title: "DMCA Takedown Guide for Digital Artists",
-      excerpt: "A step-by-step guide to filing DMCA takedown notices and protecting your copyright online.",
-      category: "Legal",
-      readTime: "12 min read"
-    }
-  ];
+  {
+    slug: "how-to-find-if-your-art-is-being-stolen-online",
+    title: "How to Find If Your Art Is Being Stolen Online",
+    excerpt: "Learn the essential techniques to discover if your artwork is being used without permission across the internet.",
+    category: "Protection",
+    readTime: "8 min read"
+  },
+  {
+    slug: "ai-training-what-artists-need-to-know-2025",
+    title: "AI Training: What Artists Need to Know in 2025",
+    excerpt: "Understanding how AI companies use artwork for training and what you can do to protect your creative rights.",
+    category: "AI",
+    readTime: "10 min read"
+  },
+  {
+    slug: "dmca-takedown-guide-digital-artists",
+    title: "DMCA Takedown Guide for Digital Artists",
+    excerpt: "A step-by-step guide to filing DMCA takedown notices and protecting your copyright online.",
+    category: "Legal",
+    readTime: "12 min read"
+  }];
 
-  const posts = dbPosts && dbPosts.length > 0 
-    ? dbPosts.map(post => ({
-        slug: post.slug,
-        title: post.title,
-        excerpt: post.excerpt || '',
-        category: post.tags?.[0] || 'General',
-        readTime: '5 min read'
-      }))
-    : fallbackPosts;
+
+  const posts = dbPosts && dbPosts.length > 0 ?
+  dbPosts.map((post) => ({
+    slug: post.slug,
+    title: post.title,
+    excerpt: post.excerpt || '',
+    category: post.tags?.[0] || 'General',
+    readTime: '5 min read'
+  })) :
+  fallbackPosts;
 
   return (
     <section className="py-16 px-4 bg-background">
@@ -89,8 +89,8 @@ const BlogSection = ({ navigate }: { navigate: (path: string) => void }) => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          {posts.map((post) => (
-            <Card key={post.slug} className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/30">
+          {posts.map((post) =>
+          <Card key={post.slug} className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/30">
               <CardHeader className="pb-3">
                 <Badge variant="secondary" className="w-fit mb-2">{post.category}</Badge>
                 <CardTitle className="text-lg group-hover:text-primary transition-colors line-clamp-2">
@@ -112,7 +112,7 @@ const BlogSection = ({ navigate }: { navigate: (path: string) => void }) => {
                 </div>
               </CardContent>
             </Card>
-          ))}
+          )}
         </div>
 
         <div className="text-center">
@@ -122,8 +122,8 @@ const BlogSection = ({ navigate }: { navigate: (path: string) => void }) => {
           </Button>
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 };
 
 const Index = () => {
@@ -131,7 +131,7 @@ const Index = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [signupEmail, setSignupEmail] = useState('');
-  
+
   useEffect(() => {
     const title = "TSMO | AI Art Protection & Forgery Detection";
     document.title = title;
@@ -251,11 +251,11 @@ const Index = () => {
 
           {/* Primary CTA - Try It Now with Animation */}
           <div className="mb-6">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="h-14 px-10 text-lg bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white shadow-xl animate-pulse-glow"
-              onClick={() => setShowInstantProtect(true)}
-            >
+              onClick={() => setShowInstantProtect(true)}>
+
               <Upload className="mr-2 h-5 w-5" />
               Scan Your Art Free — 5 Seconds
             </Button>
@@ -290,19 +290,19 @@ const Index = () => {
           {/* Secondary CTA - Email Capture */}
           <div className="max-w-md mx-auto mb-4">
             <div className="flex flex-col sm:flex-row gap-3">
-              <Input 
-                type="email" 
-                placeholder="Enter your email" 
-                className="flex-1 h-12 text-base" 
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                className="flex-1 h-12 text-base"
                 value={signupEmail}
-                onChange={(e) => setSignupEmail(e.target.value)}
-              />
-              <Button 
-                size="lg" 
+                onChange={(e) => setSignupEmail(e.target.value)} />
+
+              <Button
+                size="lg"
                 variant="outline"
-                className="h-12 px-8 whitespace-nowrap" 
-                onClick={() => navigate(`/auth?email=${encodeURIComponent(signupEmail)}&tab=signup`)}
-              >
+                className="h-12 px-8 whitespace-nowrap"
+                onClick={() => navigate(`/auth?email=${encodeURIComponent(signupEmail)}&tab=signup`)}>
+
                 Start Free
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -312,10 +312,10 @@ const Index = () => {
 
           {/* Demo Link - Text only */}
           <div className="mb-6">
-            <button 
+            <button
               onClick={() => setShowLiveDemo(true)}
-              className="text-sm text-primary hover:underline inline-flex items-center gap-1"
-            >
+              className="text-sm text-primary hover:underline inline-flex items-center gap-1">
+
               <Play className="w-3 h-3" />
               Watch 2-minute demo
             </button>
@@ -342,26 +342,26 @@ const Index = () => {
       {/* As Seen On Banner - Moved closer to hero */}
       <section className="py-4 px-4 bg-background -mt-4">
         <div className="container mx-auto max-w-2xl text-center">
-          <a 
-            href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/" 
-            target="_blank" 
+          <a
+            href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/"
+            target="_blank"
             rel="noopener noreferrer"
-            className="inline-block hover:opacity-90 transition-opacity"
-          >
-            <img 
-              src={bizWeeklyBanner} 
-              alt="As seen on BizWeekly" 
+            className="inline-block hover:opacity-90 transition-opacity">
+
+            <img
+              src={bizWeeklyBanner}
+              alt="As seen on BizWeekly"
               className="w-full max-w-xs mx-auto h-auto object-contain"
-              loading="lazy"
-            />
+              loading="lazy" />
+
           </a>
           <div className="mt-1">
-            <a 
-              href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/" 
-              target="_blank" 
+            <a
+              href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/"
+              target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-primary hover:underline inline-flex items-center gap-1"
-            >
+              className="text-sm text-primary hover:underline inline-flex items-center gap-1">
+
               Read the feature <ChevronRight className="w-3 h-3" />
             </a>
           </div>
@@ -375,21 +375,21 @@ const Index = () => {
       </section>
 
       {/* CAI Membership Banner */}
-      <section className="py-10 bg-background border-y border-border">
+      <section className="py-10 bg-background border-y border-primary-foreground">
         <div className="container mx-auto px-4 flex flex-col items-center gap-4">
           <img
             src={caiLogo}
             alt="Content Authenticity Initiative"
-            className="h-12 md:h-16 object-contain dark:invert"
-          />
-          <p className="text-sm md:text-base text-muted-foreground text-center max-w-xl">
+            className="h-12 md:h-16 object-contain dark:invert" />
+
+          <p className="text-sm md:text-base text-muted-foreground max-w-xl font-sans">
             TSMO is a proud member of the <strong className="text-foreground">Content Authenticity Initiative (CAI)</strong> — building trust and transparency for digital content through the C2PA open standard.
           </p>
         </div>
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-16 px-4 bg-muted/30">
+      <section id="how-it-works" className="py-16 px-4 bg-muted/30 border-primary-foreground">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-bold mb-3">How We Keep Your Art Safe</h2>
@@ -444,18 +444,18 @@ const Index = () => {
                 Join artists who sleep better knowing their work is monitored 24/7
               </p>
               <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                <Input 
-                  type="email" 
-                  placeholder="Enter your email" 
-                  className="flex-1 h-12" 
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="flex-1 h-12"
                   value={signupEmail}
-                  onChange={(e) => setSignupEmail(e.target.value)}
-                />
-                <Button 
+                  onChange={(e) => setSignupEmail(e.target.value)} />
+
+                <Button
                   size="lg"
                   className="h-12 px-6 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white"
-                  onClick={() => navigate(`/auth?email=${encodeURIComponent(signupEmail)}&tab=signup`)}
-                >
+                  onClick={() => navigate(`/auth?email=${encodeURIComponent(signupEmail)}&tab=signup`)}>
+
                   Get Started Free
                 </Button>
               </div>
@@ -636,45 +636,45 @@ const Index = () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="name">Name *</Label>
-                <Input 
-                  id="name" 
-                  required 
-                  value={salesFormData.name} 
-                  onChange={e => setSalesFormData(prev => ({ ...prev, name: e.target.value }))} 
-                  placeholder="Your full name" 
-                />
+                <Input
+                  id="name"
+                  required
+                  value={salesFormData.name}
+                  onChange={(e) => setSalesFormData((prev) => ({ ...prev, name: e.target.value }))}
+                  placeholder="Your full name" />
+
               </div>
               <div>
                 <Label htmlFor="email">Email *</Label>
-                <Input 
-                  id="email" 
-                  type="email" 
-                  required 
-                  value={salesFormData.email} 
-                  onChange={e => setSalesFormData(prev => ({ ...prev, email: e.target.value }))} 
-                  placeholder="your@email.com" 
-                />
+                <Input
+                  id="email"
+                  type="email"
+                  required
+                  value={salesFormData.email}
+                  onChange={(e) => setSalesFormData((prev) => ({ ...prev, email: e.target.value }))}
+                  placeholder="your@email.com" />
+
               </div>
             </div>
             <div>
               <Label htmlFor="company">Company</Label>
-              <Input 
-                id="company" 
-                value={salesFormData.company} 
-                onChange={e => setSalesFormData(prev => ({ ...prev, company: e.target.value }))} 
-                placeholder="Your company name (optional)" 
-              />
+              <Input
+                id="company"
+                value={salesFormData.company}
+                onChange={(e) => setSalesFormData((prev) => ({ ...prev, company: e.target.value }))}
+                placeholder="Your company name (optional)" />
+
             </div>
             <div>
               <Label htmlFor="message">Message *</Label>
-              <Textarea 
-                id="message" 
-                required 
-                rows={4} 
-                value={salesFormData.message} 
-                onChange={e => setSalesFormData(prev => ({ ...prev, message: e.target.value }))} 
-                placeholder="Tell us about your requirements..." 
-              />
+              <Textarea
+                id="message"
+                required
+                rows={4}
+                value={salesFormData.message}
+                onChange={(e) => setSalesFormData((prev) => ({ ...prev, message: e.target.value }))}
+                placeholder="Tell us about your requirements..." />
+
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setShowSalesDialog(false)} disabled={isSendingSales}>
@@ -689,8 +689,8 @@ const Index = () => {
       </Dialog>
 
       <BugReportButton />
-    </div>
-  );
+    </div>);
+
 };
 
 export default Index;
