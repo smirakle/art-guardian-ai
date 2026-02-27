@@ -1,22 +1,25 @@
 
 
-## Issue
+## Problem
 
-The uploaded file `CAI_Lockup_RGB_Black.ai` is an Adobe Illustrator vector file. Web browsers cannot display `.ai` files — they need to be PNG, SVG, JPG, or WebP format.
+The "As Seen On" / BizWeekly section and CAI Membership banner are stacked vertically as separate bland sections with no visual cohesion. They look like afterthoughts — plain text, small images, no visual hierarchy, and too much whitespace between them.
 
-## What I Can Do Now
+## Plan
 
-1. **Copy the `.ai` file to `src/assets/`** for archival/reference purposes
-2. **Add the logo to the C2PA admin pages** (CAIReadinessWidget, TrustListViewer, ConformanceExporter) — but only once a web-compatible format is provided
+Combine both credibility signals (BizWeekly press + CAI membership) into a single, polished **"Credibility & Trust"** section with better visual design:
 
-## Recommended Next Step
+### Changes to `src/pages/Index.tsx` (lines 342-389)
 
-Export the CAI logo from Adobe Illustrator as **SVG** (preferred for logos — crisp at any size) or **PNG** and re-upload it. Then I'll:
+Replace the two separate sections with one unified section:
 
-1. Copy it to `src/assets/cai-logo.svg` (or `.png`)
-2. Import it into `CAIReadinessWidget.tsx` and display it in the card header next to "CAI Certification Readiness"
-3. Add it to `TrustListViewer.tsx` header next to "CAI Trust List"
-4. Include it in `ConformanceExporter.tsx` for the exported evidence package branding
+1. **Single section** with subtle gradient background and proper vertical spacing
+2. **Two-column layout** on desktop (BizWeekly left, CAI right), stacked on mobile
+3. Each credential in a **card-like container** with subtle border, rounded corners, and hover effect
+4. **Larger logo sizes** — CAI logo `h-16 md:h-20`, BizWeekly image `max-w-sm`
+5. **Section header**: "Trusted & Recognized" with a subtle label above
+6. **Divider line** between the two on desktop (vertical) / mobile (horizontal)
+7. Harvard disclaimer kept as small text below the BizWeekly card
+8. "Read the feature" link styled as a proper button/pill
 
-Would you like me to copy the `.ai` file to assets now for safekeeping, or would you prefer to re-upload in SVG/PNG format first?
+This creates a cohesive, professional credibility strip that draws the eye without being gaudy.
 
