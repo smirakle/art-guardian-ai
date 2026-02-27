@@ -382,7 +382,7 @@ const Index = () => {
             alt="Content Authenticity Initiative"
             className="h-12 md:h-16 object-contain dark:invert" />
 
-          <p className="text-sm md:text-base text-muted-foreground max-w-xl font-sans">
+          <p className="text-sm md:text-base text-muted-foreground max-w-xl font-sans text-center">
             TSMO is a proud member of the <strong className="text-foreground">Content Authenticity Initiative (CAI)</strong> — building trust and transparency for digital content through the C2PA open standard.
           </p>
         </div>
