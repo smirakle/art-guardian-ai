@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Shield, LogIn, Menu, X } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import LanguageSwitcher from "./LanguageSwitcher";
+
 
 const PublicNavbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useTranslation();
+  
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -67,9 +66,6 @@ const PublicNavbar = () => {
 
           {/* Right Section */}
           <div className="flex items-center gap-3">
-            <div className="hidden sm:block">
-              <LanguageSwitcher />
-            </div>
             
             <Button
               onClick={() => navigate('/auth')}
