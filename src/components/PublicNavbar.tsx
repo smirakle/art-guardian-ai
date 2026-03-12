@@ -7,7 +7,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 const PublicNavbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useTranslation();
+  
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
