@@ -11,7 +11,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import MaintenanceMode from "@/components/MaintenanceMode";
 import { useMaintenanceMode } from "@/lib/maintenance";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { UserPreferencesProvider } from "@/contexts/UserPreferencesContext";
 import SecurityHeaders from "@/components/security/SecurityHeaders";
@@ -50,7 +50,6 @@ import TestRealtimeMonitoring from "./pages/TestRealtimeMonitoring";
 
 import CustomIntegrationsComingSoon from "./pages/CustomIntegrationsComingSoon";
 import { EnterpriseAPIAccess } from "./components/EnterpriseAPIAccess";
-// Legacy routes maintained for backward compatibility
 import InvestorHub from "./pages/InvestorHub";
 
 import CreatorMarkets from "./pages/CreatorMarkets";
@@ -101,19 +100,146 @@ import SuccessStories from "./pages/SuccessStories";
 import BlogManagementPage from "./pages/BlogManagementPage";
 import PartnershipsOverview from "./pages/PartnershipsOverview";
 import C2PAConformance from "./pages/admin/C2PAConformance";
+import PublicNavbar from "./components/PublicNavbar";
+
 const queryClient = new QueryClient();
 
+const AppRoutes = () => (
+  <Routes>
+    <Route path="/" element={<Index />} />
+    <Route path="/dashboard" element={<Dashboard />} />
+    <Route path="/about-tsmo" element={<AboutTsmo />} />
+    <Route path="/faq" element={<FAQ />} />
+    <Route path="/settings" element={<Settings />} />
+    <Route path="/profile" element={<Profile />} />
+    <Route path="/auth" element={<Auth />} />
+    <Route path="/b2b-login" element={<B2BLogin />} />
+    <Route path="/contact" element={<Contact />} />
+    <Route path="/upload" element={<Upload />} />
+    <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />
+    <Route path="/checkout" element={<Checkout />} />
+    <Route path="/success" element={<Success />} />
+    <Route path="/deep-scan" element={<DeepWebScan />} />
+    <Route path="/community" element={<Community />} />
+    <Route path="/deepfake-detection" element={<DeepfakeDetection />} />
+    <Route path="/deepfake-match/:matchId" element={<DeepfakeMatchDetails />} />
+    <Route path="/lawyers" element={<Lawyers />} />
+    <Route path="/legal-templates" element={<LegalTemplatesPage />} />
+    <Route path="/pricing" element={<Pricing />} />
+    <Route path="/sla-status" element={<SLAStatus />} />
+    <Route path="/protection-hub" element={<ProtectionHub />} />
+    <Route path="/monitoring-hub" element={<MonitoringHub />} />
+    <Route path="/findings" element={<Findings />} />
+    <Route path="/simple-findings" element={<SimpleFindings />} />
+    <Route path="/ai-protection" element={<ProtectionHub />} />
+    <Route path="/ai-protection-settings" element={<ProtectionHub />} />
+    <Route path="/ai-training-protection" element={<ProtectionHub />} />
+    <Route path="/phase1" element={<UnifiedDashboard />} />
+    <Route path="/phase2" element={<UnifiedDashboard />} />
+    <Route path="/phase3" element={<UnifiedDashboard />} />
+    <Route path="/custom-integrations" element={<CustomIntegrationsComingSoon />} />
+    <Route path="/enterprise-api" element={<EnterpriseAPIAccess />} />
+    <Route path="/profile-monitoring" element={<MonitoringHub />} />
+    <Route path="/portfolio-monitoring" element={<MonitoringHub />} />
+    <Route path="/trademark-monitoring" element={<MonitoringHub />} />
+    <Route path="/markets" element={<CreatorMarkets />} />
+    <Route path="/investors" element={<InvestorHub />} />
+    <Route path="/partner-pricing" element={<PartnerPricingManager />} />
+    <Route path="/production" element={<ProtectedRoute requiredRole="admin"><ProductionDashboard /></ProtectedRoute>} />
+    <Route path="/partner-success" element={<PartnerSuccessPage />} />
+    <Route path="/forgery-detection" element={<ForgeryDetection />} />
+    <Route path="/terms-and-privacy" element={<TermsAndPrivacy />} />
+    <Route path="/refund-policy" element={<RefundPolicy />} />
+    <Route path="/attorney-packet" element={<ProtectedRoute requiredRole="admin"><AttorneyPacket /></ProtectedRoute>} />
+    <Route path="/email-marketing" element={<ProtectedRoute requiredRole="admin"><EmailMarketing /></ProtectedRoute>} />
+    <Route path="/tax-management" element={<ProtectedRoute requiredRole="admin"><TaxManagement /></ProtectedRoute>} />
+    <Route path="/get-app" element={<GetApp />} />
+    <Route path="/dmca-center" element={<DMCACenter />} />
+    <Route path="/certificate/:certificateId" element={<Certificate />} />
+    <Route path="/mobile" element={<MobileIntegration />} />
+    <Route path="/analytics" element={<AdvancedAnalytics />} />
+    <Route path="/marketing-flyer" element={<ProtectedRoute requiredRole="admin"><MarketingFlyer /></ProtectedRoute>} />
+    <Route path="/document-protection" element={<DocumentProtection />} />
+    <Route path="/portfolio-monitoring-advanced" element={<PortfolioMonitoringAdvanced />} />
+    <Route path="/threat-alerts" element={<ThreatAlerts />} />
+    <Route path="/dmca-automation" element={<DMCAAutomation />} />
+    <Route path="/aitpa-analysis" element={<AITPAAnalysis />} />
+    <Route path="/status" element={<Status />} />
+    <Route path="/admin/monitoring" element={<ProtectedRoute requiredRole="admin"><AdminMonitoring /></ProtectedRoute>} />
+    <Route path="/admin/incidents" element={<ProtectedRoute requiredRole="admin"><IncidentManagement /></ProtectedRoute>} />
+    <Route path="/monitoring/realtime" element={<ProtectedRoute requiredRole="admin"><RealTimeMonitoringDashboard /></ProtectedRoute>} />
+    <Route path="/monitoring/test" element={<ProtectedRoute requiredRole="admin"><MonitoringTest /></ProtectedRoute>} />
+    <Route path="/monitoring/external-services" element={<ProtectedRoute requiredRole="admin"><ExternalServicesConfig /></ProtectedRoute>} />
+    <Route path="/test-realtime" element={<TestRealtimeMonitoring />} />
+    <Route path="/promo-materials" element={<PromoMaterials />} />
+    <Route path="/demo/visual" element={<AIProtectionVisualDemo />} />
+    <Route path="/protection-guide" element={<ProtectionGuide />} />
+    <Route path="/press-kit" element={<PressKit />} />
+    <Route path="/legal-resources" element={<LegalResources />} />
+    <Route path="/support" element={<Support />} />
+    <Route path="/reverse-image-search" element={<ReverseImageSearch />} />
+    <Route path="/stop-art-theft" element={<StopArtTheft />} />
+    <Route path="/protect-photos" element={<ProtectPhotos />} />
+    <Route path="/blog" element={<Blog />} />
+    <Route path="/blog/:slug" element={<BlogPost />} />
+    <Route path="/success-stories" element={<SuccessStories />} />
+    <Route path="/blog-management" element={<ProtectedRoute requiredRole="admin"><BlogManagementPage /></ProtectedRoute>} />
+    <Route path="/admin/c2pa-conformance" element={<ProtectedRoute requiredRole="admin"><C2PAConformance /></ProtectedRoute>} />
+    <Route path="/admin/partnerships" element={<ProtectedRoute requiredRole="admin"><PartnershipsOverview /></ProtectedRoute>} />
+    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+    <Route path="/terms-of-service" element={<TermsOfService />} />
+    <Route path="/adobe-integration" element={<AdobeIntegration />} />
+    <Route path="*" element={<NotFound />} />
+  </Routes>
+);
+
+const AuthenticatedLayout = () => {
+  return (
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        <main className="flex-1 flex flex-col">
+          <header className="h-12 flex items-center justify-between border-b bg-background/95 backdrop-blur-sm px-4">
+            <SidebarTrigger />
+            <RealTimeNotifications />
+          </header>
+          <div className="p-4 flex-1">
+            <AppRoutes />
+          </div>
+          <CopyrightFooter />
+        </main>
+      </div>
+    </SidebarProvider>
+  );
+};
+
+const PublicLayout = () => {
+  return (
+    <div className="min-h-screen flex flex-col w-full">
+      <PublicNavbar />
+      <main className="flex-1">
+        <AppRoutes />
+      </main>
+      <CopyrightFooter />
+    </div>
+  );
+};
+
+const AppLayout = () => {
+  const { user } = useAuth();
+  
+  if (user) {
+    return <AuthenticatedLayout />;
+  }
+  
+  return <PublicLayout />;
+};
+
 const App = () => {
-  // Use shared maintenance mode state
   const { isMaintenanceMode } = useMaintenanceMode();
-  
-  // Activate Real User Monitoring for all pages
   const { trackUserAction } = useRealUserMonitoring();
-  
-  // Activate Visitor Tracking for retention analytics
   useVisitorTracking();
 
-  // If maintenance mode is enabled, show only the maintenance page
   if (isMaintenanceMode) {
     return (
       <QueryClientProvider client={queryClient}>
@@ -128,7 +254,6 @@ const App = () => {
     );
   }
 
-  // Normal app when maintenance mode is disabled
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -139,173 +264,7 @@ const App = () => {
           <Sonner />
           <SmartOnboarding />
           <HelpWidget />
-          <SidebarProvider>
-            <div className="min-h-screen flex w-full">
-              <AppSidebar />
-              <main className="flex-1 flex flex-col">
-                <header className="h-12 flex items-center justify-between border-b bg-background/95 backdrop-blur-sm px-4">
-                  <SidebarTrigger />
-                  <RealTimeNotifications />
-                </header>
-                 <div className="p-4 flex-1">
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/about-tsmo" element={<AboutTsmo />} />
-                    <Route path="/faq" element={<FAQ />} />
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/auth" element={<Auth />} />
-                    <Route path="/b2b-login" element={<B2BLogin />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/upload" element={<Upload />} />
-                    <Route path="/admin" element={
-                      <ProtectedRoute requiredRole="admin">
-                        <Admin />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="/checkout" element={<Checkout />} />
-                    <Route path="/success" element={<Success />} />
-                    <Route path="/deep-scan" element={<DeepWebScan />} />
-                    <Route path="/community" element={<Community />} />
-                     <Route path="/deepfake-detection" element={<DeepfakeDetection />} />
-                     <Route path="/deepfake-match/:matchId" element={<DeepfakeMatchDetails />} />
-                      <Route path="/lawyers" element={<Lawyers />} />
-                      <Route path="/legal-templates" element={<LegalTemplatesPage />} />
-                       <Route path="/pricing" element={<Pricing />} />
-                       <Route path="/sla-status" element={<SLAStatus />} />
-                            <Route path="/protection-hub" element={<ProtectionHub />} />
-                            <Route path="/monitoring-hub" element={<MonitoringHub />} />
-                            <Route path="/findings" element={<Findings />} />
-                            <Route path="/simple-findings" element={<SimpleFindings />} />
-                            
-                            {/* Legacy redirects */}
-                            <Route path="/ai-protection" element={<ProtectionHub />} />
-                            <Route path="/ai-protection-settings" element={<ProtectionHub />} />
-                            <Route path="/ai-training-protection" element={<ProtectionHub />} />
-                            <Route path="/phase1" element={<UnifiedDashboard />} />
-                            <Route path="/phase2" element={<UnifiedDashboard />} />
-                            <Route path="/phase3" element={<UnifiedDashboard />} />
-                         <Route path="/custom-integrations" element={<CustomIntegrationsComingSoon />} />
-                        
-                        <Route path="/enterprise-api" element={<EnterpriseAPIAccess />} />
-            {/* Legacy monitoring routes redirect to unified hub */}
-            <Route path="/profile-monitoring" element={<MonitoringHub />} />
-            <Route path="/portfolio-monitoring" element={<MonitoringHub />} />
-            <Route path="/trademark-monitoring" element={<MonitoringHub />} />
-            <Route path="/markets" element={<CreatorMarkets />} />
-            <Route path="/investors" element={<InvestorHub />} />
-            <Route path="/partner-pricing" element={<PartnerPricingManager />} />
-            <Route path="/production" element={
-              <ProtectedRoute requiredRole="admin">
-                <ProductionDashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/partner-success" element={<PartnerSuccessPage />} />
-            <Route path="/forgery-detection" element={<ForgeryDetection />} />
-            
-            <Route path="/terms-and-privacy" element={<TermsAndPrivacy />} />
-            <Route path="/refund-policy" element={<RefundPolicy />} />
-            <Route path="/attorney-packet" element={
-              <ProtectedRoute requiredRole="admin">
-                <AttorneyPacket />
-              </ProtectedRoute>
-            } />
-            <Route path="/email-marketing" element={
-              <ProtectedRoute requiredRole="admin">
-                <EmailMarketing />
-              </ProtectedRoute>
-            } />
-            <Route path="/tax-management" element={
-              <ProtectedRoute requiredRole="admin">
-                <TaxManagement />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/get-app" element={<GetApp />} />
-            <Route path="/dmca-center" element={<DMCACenter />} />
-            <Route path="/certificate/:certificateId" element={<Certificate />} />
-            <Route path="/mobile" element={<MobileIntegration />} />
-            <Route path="/analytics" element={<AdvancedAnalytics />} />
-            <Route path="/marketing-flyer" element={
-              <ProtectedRoute requiredRole="admin">
-                <MarketingFlyer />
-              </ProtectedRoute>
-            } />
-            
-            {/* Phase 3-6 Advanced Monitoring Features */}
-            <Route path="/document-protection" element={<DocumentProtection />} />
-            <Route path="/portfolio-monitoring-advanced" element={<PortfolioMonitoringAdvanced />} />
-            <Route path="/threat-alerts" element={<ThreatAlerts />} />
-            <Route path="/dmca-automation" element={<DMCAAutomation />} />
-            <Route path="/aitpa-analysis" element={<AITPAAnalysis />} />
-            <Route path="/status" element={<Status />} />
-            <Route path="/admin/monitoring" element={
-              <ProtectedRoute requiredRole="admin">
-                <AdminMonitoring />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/incidents" element={
-              <ProtectedRoute requiredRole="admin">
-                <IncidentManagement />
-              </ProtectedRoute>
-            } />
-            <Route path="/monitoring/realtime" element={
-              <ProtectedRoute requiredRole="admin">
-                <RealTimeMonitoringDashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/monitoring/test" element={
-              <ProtectedRoute requiredRole="admin">
-                <MonitoringTest />
-              </ProtectedRoute>
-            } />
-            <Route path="/monitoring/external-services" element={
-              <ProtectedRoute requiredRole="admin">
-                <ExternalServicesConfig />
-              </ProtectedRoute>
-            } />
-            <Route path="/test-realtime" element={<TestRealtimeMonitoring />} />
-            <Route path="/promo-materials" element={<PromoMaterials />} />
-            <Route path="/demo/visual" element={<AIProtectionVisualDemo />} />
-            <Route path="/protection-guide" element={<ProtectionGuide />} />
-            <Route path="/press-kit" element={<PressKit />} />
-            <Route path="/legal-resources" element={<LegalResources />} />
-            <Route path="/support" element={<Support />} />
-            <Route path="/reverse-image-search" element={<ReverseImageSearch />} />
-            <Route path="/stop-art-theft" element={<StopArtTheft />} />
-            
-            <Route path="/protect-photos" element={<ProtectPhotos />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/success-stories" element={<SuccessStories />} />
-            <Route path="/blog-management" element={
-              <ProtectedRoute requiredRole="admin">
-                <BlogManagementPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/c2pa-conformance" element={
-              <ProtectedRoute requiredRole="admin">
-                <C2PAConformance />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/partnerships" element={
-              <ProtectedRoute requiredRole="admin">
-                <PartnershipsOverview />
-              </ProtectedRoute>
-            } />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms-of-service" element={<TermsOfService />} />
-            <Route path="/adobe-integration" element={<AdobeIntegration />} />
-            
-                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                     <Route path="*" element={<NotFound />} />
-                  </Routes>
-                 </div>
-                 <CopyrightFooter />
-              </main>
-             </div>
-          </SidebarProvider>
+          <AppLayout />
         </UserPreferencesProvider>
       </TooltipProvider>
     </QueryClientProvider>

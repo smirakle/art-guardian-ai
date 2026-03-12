@@ -1,215 +1,84 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import ContextualHelp from "@/components/help-system/ContextualHelp";
 import { BugReportButton } from "@/components/BugReportButton";
-import { Shield, Eye, Search, ArrowRight, Zap, Globe, FileText, Play, ChevronRight, Scale, Bell, Upload, BookOpen, Clock, Download, Check, X, Cloud } from "lucide-react";
+import { Shield, Eye, Search, ArrowRight, Globe, Play, ChevronRight, Bell, Upload, BookOpen, Clock, Check, Star } from "lucide-react";
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import { useQuery } from "@tanstack/react-query";
 import bizWeeklyBanner from "@/assets/Biz_Weekly.png";
 import caiLogo from "@/assets/CAI_Lockup_RGB_Black.png";
 import DemoEnvironment from "@/components/investor/DemoEnvironment";
-
-import TrustBadges from "@/components/TrustBadges";
 import { InstantProtectModal } from "@/components/InstantProtectModal";
-
-import AlertExampleSection from "@/components/AlertExampleSection";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
-
-// Blog Section Component that fetches from database
-const BlogSection = ({ navigate }: {navigate: (path: string) => void;}) => {
-  const { data: dbPosts, isLoading } = useQuery({
-    queryKey: ['home-blog-posts'],
-    queryFn: async () => {
-      const { data, error } = await supabase.
-      from('blog_posts').
-      select('id, title, slug, excerpt, tags, created_at').
-      eq('status', 'published').
-      order('published_at', { ascending: false }).
-      limit(3);
-
-      if (error) throw error;
-      return data;
-    }
-  });
-
-  // Fallback posts if no database posts
-  const fallbackPosts = [
-  {
-    slug: "how-to-find-if-your-art-is-being-stolen-online",
-    title: "How to Find If Your Art Is Being Stolen Online",
-    excerpt: "Learn the essential techniques to discover if your artwork is being used without permission across the internet.",
-    category: "Protection",
-    readTime: "8 min read"
-  },
-  {
-    slug: "ai-training-what-artists-need-to-know-2025",
-    title: "AI Training: What Artists Need to Know in 2025",
-    excerpt: "Understanding how AI companies use artwork for training and what you can do to protect your creative rights.",
-    category: "AI",
-    readTime: "10 min read"
-  },
-  {
-    slug: "dmca-takedown-guide-digital-artists",
-    title: "DMCA Takedown Guide for Digital Artists",
-    excerpt: "A step-by-step guide to filing DMCA takedown notices and protecting your copyright online.",
-    category: "Legal",
-    readTime: "12 min read"
-  }];
-
-
-  const posts = dbPosts && dbPosts.length > 0 ?
-  dbPosts.map((post) => ({
-    slug: post.slug,
-    title: post.title,
-    excerpt: post.excerpt || '',
-    category: post.tags?.[0] || 'General',
-    readTime: '5 min read'
-  })) :
-  fallbackPosts;
-
-  return (
-    <section className="py-16 px-4 bg-background">
-      <div className="container mx-auto max-w-5xl">
-        <div className="text-center mb-10">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <BookOpen className="h-6 w-6 text-primary" />
-            <h2 className="text-3xl md:text-4xl font-bold">From Our Blog</h2>
-          </div>
-          <p className="text-lg text-muted-foreground">Tips, guides, and insights for protecting your creative work</p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          {posts.map((post) =>
-          <Card key={post.slug} className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/30">
-              <CardHeader className="pb-3">
-                <Badge variant="secondary" className="w-fit mb-2">{post.category}</Badge>
-                <CardTitle className="text-lg group-hover:text-primary transition-colors line-clamp-2">
-                  {post.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-                  {post.excerpt}
-                </p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    <span>{post.readTime}</span>
-                  </div>
-                  <Link to={`/blog/${post.slug}`} className="text-sm text-primary hover:underline flex items-center gap-1">
-                    Read more <ChevronRight className="h-3 w-3" />
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        <div className="text-center">
-          <Button variant="outline" size="lg" onClick={() => navigate("/blog")}>
-            View All Articles
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-    </section>);
-
-};
 
 const Index = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [signupEmail, setSignupEmail] = useState('');
+  const [showLiveDemo, setShowLiveDemo] = useState(false);
+  const [showInstantProtect, setShowInstantProtect] = useState(false);
+  const [showSalesDialog, setShowSalesDialog] = useState(false);
+  const [salesFormData, setSalesFormData] = useState({ name: "", email: "", company: "", interestedPlan: "", message: "" });
+  const [isSendingSales, setIsSendingSales] = useState(false);
 
   useEffect(() => {
-    const title = "TSMO | AI Art Protection & Forgery Detection";
-    document.title = title;
+    document.title = "TSMO | AI Art Protection & Forgery Detection";
     const setMeta = (name: string, content: string) => {
       let tag = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
-      if (!tag) {
-        tag = document.createElement("meta");
-        tag.name = name;
-        document.head.appendChild(tag);
-      }
+      if (!tag) { tag = document.createElement("meta"); tag.name = name; document.head.appendChild(tag); }
       tag.content = content;
     };
     setMeta("description", "Stop online art theft. TSMO monitors the web 24/7 to find stolen artwork, proves ownership with timestamps, and helps you take action. Free to start.");
     let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-    if (!link) {
-      link = document.createElement("link");
-      link.rel = "canonical";
-      document.head.appendChild(link);
-    }
+    if (!link) { link = document.createElement("link"); link.rel = "canonical"; document.head.appendChild(link); }
     link.href = `${window.location.origin}/`;
-
     let script = document.querySelector('script[data-ld="org"]') as HTMLScriptElement | null;
-    if (!script) {
-      script = document.createElement("script");
-      script.type = "application/ld+json";
-      script.setAttribute("data-ld", "org");
-      document.head.appendChild(script);
-    }
-    script.text = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      name: "TSMO",
-      url: window.location.origin,
-      logo: window.location.origin + "/favicon.ico"
-    });
+    if (!script) { script = document.createElement("script"); script.type = "application/ld+json"; script.setAttribute("data-ld", "org"); document.head.appendChild(script); }
+    script.text = JSON.stringify({ "@context": "https://schema.org", "@type": "Organization", name: "TSMO", url: window.location.origin, logo: window.location.origin + "/favicon.ico" });
   }, []);
-
-  const [showLiveDemo, setShowLiveDemo] = useState(false);
-  const [showInstantProtect, setShowInstantProtect] = useState(false);
-  const [showSalesDialog, setShowSalesDialog] = useState(false);
-  const [salesFormData, setSalesFormData] = useState({
-    name: "",
-    email: "",
-    company: "",
-    interestedPlan: "",
-    message: ""
-  });
-  const [isSendingSales, setIsSendingSales] = useState(false);
 
   const handleSalesInquiry = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSendingSales(true);
     try {
-      const { data, error } = await supabase.functions.invoke("send-sales-inquiry", {
-        body: salesFormData
-      });
+      const { error } = await supabase.functions.invoke("send-sales-inquiry", { body: salesFormData });
       if (error) throw error;
-      toast({
-        title: "Sales Inquiry Sent!",
-        description: "Thank you for your interest. Our sales team will contact you within 24 hours."
-      });
+      toast({ title: "Sales Inquiry Sent!", description: "Our sales team will contact you within 24 hours." });
       setShowSalesDialog(false);
       setSalesFormData({ name: "", email: "", company: "", interestedPlan: "", message: "" });
     } catch (error) {
-      console.error("Error sending sales inquiry:", error);
-      toast({
-        title: "Error",
-        description: "Failed to send sales inquiry. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsSendingSales(false);
-    }
+      toast({ title: "Error", description: "Failed to send. Please try again.", variant: "destructive" });
+    } finally { setIsSendingSales(false); }
   };
 
+  // Blog posts query
+  const { data: dbPosts } = useQuery({
+    queryKey: ['home-blog-posts'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('blog_posts').select('id, title, slug, excerpt, tags, created_at').eq('status', 'published').order('published_at', { ascending: false }).limit(3);
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const fallbackPosts = [
+    { slug: "how-to-find-if-your-art-is-being-stolen-online", title: "How to Find If Your Art Is Being Stolen Online", excerpt: "Learn the essential techniques to discover if your artwork is being used without permission.", category: "Protection", readTime: "8 min" },
+    { slug: "ai-training-what-artists-need-to-know-2025", title: "AI Training: What Artists Need to Know in 2025", excerpt: "Understanding how AI companies use artwork for training and your rights.", category: "AI", readTime: "10 min" },
+    { slug: "dmca-takedown-guide-digital-artists", title: "DMCA Takedown Guide for Digital Artists", excerpt: "A step-by-step guide to filing DMCA takedown notices.", category: "Legal", readTime: "12 min" },
+  ];
+
+  const posts = dbPosts?.length ? dbPosts.map((p) => ({ slug: p.slug, title: p.title, excerpt: p.excerpt || '', category: p.tags?.[0] || 'General', readTime: '5 min' })) : fallbackPosts;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <ContextualHelp />
+    <div className="min-h-screen bg-background">
       <ExitIntentPopup />
       <InstantProtectModal open={showInstantProtect} onOpenChange={setShowInstantProtect} />
       
@@ -217,411 +86,265 @@ const Index = () => {
       <Dialog open={showLiveDemo} onOpenChange={setShowLiveDemo}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Live Demo - TSMO Protection Platform</DialogTitle>
-            <DialogDescription>
-              Experience our IP protection platform in action with real-time monitoring simulation.
-            </DialogDescription>
+            <DialogTitle>Live Demo — TSMO Protection Platform</DialogTitle>
+            <DialogDescription>Experience our IP protection platform in action.</DialogDescription>
           </DialogHeader>
           <DemoEnvironment />
         </DialogContent>
       </Dialog>
 
-      {/* Hero Section */}
-      <section className="pt-16 sm:pt-20 pb-12 px-4">
-        <div className="container mx-auto text-center max-w-4xl">
-          <div className="mb-6">
-            <img src={tsmoLogo} alt="TSMO Logo" className="h-[10.5rem] sm:h-[14rem] md:h-[17.5rem] mx-auto object-contain" loading="eager" />
-          </div>
+      {/* ===== HERO ===== */}
+      <section className="relative pt-28 lg:pt-36 pb-20 lg:pb-28 overflow-hidden">
+        {/* Subtle gradient orbs */}
+        <div className="absolute top-20 left-1/4 w-96 h-96 bg-primary/8 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 right-1/4 w-80 h-80 bg-accent/6 rounded-full blur-3xl" />
+        
+        <div className="container mx-auto px-4 relative">
+          <div className="max-w-3xl mx-auto text-center">
+            {/* Logo mark */}
+            <div className="mb-8">
+              <img src={tsmoLogo} alt="TSMO Logo" className="h-28 sm:h-36 lg:h-44 mx-auto object-contain" loading="eager" />
+            </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
-            Stop Online Art Theft.
-          </h1>
-          
-          <p className="text-base sm:text-lg text-muted-foreground/80 mb-6 max-w-2xl mx-auto italic font-sans text-center font-light">
-            Upload once. Get alerts. Take action.
-          </p>
-
-          {/* No Download Badge */}
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <Badge variant="outline" className="bg-emerald-500/10 border-emerald-500/40 text-emerald-700 dark:text-emerald-400 px-4 py-1.5 text-sm font-medium">
-              <Cloud className="w-4 h-4 mr-2" />
-              Works instantly in your browser — no download
-            </Badge>
-          </div>
-
-          {/* Primary CTA - Try It Now with Animation */}
-          <div className="mb-6">
-            <Button
-              size="lg"
-              className="h-14 px-10 text-lg bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white shadow-xl animate-pulse-glow"
-              onClick={() => setShowInstantProtect(true)}>
-
-              <Upload className="mr-2 h-5 w-5" />
-              Scan Your Art Free — 5 Seconds
-            </Button>
-            <p className="text-sm text-muted-foreground mt-3 flex items-center justify-center gap-2">
-              <span className="inline-flex items-center gap-1">
-                <Check className="w-4 h-4 text-emerald-500" />
-                No signup
-              </span>
-              <span className="text-muted-foreground/50">•</span>
-              <span className="inline-flex items-center gap-1">
-                <Check className="w-4 h-4 text-emerald-500" />
-                No download
-              </span>
-              <span className="text-muted-foreground/50">•</span>
-              <span className="inline-flex items-center gap-1">
-                <Check className="w-4 h-4 text-emerald-500" />
-                Instant results
-              </span>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-5 text-foreground leading-[1.1]">
+              Your Art Is Being Stolen.<br />
+              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">We Stop It.</span>
+            </h1>
+            
+            <p className="text-lg sm:text-xl text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed">
+              Upload your work. We scan the web 24/7 and alert you when someone uses it without permission.
             </p>
-            <p className="text-xs text-primary/80 mt-2 font-medium">
-              ✓ 2,400+ scans completed this month
-            </p>
-          </div>
 
-          {/* Divider */}
-          <div className="flex items-center gap-4 max-w-md mx-auto mb-6">
-            <div className="flex-1 h-px bg-border"></div>
-            <span className="text-xs text-muted-foreground uppercase tracking-wide">or create an account</span>
-            <div className="flex-1 h-px bg-border"></div>
-          </div>
-
-          {/* Secondary CTA - Email Capture */}
-          <div className="max-w-md mx-auto mb-4">
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 h-12 text-base"
-                value={signupEmail}
-                onChange={(e) => setSignupEmail(e.target.value)} />
-
+            {/* Primary CTA */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
+              <Button
+                size="lg"
+                className="h-13 px-8 text-base font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
+                onClick={() => setShowInstantProtect(true)}
+              >
+                <Upload className="mr-2 h-5 w-5" />
+                Scan Your Art Free
+              </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="h-12 px-8 whitespace-nowrap"
-                onClick={() => navigate(`/auth?email=${encodeURIComponent(signupEmail)}&tab=signup`)}>
-
-                Start Free
+                className="h-13 px-8 text-base font-medium"
+                onClick={() => navigate('/auth?tab=signup')}
+              >
+                Create Free Account
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">50 free protections + email alerts. No credit card.</p>
-          </div>
 
-          {/* Demo Link - Text only */}
-          <div className="mb-6">
+            {/* Trust indicators */}
+            <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <Check className="w-4 h-4 text-primary" />
+                No credit card
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Check className="w-4 h-4 text-primary" />
+                Instant results
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Check className="w-4 h-4 text-primary" />
+                50 free scans
+              </span>
+            </div>
+
+            {/* Demo link */}
             <button
               onClick={() => setShowLiveDemo(true)}
-              className="text-sm text-primary hover:underline inline-flex items-center gap-1">
-
-              <Play className="w-3 h-3" />
+              className="mt-6 text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1.5"
+            >
+              <Play className="w-3.5 h-3.5" />
               Watch 2-minute demo
             </button>
           </div>
+        </div>
+      </section>
 
-          {/* Key Features */}
-          <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-4">
-            <div className="text-center">
-              <Search className="w-6 h-6 sm:w-8 sm:h-8 mx-auto text-primary mb-1" />
-              <div className="text-xs sm:text-sm text-muted-foreground">AI Training Resistance</div>
-            </div>
-            <div className="text-center">
-              <Shield className="w-6 h-6 sm:w-8 sm:h-8 mx-auto text-primary mb-1" />
-              <div className="text-xs sm:text-sm text-muted-foreground">Copy Detection</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">24/7</div>
-              <div className="text-xs sm:text-sm text-muted-foreground">Monitoring</div>
-            </div>
+      {/* ===== HOW IT WORKS ===== */}
+      <section className="py-20 lg:py-28 border-t border-border/30">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">How It Works</p>
+            <h2 className="text-3xl lg:text-4xl font-bold text-foreground">Protection in four simple steps</h2>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+            {[
+              { icon: Upload, title: "Upload", desc: "Drop your artwork into TSMO" },
+              { icon: Search, title: "We Scan", desc: "AI searches billions of pages" },
+              { icon: Bell, title: "Get Alerted", desc: "Instant notification of matches" },
+              { icon: Shield, title: "Take Action", desc: "One-click enforcement tools" },
+            ].map((step, i) => (
+              <div key={i} className="text-center group">
+                <div className="relative mx-auto mb-5">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto group-hover:bg-primary/20 transition-colors">
+                    <step.icon className="h-7 w-7 text-primary" />
+                  </div>
+                  <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">
+                    {i + 1}
+                  </span>
+                </div>
+                <h3 className="text-lg font-semibold mb-1 text-foreground">{step.title}</h3>
+                <p className="text-sm text-muted-foreground">{step.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Trusted & Recognized — Unified Credibility Section */}
-      <section className="py-12 md:py-16 px-4 bg-gradient-to-b from-muted/40 to-background border-y border-border/50">
-        <div className="container mx-auto max-w-5xl">
-          {/* Section Header */}
-          <div className="text-center mb-10">
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">Credibility & Trust</p>
-            <h2 className="text-2xl md:text-3xl font-bold">Trusted & Recognized</h2>
+      {/* ===== KEY FEATURES ===== */}
+      <section className="py-20 lg:py-28 bg-muted/20 border-t border-border/30">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">Features</p>
+            <h2 className="text-3xl lg:text-4xl font-bold text-foreground">Everything you need to protect your work</h2>
           </div>
 
-          {/* Two-column layout */}
-          <div className="grid md:grid-cols-2 gap-8 md:gap-0 items-stretch">
-            {/* BizWeekly Card */}
-            <div className="flex flex-col items-center justify-center text-center p-8 rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 md:rounded-r-none md:border-r-0">
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-4">As Seen On</p>
-              <a
-                href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block hover:opacity-90 transition-opacity mb-5">
-                <img
-                  src={bizWeeklyBanner}
-                  alt="As seen on BizWeekly"
-                  className="w-full max-w-sm mx-auto h-auto object-contain"
-                  loading="lazy" />
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { icon: Eye, title: "AI Training Resistance", desc: "Style cloaking technology makes your art unusable for AI model training while keeping it visually identical to humans." },
+              { icon: Search, title: "Reverse Image Search", desc: "Continuously monitors millions of websites, marketplaces, and social platforms to detect unauthorized use of your work." },
+              { icon: Globe, title: "24/7 Web Monitoring", desc: "Our AI agents scan the internet around the clock so you never miss an unauthorized copy of your artwork." },
+            ].map((feature, i) => (
+              <div key={i} className="p-8 rounded-2xl bg-background border border-border/50 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
+                  <feature.icon className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-foreground">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== SOCIAL PROOF — STATS ===== */}
+      <section className="py-16 border-t border-border/30">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {[
+              { value: "2,400+", label: "Scans this month" },
+              { value: "24/7", label: "Monitoring" },
+              { value: "50+", label: "Platforms scanned" },
+              { value: "Free", label: "To start" },
+            ].map((stat, i) => (
+              <div key={i}>
+                <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">{stat.value}</div>
+                <div className="text-sm text-muted-foreground">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== CREDIBILITY ===== */}
+      <section className="py-20 lg:py-24 bg-muted/20 border-t border-border/30">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center mb-12">
+            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">Trusted & Recognized</p>
+            <h2 className="text-3xl font-bold text-foreground">Built on credibility</h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* BizWeekly */}
+            <div className="p-8 rounded-2xl bg-background border border-border/50 text-center flex flex-col items-center">
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-5">As Seen On</p>
+              <a href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/" target="_blank" rel="noopener noreferrer" className="block hover:opacity-90 transition-opacity mb-5">
+                <img src={bizWeeklyBanner} alt="As seen on BizWeekly" className="w-full max-w-xs mx-auto h-auto object-contain" loading="lazy" />
               </a>
-              <a
-                href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium hover:bg-primary/20 transition-colors mb-4">
+              <a href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline inline-flex items-center gap-1">
                 Read the feature <ChevronRight className="w-3.5 h-3.5" />
               </a>
-              <p className="text-xs text-muted-foreground leading-relaxed max-w-xs">
-                Founder is a Harvard Innovation Labs (i-lab) member.
-                <br />
-                <span className="opacity-70">Harvard University does not endorse or sponsor TSMO Watch.</span>
+              <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
+                Founder is a Harvard Innovation Labs member.<br />
+                <span className="opacity-60">Harvard University does not endorse or sponsor TSMO.</span>
               </p>
             </div>
 
-            {/* CAI Card */}
-            <div className="flex flex-col items-center justify-center text-center p-8 rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 md:rounded-l-none">
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-4">Official Member</p>
-              <img
-                src={caiLogo}
-                alt="Content Authenticity Initiative"
-                className="h-16 md:h-20 object-contain dark:invert mb-5" />
-              <p className="text-sm md:text-base text-muted-foreground max-w-sm leading-relaxed">
-                TSMO is a proud member of the <strong className="text-foreground">Content Authenticity Initiative (CAI)</strong> — building trust and transparency through the C2PA open standard.
+            {/* CAI */}
+            <div className="p-8 rounded-2xl bg-background border border-border/50 text-center flex flex-col items-center justify-center">
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-5">Official Member</p>
+              <img src={caiLogo} alt="Content Authenticity Initiative" className="h-16 lg:h-20 object-contain dark:invert mb-5" />
+              <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
+                Proud member of the <strong className="text-foreground">Content Authenticity Initiative (CAI)</strong> — building trust through the C2PA open standard.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section id="how-it-works" className="py-16 px-4 bg-muted/30 border-primary-foreground">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">How We Keep Your Art Safe</h2>
-            <p className="text-lg text-muted-foreground">We watch the internet for copies of your art.</p>
+      {/* ===== BLOG ===== */}
+      <section className="py-20 lg:py-24 border-t border-border/30">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <BookOpen className="h-5 w-5 text-primary" />
+              <p className="text-sm font-semibold text-primary uppercase tracking-widest">From Our Blog</p>
+            </div>
+            <h2 className="text-3xl font-bold text-foreground">Tips & guides for creators</h2>
           </div>
 
-          {/* Simple 4-Step Process - Icons + Titles Only */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-            <div className="text-center">
-              <div className="w-14 h-14 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-3">
-                <Upload className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="font-semibold">Upload</h3>
-            </div>
-            <div className="text-center">
-              <div className="w-14 h-14 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-3">
-                <Search className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="font-semibold">We Scan</h3>
-            </div>
-            <div className="text-center">
-              <div className="w-14 h-14 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-3">
-                <Bell className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="font-semibold">Get Alerted</h3>
-            </div>
-            <div className="text-center">
-              <div className="w-14 h-14 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-3">
-                <Shield className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="font-semibold">Take Action</h3>
-            </div>
+          <div className="grid md:grid-cols-3 gap-6 mb-10">
+            {posts.map((post) => (
+              <Link key={post.slug} to={`/blog/${post.slug}`} className="group block p-6 rounded-2xl bg-background border border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300">
+                <span className="text-xs font-medium text-primary uppercase tracking-wider">{post.category}</span>
+                <h3 className="text-lg font-semibold mt-2 mb-3 text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                  {post.title}
+                </h3>
+                <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{post.excerpt}</p>
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Clock className="h-3 w-3" />
+                  {post.readTime}
+                </div>
+              </Link>
+            ))}
           </div>
 
-          {/* CTA */}
           <div className="text-center">
-            <Button size="lg" className="px-8 h-12 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90" onClick={() => navigate("/upload")}>
-              Start Protecting Your Art
-              <ArrowRight className="ml-2 h-5 w-5" />
+            <Button variant="outline" onClick={() => navigate("/blog")}>
+              View All Articles <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Inline Signup Section - After How It Works */}
-      <section className="py-12 px-4 bg-background">
-        <div className="container mx-auto max-w-2xl">
-          <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-accent/5">
-            <CardContent className="text-center py-8 px-6">
-              <h3 className="text-2xl font-bold mb-2">Ready to protect your portfolio?</h3>
-              <p className="text-muted-foreground mb-6">
-                Join artists who sleep better knowing their work is monitored 24/7
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 h-12"
-                  value={signupEmail}
-                  onChange={(e) => setSignupEmail(e.target.value)} />
-
-                <Button
-                  size="lg"
-                  className="h-12 px-6 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white"
-                  onClick={() => navigate(`/auth?email=${encodeURIComponent(signupEmail)}&tab=signup`)}>
-
-                  Get Started Free
-                </Button>
-              </div>
-              <p className="text-xs text-muted-foreground mt-3">
-                50 free protections. Email alerts. No credit card.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-
-      {/* TSMO vs Glaze Comparison */}
-      <section className="py-16 px-4 bg-background">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-10">
-            <Badge variant="outline" className="mb-4 bg-primary/10 border-primary/30 text-primary">
-              Why Choose TSMO?
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">TSMO vs Traditional Tools</h2>
-            <p className="text-lg text-muted-foreground">See how our web-based platform compares to desktop software like Glaze</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* TSMO Card */}
-            <Card className="border-primary/40 bg-gradient-to-br from-primary/5 to-accent/5 relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-bl-lg">
-                RECOMMENDED
-              </div>
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2">
-                  <img src={tsmoLogo} alt="TSMO" className="h-8 w-8 object-contain" />
-                  TSMO
-                </CardTitle>
-                <CardDescription>All-in-one web platform</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                    <Check className="w-4 h-4 text-emerald-500" />
-                  </div>
-                  <span className="text-sm"><strong>No download required</strong> — works in browser</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                    <Check className="w-4 h-4 text-emerald-500" />
-                  </div>
-                  <span className="text-sm">Cloud processing — fast on any device</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                    <Check className="w-4 h-4 text-emerald-500" />
-                  </div>
-                  <span className="text-sm">Style cloaking + watermarking + monitoring</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                    <Check className="w-4 h-4 text-emerald-500" />
-                  </div>
-                  <span className="text-sm">24/7 reverse image search & alerts</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                    <Check className="w-4 h-4 text-emerald-500" />
-                  </div>
-                  <span className="text-sm">Automated DMCA takedown assistance <Badge variant="outline" className="ml-1 text-[10px] px-1.5 py-0 bg-amber-500/10 border-amber-500/40 text-amber-600 dark:text-amber-400">Coming Soon</Badge></span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                    <Check className="w-4 h-4 text-emerald-500" />
-                  </div>
-                  <span className="text-sm">Works on Windows, Mac, Linux, mobile</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Glaze Card */}
-            <Card className="border-border/50">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2">
-                  <Download className="h-6 w-6 text-muted-foreground" />
-                  Desktop Tools (Glaze, etc.)
-                </CardTitle>
-                <CardDescription>Traditional desktop software</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center">
-                    <X className="w-4 h-4 text-destructive" />
-                  </div>
-                  <span className="text-sm text-muted-foreground">Requires software download & install</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center">
-                    <X className="w-4 h-4 text-destructive" />
-                  </div>
-                  <span className="text-sm text-muted-foreground">Local processing — slow on older hardware</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                    <Check className="w-4 h-4 text-emerald-500" />
-                  </div>
-                  <span className="text-sm">Style cloaking only (research-grade)</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center">
-                    <X className="w-4 h-4 text-destructive" />
-                  </div>
-                  <span className="text-sm text-muted-foreground">No theft monitoring or alerts</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center">
-                    <X className="w-4 h-4 text-destructive" />
-                  </div>
-                  <span className="text-sm text-muted-foreground">No DMCA or legal assistance</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center">
-                    <X className="w-4 h-4 text-destructive" />
-                  </div>
-                  <span className="text-sm text-muted-foreground">Windows/Mac only, no mobile</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="text-center mt-8">
-            <Button size="lg" className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90" onClick={() => navigate("/upload")}>
-              Try TSMO Free — No Download Needed
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Alert Example - Proof of Product */}
-      <AlertExampleSection />
-
-
-      {/* Trust Badges */}
-      <TrustBadges />
-
-
-      {/* Blog Section */}
-      <BlogSection navigate={navigate} />
-
-      {/* Final CTA */}
-      <section className="py-16 px-4 bg-gradient-to-r from-primary/10 to-accent/10">
-        <div className="container mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready to Protect Your Creative Work?
+      {/* ===== FINAL CTA ===== */}
+      <section className="py-20 lg:py-28 bg-gradient-to-br from-primary/5 via-background to-accent/5 border-t border-border/30">
+        <div className="container mx-auto px-4 max-w-2xl text-center">
+          <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-foreground">
+            Ready to protect your art?
           </h2>
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Join creators using TSMO to monitor for unauthorized copies.
+          <p className="text-lg text-muted-foreground mb-8">
+            Join thousands of creators who sleep better knowing their work is monitored 24/7.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="px-8 h-12 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90" onClick={() => navigate("/upload")}>
-              Start Protecting Now
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button variant="outline" size="lg" className="px-8 h-12" onClick={() => navigate("/pricing")}>
+
+          {/* Email capture */}
+          <div className="max-w-md mx-auto mb-6">
+            <div className="flex gap-3">
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                className="flex-1 h-12 text-base bg-background"
+                value={signupEmail}
+                onChange={(e) => setSignupEmail(e.target.value)}
+              />
+              <Button
+                size="lg"
+                className="h-12 px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+                onClick={() => navigate(`/auth?email=${encodeURIComponent(signupEmail)}&tab=signup`)}
+              >
+                Get Started
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-3">50 free protections. No credit card required.</p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button variant="outline" size="lg" onClick={() => navigate("/pricing")}>
               View Pricing Plans
             </Button>
           </div>
@@ -633,69 +356,26 @@ const Index = () => {
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Contact Sales Team</DialogTitle>
-            <DialogDescription>
-              Tell us about your needs and our sales team will contact you within 24 hours.
-            </DialogDescription>
+            <DialogDescription>Tell us about your needs and our sales team will contact you within 24 hours.</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSalesInquiry} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="name">Name *</Label>
-                <Input
-                  id="name"
-                  required
-                  value={salesFormData.name}
-                  onChange={(e) => setSalesFormData((prev) => ({ ...prev, name: e.target.value }))}
-                  placeholder="Your full name" />
-
-              </div>
-              <div>
-                <Label htmlFor="email">Email *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  required
-                  value={salesFormData.email}
-                  onChange={(e) => setSalesFormData((prev) => ({ ...prev, email: e.target.value }))}
-                  placeholder="your@email.com" />
-
-              </div>
+              <div><Label htmlFor="name">Name *</Label><Input id="name" required value={salesFormData.name} onChange={(e) => setSalesFormData((p) => ({ ...p, name: e.target.value }))} placeholder="Your full name" /></div>
+              <div><Label htmlFor="email">Email *</Label><Input id="email" type="email" required value={salesFormData.email} onChange={(e) => setSalesFormData((p) => ({ ...p, email: e.target.value }))} placeholder="your@email.com" /></div>
             </div>
-            <div>
-              <Label htmlFor="company">Company</Label>
-              <Input
-                id="company"
-                value={salesFormData.company}
-                onChange={(e) => setSalesFormData((prev) => ({ ...prev, company: e.target.value }))}
-                placeholder="Your company name (optional)" />
-
-            </div>
-            <div>
-              <Label htmlFor="message">Message *</Label>
-              <Textarea
-                id="message"
-                required
-                rows={4}
-                value={salesFormData.message}
-                onChange={(e) => setSalesFormData((prev) => ({ ...prev, message: e.target.value }))}
-                placeholder="Tell us about your requirements..." />
-
-            </div>
+            <div><Label htmlFor="company">Company</Label><Input id="company" value={salesFormData.company} onChange={(e) => setSalesFormData((p) => ({ ...p, company: e.target.value }))} placeholder="Optional" /></div>
+            <div><Label htmlFor="message">Message *</Label><Textarea id="message" required rows={4} value={salesFormData.message} onChange={(e) => setSalesFormData((p) => ({ ...p, message: e.target.value }))} placeholder="Tell us about your requirements..." /></div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowSalesDialog(false)} disabled={isSendingSales}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSendingSales}>
-                {isSendingSales ? "Sending..." : "Send Inquiry"}
-              </Button>
+              <Button type="button" variant="outline" onClick={() => setShowSalesDialog(false)} disabled={isSendingSales}>Cancel</Button>
+              <Button type="submit" disabled={isSendingSales}>{isSendingSales ? "Sending..." : "Send Inquiry"}</Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
 
       <BugReportButton />
-    </div>);
-
+    </div>
+  );
 };
 
 export default Index;
