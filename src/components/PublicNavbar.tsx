@@ -66,9 +66,6 @@ const PublicNavbar = () => {
 
           {/* Right Section */}
           <div className="flex items-center gap-3">
-            <div className="hidden sm:block">
-              <LanguageSwitcher />
-            </div>
             
             <Button
               onClick={() => navigate('/auth')}
