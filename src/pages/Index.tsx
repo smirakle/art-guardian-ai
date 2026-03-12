@@ -277,43 +277,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ===== CREDIBILITY ===== */}
-      <section className="py-20 lg:py-24 bg-muted/20 border-t border-border/30">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="text-center mb-12">
-            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">Trusted & Recognized</p>
-            <h2 className="text-3xl font-bold text-foreground">Built on credibility</h2>
-          </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* BizWeekly */}
-            <div className="p-8 rounded-2xl bg-background border border-border/50 text-center flex flex-col items-center">
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-5">As Seen On</p>
-              <a href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/" target="_blank" rel="noopener noreferrer" className="block hover:opacity-90 transition-opacity mb-5">
-                <img src={bizWeeklyBanner} alt="As seen on BizWeekly" className="w-full max-w-xs mx-auto h-auto object-contain" loading="lazy" />
-              </a>
-              <a href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline inline-flex items-center gap-1">
-                Read the feature <ChevronRight className="w-3.5 h-3.5" />
-              </a>
-              <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
-                Founder is a Harvard Innovation Labs member.<br />
-                <span className="opacity-60">Harvard University does not endorse or sponsor TSMO.</span>
-              </p>
-            </div>
 
-            {/* CAI */}
-            <div className="p-8 rounded-2xl bg-background border border-border/50 text-center flex flex-col items-center justify-center">
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-5">Official Member</p>
-              <img src={caiLogo} alt="Content Authenticity Initiative" className="h-16 lg:h-20 object-contain dark:invert mb-5" />
-              <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
-                Proud member of the <strong className="text-foreground">Content Authenticity Initiative (CAI)</strong> — building trust through the C2PA open standard.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== BLOG ===== */}
       <section className="py-20 lg:py-24 border-t border-border/30">
         <div className="container mx-auto px-4 max-w-5xl">
           <div className="text-center mb-12">
