@@ -218,9 +218,9 @@ const Index = () => {
                 Being Stolen.
               </span>
               <span className="block opacity-0 animate-stagger-fade-up mt-2" style={{ animationDelay: '0.6s' }}>
-                <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-[length:200%_auto] animate-gradient-shift bg-clip-text text-transparent">
-                  We Stop It.
-                </span>
+                <span className="text-primary">
+                   We Stop It.
+                 </span>
               </span>
             </h1>
 
