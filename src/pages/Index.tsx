@@ -344,7 +344,7 @@ const Index = () => {
             <div className="relative">
               {/* Connecting line */}
               <div className="hidden lg:block absolute top-12 left-[12%] right-[12%] h-px bg-border/30">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary via-accent to-secondary origin-left animate-timeline-grow" />
+                <div className="absolute inset-0 bg-primary origin-left animate-timeline-grow" />
               </div>
 
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
