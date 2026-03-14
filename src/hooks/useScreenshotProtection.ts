@@ -161,21 +161,21 @@ export const useScreenshotProtection = (
 
     if (settings.disableSelection) {
       el.style.userSelect = 'none';
-      el.style.webkitUserSelect = 'none';
+      (el.style as any).webkitUserSelect = 'none';
     }
     if (settings.disableDrag) {
-      el.style.webkitUserDrag = 'none';
+      (el.style as any).webkitUserDrag = 'none';
       const imgs = el.querySelectorAll('img');
       imgs.forEach(img => {
         img.draggable = false;
-        img.style.webkitUserDrag = 'none';
+        (img.style as any).webkitUserDrag = 'none';
       });
     }
 
     return () => {
       el.style.userSelect = '';
-      el.style.webkitUserSelect = '';
-      el.style.webkitUserDrag = '';
+      (el.style as any).webkitUserSelect = '';
+      (el.style as any).webkitUserDrag = '';
     };
   }, [enabled, settings.disableSelection, settings.disableDrag, containerRef]);
 
