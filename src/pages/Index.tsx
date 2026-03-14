@@ -18,6 +18,7 @@ import DemoEnvironment from "@/components/investor/DemoEnvironment";
 import { InstantProtectModal } from "@/components/InstantProtectModal";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { ProtectionShowcase } from "@/components/ProtectionShowcase";
 
 /* ─── Scroll-reveal wrapper ─── */
 const RevealSection: React.FC<{ children: React.ReactNode; className?: string; delay?: number }> = ({ children, className = "", delay = 0 }) => {
@@ -452,6 +453,17 @@ const Index = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      {/* ══════════════════════════════════════════════════════
+          PROTECTION SHOWCASE — Interactive demo
+          ══════════════════════════════════════════════════════ */}
+      <RevealSection>
+        <section className="py-28 lg:py-36 border-t border-border/30 overflow-hidden">
+          <div className="container mx-auto px-4 max-w-6xl">
+            <ProtectionShowcase />
           </div>
         </section>
       </RevealSection>
