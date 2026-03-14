@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { BugReportButton } from "@/components/BugReportButton";
 import { Shield, Eye, Search, ArrowRight, Globe, Play, ChevronRight, Bell, Upload, BookOpen, Clock, Check, Star, Zap, Lock, FileSearch } from "lucide-react";
-import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
+import tsmoLogo from "@/assets/tsmo_logo_vector_ready.jpg";
 import { useQuery } from "@tanstack/react-query";
 import bizWeeklyBanner from "@/assets/Biz_Weekly.png";
 import caiLogo from "@/assets/CAI_Lockup_RGB_Black.png";
