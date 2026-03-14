@@ -232,7 +232,7 @@ const Index = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8 opacity-0 animate-stagger-fade-up" style={{ animationDelay: '0.9s' }}>
               <Button
                 size="lg"
-                className="h-16 px-10 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-2xl shadow-primary/30 rounded-2xl glow-pulse"
+                className="h-16 px-10 text-lg font-bold bg-gradient-to-r from-primary via-accent to-secondary text-primary-foreground shadow-2xl shadow-primary/30 rounded-2xl glow-pulse hover:opacity-90 transition-opacity"
                 onClick={() => setShowInstantProtect(true)}>
                 
                 <Upload className="mr-3 h-5 w-5" />
