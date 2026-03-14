@@ -185,12 +185,6 @@ const Index = () => {
           HERO — Full-viewport cinematic
           ══════════════════════════════════════════════════════ */}
       <section className="relative min-h-[100vh] flex items-center justify-center overflow-hidden">
-        {/* Layered background effects */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-20%,hsl(var(--primary)/0.12),transparent)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_80%_80%,hsl(var(--accent)/0.06),transparent)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_30%_at_10%_60%,hsl(var(--secondary)/0.04),transparent)]" />
-        </div>
 
         {/* Orbit rings */}
         <div className="absolute inset-0 pointer-events-none hidden lg:block">
@@ -224,9 +218,9 @@ const Index = () => {
                 Being Stolen.
               </span>
               <span className="block opacity-0 animate-stagger-fade-up mt-2" style={{ animationDelay: '0.6s' }}>
-                <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-[length:200%_auto] animate-gradient-shift bg-clip-text text-transparent">
-                  We Stop It.
-                </span>
+                <span className="text-primary">
+                   We Stop It.
+                 </span>
               </span>
             </h1>
 
@@ -295,7 +289,7 @@ const Index = () => {
               {stats.map((stat, i) => (
                 <RevealSection key={i} delay={i * 120}>
                   <div>
-                    <div className="text-4xl md:text-5xl lg:text-6xl font-bold tabular-nums bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent mb-2">
+                    <div className="text-4xl md:text-5xl lg:text-6xl font-bold tabular-nums text-primary mb-2">
                       <AnimatedCounter value={stat.value} />
                     </div>
                     <div className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.15em]">{stat.label}</div>
@@ -350,7 +344,7 @@ const Index = () => {
             <div className="relative">
               {/* Connecting line */}
               <div className="hidden lg:block absolute top-12 left-[12%] right-[12%] h-px bg-border/30">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary via-accent to-secondary origin-left animate-timeline-grow" />
+                <div className="absolute inset-0 bg-primary origin-left animate-timeline-grow" />
               </div>
 
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
@@ -397,7 +391,7 @@ const Index = () => {
             <div className="grid lg:grid-cols-5 gap-6 mb-6">
               <RevealSection className="lg:col-span-3">
                 <div className="relative group rounded-3xl p-10 lg:p-12 h-full bg-card border border-border/40 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 overflow-hidden">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.06),transparent)] rounded-full" />
+                  
                   <div className="relative">
                     <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
                       <HeroIcon className="h-7 w-7 text-primary" />
@@ -520,9 +514,6 @@ const Index = () => {
           FINAL CTA — Dark cinematic with email capture
           ══════════════════════════════════════════════════════ */}
       <section className="relative py-32 lg:py-40 bg-foreground text-background overflow-hidden">
-        {/* Dramatic lighting */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-20%,hsl(var(--primary)/0.25),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_80%,hsl(var(--accent)/0.08),transparent)]" />
 
         {/* Grid pattern */}
         <div className="absolute inset-0 opacity-[0.03]" style={{
