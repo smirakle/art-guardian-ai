@@ -369,6 +369,17 @@ const Index = () => {
       </RevealSection>
 
       {/* ══════════════════════════════════════════════════════
+          PROTECTION SHOWCASE — Interactive demo
+          ══════════════════════════════════════════════════════ */}
+      <RevealSection>
+        <section className="py-28 lg:py-36 overflow-hidden">
+          <div className="container mx-auto px-4 max-w-6xl">
+            <ProtectionShowcase />
+          </div>
+        </section>
+      </RevealSection>
+
+      {/* ══════════════════════════════════════════════════════
           FEATURES — Alternating large/small bento
           ══════════════════════════════════════════════════════ */}
       <section className="py-28 lg:py-36 bg-muted/10 border-y border-border/30">
