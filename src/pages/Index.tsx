@@ -458,6 +458,17 @@ const Index = () => {
       </RevealSection>
 
       {/* ══════════════════════════════════════════════════════
+          PROTECTION SHOWCASE — Interactive demo
+          ══════════════════════════════════════════════════════ */}
+      <RevealSection>
+        <section className="py-28 lg:py-36 border-t border-border/30 overflow-hidden">
+          <div className="container mx-auto px-4 max-w-6xl">
+            <ProtectionShowcase />
+          </div>
+        </section>
+      </RevealSection>
+
+      {/* ══════════════════════════════════════════════════════
           BLOG — Editorial grid
           ══════════════════════════════════════════════════════ */}
       <RevealSection>
