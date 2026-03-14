@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Shield, LogIn, Menu, X } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-
 const PublicNavbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,9 +28,9 @@ const PublicNavbar = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
       scrolled 
-        ? 'bg-background/95 backdrop-blur-md shadow-sm border-b border-border/50' 
+        ? 'bg-background/80 backdrop-blur-xl shadow-sm border-b border-border/30' 
         : 'bg-transparent'
     }`}>
       <div className="container mx-auto px-4">
@@ -41,7 +40,7 @@ const PublicNavbar = () => {
             className="flex items-center gap-2.5 cursor-pointer group"
             onClick={() => navigate('/')}
           >
-            <Shield className="w-7 h-7 text-primary transition-transform group-hover:scale-110" />
+            <Shield className="w-7 h-7 text-primary transition-transform group-hover:scale-110 duration-300" />
             <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               TSMO
             </span>
@@ -53,20 +52,23 @@ const PublicNavbar = () => {
               <button
                 key={link.path}
                 onClick={() => navigate(link.path)}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                   isActive(link.path)
-                    ? 'text-primary bg-primary/10'
+                    ? 'text-primary'
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
               >
                 {link.label}
+                {/* Active gradient underline */}
+                {isActive(link.path) && (
+                  <span className="absolute bottom-0 left-2 right-2 h-0.5 rounded-full bg-gradient-to-r from-primary to-accent" />
+                )}
               </button>
             ))}
           </div>
 
           {/* Right Section */}
           <div className="flex items-center gap-3">
-            
             <Button
               onClick={() => navigate('/auth')}
               variant="ghost"
@@ -97,7 +99,7 @@ const PublicNavbar = () => {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="lg:hidden bg-background border-t border-border/50 shadow-lg">
+        <div className="lg:hidden bg-background/95 backdrop-blur-xl border-t border-border/30 shadow-lg">
           <div className="container mx-auto px-4 py-4 space-y-1">
             {navLinks.map((link) => (
               <button
