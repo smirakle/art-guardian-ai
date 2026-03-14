@@ -29,6 +29,10 @@ export const DocumentProtectionDashboard = () => {
             <GitCompare className="w-4 h-4 mr-2" />
             Version Comparison
           </TabsTrigger>
+          <TabsTrigger value="screenshot">
+            <ShieldCheck className="w-4 h-4 mr-2" />
+            Screenshot Shield
+          </TabsTrigger>
           <TabsTrigger value="settings">
             <Settings className="w-4 h-4 mr-2" />
             API Settings
