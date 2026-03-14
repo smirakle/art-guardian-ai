@@ -419,25 +419,28 @@ const Pricing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 py-12">
-      <div className="container mx-auto px-6 max-w-7xl">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-6">
-            Choose Your Protection Plan
+    <div className="min-h-screen bg-background">
+      {/* ── Hero Header ── */}
+      <section className="relative pt-20 pb-16 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-20%,hsl(var(--primary)/0.08),transparent)]" />
+        <div className="container mx-auto px-4 max-w-5xl relative z-10 text-center">
+          <Badge variant="secondary" className="mb-6 px-4 py-1.5 text-xs font-semibold tracking-wide uppercase">
+            Simple, Transparent Pricing
+          </Badge>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-5 tracking-tight">
+            Protect your art at<br />every stage
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-            Secure your creative work with AI-powered monitoring, legal support, and blockchain verification. 
-            Start protecting your art today.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+            AI-powered monitoring, legal enforcement tools, and blockchain verification — all in one platform.
           </p>
-          
+
           {/* Billing Toggle */}
-          <div className="inline-flex items-center bg-muted rounded-lg p-1 mb-8">
+          <div className="inline-flex items-center bg-muted/60 border border-border/40 rounded-full p-1">
             <button
               onClick={() => setBillingCycle('monthly')}
-              className={`px-6 py-2 rounded-md transition-all ${
-                billingCycle === 'monthly' 
-                  ? 'bg-background text-foreground shadow-sm' 
+              className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
+                billingCycle === 'monthly'
+                  ? 'bg-background text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -445,220 +448,220 @@ const Pricing = () => {
             </button>
             <button
               onClick={() => setBillingCycle('yearly')}
-              className={`px-6 py-2 rounded-md transition-all ${
-                billingCycle === 'yearly' 
-                  ? 'bg-background text-foreground shadow-sm' 
+              className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
+                billingCycle === 'yearly'
+                  ? 'bg-background text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               Yearly
-              <Badge variant="secondary" className="ml-2 text-xs">Save 20%</Badge>
+              <span className="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">−20%</span>
             </button>
           </div>
         </div>
+      </section>
 
-        {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 max-w-5xl mx-auto">
-          {plans.map((plan) => {
-            const Icon = plan.icon;
-            const currentPrice = plan.price[billingCycle];
-            const originalPrice = plan.originalPrice?.[billingCycle];
-            
-            return (
-              <Card 
-                key={plan.id}
-                className={`relative bg-card/50 backdrop-blur-sm border-border/50 hover:shadow-lg transition-all duration-300 ${
-                  plan.popular ? 'ring-2 ring-primary shadow-lg scale-105' : ''
-                }`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-gradient-to-r from-primary to-accent text-primary-foreground px-4 py-1">
-                      Most Popular
-                    </Badge>
-                  </div>
-                )}
-                
-                {plan.discount && (
-                  <div className="absolute top-4 right-4">
-                    <Badge variant="destructive" className="text-xs">
-                      {plan.discount}
-                    </Badge>
-                  </div>
-                )}
+      {/* ── Pricing Cards ── */}
+      <section className="pb-24">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="grid md:grid-cols-3 gap-0 md:gap-0 rounded-2xl border border-border/40 overflow-hidden shadow-xl shadow-primary/5">
+            {plans.map((plan, idx) => {
+              const Icon = plan.icon;
+              const currentPrice = plan.price[billingCycle];
+              const originalPrice = plan.originalPrice?.[billingCycle];
+              const isPopular = plan.popular;
+              const isLast = idx === plans.length - 1;
+              const isFirst = idx === 0;
 
-                <CardHeader className="text-center pb-4">
-                  <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${plan.color} flex items-center justify-center`}>
-                    <Icon className="w-8 h-8 text-white" />
-                  </div>
-                  <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
-                  <CardDescription className="text-sm">
-                    {plan.description}
-                  </CardDescription>
-                </CardHeader>
-
-                <CardContent className="space-y-6">
-                  {/* Pricing */}
-                  <div className="text-center">
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <span className="text-4xl font-bold">
-                        {formatPrice(currentPrice)}
+              return (
+                <div
+                  key={plan.id}
+                  className={`relative flex flex-col ${
+                    isPopular
+                      ? 'bg-primary/[0.03] border-x border-primary/20 z-10 md:-my-4 md:rounded-2xl md:shadow-2xl md:shadow-primary/10 md:border md:border-primary/25'
+                      : 'bg-card'
+                  } ${!isPopular && !isLast ? 'md:border-r md:border-border/30' : ''}`}
+                >
+                  {/* Popular tag */}
+                  {isPopular && (
+                    <div className="absolute -top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                      <span className="bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-wider px-4 py-1.5 rounded-full shadow-lg shadow-primary/30">
+                        Most Popular
                       </span>
-                      {typeof currentPrice === 'number' && (
-                        <span className="text-muted-foreground">
-                          /{billingCycle === 'monthly' ? 'mo' : 'yr'}
+                    </div>
+                  )}
+
+                  <div className={`flex flex-col flex-1 p-8 ${isPopular ? 'pt-12' : 'pt-8'}`}>
+                    {/* Plan header */}
+                    <div className="mb-8">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                          isPopular ? 'bg-primary/15' : 'bg-muted/80'
+                        }`}>
+                          <Icon className={`w-5 h-5 ${isPopular ? 'text-primary' : 'text-muted-foreground'}`} />
+                        </div>
+                        <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{plan.description}</p>
+                    </div>
+
+                    {/* Price */}
+                    <div className="mb-8">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-5xl font-bold tracking-tight text-foreground">
+                          {formatPrice(currentPrice)}
                         </span>
+                        {typeof currentPrice === 'number' && currentPrice > 0 && (
+                          <span className="text-muted-foreground text-sm ml-1">
+                            / {billingCycle === 'monthly' ? 'month' : 'year'}
+                          </span>
+                        )}
+                      </div>
+                      {originalPrice && typeof originalPrice === 'number' && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                          <span className="line-through">${originalPrice}</span>
+                          <span className="text-primary font-semibold ml-2">{plan.discount}</span>
+                        </p>
+                      )}
+                      {typeof currentPrice === 'number' && currentPrice === 0 && (
+                        <p className="text-sm text-muted-foreground mt-1">Free forever</p>
+                      )}
+                      {typeof currentPrice === 'string' && (
+                        <p className="text-sm text-muted-foreground mt-1">Tailored to your needs</p>
                       )}
                     </div>
-                    {originalPrice && typeof originalPrice === 'number' && (
-                      <div className="text-sm text-muted-foreground line-through">
-                        Was ${originalPrice}/{billingCycle === 'monthly' ? 'mo' : 'yr'}
-                      </div>
-                    )}
-                  </div>
 
-                   {/* Features */}
-                   <div className="space-y-3">
-                     {plan.features.map((feature, index) => (
-                       <div key={index} className="flex items-start gap-3">
-                         <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                         <span className="text-sm">{feature}</span>
-                       </div>
-                     ))}
-                   </div>
-
-
-                  {/* Sign Up Button */}
-                  {plan.id === 'enterprise' ? (
-                    <Button
-                      onClick={() => handleSignUp(plan.id)}
-                      className="w-full py-6 text-lg font-semibold"
-                      variant="outline"
-                    >
-                      Contact Sales
-                    </Button>
-                  ) : plan.id === 'free' ? (
-                    <Button
-                      onClick={() => navigate('/upload')}
-                      className="w-full py-6 text-lg font-semibold"
-                      variant="outline"
-                    >
-                      Get Started Free
-                    </Button>
-                  ) : (
-                    <Dialog>
-                      <DialogTrigger asChild>
+                    {/* CTA */}
+                    <div className="mb-8">
+                      {plan.id === 'enterprise' ? (
                         <Button
-                          className={`w-full py-6 text-lg font-semibold ${
-                            plan.popular 
-                              ? 'bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90' 
-                              : ''
-                          }`}
-                          variant={plan.popular ? 'default' : 'outline'}
+                          onClick={() => handleSignUp(plan.id)}
+                          className="w-full h-12 text-sm font-semibold"
+                          variant="outline"
                         >
-                          Start Protection
+                          Contact Sales
                         </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-2xl">
-                        <DialogHeader>
-                          <DialogTitle className="flex items-center gap-2">
-                            <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${plan.color} flex items-center justify-center`}>
-                              <plan.icon className="w-4 h-4 text-white" />
-                            </div>
-                            Sign Up for {plan.name} Plan
-                          </DialogTitle>
-                          <DialogDescription>
-                            Complete your information to start protecting your creative work
-                          </DialogDescription>
-                        </DialogHeader>
-                        <SignUpForm plan={plan} />
-                      </DialogContent>
-                    </Dialog>
-                  )}
+                      ) : plan.id === 'free' ? (
+                        <Button
+                          onClick={() => navigate('/upload')}
+                          className="w-full h-12 text-sm font-semibold"
+                          variant="outline"
+                        >
+                          Get Started Free
+                        </Button>
+                      ) : (
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button
+                              className="w-full h-12 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-md shadow-primary/20"
+                            >
+                              Start Protection
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                              <DialogTitle className="flex items-center gap-2">
+                                <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${plan.color} flex items-center justify-center`}>
+                                  <plan.icon className="w-4 h-4 text-white" />
+                                </div>
+                                Sign Up for {plan.name} Plan
+                              </DialogTitle>
+                              <DialogDescription>
+                                Complete your information to start protecting your creative work
+                              </DialogDescription>
+                            </DialogHeader>
+                            <SignUpForm plan={plan} />
+                          </DialogContent>
+                        </Dialog>
+                      )}
+                      {plan.id === 'free' && (
+                        <p className="text-[11px] text-center text-muted-foreground mt-3">No credit card required</p>
+                      )}
+                      {plan.id === 'pro' && (
+                        <p className="text-[11px] text-center text-muted-foreground mt-3">14-day free trial · No credit card required</p>
+                      )}
+                    </div>
 
-                  {plan.id !== 'enterprise' && plan.id !== 'free' && (
-                    <p className="text-xs text-center text-muted-foreground">
-                      14-day free trial • No credit card required
-                    </p>
-                  )}
-                  {plan.id === 'free' && (
-                    <p className="text-xs text-center text-muted-foreground">
-                      No credit card required • Upgrade anytime
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+                    {/* Divider */}
+                    <div className="h-px bg-border/40 mb-6" />
 
-        {/* Enterprise Contact Section */}
-        <Card className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 border-purple-200/50">
-          <CardContent className="p-8 text-center">
-            <Crown className="w-12 h-12 mx-auto mb-4 text-purple-600" />
-            <h3 className="text-2xl font-bold mb-4">Need a Custom Solution?</h3>
-            <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Our Enterprise Custom plan offers tailored solutions for large organizations, 
-              including custom AI model training, advanced security features, and on-premise deployment options.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a 
-                href="mailto:Shirleena.Cunningham@tsmowatch.com"
-                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground h-11 px-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90"
-              >
-                Email us
-              </a>
-              <Button size="lg" variant="outline">
-                Request Demo
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* SLA Guarantees Section */}
-        <div className="mt-16">
-          <SLAGuarantees showComparison={true} />
-        </div>
-
-        {/* FAQ Section */}
-        <div className="mt-16 text-center">
-          <h3 className="text-2xl font-bold mb-8">Frequently Asked Questions</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            <Card className="bg-card/50 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <h4 className="font-semibold mb-2">Can I upgrade or downgrade my plan?</h4>
-                <p className="text-sm text-muted-foreground">
-                  Yes, you can change your plan at any time. Changes take effect immediately and billing is prorated.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="bg-card/50 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <h4 className="font-semibold mb-2">What happens if I cancel?</h4>
-                <p className="text-sm text-muted-foreground">
-                  Your protection continues until the end of your billing period. You can reactivate anytime.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="bg-card/50 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <h4 className="font-semibold mb-2">Is there a free trial?</h4>
-                <p className="text-sm text-muted-foreground">
-                  Yes! Start with our Free plan or try any paid plan with a 14-day free trial (no credit card required).
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="bg-card/50 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <h4 className="font-semibold mb-2">What file types are supported?</h4>
-                <p className="text-sm text-muted-foreground">
-                  We support images, videos, audio files, PDFs, and now folder uploads for bulk protection.
-                </p>
-              </CardContent>
-            </Card>
+                    {/* Features */}
+                    <div className="space-y-3 flex-1">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+                        {plan.id === 'enterprise' ? 'Everything in Pro, plus:' : 'What\'s included:'}
+                      </p>
+                      {plan.features
+                        .filter(f => f !== 'Everything in Pro, plus:')
+                        .map((feature, index) => (
+                        <div key={index} className="flex items-start gap-2.5">
+                          <CheckCircle className={`w-4 h-4 shrink-0 mt-0.5 ${isPopular ? 'text-primary' : 'text-muted-foreground/60'}`} />
+                          <span className="text-sm text-foreground/80">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* ── Enterprise CTA ── */}
+      <section className="pb-24">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="relative rounded-2xl overflow-hidden bg-card border border-border/40">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,hsl(var(--primary)/0.06),transparent)]" />
+            <div className="relative p-10 md:p-14 text-center">
+              <Crown className="w-10 h-10 mx-auto mb-5 text-primary" />
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Need a custom solution?</h2>
+              <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
+                Custom AI model training, dedicated account management, and on-premise deployment for large organizations.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <a
+                  href="mailto:Shirleena.Cunningham@tsmowatch.com"
+                  className="inline-flex items-center justify-center h-12 px-8 rounded-xl text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-md shadow-primary/20"
+                >
+                  Talk to Sales
+                </a>
+                <Button size="lg" variant="outline" className="h-12 px-8 rounded-xl">
+                  Request Demo
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SLA Guarantees ── */}
+      <section className="pb-24">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <SLAGuarantees showComparison={true} />
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section className="pb-28 border-t border-border/30 pt-20">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Frequently asked questions</h2>
+          </div>
+          <div className="space-y-0 divide-y divide-border/40">
+            {[
+              { q: "Can I upgrade or downgrade my plan?", a: "Yes, you can change your plan at any time. Changes take effect immediately and billing is prorated." },
+              { q: "What happens if I cancel?", a: "Your protection continues until the end of your billing period. You can reactivate anytime." },
+              { q: "Is there a free trial?", a: "Yes! Start with our Free plan or try any paid plan with a 14-day free trial — no credit card required." },
+              { q: "What file types are supported?", a: "We support images, videos, audio files, PDFs, and folder uploads for bulk protection." },
+            ].map((faq, i) => (
+              <div key={i} className="py-6">
+                <h3 className="text-base font-semibold text-foreground mb-2">{faq.q}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
