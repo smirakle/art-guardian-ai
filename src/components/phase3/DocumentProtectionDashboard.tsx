@@ -51,6 +51,10 @@ export const DocumentProtectionDashboard = () => {
           <DocumentVersionComparison />
         </TabsContent>
 
+        <TabsContent value="screenshot" className="space-y-4">
+          <ScreenshotProtectionSettings />
+        </TabsContent>
+
         <TabsContent value="settings" className="space-y-4">
           <CopyscapeApiStatus />
         </TabsContent>
