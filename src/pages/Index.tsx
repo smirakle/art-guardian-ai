@@ -514,9 +514,6 @@ const Index = () => {
           FINAL CTA — Dark cinematic with email capture
           ══════════════════════════════════════════════════════ */}
       <section className="relative py-32 lg:py-40 bg-foreground text-background overflow-hidden">
-        {/* Dramatic lighting */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-20%,hsl(var(--primary)/0.25),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_80%,hsl(var(--accent)/0.08),transparent)]" />
 
         {/* Grid pattern */}
         <div className="absolute inset-0 opacity-[0.03]" style={{
