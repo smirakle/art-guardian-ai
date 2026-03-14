@@ -1,6 +1,19 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { HelpCircle, ArrowRight, Search, MessageCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
+const RevealSection: React.FC<{ children: React.ReactNode; className?: string; delay?: number }> = ({ children, className = "", delay = 0 }) => {
+  const { ref, isVisible } = useScrollReveal(0.12);
+  return (
+    <div ref={ref} className={`${className} transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`} style={{ transitionDelay: `${delay}ms` }}>
+      {children}
+    </div>
+  );
+};
 const FAQ = () => {
   const faqSections = [
     {
