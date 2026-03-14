@@ -944,7 +944,6 @@ const FAQ = () => {
     }
   ];
 
-  return (
   const [searchQuery, setSearchQuery] = useState("");
 
   // Flatten all items for search
