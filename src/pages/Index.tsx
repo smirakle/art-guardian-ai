@@ -203,10 +203,7 @@ const Index = () => {
           <div className="max-w-4xl mx-auto text-center">
             {/* Logo with glow */}
             <div className="mb-10 opacity-0 animate-stagger-fade-up" style={{ animationDelay: '0.1s' }}>
-              <div className="relative inline-block">
-                <div className="absolute inset-0 blur-3xl bg-primary/10 scale-150 rounded-full" />
-                <img src={tsmoLogo} alt="TSMO Logo" className="relative h-32 sm:h-40 lg:h-52 mx-auto object-contain mix-blend-multiply dark:brightness-110 dark:contrast-105" loading="eager" />
-              </div>
+              <img src={tsmoLogo} alt="TSMO Logo" className="h-32 sm:h-40 lg:h-52 mx-auto object-contain" loading="eager" />
             </div>
 
             {/* Headline — dramatic staggered */}
