@@ -1,11 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Upload, FileCheck, Search, GitCompare, Settings } from "lucide-react";
+import { Shield, Upload, FileCheck, Search, GitCompare, Settings, ShieldCheck } from "lucide-react";
 import { DocumentUploadSection } from "./DocumentUploadSection";
 import { ProtectedDocumentsList } from "./ProtectedDocumentsList";
 import { DocumentMonitoringDashboard } from "./DocumentMonitoringDashboard";
 import { DocumentVersionComparison } from "./DocumentVersionComparison";
 import { CopyscapeApiStatus } from "./CopyscapeApiStatus";
+import { ScreenshotProtectionSettings } from "../protection/ScreenshotProtectionSettings";
 
 export const DocumentProtectionDashboard = () => {
   return (
