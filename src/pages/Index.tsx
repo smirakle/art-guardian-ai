@@ -289,7 +289,7 @@ const Index = () => {
               {stats.map((stat, i) => (
                 <RevealSection key={i} delay={i * 120}>
                   <div>
-                    <div className="text-4xl md:text-5xl lg:text-6xl font-bold tabular-nums bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent mb-2">
+                    <div className="text-4xl md:text-5xl lg:text-6xl font-bold tabular-nums text-primary mb-2">
                       <AnimatedCounter value={stat.value} />
                     </div>
                     <div className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.15em]">{stat.label}</div>
