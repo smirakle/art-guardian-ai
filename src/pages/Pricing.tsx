@@ -420,27 +420,37 @@ const Pricing = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* ── Hero Header ── */}
-      <section className="relative pt-20 pb-16 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-20%,hsl(var(--primary)/0.08),transparent)]" />
+      {/* ── Dramatic Hero ── */}
+      <section className="relative pt-24 pb-20 overflow-hidden">
+        {/* Layered background */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,hsl(var(--primary)/0.12),transparent)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_80%_20%,hsl(var(--accent)/0.06),transparent)]" />
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
+        </div>
+
         <div className="container mx-auto px-4 max-w-5xl relative z-10 text-center">
-          <Badge variant="secondary" className="mb-6 px-4 py-1.5 text-xs font-semibold tracking-wide uppercase">
-            Simple, Transparent Pricing
-          </Badge>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-5 tracking-tight">
-            Protect your art at<br />every stage
+          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-5 py-2 mb-8">
+            <Zap className="w-3.5 h-3.5 text-primary" />
+            <span className="text-xs font-bold text-primary uppercase tracking-widest">Launch Pricing — Save 40%</span>
+          </div>
+
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 tracking-tight leading-[1.05]">
+            <span className="block">Plans that scale</span>
+            <span className="block bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">with your art</span>
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            AI-powered monitoring, legal enforcement tools, and blockchain verification — all in one platform.
+
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed">
+            From individual creators to enterprise studios. Start free, upgrade when you're ready.
           </p>
 
-          {/* Billing Toggle */}
-          <div className="inline-flex items-center bg-muted/60 border border-border/40 rounded-full p-1">
+          {/* Billing Toggle — Pill with glow */}
+          <div className="relative inline-flex items-center bg-card border border-border/50 rounded-full p-1.5 shadow-lg shadow-primary/5">
             <button
               onClick={() => setBillingCycle('monthly')}
-              className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
+              className={`relative px-7 py-3 rounded-full text-sm font-semibold transition-all duration-300 ${
                 billingCycle === 'monthly'
-                  ? 'bg-background text-foreground shadow-sm'
+                  ? 'bg-foreground text-background shadow-md'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -448,156 +458,173 @@ const Pricing = () => {
             </button>
             <button
               onClick={() => setBillingCycle('yearly')}
-              className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
+              className={`relative px-7 py-3 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2.5 ${
                 billingCycle === 'yearly'
-                  ? 'bg-background text-foreground shadow-sm'
+                  ? 'bg-foreground text-background shadow-md'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               Yearly
-              <span className="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">−20%</span>
+              <span className="bg-primary text-primary-foreground text-[10px] font-bold px-2.5 py-1 rounded-full">SAVE 20%</span>
             </button>
           </div>
         </div>
       </section>
 
       {/* ── Pricing Cards ── */}
-      <section className="pb-24">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <div className="grid md:grid-cols-3 gap-0 md:gap-0 rounded-2xl border border-border/40 overflow-hidden shadow-xl shadow-primary/5">
+      <section className="py-16 lg:py-24">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="grid md:grid-cols-3 gap-6 lg:gap-8 items-start">
             {plans.map((plan, idx) => {
               const Icon = plan.icon;
               const currentPrice = plan.price[billingCycle];
               const originalPrice = plan.originalPrice?.[billingCycle];
               const isPopular = plan.popular;
-              const isLast = idx === plans.length - 1;
-              const isFirst = idx === 0;
 
               return (
                 <div
                   key={plan.id}
-                  className={`relative flex flex-col ${
+                  className={`relative rounded-3xl transition-all duration-500 ${
                     isPopular
-                      ? 'bg-primary/[0.03] border-x border-primary/20 z-10 md:-my-4 md:rounded-2xl md:shadow-2xl md:shadow-primary/10 md:border md:border-primary/25'
-                      : 'bg-card'
-                  } ${!isPopular && !isLast ? 'md:border-r md:border-border/30' : ''}`}
+                      ? 'md:-mt-6 md:mb-0'
+                      : ''
+                  }`}
                 >
-                  {/* Popular tag */}
+                  {/* Popular card outer glow */}
                   {isPopular && (
-                    <div className="absolute -top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                      <span className="bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-wider px-4 py-1.5 rounded-full shadow-lg shadow-primary/30">
-                        Most Popular
-                      </span>
-                    </div>
+                    <div className="absolute -inset-[1px] rounded-3xl bg-gradient-to-b from-primary via-primary/50 to-accent opacity-100" />
                   )}
 
-                  <div className={`flex flex-col flex-1 p-8 ${isPopular ? 'pt-12' : 'pt-8'}`}>
-                    {/* Plan header */}
-                    <div className="mb-8">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                          isPopular ? 'bg-primary/15' : 'bg-muted/80'
-                        }`}>
-                          <Icon className={`w-5 h-5 ${isPopular ? 'text-primary' : 'text-muted-foreground'}`} />
-                        </div>
-                        <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{plan.description}</p>
-                    </div>
+                  <div className={`relative rounded-3xl overflow-hidden ${
+                    isPopular
+                      ? 'bg-card shadow-2xl shadow-primary/15'
+                      : 'bg-card border border-border/40 shadow-lg shadow-primary/[0.02] hover:shadow-xl hover:border-border/60'
+                  } transition-all duration-500`}>
 
-                    {/* Price */}
-                    <div className="mb-8">
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-5xl font-bold tracking-tight text-foreground">
-                          {formatPrice(currentPrice)}
+                    {/* Popular header strip */}
+                    {isPopular && (
+                      <div className="bg-gradient-to-r from-primary to-accent px-6 py-3 text-center">
+                        <span className="text-primary-foreground text-xs font-bold uppercase tracking-[0.2em]">
+                          ★ Most Popular ★
                         </span>
-                        {typeof currentPrice === 'number' && currentPrice > 0 && (
-                          <span className="text-muted-foreground text-sm ml-1">
-                            / {billingCycle === 'monthly' ? 'month' : 'year'}
+                      </div>
+                    )}
+
+                    <div className={`p-8 lg:p-10 ${isPopular ? '' : 'pt-8 lg:pt-10'}`}>
+                      {/* Icon + Name */}
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+                          isPopular
+                            ? 'bg-gradient-to-br from-primary/20 to-accent/20'
+                            : plan.id === 'enterprise'
+                              ? 'bg-gradient-to-br from-secondary/15 to-accent/15'
+                              : 'bg-muted'
+                        }`}>
+                          <Icon className={`w-6 h-6 ${
+                            isPopular ? 'text-primary' : plan.id === 'enterprise' ? 'text-secondary' : 'text-muted-foreground'
+                          }`} />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-8">{plan.description}</p>
+
+                      {/* Price block */}
+                      <div className="mb-8">
+                        <div className="flex items-end gap-2">
+                          <span className={`font-bold tracking-tight text-foreground ${
+                            typeof currentPrice === 'string' ? 'text-4xl' : 'text-6xl'
+                          }`}>
+                            {formatPrice(currentPrice)}
                           </span>
+                          {typeof currentPrice === 'number' && currentPrice > 0 && (
+                            <span className="text-muted-foreground text-base mb-2">
+                              /{billingCycle === 'monthly' ? 'mo' : 'yr'}
+                            </span>
+                          )}
+                        </div>
+                        {originalPrice && typeof originalPrice === 'number' && (
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className="text-sm text-muted-foreground line-through">${originalPrice}/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
+                            <span className="text-xs font-bold bg-accent/15 text-accent px-2 py-0.5 rounded-md">{plan.discount}</span>
+                          </div>
+                        )}
+                        {typeof currentPrice === 'number' && currentPrice === 0 && (
+                          <p className="text-sm text-muted-foreground mt-1">Free forever · No limits on time</p>
+                        )}
+                        {typeof currentPrice === 'string' && (
+                          <p className="text-sm text-muted-foreground mt-1">Custom pricing for your team</p>
                         )}
                       </div>
-                      {originalPrice && typeof originalPrice === 'number' && (
-                        <p className="text-sm text-muted-foreground mt-1">
-                          <span className="line-through">${originalPrice}</span>
-                          <span className="text-primary font-semibold ml-2">{plan.discount}</span>
+
+                      {/* CTA */}
+                      <div className="mb-10">
+                        {plan.id === 'enterprise' ? (
+                          <Button
+                            onClick={() => handleSignUp(plan.id)}
+                            className="w-full h-13 text-sm font-bold rounded-xl border-2"
+                            variant="outline"
+                          >
+                            <Building2 className="w-4 h-4 mr-2" />
+                            Contact Sales
+                          </Button>
+                        ) : plan.id === 'free' ? (
+                          <Button
+                            onClick={() => navigate('/upload')}
+                            className="w-full h-13 text-sm font-bold rounded-xl border-2"
+                            variant="outline"
+                          >
+                            Get Started Free
+                          </Button>
+                        ) : (
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                className="w-full h-13 text-sm font-bold rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-xl shadow-primary/25 glow-pulse"
+                              >
+                                Start 14-Day Free Trial
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl">
+                              <DialogHeader>
+                                <DialogTitle className="flex items-center gap-2">
+                                  <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${plan.color} flex items-center justify-center`}>
+                                    <plan.icon className="w-4 h-4 text-white" />
+                                  </div>
+                                  Sign Up for {plan.name} Plan
+                                </DialogTitle>
+                                <DialogDescription>
+                                  Complete your information to start protecting your creative work
+                                </DialogDescription>
+                              </DialogHeader>
+                              <SignUpForm plan={plan} />
+                            </DialogContent>
+                          </Dialog>
+                        )}
+                        {plan.id === 'pro' && (
+                          <p className="text-[11px] text-center text-muted-foreground mt-3">No credit card required · Cancel anytime</p>
+                        )}
+                      </div>
+
+                      {/* Features */}
+                      <div className="space-y-4">
+                        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.15em]">
+                          {plan.id === 'free' ? 'Includes:' : plan.id === 'enterprise' ? 'Everything in Pro, plus:' : 'Everything in Free, plus:'}
                         </p>
-                      )}
-                      {typeof currentPrice === 'number' && currentPrice === 0 && (
-                        <p className="text-sm text-muted-foreground mt-1">Free forever</p>
-                      )}
-                      {typeof currentPrice === 'string' && (
-                        <p className="text-sm text-muted-foreground mt-1">Tailored to your needs</p>
-                      )}
-                    </div>
-
-                    {/* CTA */}
-                    <div className="mb-8">
-                      {plan.id === 'enterprise' ? (
-                        <Button
-                          onClick={() => handleSignUp(plan.id)}
-                          className="w-full h-12 text-sm font-semibold"
-                          variant="outline"
-                        >
-                          Contact Sales
-                        </Button>
-                      ) : plan.id === 'free' ? (
-                        <Button
-                          onClick={() => navigate('/upload')}
-                          className="w-full h-12 text-sm font-semibold"
-                          variant="outline"
-                        >
-                          Get Started Free
-                        </Button>
-                      ) : (
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              className="w-full h-12 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-md shadow-primary/20"
-                            >
-                              Start Protection
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-2xl">
-                            <DialogHeader>
-                              <DialogTitle className="flex items-center gap-2">
-                                <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${plan.color} flex items-center justify-center`}>
-                                  <plan.icon className="w-4 h-4 text-white" />
-                                </div>
-                                Sign Up for {plan.name} Plan
-                              </DialogTitle>
-                              <DialogDescription>
-                                Complete your information to start protecting your creative work
-                              </DialogDescription>
-                            </DialogHeader>
-                            <SignUpForm plan={plan} />
-                          </DialogContent>
-                        </Dialog>
-                      )}
-                      {plan.id === 'free' && (
-                        <p className="text-[11px] text-center text-muted-foreground mt-3">No credit card required</p>
-                      )}
-                      {plan.id === 'pro' && (
-                        <p className="text-[11px] text-center text-muted-foreground mt-3">14-day free trial · No credit card required</p>
-                      )}
-                    </div>
-
-                    {/* Divider */}
-                    <div className="h-px bg-border/40 mb-6" />
-
-                    {/* Features */}
-                    <div className="space-y-3 flex-1">
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
-                        {plan.id === 'enterprise' ? 'Everything in Pro, plus:' : 'What\'s included:'}
-                      </p>
-                      {plan.features
-                        .filter(f => f !== 'Everything in Pro, plus:')
-                        .map((feature, index) => (
-                        <div key={index} className="flex items-start gap-2.5">
-                          <CheckCircle className={`w-4 h-4 shrink-0 mt-0.5 ${isPopular ? 'text-primary' : 'text-muted-foreground/60'}`} />
-                          <span className="text-sm text-foreground/80">{feature}</span>
-                        </div>
-                      ))}
+                        {plan.features
+                          .filter(f => f !== 'Everything in Pro, plus:')
+                          .map((feature, index) => (
+                          <div key={index} className="flex items-start gap-3">
+                            <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+                              isPopular ? 'bg-primary/15' : 'bg-muted'
+                            }`}>
+                              <CheckCircle className={`w-3 h-3 ${isPopular ? 'text-primary' : 'text-muted-foreground'}`} />
+                            </div>
+                            <span className="text-sm text-foreground/80 leading-snug">{feature}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -607,25 +634,60 @@ const Pricing = () => {
         </div>
       </section>
 
-      {/* ── Enterprise CTA ── */}
-      <section className="pb-24">
+      {/* ── Social Proof Strip ── */}
+      <section className="py-16 border-y border-border/30 bg-muted/20">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="relative rounded-2xl overflow-hidden bg-card border border-border/40">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,hsl(var(--primary)/0.06),transparent)]" />
-            <div className="relative p-10 md:p-14 text-center">
-              <Crown className="w-10 h-10 mx-auto mb-5 text-primary" />
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Need a custom solution?</h2>
-              <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-                Custom AI model training, dedicated account management, and on-premise deployment for large organizations.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {[
+              { value: "2,400+", label: "Artworks Protected" },
+              { value: "50+", label: "Platforms Scanned" },
+              { value: "99.9%", label: "Uptime SLA" },
+              { value: "24/7", label: "AI Monitoring" },
+            ].map((stat, i) => (
+              <div key={i}>
+                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent tabular-nums mb-1">
+                  {stat.value}
+                </div>
+                <div className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Enterprise CTA — Dark dramatic ── */}
+      <section className="py-24">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="relative rounded-3xl overflow-hidden bg-foreground text-background">
+            {/* Background effects */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_-20%,hsl(var(--primary)/0.3),transparent)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_80%,hsl(var(--accent)/0.15),transparent)]" />
+
+            <div className="relative px-10 py-16 md:px-16 md:py-20 flex flex-col md:flex-row items-center gap-10">
+              <div className="flex-1">
+                <div className="inline-flex items-center gap-2 bg-background/10 border border-background/20 rounded-full px-4 py-1.5 mb-6">
+                  <Crown className="w-3.5 h-3.5 text-secondary" />
+                  <span className="text-xs font-bold uppercase tracking-widest text-background/80">Enterprise</span>
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold mb-4 text-background">
+                  Built for teams that<br />take IP seriously
+                </h2>
+                <p className="text-background/60 max-w-md leading-relaxed">
+                  Dedicated account manager, custom AI training, unlimited seats, SLA guarantees, and white-label deployment.
+                </p>
+              </div>
+              <div className="flex flex-col gap-3 shrink-0">
                 <a
                   href="mailto:Shirleena.Cunningham@tsmowatch.com"
-                  className="inline-flex items-center justify-center h-12 px-8 rounded-xl text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-md shadow-primary/20"
+                  className="inline-flex items-center justify-center h-13 px-10 rounded-xl text-sm font-bold bg-background text-foreground hover:bg-background/90 transition-colors shadow-xl"
                 >
-                  Talk to Sales
+                  Talk to Sales →
                 </a>
-                <Button size="lg" variant="outline" className="h-12 px-8 rounded-xl">
+                <Button
+                  size="lg"
+                  variant="ghost"
+                  className="h-13 px-10 rounded-xl text-sm font-semibold text-background/70 hover:text-background hover:bg-background/10"
+                >
                   Request Demo
                 </Button>
               </div>
@@ -641,21 +703,22 @@ const Pricing = () => {
         </div>
       </section>
 
-      {/* ── FAQ ── */}
-      <section className="pb-28 border-t border-border/30 pt-20">
+      {/* ── FAQ — Refined ── */}
+      <section className="pb-32 border-t border-border/30 pt-24">
         <div className="container mx-auto px-4 max-w-3xl">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Frequently asked questions</h2>
+          <div className="text-center mb-14">
+            <p className="text-sm font-semibold text-primary uppercase tracking-[0.15em] mb-3">FAQ</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">Questions? We've got answers.</h2>
           </div>
-          <div className="space-y-0 divide-y divide-border/40">
+          <div className="space-y-0 rounded-2xl border border-border/40 overflow-hidden bg-card">
             {[
               { q: "Can I upgrade or downgrade my plan?", a: "Yes, you can change your plan at any time. Changes take effect immediately and billing is prorated." },
-              { q: "What happens if I cancel?", a: "Your protection continues until the end of your billing period. You can reactivate anytime." },
+              { q: "What happens if I cancel?", a: "Your protection continues until the end of your billing period. You can reactivate anytime without losing data." },
               { q: "Is there a free trial?", a: "Yes! Start with our Free plan or try any paid plan with a 14-day free trial — no credit card required." },
-              { q: "What file types are supported?", a: "We support images, videos, audio files, PDFs, and folder uploads for bulk protection." },
-            ].map((faq, i) => (
-              <div key={i} className="py-6">
-                <h3 className="text-base font-semibold text-foreground mb-2">{faq.q}</h3>
+              { q: "What file types are supported?", a: "We support images (PNG, JPG, TIFF, PSD), videos, audio files, PDFs, and folder uploads for bulk protection." },
+            ].map((faq, i, arr) => (
+              <div key={i} className={`px-8 py-6 ${i < arr.length - 1 ? 'border-b border-border/30' : ''} hover:bg-muted/30 transition-colors`}>
+                <h3 className="text-base font-semibold text-foreground mb-1.5">{faq.q}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
               </div>
             ))}
