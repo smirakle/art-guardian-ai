@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { BugReportButton } from "@/components/BugReportButton";
-import { Shield, Eye, Search, ArrowRight, Globe, Play, ChevronRight, Bell, Upload, BookOpen, Clock, Check, Star, Zap, Lock, FileSearch } from "lucide-react";
+import { Shield, Eye, Search, ArrowRight, Globe, Play, ChevronRight, Bell, Upload, BookOpen, Clock, Check, Zap, Lock, FileSearch, ArrowDown } from "lucide-react";
 import tsmoLogo from "@/assets/tsmo_logo_vector_ready.jpg";
 import { useQuery } from "@tanstack/react-query";
 import bizWeeklyBanner from "@/assets/Biz_Weekly.png";
@@ -33,56 +33,54 @@ const RevealSection: React.FC<{ children: React.ReactNode; className?: string; d
   );
 };
 
-/* ─── Floating particles for hero ─── */
-const HeroParticles = () => (
-  <div className="absolute inset-0 pointer-events-none overflow-hidden">
-    {[...Array(14)].map((_, i) => (
-      <div
-        key={i}
-        className="absolute rounded-full bg-primary/20 animate-float-particle"
-        style={{
-          width: `${2 + Math.random() * 4}px`,
-          height: `${2 + Math.random() * 4}px`,
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-          animationDelay: `${Math.random() * 4}s`,
-          animationDuration: `${4 + Math.random() * 4}s`,
-        }}
-      />
-    ))}
-  </div>
-);
+/* ─── Animated counter ─── */
+const AnimatedCounter: React.FC<{ value: string; duration?: number }> = ({ value, duration = 2000 }) => {
+  const [display, setDisplay] = useState(value);
+  const ref = useRef<HTMLDivElement>(null);
+  const hasAnimated = useRef(false);
 
-/* ─── Floating 3D artwork cards ─── */
-const FloatingCards = () => (
-  <div className="absolute inset-0 pointer-events-none overflow-hidden hidden lg:block">
-    {/* Card 1 - top left */}
-    <div
-      className="absolute top-24 left-[8%] w-32 h-40 rounded-2xl glass-bento shadow-xl animate-float-card opacity-40"
-      style={{ animationDelay: "0s", perspective: "800px" }}
-    >
-      <div className="w-full h-full rounded-2xl bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center">
-        <Shield className="w-8 h-8 text-primary/50" />
-      </div>
-    </div>
-    {/* Card 2 - top right */}
-    <div
-      className="absolute top-32 right-[10%] w-28 h-36 rounded-2xl glass-bento shadow-xl animate-float-card opacity-30"
-      style={{ animationDelay: "2s" }}
-    >
-      <div className="w-full h-full rounded-2xl bg-gradient-to-br from-secondary/20 to-primary/10 flex items-center justify-center">
-        <Eye className="w-7 h-7 text-secondary/50" />
-      </div>
-    </div>
-    {/* Card 3 - bottom right */}
-    <div
-      className="absolute bottom-28 right-[15%] w-24 h-32 rounded-2xl glass-bento shadow-xl animate-float-card opacity-25"
-      style={{ animationDelay: "1s" }}
-    >
-      <div className="w-full h-full rounded-2xl bg-gradient-to-br from-accent/20 to-secondary/10 flex items-center justify-center">
-        <Lock className="w-6 h-6 text-accent/50" />
-      </div>
-    </div>
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !hasAnimated.current) {
+        hasAnimated.current = true;
+        const numMatch = value.match(/^([\d,]+)/);
+        if (numMatch) {
+          const target = parseInt(numMatch[1].replace(/,/g, ''));
+          const suffix = value.slice(numMatch[1].length);
+          const start = Date.now();
+          const tick = () => {
+            const elapsed = Date.now() - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = Math.floor(target * eased);
+            setDisplay(current.toLocaleString() + suffix);
+            if (progress < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }
+      }
+    }, { threshold: 0.5 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [value, duration]);
+
+  return <div ref={ref}>{display}</div>;
+};
+
+/* ─── Orbiting ring ─── */
+const OrbitRing: React.FC<{ size: number; duration: number; delay: number; opacity: number }> = ({ size, duration, delay, opacity }) => (
+  <div
+    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/10"
+    style={{
+      width: size, height: size,
+      animation: `spin ${duration}s linear infinite`,
+      animationDelay: `${delay}s`,
+      opacity,
+    }}
+  >
+    <div className="absolute -top-1 left-1/2 w-2 h-2 rounded-full bg-primary/30" />
   </div>
 );
 
@@ -145,29 +143,30 @@ const Index = () => {
   const posts = dbPosts?.length ? dbPosts.map((p) => ({ slug: p.slug, title: p.title, excerpt: p.excerpt || '', category: p.tags?.[0] || 'General', readTime: '5 min' })) : fallbackPosts;
 
   const steps = [
-    { icon: Upload, title: "Upload", desc: "Drop your artwork into TSMO" },
-    { icon: Search, title: "We Scan", desc: "AI searches billions of pages" },
-    { icon: Bell, title: "Get Alerted", desc: "Instant notification of matches" },
-    { icon: Shield, title: "Take Action", desc: "One-click enforcement tools" },
+    { icon: Upload, title: "Upload", desc: "Drop your artwork into TSMO", num: "01" },
+    { icon: Search, title: "We Scan", desc: "AI searches billions of pages", num: "02" },
+    { icon: Bell, title: "Get Alerted", desc: "Instant notification of matches", num: "03" },
+    { icon: Shield, title: "Take Action", desc: "One-click enforcement tools", num: "04" },
   ];
 
   const features = [
-    { icon: Eye, title: "AI Training Resistance", desc: "Style cloaking technology makes your art unusable for AI model training while keeping it visually identical to humans.", large: true },
+    { icon: Eye, title: "AI Training Resistance", desc: "Style cloaking technology makes your art unusable for AI model training while keeping it visually identical to humans." },
     { icon: Search, title: "Reverse Image Search", desc: "Continuously monitors millions of websites, marketplaces, and social platforms to detect unauthorized use of your work." },
     { icon: Globe, title: "24/7 Web Monitoring", desc: "Our AI agents scan the internet around the clock so you never miss an unauthorized copy of your artwork." },
     { icon: Zap, title: "Instant DMCA Takedowns", desc: "Generate and file legally-binding DMCA notices with a single click. Our system handles enforcement across all platforms." },
     { icon: FileSearch, title: "Provenance Tracking", desc: "Blockchain-backed ownership certificates with C2PA content credentials for irrefutable proof of original authorship." },
+    { icon: Lock, title: "Forgery Detection", desc: "Advanced AI detects deepfakes, style mimicry, and unauthorized derivatives of your original artwork." },
   ];
 
   const stats = [
-    { value: "2,400+", label: "Scans this month" },
-    { value: "24/7", label: "Monitoring" },
-    { value: "50+", label: "Platforms scanned" },
-    { value: "Free", label: "To start" },
+    { value: "2,400+", label: "Artworks Protected" },
+    { value: "24/7", label: "AI Monitoring" },
+    { value: "50+", label: "Platforms Scanned" },
+    { value: "99.9%", label: "Detection Rate" },
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <ExitIntentPopup />
       <InstantProtectModal open={showInstantProtect} onOpenChange={setShowInstantProtect} />
       
@@ -182,156 +181,191 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
-      {/* ══════════════════════════════════════════
-          HERO — Cinematic & Immersive
-          ══════════════════════════════════════════ */}
-      <section className="relative pt-28 lg:pt-40 pb-24 lg:pb-36 overflow-hidden bg-background">
-        <HeroParticles />
-        <FloatingCards />
+      {/* ══════════════════════════════════════════════════════
+          HERO — Full-viewport cinematic
+          ══════════════════════════════════════════════════════ */}
+      <section className="relative min-h-[100vh] flex items-center justify-center overflow-hidden">
+        {/* Layered background effects */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-20%,hsl(var(--primary)/0.12),transparent)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_80%_80%,hsl(var(--accent)/0.06),transparent)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_30%_at_10%_60%,hsl(var(--secondary)/0.04),transparent)]" />
+        </div>
+
+        {/* Orbit rings */}
+        <div className="absolute inset-0 pointer-events-none hidden lg:block">
+          <OrbitRing size={500} duration={30} delay={0} opacity={0.3} />
+          <OrbitRing size={700} duration={45} delay={5} opacity={0.15} />
+          <OrbitRing size={900} duration={60} delay={10} opacity={0.08} />
+        </div>
+
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 opacity-[0.02]" style={{
+          backgroundImage: 'linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
+        }} />
 
         <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            {/* Logo */}
-            <div className="mb-8 opacity-0 animate-stagger-fade-up stagger-1">
-              <img src={tsmoLogo} alt="TSMO Logo" className="h-28 sm:h-36 lg:h-44 mx-auto object-contain mix-blend-multiply dark:brightness-110 dark:contrast-105" loading="eager" />
+          <div className="max-w-4xl mx-auto text-center">
+            {/* Logo with glow */}
+            <div className="mb-10 opacity-0 animate-stagger-fade-up" style={{ animationDelay: '0.1s' }}>
+              <div className="relative inline-block">
+                <div className="absolute inset-0 blur-3xl bg-primary/10 scale-150 rounded-full" />
+                <img src={tsmoLogo} alt="TSMO Logo" className="relative h-32 sm:h-40 lg:h-52 mx-auto object-contain mix-blend-multiply dark:brightness-110 dark:contrast-105" loading="eager" />
+              </div>
             </div>
 
-            {/* Headline — staggered reveal */}
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tighter mb-6 leading-[1.05]">
-              <span className="block opacity-0 animate-stagger-fade-up stagger-2 text-foreground">
-                Your Art Is Being Stolen.
+            {/* Headline — dramatic staggered */}
+            <h1 className="text-5xl sm:text-6xl lg:text-8xl font-bold tracking-tighter mb-8 leading-[0.95]">
+              <span className="block opacity-0 animate-stagger-fade-up text-foreground" style={{ animationDelay: '0.3s' }}>
+                Your Art Is
               </span>
-              <span className="block opacity-0 animate-stagger-fade-up stagger-3 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-                We Stop It.
+              <span className="block opacity-0 animate-stagger-fade-up text-foreground" style={{ animationDelay: '0.45s' }}>
+                Being Stolen.
+              </span>
+              <span className="block opacity-0 animate-stagger-fade-up mt-2" style={{ animationDelay: '0.6s' }}>
+                <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-[length:200%_auto] animate-gradient-shift bg-clip-text text-transparent">
+                  We Stop It.
+                </span>
               </span>
             </h1>
 
-            <p className="text-lg sm:text-xl text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed opacity-0 animate-stagger-fade-up stagger-4">
-              Upload your work. We scan the web 24/7 and alert you when someone uses it without permission.
+            <p className="text-lg sm:text-xl text-muted-foreground mb-12 max-w-xl mx-auto leading-relaxed opacity-0 animate-stagger-fade-up" style={{ animationDelay: '0.75s' }}>
+              AI-powered monitoring that scans the web 24/7 and alerts you when someone uses your work without permission.
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8 opacity-0 animate-stagger-fade-up stagger-5">
+            {/* CTA — Big, bold, unmissable */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8 opacity-0 animate-stagger-fade-up" style={{ animationDelay: '0.9s' }}>
               <Button
                 size="lg"
-                className="h-14 px-8 text-base font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/25 glow-pulse"
+                className="h-16 px-10 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-2xl shadow-primary/30 rounded-2xl glow-pulse"
                 onClick={() => setShowInstantProtect(true)}
               >
-                <Upload className="mr-2 h-5 w-5" />
+                <Upload className="mr-3 h-5 w-5" />
                 Scan Your Art Free
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="h-14 px-8 text-base font-medium border-border/60 hover:border-primary/50 hover:bg-primary/5"
+                className="h-16 px-10 text-lg font-semibold border-2 border-border/60 hover:border-primary/50 hover:bg-primary/5 rounded-2xl"
                 onClick={() => navigate('/auth?tab=signup')}
               >
                 Create Free Account
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
 
-            {/* Trust badges */}
-            <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground opacity-0 animate-stagger-fade-up" style={{ animationDelay: "0.6s" }}>
-              <span className="flex items-center gap-1.5">
-                <Check className="w-4 h-4 text-primary" /> No credit card
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Check className="w-4 h-4 text-primary" /> Instant results
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Check className="w-4 h-4 text-primary" /> 50 free scans
-              </span>
+            {/* Trust line */}
+            <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground opacity-0 animate-stagger-fade-up" style={{ animationDelay: '1.05s' }}>
+              <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-primary" /> No credit card</span>
+              <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-primary" /> Instant results</span>
+              <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-primary" /> 50 free scans</span>
             </div>
 
             {/* Demo link */}
-            <button
-              onClick={() => setShowLiveDemo(true)}
-              className="mt-8 text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-2 group"
-            >
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                <Play className="w-3.5 h-3.5 text-primary" />
-              </div>
-              Watch 2-minute demo
-            </button>
+            <div className="mt-10 opacity-0 animate-stagger-fade-up" style={{ animationDelay: '1.2s' }}>
+              <button
+                onClick={() => setShowLiveDemo(true)}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-3 group"
+              >
+                <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 group-hover:scale-110 transition-all">
+                  <Play className="w-4 h-4 text-primary ml-0.5" />
+                </div>
+                Watch 2-minute demo
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 animate-stagger-fade-up" style={{ animationDelay: '1.5s' }}>
+          <div className="flex flex-col items-center gap-2 text-muted-foreground/40 animate-bounce">
+            <ArrowDown className="w-4 h-4" />
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          CREDIBILITY — Clean Logo Bar
-          ══════════════════════════════════════════ */}
+      {/* ══════════════════════════════════════════════════════
+          STATS — Full-width dramatic numbers
+          ══════════════════════════════════════════════════════ */}
       <RevealSection>
-        <section className="py-14 border-t border-border/30">
+        <section className="py-20 border-y border-border/30 bg-muted/10">
           <div className="container mx-auto px-4 max-w-5xl">
-            <p className="text-center text-xs font-semibold text-muted-foreground uppercase tracking-[0.2em] mb-10">Trusted & Recognized</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-10 text-center">
+              {stats.map((stat, i) => (
+                <RevealSection key={i} delay={i * 120}>
+                  <div>
+                    <div className="text-4xl md:text-5xl lg:text-6xl font-bold tabular-nums bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent mb-2">
+                      <AnimatedCounter value={stat.value} />
+                    </div>
+                    <div className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.15em]">{stat.label}</div>
+                  </div>
+                </RevealSection>
+              ))}
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      {/* ══════════════════════════════════════════════════════
+          CREDIBILITY — Logo Bar
+          ══════════════════════════════════════════════════════ */}
+      <RevealSection>
+        <section className="py-14 border-b border-border/30">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <p className="text-center text-[10px] font-bold text-muted-foreground uppercase tracking-[0.25em] mb-10">Trusted & Recognized</p>
             <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-16">
-              {/* BizWeekly */}
-              <a
-                href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-col items-center gap-3 group"
-              >
-                <img src={bizWeeklyBanner} alt="As seen on BizWeekly" className="h-10 md:h-12 object-contain opacity-70 group-hover:opacity-100 transition-opacity" loading="lazy" />
-                <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1">
-                  Read the feature <ChevronRight className="w-3 h-3" />
-                </span>
+              <a href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-3 group">
+                <img src={bizWeeklyBanner} alt="As seen on BizWeekly" className="h-10 md:h-12 object-contain opacity-60 group-hover:opacity-100 transition-opacity" loading="lazy" />
+                <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1">Read the feature <ChevronRight className="w-3 h-3" /></span>
               </a>
-
-              {/* Divider */}
-              <div className="hidden md:block w-px h-12 bg-border/50" />
-
-              {/* CAI */}
+              <div className="hidden md:block w-px h-12 bg-border/40" />
               <div className="flex flex-col items-center gap-3">
-                <img src={caiLogo} alt="Content Authenticity Initiative" className="h-10 md:h-12 object-contain dark:invert opacity-70" />
+                <img src={caiLogo} alt="Content Authenticity Initiative" className="h-10 md:h-12 object-contain dark:invert opacity-60" />
                 <span className="text-xs text-muted-foreground">CAI Member</span>
               </div>
-
-              {/* Divider */}
-              <div className="hidden md:block w-px h-12 bg-border/50" />
-
-              {/* Harvard */}
+              <div className="hidden md:block w-px h-12 bg-border/40" />
               <div className="flex flex-col items-center gap-1.5">
-                <span className="text-sm font-medium text-foreground/70">Harvard Innovation Labs</span>
-                <span className="text-[10px] text-muted-foreground/60">Member · Not an endorsement</span>
+                <span className="text-sm font-medium text-foreground/60">Harvard Innovation Labs</span>
+                <span className="text-[10px] text-muted-foreground/50">Member · Not an endorsement</span>
               </div>
             </div>
           </div>
         </section>
       </RevealSection>
 
-      {/* ══════════════════════════════════════════
-          HOW IT WORKS — Animated Timeline
-          ══════════════════════════════════════════ */}
+      {/* ══════════════════════════════════════════════════════
+          HOW IT WORKS — Numbered steps with connecting line
+          ══════════════════════════════════════════════════════ */}
       <RevealSection>
-        <section className="py-24 lg:py-32 bg-muted/20 border-t border-border/30 overflow-hidden">
+        <section className="py-28 lg:py-36 overflow-hidden">
           <div className="container mx-auto px-4 max-w-5xl">
             <div className="text-center mb-20">
-              <p className="text-sm font-semibold text-primary uppercase tracking-[0.15em] mb-3">How It Works</p>
-              <h2 className="text-3xl lg:text-5xl font-bold text-foreground">Protection in four simple steps</h2>
+              <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4">How It Works</p>
+              <h2 className="text-3xl lg:text-5xl font-bold text-foreground tracking-tight">
+                Protection in four<br />simple steps
+              </h2>
             </div>
 
-            {/* Timeline */}
             <div className="relative">
-              {/* Connecting line — desktop only */}
-              <div className="hidden lg:block absolute top-10 left-[12%] right-[12%] h-0.5 bg-border/40">
+              {/* Connecting line */}
+              <div className="hidden lg:block absolute top-12 left-[12%] right-[12%] h-px bg-border/30">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary via-accent to-secondary origin-left animate-timeline-grow" />
               </div>
 
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
                 {steps.map((step, i) => (
                   <RevealSection key={i} delay={i * 150}>
-                    <div className="text-center group relative">
-                      <div className="relative mx-auto mb-6">
-                        <div className="w-20 h-20 rounded-2xl bg-background border-2 border-border/50 flex items-center justify-center mx-auto group-hover:border-primary/50 group-hover:shadow-lg group-hover:shadow-primary/10 transition-all duration-500">
-                          <step.icon className="h-8 w-8 text-primary transition-transform group-hover:scale-110 duration-300" />
+                    <div className="text-center group">
+                      <div className="relative mx-auto mb-8">
+                        <div className="w-24 h-24 rounded-3xl bg-card border-2 border-border/40 flex items-center justify-center mx-auto group-hover:border-primary/50 group-hover:shadow-2xl group-hover:shadow-primary/10 transition-all duration-500 group-hover:-translate-y-2">
+                          <step.icon className="h-9 w-9 text-primary transition-transform group-hover:scale-110 duration-300" />
                         </div>
-                        <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center shadow-lg">
-                          {i + 1}
+                        <span className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-foreground text-background text-xs font-bold flex items-center justify-center shadow-lg">
+                          {step.num}
                         </span>
                       </div>
-                      <h3 className="text-lg font-bold mb-1.5 text-foreground">{step.title}</h3>
+                      <h3 className="text-lg font-bold mb-2 text-foreground">{step.title}</h3>
                       <p className="text-sm text-muted-foreground">{step.desc}</p>
                     </div>
                   </RevealSection>
@@ -342,187 +376,199 @@ const Index = () => {
         </section>
       </RevealSection>
 
-      {/* ══════════════════════════════════════════
-          FEATURES — Clean Professional Grid
-          ══════════════════════════════════════════ */}
-      <RevealSection>
-        <section className="py-24 lg:py-32 border-t border-border/30">
-          <div className="container mx-auto px-4 max-w-6xl">
-            <div className="text-center mb-16">
-              <p className="text-sm font-semibold text-primary uppercase tracking-[0.15em] mb-3">Features</p>
-              <h2 className="text-3xl lg:text-5xl font-bold text-foreground">Everything you need to<br />protect your work</h2>
+      {/* ══════════════════════════════════════════════════════
+          FEATURES — Alternating large/small bento
+          ══════════════════════════════════════════════════════ */}
+      <section className="py-28 lg:py-36 bg-muted/10 border-y border-border/30">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <RevealSection>
+            <div className="text-center mb-20">
+              <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4">Features</p>
+              <h2 className="text-3xl lg:text-5xl font-bold text-foreground tracking-tight">
+                Everything you need to<br />protect your work
+              </h2>
             </div>
+          </RevealSection>
 
-            {/* Top row: 3 equal cards */}
-            <div className="grid md:grid-cols-3 gap-6 mb-6">
-              {features.slice(0, 3).map((feature, i) => (
-                <RevealSection key={i} delay={i * 120}>
-                  <div className="relative group rounded-2xl p-7 bg-card border border-border/40 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1 h-full">
-                    <div className="w-11 h-11 rounded-xl bg-primary/8 flex items-center justify-center mb-5 group-hover:bg-primary/15 transition-colors">
-                      <feature.icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <h3 className="text-lg font-bold mb-2 text-foreground">{feature.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
-                  </div>
-                </RevealSection>
-              ))}
-            </div>
-
-            {/* Bottom row: 2 wider cards */}
-            <div className="grid md:grid-cols-2 gap-6">
-              {features.slice(3).map((feature, i) => (
-                <RevealSection key={i + 3} delay={(i + 3) * 120}>
-                  <div className="relative group rounded-2xl p-7 bg-card border border-border/40 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1 h-full">
-                    <div className="flex items-start gap-5">
-                      <div className="w-11 h-11 rounded-xl bg-primary/8 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors">
-                        <feature.icon className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-bold mb-2 text-foreground">{feature.title}</h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
-                      </div>
-                    </div>
-                  </div>
-                </RevealSection>
-              ))}
-            </div>
-          </div>
-        </section>
-      </RevealSection>
-
-      {/* ══════════════════════════════════════════
-          STATS — Gradient Numbers
-          ══════════════════════════════════════════ */}
-      <RevealSection>
-        <section className="py-20 bg-muted/20 border-t border-border/30">
-          <div className="container mx-auto px-4 max-w-4xl">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              {stats.map((stat, i) => (
-                <RevealSection key={i} delay={i * 100}>
+          {/* Row 1: hero feature + 2 stacked */}
+          {(() => {
+            const HeroIcon = features[0].icon;
+            return (
+            <div className="grid lg:grid-cols-5 gap-6 mb-6">
+              <RevealSection className="lg:col-span-3">
+                <div className="relative group rounded-3xl p-10 lg:p-12 h-full bg-card border border-border/40 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 overflow-hidden">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.06),transparent)] rounded-full" />
                   <div className="relative">
-                    <div className="text-4xl lg:text-5xl font-bold tabular-nums bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent mb-2">
-                      {stat.value}
+                    <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
+                      <HeroIcon className="h-7 w-7 text-primary" />
                     </div>
-                    <div className="text-sm text-muted-foreground font-medium">{stat.label}</div>
+                    <h3 className="text-2xl lg:text-3xl font-bold mb-4 text-foreground">{features[0].title}</h3>
+                    <p className="text-base text-muted-foreground leading-relaxed max-w-md">{features[0].desc}</p>
+                  </div>
+                </div>
+              </RevealSection>
+
+            <div className="lg:col-span-2 grid gap-6">
+              {features.slice(1, 3).map((f, i) => (
+                <RevealSection key={i} delay={(i + 1) * 120}>
+                  <div className="group rounded-3xl p-7 bg-card border border-border/40 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 h-full">
+                    <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                      <f.icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-bold mb-2 text-foreground">{f.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
                   </div>
                 </RevealSection>
               ))}
             </div>
           </div>
+            );
+          })()}
+
+          {/* Row 2: 3 equal cards */}
+          <div className="grid md:grid-cols-3 gap-6">
+            {features.slice(3).map((f, i) => (
+              <RevealSection key={i} delay={(i + 3) * 120}>
+                <div className="group rounded-3xl p-7 bg-card border border-border/40 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1 h-full">
+                  <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                    <f.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-bold mb-2 text-foreground">{f.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+                </div>
+              </RevealSection>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          SOCIAL PROOF — Testimonial-style quote
+          ══════════════════════════════════════════════════════ */}
+      <RevealSection>
+        <section className="py-28 lg:py-36">
+          <div className="container mx-auto px-4 max-w-3xl text-center">
+            <div className="relative">
+              <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-8xl font-display text-primary/10 select-none">"</div>
+              <blockquote className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground leading-snug tracking-tight mb-8 relative">
+                Fighting art theft used to feel like fighting shadows. TSMO gave me the tools to fight back.
+              </blockquote>
+              <div className="flex items-center justify-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">SC</div>
+                <div className="text-left">
+                  <p className="text-sm font-semibold text-foreground">Shirleena Cunningham</p>
+                  <p className="text-xs text-muted-foreground">Founder & CEO, TSMO</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
       </RevealSection>
 
-      {/* ══════════════════════════════════════════
-          BLOG — Magazine Layout
-          ══════════════════════════════════════════ */}
+      {/* ══════════════════════════════════════════════════════
+          BLOG — Editorial grid
+          ══════════════════════════════════════════════════════ */}
       <RevealSection>
         <section className="py-24 lg:py-28 border-t border-border/30">
           <div className="container mx-auto px-4 max-w-5xl">
-            <div className="text-center mb-14">
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <BookOpen className="h-5 w-5 text-primary" />
-                <p className="text-sm font-semibold text-primary uppercase tracking-[0.15em]">From Our Blog</p>
+            <div className="flex items-end justify-between mb-14">
+              <div>
+                <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-3">Blog</p>
+                <h2 className="text-3xl lg:text-4xl font-bold text-foreground tracking-tight">Latest insights</h2>
               </div>
-              <h2 className="text-3xl lg:text-4xl font-bold text-foreground">Tips & guides for creators</h2>
+              <Button variant="ghost" onClick={() => navigate("/blog")} className="hidden sm:flex text-muted-foreground hover:text-primary gap-1.5">
+                View all <ArrowRight className="h-4 w-4" />
+              </Button>
             </div>
 
-            {/* Magazine grid: first post large, rest side-by-side */}
-            <div className="grid md:grid-cols-2 gap-5 mb-10">
+            <div className="grid md:grid-cols-3 gap-6">
               {posts.map((post, i) => (
-                <Link
-                  key={post.slug}
-                  to={`/blog/${post.slug}`}
-                  className={`group block rounded-2xl bg-card border border-border/30 hover:border-primary/30 hover:shadow-xl transition-all duration-500 overflow-hidden ${i === 0 ? "md:col-span-2" : ""}`}
-                >
-                  <div className={`p-8 ${i === 0 ? "lg:p-10" : ""}`}>
-                    <span className="text-xs font-semibold text-primary uppercase tracking-wider">{post.category}</span>
-                    <h3 className={`font-bold mt-3 mb-3 text-foreground group-hover:text-primary transition-colors line-clamp-2 ${i === 0 ? "text-2xl lg:text-3xl" : "text-lg"}`}>
-                      {post.title}
-                    </h3>
-                    <p className={`text-muted-foreground line-clamp-2 mb-4 ${i === 0 ? "text-base" : "text-sm"}`}>{post.excerpt}</p>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Clock className="h-3.5 w-3.5" />
-                      {post.readTime}
-                      <span className="ml-auto text-primary opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
-                        Read more <ArrowRight className="w-3 h-3" />
-                      </span>
-                    </div>
-                  </div>
-                </Link>
+                <RevealSection key={post.slug} delay={i * 120}>
+                  <Link to={`/blog/${post.slug}`} className="group block">
+                    <article className="rounded-2xl bg-card border border-border/40 hover:border-primary/40 hover:shadow-xl transition-all duration-500 overflow-hidden h-full">
+                      {/* Color accent bar */}
+                      <div className={`h-1 ${i === 0 ? 'bg-primary' : i === 1 ? 'bg-accent' : 'bg-secondary'}`} />
+                      <div className="p-7">
+                        <span className="text-[11px] font-bold text-primary uppercase tracking-wider">{post.category}</span>
+                        <h3 className="text-lg font-bold mt-3 mb-3 text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                          {post.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground line-clamp-2 mb-4 leading-relaxed">{post.excerpt}</p>
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{post.readTime}</span>
+                          <span className="text-primary font-semibold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            Read <ArrowRight className="w-3 h-3" />
+                          </span>
+                        </div>
+                      </div>
+                    </article>
+                  </Link>
+                </RevealSection>
               ))}
             </div>
 
-            <div className="text-center">
-              <Button variant="outline" size="lg" onClick={() => navigate("/blog")} className="group">
-                View All Articles <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            <div className="text-center mt-10 sm:hidden">
+              <Button variant="outline" onClick={() => navigate("/blog")}>
+                View All Articles <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </div>
         </section>
       </RevealSection>
 
-      {/* ══════════════════════════════════════════
-          FINAL CTA — Dark Cinematic Section
-          ══════════════════════════════════════════ */}
-      <section className="relative py-28 lg:py-36 bg-foreground text-background overflow-hidden">
-        {/* Radial glow */}
-        <div className="absolute inset-0 radial-glow opacity-60" />
-        {/* Particles */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {[...Array(8)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute rounded-full bg-primary/10 animate-float-particle"
-              style={{
-                width: `${3 + Math.random() * 5}px`,
-                height: `${3 + Math.random() * 5}px`,
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 4}s`,
-                animationDuration: `${5 + Math.random() * 4}s`,
-              }}
-            />
-          ))}
-        </div>
+      {/* ══════════════════════════════════════════════════════
+          FINAL CTA — Dark cinematic with email capture
+          ══════════════════════════════════════════════════════ */}
+      <section className="relative py-32 lg:py-40 bg-foreground text-background overflow-hidden">
+        {/* Dramatic lighting */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-20%,hsl(var(--primary)/0.25),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_80%,hsl(var(--accent)/0.08),transparent)]" />
+
+        {/* Grid pattern */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{
+          backgroundImage: 'linear-gradient(hsl(var(--background)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--background)) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
+        }} />
 
         <div className="container mx-auto px-4 max-w-2xl text-center relative z-10">
           <RevealSection>
-            <h2 className="text-3xl lg:text-5xl font-bold mb-5">
-              Ready to protect your art?
+            <h2 className="text-4xl lg:text-6xl font-bold mb-6 tracking-tight text-background leading-[1.05]">
+              Ready to protect<br />your art?
             </h2>
-            <p className="text-lg opacity-70 mb-10 max-w-lg mx-auto">
-              Join thousands of creators who sleep better knowing their work is monitored 24/7.
+            <p className="text-lg text-background/50 mb-12 max-w-md mx-auto">
+              Join thousands of creators who sleep better knowing their work is monitored around the clock.
             </p>
 
-            {/* Email capture with animated border */}
-            <div className="max-w-md mx-auto mb-8">
-              <div className="flex gap-3 p-1.5 rounded-xl bg-background/10 backdrop-blur-sm border border-background/20">
+            {/* Email capture */}
+            <div className="max-w-md mx-auto mb-6">
+              <div className="flex gap-3 p-2 rounded-2xl bg-background/10 backdrop-blur-sm border border-background/15">
                 <Input
                   type="email"
                   placeholder="Enter your email"
-                  className="flex-1 h-12 text-base bg-background text-foreground border-0"
+                  className="flex-1 h-13 text-base bg-background text-foreground border-0 rounded-xl"
                   value={signupEmail}
                   onChange={(e) => setSignupEmail(e.target.value)}
                 />
                 <Button
                   size="lg"
-                  className="h-12 px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+                  className="h-13 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-xl shadow-primary/30"
                   onClick={() => navigate(`/auth?email=${encodeURIComponent(signupEmail)}&tab=signup`)}
                 >
                   Get Started
                 </Button>
               </div>
-              <p className="text-xs opacity-50 mt-3">50 free protections. No credit card required.</p>
+              <p className="text-xs text-background/30 mt-4">50 free protections · No credit card required</p>
             </div>
 
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => navigate("/pricing")}
-              className="border-background/20 text-background hover:bg-background/10"
-            >
-              View Pricing Plans
-            </Button>
+            <div className="flex items-center justify-center gap-4">
+              <Button variant="ghost" size="lg" onClick={() => navigate("/pricing")} className="text-background/50 hover:text-background hover:bg-background/10 rounded-xl">
+                View Pricing
+              </Button>
+              <span className="text-background/20">·</span>
+              <button onClick={() => setShowLiveDemo(true)} className="text-sm text-background/50 hover:text-background transition-colors inline-flex items-center gap-2">
+                <Play className="w-3.5 h-3.5" /> Watch Demo
+              </button>
+            </div>
           </RevealSection>
         </div>
       </section>
