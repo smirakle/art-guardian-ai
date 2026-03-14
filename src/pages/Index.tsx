@@ -20,21 +20,21 @@ import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 /* ─── Scroll-reveal wrapper ─── */
-const RevealSection: React.FC<{ children: React.ReactNode; className?: string; delay?: number }> = ({ children, className = "", delay = 0 }) => {
+const RevealSection: React.FC<{children: React.ReactNode;className?: string;delay?: number;}> = ({ children, className = "", delay = 0 }) => {
   const { ref, isVisible } = useScrollReveal(0.12);
   return (
     <div
       ref={ref}
       className={`${className} transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
+      style={{ transitionDelay: `${delay}ms` }}>
+      
       {children}
-    </div>
-  );
+    </div>);
+
 };
 
 /* ─── Animated counter ─── */
-const AnimatedCounter: React.FC<{ value: string; duration?: number }> = ({ value, duration = 2000 }) => {
+const AnimatedCounter: React.FC<{value: string;duration?: number;}> = ({ value, duration = 2000 }) => {
   const [display, setDisplay] = useState(value);
   const ref = useRef<HTMLDivElement>(null);
   const hasAnimated = useRef(false);
@@ -70,19 +70,19 @@ const AnimatedCounter: React.FC<{ value: string; duration?: number }> = ({ value
 };
 
 /* ─── Orbiting ring ─── */
-const OrbitRing: React.FC<{ size: number; duration: number; delay: number; opacity: number }> = ({ size, duration, delay, opacity }) => (
-  <div
-    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/10"
-    style={{
-      width: size, height: size,
-      animation: `spin ${duration}s linear infinite`,
-      animationDelay: `${delay}s`,
-      opacity,
-    }}
-  >
+const OrbitRing: React.FC<{size: number;duration: number;delay: number;opacity: number;}> = ({ size, duration, delay, opacity }) =>
+<div
+  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/10"
+  style={{
+    width: size, height: size,
+    animation: `spin ${duration}s linear infinite`,
+    animationDelay: `${delay}s`,
+    opacity
+  }}>
+  
     <div className="absolute -top-1 left-1/2 w-2 h-2 rounded-full bg-primary/30" />
-  </div>
-);
+  </div>;
+
 
 const Index = () => {
   const { toast } = useToast();
@@ -99,15 +99,15 @@ const Index = () => {
     document.title = "TSMO | AI Art Protection & Forgery Detection";
     const setMeta = (name: string, content: string) => {
       let tag = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
-      if (!tag) { tag = document.createElement("meta"); tag.name = name; document.head.appendChild(tag); }
+      if (!tag) {tag = document.createElement("meta");tag.name = name;document.head.appendChild(tag);}
       tag.content = content;
     };
     setMeta("description", "Stop online art theft. TSMO monitors the web 24/7 to find stolen artwork, proves ownership with timestamps, and helps you take action. Free to start.");
     let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-    if (!link) { link = document.createElement("link"); link.rel = "canonical"; document.head.appendChild(link); }
+    if (!link) {link = document.createElement("link");link.rel = "canonical";document.head.appendChild(link);}
     link.href = `${window.location.origin}/`;
     let script = document.querySelector('script[data-ld="org"]') as HTMLScriptElement | null;
-    if (!script) { script = document.createElement("script"); script.type = "application/ld+json"; script.setAttribute("data-ld", "org"); document.head.appendChild(script); }
+    if (!script) {script = document.createElement("script");script.type = "application/ld+json";script.setAttribute("data-ld", "org");document.head.appendChild(script);}
     script.text = JSON.stringify({ "@context": "https://schema.org", "@type": "Organization", name: "TSMO", url: window.location.origin, logo: window.location.origin + "/favicon.ico" });
   }, []);
 
@@ -122,7 +122,7 @@ const Index = () => {
       setSalesFormData({ name: "", email: "", company: "", interestedPlan: "", message: "" });
     } catch (error) {
       toast({ title: "Error", description: "Failed to send. Please try again.", variant: "destructive" });
-    } finally { setIsSendingSales(false); }
+    } finally {setIsSendingSales(false);}
   };
 
   const { data: dbPosts } = useQuery({
@@ -135,35 +135,35 @@ const Index = () => {
   });
 
   const fallbackPosts = [
-    { slug: "how-to-find-if-your-art-is-being-stolen-online", title: "How to Find If Your Art Is Being Stolen Online", excerpt: "Learn the essential techniques to discover if your artwork is being used without permission.", category: "Protection", readTime: "8 min" },
-    { slug: "ai-training-what-artists-need-to-know-2025", title: "AI Training: What Artists Need to Know in 2025", excerpt: "Understanding how AI companies use artwork for training and your rights.", category: "AI", readTime: "10 min" },
-    { slug: "dmca-takedown-guide-digital-artists", title: "DMCA Takedown Guide for Digital Artists", excerpt: "A step-by-step guide to filing DMCA takedown notices.", category: "Legal", readTime: "12 min" },
-  ];
+  { slug: "how-to-find-if-your-art-is-being-stolen-online", title: "How to Find If Your Art Is Being Stolen Online", excerpt: "Learn the essential techniques to discover if your artwork is being used without permission.", category: "Protection", readTime: "8 min" },
+  { slug: "ai-training-what-artists-need-to-know-2025", title: "AI Training: What Artists Need to Know in 2025", excerpt: "Understanding how AI companies use artwork for training and your rights.", category: "AI", readTime: "10 min" },
+  { slug: "dmca-takedown-guide-digital-artists", title: "DMCA Takedown Guide for Digital Artists", excerpt: "A step-by-step guide to filing DMCA takedown notices.", category: "Legal", readTime: "12 min" }];
+
 
   const posts = dbPosts?.length ? dbPosts.map((p) => ({ slug: p.slug, title: p.title, excerpt: p.excerpt || '', category: p.tags?.[0] || 'General', readTime: '5 min' })) : fallbackPosts;
 
   const steps = [
-    { icon: Upload, title: "Upload", desc: "Drop your artwork into TSMO", num: "01" },
-    { icon: Search, title: "We Scan", desc: "AI searches billions of pages", num: "02" },
-    { icon: Bell, title: "Get Alerted", desc: "Instant notification of matches", num: "03" },
-    { icon: Shield, title: "Take Action", desc: "One-click enforcement tools", num: "04" },
-  ];
+  { icon: Upload, title: "Upload", desc: "Drop your artwork into TSMO", num: "01" },
+  { icon: Search, title: "We Scan", desc: "AI searches billions of pages", num: "02" },
+  { icon: Bell, title: "Get Alerted", desc: "Instant notification of matches", num: "03" },
+  { icon: Shield, title: "Take Action", desc: "One-click enforcement tools", num: "04" }];
+
 
   const features = [
-    { icon: Eye, title: "AI Training Resistance", desc: "Style cloaking technology makes your art unusable for AI model training while keeping it visually identical to humans." },
-    { icon: Search, title: "Reverse Image Search", desc: "Continuously monitors millions of websites, marketplaces, and social platforms to detect unauthorized use of your work." },
-    { icon: Globe, title: "24/7 Web Monitoring", desc: "Our AI agents scan the internet around the clock so you never miss an unauthorized copy of your artwork." },
-    { icon: Zap, title: "Instant DMCA Takedowns", desc: "Generate and file legally-binding DMCA notices with a single click. Our system handles enforcement across all platforms." },
-    { icon: FileSearch, title: "Provenance Tracking", desc: "Blockchain-backed ownership certificates with C2PA content credentials for irrefutable proof of original authorship." },
-    { icon: Lock, title: "Forgery Detection", desc: "Advanced AI detects deepfakes, style mimicry, and unauthorized derivatives of your original artwork." },
-  ];
+  { icon: Eye, title: "AI Training Resistance", desc: "Style cloaking technology makes your art unusable for AI model training while keeping it visually identical to humans." },
+  { icon: Search, title: "Reverse Image Search", desc: "Continuously monitors millions of websites, marketplaces, and social platforms to detect unauthorized use of your work." },
+  { icon: Globe, title: "24/7 Web Monitoring", desc: "Our AI agents scan the internet around the clock so you never miss an unauthorized copy of your artwork." },
+  { icon: Zap, title: "Instant DMCA Takedowns", desc: "Generate and file legally-binding DMCA notices with a single click. Our system handles enforcement across all platforms." },
+  { icon: FileSearch, title: "Provenance Tracking", desc: "Blockchain-backed ownership certificates with C2PA content credentials for irrefutable proof of original authorship." },
+  { icon: Lock, title: "Forgery Detection", desc: "Advanced AI detects deepfakes, style mimicry, and unauthorized derivatives of your original artwork." }];
+
 
   const stats = [
-    { value: "2,400+", label: "Artworks Protected" },
-    { value: "24/7", label: "AI Monitoring" },
-    { value: "50+", label: "Platforms Scanned" },
-    { value: "99.9%", label: "Detection Rate" },
-  ];
+  { value: "2,400+", label: "Artworks Protected" },
+  { value: "24/7", label: "AI Monitoring" },
+  { value: "50+", label: "Platforms Scanned" },
+  { value: "99.9%", label: "Detection Rate" }];
+
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
@@ -182,8 +182,8 @@ const Index = () => {
       </Dialog>
 
       {/* ══════════════════════════════════════════════════════
-          HERO — Full-viewport cinematic
-          ══════════════════════════════════════════════════════ */}
+            HERO — Full-viewport cinematic
+            ══════════════════════════════════════════════════════ */}
       <section className="relative min-h-[100vh] flex items-center justify-center overflow-hidden">
 
         {/* Orbit rings */}
@@ -196,7 +196,7 @@ const Index = () => {
         {/* Grid pattern overlay */}
         <div className="absolute inset-0 opacity-[0.02]" style={{
           backgroundImage: 'linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
+          backgroundSize: '60px 60px'
         }} />
 
         <div className="container mx-auto px-4 relative z-10">
@@ -218,7 +218,7 @@ const Index = () => {
                 Being Stolen.
               </span>
               <span className="block opacity-0 animate-stagger-fade-up mt-2" style={{ animationDelay: '0.6s' }}>
-                <span className="text-primary">
+                <span className="text-[#f91f1f]">
                    We Stop It.
                  </span>
               </span>
@@ -233,8 +233,8 @@ const Index = () => {
               <Button
                 size="lg"
                 className="h-16 px-10 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-2xl shadow-primary/30 rounded-2xl glow-pulse"
-                onClick={() => setShowInstantProtect(true)}
-              >
+                onClick={() => setShowInstantProtect(true)}>
+                
                 <Upload className="mr-3 h-5 w-5" />
                 Scan Your Art Free
               </Button>
@@ -242,8 +242,8 @@ const Index = () => {
                 size="lg"
                 variant="outline"
                 className="h-16 px-10 text-lg font-semibold border-2 border-border/60 hover:border-primary/50 hover:bg-primary/5 rounded-2xl"
-                onClick={() => navigate('/auth?tab=signup')}
-              >
+                onClick={() => navigate('/auth?tab=signup')}>
+                
                 Create Free Account
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -260,8 +260,8 @@ const Index = () => {
             <div className="mt-10 opacity-0 animate-stagger-fade-up" style={{ animationDelay: '1.2s' }}>
               <button
                 onClick={() => setShowLiveDemo(true)}
-                className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-3 group"
-              >
+                className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-3 group">
+                
                 <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 group-hover:scale-110 transition-all">
                   <Play className="w-4 h-4 text-primary ml-0.5" />
                 </div>
@@ -280,14 +280,14 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          STATS — Full-width dramatic numbers
-          ══════════════════════════════════════════════════════ */}
+            STATS — Full-width dramatic numbers
+            ══════════════════════════════════════════════════════ */}
       <RevealSection>
         <section className="py-20 border-y border-border/30 bg-muted/10">
           <div className="container mx-auto px-4 max-w-5xl">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-10 text-center">
-              {stats.map((stat, i) => (
-                <RevealSection key={i} delay={i * 120}>
+              {stats.map((stat, i) =>
+              <RevealSection key={i} delay={i * 120}>
                   <div>
                     <div className="text-4xl md:text-5xl lg:text-6xl font-bold tabular-nums text-primary mb-2">
                       <AnimatedCounter value={stat.value} />
@@ -295,15 +295,15 @@ const Index = () => {
                     <div className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.15em]">{stat.label}</div>
                   </div>
                 </RevealSection>
-              ))}
+              )}
             </div>
           </div>
         </section>
       </RevealSection>
 
       {/* ══════════════════════════════════════════════════════
-          CREDIBILITY — Logo Bar
-          ══════════════════════════════════════════════════════ */}
+            CREDIBILITY — Logo Bar
+            ══════════════════════════════════════════════════════ */}
       <RevealSection>
         <section className="py-14 border-b border-border/30">
           <div className="container mx-auto px-4 max-w-5xl">
@@ -329,8 +329,8 @@ const Index = () => {
       </RevealSection>
 
       {/* ══════════════════════════════════════════════════════
-          HOW IT WORKS — Numbered steps with connecting line
-          ══════════════════════════════════════════════════════ */}
+            HOW IT WORKS — Numbered steps with connecting line
+            ══════════════════════════════════════════════════════ */}
       <RevealSection>
         <section className="py-28 lg:py-36 overflow-hidden">
           <div className="container mx-auto px-4 max-w-5xl">
@@ -348,8 +348,8 @@ const Index = () => {
               </div>
 
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
-                {steps.map((step, i) => (
-                  <RevealSection key={i} delay={i * 150}>
+                {steps.map((step, i) =>
+                <RevealSection key={i} delay={i * 150}>
                     <div className="text-center group">
                       <div className="relative mx-auto mb-8">
                         <div className="w-24 h-24 rounded-3xl bg-card border-2 border-border/40 flex items-center justify-center mx-auto group-hover:border-primary/50 group-hover:shadow-2xl group-hover:shadow-primary/10 transition-all duration-500 group-hover:-translate-y-2">
@@ -363,7 +363,7 @@ const Index = () => {
                       <p className="text-sm text-muted-foreground">{step.desc}</p>
                     </div>
                   </RevealSection>
-                ))}
+                )}
               </div>
             </div>
           </div>
@@ -371,8 +371,8 @@ const Index = () => {
       </RevealSection>
 
       {/* ══════════════════════════════════════════════════════
-          FEATURES — Alternating large/small bento
-          ══════════════════════════════════════════════════════ */}
+            FEATURES — Alternating large/small bento
+            ══════════════════════════════════════════════════════ */}
       <section className="py-28 lg:py-36 bg-muted/10 border-y border-border/30">
         <div className="container mx-auto px-4 max-w-6xl">
           <RevealSection>
@@ -388,7 +388,7 @@ const Index = () => {
           {(() => {
             const HeroIcon = features[0].icon;
             return (
-            <div className="grid lg:grid-cols-5 gap-6 mb-6">
+              <div className="grid lg:grid-cols-5 gap-6 mb-6">
               <RevealSection className="lg:col-span-3">
                 <div className="relative group rounded-3xl p-10 lg:p-12 h-full bg-card border border-border/40 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 overflow-hidden">
                   
@@ -403,8 +403,8 @@ const Index = () => {
               </RevealSection>
 
             <div className="lg:col-span-2 grid gap-6">
-              {features.slice(1, 3).map((f, i) => (
-                <RevealSection key={i} delay={(i + 1) * 120}>
+              {features.slice(1, 3).map((f, i) =>
+                  <RevealSection key={i} delay={(i + 1) * 120}>
                   <div className="group rounded-3xl p-7 bg-card border border-border/40 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 h-full">
                     <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                       <f.icon className="h-5 w-5 text-primary" />
@@ -413,16 +413,16 @@ const Index = () => {
                     <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
                   </div>
                 </RevealSection>
-              ))}
+                  )}
             </div>
-          </div>
-            );
+          </div>);
+
           })()}
 
           {/* Row 2: 3 equal cards */}
           <div className="grid md:grid-cols-3 gap-6">
-            {features.slice(3).map((f, i) => (
-              <RevealSection key={i} delay={(i + 3) * 120}>
+            {features.slice(3).map((f, i) =>
+            <RevealSection key={i} delay={(i + 3) * 120}>
                 <div className="group rounded-3xl p-7 bg-card border border-border/40 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1 h-full">
                   <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <f.icon className="h-5 w-5 text-primary" />
@@ -431,14 +431,14 @@ const Index = () => {
                   <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
                 </div>
               </RevealSection>
-            ))}
+            )}
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          SOCIAL PROOF — Testimonial-style quote
-          ══════════════════════════════════════════════════════ */}
+            SOCIAL PROOF — Testimonial-style quote
+            ══════════════════════════════════════════════════════ */}
       <RevealSection>
         <section className="py-28 lg:py-36">
           <div className="container mx-auto px-4 max-w-3xl text-center">
@@ -460,8 +460,8 @@ const Index = () => {
       </RevealSection>
 
       {/* ══════════════════════════════════════════════════════
-          BLOG — Editorial grid
-          ══════════════════════════════════════════════════════ */}
+            BLOG — Editorial grid
+            ══════════════════════════════════════════════════════ */}
       <RevealSection>
         <section className="py-24 lg:py-28 border-t border-border/30">
           <div className="container mx-auto px-4 max-w-5xl">
@@ -476,8 +476,8 @@ const Index = () => {
             </div>
 
             <div className="grid md:grid-cols-3 gap-6">
-              {posts.map((post, i) => (
-                <RevealSection key={post.slug} delay={i * 120}>
+              {posts.map((post, i) =>
+              <RevealSection key={post.slug} delay={i * 120}>
                   <Link to={`/blog/${post.slug}`} className="group block">
                     <article className="rounded-2xl bg-card border border-border/40 hover:border-primary/40 hover:shadow-xl transition-all duration-500 overflow-hidden h-full">
                       {/* Color accent bar */}
@@ -498,7 +498,7 @@ const Index = () => {
                     </article>
                   </Link>
                 </RevealSection>
-              ))}
+              )}
             </div>
 
             <div className="text-center mt-10 sm:hidden">
@@ -511,14 +511,14 @@ const Index = () => {
       </RevealSection>
 
       {/* ══════════════════════════════════════════════════════
-          FINAL CTA — Dark cinematic with email capture
-          ══════════════════════════════════════════════════════ */}
+            FINAL CTA — Dark cinematic with email capture
+            ══════════════════════════════════════════════════════ */}
       <section className="relative py-32 lg:py-40 bg-foreground text-background overflow-hidden">
 
         {/* Grid pattern */}
         <div className="absolute inset-0 opacity-[0.03]" style={{
           backgroundImage: 'linear-gradient(hsl(var(--background)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--background)) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
+          backgroundSize: '60px 60px'
         }} />
 
         <div className="container mx-auto px-4 max-w-2xl text-center relative z-10">
@@ -538,13 +538,13 @@ const Index = () => {
                   placeholder="Enter your email"
                   className="flex-1 h-13 text-base bg-background text-foreground border-0 rounded-xl"
                   value={signupEmail}
-                  onChange={(e) => setSignupEmail(e.target.value)}
-                />
+                  onChange={(e) => setSignupEmail(e.target.value)} />
+                
                 <Button
                   size="lg"
                   className="h-13 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-xl shadow-primary/30"
-                  onClick={() => navigate(`/auth?email=${encodeURIComponent(signupEmail)}&tab=signup`)}
-                >
+                  onClick={() => navigate(`/auth?email=${encodeURIComponent(signupEmail)}&tab=signup`)}>
+                  
                   Get Started
                 </Button>
               </div>
@@ -587,8 +587,8 @@ const Index = () => {
       </Dialog>
 
       <BugReportButton />
-    </div>
-  );
+    </div>);
+
 };
 
 export default Index;
