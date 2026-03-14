@@ -185,12 +185,6 @@ const Index = () => {
           HERO — Full-viewport cinematic
           ══════════════════════════════════════════════════════ */}
       <section className="relative min-h-[100vh] flex items-center justify-center overflow-hidden">
-        {/* Layered background effects */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-20%,hsl(var(--primary)/0.12),transparent)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_80%_80%,hsl(var(--accent)/0.06),transparent)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_30%_at_10%_60%,hsl(var(--secondary)/0.04),transparent)]" />
-        </div>
 
         {/* Orbit rings */}
         <div className="absolute inset-0 pointer-events-none hidden lg:block">
