@@ -422,6 +422,8 @@ const Index = () => {
               ))}
             </div>
           </div>
+            );
+          })()}
 
           {/* Row 2: 3 equal cards */}
           <div className="grid md:grid-cols-3 gap-6">
