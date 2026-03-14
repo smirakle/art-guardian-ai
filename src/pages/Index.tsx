@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { BugReportButton } from "@/components/BugReportButton";
 import { Shield, Eye, Search, ArrowRight, Globe, Play, ChevronRight, Bell, Upload, BookOpen, Clock, Check, Star, Zap, Lock, FileSearch } from "lucide-react";
-import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
+import tsmoLogo from "@/assets/tsmo_logo_vector_ready.jpg";
 import { useQuery } from "@tanstack/react-query";
 import bizWeeklyBanner from "@/assets/Biz_Weekly.png";
 import caiLogo from "@/assets/CAI_Lockup_RGB_Black.png";
@@ -195,7 +195,7 @@ const Index = () => {
           <div className="max-w-3xl mx-auto text-center">
             {/* Logo */}
             <div className="mb-8 opacity-0 animate-stagger-fade-up stagger-1">
-              <img src={tsmoLogo} alt="TSMO Logo" className="h-28 sm:h-36 lg:h-44 mx-auto object-contain drop-shadow-lg" loading="eager" />
+              <img src={tsmoLogo} alt="TSMO Logo" className="h-28 sm:h-36 lg:h-44 mx-auto object-contain rounded-2xl" loading="eager" />
             </div>
 
             {/* Headline — staggered reveal */}
