@@ -185,9 +185,7 @@ const Index = () => {
       {/* ══════════════════════════════════════════
           HERO — Cinematic & Immersive
           ══════════════════════════════════════════ */}
-      <section className="relative pt-28 lg:pt-40 pb-24 lg:pb-36 overflow-hidden">
-        {/* Animated gradient mesh */}
-        <div className="absolute inset-0 hero-mesh" />
+      <section className="relative pt-28 lg:pt-40 pb-24 lg:pb-36 overflow-hidden bg-background">
         <HeroParticles />
         <FloatingCards />
 
