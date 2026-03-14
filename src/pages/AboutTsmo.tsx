@@ -32,11 +32,7 @@ const AboutTsmo = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* ── Hero ── */}
-      <section className="relative pt-24 pb-20 overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_-10%,hsl(var(--primary)/0.1),transparent)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_80%_80%,hsl(var(--accent)/0.06),transparent)]" />
-        </div>
+      <section className="relative pt-24 pb-20 overflow-hidden bg-background">
         <div className="container mx-auto px-4 max-w-5xl relative z-10">
           <div className="flex flex-col items-center text-center">
             <img
