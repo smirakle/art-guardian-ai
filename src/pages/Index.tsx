@@ -391,19 +391,22 @@ const Index = () => {
           </RevealSection>
 
           {/* Row 1: hero feature + 2 stacked */}
-          <div className="grid lg:grid-cols-5 gap-6 mb-6">
-            <RevealSection className="lg:col-span-3">
-              <div className="relative group rounded-3xl p-10 lg:p-12 h-full bg-card border border-border/40 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.06),transparent)] rounded-full" />
-                <div className="relative">
-                  <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
-                    <features[0].icon className="h-7 w-7 text-primary" />
+          {(() => {
+            const HeroIcon = features[0].icon;
+            return (
+            <div className="grid lg:grid-cols-5 gap-6 mb-6">
+              <RevealSection className="lg:col-span-3">
+                <div className="relative group rounded-3xl p-10 lg:p-12 h-full bg-card border border-border/40 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 overflow-hidden">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.06),transparent)] rounded-full" />
+                  <div className="relative">
+                    <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
+                      <HeroIcon className="h-7 w-7 text-primary" />
+                    </div>
+                    <h3 className="text-2xl lg:text-3xl font-bold mb-4 text-foreground">{features[0].title}</h3>
+                    <p className="text-base text-muted-foreground leading-relaxed max-w-md">{features[0].desc}</p>
                   </div>
-                  <h3 className="text-2xl lg:text-3xl font-bold mb-4 text-foreground">{features[0].title}</h3>
-                  <p className="text-base text-muted-foreground leading-relaxed max-w-md">{features[0].desc}</p>
                 </div>
-              </div>
-            </RevealSection>
+              </RevealSection>
 
             <div className="lg:col-span-2 grid gap-6">
               {features.slice(1, 3).map((f, i) => (
