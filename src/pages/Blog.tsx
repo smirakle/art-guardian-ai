@@ -146,61 +146,91 @@ const Blog = () => {
         <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
       </Helmet>
 
-      <div className="min-h-screen">
-        {/* Hero */}
-        <section className="relative py-16 lg:py-24 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
-          <div className="container mx-auto px-4 relative">
-            <div className="max-w-3xl mx-auto text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-6">
-                <BookOpen className="h-4 w-4" />
-                <span className="text-sm font-medium">TSMO Blog</span>
+      <div className="min-h-screen bg-background">
+        {/* ── Hero ── */}
+        <section className="relative pt-24 pb-16 overflow-hidden">
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(var(--primary)/0.1),transparent)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_60%,hsl(var(--accent)/0.05),transparent)]" />
+          </div>
+          <div className="container mx-auto px-4 max-w-5xl relative z-10">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-6">
+                <BookOpen className="h-3.5 w-3.5 text-primary" />
+                <span className="text-xs font-bold text-primary uppercase tracking-widest">Blog</span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                Protect Your Creative Work
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-5 tracking-tight leading-[1.1]">
+                Insights for<br />
+                <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">creative professionals</span>
               </h1>
-              <p className="text-xl text-muted-foreground">
-                Expert guides on art protection, AI training, DMCA takedowns, and copyright enforcement.
+              <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
+                Expert guides on art protection, AI training rights, DMCA enforcement, and the future of digital copyright.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Featured Posts */}
-        {featuredPosts.length > 0 && (
-          <section className="py-12 bg-muted/30">
-            <div className="container mx-auto px-4">
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary" />
-                Featured Articles
-              </h2>
+        {/* ── Category Filter ── */}
+        <section className="border-b border-border/40 sticky top-0 bg-background/95 backdrop-blur-md z-20">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="flex items-center gap-1 py-4 overflow-x-auto scrollbar-hide">
+              {categories.filter(c => c.count > 0 || c.name === 'All').map((category) => (
+                <button
+                  key={category.name}
+                  onClick={() => setSelectedCategory(category.name)}
+                  className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap ${
+                    selectedCategory === category.name
+                      ? "bg-foreground text-background shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                  }`}
+                >
+                  {category.name}
+                  <span className={`ml-1.5 text-xs ${selectedCategory === category.name ? 'text-background/60' : 'text-muted-foreground/50'}`}>
+                    {category.count}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Featured Posts (Hero Cards) ── */}
+        {selectedCategory === 'All' && featuredPosts.length > 0 && (
+          <section className="py-12 lg:py-16">
+            <div className="container mx-auto px-4 max-w-5xl">
               <div className="grid md:grid-cols-2 gap-6">
-                {featuredPosts.map((post) => (
-                  <Link key={post.slug} to={`/blog/${post.slug}`}>
-                    <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group">
-                      <CardHeader>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                          <span className="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                {featuredPosts.map((post, i) => (
+                  <Link key={post.slug} to={`/blog/${post.slug}`} className="group">
+                    <div className={`relative rounded-2xl overflow-hidden h-full transition-all duration-500 hover:-translate-y-1 ${
+                      i === 0
+                        ? 'bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20'
+                        : 'bg-gradient-to-br from-accent/10 via-accent/5 to-transparent border border-accent/20'
+                    }`}>
+                      <div className="p-8 lg:p-10 flex flex-col h-full min-h-[280px]">
+                        <div className="flex items-center gap-3 mb-6">
+                          <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider ${
+                            i === 0 ? 'bg-primary/15 text-primary' : 'bg-accent/15 text-accent'
+                          }`}>
                             {post.category}
                           </span>
-                          <span className="flex items-center gap-1">
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
                             <Clock className="h-3 w-3" />
                             {post.readTime}
                           </span>
                         </div>
-                        <CardTitle className="text-xl group-hover:text-primary transition-colors">
+
+                        <h2 className="text-2xl lg:text-3xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors leading-tight flex-1">
                           {post.title}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <CardDescription className="text-base line-clamp-2">
+                        </h2>
+                        <p className="text-muted-foreground leading-relaxed mb-6 line-clamp-2">
                           {post.excerpt}
-                        </CardDescription>
-                        <div className="mt-4 flex items-center text-primary font-medium">
-                          Read article <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                        </p>
+                        <div className="flex items-center text-sm font-semibold text-primary">
+                          Read article
+                          <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1.5 transition-transform duration-300" />
                         </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </div>
                   </Link>
                 ))}
               </div>
@@ -208,88 +238,91 @@ const Blog = () => {
           </section>
         )}
 
-        {/* Category Filter & Posts */}
-        <section className="py-12">
-          <div className="container mx-auto px-4">
-            {/* Categories */}
-            <div className="flex flex-wrap gap-2 mb-8">
-              {categories.map((category) => (
-                <button
-                  key={category.name}
-                  onClick={() => setSelectedCategory(category.name)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    selectedCategory === category.name
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted hover:bg-muted/80"
-                  }`}
-                >
-                  {category.name} ({category.count})
-                </button>
-              ))}
-            </div>
+        {/* ── All Posts Grid ── */}
+        <section className={`${selectedCategory === 'All' && featuredPosts.length > 0 ? 'pb-20' : 'py-16'}`}>
+          <div className="container mx-auto px-4 max-w-5xl">
+            {selectedCategory === 'All' && featuredPosts.length > 0 && (
+              <div className="flex items-center gap-3 mb-8">
+                <div className="h-px flex-1 bg-border/40" />
+                <span className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em]">All Articles</span>
+                <div className="h-px flex-1 bg-border/40" />
+              </div>
+            )}
 
-            {/* All Posts */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredPosts.map((post) => (
-                <Link key={post.slug} to={`/blog/${post.slug}`}>
-                  <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group">
-                    <CardHeader>
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+            {isLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : filteredPosts.length === 0 ? (
+              <div className="text-center py-20">
+                <FileText className="h-10 w-10 text-muted-foreground/40 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-foreground mb-1">No articles yet</h3>
+                <p className="text-sm text-muted-foreground">Check back soon for new content in this category.</p>
+              </div>
+            ) : (
+              <div className="space-y-0 divide-y divide-border/30">
+                {filteredPosts.map((post) => (
+                  <Link key={post.slug} to={`/blog/${post.slug}`} className="group block">
+                    <article className="flex items-start gap-6 py-8 hover:bg-muted/20 -mx-4 px-4 rounded-xl transition-colors duration-300">
+                      {/* Icon */}
+                      <div className="w-12 h-12 rounded-2xl bg-primary/8 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors">
                         <post.icon className="h-5 w-5 text-primary" />
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                        <span className="px-2 py-1 rounded-full bg-muted text-xs">
-                          {post.category}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                        </span>
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="px-2.5 py-0.5 rounded-full bg-muted text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                            {post.category}
+                          </span>
+                          <span className="text-xs text-muted-foreground/60 flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </span>
+                        </div>
+                        <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors mb-1.5 line-clamp-1">
+                          {post.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed max-w-2xl">
+                          {post.excerpt}
+                        </p>
                       </div>
-                      <CardTitle className="text-lg group-hover:text-primary transition-colors line-clamp-2">
-                        {post.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <CardDescription className="line-clamp-3">
-                        {post.excerpt}
-                      </CardDescription>
-                      <div className="mt-4 flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground flex items-center gap-1">
+
+                      {/* Read time + Arrow */}
+                      <div className="hidden sm:flex items-center gap-4 shrink-0 pt-2">
+                        <span className="text-xs text-muted-foreground/50 flex items-center gap-1">
                           <Clock className="h-3 w-3" />
                           {post.readTime}
                         </span>
-                        <span className="text-primary font-medium flex items-center">
-                          Read <ArrowRight className="h-3 w-3 ml-1" />
-                        </span>
+                        <ArrowRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
                       </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-
-            {filteredPosts.length === 0 && (
-              <div className="text-center py-12">
-                <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">No articles yet</h3>
-                <p className="text-muted-foreground">Check back soon for new content in this category.</p>
+                    </article>
+                  </Link>
+                ))}
               </div>
             )}
           </div>
         </section>
 
-        {/* Newsletter CTA */}
-        <section className="py-16 bg-primary text-primary-foreground">
-          <div className="container mx-auto px-4 text-center">
-            <Lightbulb className="h-10 w-10 mx-auto mb-4 opacity-90" />
-            <h2 className="text-2xl font-bold mb-4">Stay Informed</h2>
-            <p className="text-lg opacity-90 mb-6 max-w-xl mx-auto">
-              Get the latest tips on protecting your art, legal updates, and industry news delivered to your inbox.
-            </p>
-            <Button size="lg" variant="secondary" asChild>
-              <Link to="/upload">Start Protecting Your Art</Link>
-            </Button>
+        {/* ── Newsletter CTA ── */}
+        <section className="py-24">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="relative rounded-3xl overflow-hidden bg-foreground text-background">
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_-20%,hsl(var(--primary)/0.25),transparent)]" />
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_80%,hsl(var(--accent)/0.1),transparent)]" />
+              <div className="relative px-10 py-16 md:px-16 md:py-20 text-center">
+                <Lightbulb className="h-8 w-8 mx-auto mb-6 text-secondary" />
+                <h2 className="text-3xl md:text-4xl font-bold mb-4 text-background">
+                  Stay ahead of art theft
+                </h2>
+                <p className="text-background/60 mb-8 max-w-lg mx-auto leading-relaxed">
+                  Get the latest tips on protecting your art, legal updates, and industry news.
+                </p>
+                <Button size="lg" className="h-13 px-10 rounded-xl bg-background text-foreground hover:bg-background/90 font-bold shadow-xl" asChild>
+                  <Link to="/upload">Start Protecting Your Art →</Link>
+                </Button>
+              </div>
+            </div>
           </div>
         </section>
       </div>
