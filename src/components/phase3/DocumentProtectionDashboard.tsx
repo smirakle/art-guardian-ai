@@ -12,7 +12,7 @@ export const DocumentProtectionDashboard = () => {
   return (
     <div className="space-y-6">
       <Tabs defaultValue="upload" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="upload">
             <Upload className="w-4 h-4 mr-2" />
             Upload & Protect
