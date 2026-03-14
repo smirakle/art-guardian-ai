@@ -18,6 +18,7 @@ import DemoEnvironment from "@/components/investor/DemoEnvironment";
 import { InstantProtectModal } from "@/components/InstantProtectModal";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { ProtectionShowcase } from "@/components/ProtectionShowcase";
 
 /* ─── Scroll-reveal wrapper ─── */
 const RevealSection: React.FC<{ children: React.ReactNode; className?: string; delay?: number }> = ({ children, className = "", delay = 0 }) => {
