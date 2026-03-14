@@ -945,71 +945,152 @@ const FAQ = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 pt-20">
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-4">
-            Frequently Asked Questions
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Flatten all items for search
+  const allItems = faqSections.flatMap((section) =>
+    section.items.map((item) => ({ ...item, section: section.title }))
+  );
+
+  const filteredSections = searchQuery.trim()
+    ? [{ title: "Search Results", items: allItems.filter(item =>
+        item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (typeof item.answer === 'string' && item.answer.toLowerCase().includes(searchQuery.toLowerCase()))
+      )}].filter(s => s.items.length > 0)
+    : faqSections;
+
+  const sectionDescriptions: Record<string, string> = {
+    "General": "Learn about TSMO Watch and what we do",
+    "Protection & Tracking": "Understanding our monitoring and protection features",
+    "Getting Started": "Quick start guide for new users",
+    "Pricing & Plans": "Information about our pricing and subscription options",
+    "AI & Deepfake Protection": "How we protect against AI misuse and deepfakes",
+    "Trademark Monitoring": "Advanced brand protection and trademark intelligence",
+    "Legal Templates & Documentation": "Professional legal documents for IP protection",
+    "Advanced Features": "Cutting-edge protection technologies",
+    "Technical & Integration": "API access, file formats, security, and integrations",
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* ── Hero ── */}
+      <section className="relative pt-24 pb-16 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(var(--primary)/0.08),transparent)]" />
+        <div className="container mx-auto px-4 max-w-4xl relative z-10 text-center">
+          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-6">
+            <HelpCircle className="h-3.5 w-3.5 text-primary" />
+            <span className="text-xs font-bold text-primary uppercase tracking-widest">Help Center</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-5 tracking-tight">
+            How can we help?
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Find answers to common questions about TSMO Watch and how we protect your creative work.
+          <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-10">
+            Find answers to common questions about TSMO Watch and protecting your creative work.
           </p>
-        </div>
 
-        <div className="max-w-4xl mx-auto space-y-8">
-          {faqSections.map((section, sectionIndex) => (
-            <Card key={sectionIndex} className="bg-card/50 backdrop-blur-sm border-border/50">
-              <CardHeader>
-                <CardTitle className="text-2xl text-primary">{section.title}</CardTitle>
-                <CardDescription>
-                  {section.title === "General" && "Learn about TSMO Watch and what we do"}
-                  {section.title === "Protection & Tracking" && "Understanding our monitoring and protection features"}
-                  {section.title === "Getting Started" && "Quick start guide for new users"}
-                  {section.title === "Pricing & Plans" && "Information about our pricing and subscription options"}
-                  {section.title === "AI & Deepfake Protection" && "How we protect against AI misuse and deepfakes"}
-                  {section.title === "Trademark Monitoring" && "Advanced brand protection and trademark intelligence"}
-                  {section.title === "Legal Templates & Documentation" && "Professional legal documents for intellectual property protection"}
-                  {section.title === "Advanced Features" && "Cutting-edge protection technologies and monitoring capabilities"}
-                  {section.title === "Technical & Integration" && "API access, file formats, security, and platform integrations"}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Accordion type="single" collapsible className="w-full">
-                  {section.items.map((item, itemIndex) => (
-                    <AccordionItem key={itemIndex} value={`${sectionIndex}-${itemIndex}`}>
-                      <AccordionTrigger className="text-left font-medium">
-                        {item.question}
-                      </AccordionTrigger>
-                      <AccordionContent className="text-muted-foreground">
-                        {typeof item.answer === 'string' ? item.answer : item.answer}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </CardContent>
-            </Card>
+          {/* Search Bar */}
+          <div className="relative max-w-lg mx-auto">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/50" />
+            <Input
+              type="text"
+              placeholder="Search questions..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="h-14 pl-12 pr-4 rounded-2xl border-border/50 bg-card text-base shadow-lg shadow-primary/5 focus:shadow-xl focus:shadow-primary/10 transition-shadow"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ── Quick Nav (category pills) ── */}
+      {!searchQuery && (
+        <section className="border-b border-border/30 sticky top-0 bg-background/95 backdrop-blur-md z-20">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <div className="flex items-center gap-1.5 py-4 overflow-x-auto scrollbar-hide">
+              {faqSections.map((section, i) => (
+                <a
+                  key={i}
+                  href={`#faq-${i}`}
+                  className="px-4 py-2 rounded-full text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all whitespace-nowrap"
+                >
+                  {section.title}
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── FAQ Sections ── */}
+      <section className="py-16 lg:py-20">
+        <div className="container mx-auto px-4 max-w-3xl space-y-16">
+          {filteredSections.map((section, sectionIndex) => (
+            <RevealSection key={sectionIndex}>
+              <div id={`faq-${sectionIndex}`} className="scroll-mt-24">
+                {/* Section header */}
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold text-foreground mb-1">{section.title}</h2>
+                  <p className="text-sm text-muted-foreground">{sectionDescriptions[section.title] || ""}</p>
+                </div>
+
+                {/* Accordion in a card */}
+                <div className="rounded-2xl border border-border/40 bg-card overflow-hidden">
+                  <Accordion type="single" collapsible className="w-full">
+                    {section.items.map((item, itemIndex) => (
+                      <AccordionItem
+                        key={itemIndex}
+                        value={`${sectionIndex}-${itemIndex}`}
+                        className={`border-border/30 ${itemIndex === 0 ? 'border-t-0' : ''}`}
+                      >
+                        <AccordionTrigger className="text-left font-semibold text-foreground px-6 py-5 hover:bg-muted/30 hover:no-underline transition-colors [&[data-state=open]]:bg-muted/20">
+                          {item.question}
+                        </AccordionTrigger>
+                        <AccordionContent className="text-muted-foreground px-6 pb-6 pt-0 leading-relaxed">
+                          {item.answer}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </div>
+              </div>
+            </RevealSection>
           ))}
-        </div>
 
-        <div className="text-center mt-12">
-          <Card className="bg-card/30 backdrop-blur-sm border-border/50 max-w-2xl mx-auto">
-            <CardHeader>
-              <CardTitle className="text-xl">Still have questions?</CardTitle>
-              <CardDescription>
-                Can't find what you're looking for? Our support team is here to help.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <a 
-                href="/contact" 
-                className="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 font-medium transition-colors"
-              >
-                Contact Support
-              </a>
-            </CardContent>
-          </Card>
+          {filteredSections.length === 0 && (
+            <div className="text-center py-16">
+              <Search className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-1">No results found</h3>
+              <p className="text-sm text-muted-foreground">Try a different search term or browse the categories above.</p>
+            </div>
+          )}
         </div>
-      </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <RevealSection>
+        <section className="pb-28">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="relative rounded-3xl overflow-hidden bg-foreground text-background">
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_-20%,hsl(var(--primary)/0.25),transparent)]" />
+              <div className="relative px-10 py-16 md:px-16 md:py-20 text-center">
+                <MessageCircle className="h-8 w-8 mx-auto mb-6 text-secondary" />
+                <h2 className="text-3xl md:text-4xl font-bold text-background mb-4">Still have questions?</h2>
+                <p className="text-background/60 mb-8 max-w-md mx-auto">
+                  Our support team is ready to help you protect your creative work.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Button size="lg" className="h-13 px-10 rounded-xl bg-background text-foreground hover:bg-background/90 font-bold shadow-xl" asChild>
+                    <Link to="/contact">Contact Support <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                  </Button>
+                  <Button size="lg" variant="ghost" className="h-13 px-10 rounded-xl text-background/70 hover:text-background hover:bg-background/10" asChild>
+                    <Link to="/community">Ask the Community</Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
     </div>
   );
 };
