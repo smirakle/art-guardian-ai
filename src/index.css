@@ -93,27 +93,23 @@ All colors MUST be HSL.
 
   /* Mobile scrollbar hiding */
   .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
   .scrollbar-hide::-webkit-scrollbar {
-    display: none;  /* Chrome, Safari and Opera */
+    display: none;
   }
 
-  /* Mobile optimizations - iPhone specific */
+  /* Mobile optimizations */
   @media (max-width: 640px) {
     .container {
       padding-left: 0.75rem;
       padding-right: 0.75rem;
     }
-    
-    /* Better touch targets for iPhone */
     button {
       min-height: 44px;
       min-width: 44px;
     }
-    
-    /* Prevent zoom on input focus - critical for iPhone */
     input[type="text"],
     input[type="email"],
     input[type="password"],
@@ -124,33 +120,25 @@ All colors MUST be HSL.
       font-size: 16px;
       transform: scale(1);
     }
-    
-    /* Safe area for iPhone notch/home indicator */
     .safe-area-top {
       padding-top: env(safe-area-inset-top);
     }
-    
     .safe-area-bottom {
       padding-bottom: env(safe-area-inset-bottom);
     }
   }
-  
-  /* iPhone specific optimizations */
+
   @media (max-width: 430px) {
     html {
       font-size: 14px;
     }
-    
     .container {
       padding-left: 0.5rem;
       padding-right: 0.5rem;
     }
-    
-    /* Reduce spacing on small screens */
     .space-y-8 > * + * {
       margin-top: 1.5rem;
     }
-    
     .space-y-6 > * + * {
       margin-top: 1rem;
     }
@@ -189,7 +177,10 @@ All colors MUST be HSL.
   }
 }
 
-/* Professional animations */
+/* ============================================
+   PREMIUM ANIMATIONS & UTILITIES
+   ============================================ */
+
 @layer utilities {
   .animate-fade-up {
     animation: fadeUp 0.6s ease-out forwards;
@@ -206,7 +197,78 @@ All colors MUST be HSL.
   .glass-card {
     @apply bg-card/80 backdrop-blur-md border border-border/50 shadow-sm;
   }
+
+  /* Glassmorphism card for bento grid */
+  .glass-bento {
+    background: hsl(var(--card) / 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border) / 0.3);
+  }
+
+  /* Animated gradient border */
+  .gradient-border {
+    position: relative;
+    background: hsl(var(--card));
+    border-radius: 1rem;
+  }
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary)),
+      hsl(var(--accent)),
+      hsl(var(--secondary)),
+      hsl(var(--primary))
+    );
+    background-size: 300% 300%;
+    animation: gradientShift 4s ease infinite;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: 0;
+  }
+
+  /* Gradient mesh hero background */
+  .hero-mesh {
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 40%, hsl(var(--primary) / 0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 60% at 80% 20%, hsl(var(--accent) / 0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 80% at 50% 80%, hsl(var(--secondary) / 0.06) 0%, transparent 70%);
+    animation: meshShift 12s ease-in-out infinite alternate;
+  }
+
+  /* Stagger delay utilities */
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+
+  /* Glow pulse for CTA buttons */
+  .glow-pulse {
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4);
+    animation: glowPulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Radial glow for dark CTA sections */
+  .radial-glow {
+    background: radial-gradient(ellipse 50% 40% at 50% 30%, hsl(var(--primary) / 0.15) 0%, transparent 70%);
+  }
+
+  /* Tabular numbers for stats */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
 }
+
+/* ============================================
+   KEYFRAMES
+   ============================================ */
 
 @keyframes fadeUp {
   from {
@@ -220,12 +282,74 @@ All colors MUST be HSL.
 }
 
 @keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 14px hsl(var(--primary) / 0);
+  }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes meshShift {
+  0% {
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 40%, hsl(var(--primary) / 0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 60% at 80% 20%, hsl(var(--accent) / 0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 80% at 50% 80%, hsl(var(--secondary) / 0.06) 0%, transparent 70%);
+  }
+  100% {
+    background:
+      radial-gradient(ellipse 70% 60% at 30% 60%, hsl(var(--primary) / 0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 80% 50% at 70% 40%, hsl(var(--accent) / 0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 70% at 40% 30%, hsl(var(--secondary) / 0.08) 0%, transparent 70%);
+  }
+}
+
+@keyframes floatCard {
+  0%, 100% {
+    transform: translateY(0px) rotate3d(1, 1, 0, 0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate3d(1, 1, 0, 3deg);
+  }
+}
+
+@keyframes staggerFadeUp {
   from {
     opacity: 0;
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
+}
+
+@keyframes scrollReveal {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes timelineGrow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }
 
 @keyframes pulse-glow {

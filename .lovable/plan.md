@@ -1,69 +1,25 @@
 
 
-# Homepage Premium Redesign — WOW Factor
+## Problem
 
-## Vision
-Transform the homepage from a standard SaaS layout into an immersive, award-winning experience with animated visuals, bold typography, cinematic sections, and micro-interactions that make visitors stop scrolling.
+The "As Seen On" / BizWeekly section and CAI Membership banner are stacked vertically as separate bland sections with no visual cohesion. They look like afterthoughts — plain text, small images, no visual hierarchy, and too much whitespace between them.
 
-## Key Design Concepts
+## Plan
 
-### 1. Hero — Cinematic & Immersive
-- **Animated shield mesh background**: CSS-only animated gradient mesh with floating particles (no libraries needed) using radial gradients that slowly shift position
-- **Staggered text reveal**: Each line of the headline fades up with a slight delay, creating a cinematic entrance
-- **Glowing CTA button** with a pulsing ring animation that draws the eye
-- **Floating artwork mockups**: CSS-animated cards that gently float/rotate in 3D space behind the hero text, suggesting protected artwork
+Combine both credibility signals (BizWeekly press + CAI membership) into a single, polished **"Credibility & Trust"** section with better visual design:
 
-### 2. Credibility Bar — Logo Ticker
-- Horizontal strip with BizWeekly + CAI logos in a clean, minimal bar format (not cards) — more like "As seen in" strips on top-tier sites
-- Subtle separator lines, muted colors, understated confidence
+### Changes to `src/pages/Index.tsx` (lines 342-389)
 
-### 3. "How It Works" — Animated Timeline
-- Horizontal connected timeline with a glowing progress line that animates on scroll (CSS `animation-timeline` with fallback)
-- Each step has an icon that scales in as it enters view
-- Connected by a gradient line that "fills" as you scroll
+Replace the two separate sections with one unified section:
 
-### 4. Features — Bento Grid Layout
-- **Bento-style asymmetric grid** (one large card + two smaller stacked) instead of uniform 3-col
-- Large feature card gets a subtle animated gradient border
-- Cards have glassmorphism effect with backdrop-blur
-- On hover: card lifts with shadow + inner glow effect
+1. **Single section** with subtle gradient background and proper vertical spacing
+2. **Two-column layout** on desktop (BizWeekly left, CAI right), stacked on mobile
+3. Each credential in a **card-like container** with subtle border, rounded corners, and hover effect
+4. **Larger logo sizes** — CAI logo `h-16 md:h-20`, BizWeekly image `max-w-sm`
+5. **Section header**: "Trusted & Recognized" with a subtle label above
+6. **Divider line** between the two on desktop (vertical) / mobile (horizontal)
+7. Harvard disclaimer kept as small text below the BizWeekly card
+8. "Read the feature" link styled as a proper button/pill
 
-### 5. Stats — Counter with Gradient Text
-- Large gradient-colored numbers
-- Clean horizontal layout with thin dividers
-- Numbers use tabular-nums for visual stability
-
-### 6. Blog Section — Magazine Style
-- First post gets a large card spanning full width, next two are side-by-side below
-- Hover reveals a subtle overlay gradient
-
-### 7. Final CTA — Bold Dark Section
-- Full-width dark section (not just a gradient tint) with a radial glow behind the heading
-- Animated gradient border on the email input
-- Floating particle dots in the background
-
-### 8. Navbar Enhancement
-- Add a subtle glow/gradient underline on active nav item
-- Smooth blur transition on scroll
-
-## Technical Approach
-
-### Files to modify:
-1. **`src/pages/Index.tsx`** — Complete rewrite of the JSX with new section designs, staggered animations via CSS classes, bento grid layout, and enhanced visual hierarchy
-2. **`src/index.css`** — Add new animation keyframes: `float`, `glow-pulse`, `gradient-shift`, `stagger-fade-up`, animated gradient mesh background, glassmorphism utilities, and bento grid helpers
-3. **`src/components/PublicNavbar.tsx`** — Add gradient underline on active link, refine scroll transition
-4. **`tailwind.config.ts`** — Add new animation entries for the custom keyframes
-
-### No new dependencies required
-All effects achieved with CSS animations, gradients, backdrop-blur, and transforms. Intersection Observer via a small inline hook for scroll-triggered animations.
-
-### WOW elements summary:
-- Animated gradient mesh hero background
-- Staggered fade-up text entrance
-- Pulsing glow CTA button
-- Bento grid with glassmorphism feature cards
-- Animated gradient border effects
-- Dark cinematic final CTA section with radial glow
-- Scroll-triggered animations throughout
-- Floating 3D-perspective decorative elements
+This creates a cohesive, professional credibility strip that draws the eye without being gaudy.
 

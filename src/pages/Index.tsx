@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { BugReportButton } from "@/components/BugReportButton";
-import { Shield, Eye, Search, ArrowRight, Globe, Play, ChevronRight, Bell, Upload, BookOpen, Clock, Check, Star } from "lucide-react";
+import { Shield, Eye, Search, ArrowRight, Globe, Play, ChevronRight, Bell, Upload, BookOpen, Clock, Check, Star, Zap, Lock, FileSearch } from "lucide-react";
 import tsmoLogo from "@/assets/tsmo-transparent-logo.png";
 import { useQuery } from "@tanstack/react-query";
 import bizWeeklyBanner from "@/assets/Biz_Weekly.png";
@@ -17,6 +17,74 @@ import caiLogo from "@/assets/CAI_Lockup_RGB_Black.png";
 import DemoEnvironment from "@/components/investor/DemoEnvironment";
 import { InstantProtectModal } from "@/components/InstantProtectModal";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+
+/* ─── Scroll-reveal wrapper ─── */
+const RevealSection: React.FC<{ children: React.ReactNode; className?: string; delay?: number }> = ({ children, className = "", delay = 0 }) => {
+  const { ref, isVisible } = useScrollReveal(0.12);
+  return (
+    <div
+      ref={ref}
+      className={`${className} transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+};
+
+/* ─── Floating particles for hero ─── */
+const HeroParticles = () => (
+  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    {[...Array(14)].map((_, i) => (
+      <div
+        key={i}
+        className="absolute rounded-full bg-primary/20 animate-float-particle"
+        style={{
+          width: `${2 + Math.random() * 4}px`,
+          height: `${2 + Math.random() * 4}px`,
+          left: `${Math.random() * 100}%`,
+          top: `${Math.random() * 100}%`,
+          animationDelay: `${Math.random() * 4}s`,
+          animationDuration: `${4 + Math.random() * 4}s`,
+        }}
+      />
+    ))}
+  </div>
+);
+
+/* ─── Floating 3D artwork cards ─── */
+const FloatingCards = () => (
+  <div className="absolute inset-0 pointer-events-none overflow-hidden hidden lg:block">
+    {/* Card 1 - top left */}
+    <div
+      className="absolute top-24 left-[8%] w-32 h-40 rounded-2xl glass-bento shadow-xl animate-float-card opacity-40"
+      style={{ animationDelay: "0s", perspective: "800px" }}
+    >
+      <div className="w-full h-full rounded-2xl bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center">
+        <Shield className="w-8 h-8 text-primary/50" />
+      </div>
+    </div>
+    {/* Card 2 - top right */}
+    <div
+      className="absolute top-32 right-[10%] w-28 h-36 rounded-2xl glass-bento shadow-xl animate-float-card opacity-30"
+      style={{ animationDelay: "2s" }}
+    >
+      <div className="w-full h-full rounded-2xl bg-gradient-to-br from-secondary/20 to-primary/10 flex items-center justify-center">
+        <Eye className="w-7 h-7 text-secondary/50" />
+      </div>
+    </div>
+    {/* Card 3 - bottom right */}
+    <div
+      className="absolute bottom-28 right-[15%] w-24 h-32 rounded-2xl glass-bento shadow-xl animate-float-card opacity-25"
+      style={{ animationDelay: "1s" }}
+    >
+      <div className="w-full h-full rounded-2xl bg-gradient-to-br from-accent/20 to-secondary/10 flex items-center justify-center">
+        <Lock className="w-6 h-6 text-accent/50" />
+      </div>
+    </div>
+  </div>
+);
 
 const Index = () => {
   const { toast } = useToast();
@@ -59,7 +127,6 @@ const Index = () => {
     } finally { setIsSendingSales(false); }
   };
 
-  // Blog posts query
   const { data: dbPosts } = useQuery({
     queryKey: ['home-blog-posts'],
     queryFn: async () => {
@@ -77,6 +144,28 @@ const Index = () => {
 
   const posts = dbPosts?.length ? dbPosts.map((p) => ({ slug: p.slug, title: p.title, excerpt: p.excerpt || '', category: p.tags?.[0] || 'General', readTime: '5 min' })) : fallbackPosts;
 
+  const steps = [
+    { icon: Upload, title: "Upload", desc: "Drop your artwork into TSMO" },
+    { icon: Search, title: "We Scan", desc: "AI searches billions of pages" },
+    { icon: Bell, title: "Get Alerted", desc: "Instant notification of matches" },
+    { icon: Shield, title: "Take Action", desc: "One-click enforcement tools" },
+  ];
+
+  const features = [
+    { icon: Eye, title: "AI Training Resistance", desc: "Style cloaking technology makes your art unusable for AI model training while keeping it visually identical to humans.", large: true },
+    { icon: Search, title: "Reverse Image Search", desc: "Continuously monitors millions of websites, marketplaces, and social platforms to detect unauthorized use of your work." },
+    { icon: Globe, title: "24/7 Web Monitoring", desc: "Our AI agents scan the internet around the clock so you never miss an unauthorized copy of your artwork." },
+    { icon: Zap, title: "Instant DMCA Takedowns", desc: "Generate and file legally-binding DMCA notices with a single click. Our system handles enforcement across all platforms." },
+    { icon: FileSearch, title: "Provenance Tracking", desc: "Blockchain-backed ownership certificates with C2PA content credentials for irrefutable proof of original authorship." },
+  ];
+
+  const stats = [
+    { value: "2,400+", label: "Scans this month" },
+    { value: "24/7", label: "Monitoring" },
+    { value: "50+", label: "Platforms scanned" },
+    { value: "Free", label: "To start" },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <ExitIntentPopup />
@@ -93,33 +182,41 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
-      {/* ===== HERO ===== */}
-      <section className="relative pt-28 lg:pt-36 pb-20 lg:pb-28 overflow-hidden">
-        {/* Subtle gradient orbs */}
-        <div className="absolute top-20 left-1/4 w-96 h-96 bg-primary/8 rounded-full blur-3xl" />
-        <div className="absolute bottom-10 right-1/4 w-80 h-80 bg-accent/6 rounded-full blur-3xl" />
-        
-        <div className="container mx-auto px-4 relative">
+      {/* ══════════════════════════════════════════
+          HERO — Cinematic & Immersive
+          ══════════════════════════════════════════ */}
+      <section className="relative pt-28 lg:pt-40 pb-24 lg:pb-36 overflow-hidden">
+        {/* Animated gradient mesh */}
+        <div className="absolute inset-0 hero-mesh" />
+        <HeroParticles />
+        <FloatingCards />
+
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            {/* Logo mark */}
-            <div className="mb-8">
+            {/* Logo */}
+            <div className="mb-8 opacity-0 animate-stagger-fade-up stagger-1">
               <img src={tsmoLogo} alt="TSMO Logo" className="h-28 sm:h-36 lg:h-44 mx-auto object-contain" loading="eager" />
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-5 text-foreground leading-[1.1]">
-              Your Art Is Being Stolen.<br />
-              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">We Stop It.</span>
+            {/* Headline — staggered reveal */}
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tighter mb-6 leading-[1.05]">
+              <span className="block opacity-0 animate-stagger-fade-up stagger-2 text-foreground">
+                Your Art Is Being Stolen.
+              </span>
+              <span className="block opacity-0 animate-stagger-fade-up stagger-3 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+                We Stop It.
+              </span>
             </h1>
-            
-            <p className="text-lg sm:text-xl text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed">
+
+            <p className="text-lg sm:text-xl text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed opacity-0 animate-stagger-fade-up stagger-4">
               Upload your work. We scan the web 24/7 and alert you when someone uses it without permission.
             </p>
 
-            {/* Primary CTA */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8 opacity-0 animate-stagger-fade-up stagger-5">
               <Button
                 size="lg"
-                className="h-13 px-8 text-base font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
+                className="h-14 px-8 text-base font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/25 glow-pulse"
                 onClick={() => setShowInstantProtect(true)}
               >
                 <Upload className="mr-2 h-5 w-5" />
@@ -128,7 +225,7 @@ const Index = () => {
               <Button
                 size="lg"
                 variant="outline"
-                className="h-13 px-8 text-base font-medium"
+                className="h-14 px-8 text-base font-medium border-border/60 hover:border-primary/50 hover:bg-primary/5"
                 onClick={() => navigate('/auth?tab=signup')}
               >
                 Create Free Account
@@ -136,219 +233,282 @@ const Index = () => {
               </Button>
             </div>
 
-            {/* Trust indicators */}
-            <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+            {/* Trust badges */}
+            <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground opacity-0 animate-stagger-fade-up" style={{ animationDelay: "0.6s" }}>
               <span className="flex items-center gap-1.5">
-                <Check className="w-4 h-4 text-primary" />
-                No credit card
+                <Check className="w-4 h-4 text-primary" /> No credit card
               </span>
               <span className="flex items-center gap-1.5">
-                <Check className="w-4 h-4 text-primary" />
-                Instant results
+                <Check className="w-4 h-4 text-primary" /> Instant results
               </span>
               <span className="flex items-center gap-1.5">
-                <Check className="w-4 h-4 text-primary" />
-                50 free scans
+                <Check className="w-4 h-4 text-primary" /> 50 free scans
               </span>
             </div>
 
             {/* Demo link */}
             <button
               onClick={() => setShowLiveDemo(true)}
-              className="mt-6 text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1.5"
+              className="mt-8 text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-2 group"
             >
-              <Play className="w-3.5 h-3.5" />
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                <Play className="w-3.5 h-3.5 text-primary" />
+              </div>
               Watch 2-minute demo
             </button>
           </div>
         </div>
       </section>
 
-      {/* ===== CREDIBILITY ===== */}
-      <section className="py-20 lg:py-24 bg-muted/20 border-t border-border/30">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="text-center mb-12">
-            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">Trusted & Recognized</p>
-            <h2 className="text-3xl font-bold text-foreground">Built on credibility</h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* BizWeekly */}
-            <div className="p-8 rounded-2xl bg-background border border-border/50 text-center flex flex-col items-center">
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-5">As Seen On</p>
-              <a href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/" target="_blank" rel="noopener noreferrer" className="block hover:opacity-90 transition-opacity mb-5">
-                <img src={bizWeeklyBanner} alt="As seen on BizWeekly" className="w-full max-w-xs mx-auto h-auto object-contain" loading="lazy" />
-              </a>
-              <a href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline inline-flex items-center gap-1">
-                Read the feature <ChevronRight className="w-3.5 h-3.5" />
-              </a>
-              <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
-                Founder is a Harvard Innovation Labs member.<br />
-                <span className="opacity-60">Harvard University does not endorse or sponsor TSMO.</span>
-              </p>
-            </div>
-
-            {/* CAI */}
-            <div className="p-8 rounded-2xl bg-background border border-border/50 text-center flex flex-col items-center justify-center">
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-5">Official Member</p>
-              <img src={caiLogo} alt="Content Authenticity Initiative" className="h-16 lg:h-20 object-contain dark:invert mb-5" />
-              <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
-                Proud member of the <strong className="text-foreground">Content Authenticity Initiative (CAI)</strong> — building trust through the C2PA open standard.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== HOW IT WORKS ===== */}
-      <section className="py-20 lg:py-28 border-t border-border/30">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <div className="text-center mb-16">
-            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">How It Works</p>
-            <h2 className="text-3xl lg:text-4xl font-bold text-foreground">Protection in four simple steps</h2>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-            {[
-              { icon: Upload, title: "Upload", desc: "Drop your artwork into TSMO" },
-              { icon: Search, title: "We Scan", desc: "AI searches billions of pages" },
-              { icon: Bell, title: "Get Alerted", desc: "Instant notification of matches" },
-              { icon: Shield, title: "Take Action", desc: "One-click enforcement tools" },
-            ].map((step, i) => (
-              <div key={i} className="text-center group">
-                <div className="relative mx-auto mb-5">
-                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto group-hover:bg-primary/20 transition-colors">
-                    <step.icon className="h-7 w-7 text-primary" />
-                  </div>
-                  <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">
-                    {i + 1}
-                  </span>
-                </div>
-                <h3 className="text-lg font-semibold mb-1 text-foreground">{step.title}</h3>
-                <p className="text-sm text-muted-foreground">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== KEY FEATURES ===== */}
-      <section className="py-20 lg:py-28 bg-muted/20 border-t border-border/30">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <div className="text-center mb-16">
-            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">Features</p>
-            <h2 className="text-3xl lg:text-4xl font-bold text-foreground">Everything you need to protect your work</h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { icon: Eye, title: "AI Training Resistance", desc: "Style cloaking technology makes your art unusable for AI model training while keeping it visually identical to humans." },
-              { icon: Search, title: "Reverse Image Search", desc: "Continuously monitors millions of websites, marketplaces, and social platforms to detect unauthorized use of your work." },
-              { icon: Globe, title: "24/7 Web Monitoring", desc: "Our AI agents scan the internet around the clock so you never miss an unauthorized copy of your artwork." },
-            ].map((feature, i) => (
-              <div key={i} className="p-8 rounded-2xl bg-background border border-border/50 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
-                  <feature.icon className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3 text-foreground">{feature.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{feature.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== SOCIAL PROOF — STATS ===== */}
-      <section className="py-16 border-t border-border/30">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {[
-              { value: "2,400+", label: "Scans this month" },
-              { value: "24/7", label: "Monitoring" },
-              { value: "50+", label: "Platforms scanned" },
-              { value: "Free", label: "To start" },
-            ].map((stat, i) => (
-              <div key={i}>
-                <div className="text-3xl lg:text-4xl font-bold text-primary mb-1">{stat.value}</div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-
-
-      <section className="py-20 lg:py-24 border-t border-border/30">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <BookOpen className="h-5 w-5 text-primary" />
-              <p className="text-sm font-semibold text-primary uppercase tracking-widest">From Our Blog</p>
-            </div>
-            <h2 className="text-3xl font-bold text-foreground">Tips & guides for creators</h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 mb-10">
-            {posts.map((post) => (
-              <Link key={post.slug} to={`/blog/${post.slug}`} className="group block p-6 rounded-2xl bg-background border border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300">
-                <span className="text-xs font-medium text-primary uppercase tracking-wider">{post.category}</span>
-                <h3 className="text-lg font-semibold mt-2 mb-3 text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                  {post.title}
-                </h3>
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{post.excerpt}</p>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Clock className="h-3 w-3" />
-                  {post.readTime}
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          <div className="text-center">
-            <Button variant="outline" onClick={() => navigate("/blog")}>
-              View All Articles <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== FINAL CTA ===== */}
-      <section className="py-20 lg:py-28 bg-gradient-to-br from-primary/5 via-background to-accent/5 border-t border-border/30">
-        <div className="container mx-auto px-4 max-w-2xl text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-foreground">
-            Ready to protect your art?
-          </h2>
-          <p className="text-lg text-muted-foreground mb-8">
-            Join thousands of creators who sleep better knowing their work is monitored 24/7.
-          </p>
-
-          {/* Email capture */}
-          <div className="max-w-md mx-auto mb-6">
-            <div className="flex gap-3">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 h-12 text-base bg-background"
-                value={signupEmail}
-                onChange={(e) => setSignupEmail(e.target.value)}
-              />
-              <Button
-                size="lg"
-                className="h-12 px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-                onClick={() => navigate(`/auth?email=${encodeURIComponent(signupEmail)}&tab=signup`)}
+      {/* ══════════════════════════════════════════
+          CREDIBILITY — Clean Logo Bar
+          ══════════════════════════════════════════ */}
+      <RevealSection>
+        <section className="py-14 border-t border-border/30">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <p className="text-center text-xs font-semibold text-muted-foreground uppercase tracking-[0.2em] mb-10">Trusted & Recognized</p>
+            <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-16">
+              {/* BizWeekly */}
+              <a
+                href="https://bizweekly.com/suddenly-fighting-shadows-one-artists-mission-to-protect-creators-in-the-ai-age/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center gap-3 group"
               >
-                Get Started
+                <img src={bizWeeklyBanner} alt="As seen on BizWeekly" className="h-10 md:h-12 object-contain opacity-70 group-hover:opacity-100 transition-opacity" loading="lazy" />
+                <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1">
+                  Read the feature <ChevronRight className="w-3 h-3" />
+                </span>
+              </a>
+
+              {/* Divider */}
+              <div className="hidden md:block w-px h-12 bg-border/50" />
+
+              {/* CAI */}
+              <div className="flex flex-col items-center gap-3">
+                <img src={caiLogo} alt="Content Authenticity Initiative" className="h-10 md:h-12 object-contain dark:invert opacity-70" />
+                <span className="text-xs text-muted-foreground">CAI Member</span>
+              </div>
+
+              {/* Divider */}
+              <div className="hidden md:block w-px h-12 bg-border/50" />
+
+              {/* Harvard */}
+              <div className="flex flex-col items-center gap-1.5">
+                <span className="text-sm font-medium text-foreground/70">Harvard Innovation Labs</span>
+                <span className="text-[10px] text-muted-foreground/60">Member · Not an endorsement</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      {/* ══════════════════════════════════════════
+          HOW IT WORKS — Animated Timeline
+          ══════════════════════════════════════════ */}
+      <RevealSection>
+        <section className="py-24 lg:py-32 bg-muted/20 border-t border-border/30 overflow-hidden">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="text-center mb-20">
+              <p className="text-sm font-semibold text-primary uppercase tracking-[0.15em] mb-3">How It Works</p>
+              <h2 className="text-3xl lg:text-5xl font-bold text-foreground">Protection in four simple steps</h2>
+            </div>
+
+            {/* Timeline */}
+            <div className="relative">
+              {/* Connecting line — desktop only */}
+              <div className="hidden lg:block absolute top-10 left-[12%] right-[12%] h-0.5 bg-border/40">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary via-accent to-secondary origin-left animate-timeline-grow" />
+              </div>
+
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
+                {steps.map((step, i) => (
+                  <RevealSection key={i} delay={i * 150}>
+                    <div className="text-center group relative">
+                      <div className="relative mx-auto mb-6">
+                        <div className="w-20 h-20 rounded-2xl bg-background border-2 border-border/50 flex items-center justify-center mx-auto group-hover:border-primary/50 group-hover:shadow-lg group-hover:shadow-primary/10 transition-all duration-500">
+                          <step.icon className="h-8 w-8 text-primary transition-transform group-hover:scale-110 duration-300" />
+                        </div>
+                        <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center shadow-lg">
+                          {i + 1}
+                        </span>
+                      </div>
+                      <h3 className="text-lg font-bold mb-1.5 text-foreground">{step.title}</h3>
+                      <p className="text-sm text-muted-foreground">{step.desc}</p>
+                    </div>
+                  </RevealSection>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      {/* ══════════════════════════════════════════
+          FEATURES — Bento Grid with Glassmorphism
+          ══════════════════════════════════════════ */}
+      <RevealSection>
+        <section className="py-24 lg:py-32 border-t border-border/30">
+          <div className="container mx-auto px-4 max-w-6xl">
+            <div className="text-center mb-16">
+              <p className="text-sm font-semibold text-primary uppercase tracking-[0.15em] mb-3">Features</p>
+              <h2 className="text-3xl lg:text-5xl font-bold text-foreground">Everything you need to<br />protect your work</h2>
+            </div>
+
+            {/* Bento Grid */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {features.map((feature, i) => (
+                <RevealSection key={i} delay={i * 100} className={feature.large ? "md:col-span-2 lg:col-span-2 lg:row-span-2" : ""}>
+                  <div className={`relative group rounded-2xl p-8 glass-bento hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1 h-full ${feature.large ? "gradient-border" : "border border-border/30 hover:border-primary/30"}`}>
+                    <div className="relative z-10">
+                      <div className={`rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors ${feature.large ? "w-14 h-14" : "w-12 h-12"}`}>
+                        <feature.icon className={`text-primary ${feature.large ? "h-7 w-7" : "h-6 w-6"}`} />
+                      </div>
+                      <h3 className={`font-bold mb-3 text-foreground ${feature.large ? "text-2xl" : "text-xl"}`}>{feature.title}</h3>
+                      <p className={`text-muted-foreground leading-relaxed ${feature.large ? "text-base max-w-lg" : "text-sm"}`}>{feature.desc}</p>
+                    </div>
+                  </div>
+                </RevealSection>
+              ))}
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      {/* ══════════════════════════════════════════
+          STATS — Gradient Numbers
+          ══════════════════════════════════════════ */}
+      <RevealSection>
+        <section className="py-20 bg-muted/20 border-t border-border/30">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              {stats.map((stat, i) => (
+                <RevealSection key={i} delay={i * 100}>
+                  <div className="relative">
+                    <div className="text-4xl lg:text-5xl font-bold tabular-nums bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent mb-2">
+                      {stat.value}
+                    </div>
+                    <div className="text-sm text-muted-foreground font-medium">{stat.label}</div>
+                  </div>
+                </RevealSection>
+              ))}
+            </div>
+          </div>
+        </section>
+      </RevealSection>
+
+      {/* ══════════════════════════════════════════
+          BLOG — Magazine Layout
+          ══════════════════════════════════════════ */}
+      <RevealSection>
+        <section className="py-24 lg:py-28 border-t border-border/30">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="text-center mb-14">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <BookOpen className="h-5 w-5 text-primary" />
+                <p className="text-sm font-semibold text-primary uppercase tracking-[0.15em]">From Our Blog</p>
+              </div>
+              <h2 className="text-3xl lg:text-4xl font-bold text-foreground">Tips & guides for creators</h2>
+            </div>
+
+            {/* Magazine grid: first post large, rest side-by-side */}
+            <div className="grid md:grid-cols-2 gap-5 mb-10">
+              {posts.map((post, i) => (
+                <Link
+                  key={post.slug}
+                  to={`/blog/${post.slug}`}
+                  className={`group block rounded-2xl bg-card border border-border/30 hover:border-primary/30 hover:shadow-xl transition-all duration-500 overflow-hidden ${i === 0 ? "md:col-span-2" : ""}`}
+                >
+                  <div className={`p-8 ${i === 0 ? "lg:p-10" : ""}`}>
+                    <span className="text-xs font-semibold text-primary uppercase tracking-wider">{post.category}</span>
+                    <h3 className={`font-bold mt-3 mb-3 text-foreground group-hover:text-primary transition-colors line-clamp-2 ${i === 0 ? "text-2xl lg:text-3xl" : "text-lg"}`}>
+                      {post.title}
+                    </h3>
+                    <p className={`text-muted-foreground line-clamp-2 mb-4 ${i === 0 ? "text-base" : "text-sm"}`}>{post.excerpt}</p>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Clock className="h-3.5 w-3.5" />
+                      {post.readTime}
+                      <span className="ml-auto text-primary opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                        Read more <ArrowRight className="w-3 h-3" />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            <div className="text-center">
+              <Button variant="outline" size="lg" onClick={() => navigate("/blog")} className="group">
+                View All Articles <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground mt-3">50 free protections. No credit card required.</p>
           </div>
+        </section>
+      </RevealSection>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button variant="outline" size="lg" onClick={() => navigate("/pricing")}>
+      {/* ══════════════════════════════════════════
+          FINAL CTA — Dark Cinematic Section
+          ══════════════════════════════════════════ */}
+      <section className="relative py-28 lg:py-36 bg-foreground text-background overflow-hidden">
+        {/* Radial glow */}
+        <div className="absolute inset-0 radial-glow opacity-60" />
+        {/* Particles */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full bg-primary/10 animate-float-particle"
+              style={{
+                width: `${3 + Math.random() * 5}px`,
+                height: `${3 + Math.random() * 5}px`,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 4}s`,
+                animationDuration: `${5 + Math.random() * 4}s`,
+              }}
+            />
+          ))}
+        </div>
+
+        <div className="container mx-auto px-4 max-w-2xl text-center relative z-10">
+          <RevealSection>
+            <h2 className="text-3xl lg:text-5xl font-bold mb-5">
+              Ready to protect your art?
+            </h2>
+            <p className="text-lg opacity-70 mb-10 max-w-lg mx-auto">
+              Join thousands of creators who sleep better knowing their work is monitored 24/7.
+            </p>
+
+            {/* Email capture with animated border */}
+            <div className="max-w-md mx-auto mb-8">
+              <div className="flex gap-3 p-1.5 rounded-xl bg-background/10 backdrop-blur-sm border border-background/20">
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="flex-1 h-12 text-base bg-background text-foreground border-0"
+                  value={signupEmail}
+                  onChange={(e) => setSignupEmail(e.target.value)}
+                />
+                <Button
+                  size="lg"
+                  className="h-12 px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+                  onClick={() => navigate(`/auth?email=${encodeURIComponent(signupEmail)}&tab=signup`)}
+                >
+                  Get Started
+                </Button>
+              </div>
+              <p className="text-xs opacity-50 mt-3">50 free protections. No credit card required.</p>
+            </div>
+
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => navigate("/pricing")}
+              className="border-background/20 text-background hover:bg-background/10"
+            >
               View Pricing Plans
             </Button>
-          </div>
+          </RevealSection>
         </div>
       </section>
 
