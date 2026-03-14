@@ -343,7 +343,7 @@ const Index = () => {
       </RevealSection>
 
       {/* ══════════════════════════════════════════
-          FEATURES — Bento Grid with Glassmorphism
+          FEATURES — Clean Professional Grid
           ══════════════════════════════════════════ */}
       <RevealSection>
         <section className="py-24 lg:py-32 border-t border-border/30">
@@ -353,17 +353,34 @@ const Index = () => {
               <h2 className="text-3xl lg:text-5xl font-bold text-foreground">Everything you need to<br />protect your work</h2>
             </div>
 
-            {/* Bento Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {features.map((feature, i) => (
-                <RevealSection key={i} delay={i * 100} className={feature.large ? "md:col-span-2 lg:col-span-2 lg:row-span-2" : ""}>
-                  <div className={`relative group rounded-2xl p-8 glass-bento hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1 h-full ${feature.large ? "gradient-border" : "border border-border/30 hover:border-primary/30"}`}>
-                    <div className="relative z-10">
-                      <div className={`rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors ${feature.large ? "w-14 h-14" : "w-12 h-12"}`}>
-                        <feature.icon className={`text-primary ${feature.large ? "h-7 w-7" : "h-6 w-6"}`} />
+            {/* Top row: 3 equal cards */}
+            <div className="grid md:grid-cols-3 gap-6 mb-6">
+              {features.slice(0, 3).map((feature, i) => (
+                <RevealSection key={i} delay={i * 120}>
+                  <div className="relative group rounded-2xl p-7 bg-card border border-border/40 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1 h-full">
+                    <div className="w-11 h-11 rounded-xl bg-primary/8 flex items-center justify-center mb-5 group-hover:bg-primary/15 transition-colors">
+                      <feature.icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-bold mb-2 text-foreground">{feature.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
+                  </div>
+                </RevealSection>
+              ))}
+            </div>
+
+            {/* Bottom row: 2 wider cards */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {features.slice(3).map((feature, i) => (
+                <RevealSection key={i + 3} delay={(i + 3) * 120}>
+                  <div className="relative group rounded-2xl p-7 bg-card border border-border/40 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1 h-full">
+                    <div className="flex items-start gap-5">
+                      <div className="w-11 h-11 rounded-xl bg-primary/8 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors">
+                        <feature.icon className="h-5 w-5 text-primary" />
                       </div>
-                      <h3 className={`font-bold mb-3 text-foreground ${feature.large ? "text-2xl" : "text-xl"}`}>{feature.title}</h3>
-                      <p className={`text-muted-foreground leading-relaxed ${feature.large ? "text-base max-w-lg" : "text-sm"}`}>{feature.desc}</p>
+                      <div>
+                        <h3 className="text-lg font-bold mb-2 text-foreground">{feature.title}</h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
+                      </div>
                     </div>
                   </div>
                 </RevealSection>
