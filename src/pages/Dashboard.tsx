@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BugReportButton } from '@/components/BugReportButton';
-import { useAuth } from '@/contexts/AuthContext';
+// UserPreferencesContext removed — progressive disclosure replaces beginner/advanced mode
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { PremiumStatCard } from '@/components/dashboard/PremiumStatCard';
 import { ThreatRadar } from '@/components/dashboard/ThreatRadar';
