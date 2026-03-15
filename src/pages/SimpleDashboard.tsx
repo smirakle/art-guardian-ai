@@ -56,6 +56,36 @@ const SimpleDashboard = () => {
   const threatCount = alerts?.length || 0;
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Creator';
 
+  // Generate signed URLs for private artwork bucket
+  useEffect(() => {
+    if (!artwork || artwork.length === 0) return;
+    setLoadingUrls(true);
+    const fetchUrls = async () => {
+      const urls: Record<string, string> = {};
+      await Promise.all(
+        artwork.map(async (art) => {
+          const path = art.file_paths?.[0];
+          if (!path) return;
+          if (path.startsWith('http')) {
+            urls[art.id] = path;
+            return;
+          }
+          try {
+            const { data, error } = await supabase.storage
+              .from('artwork')
+              .createSignedUrl(path, 3600);
+            if (data?.signedUrl) urls[art.id] = data.signedUrl;
+          } catch (e) {
+            console.error('Signed URL error:', e);
+          }
+        })
+      );
+      setSignedUrls(urls);
+      setLoadingUrls(false);
+    };
+    fetchUrls();
+  }, [artwork]);
+
   return (
     <div className="space-y-8 max-w-6xl mx-auto p-4 md:p-6">
       {/* Guest Banner */}
