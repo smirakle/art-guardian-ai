@@ -11,11 +11,15 @@ import { useAIProtectionStats } from '@/hooks/useAIProtectionStats';
 import { MobileCommunity } from '@/components/mobile/MobileCommunity';
 import { ProtectedItemsGallery } from '@/components/dashboard/ProtectedItemsGallery';
 import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const SimpleDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { stats: aiProtectionStats } = useAIProtectionStats();
+  const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
+  const [loadingUrls, setLoadingUrls] = useState(false);
 
   const { data: artwork } = useQuery({
     queryKey: ['user-artwork', user?.id],
