@@ -22,7 +22,6 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Upload from "./pages/Upload";
 import MonitoringHub from "./pages/MonitoringHub";
-import SimpleFindings from "./pages/SimpleFindings";
 import DMCACenter from "./pages/DMCACenter";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
@@ -48,33 +47,15 @@ import PressKit from "./pages/PressKit";
 import Status from "./pages/Status";
 import Support from "./pages/Support";
 
-// Feature pages
+// Feature pages (accessible via sub-navigation)
 import ProtectionHub from "./pages/ProtectionHub";
-import DeepfakeDetection from "./pages/DeepfakeDetection";
 import DeepfakeMatchDetails from "./pages/DeepfakeMatchDetails";
-import ForgeryDetection from "./pages/ForgeryDetection";
-import LegalTemplatesPage from "./pages/LegalTemplates";
-import LegalResources from "./pages/LegalResources";
 import Certificate from "./pages/Certificate";
 import Checkout from "./pages/Checkout";
 import Success from "./pages/Success";
 import Community from "./pages/Community";
-import ReverseImageSearch from "./pages/ReverseImageSearch";
-import DocumentProtection from "./pages/DocumentProtection";
-import Findings from "./pages/Findings";
 import B2BLogin from "./pages/B2BLogin";
-import Lawyers from "./pages/Lawyers";
-import AITPAAnalysis from "./pages/AITPAAnalysis";
 import ThreatAlerts from "./pages/ThreatAlerts";
-import DMCAAutomation from "./pages/DMCAAutomation";
-import AdvancedAnalytics from "./pages/AdvancedAnalytics";
-import MobileIntegration from "./pages/MobileIntegration";
-import SLAStatus from "./pages/SLAStatus";
-import CreatorMarkets from "./pages/CreatorMarkets";
-import InvestorHub from "./pages/InvestorHub";
-import DeepWebScan from "./components/DeepWebScan";
-import { EnterpriseAPIAccess } from "./components/EnterpriseAPIAccess";
-import { AIProtectionVisualDemo } from "./components/demo/AIProtectionVisualDemo";
 
 // Admin pages
 import Admin from "./pages/Admin";
@@ -109,8 +90,7 @@ const AppRoutes = () => (
     <Route path="/dashboard" element={<Dashboard />} />
     <Route path="/upload" element={<Upload />} />
     <Route path="/monitoring-hub" element={<MonitoringHub />} />
-    <Route path="/simple-findings" element={<SimpleFindings />} />
-    <Route path="/findings" element={<Findings />} />
+    <Route path="/threat-alerts" element={<ThreatAlerts />} />
     <Route path="/dmca-center" element={<DMCACenter />} />
     <Route path="/settings" element={<Settings />} />
     <Route path="/profile" element={<Profile />} />
@@ -118,30 +98,33 @@ const AppRoutes = () => (
     <Route path="/checkout" element={<Checkout />} />
     <Route path="/success" element={<Success />} />
 
-    {/* Feature pages */}
+    {/* Sub-feature pages (accessible via in-app links, not primary nav) */}
     <Route path="/protection-hub" element={<ProtectionHub />} />
-    <Route path="/deepfake-detection" element={<DeepfakeDetection />} />
     <Route path="/deepfake-match/:matchId" element={<DeepfakeMatchDetails />} />
-    <Route path="/forgery-detection" element={<ForgeryDetection />} />
-    <Route path="/legal-resources" element={<LegalResources />} />
-    <Route path="/legal-templates" element={<LegalTemplatesPage />} />
-    <Route path="/lawyers" element={<Lawyers />} />
-    <Route path="/community" element={<Community />} />
     <Route path="/certificate/:certificateId" element={<Certificate />} />
-    <Route path="/document-protection" element={<DocumentProtection />} />
-    <Route path="/reverse-image-search" element={<ReverseImageSearch />} />
-    <Route path="/aitpa-analysis" element={<AITPAAnalysis />} />
-    <Route path="/threat-alerts" element={<ThreatAlerts />} />
-    <Route path="/dmca-automation" element={<DMCAAutomation />} />
-    <Route path="/analytics" element={<AdvancedAnalytics />} />
-    <Route path="/portfolio-monitoring-advanced" element={<Navigate to="/monitoring-hub" replace />} />
-    <Route path="/deep-scan" element={<DeepWebScan />} />
-    <Route path="/mobile" element={<MobileIntegration />} />
-    <Route path="/sla-status" element={<SLAStatus />} />
-    <Route path="/markets" element={<CreatorMarkets />} />
-    <Route path="/investors" element={<InvestorHub />} />
-    <Route path="/enterprise-api" element={<EnterpriseAPIAccess />} />
+    <Route path="/community" element={<Community />} />
     <Route path="/b2b-login" element={<B2BLogin />} />
+
+    {/* Redirects: feature pages consolidated into hubs */}
+    <Route path="/simple-findings" element={<Navigate to="/threat-alerts" replace />} />
+    <Route path="/findings" element={<Navigate to="/threat-alerts" replace />} />
+    <Route path="/deepfake-detection" element={<Navigate to="/monitoring-hub" replace />} />
+    <Route path="/forgery-detection" element={<Navigate to="/monitoring-hub" replace />} />
+    <Route path="/reverse-image-search" element={<Navigate to="/monitoring-hub" replace />} />
+    <Route path="/document-protection" element={<Navigate to="/upload" replace />} />
+    <Route path="/deep-scan" element={<Navigate to="/monitoring-hub" replace />} />
+    <Route path="/legal-resources" element={<Navigate to="/dmca-center" replace />} />
+    <Route path="/legal-templates" element={<Navigate to="/dmca-center" replace />} />
+    <Route path="/lawyers" element={<Navigate to="/dmca-center" replace />} />
+    <Route path="/dmca-automation" element={<Navigate to="/dmca-center" replace />} />
+    <Route path="/aitpa-analysis" element={<Navigate to="/monitoring-hub" replace />} />
+    <Route path="/analytics" element={<Navigate to="/dashboard" replace />} />
+    <Route path="/portfolio-monitoring-advanced" element={<Navigate to="/monitoring-hub" replace />} />
+    <Route path="/mobile" element={<Navigate to="/settings" replace />} />
+    <Route path="/sla-status" element={<Navigate to="/settings" replace />} />
+    <Route path="/markets" element={<Navigate to="/dashboard" replace />} />
+    <Route path="/investors" element={<Navigate to="/dashboard" replace />} />
+    <Route path="/enterprise-api" element={<Navigate to="/settings" replace />} />
 
     {/* Public / marketing pages */}
     <Route path="/about-tsmo" element={<AboutTsmo />} />
@@ -162,7 +145,7 @@ const AppRoutes = () => (
     <Route path="/stop-art-theft" element={<StopArtTheft />} />
     <Route path="/protection-guide" element={<ProtectionGuide />} />
     <Route path="/press-kit" element={<PressKit />} />
-    <Route path="/demo/visual" element={<AIProtectionVisualDemo />} />
+    <Route path="/demo/visual" element={<Navigate to="/dashboard" replace />} />
 
     {/* Redirects for consolidated routes */}
     <Route path="/phase1" element={<Navigate to="/dashboard" replace />} />
