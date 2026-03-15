@@ -42,7 +42,6 @@ import {
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { isAdmin } = useUserPreferences();
   const { stats: aiProtectionStats } = useAIProtectionStats();
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
