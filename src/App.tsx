@@ -145,7 +145,7 @@ const AppRoutes = () => (
     <Route path="/stop-art-theft" element={<StopArtTheft />} />
     <Route path="/protection-guide" element={<ProtectionGuide />} />
     <Route path="/press-kit" element={<PressKit />} />
-    <Route path="/demo/visual" element={<AIProtectionVisualDemo />} />
+    <Route path="/demo/visual" element={<Navigate to="/dashboard" replace />} />
 
     {/* Redirects for consolidated routes */}
     <Route path="/phase1" element={<Navigate to="/dashboard" replace />} />
