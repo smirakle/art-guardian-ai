@@ -187,7 +187,7 @@ const AppRoutes = () => (
     <Route path="/admin/incidents" element={<ProtectedRoute requiredRole="admin"><IncidentManagement /></ProtectedRoute>} />
     <Route path="/admin/c2pa-conformance" element={<ProtectedRoute requiredRole="admin"><C2PAConformance /></ProtectedRoute>} />
     <Route path="/admin/partnerships" element={<ProtectedRoute requiredRole="admin"><PartnershipsOverview /></ProtectedRoute>} />
-    <Route path="/monitoring/realtime" element={<ProtectedRoute requiredRole="admin"><RealTimeMonitoringDashboard /></ProtectedRoute>} />
+    <Route path="/monitoring/realtime" element={<Navigate to="/monitoring-hub" replace />} />
     <Route path="/monitoring/test" element={<ProtectedRoute requiredRole="admin"><MonitoringTest /></ProtectedRoute>} />
     <Route path="/monitoring/external-services" element={<ProtectedRoute requiredRole="admin"><ExternalServicesConfig /></ProtectedRoute>} />
 
