@@ -81,7 +81,6 @@ import Admin from "./pages/Admin";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminMonitoring from "./pages/AdminMonitoring";
 import IncidentManagement from "./pages/IncidentManagement";
-import RealTimeMonitoringDashboard from "./pages/RealTimeMonitoringDashboard";
 import MonitoringTest from "./pages/MonitoringTest";
 import ExternalServicesConfig from "./pages/ExternalServicesConfig";
 import ProductionDashboard from "./components/production/ProductionDashboard";
