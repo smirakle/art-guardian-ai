@@ -227,7 +227,9 @@ const SimpleDashboard = () => {
                           <Shield className="h-8 w-8 text-muted-foreground/40 mx-auto mb-1" />
                           <span className="text-xs text-muted-foreground">Processing</span>
                         </div>
-                      </div>
+                          </div>
+                        </>
+                      )}
                       {/* Gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                       {/* Protection badge */}

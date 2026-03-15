@@ -135,12 +135,15 @@ const ThumbnailCard = ({
       
       if (thumbnailPath && typeof thumbnailPath === 'string') {
         try {
-          const { data } = supabase.storage
+          const { data, error } = await supabase.storage
             .from('artwork')
-            .getPublicUrl(thumbnailPath);
+            .createSignedUrl(thumbnailPath, 3600);
           
-          if (data?.publicUrl) {
-            setThumbnailUrl(data.publicUrl);
+          if (data?.signedUrl) {
+            setThumbnailUrl(data.signedUrl);
+          }
+          if (error) {
+            console.error('Failed to create signed URL:', error);
           }
         } catch (error) {
           console.error('Failed to load thumbnail:', error);
