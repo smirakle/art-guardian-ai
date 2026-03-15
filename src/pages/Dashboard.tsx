@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BugReportButton } from '@/components/BugReportButton';
-import { useUserPreferences } from '@/contexts/UserPreferencesContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { PremiumStatCard } from '@/components/dashboard/PremiumStatCard';
 import { ThreatRadar } from '@/components/dashboard/ThreatRadar';
