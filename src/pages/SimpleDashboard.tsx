@@ -178,9 +178,7 @@ const SimpleDashboard = () => {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {artwork.map((art) => {
-                const imageUrl = art.file_paths[0]?.startsWith('http')
-                  ? art.file_paths[0]
-                  : supabase.storage.from('artwork').getPublicUrl(art.file_paths[0]).data.publicUrl;
+                const imageUrl = signedUrls[art.id];
 
                 const protectionLevel = art.ai_protection_level || 'standard';
                 const levelColors: Record<string, string> = {
