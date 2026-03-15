@@ -68,7 +68,6 @@ import AITPAAnalysis from "./pages/AITPAAnalysis";
 import ThreatAlerts from "./pages/ThreatAlerts";
 import DMCAAutomation from "./pages/DMCAAutomation";
 import AdvancedAnalytics from "./pages/AdvancedAnalytics";
-import PortfolioMonitoringAdvanced from "./pages/PortfolioMonitoringAdvanced";
 import MobileIntegration from "./pages/MobileIntegration";
 import SLAStatus from "./pages/SLAStatus";
 import CreatorMarkets from "./pages/CreatorMarkets";
@@ -82,7 +81,6 @@ import Admin from "./pages/Admin";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminMonitoring from "./pages/AdminMonitoring";
 import IncidentManagement from "./pages/IncidentManagement";
-import RealTimeMonitoringDashboard from "./pages/RealTimeMonitoringDashboard";
 import MonitoringTest from "./pages/MonitoringTest";
 import ExternalServicesConfig from "./pages/ExternalServicesConfig";
 import ProductionDashboard from "./components/production/ProductionDashboard";
@@ -136,7 +134,7 @@ const AppRoutes = () => (
     <Route path="/threat-alerts" element={<ThreatAlerts />} />
     <Route path="/dmca-automation" element={<DMCAAutomation />} />
     <Route path="/analytics" element={<AdvancedAnalytics />} />
-    <Route path="/portfolio-monitoring-advanced" element={<PortfolioMonitoringAdvanced />} />
+    <Route path="/portfolio-monitoring-advanced" element={<Navigate to="/monitoring-hub" replace />} />
     <Route path="/deep-scan" element={<DeepWebScan />} />
     <Route path="/mobile" element={<MobileIntegration />} />
     <Route path="/sla-status" element={<SLAStatus />} />
@@ -189,7 +187,7 @@ const AppRoutes = () => (
     <Route path="/admin/incidents" element={<ProtectedRoute requiredRole="admin"><IncidentManagement /></ProtectedRoute>} />
     <Route path="/admin/c2pa-conformance" element={<ProtectedRoute requiredRole="admin"><C2PAConformance /></ProtectedRoute>} />
     <Route path="/admin/partnerships" element={<ProtectedRoute requiredRole="admin"><PartnershipsOverview /></ProtectedRoute>} />
-    <Route path="/monitoring/realtime" element={<ProtectedRoute requiredRole="admin"><RealTimeMonitoringDashboard /></ProtectedRoute>} />
+    <Route path="/monitoring/realtime" element={<Navigate to="/monitoring-hub" replace />} />
     <Route path="/monitoring/test" element={<ProtectedRoute requiredRole="admin"><MonitoringTest /></ProtectedRoute>} />
     <Route path="/monitoring/external-services" element={<ProtectedRoute requiredRole="admin"><ExternalServicesConfig /></ProtectedRoute>} />
 
