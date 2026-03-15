@@ -1,29 +1,25 @@
 
 
-## Fix: Artwork Thumbnails Not Loading
+## Problem
 
-**Root Cause**: The `artwork` storage bucket is **private**. The dashboard uses `getPublicUrl()` which returns a URL that gets a 403 error. Every other part of the codebase correctly uses `createSignedUrl()` instead.
+The "As Seen On" / BizWeekly section and CAI Membership banner are stacked vertically as separate bland sections with no visual cohesion. They look like afterthoughts — plain text, small images, no visual hierarchy, and too much whitespace between them.
 
-### Changes
+## Plan
 
-**`src/pages/SimpleDashboard.tsx`**:
-- Replace the synchronous `getPublicUrl` call with an async signed URL approach
-- Add a state map to hold signed URLs keyed by artwork ID
-- Use a `useEffect` to batch-generate signed URLs for all artwork items when data loads
-- Show a skeleton/loading state while URLs are being generated
-- Set signed URL expiry to 1 hour (consistent with rest of codebase)
+Combine both credibility signals (BizWeekly press + CAI membership) into a single, polished **"Credibility & Trust"** section with better visual design:
 
-**`src/components/dashboard/ProtectedItemsGallery.tsx`** (ThumbnailCard):
-- The thumbnail loading for plugin-protected items also uses `getPublicUrl` on line ~126 — update to use `createSignedUrl` for the thumbnail path as well
+### Changes to `src/pages/Index.tsx` (lines 342-389)
 
-### Technical Approach
+Replace the two separate sections with one unified section:
 
-```text
-artwork data loads → useEffect triggers → 
-  Promise.all(artwork.map(art => createSignedUrl(art.file_paths[0], 3600)))
-  → store results in state map { [artworkId]: signedUrl }
-  → render images with signed URLs
-```
+1. **Single section** with subtle gradient background and proper vertical spacing
+2. **Two-column layout** on desktop (BizWeekly left, CAI right), stacked on mobile
+3. Each credential in a **card-like container** with subtle border, rounded corners, and hover effect
+4. **Larger logo sizes** — CAI logo `h-16 md:h-20`, BizWeekly image `max-w-sm`
+5. **Section header**: "Trusted & Recognized" with a subtle label above
+6. **Divider line** between the two on desktop (vertical) / mobile (horizontal)
+7. Harvard disclaimer kept as small text below the BizWeekly card
+8. "Read the feature" link styled as a proper button/pill
 
-No backend changes needed. Just switching from public to signed URL generation on the client side.
+This creates a cohesive, professional credibility strip that draws the eye without being gaudy.
 

@@ -11,11 +11,15 @@ import { useAIProtectionStats } from '@/hooks/useAIProtectionStats';
 import { MobileCommunity } from '@/components/mobile/MobileCommunity';
 import { ProtectedItemsGallery } from '@/components/dashboard/ProtectedItemsGallery';
 import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const SimpleDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { stats: aiProtectionStats } = useAIProtectionStats();
+  const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
+  const [loadingUrls, setLoadingUrls] = useState(false);
 
   const { data: artwork } = useQuery({
     queryKey: ['user-artwork', user?.id],
@@ -51,6 +55,36 @@ const SimpleDashboard = () => {
 
   const threatCount = alerts?.length || 0;
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Creator';
+
+  // Generate signed URLs for private artwork bucket
+  useEffect(() => {
+    if (!artwork || artwork.length === 0) return;
+    setLoadingUrls(true);
+    const fetchUrls = async () => {
+      const urls: Record<string, string> = {};
+      await Promise.all(
+        artwork.map(async (art) => {
+          const path = art.file_paths?.[0];
+          if (!path) return;
+          if (path.startsWith('http')) {
+            urls[art.id] = path;
+            return;
+          }
+          try {
+            const { data, error } = await supabase.storage
+              .from('artwork')
+              .createSignedUrl(path, 3600);
+            if (data?.signedUrl) urls[art.id] = data.signedUrl;
+          } catch (e) {
+            console.error('Signed URL error:', e);
+          }
+        })
+      );
+      setSignedUrls(urls);
+      setLoadingUrls(false);
+    };
+    fetchUrls();
+  }, [artwork]);
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto p-4 md:p-6">
@@ -144,9 +178,7 @@ const SimpleDashboard = () => {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {artwork.map((art) => {
-                const imageUrl = art.file_paths[0]?.startsWith('http')
-                  ? art.file_paths[0]
-                  : supabase.storage.from('artwork').getPublicUrl(art.file_paths[0]).data.publicUrl;
+                const imageUrl = signedUrls[art.id];
 
                 const protectionLevel = art.ai_protection_level || 'standard';
                 const levelColors: Record<string, string> = {
@@ -165,24 +197,39 @@ const SimpleDashboard = () => {
                   <div key={art.id} className="group relative rounded-2xl overflow-hidden border border-border/50 bg-card shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                     {/* Thumbnail */}
                     <div className="aspect-[4/3] bg-muted relative overflow-hidden">
-                      <img
-                        src={imageUrl}
-                        alt={art.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
-                        onError={(e) => {
-                          const target = e.currentTarget;
-                          target.style.display = 'none';
-                          const fallback = target.nextElementSibling as HTMLElement;
-                          if (fallback) fallback.style.display = 'flex';
-                        }}
-                      />
-                      <div className="hidden absolute inset-0 items-center justify-center bg-muted">
+                      {loadingUrls || !imageUrl ? (
+                        <div className="flex items-center justify-center w-full h-full bg-muted">
+                          {loadingUrls ? (
+                            <Skeleton className="w-full h-full" />
+                          ) : (
+                            <div className="text-center">
+                              <Shield className="h-8 w-8 text-muted-foreground/40 mx-auto mb-1" />
+                              <span className="text-xs text-muted-foreground">Processing</span>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <>
+                          <img
+                            src={imageUrl}
+                            alt={art.title}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            loading="lazy"
+                            onError={(e) => {
+                              const target = e.currentTarget;
+                              target.style.display = 'none';
+                              const fallback = target.nextElementSibling as HTMLElement;
+                              if (fallback) fallback.style.display = 'flex';
+                            }}
+                          />
+                          <div className="hidden absolute inset-0 items-center justify-center bg-muted">
                         <div className="text-center">
                           <Shield className="h-8 w-8 text-muted-foreground/40 mx-auto mb-1" />
                           <span className="text-xs text-muted-foreground">Processing</span>
                         </div>
-                      </div>
+                          </div>
+                        </>
+                      )}
                       {/* Gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                       {/* Protection badge */}
