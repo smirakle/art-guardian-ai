@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Shield, AlertTriangle, CheckCircle2, Upload, Search, Mail, Clock, UserPlus } from 'lucide-react';
+import { Shield, AlertTriangle, CheckCircle2, Upload, Search, Mail, Clock, UserPlus, ArrowRight, Eye, Brain, Activity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,42 +10,29 @@ import { SimpleAIProtection } from '@/components/beginner/SimpleAIProtection';
 import { useAIProtectionStats } from '@/hooks/useAIProtectionStats';
 import { MobileCommunity } from '@/components/mobile/MobileCommunity';
 import { ProtectedItemsGallery } from '@/components/dashboard/ProtectedItemsGallery';
+import { cn } from '@/lib/utils';
 
 const SimpleDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { stats: aiProtectionStats } = useAIProtectionStats();
 
-  // Fetch user's artwork
-  const { data: artwork, error: artworkError } = useQuery({
+  const { data: artwork } = useQuery({
     queryKey: ['user-artwork', user?.id],
     queryFn: async () => {
       if (!user) return [];
-      console.log('Fetching artwork for user:', user.id);
       const { data, error } = await supabase
         .from('artwork')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(6);
-      
-      if (error) {
-        console.error('Artwork fetch error:', error);
-        throw error;
-      }
-      
-      console.log('Artwork data:', data);
+      if (error) throw error;
       return data || [];
     },
     enabled: !!user,
   });
 
-  // Log artwork error if any
-  if (artworkError) {
-    console.error('Artwork query error:', artworkError);
-  }
-
-  // Fetch recent alerts
   const { data: alerts } = useQuery({
     queryKey: ['user-alerts', user?.id],
     queryFn: async () => {
@@ -63,211 +50,245 @@ const SimpleDashboard = () => {
   });
 
   const threatCount = alerts?.length || 0;
+  const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Creator';
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto p-6">
-      {/* Guest Mode Banner */}
+    <div className="space-y-8 max-w-6xl mx-auto p-4 md:p-6">
+      {/* Guest Banner */}
       {!user && (
-        <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/10 rounded-full">
-              <Clock className="h-5 w-5 text-primary" />
+        <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/5 via-card to-secondary/5 p-5">
+          <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-primary/5 blur-2xl" />
+          <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-primary/10">
+                <Clock className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-semibold text-foreground">Guest Mode — Data expires in 7 days</p>
+                <p className="text-sm text-muted-foreground">Create a free account to save permanently</p>
+              </div>
             </div>
-            <div>
-              <p className="font-medium text-foreground">Guest Mode — Your data expires in 7 days</p>
-              <p className="text-sm text-muted-foreground">Create a free account to save permanently</p>
-            </div>
+            <Button onClick={() => navigate('/auth')} className="shrink-0 gap-2">
+              <UserPlus className="h-4 w-4" />
+              Create Free Account
+            </Button>
           </div>
-          <Button onClick={() => navigate('/auth')} className="flex-shrink-0">
-            <UserPlus className="h-4 w-4 mr-2" />
-            Create Free Account
-          </Button>
         </div>
       )}
 
-      {/* Header */}
-      <div>
-        <h1 className="text-4xl font-bold mb-2">{user ? 'Welcome Back!' : 'Welcome!'}</h1>
-        <p className="text-lg text-muted-foreground">Here's what's happening with your art</p>
+      {/* Hero Header */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-card to-secondary/10 border border-border/50 p-8 md:p-10">
+        <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-primary/5 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-secondary/5 blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         
-        {/* Quick Stats */}
-        <div className="flex flex-wrap gap-4 mt-4 text-sm">
-          <div className="flex items-center gap-2">
-            <Shield className="h-4 w-4 text-green-600" />
-            <span className="text-muted-foreground">
-              {artwork?.length || 0} artworks protected
-            </span>
+        <div className="relative z-10">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+              </span>
+              <span className="text-xs font-medium text-green-600 dark:text-green-400">Protection Active</span>
+            </div>
           </div>
-          {aiProtectionStats.totalProtected > 0 && (
-            <div className="flex items-center gap-2">
-              <Shield className="h-4 w-4 text-primary" />
-              <span className="text-muted-foreground">
-                {aiProtectionStats.totalProtected} protected from AI training
-              </span>
+
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+            Welcome back, {displayName}
+          </h1>
+          <p className="text-muted-foreground mt-2 text-base md:text-lg">Here's what's happening with your art</p>
+
+          {/* Stat Pills */}
+          <div className="flex flex-wrap gap-3 mt-6">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-card/80 backdrop-blur border border-border/50 shadow-sm">
+              <Shield className="h-4 w-4 text-green-500" />
+              <span className="text-sm font-semibold text-foreground">{artwork?.length || 0}</span>
+              <span className="text-sm text-muted-foreground">artworks protected</span>
             </div>
-          )}
-          {threatCount > 0 && (
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-destructive" />
-              <span className="text-muted-foreground">
-                {threatCount} alerts need attention
-              </span>
-            </div>
-          )}
+            {aiProtectionStats.totalProtected > 0 && (
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-card/80 backdrop-blur border border-border/50 shadow-sm">
+                <Brain className="h-4 w-4 text-primary" />
+                <span className="text-sm font-semibold text-foreground">{aiProtectionStats.totalProtected}</span>
+                <span className="text-sm text-muted-foreground">AI training shields</span>
+              </div>
+            )}
+            {threatCount > 0 && (
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-accent/10 border border-accent/20 shadow-sm">
+                <AlertTriangle className="h-4 w-4 text-accent" />
+                <span className="text-sm font-semibold text-accent">{threatCount}</span>
+                <span className="text-sm text-accent/80">alerts need attention</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Your Protected Art */}
-      <Card className="border-2">
-        <CardHeader>
-          <CardTitle className="text-2xl flex items-center gap-2">
-            <Shield className="h-6 w-6 text-primary" />
-            Your Protected Art
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
+          <Shield className="h-5 w-5 text-primary" />
+          Your Protected Art
+        </h2>
+        <div className="rounded-2xl border border-border/50 bg-card p-6">
           {!artwork || artwork.length === 0 ? (
-            <div className="text-center py-12">
-              <Upload className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <p className="text-xl mb-4">You haven't protected any art yet</p>
-              <Button 
-                size="lg" 
-                onClick={() => navigate('/upload')}
-                className="text-lg px-8 py-6"
-              >
-                <Upload className="mr-2 h-5 w-5" />
+            <div className="text-center py-16">
+              <div className="mx-auto w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mb-5">
+                <Upload className="h-10 w-10 text-primary" />
+              </div>
+              <p className="text-xl font-semibold text-foreground mb-2">No art protected yet</p>
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">Upload your first artwork to start protecting it from unauthorized use and AI training</p>
+              <Button size="lg" onClick={() => navigate('/upload')} className="gap-2 text-base px-8">
+                <Upload className="h-5 w-5" />
                 Add Your First Artwork
               </Button>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {artwork.map((art) => {
-                const imageUrl = art.file_paths[0]?.startsWith('http') 
+                const imageUrl = art.file_paths[0]?.startsWith('http')
                   ? art.file_paths[0]
                   : supabase.storage.from('artwork').getPublicUrl(art.file_paths[0]).data.publicUrl;
-                
-                console.log('Image URL for', art.title, ':', imageUrl);
-                
+
                 return (
-                  <div key={art.id} className="relative group">
-                    <img
-                      src={imageUrl}
-                      alt={art.title}
-                      className="w-full aspect-square object-cover rounded-lg"
-                      onError={(e) => {
-                        console.error('Image failed to load:', imageUrl);
-                        e.currentTarget.src = 'https://placehold.co/400x400?text=Image+Not+Found';
-                      }}
-                    />
-                    <div className="absolute top-2 right-2">
-                      <Badge variant="default" className="bg-green-600">
-                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                  <div key={art.id} className="group relative rounded-xl overflow-hidden border border-border/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                    <div className="aspect-square bg-muted relative">
+                      <img
+                        src={imageUrl}
+                        alt={art.title}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://placehold.co/400x400?text=Image+Not+Found';
+                        }}
+                      />
+                      {/* Hover overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </div>
+                    <div className="absolute top-3 right-3">
+                      <Badge className="bg-green-600/90 backdrop-blur-sm border-0 text-xs gap-1 shadow-md">
+                        <CheckCircle2 className="h-3 w-3" />
                         Protected
                       </Badge>
                     </div>
-                    <p className="mt-2 font-medium truncate">{art.title}</p>
+                    <div className="p-3 bg-card">
+                      <p className="font-medium text-sm truncate text-foreground">{art.title}</p>
+                    </div>
                   </div>
                 );
               })}
               <button
                 onClick={() => navigate('/upload')}
-                className="aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center hover:border-primary hover:bg-muted/50 transition-colors"
+                className="aspect-square rounded-xl border-2 border-dashed border-border/50 flex flex-col items-center justify-center gap-2 hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 group"
               >
-                <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-                <span className="text-sm font-medium">Add More</span>
+                <div className="rounded-xl bg-muted/50 p-3 group-hover:bg-primary/10 transition-colors">
+                  <Upload className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+                <span className="text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors">Add More</span>
               </button>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Plugin Protected Items */}
       <ProtectedItemsGallery />
 
-      {/* AI Training Protection Section */}
+      {/* AI Training Protection */}
       <SimpleAIProtection />
 
-      {/* Alerts Section */}
-      <Card className={threatCount > 0 ? "border-2 border-destructive" : "border-2 border-green-500"}>
-        <CardHeader>
-          <CardTitle className="text-2xl flex items-center gap-2">
-            {threatCount > 0 ? (
-              <>
-                <AlertTriangle className="h-6 w-6 text-destructive" />
-                Threats Detected
-              </>
-            ) : (
-              <>
-                <CheckCircle2 className="h-6 w-6 text-green-600" />
-                Everything Looks Good
-              </>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+      {/* Threat Status */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
           {threatCount > 0 ? (
-            <div className="space-y-4">
-              <div className="text-center py-6 bg-destructive/10 rounded-lg">
-                <p className="text-4xl font-bold text-destructive mb-2">{threatCount}</p>
-                <p className="text-lg">copies of your art found online</p>
+            <AlertTriangle className="h-5 w-5 text-accent" />
+          ) : (
+            <CheckCircle2 className="h-5 w-5 text-green-500" />
+          )}
+          Threat Status
+        </h2>
+        <div className={cn(
+          'rounded-2xl border-2 p-6 transition-colors',
+          threatCount > 0 ? 'border-accent/30 bg-accent/5' : 'border-green-500/20 bg-green-500/5'
+        )}>
+          {threatCount > 0 ? (
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              <div className="relative w-28 h-28 shrink-0">
+                <div className="absolute inset-0 rounded-full border-2 border-accent/20" />
+                <div className="absolute inset-3 rounded-full border-2 border-accent/30" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-accent/10 border-2 border-accent/30 flex flex-col items-center justify-center">
+                    <span className="text-2xl font-bold text-accent">{threatCount}</span>
+                    <span className="text-[9px] font-semibold text-accent uppercase tracking-wider">Threats</span>
+                  </div>
+                </div>
+                <div
+                  className="absolute inset-0 rounded-full"
+                  style={{
+                    background: 'conic-gradient(from 0deg, transparent 0deg, hsl(var(--accent) / 0.15) 30deg, transparent 60deg)',
+                    animation: 'spin 4s linear infinite',
+                  }}
+                />
               </div>
-              <Button 
-                size="lg" 
-                variant="destructive"
-                onClick={() => navigate('/monitoring-hub')}
-                className="w-full text-lg py-6"
-              >
-                View Details & Take Action
-              </Button>
+              <div className="flex-1 text-center md:text-left">
+                <p className="text-xl font-bold text-foreground mb-1">Copies of your art found online</p>
+                <p className="text-muted-foreground mb-4">We detected potential unauthorized usage that needs your attention</p>
+                <Button variant="destructive" size="lg" onClick={() => navigate('/monitoring-hub')} className="gap-2">
+                  View Details & Take Action
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           ) : (
-            <div className="text-center py-12">
-              <CheckCircle2 className="h-16 w-16 text-green-600 mx-auto mb-4" />
-              <p className="text-xl text-green-700 font-medium">No threats detected today</p>
-              <p className="text-muted-foreground mt-2">We're watching your art 24/7</p>
+            <div className="flex flex-col items-center text-center py-8">
+              <div className="w-20 h-20 rounded-full bg-green-500/10 border-2 border-green-500/20 flex items-center justify-center mb-4">
+                <CheckCircle2 className="h-10 w-10 text-green-500" />
+              </div>
+              <p className="text-xl font-bold text-foreground mb-1">All Clear — No Threats Detected</p>
+              <p className="text-muted-foreground">We're watching your art 24/7 across the web</p>
             </div>
           )}
-        </CardContent>
-      </Card>
-
-      {/* Quick Actions */}
-      <div>
-        <h2 className="text-2xl font-bold mb-4">Quick Actions</h2>
-        <div className="grid md:grid-cols-3 gap-4">
-          <Button
-            size="lg"
-            onClick={() => navigate('/upload')}
-            className="h-32 flex flex-col gap-3 text-lg"
-          >
-            <Shield className="h-10 w-10" />
-            Protect New Artwork
-          </Button>
-          
-          <Button
-            size="lg"
-            variant="outline"
-            onClick={() => navigate('/monitoring-hub')}
-            className="h-32 flex flex-col gap-3 text-lg"
-          >
-            <Search className="h-10 w-10" />
-            Check for Copies
-          </Button>
-          
-          <Button
-            size="lg"
-            variant="outline"
-            onClick={() => navigate('/contact')}
-            className="h-32 flex flex-col gap-3 text-lg"
-          >
-            <Mail className="h-10 w-10" />
-            Get Help
-          </Button>
         </div>
       </div>
 
-      {/* Community Section */}
-      <div>
-        <h2 className="text-2xl font-bold mb-4">Community</h2>
+      {/* Quick Actions */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-foreground">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {[
+            { icon: Shield, label: 'Protect New Artwork', desc: 'Upload & secure', path: '/upload', gradient: 'from-primary/10 to-primary/5', iconColor: 'text-primary', borderHover: 'hover:border-primary/40' },
+            { icon: Search, label: 'Check for Copies', desc: 'Scan the web', path: '/monitoring-hub', gradient: 'from-secondary/10 to-secondary/5', iconColor: 'text-secondary', borderHover: 'hover:border-secondary/40' },
+            { icon: Mail, label: 'Get Help', desc: 'Contact support', path: '/contact', gradient: 'from-accent/10 to-accent/5', iconColor: 'text-accent', borderHover: 'hover:border-accent/40' },
+          ].map((action) => {
+            const Icon = action.icon;
+            return (
+              <button
+                key={action.path}
+                onClick={() => navigate(action.path)}
+                className={cn(
+                  'group relative flex flex-col items-start gap-4 rounded-2xl border border-border/50 p-6',
+                  'bg-gradient-to-br transition-all duration-300',
+                  'hover:shadow-lg hover:-translate-y-0.5',
+                  action.gradient,
+                  action.borderHover
+                )}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="rounded-xl bg-card/80 p-3">
+                    <Icon className={cn('h-7 w-7', action.iconColor)} />
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                </div>
+                <div className="text-left">
+                  <p className="font-semibold text-foreground text-lg">{action.label}</p>
+                  <p className="text-sm text-muted-foreground">{action.desc}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Community */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-foreground">Community</h2>
         <MobileCommunity />
       </div>
     </div>
