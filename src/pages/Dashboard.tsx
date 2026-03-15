@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BugReportButton } from '@/components/BugReportButton';
-import { useUserPreferences } from '@/contexts/UserPreferencesContext';
+// UserPreferencesContext removed — progressive disclosure replaces beginner/advanced mode
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { PremiumStatCard } from '@/components/dashboard/PremiumStatCard';
 import { ThreatRadar } from '@/components/dashboard/ThreatRadar';
@@ -42,7 +42,6 @@ import {
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { isAdmin } = useUserPreferences();
   const { stats: aiProtectionStats } = useAIProtectionStats();
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
@@ -420,21 +419,19 @@ const Dashboard = () => {
         <MobileCommunity />
       </div>
 
-      {/* Progressive disclosure: admin users can expand advanced stats */}
-      {isAdmin && (
-        <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced}>
-          <CollapsibleTrigger asChild>
-            <Button variant="outline" className="w-full flex items-center gap-2 justify-center">
-              <BarChart3 className="w-4 h-4" />
-              {showAdvanced ? 'Hide' : 'Show'} Advanced Analytics
-              <ChevronDown className={`w-4 h-4 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="mt-4 space-y-6">
-            <AdvancedStatsSection />
-          </CollapsibleContent>
-        </Collapsible>
-      )}
+      {/* Progressive disclosure: any user can expand advanced stats */}
+      <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced}>
+        <CollapsibleTrigger asChild>
+          <Button variant="outline" className="w-full flex items-center gap-2 justify-center">
+            <BarChart3 className="w-4 h-4" />
+            {showAdvanced ? 'Hide' : 'Show'} Advanced Analytics
+            <ChevronDown className={`w-4 h-4 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
+          </Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="mt-4 space-y-6">
+          <AdvancedStatsSection />
+        </CollapsibleContent>
+      </Collapsible>
 
       <BugReportButton />
     </div>
