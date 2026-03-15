@@ -197,19 +197,32 @@ const SimpleDashboard = () => {
                   <div key={art.id} className="group relative rounded-2xl overflow-hidden border border-border/50 bg-card shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                     {/* Thumbnail */}
                     <div className="aspect-[4/3] bg-muted relative overflow-hidden">
-                      <img
-                        src={imageUrl}
-                        alt={art.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
-                        onError={(e) => {
-                          const target = e.currentTarget;
-                          target.style.display = 'none';
-                          const fallback = target.nextElementSibling as HTMLElement;
-                          if (fallback) fallback.style.display = 'flex';
-                        }}
-                      />
-                      <div className="hidden absolute inset-0 items-center justify-center bg-muted">
+                      {loadingUrls || !imageUrl ? (
+                        <div className="flex items-center justify-center w-full h-full bg-muted">
+                          {loadingUrls ? (
+                            <Skeleton className="w-full h-full" />
+                          ) : (
+                            <div className="text-center">
+                              <Shield className="h-8 w-8 text-muted-foreground/40 mx-auto mb-1" />
+                              <span className="text-xs text-muted-foreground">Processing</span>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <>
+                          <img
+                            src={imageUrl}
+                            alt={art.title}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            loading="lazy"
+                            onError={(e) => {
+                              const target = e.currentTarget;
+                              target.style.display = 'none';
+                              const fallback = target.nextElementSibling as HTMLElement;
+                              if (fallback) fallback.style.display = 'flex';
+                            }}
+                          />
+                          <div className="hidden absolute inset-0 items-center justify-center bg-muted">
                         <div className="text-center">
                           <Shield className="h-8 w-8 text-muted-foreground/40 mx-auto mb-1" />
                           <span className="text-xs text-muted-foreground">Processing</span>
