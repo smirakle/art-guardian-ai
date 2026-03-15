@@ -48,33 +48,15 @@ import PressKit from "./pages/PressKit";
 import Status from "./pages/Status";
 import Support from "./pages/Support";
 
-// Feature pages
+// Feature pages (accessible via sub-navigation)
 import ProtectionHub from "./pages/ProtectionHub";
-import DeepfakeDetection from "./pages/DeepfakeDetection";
 import DeepfakeMatchDetails from "./pages/DeepfakeMatchDetails";
-import ForgeryDetection from "./pages/ForgeryDetection";
-import LegalTemplatesPage from "./pages/LegalTemplates";
-import LegalResources from "./pages/LegalResources";
 import Certificate from "./pages/Certificate";
 import Checkout from "./pages/Checkout";
 import Success from "./pages/Success";
 import Community from "./pages/Community";
-import ReverseImageSearch from "./pages/ReverseImageSearch";
-import DocumentProtection from "./pages/DocumentProtection";
-import Findings from "./pages/Findings";
 import B2BLogin from "./pages/B2BLogin";
-import Lawyers from "./pages/Lawyers";
-import AITPAAnalysis from "./pages/AITPAAnalysis";
 import ThreatAlerts from "./pages/ThreatAlerts";
-import DMCAAutomation from "./pages/DMCAAutomation";
-import AdvancedAnalytics from "./pages/AdvancedAnalytics";
-import MobileIntegration from "./pages/MobileIntegration";
-import SLAStatus from "./pages/SLAStatus";
-import CreatorMarkets from "./pages/CreatorMarkets";
-import InvestorHub from "./pages/InvestorHub";
-import DeepWebScan from "./components/DeepWebScan";
-import { EnterpriseAPIAccess } from "./components/EnterpriseAPIAccess";
-import { AIProtectionVisualDemo } from "./components/demo/AIProtectionVisualDemo";
 
 // Admin pages
 import Admin from "./pages/Admin";
