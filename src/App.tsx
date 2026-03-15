@@ -68,7 +68,6 @@ import AITPAAnalysis from "./pages/AITPAAnalysis";
 import ThreatAlerts from "./pages/ThreatAlerts";
 import DMCAAutomation from "./pages/DMCAAutomation";
 import AdvancedAnalytics from "./pages/AdvancedAnalytics";
-import PortfolioMonitoringAdvanced from "./pages/PortfolioMonitoringAdvanced";
 import MobileIntegration from "./pages/MobileIntegration";
 import SLAStatus from "./pages/SLAStatus";
 import CreatorMarkets from "./pages/CreatorMarkets";
