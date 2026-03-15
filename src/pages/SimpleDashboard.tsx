@@ -143,33 +143,96 @@ const SimpleDashboard = () => {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {artwork.map((art) => {
+          {artwork.map((art) => {
                 const imageUrl = art.file_paths[0]?.startsWith('http')
                   ? art.file_paths[0]
                   : supabase.storage.from('artwork').getPublicUrl(art.file_paths[0]).data.publicUrl;
 
+                const protectionLevel = art.ai_protection_level || 'standard';
+                const levelColors: Record<string, string> = {
+                  maximum: 'text-purple-600 dark:text-purple-400',
+                  standard: 'text-green-600 dark:text-green-400',
+                  light: 'text-blue-600 dark:text-blue-400',
+                };
+                const levelBgColors: Record<string, string> = {
+                  maximum: 'bg-purple-500/10',
+                  standard: 'bg-green-500/10',
+                  light: 'bg-blue-500/10',
+                };
+                const methods = Array.isArray(art.ai_protection_methods) ? art.ai_protection_methods : [];
+
                 return (
-                  <div key={art.id} className="group relative rounded-xl overflow-hidden border border-border/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
-                    <div className="aspect-square bg-muted relative">
+                  <div key={art.id} className="group relative rounded-2xl overflow-hidden border border-border/50 bg-card shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    {/* Thumbnail */}
+                    <div className="aspect-[4/3] bg-muted relative overflow-hidden">
                       <img
                         src={imageUrl}
                         alt={art.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
                         onError={(e) => {
-                          e.currentTarget.src = 'https://placehold.co/400x400?text=Image+Not+Found';
+                          const target = e.currentTarget;
+                          target.style.display = 'none';
+                          const fallback = target.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = 'flex';
                         }}
                       />
-                      {/* Hover overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="hidden absolute inset-0 items-center justify-center bg-muted">
+                        <div className="text-center">
+                          <Shield className="h-8 w-8 text-muted-foreground/40 mx-auto mb-1" />
+                          <span className="text-xs text-muted-foreground">Processing</span>
+                        </div>
+                      </div>
+                      {/* Gradient overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                      {/* Protection badge */}
+                      <div className="absolute top-2.5 right-2.5">
+                        <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-green-600/90 backdrop-blur-md shadow-lg">
+                          <CheckCircle2 className="h-3 w-3 text-white" />
+                          <span className="text-[10px] font-bold text-white uppercase tracking-wide">Protected</span>
+                        </div>
+                      </div>
+                      {/* Title on image */}
+                      <div className="absolute bottom-0 left-0 right-0 p-3">
+                        <p className="font-semibold text-sm text-white truncate drop-shadow-md">{art.title}</p>
+                      </div>
                     </div>
-                    <div className="absolute top-3 right-3">
-                      <Badge className="bg-green-600/90 backdrop-blur-sm border-0 text-xs gap-1 shadow-md">
-                        <CheckCircle2 className="h-3 w-3" />
-                        Protected
-                      </Badge>
-                    </div>
-                    <div className="p-3 bg-card">
-                      <p className="font-medium text-sm truncate text-foreground">{art.title}</p>
+                    {/* Protection Stats */}
+                    <div className="p-3 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                          <Shield className={cn('h-3.5 w-3.5', levelColors[protectionLevel] || 'text-green-600')} />
+                          <span className={cn('text-xs font-semibold capitalize', levelColors[protectionLevel] || 'text-green-600')}>
+                            {protectionLevel} Protection
+                          </span>
+                        </div>
+                        {art.enable_blockchain && (
+                          <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-primary/10">
+                            <Activity className="h-3 w-3 text-primary" />
+                            <span className="text-[10px] font-medium text-primary">Chain</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {art.enable_watermark && (
+                          <span className={cn('text-[10px] font-medium px-1.5 py-0.5 rounded-md', levelBgColors[protectionLevel] || 'bg-green-500/10', levelColors[protectionLevel] || 'text-green-600')}>
+                            Watermark
+                          </span>
+                        )}
+                        {art.ai_protection_enabled && (
+                          <span className={cn('text-[10px] font-medium px-1.5 py-0.5 rounded-md', levelBgColors[protectionLevel] || 'bg-green-500/10', levelColors[protectionLevel] || 'text-green-600')}>
+                            AI Shield
+                          </span>
+                        )}
+                        {methods.length > 0 && methods.slice(0, 2).map((m: any, i: number) => (
+                          <span key={i} className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground">
+                            {typeof m === 'string' ? m : 'Protected'}
+                          </span>
+                        ))}
+                      </div>
+                      <p className="text-[10px] text-muted-foreground">
+                        Protected {new Date(art.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </p>
                     </div>
                   </div>
                 );

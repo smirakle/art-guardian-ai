@@ -155,39 +155,81 @@ const ThumbnailCard = ({
   // Get file extension for display
   const fileExt = record.original_filename?.split('.').pop()?.toUpperCase() || 'IMG';
 
+  const levelColors: Record<string, string> = {
+    maximum: 'text-purple-600 dark:text-purple-400',
+    standard: 'text-green-600 dark:text-green-400',
+    basic: 'text-blue-600 dark:text-blue-400',
+    light: 'text-blue-600 dark:text-blue-400',
+    pro: 'text-purple-600 dark:text-purple-400',
+  };
+  const levelBgColors: Record<string, string> = {
+    maximum: 'bg-purple-500/10',
+    standard: 'bg-green-500/10',
+    basic: 'bg-blue-500/10',
+    light: 'bg-blue-500/10',
+    pro: 'bg-purple-500/10',
+  };
+  const level = record.protection_level?.toLowerCase() || 'standard';
+
   return (
-    <div className="relative group">
-      <div className="aspect-square bg-gradient-to-br from-muted to-muted/50 rounded-lg flex items-center justify-center border overflow-hidden">
+    <div className="group relative rounded-2xl overflow-hidden border border-border/50 bg-card shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+      {/* Thumbnail */}
+      <div className="aspect-[4/3] bg-muted relative overflow-hidden">
         {isLoading ? (
           <div className="animate-pulse w-full h-full bg-muted" />
         ) : thumbnailUrl ? (
           <img 
             src={thumbnailUrl} 
             alt={record.original_filename}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
             onError={() => setThumbnailUrl(null)}
           />
         ) : (
-          <div className="flex flex-col items-center justify-center text-muted-foreground p-2">
-            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-2">
-              <FileImage className="h-6 w-6 text-primary/60" />
+          <div className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-muted to-muted/30">
+            <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
+              <FileImage className="h-7 w-7 text-primary/50" />
             </div>
-            <span className="text-[10px] font-medium uppercase">{fileExt}</span>
-            <span className="text-[9px] opacity-60">Protected Locally</span>
+            <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">{fileExt}</span>
+            <span className="text-[9px] text-muted-foreground/60 mt-0.5">Protected Locally</span>
           </div>
         )}
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+        {/* Protection badge */}
+        <div className="absolute top-2.5 right-2.5">
+          <div className={`flex items-center gap-1 px-2 py-1 rounded-full backdrop-blur-md shadow-lg ${getProtectionLevelColor(record.protection_level)}`}>
+            <Shield className="h-3 w-3 text-white" />
+            <span className="text-[10px] font-bold text-white uppercase tracking-wide">
+              {record.protection_level || 'Protected'}
+            </span>
+          </div>
+        </div>
+        {/* Filename on image */}
+        <div className="absolute bottom-0 left-0 right-0 p-3">
+          <p className="font-semibold text-sm text-white truncate drop-shadow-md">{record.original_filename}</p>
+        </div>
       </div>
-      <Badge 
-        className={`absolute top-2 right-2 ${getProtectionLevelColor(record.protection_level)}`}
-      >
-        {record.protection_level || 'Protected'}
-      </Badge>
-      <p className="mt-2 font-medium truncate text-sm">
-        {record.original_filename}
-      </p>
-      <p className="text-xs text-muted-foreground">
-        {formatDistanceToNow(new Date(record.created_at), { addSuffix: true })}
-      </p>
+      {/* Protection Stats */}
+      <div className="p-3 space-y-2">
+        <div className="flex items-center gap-1.5">
+          <Shield className={`h-3.5 w-3.5 ${levelColors[level] || 'text-green-600'}`} />
+          <span className={`text-xs font-semibold capitalize ${levelColors[level] || 'text-green-600'}`}>
+            {level} Protection
+          </span>
+        </div>
+        <div className="flex flex-wrap gap-1">
+          <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-md ${levelBgColors[level] || 'bg-green-500/10'} ${levelColors[level] || 'text-green-600'}`}>
+            AI Shield
+          </span>
+          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground">
+            Plugin
+          </span>
+        </div>
+        <p className="text-[10px] text-muted-foreground">
+          {formatDistanceToNow(new Date(record.created_at), { addSuffix: true })}
+        </p>
+      </div>
     </div>
   );
 };
