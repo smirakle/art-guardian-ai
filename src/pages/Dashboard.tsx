@@ -1,19 +1,17 @@
-import React, { useState, useEffect, useMemo, lazy, Suspense } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { useUserPreferences } from '@/contexts/UserPreferencesContext';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import React, { useState } from 'react';
 import { BugReportButton } from '@/components/BugReportButton';
-import { DashboardEmptyState } from '@/components/customer-success/DashboardEmptyState';
-import { PremiumDashboardHeader } from '@/components/dashboard/PremiumDashboardHeader';
+import SimpleDashboard from './SimpleDashboard';
+import { useUserPreferences } from '@/contexts/UserPreferencesContext';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Button } from '@/components/ui/button';
+import { ChevronDown, BarChart3 } from 'lucide-react';
 import { PremiumStatCard } from '@/components/dashboard/PremiumStatCard';
-import { DashboardQuickActions } from '@/components/dashboard/DashboardQuickActions';
-import { DashboardActivityFeed } from '@/components/dashboard/DashboardActivityFeed';
 import { ThreatRadar } from '@/components/dashboard/ThreatRadar';
 import { HighThreatsSection } from '@/components/dashboard/HighThreatsSection';
-import { Skeleton } from '@/components/ui/skeleton';
+import { DashboardActivityFeed } from '@/components/dashboard/DashboardActivityFeed';
+import { useAuth } from '@/contexts/AuthContext';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import {
   Shield,
   Activity,
@@ -23,47 +21,46 @@ import {
   TrendingUp,
 } from 'lucide-react';
 
-import SimpleDashboard from './SimpleDashboard';
-
 const Dashboard = () => {
-  const { interfaceMode } = useUserPreferences();
-
-  if (interfaceMode === 'beginner') {
-    return (
-      <>
-        <SimpleDashboard />
-        <BugReportButton />
-      </>
-    );
-  }
+  const { isAdmin } = useUserPreferences();
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   return (
     <>
-      <PremiumDashboardContent />
+      <SimpleDashboard />
+
+      {/* Progressive disclosure: admin users can expand advanced stats */}
+      {isAdmin && (
+        <div className="max-w-7xl mx-auto mt-6 px-2">
+          <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced}>
+            <CollapsibleTrigger asChild>
+              <Button variant="outline" className="w-full flex items-center gap-2 justify-center">
+                <BarChart3 className="w-4 h-4" />
+                {showAdvanced ? 'Hide' : 'Show'} Advanced Analytics
+                <ChevronDown className={`w-4 h-4 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-4 space-y-6">
+              <AdvancedStatsSection />
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
+      )}
+
       <BugReportButton />
     </>
   );
 };
 
-const PremiumDashboardContent = () => {
-  const { user, loading: authLoading } = useAuth();
-  const { toast } = useToast();
+const AdvancedStatsSection = () => {
+  const { user } = useAuth();
 
-  const { data: stats, isLoading: dataLoading } = useQuery({
-    queryKey: ['dashboardStats', user?.id],
-    enabled: !!user && !authLoading,
+  const { data: stats } = useQuery({
+    queryKey: ['advancedDashboardStats', user?.id],
+    enabled: !!user,
     staleTime: 30000,
-    gcTime: 300000,
     queryFn: async () => {
-      const [
-        artworkResult,
-        protectionResult,
-        blockchainResult,
-        violationResult,
-        dmcaResult,
-        agentResult,
-        threatResult,
-      ] = await Promise.all([
+      const [artworkResult, protectionResult, blockchainResult, violationResult, dmcaResult, agentResult, threatResult] = await Promise.all([
         supabase.from('artwork').select('id, title, created_at', { count: 'exact' }).eq('user_id', user!.id).order('created_at', { ascending: false }).limit(1),
         supabase.from('ai_protection_records').select('id, created_at', { count: 'exact' }).eq('user_id', user!.id).eq('is_active', true).order('created_at', { ascending: false }).limit(1),
         supabase.from('blockchain_certificates').select('id, created_at', { count: 'exact' }).eq('user_id', user!.id).order('created_at', { ascending: false }).limit(1),
@@ -105,98 +102,26 @@ const PremiumDashboardContent = () => {
     },
   });
 
-  const hasAnyData = useMemo(
-    () => (stats ? stats.protectedAssets > 0 || stats.threats > 0 || stats.blockchainRecords > 0 : false),
-    [stats]
-  );
-
-  if (authLoading || dataLoading) {
-    return (
-      <div className="space-y-6 max-w-7xl mx-auto">
-        <Skeleton className="h-40 w-full rounded-2xl" />
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {[...Array(6)].map((_, i) => (
-            <Skeleton key={i} className="h-32 rounded-2xl" />
-          ))}
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Skeleton className="h-80 rounded-2xl lg:col-span-2" />
-          <Skeleton className="h-80 rounded-2xl" />
-        </div>
-      </div>
-    );
-  }
-
-  if (!hasAnyData) {
-    return <DashboardEmptyState />;
-  }
-
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      {/* Hero Header */}
-      <PremiumDashboardHeader />
-
-      {/* Stat Cards */}
+    <>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <PremiumStatCard
-          icon={Shield}
-          value={stats?.protectedAssets.toLocaleString() ?? '0'}
-          label="Protected Assets"
-          accentColor="green"
-          trend="+2"
-          trendUp
-        />
-        <PremiumStatCard
-          icon={Activity}
-          value={stats?.activeScans ?? 0}
-          label="Active Scans"
-          accentColor="primary"
-        />
-        <PremiumStatCard
-          icon={AlertTriangle}
-          value={stats?.threats ?? 0}
-          label="Threats Found"
-          accentColor="accent"
-        />
-        <PremiumStatCard
-          icon={Link2}
-          value={stats?.blockchainRecords ?? 0}
-          label="Blockchain Records"
-          accentColor="purple"
-        />
-        <PremiumStatCard
-          icon={Scale}
-          value={stats?.legalActions ?? 0}
-          label="Legal Actions"
-          accentColor="secondary"
-        />
-        <PremiumStatCard
-          icon={TrendingUp}
-          value={`${stats?.successRate ?? 95}%`}
-          label="Success Rate"
-          accentColor="green"
-          trend="↑"
-          trendUp
-        />
+        <PremiumStatCard icon={Shield} value={stats?.protectedAssets.toLocaleString() ?? '0'} label="Protected Assets" accentColor="green" trend="+2" trendUp />
+        <PremiumStatCard icon={Activity} value={stats?.activeScans ?? 0} label="Active Scans" accentColor="primary" />
+        <PremiumStatCard icon={AlertTriangle} value={stats?.threats ?? 0} label="Threats Found" accentColor="accent" />
+        <PremiumStatCard icon={Link2} value={stats?.blockchainRecords ?? 0} label="Blockchain Records" accentColor="purple" />
+        <PremiumStatCard icon={Scale} value={stats?.legalActions ?? 0} label="Legal Actions" accentColor="secondary" />
+        <PremiumStatCard icon={TrendingUp} value={`${stats?.successRate ?? 95}%`} label="Success Rate" accentColor="green" trend="↑" trendUp />
       </div>
 
-      {/* Quick Actions */}
-      <DashboardQuickActions />
-
-      {/* Bento Grid: Activity + Threat Radar */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <DashboardActivityFeed activities={stats?.recentActivity ?? []} />
         </div>
-        <ThreatRadar
-          threatCount={stats?.threats ?? 0}
-          successRate={stats?.successRate ?? 95}
-        />
+        <ThreatRadar threatCount={stats?.threats ?? 0} successRate={stats?.successRate ?? 95} />
       </div>
 
-      {/* High Threats */}
       <HighThreatsSection />
-    </div>
+    </>
   );
 };
 
