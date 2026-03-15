@@ -1,48 +1,25 @@
 
 
-## Problem: "Tree" file shows no protection level
+## Problem
 
-**Root Cause**: The Upload wizard's database insert (line 229-239 in `Upload.tsx`) is missing two critical fields:
-- `ai_protection_enabled` — not set, defaults to `null`/`false`
-- `ai_protection_level` — not set, defaults to `null`
+The "As Seen On" / BizWeekly section and CAI Membership banner are stacked vertically as separate bland sections with no visual cohesion. They look like afterthoughts — plain text, small images, no visual hierarchy, and too much whitespace between them.
 
-On the Dashboard, line 205 does `art.ai_protection_level || 'standard'`, which would fall back to `'standard'` for `null`. However, `ai_protection_enabled` being `null`/`false` means the "AI Shield" badge on line 286 doesn't render. Combined with no protection level color mapping for unexpected values, the card appears to show weak/no protection indicators.
+## Plan
 
-**Fix**: Update the artwork insert in `src/pages/Upload.tsx` to include the protection fields:
+Combine both credibility signals (BizWeekly press + CAI membership) into a single, polished **"Credibility & Trust"** section with better visual design:
 
-```tsx
-// Line 229-239: Add missing protection fields
-.insert({
-  user_id: user.id,
-  title: artworkTitle,
-  description: description || null,
-  category,
-  tags: tags.length > 0 ? tags : null,
-  license_type: licenseType || null,
-  file_paths: allPaths,
-  enable_watermark: enableWatermark,
-  ai_protection_enabled: true,        // ← ADD
-  ai_protection_level: 'standard',    // ← ADD
-  status: 'protected'
-})
-```
+### Changes to `src/pages/Index.tsx` (lines 342-389)
 
-**Secondary fix**: Update the Dashboard fallback on line 205 to be more robust, ensuring even edge cases display correctly:
+Replace the two separate sections with one unified section:
 
-```tsx
-const protectionLevel = art.ai_protection_level && art.ai_protection_level !== 'none' 
-  ? art.ai_protection_level 
-  : 'standard';
-```
+1. **Single section** with subtle gradient background and proper vertical spacing
+2. **Two-column layout** on desktop (BizWeekly left, CAI right), stacked on mobile
+3. Each credential in a **card-like container** with subtle border, rounded corners, and hover effect
+4. **Larger logo sizes** — CAI logo `h-16 md:h-20`, BizWeekly image `max-w-sm`
+5. **Section header**: "Trusted & Recognized" with a subtle label above
+6. **Divider line** between the two on desktop (vertical) / mobile (horizontal)
+7. Harvard disclaimer kept as small text below the BizWeekly card
+8. "Read the feature" link styled as a proper button/pill
 
-### Files to change
-1. **`src/pages/Upload.tsx`** — Add `ai_protection_enabled: true` and `ai_protection_level: 'standard'` to the artwork insert
-2. **`src/pages/Dashboard.tsx`** — Harden the fallback logic for protection level display
-
-### Existing data
-The "Tree" file already in the database still has `null` for these fields. The Dashboard fallback fix will handle this. Optionally, we can run a one-time SQL update to fix existing records:
-```sql
-UPDATE artwork SET ai_protection_enabled = true, ai_protection_level = 'standard' 
-WHERE ai_protection_level IS NULL AND status = 'protected';
-```
+This creates a cohesive, professional credibility strip that draws the eye without being gaudy.
 

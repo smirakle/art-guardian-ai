@@ -235,6 +235,8 @@ const Upload = () => {
             license_type: licenseType || null,
             file_paths: allPaths,
             enable_watermark: enableWatermark,
+            ai_protection_enabled: true,
+            ai_protection_level: 'standard',
             status: 'protected'
           })
           .select()
