@@ -202,7 +202,7 @@ const Dashboard = () => {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {artwork.map((art) => {
                 const imageUrl = signedUrls[art.id];
-                const protectionLevel = art.ai_protection_level || 'standard';
+                const protectionLevel = art.ai_protection_level && art.ai_protection_level !== 'none' ? art.ai_protection_level : 'standard';
                 const levelColors: Record<string, string> = {
                   maximum: 'text-purple-600 dark:text-purple-400',
                   standard: 'text-green-600 dark:text-green-400',
