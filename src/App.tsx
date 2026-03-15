@@ -134,7 +134,7 @@ const AppRoutes = () => (
     <Route path="/threat-alerts" element={<ThreatAlerts />} />
     <Route path="/dmca-automation" element={<DMCAAutomation />} />
     <Route path="/analytics" element={<AdvancedAnalytics />} />
-    <Route path="/portfolio-monitoring-advanced" element={<PortfolioMonitoringAdvanced />} />
+    <Route path="/portfolio-monitoring-advanced" element={<Navigate to="/monitoring-hub" replace />} />
     <Route path="/deep-scan" element={<DeepWebScan />} />
     <Route path="/mobile" element={<MobileIntegration />} />
     <Route path="/sla-status" element={<SLAStatus />} />
