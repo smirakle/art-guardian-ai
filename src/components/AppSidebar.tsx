@@ -25,7 +25,7 @@ const coreNavItems = [
   { path: "/dashboard", label: "Dashboard", icon: Home },
   { path: "/upload", label: "Upload & Protect", icon: Upload },
   { path: "/monitoring-hub", label: "Monitor", icon: Monitor },
-  { path: "/simple-findings", label: "Findings", icon: FolderSearch },
+  { path: "/threat-alerts", label: "Alerts", icon: FolderSearch },
   { path: "/dmca-center", label: "Legal & DMCA", icon: Gavel },
   { path: "/settings", label: "Settings", icon: Settings },
 ];

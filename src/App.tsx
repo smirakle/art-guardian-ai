@@ -109,8 +109,7 @@ const AppRoutes = () => (
     <Route path="/dashboard" element={<Dashboard />} />
     <Route path="/upload" element={<Upload />} />
     <Route path="/monitoring-hub" element={<MonitoringHub />} />
-    <Route path="/simple-findings" element={<SimpleFindings />} />
-    <Route path="/findings" element={<Findings />} />
+    <Route path="/threat-alerts" element={<ThreatAlerts />} />
     <Route path="/dmca-center" element={<DMCACenter />} />
     <Route path="/settings" element={<Settings />} />
     <Route path="/profile" element={<Profile />} />
@@ -118,30 +117,33 @@ const AppRoutes = () => (
     <Route path="/checkout" element={<Checkout />} />
     <Route path="/success" element={<Success />} />
 
-    {/* Feature pages */}
+    {/* Sub-feature pages (accessible via in-app links, not primary nav) */}
     <Route path="/protection-hub" element={<ProtectionHub />} />
-    <Route path="/deepfake-detection" element={<DeepfakeDetection />} />
     <Route path="/deepfake-match/:matchId" element={<DeepfakeMatchDetails />} />
-    <Route path="/forgery-detection" element={<ForgeryDetection />} />
-    <Route path="/legal-resources" element={<LegalResources />} />
-    <Route path="/legal-templates" element={<LegalTemplatesPage />} />
-    <Route path="/lawyers" element={<Lawyers />} />
-    <Route path="/community" element={<Community />} />
     <Route path="/certificate/:certificateId" element={<Certificate />} />
-    <Route path="/document-protection" element={<DocumentProtection />} />
-    <Route path="/reverse-image-search" element={<ReverseImageSearch />} />
-    <Route path="/aitpa-analysis" element={<AITPAAnalysis />} />
-    <Route path="/threat-alerts" element={<ThreatAlerts />} />
-    <Route path="/dmca-automation" element={<DMCAAutomation />} />
-    <Route path="/analytics" element={<AdvancedAnalytics />} />
-    <Route path="/portfolio-monitoring-advanced" element={<Navigate to="/monitoring-hub" replace />} />
-    <Route path="/deep-scan" element={<DeepWebScan />} />
-    <Route path="/mobile" element={<MobileIntegration />} />
-    <Route path="/sla-status" element={<SLAStatus />} />
-    <Route path="/markets" element={<CreatorMarkets />} />
-    <Route path="/investors" element={<InvestorHub />} />
-    <Route path="/enterprise-api" element={<EnterpriseAPIAccess />} />
+    <Route path="/community" element={<Community />} />
     <Route path="/b2b-login" element={<B2BLogin />} />
+
+    {/* Redirects: feature pages consolidated into hubs */}
+    <Route path="/simple-findings" element={<Navigate to="/threat-alerts" replace />} />
+    <Route path="/findings" element={<Navigate to="/threat-alerts" replace />} />
+    <Route path="/deepfake-detection" element={<Navigate to="/monitoring-hub" replace />} />
+    <Route path="/forgery-detection" element={<Navigate to="/monitoring-hub" replace />} />
+    <Route path="/reverse-image-search" element={<Navigate to="/monitoring-hub" replace />} />
+    <Route path="/document-protection" element={<Navigate to="/upload" replace />} />
+    <Route path="/deep-scan" element={<Navigate to="/monitoring-hub" replace />} />
+    <Route path="/legal-resources" element={<Navigate to="/dmca-center" replace />} />
+    <Route path="/legal-templates" element={<Navigate to="/dmca-center" replace />} />
+    <Route path="/lawyers" element={<Navigate to="/dmca-center" replace />} />
+    <Route path="/dmca-automation" element={<Navigate to="/dmca-center" replace />} />
+    <Route path="/aitpa-analysis" element={<Navigate to="/monitoring-hub" replace />} />
+    <Route path="/analytics" element={<Navigate to="/dashboard" replace />} />
+    <Route path="/portfolio-monitoring-advanced" element={<Navigate to="/monitoring-hub" replace />} />
+    <Route path="/mobile" element={<Navigate to="/settings" replace />} />
+    <Route path="/sla-status" element={<Navigate to="/settings" replace />} />
+    <Route path="/markets" element={<Navigate to="/dashboard" replace />} />
+    <Route path="/investors" element={<Navigate to="/dashboard" replace />} />
+    <Route path="/enterprise-api" element={<Navigate to="/settings" replace />} />
 
     {/* Public / marketing pages */}
     <Route path="/about-tsmo" element={<AboutTsmo />} />
