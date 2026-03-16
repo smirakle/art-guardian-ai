@@ -508,6 +508,7 @@ const AdvancedStatsSection = () => {
       </div>
 
       <HighThreatsSection />
+      <OnboardingTour />
     </>
   );
 };
