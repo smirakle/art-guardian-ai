@@ -2,20 +2,24 @@
 
 ## Problem
 
-`SignUpForm` is defined **inside** the `Pricing` component (line 294). Every keystroke on the promo code input calls `setPromoCode`, re-rendering `Pricing`, which recreates `SignUpForm` as a new component reference. React unmounts and remounts the form, causing the input to lose focus after each character.
+The "As Seen On" / BizWeekly section and CAI Membership banner are stacked vertically as separate bland sections with no visual cohesion. They look like afterthoughts — plain text, small images, no visual hierarchy, and too much whitespace between them.
 
-## Fix
+## Plan
 
-Extract `SignUpForm` out of the `Pricing` function to the top level of the file (or a separate file). Pass all referenced state/handlers as props.
+Combine both credibility signals (BizWeekly press + CAI membership) into a single, polished **"Credibility & Trust"** section with better visual design:
 
-### Changes — `src/pages/Pricing.tsx`
+### Changes to `src/pages/Index.tsx` (lines 342-389)
 
-1. **Define a props interface** above `Pricing` for `SignUpForm`:
-   - `plan`, `formData`, `handleInputChange`, `promoCode`, `setPromoCode`, `emailError`, `validateEmail`, `billingCycle`, `isProcessing`, `handleFormSubmit`, `formatPrice`
+Replace the two separate sections with one unified section:
 
-2. **Move `SignUpForm`** (lines 294–419) outside and above the `Pricing` component, accepting the props interface instead of using closure variables.
+1. **Single section** with subtle gradient background and proper vertical spacing
+2. **Two-column layout** on desktop (BizWeekly left, CAI right), stacked on mobile
+3. Each credential in a **card-like container** with subtle border, rounded corners, and hover effect
+4. **Larger logo sizes** — CAI logo `h-16 md:h-20`, BizWeekly image `max-w-sm`
+5. **Section header**: "Trusted & Recognized" with a subtle label above
+6. **Divider line** between the two on desktop (vertical) / mobile (horizontal)
+7. Harvard disclaimer kept as small text below the BizWeekly card
+8. "Read the feature" link styled as a proper button/pill
 
-3. **Update the usage** inside `Pricing` to pass these values as props.
-
-Single file change, no new dependencies.
+This creates a cohesive, professional credibility strip that draws the eye without being gaudy.
 

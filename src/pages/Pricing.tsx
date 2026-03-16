@@ -11,6 +11,149 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import StripeDisclosure from "@/components/billing/StripeDisclosure";
+interface SignUpFormProps {
+  plan: any;
+  formData: { firstName: string; lastName: string; email: string };
+  handleInputChange: (field: string, value: string) => void;
+  promoCode: string;
+  setPromoCode: (value: string) => void;
+  emailError: string;
+  validateEmail: (email: string) => boolean;
+  billingCycle: 'monthly' | 'yearly';
+  isProcessing: boolean;
+  handleFormSubmit: (planId: string) => void;
+  formatPrice: (price: number | string) => string;
+}
+
+const SignUpForm = ({
+  plan, formData, handleInputChange, promoCode, setPromoCode,
+  emailError, validateEmail, billingCycle, isProcessing, handleFormSubmit, formatPrice,
+}: SignUpFormProps) => {
+  return (
+    <div className="space-y-6">
+      {/* Stripe Redirect Notice */}
+      <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <Shield className="w-5 h-5 text-primary" />
+          <span className="font-semibold text-primary">Secure Checkout</span>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          You'll be redirected to Stripe's secure checkout to complete your payment. 
+          Your payment information is handled securely by Stripe.
+        </p>
+      </div>
+
+      {/* Basic Information */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2 mb-2">
+          <User className="w-5 h-5 text-primary" />
+          <h3 className="text-lg font-semibold">Your Information</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="firstName">First Name</Label>
+            <Input
+              id="firstName"
+              value={formData.firstName}
+              onChange={(e) => handleInputChange('firstName', e.target.value)}
+              placeholder="John"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="lastName">Last Name</Label>
+            <Input
+              id="lastName"
+              value={formData.lastName}
+              onChange={(e) => handleInputChange('lastName', e.target.value)}
+              placeholder="Doe"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="email" className="flex items-center gap-1">
+            Email Address <span className="text-destructive">*</span>
+          </Label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => {
+                handleInputChange('email', e.target.value);
+                if (emailError) validateEmail(e.target.value);
+              }}
+              onBlur={(e) => validateEmail(e.target.value)}
+              placeholder="john@example.com"
+              className={`pl-10 ${emailError ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+              required
+            />
+          </div>
+          {emailError && (
+            <p className="text-sm text-destructive">{emailError}</p>
+          )}
+        </div>
+      </div>
+
+      {/* Promotional Code */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2 mb-2">
+          <Tag className="w-5 h-5 text-primary" />
+          <h3 className="text-lg font-semibold">Promotional Code</h3>
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="promoCode">Promo Code (Optional)</Label>
+          <div className="relative">
+            <Tag className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              id="promoCode"
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value)}
+              placeholder="Enter promo code"
+              className="pl-10"
+            />
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Enter "FEEDBACK" for one month free!
+          </p>
+        </div>
+      </div>
+
+      {/* Plan Summary */}
+      <div className="bg-muted/50 p-4 rounded-lg">
+        <h4 className="font-semibold mb-2">Plan Summary</h4>
+        <div className="flex justify-between items-center">
+          <span>{plan.name} Plan ({billingCycle})</span>
+          <span className="font-bold">
+            {formatPrice(plan.price[billingCycle])}{typeof plan.price[billingCycle] === 'number' ? `/${billingCycle === 'monthly' ? 'mo' : 'yr'}` : ''}
+          </span>
+        </div>
+        {plan.discount && (
+          <div className="text-sm text-green-600 mt-1">
+            {plan.discount} - You save ${typeof plan.originalPrice?.[billingCycle] === 'number' && typeof plan.price[billingCycle] === 'number' ? 
+              plan.originalPrice[billingCycle] - plan.price[billingCycle] : 0}!
+          </div>
+        )}
+      </div>
+
+      <Button
+        onClick={() => {
+          if (!validateEmail(formData.email)) return;
+          handleFormSubmit(plan.id);
+        }}
+        disabled={isProcessing}
+        className="w-full py-3 text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 disabled:opacity-50"
+      >
+        {isProcessing ? "Processing..." : "Continue to Secure Checkout →"}
+      </Button>
+
+      <StripeDisclosure className="mt-3 max-w-md mx-auto" />
+    </div>
+  );
+};
 
 const Pricing = () => {
   const { toast } = useToast();
@@ -291,132 +434,7 @@ const Pricing = () => {
     return true;
   };
 
-  const SignUpForm = ({ plan }: { plan: any }) => {
-    return (
-      <div className="space-y-6">
-        {/* Stripe Redirect Notice */}
-        <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Shield className="w-5 h-5 text-primary" />
-            <span className="font-semibold text-primary">Secure Checkout</span>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            You'll be redirected to Stripe's secure checkout to complete your payment. 
-            Your payment information is handled securely by Stripe.
-          </p>
-        </div>
 
-        {/* Basic Information */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 mb-2">
-            <User className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-semibold">Your Information</h3>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
-              <Input
-                id="firstName"
-                value={formData.firstName}
-                onChange={(e) => handleInputChange('firstName', e.target.value)}
-                placeholder="John"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
-              <Input
-                id="lastName"
-                value={formData.lastName}
-                onChange={(e) => handleInputChange('lastName', e.target.value)}
-                placeholder="Doe"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email" className="flex items-center gap-1">
-              Email Address <span className="text-destructive">*</span>
-            </Label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => {
-                  handleInputChange('email', e.target.value);
-                  if (emailError) validateEmail(e.target.value);
-                }}
-                onBlur={(e) => validateEmail(e.target.value)}
-                placeholder="john@example.com"
-                className={`pl-10 ${emailError ? 'border-destructive focus-visible:ring-destructive' : ''}`}
-                required
-              />
-            </div>
-            {emailError && (
-              <p className="text-sm text-destructive">{emailError}</p>
-            )}
-          </div>
-        </div>
-
-        {/* Promotional Code */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Tag className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-semibold">Promotional Code</h3>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="promoCode">Promo Code (Optional)</Label>
-            <div className="relative">
-              <Tag className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="promoCode"
-                value={promoCode}
-                onChange={(e) => setPromoCode(e.target.value)}
-                placeholder="Enter promo code"
-                className="pl-10"
-              />
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Enter "FEEDBACK" for one month free!
-            </p>
-          </div>
-        </div>
-
-        {/* Plan Summary */}
-        <div className="bg-muted/50 p-4 rounded-lg">
-          <h4 className="font-semibold mb-2">Plan Summary</h4>
-          <div className="flex justify-between items-center">
-            <span>{plan.name} Plan ({billingCycle})</span>
-            <span className="font-bold">
-              {formatPrice(plan.price[billingCycle])}{typeof plan.price[billingCycle] === 'number' ? `/${billingCycle === 'monthly' ? 'mo' : 'yr'}` : ''}
-            </span>
-          </div>
-          {plan.discount && (
-            <div className="text-sm text-green-600 mt-1">
-              {plan.discount} - You save ${typeof plan.originalPrice?.[billingCycle] === 'number' && typeof plan.price[billingCycle] === 'number' ? 
-                plan.originalPrice[billingCycle] - plan.price[billingCycle] : 0}!
-            </div>
-          )}
-        </div>
-
-        <Button
-          onClick={() => {
-            if (!validateEmail(formData.email)) return;
-            handleFormSubmit(plan.id);
-          }}
-          disabled={isProcessing}
-          className="w-full py-3 text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 disabled:opacity-50"
-        >
-          {isProcessing ? "Processing..." : "Continue to Secure Checkout →"}
-        </Button>
-
-        <StripeDisclosure className="mt-3 max-w-md mx-auto" />
-      </div>
-    );
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -598,7 +616,19 @@ const Pricing = () => {
                                   Complete your information to start protecting your creative work
                                 </DialogDescription>
                               </DialogHeader>
-                              <SignUpForm plan={plan} />
+                              <SignUpForm
+                                plan={plan}
+                                formData={formData}
+                                handleInputChange={handleInputChange}
+                                promoCode={promoCode}
+                                setPromoCode={setPromoCode}
+                                emailError={emailError}
+                                validateEmail={validateEmail}
+                                billingCycle={billingCycle}
+                                isProcessing={isProcessing}
+                                handleFormSubmit={handleFormSubmit}
+                                formatPrice={formatPrice}
+                              />
                             </DialogContent>
                           </Dialog>
                         )}
