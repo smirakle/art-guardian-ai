@@ -434,7 +434,7 @@ const Pricing = () => {
     return true;
   };
 
-  // SignUpForm extracted to top-level to prevent remount on every keystroke
+
 
   return (
     <div className="min-h-screen bg-background">
