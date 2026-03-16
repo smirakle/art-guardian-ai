@@ -94,10 +94,10 @@ const Support = () => {
                     For general inquiries and support questions
                   </p>
                   <a 
-                    href="mailto:support@tsmo.com" 
+                    href="mailto:support@tsmowatch.com" 
                     className="text-primary hover:underline font-medium"
                   >
-                    support@tsmo.com
+                    support@tsmowatch.com
                   </a>
                   <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                     <Clock className="h-4 w-4" />
