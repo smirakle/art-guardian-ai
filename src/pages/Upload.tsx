@@ -27,7 +27,8 @@ import {
   ArrowLeft,
   Lock,
   Zap,
-  Globe
+  Globe,
+  Download
 } from "lucide-react";
 import {
   Collapsible,
