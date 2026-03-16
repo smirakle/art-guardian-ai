@@ -1,25 +1,40 @@
 
 
-## Problem
+# Beta Readiness Fix Plan
 
-The "As Seen On" / BizWeekly section and CAI Membership banner are stacked vertically as separate bland sections with no visual cohesion. They look like afterthoughts — plain text, small images, no visual hierarchy, and too much whitespace between them.
+## Current State
+- **287 RLS warnings**: Many tables have `WITH CHECK (true)` or `USING (true)` on INSERT/UPDATE/DELETE, allowing any user (including anonymous via `public` role) to write data.
+- **Secrets**: `STRIPE_SECRET_KEY` exists but **`STRIPE_WEBHOOK_SECRET`** is missing — subscriptions won't update after payment.
+- **No database indexes** on high-traffic columns.
 
-## Plan
+## Plan (3 Phases)
 
-Combine both credibility signals (BizWeekly press + CAI membership) into a single, polished **"Credibility & Trust"** section with better visual design:
+### Phase 1: Critical RLS Hardening
+Run a single SQL migration to fix the most dangerous policies — tables with `public` role INSERT/UPDATE/DELETE using `true`. Priority tables:
 
-### Changes to `src/pages/Index.tsx` (lines 342-389)
+**High-risk user-data tables** (have `user_id`, should scope to `auth.uid()`):
+- `artwork`, `subscriptions`, `profiles`, `ai_protection_records`, `portfolios`, `copyright_matches`
 
-Replace the two separate sections with one unified section:
+**System/audit tables** (should restrict to `service_role` only — drop the `public` role policy):
+- `error_logs`, `ai_protection_audit_log`, `security_audit_log`, `ai_training_violations`, `ai_detection_results`, `document_protection_jobs`
 
-1. **Single section** with subtle gradient background and proper vertical spacing
-2. **Two-column layout** on desktop (BizWeekly left, CAI right), stacked on mobile
-3. Each credential in a **card-like container** with subtle border, rounded corners, and hover effect
-4. **Larger logo sizes** — CAI logo `h-16 md:h-20`, BizWeekly image `max-w-sm`
-5. **Section header**: "Trusted & Recognized" with a subtle label above
-6. **Divider line** between the two on desktop (vertical) / mobile (horizontal)
-7. Harvard disclaimer kept as small text below the BizWeekly card
-8. "Read the feature" link styled as a proper button/pill
+**Approach**: For each table, `DROP POLICY` the permissive one, then `CREATE POLICY` scoped to `authenticated` with `auth.uid() = user_id`. For system tables, drop the public policy entirely (edge functions use service_role key which bypasses RLS).
 
-This creates a cohesive, professional credibility strip that draws the eye without being gaudy.
+### Phase 2: Add Missing Stripe Webhook Secret
+- Prompt you to add `STRIPE_WEBHOOK_SECRET` to Supabase edge function secrets
+- This is required for the `stripe-webhook` function to verify Stripe signatures
+
+### Phase 3: Database Performance Indexes
+Single migration adding:
+```sql
+CREATE INDEX IF NOT EXISTS idx_artwork_user_id ON artwork(user_id);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_user_status ON subscriptions(user_id, status);
+CREATE INDEX IF NOT EXISTS idx_ai_protection_audit_log_user ON ai_protection_audit_log(user_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_copyright_matches_artwork ON copyright_matches(artwork_id);
+```
+
+### Estimated Impact
+- Security scan warnings: ~287 → ~50 (remaining would be intentional SELECT `true` policies)
+- Stripe webhooks: fully functional
+- Query performance: significantly improved on dashboard and monitoring pages
 
