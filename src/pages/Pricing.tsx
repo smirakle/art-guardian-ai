@@ -616,7 +616,19 @@ const Pricing = () => {
                                   Complete your information to start protecting your creative work
                                 </DialogDescription>
                               </DialogHeader>
-                              <SignUpForm plan={plan} />
+                              <SignUpForm
+                                plan={plan}
+                                formData={formData}
+                                handleInputChange={handleInputChange}
+                                promoCode={promoCode}
+                                setPromoCode={setPromoCode}
+                                emailError={emailError}
+                                validateEmail={validateEmail}
+                                billingCycle={billingCycle}
+                                isProcessing={isProcessing}
+                                handleFormSubmit={handleFormSubmit}
+                                formatPrice={formatPrice}
+                              />
                             </DialogContent>
                           </Dialog>
                         )}
