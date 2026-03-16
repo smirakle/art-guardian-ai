@@ -752,12 +752,45 @@ const Upload = () => {
               ))}
             </div>
 
+            {/* Download Protected Files */}
+            {rawFiles.length > 0 && (
+              <div className="mb-8 space-y-2">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Download Protected Files</h3>
+                <div className="grid gap-2 max-w-md mx-auto">
+                  {rawFiles.map((file, i) => (
+                    <Button
+                      key={i}
+                      variant="outline"
+                      className="gap-2 justify-start"
+                      onClick={() => {
+                        const url = URL.createObjectURL(file);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `protected_${file.name}`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        toast({ title: "Downloaded", description: `${file.name} saved` });
+                      }}
+                    >
+                      <Download className="w-4 h-4 text-primary" />
+                      <span className="truncate">{file.name}</span>
+                      <span className="text-xs text-muted-foreground ml-auto shrink-0">
+                        {(file.size / 1024).toFixed(0)} KB
+                      </span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button size="lg" variant="outline" className="gap-2" onClick={() => window.location.href = '/dashboard'}>
                 <Eye className="w-4 h-4" />
                 View Dashboard
               </Button>
-              <Button size="lg" className="gap-2 shadow-lg shadow-primary/20" onClick={() => { setStep(1); setFiles([]); setUrls([]); setArtworkTitle(""); setDescription(""); setCategory(""); setTags([]); }}>
+              <Button size="lg" className="gap-2 shadow-lg shadow-primary/20" onClick={() => { setStep(1); setFiles([]); setUrls([]); setRawFiles([]); setArtworkTitle(""); setDescription(""); setCategory(""); setTags([]); }}>
                 <Plus className="w-4 h-4" />
                 Protect More Content
               </Button>
