@@ -95,7 +95,7 @@ const Success = () => {
 
             <div className="pt-6 border-t border-border/50">
               <p className="text-sm text-muted-foreground">
-                Need help? <a href="mailto:support@tsmo.com" className="text-primary hover:underline">Contact Support</a>
+                Need help? <a href="mailto:support@tsmowatch.com" className="text-primary hover:underline">Contact Support</a>
               </p>
             </div>
           </CardContent>
