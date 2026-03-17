@@ -833,17 +833,136 @@ export class ProductionMetadataInjection {
     return result;
   }
 
+  /**
+   * Build a real EXIF APP1 segment with IFD0 tags for copyright, artist, software, etc.
+   * Follows EXIF 2.32 / TIFF 6.0 IFD structure.
+   */
   private buildExifBytes(exifData: any): Uint8Array {
-    // Simplified EXIF byte generation
-    return new Uint8Array([0xFF, 0xE1, 0x00, 0x16]); // Placeholder
+    const ifd0 = exifData["0th"] || {};
+    
+    // Collect tag entries: [tag, type, count, value_bytes]
+    const entries: Array<{ tag: number; type: number; count: number; value: Uint8Array }> = [];
+    
+    const encodeAscii = (s: string): Uint8Array => {
+      const bytes = new TextEncoder().encode(s + '\0');
+      return bytes;
+    };
+
+    // Add each IFD0 tag
+    const tagValues: Array<[number, string | Uint8Array]> = [
+      [0x010E, ifd0[0x010E] || ''], // ImageDescription
+      [0x013B, ifd0[0x013B] || ''], // Artist
+      [0x8298, ifd0[0x8298] || ''], // Copyright
+      [0x0131, ifd0[0x0131] || ''], // Software
+      [0x0132, ifd0[0x0132] || ''], // DateTime
+      [0x010F, ifd0[0x010F] || ''], // Make
+      [0x0110, ifd0[0x0110] || ''], // Model
+    ];
+
+    for (const [tag, val] of tagValues) {
+      if (!val) continue;
+      const valueBytes = typeof val === 'string' ? encodeAscii(val) : val;
+      entries.push({ tag, type: 2 /* ASCII */, count: valueBytes.length, value: valueBytes });
+    }
+
+    // Also embed UserComment from Exif IFD
+    const userComment = exifData["Exif"]?.[0x9286];
+    if (userComment instanceof Uint8Array) {
+      entries.push({ tag: 0x9286, type: 7 /* UNDEFINED */, count: userComment.length, value: userComment });
+    }
+
+    // Sort entries by tag number (TIFF spec requirement)
+    entries.sort((a, b) => a.tag - b.tag);
+
+    // Calculate sizes
+    const numEntries = entries.length;
+    const ifdSize = 2 + numEntries * 12 + 4; // count + entries + next-IFD pointer
+    let extraDataOffset = 8 + ifdSize; // after TIFF header + IFD
+    
+    // Build IFD bytes
+    const ifdBytes: number[] = [];
+    // Entry count (2 bytes, little-endian)
+    ifdBytes.push(numEntries & 0xFF, (numEntries >> 8) & 0xFF);
+    
+    const extraData: number[] = [];
+    
+    for (const entry of entries) {
+      // Tag (2 bytes LE)
+      ifdBytes.push(entry.tag & 0xFF, (entry.tag >> 8) & 0xFF);
+      // Type (2 bytes LE)
+      ifdBytes.push(entry.type & 0xFF, (entry.type >> 8) & 0xFF);
+      // Count (4 bytes LE)
+      ifdBytes.push(
+        entry.count & 0xFF, (entry.count >> 8) & 0xFF,
+        (entry.count >> 16) & 0xFF, (entry.count >> 24) & 0xFF
+      );
+      // Value/Offset (4 bytes LE)
+      if (entry.value.length <= 4) {
+        // Inline value (pad to 4 bytes)
+        for (let i = 0; i < 4; i++) {
+          ifdBytes.push(i < entry.value.length ? entry.value[i] : 0);
+        }
+      } else {
+        // Offset to extra data area
+        const offset = extraDataOffset + extraData.length;
+        ifdBytes.push(
+          offset & 0xFF, (offset >> 8) & 0xFF,
+          (offset >> 16) & 0xFF, (offset >> 24) & 0xFF
+        );
+        extraData.push(...entry.value);
+        // Pad to word boundary
+        if (entry.value.length % 2 !== 0) extraData.push(0);
+      }
+    }
+    
+    // Next IFD pointer (0 = no more IFDs)
+    ifdBytes.push(0, 0, 0, 0);
+
+    // Assemble TIFF structure: header + IFD + extra data
+    const tiffHeader = [
+      0x49, 0x49, // Little-endian ('II')
+      0x2A, 0x00, // TIFF magic
+      0x08, 0x00, 0x00, 0x00 // Offset to IFD0
+    ];
+    
+    const tiffData = new Uint8Array([...tiffHeader, ...ifdBytes, ...extraData]);
+    
+    // Wrap in APP1 segment: FF E1 + length(2) + "Exif\0\0" + TIFF
+    const exifHeader = new TextEncoder().encode('Exif');
+    const app1Length = 2 + 6 + tiffData.length; // length field + "Exif\0\0" + TIFF
+    const app1 = new Uint8Array(2 + 2 + 6 + tiffData.length);
+    app1[0] = 0xFF; app1[1] = 0xE1; // APP1 marker
+    app1[2] = (app1Length >> 8) & 0xFF; app1[3] = app1Length & 0xFF; // Big-endian length
+    app1.set(exifHeader, 4);
+    app1[8] = 0x00; app1[9] = 0x00; // Exif padding
+    app1.set(tiffData, 10);
+    
+    return app1;
   }
 
-  private insertExifIntoJpeg(jpegData: Uint8Array, exifBytes: Uint8Array): Uint8Array {
-    // Simplified JPEG EXIF insertion
-    const result = new Uint8Array(jpegData.length + exifBytes.length);
-    result.set(jpegData.slice(0, 2)); // SOI marker
-    result.set(exifBytes, 2);
-    result.set(jpegData.slice(2), 2 + exifBytes.length);
+  /**
+   * Insert an APP1 EXIF segment into a JPEG after the SOI marker,
+   * replacing any existing APP1 EXIF segment.
+   */
+  private insertExifIntoJpeg(jpegData: Uint8Array, app1Bytes: Uint8Array): Uint8Array {
+    // Verify JPEG SOI
+    if (jpegData[0] !== 0xFF || jpegData[1] !== 0xD8) {
+      // Not a valid JPEG, return as-is
+      return jpegData;
+    }
+
+    // Find and skip any existing APP1 (EXIF) segment
+    let insertPos = 2;
+    if (jpegData[2] === 0xFF && jpegData[3] === 0xE1) {
+      // Existing APP1 — read its length and skip it
+      const existingLen = (jpegData[4] << 8) | jpegData[5];
+      insertPos = 2 + 2 + existingLen; // past marker + length + data
+    }
+    
+    const result = new Uint8Array(2 + app1Bytes.length + (jpegData.length - insertPos));
+    result.set(jpegData.slice(0, 2)); // SOI
+    result.set(app1Bytes, 2); // New APP1
+    result.set(jpegData.slice(insertPos), 2 + app1Bytes.length); // Rest of JPEG
     return result;
   }
 
