@@ -252,6 +252,7 @@ const Upload = () => {
         artwork = artworkData;
       }
 
+      let monitoringCreated = false;
       if (user && artwork) {
         const { data: scan, error: scanError } = await supabase
           .from('monitoring_scans')
@@ -259,6 +260,7 @@ const Upload = () => {
           .select()
           .single();
         if (!scanError && scan) {
+          monitoringCreated = true;
           try {
             await supabase.functions.invoke('process-monitoring-scan', {
               body: { scanId: scan.id, artworkId: artwork.id }
@@ -266,6 +268,13 @@ const Upload = () => {
           } catch (e) { console.error('Scan error:', e); }
         }
       }
+
+      setProtectionResult({
+        artworkId: artwork?.id || null,
+        protectionLevel: artwork?.ai_protection_level || 'standard',
+        monitoringCreated,
+        protectedAt: new Date().toISOString(),
+      });
 
       setFiles(prev => prev.map(f => ({ ...f, status: 'protected' as const, progress: 100 })));
       setStep(4);
