@@ -44,6 +44,8 @@ import VisualRecognition from "@/components/VisualRecognition";
 import { AdvancedWatermarkProtection } from "@/components/AdvancedWatermarkProtection";
 import { WatermarkResult } from "@/lib/advancedWatermark";
 import C2PAProtection from "@/components/ai-protection/C2PAProtection";
+import { watermarkService, InvisibleWatermark } from "@/lib/watermark";
+import { cloakImageFromFile } from "@/lib/styleCloak";
 
 interface UploadedFile {
   id: string;
