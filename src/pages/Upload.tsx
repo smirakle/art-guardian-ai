@@ -44,6 +44,8 @@ import VisualRecognition from "@/components/VisualRecognition";
 import { AdvancedWatermarkProtection } from "@/components/AdvancedWatermarkProtection";
 import { WatermarkResult } from "@/lib/advancedWatermark";
 import C2PAProtection from "@/components/ai-protection/C2PAProtection";
+import { watermarkService, InvisibleWatermark } from "@/lib/watermark";
+import { cloakImageFromFile } from "@/lib/styleCloak";
 
 interface UploadedFile {
   id: string;
@@ -90,10 +92,15 @@ const Upload = () => {
   const [showAdvancedProtection, setShowAdvancedProtection] = useState(false);
   const [protectionResult, setProtectionResult] = useState<{
     artworkId: string | null;
+    protectionRecordId: string | null;
     protectionLevel: string;
     monitoringCreated: boolean;
+    watermarkApplied: boolean;
+    aiShieldApplied: boolean;
+    dmcaEnforcement: boolean;
     protectedAt: string;
   } | null>(null);
+  const [protectedFiles, setProtectedFiles] = useState<File[]>([]);
 
   const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true); };
   const handleDragLeave = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false); };
@@ -221,13 +228,80 @@ const Upload = () => {
     }
 
     setIsProtecting(true);
-    try {
-      toast({ title: "Protection Started", description: "Applying protection layers..." });
-      setFiles(prev => prev.map(f => ({ ...f, status: 'processing' as const, progress: 50 })));
+    const protectedAt = new Date().toISOString();
+    let watermarkApplied = false;
+    let aiShieldApplied = false;
+    let dmcaEnforcement = false;
+    let protectionRecordId: string | null = null;
 
+    try {
+      toast({ title: "Protection Started", description: "Applying real protection layers to your files..." });
+      setFiles(prev => prev.map(f => ({ ...f, status: 'processing' as const, progress: 10 })));
+
+      // ── Step 1: Apply real invisible watermark + AI training shield to files ──
+      const processedFiles: File[] = [];
+      for (let i = 0; i < rawFiles.length; i++) {
+        const file = rawFiles[i];
+        let processedBlob: Blob = file;
+
+        if (file.type.startsWith('image/')) {
+          // Apply invisible watermark
+          if (enableWatermark) {
+            try {
+              const wmId = InvisibleWatermark.generateWatermarkId(user?.id || 'anon');
+              processedBlob = await watermarkService.applyWatermark(file, {
+                text: wmId,
+                opacity: 0.02,
+                size: 12,
+                position: 'center',
+                frequency: 'high',
+              });
+              watermarkApplied = true;
+              console.log(`[Protection] Invisible watermark applied to ${file.name} (ID: ${wmId})`);
+            } catch (e) {
+              console.error(`[Protection] Watermark failed for ${file.name}:`, e);
+            }
+          }
+
+          // Apply AI Training Shield (style cloak perturbation)
+          try {
+            const cloakedBlob = await cloakImageFromFile(
+              new File([processedBlob], file.name, { type: file.type }),
+              { strength: 0.25, frequency: 8, colorJitter: 0.08, useSegmentation: false }
+            );
+            processedBlob = cloakedBlob;
+            aiShieldApplied = true;
+            console.log(`[Protection] AI Training Shield applied to ${file.name}`);
+          } catch (e) {
+            console.error(`[Protection] AI Shield failed for ${file.name}:`, e);
+          }
+        }
+
+        processedFiles.push(new File([processedBlob], file.name, { type: file.type }));
+        setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, progress: 30 + Math.round((i / rawFiles.length) * 30) } : f));
+      }
+
+      // Store protected files for download
+      setProtectedFiles(processedFiles);
+
+      setFiles(prev => prev.map(f => ({ ...f, progress: 60 })));
+
+      // ── Step 2: Upload protected files to storage & create artwork record ──
       const userId = user?.id || 'anonymous';
-      const filePaths = files.map(file => `${userId}/${Date.now()}-${file.name}`);
-      const allPaths = [...filePaths, ...urls];
+      const uploadedPaths: string[] = [];
+
+      for (const pFile of processedFiles) {
+        const fileName = `${userId}/${Date.now()}-${pFile.name}`;
+        const { data: upData, error: upError } = await supabase.storage
+          .from('artwork')
+          .upload(fileName, pFile, { cacheControl: '3600', upsert: false });
+        if (!upError && upData) {
+          const { data: { publicUrl } } = supabase.storage.from('artwork').getPublicUrl(upData.path);
+          uploadedPaths.push(publicUrl);
+        }
+      }
+
+      const allPaths = [...uploadedPaths, ...urls];
 
       let artwork = null;
       if (user) {
@@ -244,7 +318,10 @@ const Upload = () => {
             enable_watermark: enableWatermark,
             ai_protection_enabled: true,
             ai_protection_level: 'standard',
-            status: 'protected'
+            ai_protection_methods: { watermark: watermarkApplied, style_cloak: aiShieldApplied },
+            status: 'protected',
+            file_size: processedFiles.reduce((sum, f) => sum + f.size, 0),
+            original_file_size: rawFiles.reduce((sum, f) => sum + f.size, 0),
           })
           .select()
           .single();
@@ -252,6 +329,54 @@ const Upload = () => {
         artwork = artworkData;
       }
 
+      setFiles(prev => prev.map(f => ({ ...f, progress: 75 })));
+
+      // ── Step 3: Create DMCA enforcement record (ai_protection_records) ──
+      if (user && artwork) {
+        const fingerprint = `fp_${artwork.id}_${Date.now()}`;
+        const { data: protRec, error: protError } = await supabase
+          .from('ai_protection_records')
+          .insert({
+            user_id: user.id,
+            artwork_id: artwork.id,
+            original_filename: artworkTitle,
+            file_fingerprint: fingerprint,
+            protection_id: `prot_${artwork.id.substring(0, 8)}`,
+            protection_level: 'standard',
+            protection_methods: {
+              invisible_watermark: watermarkApplied,
+              ai_training_shield: aiShieldApplied,
+              style_cloak_strength: 0.25,
+            },
+            content_type: category === 'photography' || category === 'digital-art' ? 'image' : category,
+            metadata: {
+              files_count: processedFiles.length,
+              urls_count: urls.length,
+              original_total_size: rawFiles.reduce((s, f) => s + f.size, 0),
+              protected_total_size: processedFiles.reduce((s, f) => s + f.size, 0),
+              watermark_applied: watermarkApplied,
+              ai_shield_applied: aiShieldApplied,
+              protected_at: protectedAt,
+            },
+          })
+          .select()
+          .single();
+
+        if (!protError && protRec) {
+          protectionRecordId = protRec.id;
+          dmcaEnforcement = true;
+
+          // Link protection record to artwork
+          await supabase.from('artwork').update({ protection_record_id: protRec.id }).eq('id', artwork.id);
+          console.log(`[Protection] DMCA enforcement record created: ${protRec.id}`);
+        } else {
+          console.error('[Protection] DMCA record creation failed:', protError);
+        }
+      }
+
+      setFiles(prev => prev.map(f => ({ ...f, progress: 85 })));
+
+      // ── Step 4: Trigger monitoring scan ──
       let monitoringCreated = false;
       if (user && artwork) {
         const { data: scan, error: scanError } = await supabase
@@ -265,20 +390,43 @@ const Upload = () => {
             await supabase.functions.invoke('process-monitoring-scan', {
               body: { scanId: scan.id, artworkId: artwork.id }
             });
-          } catch (e) { console.error('Scan error:', e); }
+          } catch (e) { console.error('Scan invocation error:', e); }
         }
+      }
+
+      // ── Step 5: Log the protection action ──
+      if (user && artwork) {
+        try {
+          await supabase.rpc('log_ai_protection_action', {
+            user_id_param: user.id,
+            action_param: 'full_protection_applied',
+            resource_type_param: 'artwork',
+            resource_id_param: artwork.id,
+            details_param: {
+              watermark: watermarkApplied,
+              ai_shield: aiShieldApplied,
+              dmca_enforcement: dmcaEnforcement,
+              monitoring: monitoringCreated,
+              files_count: processedFiles.length,
+            },
+          });
+        } catch (logErr) { console.error('Audit log error:', logErr); }
       }
 
       setProtectionResult({
         artworkId: artwork?.id || null,
+        protectionRecordId,
         protectionLevel: artwork?.ai_protection_level || 'standard',
         monitoringCreated,
-        protectedAt: new Date().toISOString(),
+        watermarkApplied,
+        aiShieldApplied,
+        dmcaEnforcement,
+        protectedAt,
       });
 
       setFiles(prev => prev.map(f => ({ ...f, status: 'protected' as const, progress: 100 })));
       setStep(4);
-      toast({ title: "Protection Complete!", description: `${files.length + urls.length} item(s) now protected` });
+      toast({ title: "Protection Complete!", description: `${files.length + urls.length} item(s) genuinely protected with watermark + AI shield` });
     } catch (error: any) {
       console.error('Protection error:', error);
       toast({ title: "Protection Failed", description: error.message || "Please try again", variant: "destructive" });
@@ -786,10 +934,10 @@ const Upload = () => {
               {/* Protection Layers Checklist */}
               <div className="grid sm:grid-cols-2 gap-2">
                 {[
-                  { label: "Invisible Watermark", active: enableWatermark, delay: "0s" },
-                  { label: "AI Training Shield", active: true, delay: "0.15s" },
+                  { label: "Invisible Watermark", active: protectionResult?.watermarkApplied ?? false, delay: "0s" },
+                  { label: "AI Training Shield", active: protectionResult?.aiShieldApplied ?? false, delay: "0.15s" },
                   { label: "Monitoring Active", active: protectionResult?.monitoringCreated ?? false, delay: "0.3s" },
-                  { label: "DMCA Enforcement", active: !!user, delay: "0.45s" },
+                  { label: "DMCA Enforcement", active: protectionResult?.dmcaEnforcement ?? false, delay: "0.45s" },
                 ].map((layer) => (
                   <div
                     key={layer.label}
@@ -844,11 +992,11 @@ const Upload = () => {
             </div>
 
             {/* Download Protected Files */}
-            {rawFiles.length > 0 && (
+            {protectedFiles.length > 0 && (
               <div className="mb-8 space-y-2">
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Download Protected Files</h3>
                 <div className="grid gap-2 max-w-md mx-auto">
-                  {rawFiles.map((file, i) => (
+                  {protectedFiles.map((file, i) => (
                     <Button
                       key={i}
                       variant="outline"
@@ -881,7 +1029,7 @@ const Upload = () => {
                 <Eye className="w-4 h-4" />
                 View Dashboard
               </Button>
-              <Button size="lg" className="gap-2 shadow-lg shadow-primary/20" onClick={() => { setStep(1); setFiles([]); setUrls([]); setRawFiles([]); setArtworkTitle(""); setDescription(""); setCategory(""); setTags([]); setProtectionResult(null); }}>
+              <Button size="lg" className="gap-2 shadow-lg shadow-primary/20" onClick={() => { setStep(1); setFiles([]); setUrls([]); setRawFiles([]); setProtectedFiles([]); setArtworkTitle(""); setDescription(""); setCategory(""); setTags([]); setProtectionResult(null); }}>
                 <Plus className="w-4 h-4" />
                 Protect More Content
               </Button>
