@@ -387,6 +387,7 @@ const Upload = () => {
               protected_total_size: processedFiles.reduce((s, f) => s + f.size, 0),
               watermark_applied: watermarkApplied,
               ai_shield_applied: aiShieldApplied,
+              metadata_injected: metadataInjected,
               protected_at: protectedAt,
             },
           })
