@@ -985,13 +985,35 @@ export class ProductionMetadataInjection {
 <?xpacket end="w"?>`;
   }
 
+  /**
+   * Insert an XMP APP1 segment into a JPEG.
+   * Uses the standard "http://ns.adobe.com/xap/1.0/\0" namespace header.
+   */
   private insertXmpIntoJpeg(jpegData: Uint8Array, xmpBytes: Uint8Array): Uint8Array {
-    // Simplified XMP insertion
-    const result = new Uint8Array(jpegData.length + xmpBytes.length + 4);
-    result.set(jpegData.slice(0, 2)); // SOI
-    result.set([0xFF, 0xE1], 2); // APP1 marker
-    result.set(xmpBytes, 6);
-    result.set(jpegData.slice(2), 6 + xmpBytes.length);
+    if (jpegData[0] !== 0xFF || jpegData[1] !== 0xD8) return jpegData;
+    
+    const xmpNs = new TextEncoder().encode('http://ns.adobe.com/xap/1.0/\0');
+    const segmentDataLength = 2 + xmpNs.length + xmpBytes.length; // length field includes itself
+    
+    // Build APP1 segment: FF E1 + length(2, big-endian) + namespace + XMP data
+    const app1 = new Uint8Array(2 + 2 + xmpNs.length + xmpBytes.length);
+    app1[0] = 0xFF; app1[1] = 0xE1;
+    app1[2] = (segmentDataLength >> 8) & 0xFF; app1[3] = segmentDataLength & 0xFF;
+    app1.set(xmpNs, 4);
+    app1.set(xmpBytes, 4 + xmpNs.length);
+    
+    // Insert after SOI (and after any existing EXIF APP1)
+    let insertPos = 2;
+    // Skip past existing APP1 segments (EXIF)
+    while (insertPos < jpegData.length - 1 && jpegData[insertPos] === 0xFF && jpegData[insertPos + 1] === 0xE1) {
+      const len = (jpegData[insertPos + 2] << 8) | jpegData[insertPos + 3];
+      insertPos += 2 + len;
+    }
+    
+    const result = new Uint8Array(insertPos + app1.length + (jpegData.length - insertPos));
+    result.set(jpegData.slice(0, insertPos));
+    result.set(app1, insertPos);
+    result.set(jpegData.slice(insertPos), insertPos + app1.length);
     return result;
   }
 }
