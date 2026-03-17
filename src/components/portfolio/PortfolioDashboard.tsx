@@ -281,101 +281,48 @@ export function PortfolioDashboard() {
         return;
       }
 
-      // Generate data for each portfolio
+      // Trigger real scans via edge function for each portfolio
       for (const portfolio of portfolios) {
-        await generatePortfolioScanResult(portfolio);
+        try {
+          await supabase.functions.invoke('portfolio-scan', {
+            body: {
+              portfolio_id: portfolio.id,
+              platforms: ['TinEye', 'Google Lens', 'Google Search'],
+            }
+          });
+        } catch (err) {
+          console.error(`Scan failed for portfolio ${portfolio.id}:`, err);
+        }
       }
 
       toast({
-        title: "Real-time Data Generated",
-        description: `Generated monitoring data for ${portfolios.length} portfolios`,
+        title: "Real-time Monitoring Active",
+        description: `Started real scans for ${portfolios.length} portfolios using reverse image search`,
       });
 
-      // Set up interval to generate more data every 3 minutes
-      const interval = setInterval(async () => {
-        for (const portfolio of portfolios) {
-          await generatePortfolioScanResult(portfolio);
-        }
-      }, 3 * 60 * 1000); // 3 minutes
-
-      // Clear interval after 30 minutes
-      setTimeout(() => {
-        clearInterval(interval);
-        toast({
-          title: "Monitoring Update",
-          description: "Real-time monitoring cycle completed",
-        });
-      }, 30 * 60 * 1000); // 30 minutes
-
     } catch (error) {
-      console.error('Error in direct data generation:', error);
+      console.error('Error in monitoring activation:', error);
       throw error;
     }
   };
 
-  const generatePortfolioScanResult = async (portfolio: any) => {
+  const triggerPortfolioScan = async (portfolio: any) => {
     try {
-      // Get portfolio items count
-      const { count: artworkCount } = await supabase
-        .from('portfolio_items')
-        .select('*', { count: 'exact', head: true })
-        .eq('portfolio_id', portfolio.id)
-        .eq('is_active', true);
-
-      const totalArtworks = artworkCount || Math.floor(Math.random() * 20) + 5; // Default 5-25 artworks
-      const artworksScanned = Math.min(totalArtworks, Math.floor(Math.random() * totalArtworks) + 1);
-      
-      // Realistic threat detection rates (2-15% of scanned artworks have matches)
-      const matchRate = Math.random() * 0.13 + 0.02;
-      const totalMatches = Math.floor(artworksScanned * matchRate);
-      
-      // Distribute threat levels (60% low, 30% medium, 10% high)
-      const highRiskMatches = Math.floor(totalMatches * 0.1);
-      const mediumRiskMatches = Math.floor(totalMatches * 0.3);
-      const lowRiskMatches = totalMatches - highRiskMatches - mediumRiskMatches;
-      
-      const platforms = [
-        'Google Images', 'Bing Visual Search', 'TinEye', 'Instagram', 'Pinterest',
-        'DeviantArt', 'Behance', 'ArtStation', 'Etsy', 'Amazon', 'eBay',
-        'Facebook', 'Twitter/X', 'Reddit', 'Tumblr'
-      ];
-      
-      const platformsScanned = platforms
-        .sort(() => 0.5 - Math.random())
-        .slice(0, Math.floor(Math.random() * 6) + 3);
-
-      // Insert monitoring result
-      const { error: resultError } = await supabase
-        .from('portfolio_monitoring_results')
-        .insert({
+      const { data, error } = await supabase.functions.invoke('portfolio-scan', {
+        body: {
           portfolio_id: portfolio.id,
-          scan_date: new Date().toISOString().split('T')[0],
-          total_artworks: totalArtworks,
-          artworks_scanned: artworksScanned,
-          total_matches: totalMatches,
-          high_risk_matches: highRiskMatches,
-          medium_risk_matches: mediumRiskMatches,
-          low_risk_matches: lowRiskMatches,
-          scan_duration_minutes: Math.floor(Math.random() * 45) + 15,
-          platforms_scanned: platformsScanned
-        });
+          platforms: ['TinEye', 'Google Lens', 'Google Search'],
+        }
+      });
 
-      if (resultError) {
-        console.error('Error inserting monitoring result:', resultError);
+      if (error) {
+        console.error('Portfolio scan error:', error);
         return;
       }
 
-      // Generate alerts for high-risk findings
-      if (highRiskMatches > 0) {
-        await generatePortfolioAlert(portfolio, { 
-          high_risk_matches: highRiskMatches, 
-          total_matches: totalMatches,
-          platforms_scanned: platformsScanned 
-        });
-      }
-
+      console.log('Portfolio scan completed:', data);
     } catch (error) {
-      console.error('Error generating portfolio scan result:', error);
+      console.error('Error triggering portfolio scan:', error);
     }
   };
 

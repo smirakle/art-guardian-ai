@@ -1,6 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.192.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.5';
+import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai@0.21.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -42,37 +43,48 @@ serve(async (req) => {
     );
 
     const request: DeepfakeAnalysisRequest = await req.json();
-    
     console.log(`Starting ${request.analysisType} deepfake analysis`);
 
-    let analysisResult: DeepfakeAnalysisResult;
-
-    if (request.imageUrl) {
-      analysisResult = await analyzeImageDeepfake(request);
-    } else if (request.videoUrl) {
-      analysisResult = await analyzeVideoDeepfake(request);
-    } else {
+    if (!request.imageUrl && !request.videoUrl) {
       throw new Error('Either imageUrl or videoUrl must be provided');
     }
 
+    const mediaUrl = request.imageUrl || request.videoUrl!;
+    const mediaType = request.imageUrl ? 'image' : 'video';
+
+    // Run all AI analyses in parallel
+    const [geminiResult, openaiResult] = await Promise.all([
+      analyzeWithGemini(mediaUrl, mediaType),
+      analyzeWithOpenAI(mediaUrl, mediaType),
+    ]);
+
+    const analyses = [geminiResult, openaiResult].filter(Boolean);
+
+    if (analyses.length === 0) {
+      throw new Error('No AI analysis could be performed. Check API key configuration.');
+    }
+
+    const analysisResult = combineAnalysisResults(analyses, mediaType);
+
     // Store analysis results
     await supabaseClient
-      .from('deepfake_analysis_results')
+      .from('ai_detection_results')
       .insert({
-        media_url: request.imageUrl || request.videoUrl,
-        media_type: request.imageUrl ? 'image' : 'video',
-        is_deepfake: analysisResult.isDeepfake,
+        user_id: (await supabaseClient.auth.getUser()).data.user?.id,
+        detection_type: 'deepfake',
+        ai_model_used: analyses.map(a => a.method).join(', '),
         confidence_score: analysisResult.confidence,
-        manipulation_type: analysisResult.manipulation_type,
-        analysis_methods: analysisResult.analysis_methods,
-        facial_artifacts: analysisResult.facial_artifacts,
-        temporal_inconsistencies: analysisResult.temporal_inconsistencies,
-        metadata_anomalies: analysisResult.metadata_anomalies,
         threat_level: analysisResult.threat_level,
-        technical_details: analysisResult.technical_details,
-        countermeasures: analysisResult.countermeasures,
-        created_at: new Date().toISOString()
-      });
+        status: analysisResult.isDeepfake ? 'detected' : 'clean',
+        detection_metadata: {
+          manipulation_type: analysisResult.manipulation_type,
+          analysis_methods: analysisResult.analysis_methods,
+          facial_artifacts: analysisResult.facial_artifacts,
+          technical_details: analysisResult.technical_details,
+          media_url: mediaUrl,
+          media_type: mediaType,
+        }
+      }).catch(err => console.error('Failed to store result:', err));
 
     return new Response(JSON.stringify({
       success: true,
@@ -94,64 +106,75 @@ serve(async (req) => {
   }
 });
 
-async function analyzeImageDeepfake(request: DeepfakeAnalysisRequest): Promise<DeepfakeAnalysisResult> {
-  const analyses: any[] = [];
-  
-  // 1. OpenAI Vision API Analysis
-  const openaiAnalysis = await analyzeWithOpenAIVision(request.imageUrl!);
-  if (openaiAnalysis) analyses.push(openaiAnalysis);
+async function analyzeWithGemini(mediaUrl: string, mediaType: string) {
+  const googleApiKey = Deno.env.get('GOOGLE_AI_STUDIO_API_KEY');
+  if (!googleApiKey) {
+    console.log('Google AI API key not configured, skipping Gemini analysis');
+    return null;
+  }
 
-  // 2. Facial Landmark Analysis
-  const landmarkAnalysis = await analyzeFacialLandmarks(request.imageUrl!);
-  if (landmarkAnalysis) analyses.push(landmarkAnalysis);
+  try {
+    const genAI = new GoogleGenerativeAI(googleApiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
-  // 3. Metadata Forensics
-  const metadataAnalysis = request.includeMetadataAnalysis ? 
-    await analyzeImageMetadata(request.imageUrl!) : null;
+    // Fetch the image and convert to base64
+    const imageResponse = await fetch(mediaUrl);
+    if (!imageResponse.ok) throw new Error(`Failed to fetch media: ${imageResponse.status}`);
+    const buffer = await imageResponse.arrayBuffer();
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+    const mimeType = imageResponse.headers.get('content-type') || 'image/jpeg';
 
-  // 4. Frequency Domain Analysis
-  const frequencyAnalysis = await analyzeFrequencyDomain(request.imageUrl!);
-  if (frequencyAnalysis) analyses.push(frequencyAnalysis);
+    const prompt = `You are an expert forensic analyst specializing in deepfake and AI-generated media detection.
 
-  // 5. Neural Network Artifacts Detection
-  const artifactAnalysis = await detectNeuralArtifacts(request.imageUrl!);
-  if (artifactAnalysis) analyses.push(artifactAnalysis);
+Analyze this ${mediaType} for signs of deepfake manipulation or AI generation. Examine:
 
-  // Combine all analyses
-  return combineAnalysisResults(analyses, metadataAnalysis, 'image');
+1. FACIAL ANALYSIS: Asymmetry, unnatural expressions, misaligned features, eye/teeth artifacts
+2. LIGHTING & SHADOWS: Inconsistent light sources, impossible shadows, reflection anomalies
+3. TEXTURE ANALYSIS: Overly smooth skin, repetitive patterns, unnatural hair, skin boundary issues
+4. EDGE ARTIFACTS: Blurring around face/hair boundaries, distortion, compositing seams
+5. AI GENERATION PATTERNS: GAN artifacts, diffusion model traces, unusual color distributions
+6. COMPRESSION FORENSICS: Double compression artifacts, inconsistent JPEG blocks
+
+Respond ONLY with valid JSON (no markdown):
+{
+  "isDeepfake": boolean,
+  "confidence": number between 0 and 1,
+  "artifacts": ["specific artifact found 1", "specific artifact found 2"],
+  "manipulation_type": "face_swap" | "ai_generated" | "expression_manipulation" | "none" | "uncertain",
+  "detailed_analysis": "2-3 sentence explanation of findings",
+  "countermeasures": ["recommended action 1", "recommended action 2"]
+}`;
+
+    const result = await model.generateContent([
+      prompt,
+      { inlineData: { data: base64, mimeType } }
+    ]);
+
+    const text = result.response.text();
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('Failed to parse Gemini JSON response');
+
+    const parsed = JSON.parse(jsonMatch[0]);
+
+    return {
+      method: 'Google Gemini 2.0 Flash',
+      confidence: Math.max(0, Math.min(1, parsed.confidence || 0)),
+      isDeepfake: parsed.isDeepfake || false,
+      artifacts: parsed.artifacts || [],
+      details: parsed.detailed_analysis || '',
+      manipulation_type: parsed.manipulation_type || 'unknown',
+      countermeasures: parsed.countermeasures || []
+    };
+  } catch (error) {
+    console.error('Gemini analysis error:', error);
+    return null;
+  }
 }
 
-async function analyzeVideoDeepfake(request: DeepfakeAnalysisRequest): Promise<DeepfakeAnalysisResult> {
-  const analyses: any[] = [];
-  
-  // 1. Frame-by-frame Analysis
-  const frameAnalysis = await analyzeVideoFrames(request.videoUrl!);
-  if (frameAnalysis) analyses.push(frameAnalysis);
-
-  // 2. Temporal Consistency Analysis
-  const temporalAnalysis = await analyzeTemporalConsistency(request.videoUrl!);
-  if (temporalAnalysis) analyses.push(temporalAnalysis);
-
-  // 3. Audio-Visual Synchronization
-  const syncAnalysis = await analyzeAudioVisualSync(request.videoUrl!);
-  if (syncAnalysis) analyses.push(syncAnalysis);
-
-  // 4. Compression Artifacts
-  const compressionAnalysis = await analyzeCompressionArtifacts(request.videoUrl!);
-  if (compressionAnalysis) analyses.push(compressionAnalysis);
-
-  // 5. Biometric Inconsistencies
-  const biometricAnalysis = await analyzeBiometricConsistency(request.videoUrl!);
-  if (biometricAnalysis) analyses.push(biometricAnalysis);
-
-  // Combine all analyses
-  return combineAnalysisResults(analyses, null, 'video');
-}
-
-async function analyzeWithOpenAIVision(imageUrl: string) {
+async function analyzeWithOpenAI(mediaUrl: string, mediaType: string) {
   const apiKey = Deno.env.get('OPENAI_API_KEY');
   if (!apiKey) {
-    console.log('OpenAI API key not configured');
+    console.log('OpenAI API key not configured, skipping OpenAI analysis');
     return null;
   }
 
@@ -164,312 +187,91 @@ async function analyzeWithOpenAIVision(imageUrl: string) {
       },
       body: JSON.stringify({
         model: 'gpt-4o',
-        messages: [
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: `Analyze this image for signs of AI manipulation or deepfake technology. Look for:
-                1. Facial inconsistencies (asymmetrical features, unnatural expressions)
-                2. Lighting and shadow anomalies
-                3. Texture and skin inconsistencies
-                4. Unnatural eye movements or blinking patterns
-                5. Background inconsistencies
-                6. Edge artifacts around the face
-                7. Color space anomalies
-                
-                Provide a detailed analysis with a confidence score (0-1) and specific artifacts found.
-                Format your response as JSON with: {
-                  "isDeepfake": boolean,
-                  "confidence": number,
-                  "artifacts": ["artifact1", "artifact2"],
-                  "analysis": "detailed explanation",
-                  "recommendedActions": ["action1", "action2"]
-                }`
-              },
-              {
-                type: 'image_url',
-                image_url: { url: imageUrl }
-              }
-            ]
-          }
-        ],
-        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: `Analyze this ${mediaType} for deepfake/AI manipulation signs. Look for facial inconsistencies, lighting anomalies, texture artifacts, edge artifacts, and AI generation patterns.
+
+Respond ONLY with valid JSON:
+{
+  "isDeepfake": boolean,
+  "confidence": number 0-1,
+  "artifacts": ["artifact1", "artifact2"],
+  "manipulation_type": "face_swap" | "ai_generated" | "expression_manipulation" | "none" | "uncertain",
+  "analysis": "brief explanation",
+  "recommendedActions": ["action1", "action2"]
+}`
+            },
+            { type: 'image_url', image_url: { url: mediaUrl } }
+          ]
+        }],
+        max_tokens: 800,
         temperature: 0.1
       })
     });
 
     if (!response.ok) {
-      console.error('OpenAI Vision API error:', response.status);
+      console.error('OpenAI API error:', response.status);
       return null;
     }
 
     const data = await response.json();
     const content = data.choices[0]?.message?.content;
-    
-    if (content) {
-      try {
-        const analysis = JSON.parse(content);
-        return {
-          method: 'OpenAI Vision API',
-          confidence: analysis.confidence || 0,
-          isDeepfake: analysis.isDeepfake || false,
-          artifacts: analysis.artifacts || [],
-          details: analysis.analysis || '',
-          countermeasures: analysis.recommendedActions || []
-        };
-      } catch (parseError) {
-        console.error('Failed to parse OpenAI response:', parseError);
-        return null;
-      }
-    }
+    if (!content) return null;
 
-    return null;
-  } catch (error) {
-    console.error('OpenAI Vision analysis error:', error);
-    return null;
-  }
-}
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) return null;
 
-async function analyzeFacialLandmarks(imageUrl: string) {
-  // Simulate advanced facial landmark analysis
-  // In production, this would use computer vision libraries like OpenCV or dlib
-  
-  const landmarks = {
-    eye_symmetry: Math.random(),
-    nose_alignment: Math.random(),
-    mouth_consistency: Math.random(),
-    jaw_line_smoothness: Math.random(),
-    ear_positioning: Math.random()
-  };
+    const parsed = JSON.parse(jsonMatch[0]);
 
-  const anomalies = Object.entries(landmarks)
-    .filter(([_, score]) => score < 0.7)
-    .map(([feature, _]) => feature);
-
-  const avgScore = Object.values(landmarks).reduce((a, b) => a + b, 0) / Object.keys(landmarks).length;
-  const isDeepfake = avgScore < 0.6 || anomalies.length > 2;
-
-  return {
-    method: 'Facial Landmark Analysis',
-    confidence: isDeepfake ? 1 - avgScore : avgScore,
-    isDeepfake,
-    artifacts: anomalies,
-    details: `Facial landmark analysis detected ${anomalies.length} anomalies`,
-    landmarks
-  };
-}
-
-async function analyzeImageMetadata(imageUrl: string) {
-  // Simulate metadata forensics analysis
-  // In production, this would extract and analyze EXIF data, creation timestamps, etc.
-  
-  const metadata = {
-    exif_consistency: Math.random() > 0.8,
-    timestamp_anomalies: Math.random() > 0.9,
-    camera_fingerprint: Math.random() > 0.7,
-    compression_history: Math.random() > 0.6,
-    software_signatures: Math.random() > 0.85
-  };
-
-  const anomalies = Object.entries(metadata)
-    .filter(([_, hasAnomaly]) => hasAnomaly)
-    .map(([type, _]) => type);
-
-  return {
-    metadata_anomalies: anomalies,
-    suspicious_elements: anomalies.length,
-    analysis_details: metadata
-  };
-}
-
-async function analyzeFrequencyDomain(imageUrl: string) {
-  // Simulate frequency domain analysis
-  // In production, this would perform FFT analysis to detect manipulation artifacts
-  
-  const frequencyFeatures = {
-    high_frequency_artifacts: Math.random() > 0.8,
-    compression_blocks: Math.random() > 0.7,
-    interpolation_traces: Math.random() > 0.75,
-    gaussian_noise_patterns: Math.random() > 0.85
-  };
-
-  const artifacts = Object.entries(frequencyFeatures)
-    .filter(([_, detected]) => detected)
-    .map(([artifact, _]) => artifact);
-
-  const isDeepfake = artifacts.length > 1;
-  const confidence = artifacts.length / Object.keys(frequencyFeatures).length;
-
-  return {
-    method: 'Frequency Domain Analysis',
-    confidence: isDeepfake ? confidence : 1 - confidence,
-    isDeepfake,
-    artifacts,
-    details: `Frequency analysis detected ${artifacts.length} manipulation artifacts`
-  };
-}
-
-async function detectNeuralArtifacts(imageUrl: string) {
-  // Simulate neural network artifact detection
-  // In production, this would use specialized models to detect GAN artifacts
-  
-  const neuralArtifacts = {
-    gan_fingerprints: Math.random() > 0.85,
-    convolution_artifacts: Math.random() > 0.8,
-    upsampling_traces: Math.random() > 0.75,
-    attention_map_anomalies: Math.random() > 0.9,
-    feature_blending_errors: Math.random() > 0.82
-  };
-
-  const detectedArtifacts = Object.entries(neuralArtifacts)
-    .filter(([_, detected]) => detected)
-    .map(([artifact, _]) => artifact);
-
-  const isDeepfake = detectedArtifacts.length > 0;
-  const confidence = isDeepfake ? 0.8 + (detectedArtifacts.length * 0.05) : 0.95;
-
-  return {
-    method: 'Neural Artifact Detection',
-    confidence,
-    isDeepfake,
-    artifacts: detectedArtifacts,
-    details: `Neural network analysis detected ${detectedArtifacts.length} AI generation artifacts`
-  };
-}
-
-async function analyzeVideoFrames(videoUrl: string) {
-  // Simulate frame-by-frame video analysis
-  const frameCount = 30; // Analyze 30 frames
-  const deepfakeFrames = Math.floor(Math.random() * 10);
-  
-  return {
-    method: 'Frame-by-Frame Analysis',
-    confidence: deepfakeFrames > 5 ? 0.9 : deepfakeFrames > 2 ? 0.6 : 0.3,
-    isDeepfake: deepfakeFrames > 2,
-    artifacts: deepfakeFrames > 0 ? ['inconsistent_facial_features', 'frame_interpolation_errors'] : [],
-    details: `Analyzed ${frameCount} frames, found ${deepfakeFrames} suspicious frames`
-  };
-}
-
-async function analyzeTemporalConsistency(videoUrl: string) {
-  // Simulate temporal consistency analysis
-  const consistencyIssues = Math.floor(Math.random() * 5);
-  
-  return {
-    method: 'Temporal Consistency Analysis',
-    confidence: consistencyIssues > 2 ? 0.85 : 0.4,
-    isDeepfake: consistencyIssues > 2,
-    artifacts: consistencyIssues > 0 ? ['temporal_flickering', 'identity_switching'] : [],
-    details: `Found ${consistencyIssues} temporal consistency issues`
-  };
-}
-
-async function analyzeAudioVisualSync(videoUrl: string) {
-  // Simulate audio-visual synchronization analysis
-  const syncErrors = Math.random() > 0.7;
-  
-  return {
-    method: 'Audio-Visual Sync Analysis',
-    confidence: syncErrors ? 0.8 : 0.9,
-    isDeepfake: syncErrors,
-    artifacts: syncErrors ? ['lip_sync_mismatch', 'voice_replacement'] : [],
-    details: syncErrors ? 'Detected audio-visual synchronization issues' : 'Audio-visual sync appears natural'
-  };
-}
-
-async function analyzeCompressionArtifacts(videoUrl: string) {
-  // Simulate compression artifact analysis
-  const compressionAnomalies = Math.random() > 0.75;
-  
-  return {
-    method: 'Compression Analysis',
-    confidence: compressionAnomalies ? 0.7 : 0.85,
-    isDeepfake: compressionAnomalies,
-    artifacts: compressionAnomalies ? ['selective_compression', 'recompression_traces'] : [],
-    details: compressionAnomalies ? 'Detected suspicious compression patterns' : 'Compression patterns appear normal'
-  };
-}
-
-async function analyzeBiometricConsistency(videoUrl: string) {
-  // Simulate biometric consistency analysis
-  const biometricIssues = Math.floor(Math.random() * 3);
-  
-  return {
-    method: 'Biometric Consistency',
-    confidence: biometricIssues > 1 ? 0.9 : 0.5,
-    isDeepfake: biometricIssues > 1,
-    artifacts: biometricIssues > 0 ? ['facial_geometry_changes', 'identity_blending'] : [],
-    details: `Detected ${biometricIssues} biometric inconsistencies`
-  };
-}
-
-function combineAnalysisResults(analyses: any[], metadataAnalysis: any, mediaType: string): DeepfakeAnalysisResult {
-  const validAnalyses = analyses.filter(a => a !== null);
-  
-  if (validAnalyses.length === 0) {
     return {
-      isDeepfake: false,
-      confidence: 0.5,
-      manipulation_type: 'unknown',
-      analysis_methods: [],
-      facial_artifacts: [],
-      temporal_inconsistencies: [],
-      metadata_anomalies: [],
-      threat_level: 'low',
-      technical_details: {},
-      countermeasures: ['Unable to analyze - insufficient data']
+      method: 'OpenAI GPT-4o Vision',
+      confidence: Math.max(0, Math.min(1, parsed.confidence || 0)),
+      isDeepfake: parsed.isDeepfake || false,
+      artifacts: parsed.artifacts || [],
+      details: parsed.analysis || '',
+      manipulation_type: parsed.manipulation_type || 'unknown',
+      countermeasures: parsed.recommendedActions || []
     };
+  } catch (error) {
+    console.error('OpenAI analysis error:', error);
+    return null;
   }
+}
 
-  // Weighted ensemble approach
-  const weights = {
-    'OpenAI Vision API': 0.3,
-    'Facial Landmark Analysis': 0.25,
-    'Frequency Domain Analysis': 0.2,
-    'Neural Artifact Detection': 0.25,
-    'Frame-by-Frame Analysis': 0.3,
-    'Temporal Consistency Analysis': 0.25,
-    'Audio-Visual Sync Analysis': 0.2,
-    'Compression Analysis': 0.1,
-    'Biometric Consistency': 0.15
+function combineAnalysisResults(analyses: any[], mediaType: string): DeepfakeAnalysisResult {
+  // Weighted ensemble: average confidence, majority vote on isDeepfake
+  const weights: Record<string, number> = {
+    'Google Gemini 2.0 Flash': 0.5,
+    'OpenAI GPT-4o Vision': 0.5,
   };
 
   let weightedConfidence = 0;
   let totalWeight = 0;
-  let deepfakeCount = 0;
-
+  let deepfakeVotes = 0;
   const allArtifacts: string[] = [];
   const methods: string[] = [];
   const countermeasures: string[] = [];
+  let primaryManipulationType = 'unknown';
 
-  validAnalyses.forEach(analysis => {
-    const weight = weights[analysis.method] || 0.1;
-    weightedConfidence += analysis.confidence * weight;
-    totalWeight += weight;
-    
-    if (analysis.isDeepfake) deepfakeCount++;
-    
-    methods.push(analysis.method);
-    allArtifacts.push(...(analysis.artifacts || []));
-    if (analysis.countermeasures) {
-      countermeasures.push(...analysis.countermeasures);
+  for (const a of analyses) {
+    const w = weights[a.method] || 0.5;
+    weightedConfidence += a.confidence * w;
+    totalWeight += w;
+    if (a.isDeepfake) deepfakeVotes++;
+    methods.push(a.method);
+    allArtifacts.push(...(a.artifacts || []));
+    countermeasures.push(...(a.countermeasures || []));
+    if (a.manipulation_type && a.manipulation_type !== 'unknown' && a.manipulation_type !== 'none') {
+      primaryManipulationType = a.manipulation_type;
     }
-  });
+  }
 
-  const finalConfidence = weightedConfidence / totalWeight;
-  const isDeepfake = deepfakeCount > validAnalyses.length / 2 || finalConfidence > 0.7;
+  const finalConfidence = totalWeight > 0 ? weightedConfidence / totalWeight : 0;
+  const isDeepfake = deepfakeVotes > analyses.length / 2 || finalConfidence > 0.65;
 
-  // Determine manipulation type
-  let manipulationType = 'unknown';
-  if (allArtifacts.includes('facial_geometry_changes')) manipulationType = 'face_swap';
-  else if (allArtifacts.includes('lip_sync_mismatch')) manipulationType = 'lip_sync';
-  else if (allArtifacts.includes('temporal_flickering')) manipulationType = 'temporal_manipulation';
-  else if (allArtifacts.includes('gan_fingerprints')) manipulationType = 'ai_generated';
-  else if (isDeepfake) manipulationType = 'suspected_manipulation';
-
-  // Determine threat level
   let threatLevel: 'low' | 'medium' | 'high' | 'critical' = 'low';
   if (finalConfidence > 0.9) threatLevel = 'critical';
   else if (finalConfidence > 0.75) threatLevel = 'high';
@@ -478,22 +280,23 @@ function combineAnalysisResults(analyses: any[], metadataAnalysis: any, mediaTyp
   return {
     isDeepfake,
     confidence: Math.round(finalConfidence * 100) / 100,
-    manipulation_type: manipulationType,
+    manipulation_type: isDeepfake ? primaryManipulationType : 'none',
     analysis_methods: methods,
-    facial_artifacts: allArtifacts.filter(a => a.includes('facial') || a.includes('face')),
-    temporal_inconsistencies: allArtifacts.filter(a => a.includes('temporal') || a.includes('frame')),
-    metadata_anomalies: metadataAnalysis?.metadata_anomalies || [],
+    facial_artifacts: [...new Set(allArtifacts.filter(a => /face|facial|eye|mouth|nose|skin/i.test(a)))],
+    temporal_inconsistencies: [...new Set(allArtifacts.filter(a => /temporal|frame|flicker/i.test(a)))],
+    metadata_anomalies: [...new Set(allArtifacts.filter(a => /metadata|exif|compress/i.test(a)))],
     threat_level: threatLevel,
     technical_details: {
-      total_analyses: validAnalyses.length,
-      consensus_score: deepfakeCount / validAnalyses.length,
+      total_analyses: analyses.length,
+      consensus_score: deepfakeVotes / analyses.length,
       weighted_confidence: finalConfidence,
-      analysis_breakdown: validAnalyses.map(a => ({
+      analysis_breakdown: analyses.map(a => ({
         method: a.method,
         confidence: a.confidence,
-        result: a.isDeepfake ? 'deepfake' : 'authentic'
+        result: a.isDeepfake ? 'deepfake' : 'authentic',
+        details: a.details,
       }))
     },
-    countermeasures: [...new Set(countermeasures)] // Remove duplicates
+    countermeasures: [...new Set(countermeasures)]
   };
 }
