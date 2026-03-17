@@ -88,6 +88,12 @@ const Upload = () => {
   const [watermarkResults, setWatermarkResults] = useState<WatermarkResult[]>([]);
   const [showOptionalFields, setShowOptionalFields] = useState(false);
   const [showAdvancedProtection, setShowAdvancedProtection] = useState(false);
+  const [protectionResult, setProtectionResult] = useState<{
+    artworkId: string | null;
+    protectionLevel: string;
+    monitoringCreated: boolean;
+    protectedAt: string;
+  } | null>(null);
 
   const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true); };
   const handleDragLeave = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false); };
