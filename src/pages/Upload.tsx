@@ -233,6 +233,7 @@ const Upload = () => {
     const protectedAt = new Date().toISOString();
     let watermarkApplied = false;
     let aiShieldApplied = false;
+    let metadataInjected = false;
     let dmcaEnforcement = false;
     let protectionRecordId: string | null = null;
 
