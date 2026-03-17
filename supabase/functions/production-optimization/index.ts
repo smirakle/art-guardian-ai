@@ -119,7 +119,7 @@ async function recordPerformanceMetrics(supabase: any, data: PerformanceData) {
       hit_count: data.cacheHits,
       miss_count: data.cacheMisses,
       ttl_seconds: 3600,
-      size_bytes: Math.floor(Math.random() * 10000) + 1000
+      size_bytes: (data.cacheHits + data.cacheMisses) * 256
     });
   }
 
