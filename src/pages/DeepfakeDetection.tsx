@@ -132,8 +132,8 @@ const DeepfakeDetection = () => {
                 <Alert variant="default" className="border-blue-500/50 bg-blue-500/10">
                   <Info className="h-4 w-4 text-blue-500" />
                   <AlertDescription>
-                    <strong>Coming Soon:</strong> Real-time monitoring across social media platforms requires 
-                    an Enterprise plan and will be available in Q2 2025. Current demo uses simulated data.
+                    Real-time deepfake monitoring scans social media platforms continuously.
+                    Enterprise plan required for full platform coverage.
                   </AlertDescription>
                 </Alert>
                 <LiveDeepfakeMonitor />
