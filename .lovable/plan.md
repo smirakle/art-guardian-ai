@@ -1,26 +1,25 @@
 
-## Plan: Make Protection Evidence Use Real Data
 
-**Goal**: Pull actual protection results from the database/state so the evidence panel reflects what truly happened.
+## Problem
 
-### Changes — `src/pages/Upload.tsx` only
+The "As Seen On" / BizWeekly section and CAI Membership banner are stacked vertically as separate bland sections with no visual cohesion. They look like afterthoughts — plain text, small images, no visual hierarchy, and too much whitespace between them.
 
-1. **Capture real protection results in state**  
-   - After the artwork + protection records are created in `handleStartProtection`, store the actual `artwork.id`, protection level (`ai_protection_level`), and the real `protection_record_id` (if created) into component state (e.g., `protectionResult`).
+## Plan
 
-2. **Protection ID** — Use the real artwork ID or protection record ID instead of `Date.now().toString(36)`. Format: `TSMO-{artwork.id.substring(0,8).toUpperCase()}`.
+Combine both credibility signals (BizWeekly press + CAI membership) into a single, polished **"Credibility & Trust"** section with better visual design:
 
-3. **Protection Level** — Read from the actual state (currently always `'standard'` but wired correctly so future changes reflect).
+### Changes to `src/pages/Index.tsx` (lines 342-389)
 
-4. **Layer Checklist** — Make each layer conditional based on what was actually enabled:
-   - "Invisible Watermark" → show green only if `enableWatermark` is true
-   - "AI Training Shield" → always true (always applied)
-   - "Monitoring Active" → show green only if a monitoring scan was successfully created
-   - "DMCA Enforcement" → show green only if user is authenticated (guests don't get this)
-   - Show unchecked/grey state for layers that weren't applied
+Replace the two separate sections with one unified section:
 
-5. **Date** — Use the timestamp captured at protection time (not render time), stored in state.
+1. **Single section** with subtle gradient background and proper vertical spacing
+2. **Two-column layout** on desktop (BizWeekly left, CAI right), stacked on mobile
+3. Each credential in a **card-like container** with subtle border, rounded corners, and hover effect
+4. **Larger logo sizes** — CAI logo `h-16 md:h-20`, BizWeekly image `max-w-sm`
+5. **Section header**: "Trusted & Recognized" with a subtle label above
+6. **Divider line** between the two on desktop (vertical) / mobile (horizontal)
+7. Harvard disclaimer kept as small text below the BizWeekly card
+8. "Read the feature" link styled as a proper button/pill
 
-6. **Verification hint** — Keep as-is (accurate statement).
+This creates a cohesive, professional credibility strip that draws the eye without being gaudy.
 
-### No new files or dependencies. All changes scoped to Upload.tsx state management and the Step 4 render block.
