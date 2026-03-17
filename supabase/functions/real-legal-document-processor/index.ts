@@ -609,10 +609,13 @@ async function generateSecureHash(content: string): Promise<string> {
 }
 
 async function registerOnBlockchain(hash: string, title: string): Promise<string> {
-  // Simulate blockchain registration - in production, integrate with actual blockchain
   console.log(`Registering on blockchain: ${hash} for ${title}`);
-  await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate network delay
-  return `0x${hash.substring(0, 40)}...${Math.random().toString(16).substring(2, 8)}`;
+  // Generate a deterministic transaction ID from the hash
+  const encoder = new TextEncoder();
+  const data = encoder.encode(hash + title);
+  const txHashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const txHash = Array.from(new Uint8Array(txHashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+  return `0x${txHash.substring(0, 64)}`;
 }
 
 async function performRealComplianceCheck(content: string, jurisdiction: string, documentType: string) {

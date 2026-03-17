@@ -8,91 +8,145 @@ const corsHeaders = {
 
 console.log("Document Monitoring Engine function started");
 
-// Simple text comparison for plagiarism detection
-function calculateSimilarity(originalText: string, comparedText: string): number {
-  const originalWords = new Set(originalText.toLowerCase().split(/\s+/));
-  const comparedWords = comparedText.toLowerCase().split(/\s+/);
-  
-  let matches = 0;
-  for (const word of comparedWords) {
-    if (originalWords.has(word) && word.length > 3) {
-      matches++;
-    }
-  }
-  
-  return comparedWords.length > 0 ? matches / comparedWords.length : 0;
-}
-
-// Simulate platform scanning
-async function scanPlatformForPlagiarism(
+// Real web search for document plagiarism using SerpAPI
+async function searchWebForPlagiarism(
   content: string,
   platform: string,
   supabase: any,
   sessionId: string
-) {
-  console.log(`Scanning ${platform}...`);
-  
-  // Update scan progress
+): Promise<any[]> {
+  console.log(`Real scan on ${platform}...`);
+
   await supabase.from("document_scan_updates").insert({
     session_id: sessionId,
-    platform: platform,
+    platform,
     status: "scanning",
     scanned_items: 0,
     total_items: 100,
-    metadata: { started_at: new Date().toISOString() }
+    metadata: { started_at: new Date().toISOString() },
   });
-  
-  // Simulate scanning delay
-  await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-  
-  // 10% chance of finding a match per platform
-  const hasMatch = Math.random() < 0.1;
-  
-  if (!hasMatch) {
-    console.log(`No matches found on ${platform}`);
-    
-    // Update scan as complete
-    await supabase.from("document_scan_updates").insert({
-      session_id: sessionId,
-      platform: platform,
-      status: "completed",
-      scanned_items: 100,
-      total_items: 100,
-      matches_found: 0,
-      metadata: { completed_at: new Date().toISOString() }
-    });
-    
-    return [];
+
+  const serpApiKey = Deno.env.get("SERPAPI_KEY");
+  const openaiKey = Deno.env.get("OPENAI_API_KEY");
+
+  // Extract a representative snippet for searching (first ~200 chars of meaningful text)
+  const snippet = content.replace(/\s+/g, " ").trim().substring(0, 200);
+  const searchQuery = `"${snippet.substring(0, 80)}" ${platform}`;
+
+  const matches: any[] = [];
+
+  // Search with SerpAPI
+  if (serpApiKey) {
+    try {
+      const url = `https://serpapi.com/search?engine=google&q=${encodeURIComponent(searchQuery)}&num=10&api_key=${serpApiKey}`;
+      const resp = await fetch(url);
+      if (resp.ok) {
+        const data = await resp.json();
+        const results = data.organic_results || [];
+
+        for (const r of results) {
+          // Use OpenAI to check if the found page actually contains similar content
+          let similarity = 0.4; // base similarity for keyword match
+          if (openaiKey && r.snippet) {
+            similarity = await computeSimilarityWithAI(openaiKey, content.substring(0, 500), r.snippet);
+          }
+
+          if (similarity >= 0.5) {
+            matches.push({
+              platform,
+              url: r.link,
+              title: r.title || `Match on ${platform}`,
+              similarity_score: similarity,
+              snippet: r.snippet || "",
+              detected_at: new Date().toISOString(),
+            });
+          }
+        }
+      }
+    } catch (e) {
+      console.error(`SerpAPI search error for ${platform}:`, e);
+    }
   }
-  
-  // Simulate a match
-  const sampleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-  const similarity = Math.max(calculateSimilarity(content, sampleText), 0.6 + Math.random() * 0.3);
-  
-  console.log(`Found potential match on ${platform} with ${(similarity * 100).toFixed(1)}% similarity`);
-  
-  // Update scan as complete with match
+
+  // Google Custom Search fallback
+  const googleKey = Deno.env.get("GOOGLE_CUSTOM_SEARCH_API_KEY");
+  const googleCx = Deno.env.get("GOOGLE_SEARCH_ENGINE_ID");
+  if (matches.length === 0 && googleKey && googleCx) {
+    try {
+      const url = `https://www.googleapis.com/customsearch/v1?key=${googleKey}&cx=${googleCx}&q=${encodeURIComponent(searchQuery)}&num=5`;
+      const resp = await fetch(url);
+      if (resp.ok) {
+        const data = await resp.json();
+        for (const item of data.items || []) {
+          let similarity = 0.4;
+          if (openaiKey && item.snippet) {
+            similarity = await computeSimilarityWithAI(openaiKey, content.substring(0, 500), item.snippet);
+          }
+          if (similarity >= 0.5) {
+            matches.push({
+              platform,
+              url: item.link,
+              title: item.title,
+              similarity_score: similarity,
+              snippet: item.snippet || "",
+              detected_at: new Date().toISOString(),
+            });
+          }
+        }
+      }
+    } catch (e) {
+      console.error(`Google CSE error for ${platform}:`, e);
+    }
+  }
+
+  // Update scan as complete
   await supabase.from("document_scan_updates").insert({
     session_id: sessionId,
-    platform: platform,
+    platform,
     status: "completed",
     scanned_items: 100,
     total_items: 100,
-    matches_found: 1,
-    metadata: { 
-      completed_at: new Date().toISOString(),
-      similarity: similarity
-    }
+    matches_found: matches.length,
+    metadata: { completed_at: new Date().toISOString(), real_search: true },
   });
-  
-  return [{
-    platform,
-    url: `https://${platform.toLowerCase().replace(/\s+/g, '')}.com/document/${Date.now()}`,
-    title: `Potential plagiarism detected on ${platform}`,
-    similarity_score: similarity,
-    snippet: content.substring(0, 150),
-    detected_at: new Date().toISOString()
-  }];
+
+  return matches;
+}
+
+async function computeSimilarityWithAI(apiKey: string, original: string, found: string): Promise<number> {
+  try {
+    const resp = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: "You compare two text excerpts for plagiarism similarity. Return ONLY a JSON object: {\"similarity\": 0.0-1.0, \"reason\": \"brief explanation\"}",
+          },
+          {
+            role: "user",
+            content: `Original excerpt:\n${original}\n\nFound text:\n${found}`,
+          },
+        ],
+        max_tokens: 100,
+        temperature: 0.1,
+      }),
+    });
+    if (resp.ok) {
+      const data = await resp.json();
+      const text = data.choices?.[0]?.message?.content || "";
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const parsed = JSON.parse(jsonMatch[0]);
+        return typeof parsed.similarity === "number" ? parsed.similarity : 0.3;
+      }
+    }
+  } catch (e) {
+    console.error("AI similarity error:", e);
+  }
+  return 0.3;
 }
 
 serve(async (req) => {
@@ -109,7 +163,6 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Get session details
     const { data: session, error: sessionError } = await supabase
       .from("document_monitoring_sessions")
       .select("*")
@@ -117,20 +170,13 @@ serve(async (req) => {
       .single();
 
     if (sessionError || !session) {
-      console.error("Session not found:", sessionError);
       return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: "Session not found",
-          sessionId 
-        }),
+        JSON.stringify({ success: false, error: "Session not found", sessionId }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 404 }
       );
     }
 
-    // Get document content from protection record if available
-    let documentContent = "Sample document content for testing monitoring system. This text will be used to scan various platforms for plagiarism and unauthorized AI training usage.";
-    
+    let documentContent = "";
     if (session.protection_record_id) {
       const { data: protectionRecord } = await supabase
         .from("ai_protection_records")
@@ -142,65 +188,38 @@ serve(async (req) => {
         documentContent = protectionRecord.metadata.original_text;
       }
     }
-    
+
+    if (!documentContent) {
+      documentContent = "No document content available for scanning.";
+    }
+
     console.log(`Document content length: ${documentContent.length} characters`);
 
-    const platforms = session.platforms || [
-      "Google Scholar",
-      "Research Gate",
-      "Academia.edu",
-      "Medium",
-      "Substack",
-      "Common Crawl",
-      "AI Training Datasets"
-    ];
-
-    console.log(`Starting real plagiarism scan with Copyscape...`);
-
-    // Call Copyscape plagiarism scanner
+    // Call Copyscape first
     let copyscapeMatches = 0;
     let totalMatches = 0;
     let highRiskMatches = 0;
 
     try {
-      console.log("Calling Copyscape API...");
-      
       const { data: copyscapeResult, error: copyscapeError } = await supabase.functions.invoke(
-        'scan-plagiarism-copyscape',
-        {
-          body: {
-            sessionId: sessionId,
-            documentContent: documentContent
-          }
-        }
+        "scan-plagiarism-copyscape",
+        { body: { sessionId, documentContent } }
       );
 
-      if (copyscapeError) {
-        console.error("Copyscape scan error:", copyscapeError);
-        // Continue with fallback scanning if Copyscape fails
-      } else if (copyscapeResult?.success) {
+      if (!copyscapeError && copyscapeResult?.success) {
         copyscapeMatches = copyscapeResult.matchesFound || 0;
         totalMatches = copyscapeMatches;
-        
-        // Calculate high-risk matches (>80% similarity)
         if (copyscapeResult.matches) {
-          highRiskMatches = copyscapeResult.matches.filter(
-            (m: any) => m.similarity_score > 0.8
-          ).length;
+          highRiskMatches = copyscapeResult.matches.filter((m: any) => m.similarity_score > 0.8).length;
         }
-        
         console.log(`Copyscape found ${copyscapeMatches} matches (${highRiskMatches} high-risk)`);
       }
     } catch (error) {
       console.error("Error calling Copyscape scanner:", error);
-      // Continue with fallback
     }
 
-    // Enhance Copyscape results with AI analysis for high-similarity matches
+    // AI analysis on Copyscape matches
     if (copyscapeMatches > 0) {
-      console.log("Running AI analysis on Copyscape matches...");
-      
-      // Get plagiarism matches to analyze
       const { data: matches } = await supabase
         .from("document_plagiarism_matches")
         .select("*")
@@ -208,58 +227,36 @@ serve(async (req) => {
         .gte("similarity_score", 0.6)
         .limit(5);
 
-      if (matches && matches.length > 0) {
+      if (matches?.length) {
         for (const match of matches) {
           try {
-            console.log(`Analyzing match from ${match.source_url} with AI...`);
-            
-            const { data: aiResult } = await supabase.functions.invoke(
-              'analyze-similarity-ai',
-              {
-                body: {
-                  originalText: documentContent,
-                  comparedText: match.matched_content || "",
-                  matchUrl: match.source_url,
-                  sessionId: sessionId
-                }
-              }
-            );
-
-            if (aiResult?.success) {
-              console.log(`AI analysis complete for ${match.source_url}:`, {
-                similarity: aiResult.analysis.similarity_score,
-                paraphrased: aiResult.analysis.is_paraphrased
-              });
-            }
-          } catch (error) {
-            console.error("AI analysis error for match:", error);
+            await supabase.functions.invoke("analyze-similarity-ai", {
+              body: {
+                originalText: documentContent,
+                comparedText: match.matched_content || "",
+                matchUrl: match.source_url,
+                sessionId,
+              },
+            });
+          } catch (e) {
+            console.error("AI analysis error:", e);
           }
         }
       }
     }
 
-    // If Copyscape didn't find matches or failed, do simulated platform scans
+    // If Copyscape didn't find matches, do real web search
     if (totalMatches === 0) {
-      console.log("Running fallback platform scans...");
-      
-      const platforms = session.platforms || [
-        "Google Scholar",
-        "Academia.edu",
-        "Medium"
-      ];
+      console.log("Running real web search fallback...");
+      const platforms = session.platforms || ["Google Scholar", "Academia.edu", "Medium"];
 
       for (const platform of platforms) {
-        const matches = await scanPlatformForPlagiarism(
-          documentContent,
-          platform,
-          supabase,
-          sessionId
-        );
+        const matches = await searchWebForPlagiarism(documentContent, platform, supabase, sessionId);
 
         for (const match of matches) {
           const isHighRisk = match.similarity_score > 0.8;
           if (isHighRisk) highRiskMatches++;
-          
+
           await supabase.from("document_plagiarism_matches").insert({
             session_id: sessionId,
             protection_record_id: session.protection_record_id,
@@ -269,7 +266,7 @@ serve(async (req) => {
             matched_content: match.snippet,
             platform: match.platform,
             detected_at: match.detected_at,
-            metadata: { simulated: true }
+            metadata: { real_search: true },
           });
 
           totalMatches++;
@@ -277,18 +274,17 @@ serve(async (req) => {
       }
     }
 
-    // Update session as completed
+    // Update session
     await supabase
       .from("document_monitoring_sessions")
       .update({
         status: "completed",
         completed_at: new Date().toISOString(),
         total_matches: totalMatches,
-        high_risk_matches: highRiskMatches
+        high_risk_matches: highRiskMatches,
       })
       .eq("id", sessionId);
 
-    // Create summary notification
     if (totalMatches > 0) {
       await supabase.from("ai_protection_notifications").insert({
         user_id: session.user_id,
@@ -301,37 +297,27 @@ serve(async (req) => {
           session_id: sessionId,
           total_matches: totalMatches,
           high_risk_matches: highRiskMatches,
-          scan_type: copyscapeMatches > 0 ? "copyscape" : "simulated"
-        }
+          scan_type: copyscapeMatches > 0 ? "copyscape" : "web_search",
+        },
       });
     }
-
-    console.log(`Monitoring complete: ${totalMatches} total matches, ${highRiskMatches} high-risk`);
 
     return new Response(
       JSON.stringify({
         success: true,
-        sessionId: sessionId,
-        totalMatches: totalMatches,
-        highRiskMatches: highRiskMatches,
-        scanType: copyscapeMatches > 0 ? "real_copyscape" : "simulated",
-        message: "Document monitoring completed"
+        sessionId,
+        totalMatches,
+        highRiskMatches,
+        scanType: copyscapeMatches > 0 ? "real_copyscape" : "real_web_search",
+        message: "Document monitoring completed",
       }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
     console.error("Error in document monitoring:", error);
     return new Response(
-      JSON.stringify({
-        success: false,
-        error: error instanceof Error ? error.message : "Unknown error"
-      }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      JSON.stringify({ success: false, error: error instanceof Error ? error.message : "Unknown error" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });

@@ -15,54 +15,31 @@ function validateInput(data: any): MonitoringRequest {
   if (!data.accountId || typeof data.accountId !== 'string') {
     throw new Error('Invalid accountId provided');
   }
-  
   const scanType = data.scanType || 'full';
   if (!['quick', 'full'].includes(scanType)) {
     throw new Error('Invalid scanType. Must be "quick" or "full"');
   }
-  
-  // Validate UUID format
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   if (!uuidRegex.test(data.accountId)) {
     throw new Error('Invalid accountId format');
   }
-  
-  return {
-    accountId: data.accountId,
-    scanType: scanType
-  };
+  return { accountId: data.accountId, scanType };
 }
 
-async function logSecurityEvent(
-  supabase: any,
-  userId: string | null,
-  action: string,
-  details: any,
-  req: Request
-) {
+async function logSecurityEvent(supabase: any, userId: string | null, action: string, details: any, req: Request) {
   try {
     const userAgent = req.headers.get('user-agent') || '';
-    const forwarded = req.headers.get('x-forwarded-for');
-    const realIp = req.headers.get('x-real-ip');
-    const ipAddress = forwarded || realIp || 'unknown';
-    
-    await supabase
-      .from('security_audit_log')
-      .insert({
-        user_id: userId,
-        action,
-        resource_type: 'social_media_monitoring',
-        details,
-        ip_address: ipAddress,
-        user_agent: userAgent
-      });
+    const ipAddress = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+    await supabase.from('security_audit_log').insert({
+      user_id: userId, action, resource_type: 'social_media_monitoring',
+      details, ip_address: ipAddress, user_agent: userAgent
+    });
   } catch (error) {
     console.error('Failed to log security event:', error);
   }
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -73,308 +50,247 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     if (req.method !== 'POST') {
-      await logSecurityEvent(supabase, null, 'invalid_method_attempt', 
-        { method: req.method }, req);
-      
-      return new Response(
-        JSON.stringify({ error: 'Method not allowed' }),
-        { 
-          status: 405, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      );
+      await logSecurityEvent(supabase, null, 'invalid_method_attempt', { method: req.method }, req);
+      return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+        status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
     }
 
-    // Parse and validate request body
     const requestData = await req.json();
     const { accountId, scanType } = validateInput(requestData);
 
     console.log(`Starting social media monitoring for account: ${accountId}, type: ${scanType}`);
 
-    // Get account details and verify ownership
     const { data: account, error: accountError } = await supabase
-      .from('social_media_accounts')
-      .select('*')
-      .eq('id', accountId)
-      .single();
+      .from('social_media_accounts').select('*').eq('id', accountId).single();
 
     if (accountError) {
-      await logSecurityEvent(supabase, null, 'monitoring_account_not_found', 
-        { accountId, error: accountError.message }, req);
+      await logSecurityEvent(supabase, null, 'monitoring_account_not_found', { accountId, error: accountError.message }, req);
       throw new Error(`Failed to fetch account: ${accountError.message}`);
     }
 
-    // Log successful monitoring start
-    await logSecurityEvent(supabase, account.user_id, 'monitoring_scan_started', 
+    await logSecurityEvent(supabase, account.user_id, 'monitoring_scan_started',
       { accountId, scanType, platform: account.platform }, req);
 
-    console.log(`Monitoring account: @${account.account_handle} on ${account.platform}`);
-
-    // Create scan record
     const { data: scan, error: scanError } = await supabase
       .from('social_media_scans')
-      .insert({
-        account_id: accountId,
-        scan_type: scanType,
-        status: 'running',
-        started_at: new Date().toISOString()
-      })
-      .select()
-      .single();
+      .insert({ account_id: accountId, scan_type: scanType, status: 'running', started_at: new Date().toISOString() })
+      .select().single();
 
-    if (scanError) {
-      throw new Error(`Failed to create scan record: ${scanError.message}`);
-    }
-
-    console.log(`Created scan record: ${scan.id}`);
-
-    // Simulate account verification and content scanning
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    if (scanError) throw new Error(`Failed to create scan record: ${scanError.message}`);
 
     // Update account verification status
-    await supabase
-      .from('social_media_accounts')
-      .update({ 
-        verification_status: 'verified',
-        last_scan_at: new Date().toISOString()
-      })
+    await supabase.from('social_media_accounts')
+      .update({ verification_status: 'verified', last_scan_at: new Date().toISOString() })
       .eq('id', accountId);
 
-    // Simulate content discovery and analysis
-    const mockContentResults = await performContentAnalysis(account, scan.id, supabase);
+    // Real content analysis using SerpAPI + OpenAI
+    const analysisResults = await performRealContentAnalysis(account, scan.id, supabase);
 
-    // Update scan completion
-    await supabase
-      .from('social_media_scans')
-      .update({
-        status: 'completed',
-        content_scanned: mockContentResults.contentScanned,
-        detections_found: mockContentResults.detectionsCount,
-        completed_at: new Date().toISOString()
-      })
-      .eq('id', scan.id);
+    await supabase.from('social_media_scans').update({
+      status: 'completed',
+      content_scanned: analysisResults.contentScanned,
+      detections_found: analysisResults.detectionsCount,
+      completed_at: new Date().toISOString()
+    }).eq('id', scan.id);
 
-    console.log(`Scan completed: ${mockContentResults.contentScanned} items scanned, ${mockContentResults.detectionsCount} detections found`);
+    console.log(`Scan completed: ${analysisResults.contentScanned} items scanned, ${analysisResults.detectionsCount} detections found`);
 
     return new Response(JSON.stringify({
       success: true,
       scanId: scan.id,
       accountHandle: account.account_handle,
       platform: account.platform,
-      contentScanned: mockContentResults.contentScanned,
-      detectionsFound: mockContentResults.detectionsCount,
-      detections: mockContentResults.detections
+      contentScanned: analysisResults.contentScanned,
+      detectionsFound: analysisResults.detectionsCount,
+      detections: analysisResults.detections
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
   } catch (error) {
     console.error('Social media monitoring error:', error);
-    
-    // Log the error for security audit
     try {
-      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-      const supabase = createClient(supabaseUrl, supabaseServiceKey);
-      
-      await logSecurityEvent(supabase, null, 'monitoring_scan_error', 
-        { error: error.message }, req);
-    } catch (logError) {
-      console.error('Failed to log error event:', logError);
-    }
-    
-    return new Response(JSON.stringify({ 
-      error: 'Monitoring scan failed',
-      success: false 
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+      await logSecurityEvent(supabase, null, 'monitoring_scan_error', { error: error.message }, req);
+    } catch {}
+    return new Response(JSON.stringify({ error: 'Monitoring scan failed', success: false }), {
+      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });
 
-async function performContentAnalysis(account: any, scanId: string, supabase: any) {
-  const contentTypes = ['video', 'image', 'post', 'story'];
-  const detectionTypes = ['deepfake', 'copyright', 'impersonation'];
-  const threatLevels = ['low', 'medium', 'high'];
-  
-  // Simulate scanning different amounts of content based on platform
-  const contentCounts = {
-    youtube: Math.floor(Math.random() * 50) + 20,
-    facebook: Math.floor(Math.random() * 80) + 30,
-    instagram: Math.floor(Math.random() * 100) + 40,
-    tiktok: Math.floor(Math.random() * 150) + 60
-  };
+async function performRealContentAnalysis(account: any, scanId: string, supabase: any) {
+  const serpApiKey = Deno.env.get('SERPAPI_KEY');
+  const openaiKey = Deno.env.get('OPENAI_API_KEY');
+  const detections: any[] = [];
+  let contentScanned = 0;
 
-  const contentScanned = contentCounts[account.platform as keyof typeof contentCounts] || 50;
-  const detections = [];
-  
-  // Generate realistic detection results (10-20% detection rate)
-  const detectionRate = 0.1 + Math.random() * 0.1;
-  const detectionsCount = Math.floor(contentScanned * detectionRate);
+  // Search for the account's content on the web using SerpAPI
+  if (serpApiKey) {
+    try {
+      const query = `site:${getPlatformDomain(account.platform)} "@${account.account_handle}"`;
+      const url = `https://serpapi.com/search?engine=google&q=${encodeURIComponent(query)}&num=20&api_key=${serpApiKey}`;
+      const resp = await fetch(url);
 
-  console.log(`Analyzing ${contentScanned} pieces of content from @${account.account_handle}`);
+      if (resp.ok) {
+        const data = await resp.json();
+        const results = data.organic_results || [];
+        contentScanned = results.length;
 
-  for (let i = 0; i < detectionsCount; i++) {
-    const contentType = contentTypes[Math.floor(Math.random() * contentTypes.length)];
-    const detectionType = detectionTypes[Math.floor(Math.random() * detectionTypes.length)];
-    const threatLevel = threatLevels[Math.floor(Math.random() * threatLevels.length)];
-    const confidence = 0.6 + Math.random() * 0.4; // 60-100% confidence
+        // Get user's artworks for comparison
+        const { data: artworks } = await supabase
+          .from('artwork').select('id, title, file_paths')
+          .eq('user_id', account.user_id).limit(10);
 
-    // Generate realistic artifacts based on detection type
-    const artifacts = generateArtifacts(detectionType);
-    
-    // Create detection record
-    const detection = {
-      account_id: account.id,
-      scan_id: scanId,
-      content_type: contentType,
-      content_url: generateContentUrl(account, contentType, i),
-      content_title: generateContentTitle(account.platform, contentType, i),
-      content_description: generateContentDescription(detectionType, confidence, account),
-      thumbnail_url: generateThumbnailUrl(account.platform, account),
-      detection_type: detectionType,
-      confidence_score: confidence,
-      threat_level: threatLevel,
-      artifacts_detected: artifacts,
-      detected_at: new Date().toISOString()
-    };
+        for (const result of results) {
+          // Use OpenAI to analyze each result for threats
+          const assessment = await assessContentThreat(
+            openaiKey, result, account, artworks || []
+          );
 
-    // Insert detection into database
-    const { error: detectionError } = await supabase
-      .from('social_media_monitoring_results')
-      .insert(detection);
+          if (assessment.isThreat) {
+            const detection = {
+              account_id: account.id,
+              scan_id: scanId,
+              content_type: assessment.contentType,
+              content_url: result.link,
+              content_title: result.title,
+              content_description: assessment.description,
+              thumbnail_url: result.thumbnail || null,
+              detection_type: assessment.detectionType,
+              confidence_score: assessment.confidence,
+              threat_level: assessment.threatLevel,
+              artifacts_detected: assessment.artifacts,
+              detected_at: new Date().toISOString()
+            };
 
-    if (detectionError) {
-      console.error('Error inserting detection:', detectionError);
-    } else {
-      detections.push(detection);
-      console.log(`Detected ${detectionType} in ${contentType} with ${Math.round(confidence * 100)}% confidence`);
+            const { error } = await supabase.from('social_media_monitoring_results').insert(detection);
+            if (!error) {
+              detections.push(detection);
+              console.log(`Detected ${assessment.detectionType} at ${result.link} (${(assessment.confidence * 100).toFixed(0)}%)`);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error('SerpAPI content search error:', e);
     }
-
-    // Add delay to simulate real-time processing
-    await new Promise(resolve => setTimeout(resolve, 100));
   }
 
-  return {
-    contentScanned,
-    detectionsCount,
-    detections
-  };
-}
+  // Also try Google Lens for image-based monitoring
+  if (serpApiKey && account.profile_image_url) {
+    try {
+      const lensUrl = `https://serpapi.com/search?engine=google_lens&url=${encodeURIComponent(account.profile_image_url)}&api_key=${serpApiKey}`;
+      const resp = await fetch(lensUrl);
+      if (resp.ok) {
+        const data = await resp.json();
+        const matches = data.visual_matches || [];
+        contentScanned += matches.length;
 
-function generateArtifacts(detectionType: string): string[] {
-  const artifactSets = {
-    deepfake: [
-      'Facial landmark inconsistencies',
-      'Temporal flickering',
-      'Unnatural eye movements',
-      'Inconsistent lighting',
-      'Audio-visual synchronization issues',
-      'Compression artifacts',
-      'Edge artifacts around face'
-    ],
-    copyright: [
-      'Watermark removal traces',
-      'Metadata inconsistencies',
-      'Resolution mismatches',
-      'Color profile differences',
-      'EXIF data manipulation',
-      'Reverse image match found'
-    ],
-    impersonation: [
-      'Profile verification mismatch',
-      'Account creation date suspicious',
-      'Follower pattern anomalies',
-      'Content similarity detected',
-      'Username variations',
-      'Bio content duplication'
-    ]
-  };
+        for (const match of matches.slice(0, 5)) {
+          if (match.link && !match.link.includes(getPlatformDomain(account.platform))) {
+            const detection = {
+              account_id: account.id,
+              scan_id: scanId,
+              content_type: 'image',
+              content_url: match.link,
+              content_title: match.title || 'Profile image found elsewhere',
+              content_description: `Profile image of @${account.account_handle} found on ${new URL(match.link).hostname}`,
+              thumbnail_url: match.thumbnail || null,
+              detection_type: 'impersonation',
+              confidence_score: 0.7,
+              threat_level: 'medium',
+              artifacts_detected: ['profile_image_reuse'],
+              detected_at: new Date().toISOString()
+            };
 
-  const availableArtifacts = artifactSets[detectionType as keyof typeof artifactSets] || [];
-  const numArtifacts = Math.floor(Math.random() * 3) + 1; // 1-3 artifacts
-  
-  return availableArtifacts
-    .sort(() => Math.random() - 0.5)
-    .slice(0, numArtifacts);
-}
-
-function generateContentUrl(account: any, contentType: string, index: number): string {
-  // Generate realistic content URLs that show where detected content would be found
-  const timestamp = Date.now() + index;
-  const contentId = generateRandomId();
-  
-  if (account.platform === 'youtube') {
-    // YouTube video URLs
-    return `https://www.youtube.com/watch?v=${contentId}`;
-  } else if (account.platform === 'facebook') {
-    // Facebook post URLs - use handle from account URL
-    const handle = account.account_handle;
-    return `https://www.facebook.com/${handle}/posts/${timestamp}`;
-  } else if (account.platform === 'instagram') {
-    // Instagram post URLs
-    return `https://www.instagram.com/p/${contentId}/`;
-  } else if (account.platform === 'tiktok') {
-    // TikTok video URLs
-    return `https://www.tiktok.com/@${account.account_handle}/video/${timestamp}`;
-  } else if (account.platform === 'twitter' || account.platform === 'x') {
-    // Twitter/X post URLs
-    return `https://twitter.com/${account.account_handle}/status/${timestamp}`;
-  }
-  
-  // For other platforms, create content-specific URLs
-  return `${account.account_url}/content/${contentId}`;
-}
-
-function generateContentTitle(platform: string, contentType: string, index: number): string {
-  // Generate realistic content titles that show specific detected content
-  const contentNumber = index + 1;
-  
-  const contentTitles = {
-    youtube: [`Video #${contentNumber} - Potential Violation Detected`, `Monitored Upload #${contentNumber}`, `Flagged Video Content #${contentNumber}`],
-    facebook: [`Post #${contentNumber} - Detection Alert`, `Monitored Status #${contentNumber}`, `Flagged Content #${contentNumber}`],
-    instagram: [`Instagram Post #${contentNumber} - Alert`, `Detected Content #${contentNumber}`, `Monitored Image #${contentNumber}`],
-    tiktok: [`TikTok Video #${contentNumber} - Detection`, `Flagged Short #${contentNumber}`, `Monitored Video #${contentNumber}`],
-    twitter: [`Tweet #${contentNumber} - Alert`, `Monitored Post #${contentNumber}`, `Flagged Tweet #${contentNumber}`]
-  };
-
-  const platformContent = contentTitles[platform as keyof typeof contentTitles];
-  if (platformContent) {
-    return platformContent[index % platformContent.length];
+            const { error } = await supabase.from('social_media_monitoring_results').insert(detection);
+            if (!error) detections.push(detection);
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Google Lens search error:', e);
+    }
   }
 
-  return `Content #${contentNumber} - Detection Alert`;
+  return { contentScanned, detectionsCount: detections.length, detections };
 }
 
-function generateContentDescription(detectionType: string, confidence: number, account: any): string {
-  const timeInfo = `Detected on ${new Date().toLocaleString()}`;
-  
-  const descriptions = {
-    deepfake: `Potential deepfake content detected in @${account.account_handle}'s ${account.platform} account with ${Math.round(confidence * 100)}% confidence. Advanced AI analysis identified synthetic media characteristics. ${timeInfo}`,
-    copyright: `Possible copyright infringement detected in @${account.account_handle}'s ${account.platform} content with ${Math.round(confidence * 100)}% confidence. Content similarity analysis flagged potential unauthorized use. ${timeInfo}`,
-    impersonation: `Account impersonation activity detected on @${account.account_handle}'s ${account.platform} profile with ${Math.round(confidence * 100)}% confidence. Identity verification analysis found suspicious patterns. ${timeInfo}`
+function getPlatformDomain(platform: string): string {
+  const domains: Record<string, string> = {
+    youtube: 'youtube.com', facebook: 'facebook.com',
+    instagram: 'instagram.com', tiktok: 'tiktok.com',
+    twitter: 'twitter.com', x: 'x.com'
   };
-
-  return descriptions[detectionType as keyof typeof descriptions] || `Suspicious activity detected in @${account.account_handle}'s ${account.platform} content. ${timeInfo}`;
+  return domains[platform] || `${platform}.com`;
 }
 
-function generateThumbnailUrl(platform: string, account: any): string {
-  // Generate more realistic thumbnails based on platform
-  const platformColors = {
-    youtube: 'ff0000', // YouTube red
-    facebook: '1877f2', // Facebook blue  
-    instagram: 'e4405f', // Instagram pink
-    tiktok: '000000'   // TikTok black
-  };
-  
-  const color = platformColors[platform as keyof typeof platformColors] || '666666';
-  const size = '320x180';
-  
-  // Use a service that generates thumbnails with platform branding
-  return `https://via.placeholder.com/${size}/${color}/ffffff?text=${platform.toUpperCase()}+@${account.account_handle}`;
-}
+async function assessContentThreat(
+  apiKey: string | undefined,
+  result: any,
+  account: any,
+  artworks: any[]
+): Promise<{
+  isThreat: boolean; contentType: string; detectionType: string;
+  confidence: number; threatLevel: string; artifacts: string[]; description: string;
+}> {
+  const noThreat = { isThreat: false, contentType: 'post', detectionType: 'none', confidence: 0, threatLevel: 'low', artifacts: [], description: '' };
 
-function generateRandomId(): string {
-  return Math.random().toString(36).substring(2, 15);
+  if (!apiKey) {
+    // Basic heuristic without AI
+    const text = (result.title + ' ' + (result.snippet || '')).toLowerCase();
+    const hasCopyright = /stolen|copied|unauthorized|repost|reupload/i.test(text);
+    if (hasCopyright) {
+      return {
+        isThreat: true, contentType: 'post', detectionType: 'copyright',
+        confidence: 0.5, threatLevel: 'low', artifacts: ['keyword_match'],
+        description: `Keyword match suggesting potential unauthorized use of @${account.account_handle}'s content`
+      };
+    }
+    return noThreat;
+  }
+
+  try {
+    const artworkTitles = artworks.map(a => a.title).join(', ');
+    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [{
+          role: 'system',
+          content: 'You analyze social media content for copyright infringement, deepfakes, and impersonation. Return ONLY JSON: {"isThreat": bool, "contentType": "video|image|post|story", "detectionType": "deepfake|copyright|impersonation|none", "confidence": 0.0-1.0, "threatLevel": "low|medium|high", "artifacts": ["list"], "description": "brief"}'
+        }, {
+          role: 'user',
+          content: `Account: @${account.account_handle} on ${account.platform}\nKnown artworks: ${artworkTitles || 'none'}\nFound content:\nTitle: ${result.title}\nSnippet: ${result.snippet || 'N/A'}\nURL: ${result.link}\n\nIs this a threat to the account owner?`
+        }],
+        max_tokens: 200,
+        temperature: 0.1
+      })
+    });
+
+    if (resp.ok) {
+      const data = await resp.json();
+      const text = data.choices?.[0]?.message?.content || '';
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const parsed = JSON.parse(jsonMatch[0]);
+        return {
+          isThreat: !!parsed.isThreat,
+          contentType: parsed.contentType || 'post',
+          detectionType: parsed.detectionType || 'none',
+          confidence: typeof parsed.confidence === 'number' ? parsed.confidence : 0,
+          threatLevel: parsed.threatLevel || 'low',
+          artifacts: Array.isArray(parsed.artifacts) ? parsed.artifacts : [],
+          description: parsed.description || ''
+        };
+      }
+    }
+  } catch (e) {
+    console.error('AI content assessment error:', e);
+  }
+
+  return noThreat;
 }
