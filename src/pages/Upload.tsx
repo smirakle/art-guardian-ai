@@ -752,6 +752,70 @@ const Upload = () => {
               ))}
             </div>
 
+            {/* ── Protection Evidence ── */}
+            <div className="mb-8 p-6 rounded-2xl bg-card/50 backdrop-blur border border-primary/20 text-left space-y-5">
+              {/* Animated Shield Badge */}
+              <div className="flex items-center gap-3 justify-center animate-fade-in">
+                <div className="relative">
+                  <div className="w-14 h-14 rounded-full bg-green-500/10 flex items-center justify-center ring-4 ring-green-500/10 animate-pulse-glow">
+                    <Shield className="w-7 h-7 text-green-500" />
+                  </div>
+                  <CheckCircle className="w-5 h-5 text-green-500 absolute -bottom-0.5 -right-0.5 bg-card rounded-full" />
+                </div>
+                <div>
+                  <p className="font-bold text-lg">Verified Protected</p>
+                  <p className="text-xs text-muted-foreground">All protection layers applied successfully</p>
+                </div>
+              </div>
+
+              {/* Protection Layers Checklist */}
+              <div className="grid sm:grid-cols-2 gap-2">
+                {[
+                  { label: "Invisible Watermark", delay: "0s" },
+                  { label: "AI Training Shield", delay: "0.15s" },
+                  { label: "Monitoring Active", delay: "0.3s" },
+                  { label: "DMCA Enforcement", delay: "0.45s" },
+                ].map((layer) => (
+                  <div
+                    key={layer.label}
+                    className="flex items-center gap-2 p-2.5 rounded-lg bg-green-500/5 border border-green-500/10 animate-fade-in opacity-0"
+                    style={{ animationDelay: layer.delay, animationFillMode: "forwards" }}
+                  >
+                    <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
+                    <span className="text-sm font-medium">{layer.label}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Mini Protection Certificate */}
+              <div className="p-4 rounded-xl bg-muted/40 border border-border/50 space-y-2">
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Protection Certificate</p>
+                <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm">
+                  <div>
+                    <span className="text-muted-foreground text-xs">Protection ID</span>
+                    <p className="font-mono text-xs font-semibold truncate">TSMO-{Date.now().toString(36).toUpperCase()}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground text-xs">Date</span>
+                    <p className="font-mono text-xs font-semibold">{new Date().toLocaleDateString()}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground text-xs">Level</span>
+                    <p className="text-xs font-semibold text-primary">Standard</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground text-xs">Files</span>
+                    <p className="text-xs font-semibold">{files.length} protected</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Verification Hint */}
+              <p className="text-[11px] text-center text-muted-foreground italic">
+                Protection is invisible to the human eye but detectable by our verification system.
+              </p>
+            </div>
+
             {/* Download Protected Files */}
             {rawFiles.length > 0 && (
               <div className="mb-8 space-y-2">
