@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { Activity } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ChartData {
   time: string;
@@ -14,41 +15,50 @@ const MonitoringChart = () => {
   const [data, setData] = useState<ChartData[]>([]);
 
   useEffect(() => {
-    // Initialize with some baseline data
-    const initialData: ChartData[] = [];
-    const now = new Date();
-    
-    for (let i = 23; i >= 0; i--) {
-      const time = new Date(now.getTime() - i * 60 * 60 * 1000);
-      initialData.push({
-        time: time.getHours().toString().padStart(2, '0') + ':00',
-        scans: Math.floor(Math.random() * 100) + 50,
-        threats: Math.floor(Math.random() * 10) + 1,
-        protected: Math.floor(Math.random() * 50) + 25
-      });
-    }
-    
-    setData(initialData);
+    const loadRealData = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-    // Update data every 10 seconds
-    const interval = setInterval(() => {
-      setData(prevData => {
-        const newData = [...prevData];
-        newData.shift(); // Remove oldest entry
-        
-        const now = new Date();
-        newData.push({
-          time: now.getHours().toString().padStart(2, '0') + ':' + 
-                now.getMinutes().toString().padStart(2, '0'),
-          scans: Math.floor(Math.random() * 100) + 50,
-          threats: Math.floor(Math.random() * 10) + 1,
-          protected: Math.floor(Math.random() * 50) + 25
+      const now = new Date();
+      const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+      const [scansRes, matchesRes, artworkRes] = await Promise.all([
+        supabase.from('monitoring_scans')
+          .select('created_at, status')
+          .gte('created_at', dayAgo.toISOString()),
+        supabase.from('copyright_matches')
+          .select('created_at, threat_level')
+          .gte('created_at', dayAgo.toISOString()),
+        supabase.from('artwork')
+          .select('created_at')
+          .eq('user_id', user.id)
+          .gte('created_at', dayAgo.toISOString()),
+      ]);
+
+      const scans = scansRes.data || [];
+      const matches = matchesRes.data || [];
+      const artworks = artworkRes.data || [];
+
+      // Bucket by hour
+      const chartData: ChartData[] = [];
+      for (let i = 23; i >= 0; i--) {
+        const hourStart = new Date(now.getTime() - i * 60 * 60 * 1000);
+        const hourEnd = new Date(hourStart.getTime() + 60 * 60 * 1000);
+        const hStart = hourStart.toISOString();
+        const hEnd = hourEnd.toISOString();
+
+        chartData.push({
+          time: hourStart.getHours().toString().padStart(2, '0') + ':00',
+          scans: scans.filter(s => s.created_at >= hStart && s.created_at < hEnd).length,
+          threats: matches.filter(m => m.created_at >= hStart && m.created_at < hEnd).length,
+          protected: artworks.filter(a => a.created_at >= hStart && a.created_at < hEnd).length,
         });
-        
-        return newData;
-      });
-    }, 10000);
+      }
+      setData(chartData);
+    };
 
+    loadRealData();
+    const interval = setInterval(loadRealData, 60000); // Refresh every minute
     return () => clearInterval(interval);
   }, []);
 

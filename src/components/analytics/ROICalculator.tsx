@@ -77,15 +77,22 @@ export const ROICalculator: React.FC = () => {
   };
 
   const generateMonthlyTrend = (threats: any[], monthlyCost: number) => {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-    return months.map((month, index) => {
-      const saved = Math.random() * 10000 + 5000; // Simulated for demo
-      return {
-        month,
-        saved: Math.round(saved),
-        cost: monthlyCost
-      };
-    });
+    // Group real threat data by month and compute actual savings per month
+    const now = new Date();
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const result: Array<{ month: string; saved: number; cost: number }> = [];
+
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthStart = d.toISOString();
+      const monthEnd = new Date(d.getFullYear(), d.getMonth() + 1, 1).toISOString();
+      const monthThreats = threats.filter(t => t.created_at >= monthStart && t.created_at < monthEnd);
+      const highCount = monthThreats.filter(t => t.threat_level === 'high').length;
+      const medCount = monthThreats.filter(t => t.threat_level === 'medium').length;
+      const saved = (highCount * 5000) + (medCount * 1000);
+      result.push({ month: monthNames[d.getMonth()], saved, cost: monthlyCost });
+    }
+    return result;
   };
 
   return (

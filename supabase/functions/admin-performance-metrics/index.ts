@@ -105,13 +105,13 @@ serve(async (req) => {
         .ilike('action', '%error%')
         .gte('created_at', timeAgo.toISOString()),
       
-      // API performance simulation (would be real metrics in production)
-      Promise.resolve({
-        averageResponseTime: Math.floor(Math.random() * 100) + 50,
-        requestsPerSecond: Math.floor(Math.random() * 50) + 100,
-        errorRate: Math.random() * 2,
-        uptime: 99.9
-      })
+      // Derive API performance from real production_metrics table
+      supabase.from('production_metrics')
+        .select('metric_name, metric_value')
+        .in('metric_name', ['response_time', 'requests_per_second', 'error_rate', 'uptime'])
+        .gte('recorded_at', timeAgo.toISOString())
+        .order('recorded_at', { ascending: false })
+        .limit(10)
     ])
 
     // Process scan performance
@@ -169,12 +169,17 @@ serve(async (req) => {
         ).length,
         userEngagement: Math.min(100, (activeUsers / 10) * 100) // Simplified metric
       },
-      api: apiPerformance.status === 'fulfilled' ? apiPerformance.value : {
-        averageResponseTime: 'N/A',
-        requestsPerSecond: 'N/A',
-        errorRate: 'N/A',
-        uptime: 'N/A'
-      },
+      api: (() => {
+        if (apiPerformance.status !== 'fulfilled') return { averageResponseTime: 'N/A', requestsPerSecond: 'N/A', errorRate: 'N/A', uptime: 'N/A' };
+        const apiData = apiPerformance.value.data || [];
+        const getMetric = (name: string) => apiData.find((m: any) => m.metric_name === name)?.metric_value;
+        return {
+          averageResponseTime: getMetric('response_time') ?? 'N/A',
+          requestsPerSecond: getMetric('requests_per_second') ?? 'N/A',
+          errorRate: getMetric('error_rate') ?? 'N/A',
+          uptime: getMetric('uptime') ?? 'N/A'
+        };
+      })(),
       errors: {
         totalErrors: errorData.length,
         errorRate: uploadData.length > 0 ? (errorData.length / uploadData.length) * 100 : 0,
@@ -213,19 +218,24 @@ serve(async (req) => {
 })
 
 function generateHourlyTrend(startTime: Date, endTime: Date, data: any[]) {
-  const hours = []
+  const hours: any[] = []
   const current = new Date(startTime)
   
   while (current <= endTime) {
+    const nextHour = new Date(current.getTime() + 60 * 60 * 1000)
     const hourData = data.filter(item => {
       const itemTime = new Date(item.created_at || item.started_at)
-      return itemTime >= current && itemTime < new Date(current.getTime() + 60 * 60 * 1000)
+      return itemTime >= current && itemTime < nextHour
     })
+    
+    // Derive performance score from completion rate of scans in this hour
+    const completed = hourData.filter((d: any) => d.status === 'completed').length
+    const performanceScore = hourData.length > 0 ? (completed / hourData.length) * 100 : 0
     
     hours.push({
       hour: current.toISOString(),
       activity: hourData.length,
-      performance: Math.random() * 100 + 50 // Simulated performance score
+      performance: Math.round(performanceScore)
     })
     
     current.setHours(current.getHours() + 1)
@@ -235,15 +245,12 @@ function generateHourlyTrend(startTime: Date, endTime: Date, data: any[]) {
 }
 
 function generatePerformanceTrend() {
-  return Array.from({ length: 24 }, (_, i) => ({
-    hour: i,
-    responseTime: Math.floor(Math.random() * 100) + 50,
-    throughput: Math.floor(Math.random() * 1000) + 500
-  }))
+  // Return empty array — real performance trend data should come from production_metrics
+  return []
 }
 
 function generateErrorTrend(errorData: any[]) {
-  return errorData.reduce((acc: any, error) => {
+  return errorData.reduce((acc: any, error: any) => {
     const hour = new Date(error.created_at).getHours()
     acc[hour] = (acc[hour] || 0) + 1
     return acc

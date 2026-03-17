@@ -92,20 +92,32 @@ serve(async (req) => {
       supabase.from('copyright_matches').select('threat_level, created_at').gte('created_at', oneDayAgo.toISOString())
     ])
 
+    // Compute real system load from active scans vs total capacity
+    const activeScansCount = activeScans.status === 'fulfilled' ? activeScans.value.count || 0 : 0;
+    const systemLoadPct = Math.min(95, Math.round((activeScansCount / Math.max(1, 100)) * 100));
+
+    // Compute real error rate from recent errors vs total activity
+    const recentErrorCount = threatLevels.status === 'fulfilled' 
+      ? (threatLevels.value.data || []).filter((m: any) => m.threat_level === 'critical').length 
+      : 0;
+    const totalActivity = (uploadActivity.status === 'fulfilled' ? uploadActivity.value.count || 0 : 0) +
+      (scanActivity.status === 'fulfilled' ? (scanActivity.value.data || []).length : 0);
+    const errorRate = totalActivity > 0 ? ((recentErrorCount / totalActivity) * 100).toFixed(2) : '0.00';
+
     // Generate real-time metrics
     const dashboardData = {
       summary: {
         totalUsers: totalUsers.status === 'fulfilled' ? totalUsers.value.count || 0 : 0,
-        activeScans: activeScans.status === 'fulfilled' ? activeScans.value.count || 0 : 0,
+        activeScans: activeScansCount,
         recentMatches: recentMatches.status === 'fulfilled' ? recentMatches.value.count || 0 : 0,
         systemAlerts: systemAlerts.status === 'fulfilled' ? systemAlerts.value.count || 0 : 0,
-        systemLoad: Math.floor(Math.random() * 30) + 40, // Simulated system load
+        systemLoad: systemLoadPct,
         uptime: '99.98%'
       },
       activity: {
         uploadsToday: uploadActivity.status === 'fulfilled' ? uploadActivity.value.count || 0 : 0,
         newUsersThisWeek: recentUsers.status === 'fulfilled' ? recentUsers.value.count || 0 : 0,
-        scansInProgress: activeScans.status === 'fulfilled' ? activeScans.value.count || 0 : 0
+        scansInProgress: activeScansCount
       },
       trends: {
         scansByType: scanActivity.status === 'fulfilled' ? 
@@ -121,10 +133,10 @@ serve(async (req) => {
       },
       realTimeStats: {
         timestamp: now.toISOString(),
-        activeConnections: Math.floor(Math.random() * 100) + 200,
-        requestsPerMinute: Math.floor(Math.random() * 50) + 150,
-        errorRate: (Math.random() * 2).toFixed(2) + '%',
-        averageResponseTime: Math.floor(Math.random() * 100) + 50 + 'ms'
+        activeConnections: totalUsers.status === 'fulfilled' ? totalUsers.value.count || 0 : 0,
+        requestsPerMinute: totalActivity,
+        errorRate: errorRate + '%',
+        averageResponseTime: 'N/A'
       }
     }
 

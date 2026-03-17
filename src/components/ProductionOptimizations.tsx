@@ -58,22 +58,41 @@ export const ProductionOptimizations = () => {
   useEffect(() => {
     const loadMetrics = async () => {
       try {
-        // Simulate real performance metrics
-        const mockMetrics = {
-          avgResponseTime: Math.floor(Math.random() * 100) + 200,
-          apiCallsPerMinute: Math.floor(Math.random() * 50) + 100,
-          cacheHitRate: Math.random() * 10 + 90,
-          activeAlerts: Math.floor(Math.random() * 3),
-          systemLoad: Math.random() * 30 + 15
-        };
-        setMetrics(mockMetrics);
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // Fetch real metrics from DB in parallel
+        const [alertsRes, cacheRes, scansRes] = await Promise.all([
+          supabase.from('advanced_alerts').select('id', { count: 'exact', head: true })
+            .eq('user_id', user.id).eq('is_escalated', false),
+          supabase.from('cache_statistics').select('hit_count, miss_count').limit(50),
+          supabase.from('monitoring_scans').select('id', { count: 'exact', head: true })
+            .in('status', ['pending', 'in_progress']),
+        ]);
+
+        // Compute cache hit rate from real data
+        const cacheRows = cacheRes.data || [];
+        const totalHits = cacheRows.reduce((s, r) => s + (r.hit_count || 0), 0);
+        const totalMisses = cacheRows.reduce((s, r) => s + (r.miss_count || 0), 0);
+        const cacheTotal = totalHits + totalMisses;
+        const cacheHitRate = cacheTotal > 0 ? (totalHits / cacheTotal) * 100 : 0;
+
+        const activeScans = scansRes.count || 0;
+
+        setMetrics({
+          avgResponseTime: 0, // No real endpoint timing available
+          apiCallsPerMinute: 0,
+          cacheHitRate: parseFloat(cacheHitRate.toFixed(1)),
+          activeAlerts: alertsRes.count || 0,
+          systemLoad: Math.min(95, Math.round((activeScans / Math.max(1, 50)) * 100)),
+        });
       } catch (error) {
         console.error('Error loading metrics:', error);
       }
     };
 
     loadMetrics();
-    const interval = setInterval(loadMetrics, 10000);
+    const interval = setInterval(loadMetrics, 30000);
     return () => clearInterval(interval);
   }, []);
 
