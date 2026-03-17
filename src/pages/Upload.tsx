@@ -348,7 +348,7 @@ const Upload = () => {
             enable_watermark: enableWatermark,
             ai_protection_enabled: true,
             ai_protection_level: 'standard',
-            ai_protection_methods: { watermark: watermarkApplied, style_cloak: aiShieldApplied },
+            ai_protection_methods: { watermark: watermarkApplied, style_cloak: aiShieldApplied, metadata_injection: metadataInjected },
             status: 'protected',
             file_size: processedFiles.reduce((sum, f) => sum + f.size, 0),
             original_file_size: rawFiles.reduce((sum, f) => sum + f.size, 0),
