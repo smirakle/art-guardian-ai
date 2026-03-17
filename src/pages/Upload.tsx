@@ -46,6 +46,7 @@ import { WatermarkResult } from "@/lib/advancedWatermark";
 import C2PAProtection from "@/components/ai-protection/C2PAProtection";
 import { watermarkService, InvisibleWatermark } from "@/lib/watermark";
 import { cloakImageFromFile } from "@/lib/styleCloak";
+import { productionMetadataInjection } from "@/lib/productionMetadataInjection";
 
 interface UploadedFile {
   id: string;
@@ -98,6 +99,7 @@ const Upload = () => {
     watermarkApplied: boolean;
     aiShieldApplied: boolean;
     dmcaEnforcement: boolean;
+    metadataInjected: boolean;
     protectedAt: string;
   } | null>(null);
   const [protectedFiles, setProtectedFiles] = useState<File[]>([]);
@@ -231,6 +233,7 @@ const Upload = () => {
     const protectedAt = new Date().toISOString();
     let watermarkApplied = false;
     let aiShieldApplied = false;
+    let metadataInjected = false;
     let dmcaEnforcement = false;
     let protectionRecordId: string | null = null;
 
@@ -277,6 +280,33 @@ const Upload = () => {
           }
         }
 
+        // Apply rights metadata injection (EXIF + XMP + LSB)
+        if (file.type.startsWith('image/')) {
+          try {
+            const metaResult = await productionMetadataInjection.injectProductionMetadata(
+              new File([processedBlob], file.name, { type: file.type }),
+              {
+                copyrightInfo: {
+                  owner: user?.email || 'Unknown',
+                  year: new Date().getFullYear(),
+                  rights: 'All Rights Reserved. AI Training Prohibited.',
+                  contactEmail: user?.email,
+                },
+                legalCompliance: { dmcaCompliant: true, gdprCompliant: true, ccpaCompliant: true, includeDisclaimer: true },
+                technicalSettings: { useExifStandard: true, useXmpStandard: true, useLsbBackup: true, compressionResistant: true, batchProcessing: false },
+                aiProtection: { prohibitTraining: true, prohibitDerivatives: true, prohibitCommercialUse: false, requireAttribution: true },
+              }
+            );
+            if (metaResult.success && metaResult.protectedBlob) {
+              processedBlob = metaResult.protectedBlob;
+              metadataInjected = true;
+              console.log(`[Protection] Rights metadata injected into ${file.name} (${metaResult.methods.join(', ')})`);
+            }
+          } catch (e) {
+            console.error(`[Protection] Metadata injection failed for ${file.name}:`, e);
+          }
+        }
+
         processedFiles.push(new File([processedBlob], file.name, { type: file.type }));
         setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, progress: 30 + Math.round((i / rawFiles.length) * 30) } : f));
       }
@@ -318,7 +348,7 @@ const Upload = () => {
             enable_watermark: enableWatermark,
             ai_protection_enabled: true,
             ai_protection_level: 'standard',
-            ai_protection_methods: { watermark: watermarkApplied, style_cloak: aiShieldApplied },
+            ai_protection_methods: { watermark: watermarkApplied, style_cloak: aiShieldApplied, metadata_injection: metadataInjected },
             status: 'protected',
             file_size: processedFiles.reduce((sum, f) => sum + f.size, 0),
             original_file_size: rawFiles.reduce((sum, f) => sum + f.size, 0),
@@ -346,6 +376,7 @@ const Upload = () => {
             protection_methods: {
               invisible_watermark: watermarkApplied,
               ai_training_shield: aiShieldApplied,
+              rights_metadata: metadataInjected,
               style_cloak_strength: 0.25,
             },
             content_type: category === 'photography' || category === 'digital-art' ? 'image' : category,
@@ -356,6 +387,7 @@ const Upload = () => {
               protected_total_size: processedFiles.reduce((s, f) => s + f.size, 0),
               watermark_applied: watermarkApplied,
               ai_shield_applied: aiShieldApplied,
+              metadata_injected: metadataInjected,
               protected_at: protectedAt,
             },
           })
@@ -420,6 +452,7 @@ const Upload = () => {
         monitoringCreated,
         watermarkApplied,
         aiShieldApplied,
+        metadataInjected,
         dmcaEnforcement,
         protectedAt,
       });
@@ -935,9 +968,10 @@ const Upload = () => {
               <div className="grid sm:grid-cols-2 gap-2">
                 {[
                   { label: "Invisible Watermark", active: protectionResult?.watermarkApplied ?? false, delay: "0s" },
-                  { label: "AI Training Shield", active: protectionResult?.aiShieldApplied ?? false, delay: "0.15s" },
+                  { label: "AI Training Shield", active: protectionResult?.aiShieldApplied ?? false, delay: "0.1s" },
+                  { label: "Rights Metadata (EXIF/XMP/LSB)", active: protectionResult?.metadataInjected ?? false, delay: "0.2s" },
                   { label: "Monitoring Active", active: protectionResult?.monitoringCreated ?? false, delay: "0.3s" },
-                  { label: "DMCA Enforcement", active: protectionResult?.dmcaEnforcement ?? false, delay: "0.45s" },
+                  { label: "DMCA Enforcement", active: protectionResult?.dmcaEnforcement ?? false, delay: "0.4s" },
                 ].map((layer) => (
                   <div
                     key={layer.label}
