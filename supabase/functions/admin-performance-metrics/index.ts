@@ -218,19 +218,24 @@ serve(async (req) => {
 })
 
 function generateHourlyTrend(startTime: Date, endTime: Date, data: any[]) {
-  const hours = []
+  const hours: any[] = []
   const current = new Date(startTime)
   
   while (current <= endTime) {
+    const nextHour = new Date(current.getTime() + 60 * 60 * 1000)
     const hourData = data.filter(item => {
       const itemTime = new Date(item.created_at || item.started_at)
-      return itemTime >= current && itemTime < new Date(current.getTime() + 60 * 60 * 1000)
+      return itemTime >= current && itemTime < nextHour
     })
+    
+    // Derive performance score from completion rate of scans in this hour
+    const completed = hourData.filter((d: any) => d.status === 'completed').length
+    const performanceScore = hourData.length > 0 ? (completed / hourData.length) * 100 : 0
     
     hours.push({
       hour: current.toISOString(),
       activity: hourData.length,
-      performance: Math.random() * 100 + 50 // Simulated performance score
+      performance: Math.round(performanceScore)
     })
     
     current.setHours(current.getHours() + 1)
@@ -240,15 +245,12 @@ function generateHourlyTrend(startTime: Date, endTime: Date, data: any[]) {
 }
 
 function generatePerformanceTrend() {
-  return Array.from({ length: 24 }, (_, i) => ({
-    hour: i,
-    responseTime: Math.floor(Math.random() * 100) + 50,
-    throughput: Math.floor(Math.random() * 1000) + 500
-  }))
+  // Return empty array — real performance trend data should come from production_metrics
+  return []
 }
 
 function generateErrorTrend(errorData: any[]) {
-  return errorData.reduce((acc: any, error) => {
+  return errorData.reduce((acc: any, error: any) => {
     const hour = new Date(error.created_at).getHours()
     acc[hour] = (acc[hour] || 0) + 1
     return acc
