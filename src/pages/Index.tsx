@@ -278,7 +278,38 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          STATS — Full-width dramatic numbers
+          LEGAL DISCLOSURE — Premium banner
+          ══════════════════════════════════════════════════════ */}
+      <section className="relative py-6 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 border-y border-primary/10">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="flex flex-col md:flex-row items-stretch gap-4">
+            <div className="flex-1 flex items-start gap-3 p-4 rounded-xl bg-card/60 backdrop-blur border border-border/40">
+              <div className="shrink-0 w-9 h-9 rounded-full bg-primary/10 ring-1 ring-primary/20 flex items-center justify-center mt-0.5">
+                <Scale className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground mb-0.5">Legal Disclaimer</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  TSMO is not a law firm and does not provide legal advice. Artists should always consult a qualified attorney before pursuing any legal action, including DMCA takedowns, copyright claims, or litigation.
+                </p>
+              </div>
+            </div>
+            <div className="flex-1 flex items-start gap-3 p-4 rounded-xl bg-card/60 backdrop-blur border border-border/40">
+              <div className="shrink-0 w-9 h-9 rounded-full bg-accent/10 ring-1 ring-accent/20 flex items-center justify-center mt-0.5">
+                <Shield className="w-4 h-4 text-accent" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground mb-0.5">You Own Your Work</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  All artists retain full ownership of their work. TSMO does not claim any rights, licenses, or ownership over content uploaded to our platform. Your art is yours — always.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
           ══════════════════════════════════════════════════════ */}
       <RevealSection>
         <section className="py-20 border-y border-border/30 bg-muted/10">
@@ -598,25 +629,7 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
-      {/* ══════════════════════════════════════════════════════
-          LEGAL DISCLOSURE
-          ══════════════════════════════════════════════════════ */}
-      <section className="border-t border-border/40 bg-muted/30 py-10">
-        <div className="container mx-auto px-4 max-w-4xl space-y-4 text-center text-xs text-muted-foreground leading-relaxed">
-          <p className="flex items-center justify-center gap-2">
-            <Scale className="h-4 w-4 shrink-0 text-muted-foreground/70" />
-            <span>
-              <strong className="text-foreground/80">Legal Disclaimer:</strong> TSMO is not a law firm and does not provide legal advice. Artists should always consult a qualified attorney before pursuing any legal action, including but not limited to DMCA takedowns, copyright claims, or litigation.
-            </span>
-          </p>
-          <p className="flex items-center justify-center gap-2">
-            <Shield className="h-4 w-4 shrink-0 text-muted-foreground/70" />
-            <span>
-              <strong className="text-foreground/80">Ownership Notice:</strong> All artists retain full ownership of their work. TSMO does not claim any rights, licenses, or ownership over content uploaded to our platform. Your art is yours — always.
-            </span>
-          </p>
-        </div>
-      </section>
+
 
       <BugReportButton />
     </div>
