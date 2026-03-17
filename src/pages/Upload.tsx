@@ -99,6 +99,7 @@ const Upload = () => {
     watermarkApplied: boolean;
     aiShieldApplied: boolean;
     dmcaEnforcement: boolean;
+    metadataInjected: boolean;
     protectedAt: string;
   } | null>(null);
   const [protectedFiles, setProtectedFiles] = useState<File[]>([]);
