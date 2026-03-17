@@ -992,11 +992,11 @@ const Upload = () => {
             </div>
 
             {/* Download Protected Files */}
-            {rawFiles.length > 0 && (
+            {protectedFiles.length > 0 && (
               <div className="mb-8 space-y-2">
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Download Protected Files</h3>
                 <div className="grid gap-2 max-w-md mx-auto">
-                  {rawFiles.map((file, i) => (
+                  {protectedFiles.map((file, i) => (
                     <Button
                       key={i}
                       variant="outline"
