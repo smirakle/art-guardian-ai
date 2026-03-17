@@ -280,6 +280,33 @@ const Upload = () => {
           }
         }
 
+        // Apply rights metadata injection (EXIF + XMP + LSB)
+        if (file.type.startsWith('image/')) {
+          try {
+            const metaResult = await productionMetadataInjection.injectProductionMetadata(
+              new File([processedBlob], file.name, { type: file.type }),
+              {
+                copyrightInfo: {
+                  owner: user?.email || 'Unknown',
+                  year: new Date().getFullYear(),
+                  rights: 'All Rights Reserved. AI Training Prohibited.',
+                  contactEmail: user?.email,
+                },
+                legalCompliance: { dmcaCompliant: true, gdprCompliant: true, ccpaCompliant: true, includeDisclaimer: true },
+                technicalSettings: { useExifStandard: true, useXmpStandard: true, useLsbBackup: true, compressionResistant: true, batchProcessing: false },
+                aiProtection: { prohibitTraining: true, prohibitDerivatives: true, prohibitCommercialUse: false, requireAttribution: true },
+              }
+            );
+            if (metaResult.success && metaResult.protectedBlob) {
+              processedBlob = metaResult.protectedBlob;
+              metadataInjected = true;
+              console.log(`[Protection] Rights metadata injected into ${file.name} (${metaResult.methods.join(', ')})`);
+            }
+          } catch (e) {
+            console.error(`[Protection] Metadata injection failed for ${file.name}:`, e);
+          }
+        }
+
         processedFiles.push(new File([processedBlob], file.name, { type: file.type }));
         setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, progress: 30 + Math.round((i / rawFiles.length) * 30) } : f));
       }
