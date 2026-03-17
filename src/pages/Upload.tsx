@@ -881,7 +881,7 @@ const Upload = () => {
                 <Eye className="w-4 h-4" />
                 View Dashboard
               </Button>
-              <Button size="lg" className="gap-2 shadow-lg shadow-primary/20" onClick={() => { setStep(1); setFiles([]); setUrls([]); setRawFiles([]); setArtworkTitle(""); setDescription(""); setCategory(""); setTags([]); }}>
+              <Button size="lg" className="gap-2 shadow-lg shadow-primary/20" onClick={() => { setStep(1); setFiles([]); setUrls([]); setRawFiles([]); setArtworkTitle(""); setDescription(""); setCategory(""); setTags([]); setProtectionResult(null); }}>
                 <Plus className="w-4 h-4" />
                 Protect More Content
               </Button>
