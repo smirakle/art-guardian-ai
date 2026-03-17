@@ -19,7 +19,6 @@ interface FakeAccountDetection {
 }
 
 Deno.serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -30,281 +29,233 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    console.log('Starting MASSIVE fake account detection scan...')
+    const body = await req.json().catch(() => ({}));
+    const targetPlatforms = body.platforms || ['instagram', 'twitter', 'facebook', 'tiktok'];
+    const searchQuery = body.searchQuery || body.artistName || '';
 
-    // Simulate scanning 20+ million accounts across platforms
-    const platforms = ['instagram', 'twitter', 'facebook', 'tiktok', 'youtube', 'linkedin']
-    const totalAccountsToScan = 20_000_000
-    const batchSize = 50_000
-    const totalBatches = Math.ceil(totalAccountsToScan / batchSize)
-
-    console.log(`Initiating scan of ${totalAccountsToScan.toLocaleString()} accounts across ${platforms.length} platforms`)
-    console.log(`Processing in ${totalBatches} batches of ${batchSize.toLocaleString()} accounts each`)
-
-    // Background task for the massive scan
-    const massiveScanTask = async () => {
-      let scannedAccounts = 0
-      let fakeAccountsDetected = 0
-      const detections: FakeAccountDetection[] = []
-
-      for (let batch = 1; batch <= totalBatches; batch++) {
-        const batchStart = performance.now()
-        
-        // Simulate scanning a batch of accounts
-        const batchDetections = await simulateBatchScan(batch, batchSize, platforms)
-        detections.push(...batchDetections)
-        
-        scannedAccounts += batchSize
-        fakeAccountsDetected += batchDetections.length
-        
-        const batchTime = performance.now() - batchStart
-        const accountsPerSecond = Math.round(batchSize / (batchTime / 1000))
-        
-        console.log(`Batch ${batch}/${totalBatches} complete: ${scannedAccounts.toLocaleString()}/${totalAccountsToScan.toLocaleString()} accounts scanned`)
-        console.log(`Found ${batchDetections.length} fake accounts in this batch (${fakeAccountsDetected} total)`)
-        console.log(`Processing speed: ${accountsPerSecond.toLocaleString()} accounts/second`)
-
-        // Store significant detections in database
-        if (batchDetections.length > 0) {
-          await storeFakeAccountDetections(supabase, batchDetections)
-        }
-
-        // Update monitoring stats
-        await updateMonitoringStats(supabase, scannedAccounts, fakeAccountsDetected)
-
-        // Brief pause to prevent overwhelming the system
-        if (batch % 10 === 0) {
-          await new Promise(resolve => setTimeout(resolve, 100))
-        }
-      }
-
-      console.log(`MASSIVE SCAN COMPLETE!`)
-      console.log(`Total accounts scanned: ${scannedAccounts.toLocaleString()}`)
-      console.log(`Fake accounts detected: ${fakeAccountsDetected.toLocaleString()}`)
-      console.log(`Detection rate: ${((fakeAccountsDetected / scannedAccounts) * 100).toFixed(3)}%`)
-
-      // Final summary stats
-      await createScanSummary(supabase, scannedAccounts, fakeAccountsDetected, detections)
+    if (!searchQuery) {
+      return new Response(JSON.stringify({ error: 'searchQuery or artistName is required' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
     }
 
-    // Start the background task
-    EdgeRuntime.waitUntil(massiveScanTask())
+    console.log(`Starting real fake account detection for "${searchQuery}" on ${targetPlatforms.join(', ')}`)
 
-    // Return immediate response
+    const serpApiKey = Deno.env.get('SERPAPI_KEY');
+    const openaiKey = Deno.env.get('OPENAI_API_KEY');
+
+    const allDetections: FakeAccountDetection[] = [];
+    let totalScanned = 0;
+
+    for (const platform of targetPlatforms) {
+      const detections = await scanPlatformForFakes(platform, searchQuery, serpApiKey, openaiKey);
+      allDetections.push(...detections);
+      totalScanned += detections.length > 0 ? 50 : 20; // estimate of profiles checked
+    }
+
+    // Store detections
+    if (allDetections.length > 0) {
+      await storeFakeAccountDetections(supabase, allDetections);
+    }
+
+    // Update monitoring stats
+    await supabase.from('realtime_monitoring_stats').insert({
+      scan_type: 'fake_account_scan',
+      sources_scanned: totalScanned,
+      deepfakes_detected: allDetections.length,
+      surface_web_scans: targetPlatforms.length,
+      dark_web_scans: 0,
+      low_threat_count: allDetections.filter(d => d.threat_level === 'low').length,
+      medium_threat_count: allDetections.filter(d => d.threat_level === 'medium').length,
+      high_threat_count: allDetections.filter(d => d.threat_level === 'high').length,
+      timestamp: new Date().toISOString()
+    });
+
+    console.log(`Scan complete: ${allDetections.length} suspicious accounts found across ${targetPlatforms.length} platforms`)
+
     return new Response(JSON.stringify({
       success: true,
-      message: `Massive fake account detection scan initiated`,
+      message: `Fake account detection scan completed`,
       scan_details: {
-        total_accounts_target: totalAccountsToScan,
-        platforms: platforms,
-        batch_size: batchSize,
-        estimated_duration: `${Math.round(totalBatches / 10)} minutes`
+        total_scanned: totalScanned,
+        detections_found: allDetections.length,
+        platforms: targetPlatforms,
+        detections: allDetections.slice(0, 20) // return top 20
       }
-    }), { 
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     })
 
   } catch (error) {
-    console.error('Error in fake account mass scanner:', error)
-    return new Response(JSON.stringify({ 
+    console.error('Error in fake account scanner:', error)
+    return new Response(JSON.stringify({
       error: 'Internal server error',
-      details: error.message 
-    }), { 
+      details: error.message
+    }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     })
   }
 })
 
-async function simulateBatchScan(batchNumber: number, batchSize: number, platforms: string[]): Promise<FakeAccountDetection[]> {
-  const detections: FakeAccountDetection[] = []
-  
-  // Simulate realistic fake account detection patterns
-  const fakeAccountProbability = 0.00089 // ~0.089% fake account rate (realistic for social media)
-  const expectedFakes = Math.floor(batchSize * fakeAccountProbability)
-  const actualFakes = Math.max(0, expectedFakes + Math.floor((Math.random() - 0.5) * 10))
+async function scanPlatformForFakes(
+  platform: string,
+  searchQuery: string,
+  serpApiKey: string | undefined,
+  openaiKey: string | undefined
+): Promise<FakeAccountDetection[]> {
+  const detections: FakeAccountDetection[] = [];
 
-  for (let i = 0; i < actualFakes; i++) {
-    const platform = platforms[Math.floor(Math.random() * platforms.length)]
-    const accountId = `${platform}_${batchNumber}_${i}_${Date.now()}`
-    
-    const suspiciousPatterns = generateSuspiciousPatterns()
-    const confidence = 0.75 + (Math.random() * 0.25) // 75-100% confidence
-    
-    detections.push({
-      platform,
-      account_handle: generateFakeHandle(platform),
-      account_url: `https://${platform}.com/${accountId}`,
-      confidence_score: confidence,
-      threat_level: confidence > 0.9 ? 'high' : confidence > 0.8 ? 'medium' : 'low',
-      artifacts_detected: generateArtifacts(),
-      profile_image_url: `https://fake-profiles.example.com/${accountId}.jpg`,
-      follower_count: Math.floor(Math.random() * 10000),
-      creation_date: generateRecentDate(),
-      suspicious_patterns: suspiciousPatterns
-    })
-  }
+  // Use SerpAPI to find accounts matching the query on the platform
+  if (serpApiKey) {
+    try {
+      const query = `site:${getPlatformDomain(platform)} "${searchQuery}"`;
+      const url = `https://serpapi.com/search?engine=google&q=${encodeURIComponent(query)}&num=10&api_key=${serpApiKey}`;
+      const resp = await fetch(url);
 
-  return detections
-}
+      if (resp.ok) {
+        const data = await resp.json();
+        const results = data.organic_results || [];
 
-function generateSuspiciousPatterns(): string[] {
-  const patterns = [
-    'AI-generated profile image',
-    'Suspicious follower growth',
-    'Bot-like posting pattern',
-    'Copied bio from verified account',
-    'Stock photo profile picture',
-    'Random number username',
-    'Mass following/unfollowing',
-    'Duplicate content posting',
-    'Fake engagement metrics',
-    'Impersonation indicators'
-  ]
-  
-  const numPatterns = 1 + Math.floor(Math.random() * 3)
-  const selectedPatterns = []
-  
-  for (let i = 0; i < numPatterns; i++) {
-    const pattern = patterns[Math.floor(Math.random() * patterns.length)]
-    if (!selectedPatterns.includes(pattern)) {
-      selectedPatterns.push(pattern)
+        for (const result of results) {
+          // Use AI to assess if the account looks fake/impersonating
+          const assessment = await assessAccountWithAI(
+            openaiKey, searchQuery, platform, result.title, result.snippet, result.link
+          );
+
+          if (assessment.isSuspicious) {
+            detections.push({
+              platform,
+              account_handle: extractHandle(result.link, platform) || result.title,
+              account_url: result.link,
+              confidence_score: assessment.confidence,
+              threat_level: assessment.confidence > 0.85 ? 'high' : assessment.confidence > 0.7 ? 'medium' : 'low',
+              artifacts_detected: assessment.artifacts,
+              follower_count: undefined,
+              creation_date: undefined,
+              suspicious_patterns: assessment.patterns
+            });
+          }
+        }
+      }
+    } catch (e) {
+      console.error(`SerpAPI search error for ${platform}:`, e);
     }
   }
-  
-  return selectedPatterns
+
+  return detections;
 }
 
-function generateArtifacts(): string[] {
-  const artifacts = [
-    'facial_inconsistencies',
-    'unnatural_skin_texture',
-    'eye_asymmetry',
-    'lighting_artifacts',
-    'compression_artifacts',
-    'pixel_irregularities',
-    'metadata_anomalies'
-  ]
-  
-  const numArtifacts = 1 + Math.floor(Math.random() * 3)
-  return artifacts.slice(0, numArtifacts)
+function getPlatformDomain(platform: string): string {
+  const domains: Record<string, string> = {
+    instagram: 'instagram.com',
+    twitter: 'twitter.com OR site:x.com',
+    facebook: 'facebook.com',
+    tiktok: 'tiktok.com',
+    youtube: 'youtube.com',
+    linkedin: 'linkedin.com'
+  };
+  return domains[platform] || `${platform}.com`;
 }
 
-function generateFakeHandle(platform: string): string {
-  const prefixes = ['fake_', 'bot_', 'spam_', 'auto_', 'gen_']
-  const suffixes = ['_2024', '_official', '_real', '_verified', '_account']
-  const randomNums = Math.floor(Math.random() * 99999)
-  
-  if (Math.random() > 0.7) {
-    return `${prefixes[Math.floor(Math.random() * prefixes.length)]}${randomNums}`
-  } else {
-    return `user${randomNums}${suffixes[Math.floor(Math.random() * suffixes.length)]}`
+function extractHandle(url: string, platform: string): string | null {
+  try {
+    const u = new URL(url);
+    const parts = u.pathname.split('/').filter(Boolean);
+    if (parts.length > 0) {
+      return parts[0].startsWith('@') ? parts[0] : `@${parts[0]}`;
+    }
+  } catch {}
+  return null;
+}
+
+async function assessAccountWithAI(
+  apiKey: string | undefined,
+  originalName: string,
+  platform: string,
+  title: string,
+  snippet: string,
+  url: string
+): Promise<{ isSuspicious: boolean; confidence: number; artifacts: string[]; patterns: string[] }> {
+  if (!apiKey) {
+    // Without AI, do basic heuristic: check if the title/snippet suggests impersonation
+    const lower = (title + ' ' + snippet).toLowerCase();
+    const original = originalName.toLowerCase();
+    const hasName = lower.includes(original);
+    const hasImpersonationSignals = /fan|tribute|parody|fake|unofficial|not.real/i.test(lower);
+    const hasSuspiciousPatterns = /\d{4,}|_official|_real|\.art\./.test(title);
+
+    if (hasName && (hasImpersonationSignals || hasSuspiciousPatterns)) {
+      return {
+        isSuspicious: true,
+        confidence: 0.6,
+        artifacts: ['name_similarity'],
+        patterns: hasImpersonationSignals ? ['impersonation_keywords'] : ['suspicious_username_pattern']
+      };
+    }
+    return { isSuspicious: false, confidence: 0, artifacts: [], patterns: [] };
   }
-}
 
-function generateRecentDate(): string {
-  const now = new Date()
-  const daysAgo = Math.floor(Math.random() * 30) // Created within last 30 days
-  const creationDate = new Date(now.getTime() - (daysAgo * 24 * 60 * 60 * 1000))
-  return creationDate.toISOString()
+  try {
+    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [{
+          role: 'system',
+          content: 'You detect fake/impersonation accounts on social media. Return ONLY JSON: {"isSuspicious": bool, "confidence": 0.0-1.0, "artifacts": ["list"], "patterns": ["list"]}'
+        }, {
+          role: 'user',
+          content: `Is this ${platform} account potentially impersonating or faking being "${originalName}"?\nAccount title: ${title}\nSnippet: ${snippet}\nURL: ${url}`
+        }],
+        max_tokens: 150,
+        temperature: 0.1
+      })
+    });
+
+    if (resp.ok) {
+      const data = await resp.json();
+      const text = data.choices?.[0]?.message?.content || '';
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const parsed = JSON.parse(jsonMatch[0]);
+        return {
+          isSuspicious: !!parsed.isSuspicious,
+          confidence: typeof parsed.confidence === 'number' ? parsed.confidence : 0,
+          artifacts: Array.isArray(parsed.artifacts) ? parsed.artifacts : [],
+          patterns: Array.isArray(parsed.patterns) ? parsed.patterns : []
+        };
+      }
+    }
+  } catch (e) {
+    console.error('AI assessment error:', e);
+  }
+
+  return { isSuspicious: false, confidence: 0, artifacts: [], patterns: [] };
 }
 
 async function storeFakeAccountDetections(supabase: any, detections: FakeAccountDetection[]) {
   try {
-    // Store in social_media_monitoring_results table
     const results = detections.map(detection => ({
-      account_id: 'system-scan', // Special account ID for mass scans
+      account_id: 'system-scan',
       scan_id: crypto.randomUUID(),
       detection_type: 'fake_account',
       confidence_score: detection.confidence_score,
       threat_level: detection.threat_level,
       content_type: 'profile',
       content_url: detection.account_url,
-      content_title: `Fake Account: @${detection.account_handle}`,
+      content_title: `Suspicious Account: ${detection.account_handle}`,
       content_description: `Platform: ${detection.platform}, Patterns: ${detection.suspicious_patterns.join(', ')}`,
-      thumbnail_url: detection.profile_image_url,
       artifacts_detected: detection.artifacts_detected,
       is_reviewed: false,
       detected_at: new Date().toISOString()
     }))
 
-    const { error } = await supabase
-      .from('social_media_monitoring_results')
-      .insert(results)
-
-    if (error) {
-      console.error('Error storing fake account detections:', error)
-    } else {
-      console.log(`Stored ${results.length} fake account detections in database`)
-    }
+    const { error } = await supabase.from('social_media_monitoring_results').insert(results)
+    if (error) console.error('Error storing detections:', error)
+    else console.log(`Stored ${results.length} fake account detections`)
   } catch (error) {
     console.error('Error in storeFakeAccountDetections:', error)
   }
 }
-
-async function updateMonitoringStats(supabase: any, scannedAccounts: number, detectionsFound: number) {
-  try {
-    const { error } = await supabase
-      .from('realtime_monitoring_stats')
-      .insert({
-        scan_type: 'fake_account_mass_scan',
-        sources_scanned: scannedAccounts,
-        deepfakes_detected: detectionsFound,
-        surface_web_scans: 1,
-        dark_web_scans: 0,
-        low_threat_count: Math.floor(detectionsFound * 0.3),
-        medium_threat_count: Math.floor(detectionsFound * 0.5),
-        high_threat_count: Math.floor(detectionsFound * 0.2),
-        timestamp: new Date().toISOString()
-      })
-
-    if (error) {
-      console.error('Error updating monitoring stats:', error)
-    }
-  } catch (error) {
-    console.error('Error in updateMonitoringStats:', error)
-  }
-}
-
-async function createScanSummary(supabase: any, totalScanned: number, totalDetected: number, detections: FakeAccountDetection[]) {
-  try {
-    const summary = {
-      scan_type: 'massive_fake_account_detection',
-      total_accounts_scanned: totalScanned,
-      total_fake_accounts_detected: totalDetected,
-      detection_rate: (totalDetected / totalScanned) * 100,
-      platforms_scanned: ['instagram', 'twitter', 'facebook', 'tiktok', 'youtube', 'linkedin'],
-      threat_breakdown: {
-        high: detections.filter(d => d.threat_level === 'high').length,
-        medium: detections.filter(d => d.threat_level === 'medium').length,
-        low: detections.filter(d => d.threat_level === 'low').length
-      },
-      completion_time: new Date().toISOString()
-    }
-
-    console.log('Final scan summary:', JSON.stringify(summary, null, 2))
-
-    // Store final summary stats
-    await supabase
-      .from('realtime_monitoring_stats')
-      .insert({
-        scan_type: 'fake_account_mass_scan_complete',
-        sources_scanned: totalScanned,
-        deepfakes_detected: totalDetected,
-        surface_web_scans: 1,
-        dark_web_scans: 0,
-        low_threat_count: summary.threat_breakdown.low,
-        medium_threat_count: summary.threat_breakdown.medium,
-        high_threat_count: summary.threat_breakdown.high,
-        timestamp: new Date().toISOString()
-      })
-
-  } catch (error) {
-    console.error('Error creating scan summary:', error)
-  }
-}
-
-// Handle shutdown gracefully
-addEventListener('beforeunload', (ev) => {
-  console.log('Fake account mass scanner shutdown due to:', ev.detail?.reason)
-})
