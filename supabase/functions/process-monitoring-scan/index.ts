@@ -212,10 +212,11 @@ serve(async (req) => {
     console.log(`Real-time scan completed. Found ${totalMatches} matches from actual APIs.`)
 
     // Progress through different search phases
+    const phaseIncrements = [500000, 500000, 500000, 500000, 500000];
     for (let phase = 0; phase < 5; phase++) {
-      await new Promise(resolve => setTimeout(resolve, 3000)) // 3 second delay per phase
+      await new Promise(resolve => setTimeout(resolve, 3000))
 
-      sourcesScanned += Math.floor(Math.random() * 150000) + 150000
+      sourcesScanned += phaseIncrements[phase]
       
       // Update scan progress
       await supabaseClient

@@ -151,8 +151,8 @@ async function optimizeSystemPerformance(supabase: any, data: any) {
         configuration,
         enabled_at: new Date().toISOString(),
         performance_impact: {
-          performance_gain: Math.random() * 30 + 10, // 10-40% improvement
-          resource_reduction: Math.random() * 20 + 5, // 5-25% reduction
+          performance_gain: 20,
+          resource_reduction: 12,
           optimization_timestamp: new Date().toISOString()
         }
       })
