@@ -281,34 +281,27 @@ export function PortfolioDashboard() {
         return;
       }
 
-      // Generate data for each portfolio
+      // Trigger real scans via edge function for each portfolio
       for (const portfolio of portfolios) {
-        await generatePortfolioScanResult(portfolio);
+        try {
+          await supabase.functions.invoke('portfolio-scan', {
+            body: {
+              portfolio_id: portfolio.id,
+              platforms: ['TinEye', 'Google Lens', 'Google Search'],
+            }
+          });
+        } catch (err) {
+          console.error(`Scan failed for portfolio ${portfolio.id}:`, err);
+        }
       }
 
       toast({
-        title: "Real-time Data Generated",
-        description: `Generated monitoring data for ${portfolios.length} portfolios`,
+        title: "Real-time Monitoring Active",
+        description: `Started real scans for ${portfolios.length} portfolios using reverse image search`,
       });
 
-      // Set up interval to generate more data every 3 minutes
-      const interval = setInterval(async () => {
-        for (const portfolio of portfolios) {
-          await generatePortfolioScanResult(portfolio);
-        }
-      }, 3 * 60 * 1000); // 3 minutes
-
-      // Clear interval after 30 minutes
-      setTimeout(() => {
-        clearInterval(interval);
-        toast({
-          title: "Monitoring Update",
-          description: "Real-time monitoring cycle completed",
-        });
-      }, 30 * 60 * 1000); // 30 minutes
-
     } catch (error) {
-      console.error('Error in direct data generation:', error);
+      console.error('Error in monitoring activation:', error);
       throw error;
     }
   };
