@@ -275,6 +275,7 @@ const Index = () => {
             <ArrowDown className="w-4 h-4" />
           </div>
         </div>
+      </section>
 
       {/* ══════════════════════════════════════════════════════
           LEGAL DISCLOSURE — Premium banner
