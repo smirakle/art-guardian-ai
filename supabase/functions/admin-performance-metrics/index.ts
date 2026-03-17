@@ -169,12 +169,17 @@ serve(async (req) => {
         ).length,
         userEngagement: Math.min(100, (activeUsers / 10) * 100) // Simplified metric
       },
-      api: apiPerformance.status === 'fulfilled' ? apiPerformance.value : {
-        averageResponseTime: 'N/A',
-        requestsPerSecond: 'N/A',
-        errorRate: 'N/A',
-        uptime: 'N/A'
-      },
+      api: (() => {
+        if (apiPerformance.status !== 'fulfilled') return { averageResponseTime: 'N/A', requestsPerSecond: 'N/A', errorRate: 'N/A', uptime: 'N/A' };
+        const apiData = apiPerformance.value.data || [];
+        const getMetric = (name: string) => apiData.find((m: any) => m.metric_name === name)?.metric_value;
+        return {
+          averageResponseTime: getMetric('response_time') ?? 'N/A',
+          requestsPerSecond: getMetric('requests_per_second') ?? 'N/A',
+          errorRate: getMetric('error_rate') ?? 'N/A',
+          uptime: getMetric('uptime') ?? 'N/A'
+        };
+      })(),
       errors: {
         totalErrors: errorData.length,
         errorRate: uploadData.length > 0 ? (errorData.length / uploadData.length) * 100 : 0,
