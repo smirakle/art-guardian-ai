@@ -276,7 +276,7 @@ const Certificate = () => {
               <div>
                 <Label className="text-sm font-medium text-muted-foreground">Network</Label>
                 <Badge variant="outline" className="mt-1">
-                  TSMO Blockchain (Simulated)
+                  TSMO Timestamp Proof Network
                 </Badge>
               </div>
             </CardContent>
