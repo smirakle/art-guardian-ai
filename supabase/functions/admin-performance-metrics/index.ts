@@ -105,13 +105,13 @@ serve(async (req) => {
         .ilike('action', '%error%')
         .gte('created_at', timeAgo.toISOString()),
       
-      // API performance simulation (would be real metrics in production)
-      Promise.resolve({
-        averageResponseTime: Math.floor(Math.random() * 100) + 50,
-        requestsPerSecond: Math.floor(Math.random() * 50) + 100,
-        errorRate: Math.random() * 2,
-        uptime: 99.9
-      })
+      // Derive API performance from real production_metrics table
+      supabase.from('production_metrics')
+        .select('metric_name, metric_value')
+        .in('metric_name', ['response_time', 'requests_per_second', 'error_rate', 'uptime'])
+        .gte('recorded_at', timeAgo.toISOString())
+        .order('recorded_at', { ascending: false })
+        .limit(10)
     ])
 
     // Process scan performance
