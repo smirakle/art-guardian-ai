@@ -46,6 +46,7 @@ import { WatermarkResult } from "@/lib/advancedWatermark";
 import C2PAProtection from "@/components/ai-protection/C2PAProtection";
 import { watermarkService, InvisibleWatermark } from "@/lib/watermark";
 import { cloakImageFromFile } from "@/lib/styleCloak";
+import { productionMetadataInjection } from "@/lib/productionMetadataInjection";
 
 interface UploadedFile {
   id: string;
