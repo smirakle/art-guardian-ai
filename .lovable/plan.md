@@ -1,23 +1,25 @@
 
 
-## Plan: Add Visual Protection Evidence to Step 4
+## Problem
 
-**What**: After protection completes (Step 4), show a visual "Protection Evidence" card above the download section that proves the file has been protected — animated layer indicators, a protection certificate-style summary, and verification details.
+The "As Seen On" / BizWeekly section and CAI Membership banner are stacked vertically as separate bland sections with no visual cohesion. They look like afterthoughts — plain text, small images, no visual hierarchy, and too much whitespace between them.
 
-**Changes — `src/pages/Upload.tsx` only**
+## Plan
 
-Insert a new **Protection Evidence** card between the stats grid and the download section (after line 753, before line 755):
+Combine both credibility signals (BizWeekly press + CAI membership) into a single, polished **"Credibility & Trust"** section with better visual design:
 
-1. **Animated Shield Badge** — A pulsing shield icon with a green checkmark overlay and a "Verified Protected" label
-2. **Protection Layers Verified** — A checklist of 4 protection layers (Invisible Watermark, AI Training Shield, Monitoring Active, DMCA Enforcement) each with a staggered fade-in animation and green check icons, showing they were successfully applied
-3. **Protection Certificate** — A mini card styled like a certificate showing:
-   - Protection ID (generated timestamp-based hash)
-   - Date/time of protection
-   - Protection level: "Standard" 
-   - File count protected
-4. **Visual diff hint** — Small text: "Protection is invisible to the human eye but detectable by our verification system"
+### Changes to `src/pages/Index.tsx` (lines 342-389)
 
-**Design**: Follows existing glass-morphism style (`bg-card/50 backdrop-blur`, `border-primary/20`, gradient accents). Uses staggered CSS animations (`animate-fade-in` with delays) so each layer "checks in" sequentially, giving a sense of real verification happening.
+Replace the two separate sections with one unified section:
 
-**No new files or dependencies** — all done inline in the Step 4 section of Upload.tsx using existing UI primitives (Card, Badge, CheckCircle, Shield, etc.).
+1. **Single section** with subtle gradient background and proper vertical spacing
+2. **Two-column layout** on desktop (BizWeekly left, CAI right), stacked on mobile
+3. Each credential in a **card-like container** with subtle border, rounded corners, and hover effect
+4. **Larger logo sizes** — CAI logo `h-16 md:h-20`, BizWeekly image `max-w-sm`
+5. **Section header**: "Trusted & Recognized" with a subtle label above
+6. **Divider line** between the two on desktop (vertical) / mobile (horizontal)
+7. Harvard disclaimer kept as small text below the BizWeekly card
+8. "Read the feature" link styled as a proper button/pill
+
+This creates a cohesive, professional credibility strip that draws the eye without being gaudy.
 
