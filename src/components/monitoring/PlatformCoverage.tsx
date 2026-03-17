@@ -126,7 +126,18 @@ const PlatformCoverage = () => {
     }
   };
 
+  const SCAN_COOLDOWN_MS = 60_000; // 1 minute between scans per account
+  const [lastScanTimes, setLastScanTimes] = useState<Record<string, number>>({});
+
   const runScan = async (accountId: string) => {
+    const lastScan = lastScanTimes[accountId] || 0;
+    const elapsed = Date.now() - lastScan;
+    if (elapsed < SCAN_COOLDOWN_MS) {
+      const remaining = Math.ceil((SCAN_COOLDOWN_MS - elapsed) / 1000);
+      toast({ title: "Cooldown", description: `Please wait ${remaining}s before scanning again.`, variant: "destructive" });
+      return;
+    }
+
     setScanningId(accountId);
     try {
       const { data, error } = await supabase.functions.invoke('real-social-media-monitor', {
@@ -135,6 +146,7 @@ const PlatformCoverage = () => {
 
       if (error) throw error;
 
+      setLastScanTimes(prev => ({ ...prev, [accountId]: Date.now() }));
       toast({
         title: "Scan Complete",
         description: `Scanned ${data.contentScanned} items, found ${data.detectionsFound} violations.`,
