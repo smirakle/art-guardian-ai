@@ -629,25 +629,7 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
-      {/* ══════════════════════════════════════════════════════
-          LEGAL DISCLOSURE
-          ══════════════════════════════════════════════════════ */}
-      <section className="border-t border-border/40 bg-muted/30 py-10">
-        <div className="container mx-auto px-4 max-w-4xl space-y-4 text-center text-xs text-muted-foreground leading-relaxed">
-          <p className="flex items-center justify-center gap-2">
-            <Scale className="h-4 w-4 shrink-0 text-muted-foreground/70" />
-            <span>
-              <strong className="text-foreground/80">Legal Disclaimer:</strong> TSMO is not a law firm and does not provide legal advice. Artists should always consult a qualified attorney before pursuing any legal action, including but not limited to DMCA takedowns, copyright claims, or litigation.
-            </span>
-          </p>
-          <p className="flex items-center justify-center gap-2">
-            <Shield className="h-4 w-4 shrink-0 text-muted-foreground/70" />
-            <span>
-              <strong className="text-foreground/80">Ownership Notice:</strong> All artists retain full ownership of their work. TSMO does not claim any rights, licenses, or ownership over content uploaded to our platform. Your art is yours — always.
-            </span>
-          </p>
-        </div>
-      </section>
+
 
       <BugReportButton />
     </div>
