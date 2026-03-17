@@ -786,18 +786,26 @@ const Upload = () => {
               {/* Protection Layers Checklist */}
               <div className="grid sm:grid-cols-2 gap-2">
                 {[
-                  { label: "Invisible Watermark", delay: "0s" },
-                  { label: "AI Training Shield", delay: "0.15s" },
-                  { label: "Monitoring Active", delay: "0.3s" },
-                  { label: "DMCA Enforcement", delay: "0.45s" },
+                  { label: "Invisible Watermark", active: enableWatermark, delay: "0s" },
+                  { label: "AI Training Shield", active: true, delay: "0.15s" },
+                  { label: "Monitoring Active", active: protectionResult?.monitoringCreated ?? false, delay: "0.3s" },
+                  { label: "DMCA Enforcement", active: !!user, delay: "0.45s" },
                 ].map((layer) => (
                   <div
                     key={layer.label}
-                    className="flex items-center gap-2 p-2.5 rounded-lg bg-green-500/5 border border-green-500/10 animate-fade-in opacity-0"
+                    className={`flex items-center gap-2 p-2.5 rounded-lg animate-fade-in opacity-0 ${
+                      layer.active 
+                        ? 'bg-green-500/5 border border-green-500/10' 
+                        : 'bg-muted/30 border border-border/50'
+                    }`}
                     style={{ animationDelay: layer.delay, animationFillMode: "forwards" }}
                   >
-                    <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
-                    <span className="text-sm font-medium">{layer.label}</span>
+                    {layer.active ? (
+                      <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
+                    ) : (
+                      <X className="w-4 h-4 text-muted-foreground shrink-0" />
+                    )}
+                    <span className={`text-sm font-medium ${!layer.active ? 'text-muted-foreground' : ''}`}>{layer.label}</span>
                   </div>
                 ))}
               </div>
@@ -808,15 +816,19 @@ const Upload = () => {
                 <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm">
                   <div>
                     <span className="text-muted-foreground text-xs">Protection ID</span>
-                    <p className="font-mono text-xs font-semibold truncate">TSMO-{Date.now().toString(36).toUpperCase()}</p>
+                    <p className="font-mono text-xs font-semibold truncate">
+                      TSMO-{protectionResult?.artworkId ? protectionResult.artworkId.substring(0, 8).toUpperCase() : 'GUEST'}
+                    </p>
                   </div>
                   <div>
                     <span className="text-muted-foreground text-xs">Date</span>
-                    <p className="font-mono text-xs font-semibold">{new Date().toLocaleDateString()}</p>
+                    <p className="font-mono text-xs font-semibold">
+                      {protectionResult?.protectedAt ? new Date(protectionResult.protectedAt).toLocaleDateString() : new Date().toLocaleDateString()}
+                    </p>
                   </div>
                   <div>
                     <span className="text-muted-foreground text-xs">Level</span>
-                    <p className="text-xs font-semibold text-primary">Standard</p>
+                    <p className="text-xs font-semibold text-primary capitalize">{protectionResult?.protectionLevel || 'standard'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground text-xs">Files</span>
