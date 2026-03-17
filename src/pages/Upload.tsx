@@ -934,10 +934,10 @@ const Upload = () => {
               {/* Protection Layers Checklist */}
               <div className="grid sm:grid-cols-2 gap-2">
                 {[
-                  { label: "Invisible Watermark", active: enableWatermark, delay: "0s" },
-                  { label: "AI Training Shield", active: true, delay: "0.15s" },
+                  { label: "Invisible Watermark", active: protectionResult?.watermarkApplied ?? false, delay: "0s" },
+                  { label: "AI Training Shield", active: protectionResult?.aiShieldApplied ?? false, delay: "0.15s" },
                   { label: "Monitoring Active", active: protectionResult?.monitoringCreated ?? false, delay: "0.3s" },
-                  { label: "DMCA Enforcement", active: !!user, delay: "0.45s" },
+                  { label: "DMCA Enforcement", active: protectionResult?.dmcaEnforcement ?? false, delay: "0.45s" },
                 ].map((layer) => (
                   <div
                     key={layer.label}
