@@ -135,7 +135,7 @@ export default function DMCACenter() {
         targetDomain = new URL(form.infringing_url).hostname;
       } catch { targetDomain = form.infringing_url; }
 
-      // Get user's first artwork as default (or null if none)
+      // Must have at least one artwork for RLS to allow the insert
       const { data: userArtwork } = await supabase
         .from('artwork')
         .select('id')
@@ -143,11 +143,17 @@ export default function DMCACenter() {
         .limit(1)
         .maybeSingle();
 
+      if (!userArtwork) {
+        toast.error('You need to upload at least one artwork before filing a DMCA notice.');
+        setSubmitting(false);
+        return;
+      }
+
       const { error } = await supabase
         .from('dmca_notices')
         .insert({
-          artwork_id: userArtwork?.id || '00000000-0000-0000-0000-000000000000',
-          match_id: '00000000-0000-0000-0000-000000000000',
+          artwork_id: userArtwork.id,
+          match_id: userArtwork.id, // placeholder — not tied to a specific match
           copyright_owner_name: form.copyright_owner_name,
           copyright_owner_email: form.copyright_owner_email,
           copyright_owner_address: form.copyright_owner_address || '',
