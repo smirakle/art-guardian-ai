@@ -376,6 +376,7 @@ const Upload = () => {
             protection_methods: {
               invisible_watermark: watermarkApplied,
               ai_training_shield: aiShieldApplied,
+              rights_metadata: metadataInjected,
               style_cloak_strength: 0.25,
             },
             content_type: category === 'photography' || category === 'digital-art' ? 'image' : category,
