@@ -593,8 +593,8 @@ export class ProductionMetadataInjection {
         }
       }
 
-      // Verify checksum integrity
-      const calculatedChecksum = this.calculateChecksum(JSON.stringify(originalMetadata));
+      // Verify checksum integrity using SHA-256
+      const calculatedChecksum = await this.calculateSha256(JSON.stringify(originalMetadata));
       result.integrity.checksum = calculatedChecksum;
       result.integrity.verified = true;
 
