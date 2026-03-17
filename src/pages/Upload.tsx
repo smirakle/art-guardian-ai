@@ -966,9 +966,10 @@ const Upload = () => {
               <div className="grid sm:grid-cols-2 gap-2">
                 {[
                   { label: "Invisible Watermark", active: protectionResult?.watermarkApplied ?? false, delay: "0s" },
-                  { label: "AI Training Shield", active: protectionResult?.aiShieldApplied ?? false, delay: "0.15s" },
+                  { label: "AI Training Shield", active: protectionResult?.aiShieldApplied ?? false, delay: "0.1s" },
+                  { label: "Rights Metadata (EXIF/XMP/LSB)", active: protectionResult?.metadataInjected ?? false, delay: "0.2s" },
                   { label: "Monitoring Active", active: protectionResult?.monitoringCreated ?? false, delay: "0.3s" },
-                  { label: "DMCA Enforcement", active: protectionResult?.dmcaEnforcement ?? false, delay: "0.45s" },
+                  { label: "DMCA Enforcement", active: protectionResult?.dmcaEnforcement ?? false, delay: "0.4s" },
                 ].map((layer) => (
                   <div
                     key={layer.label}
