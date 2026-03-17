@@ -269,40 +269,62 @@ async function scanDarkWeb(searchTerms: string[], contentType: string, contentUr
   const results: ScanResult[] = [];
   
   try {
-    console.log('Scanning dark web sources...');
+    console.log('Scanning deep web sources via search engine indexing...');
     
-    // Simulated dark web scanning (in a real implementation, this would use Tor proxies)
-    // This would require careful legal and ethical considerations
-    
-    const darkWebSources = [
-      'marketplace.onion',
-      'forums.onion', 
-      'paste.onion',
-      'sharing.onion'
+    // Use SerpAPI to search for content on paste sites, forums, and file-sharing domains
+    // that are indexed by search engines (the legally accessible deep web surface)
+    const apiKey = Deno.env.get('SERPAPI_KEY');
+    if (!apiKey) {
+      console.log('SerpAPI key not configured for deep web scanning');
+      return results;
+    }
+
+    const deepWebDomains = [
+      'pastebin.com',
+      'paste.ee',
+      'ghostbin.com',
+      'mega.nz',
+      'anonfiles.com',
+      'catbox.moe',
+      'archive.org',
     ];
 
-    for (const term of searchTerms) {
-      for (const source of darkWebSources) {
-        // Simulate finding content on dark web
-        if (Math.random() > 0.8) { // 20% chance of finding something
-          results.push({
-            id: `dark_${Date.now()}_${Math.random()}`,
-            source: source,
-            url: `http://${source}/content/${Math.random().toString(36)}`,
-            title: `Potential ${contentType} match found`,
-            description: `Content matching "${term}" detected on ${source}`,
-            confidence: 0.6 + Math.random() * 0.3,
-            threatLevel: 'high' as const,
-            contentType: contentType,
-            detectionType: 'unauthorized_distribution',
-            artifacts: ['dark_web_source', 'tor_hidden_service', 'anonymous_posting']
-          });
+    for (const term of searchTerms.slice(0, 3)) {
+      // Search across known paste/file-sharing sites for unauthorized distribution
+      const siteQueries = deepWebDomains.map(d => `site:${d}`).join(' OR ');
+      const query = `${term} (${siteQueries})`;
+      
+      const searchUrl = `https://serpapi.com/search.json?engine=google&q=${encodeURIComponent(query)}&api_key=${apiKey}&num=5`;
+
+      try {
+        const response = await fetch(searchUrl);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.organic_results) {
+            for (const item of data.organic_results) {
+              const domain = extractDomain(item.link);
+              results.push({
+                id: `deepweb_${Date.now()}_${results.length}`,
+                source: `Deep Web (${domain})`,
+                url: item.link,
+                title: item.title || 'Potential unauthorized distribution',
+                description: item.snippet || `Content matching "${term}" found on ${domain}`,
+                confidence: 0.65,
+                threatLevel: 'high' as const,
+                contentType: contentType,
+                detectionType: 'unauthorized_distribution',
+                artifacts: ['deep_web_indexed', 'paste_site', 'file_sharing']
+              });
+            }
+          }
         }
+      } catch (searchErr) {
+        console.error(`Deep web search error for term "${term}":`, searchErr);
       }
     }
 
   } catch (error) {
-    console.error('Error in dark web scanning:', error);
+    console.error('Error in deep web scanning:', error);
   }
 
   return results;
