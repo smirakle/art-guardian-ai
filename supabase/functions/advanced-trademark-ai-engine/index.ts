@@ -507,12 +507,12 @@ function extractRecommendedActions(strategy: string): string[] {
 }
 
 async function analyzeSingleTrademark(trademark: any, options: any) {
-  // Comprehensive single trademark analysis
   return {
     trademark_name: trademark.name,
-    risk_assessment: 'medium',
-    similarity_matches: Math.floor(Math.random() * 10),
+    risk_assessment: 'pending_api_analysis',
+    similarity_matches: 0,
     recommended_actions: ['monitor', 'file_additional_classes'],
-    analysis_date: new Date().toISOString()
+    analysis_date: new Date().toISOString(),
+    note: 'Configure OPENAI_API_KEY and SERPAPI_KEY for real similarity analysis'
   };
 }

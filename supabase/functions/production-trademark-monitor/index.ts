@@ -237,47 +237,9 @@ async function performTrademarkSearch(searchTerm: string, jurisdiction: string[]
 }
 
 function generateEnhancedMockResults(searchTerm: string, jurisdiction: string[], platforms: string[]) {
-  const baseResults = [
-    {
-      type: 'trademark_registration',
-      application_number: `${Math.floor(Math.random() * 90000000) + 10000000}`,
-      status: 'registered',
-      filing_date: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString(),
-      trademark_text: searchTerm.toUpperCase(),
-      applicant_name: 'Example Corporation',
-      trademark_class: [9, 42],
-      goods_services: 'Computer software; Technology services',
-      similarity_score: Math.random() * 0.4 + 0.6,
-      risk_level: 'high',
-      jurisdiction: jurisdiction[0] || 'US',
-      source: 'uspto_mock'
-    },
-    {
-      type: 'domain_registration',
-      domain: `${searchTerm.toLowerCase().replace(/\s+/g, '')}.com`,
-      registrant: 'Privacy Protected',
-      registration_date: new Date(Date.now() - Math.random() * 1000 * 24 * 60 * 60 * 1000).toISOString(),
-      similarity_score: Math.random() * 0.3 + 0.7,
-      risk_level: 'medium',
-      source: 'domain_check_mock'
-    }
-  ];
-  
-  // Add platform-specific results
-  platforms.forEach(platform => {
-    baseResults.push({
-      type: 'social_media',
-      platform,
-      handle: `@${searchTerm.toLowerCase().replace(/\s+/g, '')}`,
-      followers: Math.floor(Math.random() * 100000),
-      verified: Math.random() > 0.7,
-      similarity_score: Math.random() * 0.5 + 0.5,
-      risk_level: Math.random() > 0.5 ? 'medium' : 'low',
-      source: `${platform}_mock`
-    });
-  });
-  
-  return baseResults;
+  // Return empty results when no real APIs are available - no fake data
+  console.warn('No real API keys (USPTO, OpenAI, SerpAPI) configured. Returning empty results.');
+  return [];
 }
 
 async function createMonitoringAlert(userId: string, trademarkId: string, result: any): Promise<void> {
