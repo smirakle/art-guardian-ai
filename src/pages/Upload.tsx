@@ -92,10 +92,15 @@ const Upload = () => {
   const [showAdvancedProtection, setShowAdvancedProtection] = useState(false);
   const [protectionResult, setProtectionResult] = useState<{
     artworkId: string | null;
+    protectionRecordId: string | null;
     protectionLevel: string;
     monitoringCreated: boolean;
+    watermarkApplied: boolean;
+    aiShieldApplied: boolean;
+    dmcaEnforcement: boolean;
     protectedAt: string;
   } | null>(null);
+  const [protectedFiles, setProtectedFiles] = useState<File[]>([]);
 
   const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true); };
   const handleDragLeave = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false); };
