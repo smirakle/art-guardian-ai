@@ -135,17 +135,27 @@ export default function DMCACenter() {
         targetDomain = new URL(form.infringing_url).hostname;
       } catch { targetDomain = form.infringing_url; }
 
+      // Get user's first artwork as default (or null if none)
+      const { data: userArtwork } = await supabase
+        .from('artwork')
+        .select('id')
+        .eq('user_id', user.id)
+        .limit(1)
+        .maybeSingle();
+
       const { error } = await supabase
         .from('dmca_notices')
         .insert({
+          artwork_id: userArtwork?.id || '00000000-0000-0000-0000-000000000000',
+          match_id: '00000000-0000-0000-0000-000000000000',
           copyright_owner_name: form.copyright_owner_name,
           copyright_owner_email: form.copyright_owner_email,
-          copyright_owner_address: form.copyright_owner_address || null,
+          copyright_owner_address: form.copyright_owner_address || '',
           copyright_work_description: form.copyright_work_description,
           infringing_url: form.infringing_url,
-          infringing_description: form.infringing_description || null,
+          infringing_description: form.infringing_description || '',
           target_domain: targetDomain,
-          electronic_signature: form.electronic_signature || null,
+          electronic_signature: form.electronic_signature || form.copyright_owner_name,
           status: 'draft',
         });
 
