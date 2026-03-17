@@ -450,6 +450,7 @@ const Upload = () => {
         monitoringCreated,
         watermarkApplied,
         aiShieldApplied,
+        metadataInjected,
         dmcaEnforcement,
         protectedAt,
       });
