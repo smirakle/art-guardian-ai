@@ -684,14 +684,30 @@ export class ProductionMetadataInjection {
   }
 
   private calculateChecksum(data: string): string {
-    // Simple hash implementation (in production, use crypto.subtle.digest)
-    let hash = 0;
-    for (let i = 0; i < data.length; i++) {
-      const char = data.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32bit integer
+    // Synchronous fallback for places that can't await
+    // Uses FNV-1a 64-bit hash for fast, low-collision checksums
+    let h1 = 0x811c9dc5 >>> 0;
+    let h2 = 0x811c9dc5 >>> 0;
+    const encoder = new TextEncoder();
+    const bytes = encoder.encode(data);
+    for (let i = 0; i < bytes.length; i++) {
+      if (i % 2 === 0) {
+        h1 ^= bytes[i]; h1 = Math.imul(h1, 0x01000193) >>> 0;
+      } else {
+        h2 ^= bytes[i]; h2 = Math.imul(h2, 0x01000193) >>> 0;
+      }
     }
-    return Math.abs(hash).toString(16);
+    return h1.toString(16).padStart(8, '0') + h2.toString(16).padStart(8, '0');
+  }
+
+  /**
+   * Async SHA-256 checksum using Web Crypto API for production integrity verification
+   */
+  private async calculateSha256(data: string): Promise<string> {
+    const encoded = new TextEncoder().encode(data);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
   private stringToBinary(str: string): string {
