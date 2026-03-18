@@ -48,6 +48,7 @@ import Status from "./pages/Status";
 import Support from "./pages/Support";
 
 // Feature pages (accessible via sub-navigation)
+import ForgeryDetection from "./pages/ForgeryDetection";
 import ProtectionHub from "./pages/ProtectionHub";
 import DeepfakeMatchDetails from "./pages/DeepfakeMatchDetails";
 import Certificate from "./pages/Certificate";

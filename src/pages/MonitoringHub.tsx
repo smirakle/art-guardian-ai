@@ -34,6 +34,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { buildMatchUrl } from '@/utils/buildMatchUrl';
 import CopyrightMatches from '@/components/monitoring/CopyrightMatches';
 import AlertsPanel from '@/components/AlertsPanel';
+import ImageForgeryDetector from '@/components/forensics/ImageForgeryDetector';
+import AIImageDetector from '@/components/forensics/AIImageDetector';
 import SocialMediaMonitoringResults from '@/components/monitoring/SocialMediaMonitoringResults';
 import SocialMediaAccountManager from '@/components/SocialMediaAccountManager';
 import FakeAccountDetector from '@/components/FakeAccountDetector';
