@@ -34,6 +34,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { buildMatchUrl } from '@/utils/buildMatchUrl';
 import CopyrightMatches from '@/components/monitoring/CopyrightMatches';
 import AlertsPanel from '@/components/AlertsPanel';
+import ImageForgeryDetector from '@/components/forensics/ImageForgeryDetector';
+import AIImageDetector from '@/components/forensics/AIImageDetector';
 import SocialMediaMonitoringResults from '@/components/monitoring/SocialMediaMonitoringResults';
 import SocialMediaAccountManager from '@/components/SocialMediaAccountManager';
 import FakeAccountDetector from '@/components/FakeAccountDetector';
@@ -418,34 +420,24 @@ const MonitoringHub = () => {
                     <Image className="h-5 w-5 text-secondary" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-base">Image Forgery Analysis</h3>
-                    <p className="text-xs text-muted-foreground">Detect manipulation, splicing, and AI-generated content</p>
+                    <h3 className="font-semibold text-base">Image Forgery & AI Analysis</h3>
+                    <p className="text-xs text-muted-foreground">Detect manipulation, splicing, deepfakes, and AI-generated content</p>
                   </div>
                 </div>
               </div>
-              <div className="p-6 space-y-4">
-                <div className="grid gap-2">
-                  {[
-                    { label: 'Manipulation Detection', icon: Eye },
-                    { label: 'Metadata Analysis', icon: FileText },
-                    { label: 'AI-Generated Detection', icon: Brain },
-                  ].map((item) => (
-                    <div key={item.label} className="flex items-center gap-3 p-3.5 rounded-xl border border-border/30 bg-card/30 hover:bg-card/60 transition-all duration-200 group">
-                      <div className="w-9 h-9 rounded-lg bg-green-500/10 flex items-center justify-center shrink-0 ring-1 ring-green-500/20 group-hover:ring-green-500/40 transition-all">
-                        <item.icon className="h-4 w-4 text-green-600 dark:text-green-400" />
-                      </div>
-                      <span className="text-sm font-medium flex-1">{item.label}</span>
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                        <span className="text-[11px] text-green-600 dark:text-green-400 font-medium">Active</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <Button className="w-full gap-2 shadow-lg shadow-secondary/10" size="lg" onClick={() => navigate('/forgery-detection?tab=forgery-detection')}>
-                  <Image className="h-4 w-4" />
-                  Analyze Image
-                </Button>
+              <div className="p-6">
+                <Tabs defaultValue="ai-detection" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 mb-6">
+                    <TabsTrigger value="ai-detection">AI Generation Detection</TabsTrigger>
+                    <TabsTrigger value="forgery-detection">Forgery & Tampering</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="ai-detection">
+                    <AIImageDetector />
+                  </TabsContent>
+                  <TabsContent value="forgery-detection">
+                    <ImageForgeryDetector />
+                  </TabsContent>
+                </Tabs>
               </div>
             </div>
           </TabsContent>
