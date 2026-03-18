@@ -109,7 +109,7 @@ const AppRoutes = () => (
     <Route path="/simple-findings" element={<Navigate to="/threat-alerts" replace />} />
     <Route path="/findings" element={<Navigate to="/threat-alerts" replace />} />
     <Route path="/deepfake-detection" element={<Navigate to="/monitoring-hub" replace />} />
-    <Route path="/forgery-detection" element={<Navigate to="/monitoring-hub" replace />} />
+    <Route path="/forgery-detection" element={<ForgeryDetection />} />
     <Route path="/reverse-image-search" element={<Navigate to="/monitoring-hub" replace />} />
     <Route path="/document-protection" element={<Navigate to="/upload" replace />} />
     <Route path="/deep-scan" element={<Navigate to="/monitoring-hub" replace />} />
