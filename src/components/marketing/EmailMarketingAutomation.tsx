@@ -973,23 +973,7 @@ export const EmailMarketingAutomation = () => {
         </TabsContent>
 
         <TabsContent value="analytics">
-          <Card>
-            <CardHeader>
-              <CardTitle>Campaign Analytics</CardTitle>
-              <CardDescription>
-                Detailed performance metrics for your email campaigns
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <BarChart3 className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Advanced Analytics</h3>
-                <p className="text-muted-foreground">
-                  Detailed campaign performance coming soon
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <EmailAnalyticsDashboard />
         </TabsContent>
       </Tabs>
     </div>
