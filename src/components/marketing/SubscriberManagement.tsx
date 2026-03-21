@@ -168,7 +168,7 @@ export const SubscriberManagement = () => {
           sub.email,
           sub.status,
           new Date(sub.created_at).toLocaleDateString(),
-          (sub.tags || []).join('; ')
+          ((sub.metadata as any)?.tags || []).join('; ')
         ])
       ].map(row => row.join(',')).join('\n');
 
