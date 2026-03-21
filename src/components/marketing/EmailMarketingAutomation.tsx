@@ -803,21 +803,17 @@ export const EmailMarketingAutomation = () => {
         </TabsContent>
 
         <TabsContent value="templates">
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Email Templates</CardTitle>
-                <CardDescription>
-                  Manage your email templates for faster campaign creation
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground text-center py-8">
-                  Email templates will be available after database migration is complete.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+          <EmailTemplateLibrary
+            onCreateCampaign={(template) => {
+              // Pre-fill campaign form from template
+              createCampaign({
+                name: template.name,
+                subject: template.subject,
+                content: template.html_content,
+                trigger_type: 'manual',
+              });
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="create">
