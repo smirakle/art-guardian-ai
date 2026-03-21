@@ -129,8 +129,7 @@ export const SubscriberManagement = () => {
         user_id: userData.user.id,
         email,
         status: 'subscribed',
-        tags,
-        subscribed_at: new Date().toISOString()
+        metadata: { tags },
       }));
 
       const { error } = await supabase
