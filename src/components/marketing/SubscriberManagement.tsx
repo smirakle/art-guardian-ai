@@ -64,7 +64,7 @@ export const SubscriberManagement = () => {
       let query = supabase
         .from('email_subscribers')
         .select('*')
-        .order('subscribed_at', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (statusFilter !== 'all') {
         query = query.eq('status', statusFilter);
