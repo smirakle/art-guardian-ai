@@ -273,7 +273,7 @@ export const SubscriberManagement = () => {
 
   const filteredSubscribers = subscribers.filter(subscriber => 
     subscriber.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (subscriber.tags || []).some(tag => 
+    ((subscriber.metadata as any)?.tags || []).some((tag: string) => 
       tag.toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
