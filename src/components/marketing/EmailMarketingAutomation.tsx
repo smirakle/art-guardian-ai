@@ -10,6 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Mail, Send, Clock, Users, BarChart3, Settings, Plus, Trash2, Play, Pause } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { EmailTemplateLibrary } from './EmailTemplateLibrary';
+import { EmailAnalyticsDashboard } from './EmailAnalyticsDashboard';
 
 interface EmailCampaign {
   id: string;
