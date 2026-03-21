@@ -18,69 +18,73 @@ serve(async (req) => {
 
   try {
     const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
-      throw new Error('No authorization header')
-    }
+    if (!authHeader) throw new Error('No authorization header')
 
-    // Get user from auth header
     const token = authHeader.replace('Bearer ', '')
     const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    if (authError || !user) throw new Error('Invalid authentication')
+
+    const body = await req.json().catch(() => ({}))
+    const timeRange = body.timeRange || '30d'
     
-    if (authError || !user) {
-      throw new Error('Invalid authentication')
-    }
+    const daysMap: Record<string, number> = { '7d': 7, '30d': 30, '90d': 90 }
+    const days = daysMap[timeRange] || 30
+    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString()
 
-    // Get email analytics for the user
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+    // Get campaigns in time range
+    const { data: campaigns, error: campError } = await supabase
+      .from('email_campaigns')
+      .select('id, status')
+      .eq('user_id', user.id)
+      .gte('created_at', since)
 
-    // Try to get campaign statistics from email_marketing_campaigns table
-    try {
-      const { data: campaigns, error: campaignError } = await supabase
-        .from('email_marketing_campaigns')
-        .select('*')
-        .eq('user_id', user.id)
-        .gte('created_at', thirtyDaysAgo)
+    if (campError) throw campError
 
-      if (!campaignError && campaigns) {
-        // Calculate analytics from real data
-        const totalSent = campaigns.reduce((sum, c) => sum + (c.recipient_count || 0), 0)
-        const totalOpened = campaigns.reduce((sum, c) => sum + (c.open_count || 0), 0)
-        const totalClicked = campaigns.reduce((sum, c) => sum + (c.click_count || 0), 0)
+    const campaignIds = (campaigns || []).map(c => c.id)
+    const totalCampaigns = campaigns?.length || 0
+    const activeCampaigns = campaigns?.filter(c => c.status === 'sent' || c.status === 'sending').length || 0
 
-        const avgOpenRate = totalSent > 0 ? (totalOpened / totalSent) * 100 : 0
-        const avgClickRate = totalSent > 0 ? (totalClicked / totalSent) * 100 : 0
+    let totalSent = 0, totalOpened = 0, totalClicked = 0, totalBounced = 0, totalUnsubscribed = 0
 
-        return new Response(JSON.stringify({
-          totalSent,
-          totalOpened,
-          totalClicked,
-          avgOpenRate: Math.round(avgOpenRate * 100) / 100,
-          avgClickRate: Math.round(avgClickRate * 100) / 100,
-          subscriberGrowth: 0,
-          campaignCount: campaigns.length
-        }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        })
+    if (campaignIds.length > 0) {
+      // Get recipient stats
+      const { data: recipients, error: recError } = await supabase
+        .from('email_campaign_recipients')
+        .select('status, opened_at, clicked_at, bounced_at, unsubscribed_at')
+        .in('campaign_id', campaignIds)
+
+      if (!recError && recipients) {
+        totalSent = recipients.filter(r => r.status === 'sent').length
+        totalOpened = recipients.filter(r => r.opened_at).length
+        totalClicked = recipients.filter(r => r.clicked_at).length
+        totalBounced = recipients.filter(r => r.bounced_at).length
+        totalUnsubscribed = recipients.filter(r => r.unsubscribed_at).length
       }
-    } catch (error) {
-      console.log('No email campaigns data, using mock analytics')
     }
 
-    // Return mock analytics data
+    const avgOpenRate = totalSent > 0 ? Math.round((totalOpened / totalSent) * 10000) / 100 : 0
+    const avgClickRate = totalSent > 0 ? Math.round((totalClicked / totalSent) * 10000) / 100 : 0
+    const deliverabilityRate = totalSent > 0 ? Math.round(((totalSent - totalBounced) / totalSent) * 10000) / 100 : 100
+    const bounceRate = totalSent > 0 ? Math.round((totalBounced / totalSent) * 10000) / 100 : 0
+    const unsubscribeRate = totalSent > 0 ? Math.round((totalUnsubscribed / totalSent) * 10000) / 100 : 0
+
     return new Response(JSON.stringify({
-      totalSent: 0,
-      totalOpened: 0,
-      totalClicked: 0,
-      avgOpenRate: 0,
-      avgClickRate: 0,
-      subscriberGrowth: 0,
-      campaignCount: 0
+      totalSent,
+      totalOpened,
+      totalClicked,
+      avgOpenRate,
+      avgClickRate,
+      totalCampaigns,
+      activeCampaigns,
+      deliverabilityRate,
+      bounceRate,
+      unsubscribeRate,
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
 
   } catch (error: any) {
-    console.error('Error in email-analytics function:', error)
+    console.error('Error in email-analytics:', error)
     return new Response(JSON.stringify({ error: error.message }), {
       status: 400,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
