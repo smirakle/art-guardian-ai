@@ -64,7 +64,7 @@ export const SubscriberManagement = () => {
       let query = supabase
         .from('email_subscribers')
         .select('*')
-        .order('subscribed_at', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (statusFilter !== 'all') {
         query = query.eq('status', statusFilter);
@@ -129,8 +129,7 @@ export const SubscriberManagement = () => {
         user_id: userData.user.id,
         email,
         status: 'subscribed',
-        tags,
-        subscribed_at: new Date().toISOString()
+        metadata: { tags },
       }));
 
       const { error } = await supabase
@@ -169,7 +168,7 @@ export const SubscriberManagement = () => {
           sub.email,
           sub.status,
           new Date(sub.created_at).toLocaleDateString(),
-          (sub.tags || []).join('; ')
+          ((sub.metadata as any)?.tags || []).join('; ')
         ])
       ].map(row => row.join(',')).join('\n');
 
@@ -274,7 +273,7 @@ export const SubscriberManagement = () => {
 
   const filteredSubscribers = subscribers.filter(subscriber => 
     subscriber.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (subscriber.tags || []).some(tag => 
+    ((subscriber.metadata as any)?.tags || []).some((tag: string) => 
       tag.toLowerCase().includes(searchTerm.toLowerCase())
     )
   );

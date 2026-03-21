@@ -10,6 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Mail, Send, Clock, Users, BarChart3, Settings, Plus, Trash2, Play, Pause } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { EmailTemplateLibrary } from './EmailTemplateLibrary';
+import { EmailAnalyticsDashboard } from './EmailAnalyticsDashboard';
 
 interface EmailCampaign {
   id: string;
@@ -801,21 +803,17 @@ export const EmailMarketingAutomation = () => {
         </TabsContent>
 
         <TabsContent value="templates">
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Email Templates</CardTitle>
-                <CardDescription>
-                  Manage your email templates for faster campaign creation
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground text-center py-8">
-                  Email templates will be available after database migration is complete.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+          <EmailTemplateLibrary
+            onCreateCampaign={(template) => {
+              // Pre-fill campaign form from template
+              createCampaign({
+                name: template.name,
+                subject: template.subject,
+                content: template.html_content,
+                trigger_type: 'manual',
+              });
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="create">
@@ -975,23 +973,7 @@ export const EmailMarketingAutomation = () => {
         </TabsContent>
 
         <TabsContent value="analytics">
-          <Card>
-            <CardHeader>
-              <CardTitle>Campaign Analytics</CardTitle>
-              <CardDescription>
-                Detailed performance metrics for your email campaigns
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <BarChart3 className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Advanced Analytics</h3>
-                <p className="text-muted-foreground">
-                  Detailed campaign performance coming soon
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <EmailAnalyticsDashboard />
         </TabsContent>
       </Tabs>
     </div>
