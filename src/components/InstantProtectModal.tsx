@@ -306,7 +306,19 @@ export const InstantProtectModal = ({ open, onOpenChange }: InstantProtectModalP
               </span>
             </div>
 
-            {remainingProtections > 0 && (
+            {showSoftSignupPrompt && (
+              <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg text-center">
+                <p className="text-sm font-medium text-foreground mb-1">💡 Create a free account to save your results</p>
+                <button
+                  onClick={handleCreateAccount}
+                  className="text-xs text-primary hover:underline font-medium"
+                >
+                  Sign up in 10 seconds →
+                </button>
+              </div>
+            )}
+
+            {remainingProtections > 0 && !showSoftSignupPrompt && (
               <p className="text-xs text-center text-muted-foreground">
                 {remainingProtections} free protection{remainingProtections !== 1 ? "s" : ""} remaining
               </p>
