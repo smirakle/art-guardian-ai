@@ -16,7 +16,8 @@ interface InstantProtectModalProps {
 type Step = "upload" | "processing" | "complete";
 
 const GUEST_PROTECTION_KEY = "tsmo_guest_protection_count";
-const MAX_GUEST_PROTECTIONS = 3;
+const MAX_GUEST_PROTECTIONS = 10;
+const SOFT_PROMPT_THRESHOLD = 5;
 
 const getGuestProtectionCount = (): number => {
   const stored = localStorage.getItem(GUEST_PROTECTION_KEY);
