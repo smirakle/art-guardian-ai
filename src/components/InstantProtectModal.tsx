@@ -16,7 +16,8 @@ interface InstantProtectModalProps {
 type Step = "upload" | "processing" | "complete";
 
 const GUEST_PROTECTION_KEY = "tsmo_guest_protection_count";
-const MAX_GUEST_PROTECTIONS = 3;
+const MAX_GUEST_PROTECTIONS = 10;
+const SOFT_PROMPT_THRESHOLD = 5;
 
 const getGuestProtectionCount = (): number => {
   const stored = localStorage.getItem(GUEST_PROTECTION_KEY);
@@ -49,6 +50,7 @@ export const InstantProtectModal = ({ open, onOpenChange }: InstantProtectModalP
   const protectionCount = getGuestProtectionCount();
   const canProtect = protectionCount < MAX_GUEST_PROTECTIONS;
   const remainingProtections = MAX_GUEST_PROTECTIONS - protectionCount;
+  const showSoftSignupPrompt = protectionCount >= SOFT_PROMPT_THRESHOLD && canProtect;
 
   const resetState = () => {
     setStep("upload");
@@ -304,7 +306,19 @@ export const InstantProtectModal = ({ open, onOpenChange }: InstantProtectModalP
               </span>
             </div>
 
-            {remainingProtections > 0 && (
+            {showSoftSignupPrompt && (
+              <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg text-center">
+                <p className="text-sm font-medium text-foreground mb-1">💡 Create a free account to save your results</p>
+                <button
+                  onClick={handleCreateAccount}
+                  className="text-xs text-primary hover:underline font-medium"
+                >
+                  Sign up in 10 seconds →
+                </button>
+              </div>
+            )}
+
+            {remainingProtections > 0 && !showSoftSignupPrompt && (
               <p className="text-xs text-center text-muted-foreground">
                 {remainingProtections} free protection{remainingProtections !== 1 ? "s" : ""} remaining
               </p>

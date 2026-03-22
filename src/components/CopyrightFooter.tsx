@@ -88,6 +88,20 @@ export const CopyrightFooter = () => {
           </div>
         </div>
 
+        {/* Legal Disclaimers */}
+        <div className="border-t pt-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-muted-foreground">
+            <div>
+              <p className="font-semibold text-foreground text-sm mb-1">Legal Disclaimer</p>
+              <p>TSMO is not a law firm and does not provide legal advice. Artists should always consult a qualified attorney before pursuing any legal action.</p>
+            </div>
+            <div>
+              <p className="font-semibold text-foreground text-sm mb-1">You Own Your Work</p>
+              <p>All artists retain full ownership of their work. TSMO does not claim any rights, licenses, or ownership over content uploaded to our platform.</p>
+            </div>
+          </div>
+        </div>
+
         {/* Divider */}
         <div className="border-t pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">

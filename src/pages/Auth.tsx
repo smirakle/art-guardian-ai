@@ -10,7 +10,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Eye, EyeOff, Lock, Mail, Check } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, Check, Chrome } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
 const Auth: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -53,16 +54,16 @@ const Auth: React.FC = () => {
           navigate('/dashboard');
         }
       } else {
-        // Simplified signup - just email and password
         const { error } = await signUp(email.trim(), password.trim(), {
           account_type: 'free'
         });
         
         if (!error) {
           toast({
-            title: "Account created!",
-            description: "Check your email to verify your account, then start protecting your art.",
+            title: "Welcome to TSMO!",
+            description: "Start protecting your art now.",
           });
+          navigate('/dashboard');
         }
       }
     } catch (error) {
@@ -134,6 +135,28 @@ const Auth: React.FC = () => {
         </CardHeader>
 
         <CardContent>
+          {/* Google OAuth */}
+          <Button
+            variant="outline"
+            className="w-full mb-4 h-12 text-base font-medium"
+            onClick={async () => {
+              await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: `${window.location.origin}/dashboard` }
+              });
+            }}
+          >
+            <Chrome className="mr-2 h-5 w-5" />
+            Continue with Google
+          </Button>
+
+          <div className="relative mb-4">
+            <Separator />
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted-foreground">
+              or
+            </span>
+          </div>
+
           <Tabs value={isLogin ? 'login' : 'signup'} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger 

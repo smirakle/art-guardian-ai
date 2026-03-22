@@ -226,24 +226,15 @@ const Index = () => {
               AI-powered monitoring that scans the web 24/7 and alerts you when someone uses your work without permission.
             </p>
 
-            {/* CTA — Big, bold, unmissable */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8 opacity-0 animate-stagger-fade-up" style={{ animationDelay: '0.9s' }}>
+            {/* CTA — Single, bold, unmissable */}
+            <div className="flex justify-center mb-8 opacity-0 animate-stagger-fade-up" style={{ animationDelay: '0.9s' }}>
               <Button
                 size="lg"
-                className="h-16 px-10 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-2xl shadow-primary/30 rounded-2xl glow-pulse"
+                className="h-16 px-12 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-2xl shadow-primary/30 rounded-2xl glow-pulse"
                 onClick={() => setShowInstantProtect(true)}
               >
                 <Upload className="mr-3 h-5 w-5" />
                 Scan Your Art Free
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-16 px-10 text-lg font-semibold border-2 border-border/60 hover:border-primary/50 hover:bg-primary/5 rounded-2xl"
-                onClick={() => navigate('/auth?tab=signup')}
-              >
-                Create Free Account
-                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
 
@@ -277,37 +268,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════
-          LEGAL DISCLOSURE — Premium banner
-          ══════════════════════════════════════════════════════ */}
-      <section className="relative py-6 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 border-y border-primary/10">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <div className="flex flex-col md:flex-row items-stretch gap-4">
-            <div className="flex-1 flex items-start gap-3 p-4 rounded-xl bg-card/60 backdrop-blur border border-border/40">
-              <div className="shrink-0 w-9 h-9 rounded-full bg-primary/10 ring-1 ring-primary/20 flex items-center justify-center mt-0.5">
-                <Scale className="w-4 h-4 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground mb-0.5">Legal Disclaimer</p>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  TSMO is not a law firm and does not provide legal advice. Artists should always consult a qualified attorney before pursuing any legal action, including DMCA takedowns, copyright claims, or litigation.
-                </p>
-              </div>
-            </div>
-            <div className="flex-1 flex items-start gap-3 p-4 rounded-xl bg-card/60 backdrop-blur border border-border/40">
-              <div className="shrink-0 w-9 h-9 rounded-full bg-accent/10 ring-1 ring-accent/20 flex items-center justify-center mt-0.5">
-                <Shield className="w-4 h-4 text-accent" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground mb-0.5">You Own Your Work</p>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  All artists retain full ownership of their work. TSMO does not claim any rights, licenses, or ownership over content uploaded to our platform. Your art is yours — always.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Legal disclaimers moved to CopyrightFooter */}
 
       {/* ══════════════════════════════════════════════════════
           ══════════════════════════════════════════════════════ */}
@@ -476,25 +437,14 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════
-          SOCIAL PROOF — Testimonial-style quote
-          ══════════════════════════════════════════════════════ */}
+      {/* Social proof counter */}
       <RevealSection>
-        <section className="py-28 lg:py-36">
+        <section className="py-20 lg:py-24">
           <div className="container mx-auto px-4 max-w-3xl text-center">
-            <div className="relative">
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-8xl font-display text-primary/10 select-none">"</div>
-              <blockquote className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground leading-snug tracking-tight mb-8 relative">
-                Fighting art theft used to feel like fighting shadows. TSMO gave me the tools to fight back.
-              </blockquote>
-              <div className="flex items-center justify-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">SC</div>
-                <div className="text-left">
-                  <p className="text-sm font-semibold text-foreground">Shirleena Cunningham</p>
-                  <p className="text-xs text-muted-foreground">Founder & CEO, TSMO</p>
-                </div>
-              </div>
-            </div>
+            <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground tracking-tight">
+              Join <span className="text-primary">2,400+</span> creators protecting their art with TSMO
+            </p>
+            <p className="text-muted-foreground mt-4 text-lg">From independent artists to professional studios</p>
           </div>
         </section>
       </RevealSection>
