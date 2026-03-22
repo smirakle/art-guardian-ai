@@ -54,16 +54,16 @@ const Auth: React.FC = () => {
           navigate('/dashboard');
         }
       } else {
-        // Simplified signup - just email and password
         const { error } = await signUp(email.trim(), password.trim(), {
           account_type: 'free'
         });
         
         if (!error) {
           toast({
-            title: "Account created!",
-            description: "Check your email to verify your account, then start protecting your art.",
+            title: "Welcome to TSMO!",
+            description: "Start protecting your art now.",
           });
+          navigate('/dashboard');
         }
       }
     } catch (error) {
