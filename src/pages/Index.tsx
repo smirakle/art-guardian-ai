@@ -226,24 +226,15 @@ const Index = () => {
               AI-powered monitoring that scans the web 24/7 and alerts you when someone uses your work without permission.
             </p>
 
-            {/* CTA — Big, bold, unmissable */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8 opacity-0 animate-stagger-fade-up" style={{ animationDelay: '0.9s' }}>
+            {/* CTA — Single, bold, unmissable */}
+            <div className="flex justify-center mb-8 opacity-0 animate-stagger-fade-up" style={{ animationDelay: '0.9s' }}>
               <Button
                 size="lg"
-                className="h-16 px-10 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-2xl shadow-primary/30 rounded-2xl glow-pulse"
+                className="h-16 px-12 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-2xl shadow-primary/30 rounded-2xl glow-pulse"
                 onClick={() => setShowInstantProtect(true)}
               >
                 <Upload className="mr-3 h-5 w-5" />
                 Scan Your Art Free
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-16 px-10 text-lg font-semibold border-2 border-border/60 hover:border-primary/50 hover:bg-primary/5 rounded-2xl"
-                onClick={() => navigate('/auth?tab=signup')}
-              >
-                Create Free Account
-                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
 
