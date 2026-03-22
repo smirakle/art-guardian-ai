@@ -10,7 +10,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Eye, EyeOff, Lock, Mail, Check } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, Check, Chrome } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
 const Auth: React.FC = () => {
   const [searchParams] = useSearchParams();
