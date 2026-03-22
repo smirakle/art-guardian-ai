@@ -437,25 +437,14 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════
-          SOCIAL PROOF — Testimonial-style quote
-          ══════════════════════════════════════════════════════ */}
+      {/* Social proof counter */}
       <RevealSection>
-        <section className="py-28 lg:py-36">
+        <section className="py-20 lg:py-24">
           <div className="container mx-auto px-4 max-w-3xl text-center">
-            <div className="relative">
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-8xl font-display text-primary/10 select-none">"</div>
-              <blockquote className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground leading-snug tracking-tight mb-8 relative">
-                Fighting art theft used to feel like fighting shadows. TSMO gave me the tools to fight back.
-              </blockquote>
-              <div className="flex items-center justify-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">SC</div>
-                <div className="text-left">
-                  <p className="text-sm font-semibold text-foreground">Shirleena Cunningham</p>
-                  <p className="text-xs text-muted-foreground">Founder & CEO, TSMO</p>
-                </div>
-              </div>
-            </div>
+            <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground tracking-tight">
+              Join <span className="text-primary">2,400+</span> creators protecting their art with TSMO
+            </p>
+            <p className="text-muted-foreground mt-4 text-lg">From independent artists to professional studios</p>
           </div>
         </section>
       </RevealSection>

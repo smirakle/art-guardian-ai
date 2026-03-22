@@ -50,6 +50,7 @@ export const InstantProtectModal = ({ open, onOpenChange }: InstantProtectModalP
   const protectionCount = getGuestProtectionCount();
   const canProtect = protectionCount < MAX_GUEST_PROTECTIONS;
   const remainingProtections = MAX_GUEST_PROTECTIONS - protectionCount;
+  const showSoftSignupPrompt = protectionCount >= SOFT_PROMPT_THRESHOLD && canProtect;
 
   const resetState = () => {
     setStep("upload");

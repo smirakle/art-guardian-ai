@@ -135,6 +135,28 @@ const Auth: React.FC = () => {
         </CardHeader>
 
         <CardContent>
+          {/* Google OAuth */}
+          <Button
+            variant="outline"
+            className="w-full mb-4 h-12 text-base font-medium"
+            onClick={async () => {
+              await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: `${window.location.origin}/dashboard` }
+              });
+            }}
+          >
+            <Chrome className="mr-2 h-5 w-5" />
+            Continue with Google
+          </Button>
+
+          <div className="relative mb-4">
+            <Separator />
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted-foreground">
+              or
+            </span>
+          </div>
+
           <Tabs value={isLogin ? 'login' : 'signup'} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger 
