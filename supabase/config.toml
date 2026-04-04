@@ -239,3 +239,6 @@ verify_jwt = false
 
 [functions.embed-c2pa-manifest]
 verify_jwt = false
+
+[functions.mcp-server]
+verify_jwt = false
