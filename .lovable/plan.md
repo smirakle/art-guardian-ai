@@ -1,44 +1,68 @@
 
 
-# Signup Conversion Fixes
+# Build MCP Server Edge Function
 
 ## Summary
-Six targeted changes to reduce signup friction and improve conversion: disable email verification, remove self-testimonial, simplify hero CTA, increase guest limit, add Google OAuth, and move legal disclaimers to footer.
+Create a Supabase Edge Function (`mcp-server`) using `mcp-lite` and Hono that exposes four core platform tools via the Model Context Protocol, enabling AI agents (Claude, Cursor, Windsurf) to call them directly.
+
+## Exposed Tools
+
+| Tool | Description | Delegates to |
+|------|-------------|-------------|
+| `image_scan` | Scan an image URL for copyright infringement across the web | `production-realtime-scanner` |
+| `social_media_monitor` | Monitor social media platforms for unauthorized use | `real-social-media-monitor` |
+| `deepfake_detection` | Analyze an image for deepfake/AI manipulation | `deepfake-detection` |
+| `dmca_filing` | File an automated DMCA takedown notice | `automated-dmca-filing` |
+
+## Architecture
+
+```text
+AI Agent (Claude, Cursor, etc.)
+  │
+  ▼  POST /mcp-server (MCP Streamable HTTP)
+┌──────────────────────────┐
+│  mcp-server (Edge Fn)    │
+│  - Hono router           │
+│  - mcp-lite McpServer    │
+│  - Auth via Bearer token │
+│  - 4 tool definitions    │
+└──────┬───────────────────┘
+       │ supabase.functions.invoke()
+       ▼
+  Existing Edge Functions
+```
 
 ## Changes
 
-### 1. Disable email verification (Supabase Dashboard)
-- This is a dashboard setting, not a code change. You need to go to **Supabase Dashboard > Authentication > Email > disable "Confirm email"**.
-- Update the signup success toast in `Auth.tsx` (line 62-65) to remove "Check your email to verify" message — replace with "Welcome! Start protecting your art now." and auto-redirect to `/dashboard`.
+### 1. Create `supabase/functions/mcp-server/index.ts`
+- Import Hono + mcp-lite (`npm:mcp-lite@^0.10.0`)
+- Authenticate incoming requests via the `Authorization` header (validate JWT with Supabase)
+- Register four tools with input schemas (JSON Schema)
+- Each tool handler invokes the corresponding existing edge function using the service role key
+- Route all requests through `StreamableHttpTransport`
 
-### 2. Remove self-testimonial from landing page
-- Delete lines 479-500 in `src/pages/Index.tsx` (the "Social Proof" section with Shirleena Cunningham quote).
-- Replace with a simple social proof counter: "Join 2,400+ creators protecting their art" using existing stats data.
+### 2. Create `supabase/functions/mcp-server/deno.json`
+- Define import map for `mcp-lite` and `hono`
 
-### 3. Simplify hero to single CTA
-- In `src/pages/Index.tsx` lines 229-248, remove the secondary "Create Free Account" button.
-- Keep only the primary "Scan Your Art Free" button that opens the instant protect modal — this is the hook that demonstrates value before asking for signup.
+### 3. Update `supabase/config.toml`
+- Add `[functions.mcp-server]` with `verify_jwt = false` (auth handled in code for MCP protocol compatibility)
 
-### 4. Increase guest protection limit
-- In `src/components/InstantProtectModal.tsx` line 19, change `MAX_GUEST_PROTECTIONS = 3` to `MAX_GUEST_PROTECTIONS = 10`.
-- Add a soft signup prompt after 5 uses (show a banner inside the modal suggesting account creation to save results, but don't block).
+## MCP Server URL (after deploy)
+```
+https://utneaqmbyjwxaqrrarpc.supabase.co/functions/v1/mcp-server
+```
 
-### 5. Add Google OAuth
-- Add a "Continue with Google" button to `src/pages/Auth.tsx` above the email form in both login and signup tabs.
-- Use `supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/dashboard' } })`.
-- **Requires manual setup**: You must configure Google OAuth in your Supabase Dashboard (Authentication > Providers > Google) with your Google Cloud OAuth credentials.
+Users configure this URL in their AI agent's MCP settings with their Supabase auth token as the Bearer token.
 
-### 6. Move legal disclaimers to footer
-- Remove lines 280-310 in `src/pages/Index.tsx` (the legal disclosure section that appears right after the hero).
-- Add the same legal disclaimer and "You Own Your Work" text to `src/components/CopyrightFooter.tsx` as a small section above the copyright line.
+## Tool Input Schemas
 
-## Files to modify
-- `src/pages/Auth.tsx` — Google OAuth button, update signup toast/redirect
-- `src/pages/Index.tsx` — Remove secondary CTA, remove self-testimonial, remove legal section from mid-page
-- `src/components/InstantProtectModal.tsx` — Increase limit to 10, add soft prompt at 5
-- `src/components/CopyrightFooter.tsx` — Add legal disclaimers
+- **image_scan**: `{ imageUrl: string, platforms?: string[], priority?: "low"|"normal"|"high" }`
+- **social_media_monitor**: `{ accountId: string, scanType?: "full"|"quick" }`
+- **deepfake_detection**: `{ filePath: string, fileName: string, artworkId?: string }`
+- **dmca_filing**: `{ matchId: string, autoFile?: boolean }`
 
-## Manual step required
-- **Supabase Dashboard**: Disable email confirmation at Authentication > Email settings
-- **Supabase Dashboard**: Configure Google OAuth provider with Google Cloud credentials
+## Files to create/modify
+- `supabase/functions/mcp-server/index.ts` (new)
+- `supabase/functions/mcp-server/deno.json` (new)
+- `supabase/config.toml` (add entry)
 
