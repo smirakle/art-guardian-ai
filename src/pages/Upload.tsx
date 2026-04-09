@@ -930,6 +930,11 @@ const Upload = () => {
         {/* ========== STEP 4: COMPLETE ========== */}
         {step === 4 && (
           <div className="animate-fade-in max-w-lg mx-auto text-center py-12">
+          <ScreenshotShield
+            watermarkText={user?.email || user?.id || 'PROTECTED'}
+            enabled={enableScreenshotShield}
+            showWatermark={enableScreenshotShield}
+          >
             <div className="w-24 h-24 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-8 ring-8 ring-green-500/5">
               <CheckCircle className="w-12 h-12 text-green-500" />
             </div>
