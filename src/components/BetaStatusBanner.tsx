@@ -50,7 +50,7 @@ export default function BetaStatusBanner() {
                   <span className="text-sm font-medium">TSMO Watch</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Full production features • Enterprise-grade security • 99.9% uptime
+                  Full production features • Enterprise-grade security • 99.5% uptime
                 </p>
               </div>
             </div>

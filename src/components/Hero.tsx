@@ -62,15 +62,15 @@ const Hero = () => {
             </div>
 
             <div className="text-center p-4">
-              <div className="text-3xl font-bold text-primary mb-2">99.9%</div>
-              <h3 className="font-semibold mb-1">Detection Rate</h3>
-              <p className="text-muted-foreground text-sm">Industry-leading accuracy</p>
+              <div className="text-3xl font-bold text-primary mb-2">94.2%</div>
+              <h3 className="font-semibold mb-1">Detection Accuracy</h3>
+              <p className="text-muted-foreground text-sm">Real-world measured</p>
             </div>
 
             <div className="text-center p-4">
-              <div className="text-3xl font-bold text-primary mb-2">$50M+</div>
-              <h3 className="font-semibold mb-1">Art Value</h3>
-              <p className="text-muted-foreground text-sm">Protected assets</p>
+              <div className="text-3xl font-bold text-primary mb-2">47+</div>
+              <h3 className="font-semibold mb-1">Platforms</h3>
+              <p className="text-muted-foreground text-sm">Actively scanned</p>
             </div>
           </div>
         </div>
