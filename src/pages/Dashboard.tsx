@@ -38,6 +38,8 @@ import {
   CheckCircle2,
   Brain,
   Eye,
+  Download,
+  Loader2,
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -47,6 +49,32 @@ const Dashboard = () => {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
   const [loadingUrls, setLoadingUrls] = useState(false);
+  const [downloading, setDownloading] = useState<Set<string>>(new Set());
+
+  const handleDownloadArtwork = async (artId: string, filePath: string, title: string) => {
+    if (downloading.has(artId)) return;
+    setDownloading(prev => new Set(prev).add(artId));
+    try {
+      const { data, error } = await supabase.storage
+        .from('artwork')
+        .createSignedUrl(filePath, 60);
+      if (error || !data?.signedUrl) throw error || new Error('No URL');
+      const link = document.createElement('a');
+      link.href = data.signedUrl;
+      link.download = title || 'artwork';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (e) {
+      console.error('Download error:', e);
+    } finally {
+      setDownloading(prev => {
+        const next = new Set(prev);
+        next.delete(artId);
+        return next;
+      });
+    }
+  };
 
   const { data: artwork } = useQuery({
     queryKey: ['user-artwork', user?.id],
@@ -253,6 +281,23 @@ const Dashboard = () => {
                         </>
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                      {/* Download button overlay */}
+                      {imageUrl && art.file_paths?.[0] && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDownloadArtwork(art.id, art.file_paths[0], art.title);
+                          }}
+                          className="absolute bottom-2.5 right-2.5 z-10 p-2 rounded-full bg-black/50 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-black/70"
+                          title="Download protected artwork"
+                        >
+                          {downloading.has(art.id) ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Download className="h-4 w-4" />
+                          )}
+                        </button>
+                      )}
                       <div className="absolute top-2.5 right-2.5">
                         <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-green-600/90 backdrop-blur-md shadow-lg">
                           <CheckCircle2 className="h-3 w-3 text-white" />
