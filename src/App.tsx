@@ -57,6 +57,7 @@ import Success from "./pages/Success";
 import Community from "./pages/Community";
 import B2BLogin from "./pages/B2BLogin";
 import ThreatAlerts from "./pages/ThreatAlerts";
+import AccuracyDashboard from "./pages/AccuracyDashboard";
 
 // Admin pages
 import Admin from "./pages/Admin";
