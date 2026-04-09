@@ -106,6 +106,7 @@ const AppRoutes = () => (
     <Route path="/certificate/:certificateId" element={<Certificate />} />
     <Route path="/community" element={<Community />} />
     <Route path="/b2b-login" element={<B2BLogin />} />
+    <Route path="/accuracy-dashboard" element={<AccuracyDashboard />} />
 
     {/* Redirects: feature pages consolidated into hubs */}
     <Route path="/simple-findings" element={<Navigate to="/threat-alerts" replace />} />
