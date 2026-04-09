@@ -57,6 +57,7 @@ import Success from "./pages/Success";
 import Community from "./pages/Community";
 import B2BLogin from "./pages/B2BLogin";
 import ThreatAlerts from "./pages/ThreatAlerts";
+import AccuracyDashboard from "./pages/AccuracyDashboard";
 
 // Admin pages
 import Admin from "./pages/Admin";
@@ -105,6 +106,7 @@ const AppRoutes = () => (
     <Route path="/certificate/:certificateId" element={<Certificate />} />
     <Route path="/community" element={<Community />} />
     <Route path="/b2b-login" element={<B2BLogin />} />
+    <Route path="/accuracy-dashboard" element={<AccuracyDashboard />} />
 
     {/* Redirects: feature pages consolidated into hubs */}
     <Route path="/simple-findings" element={<Navigate to="/threat-alerts" replace />} />
