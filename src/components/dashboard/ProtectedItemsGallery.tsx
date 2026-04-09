@@ -135,20 +135,31 @@ const ThumbnailCard = ({
     if (isDownloading) return;
     setIsDownloading(true);
     try {
-      // Prefer protected_file_path, fall back to thumbnailPath
       const filePath = record.protected_file_path || record.metadata?.thumbnailPath;
       if (!filePath) return;
-      const bucket = record.protected_file_path ? 'artwork' : 'artwork';
-      const { data, error } = await supabase.storage
-        .from(bucket)
-        .createSignedUrl(filePath as string, 60);
-      if (error || !data?.signedUrl) throw error || new Error('No URL');
+      const path = filePath as string;
+      let downloadUrl: string;
+
+      if (path.startsWith('http')) {
+        downloadUrl = path;
+      } else {
+        const { data, error } = await supabase.storage
+          .from('artwork')
+          .createSignedUrl(path, 60);
+        if (error || !data?.signedUrl) throw error || new Error('No URL');
+        downloadUrl = data.signedUrl;
+      }
+
+      const response = await fetch(downloadUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = data.signedUrl;
+      link.href = blobUrl;
       link.download = record.original_filename || 'protected-file';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
     } catch (e) {
       console.error('Download error:', e);
     } finally {
