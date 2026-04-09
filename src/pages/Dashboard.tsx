@@ -38,6 +38,8 @@ import {
   CheckCircle2,
   Brain,
   Eye,
+  Download,
+  Loader2,
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -47,6 +49,32 @@ const Dashboard = () => {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
   const [loadingUrls, setLoadingUrls] = useState(false);
+  const [downloading, setDownloading] = useState<Set<string>>(new Set());
+
+  const handleDownloadArtwork = async (artId: string, filePath: string, title: string) => {
+    if (downloading.has(artId)) return;
+    setDownloading(prev => new Set(prev).add(artId));
+    try {
+      const { data, error } = await supabase.storage
+        .from('artwork')
+        .createSignedUrl(filePath, 60);
+      if (error || !data?.signedUrl) throw error || new Error('No URL');
+      const link = document.createElement('a');
+      link.href = data.signedUrl;
+      link.download = title || 'artwork';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (e) {
+      console.error('Download error:', e);
+    } finally {
+      setDownloading(prev => {
+        const next = new Set(prev);
+        next.delete(artId);
+        return next;
+      });
+    }
+  };
 
   const { data: artwork } = useQuery({
     queryKey: ['user-artwork', user?.id],
