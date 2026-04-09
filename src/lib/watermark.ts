@@ -169,7 +169,7 @@ export class InvisibleWatermark {
   }> {
     return new Promise((resolve) => {
       const img = new Image();
-      img.onload = () => {
+      img.onload = async () => {
         this.canvas.width = img.width;
         this.canvas.height = img.height;
         this.ctx.drawImage(img, 0, 0);
@@ -177,7 +177,7 @@ export class InvisibleWatermark {
         const imageData = this.ctx.getImageData(0, 0, img.width, img.height);
         const pixels = imageData.data;
         
-        // Multiple detection methods
+        // Spatial-domain detection methods
         const detectionResults = [
           this.detectVisibleWatermark(pixels, img.width, img.height),
           this.detectTransparencyWatermark(pixels, img.width, img.height),
@@ -185,6 +185,20 @@ export class InvisibleWatermark {
           this.detectEdgeWatermark(pixels, img.width, img.height),
           this.detectTSMOWatermark(pixels, img.width, img.height)
         ];
+
+        // DCT frequency-domain blind detection
+        try {
+          const dctResult = await detectDCTWatermarkBlind(imageFile);
+          if (dctResult.detected) {
+            detectionResults.push({
+              confidence: dctResult.confidence,
+              type: 'dct_frequency_domain',
+              id: 'TSMO-DCT-WATERMARK'
+            });
+          }
+        } catch (e) {
+          console.warn('DCT detection failed:', e);
+        }
 
         // Find the highest confidence detection
         const bestDetection = detectionResults.reduce((best, current) => 
