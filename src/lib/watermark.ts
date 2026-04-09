@@ -1,6 +1,7 @@
 /**
  * Invisible watermarking utilities for enhanced detection during real-time monitoring
  */
+import { embedDCTWatermark, detectDCTWatermarkBlind } from './dctWatermark';
 
 export interface WatermarkOptions {
   text?: string;
@@ -48,14 +49,20 @@ export class InvisibleWatermark {
           // Apply invisible watermark pattern
           this.applyInvisiblePattern(text, opacity, size, position, frequency);
 
-          // Convert to blob
-          this.canvas.toBlob((blob) => {
-            if (blob) {
-              resolve(blob);
-            } else {
+          // Convert to intermediate blob, then apply DCT frequency-domain watermark
+          this.canvas.toBlob(async (intermediateBlob) => {
+            if (!intermediateBlob) {
               reject(new Error('Failed to create watermarked image'));
+              return;
             }
-          }, imageFile.type, 0.98); // High quality
+            try {
+              const dctBlob = await embedDCTWatermark(intermediateBlob, { text, strength: 1.0 });
+              resolve(dctBlob);
+            } catch (dctErr) {
+              console.warn('DCT watermark failed, using spatial-only:', dctErr);
+              resolve(intermediateBlob);
+            }
+          }, imageFile.type, 0.98);
         } catch (error) {
           reject(error);
         }
