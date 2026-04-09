@@ -838,6 +838,7 @@ const Upload = () => {
                 <div className="space-y-3">
                   {[
                     { icon: Sparkles, label: "Invisible Watermark", desc: "Imperceptible markers embedded in your content", checked: enableWatermark, toggle: () => setEnableWatermark(!enableWatermark) },
+                    { icon: ShieldCheck, label: "Screenshot Shield", desc: "Blur content on tab-leave, block right-click & print", checked: enableScreenshotShield, toggle: () => setEnableScreenshotShield(!enableScreenshotShield) },
                     { icon: Zap, label: "AI Training Shield", desc: "Block AI models from learning from your work", checked: true, disabled: true },
                     { icon: Globe, label: "24/7 Monitoring", desc: "Continuous scanning across 52,000+ sources", checked: true, disabled: true },
                     { icon: Shield, label: "DMCA Auto-Enforcement", desc: "Automated takedown notices for violations", checked: true, disabled: true },
