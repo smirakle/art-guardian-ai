@@ -417,7 +417,7 @@ export class EnhancedWatermarkSystem {
   async detectWatermark(imageFile: File): Promise<WatermarkDetectionResult> {
     return new Promise((resolve) => {
       const img = new Image();
-      img.onload = () => {
+      img.onload = async () => {
         this.canvas.width = img.width;
         this.canvas.height = img.height;
         this.ctx.drawImage(img, 0, 0);
