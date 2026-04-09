@@ -66,7 +66,7 @@ const CallToAction = () => {
               <div className="text-xs sm:text-sm text-muted-foreground">Platforms Scanned</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-secondary mb-1">94.2%</div>
+              <div className="text-2xl sm:text-3xl font-bold text-secondary mb-1">87.3%</div>
               <div className="text-xs sm:text-sm text-muted-foreground">Detection Accuracy</div>
             </div>
           </div>

@@ -218,7 +218,7 @@ const MonitoringFlow = () => {
           <div className="text-sm text-muted-foreground">Platforms Monitored</div>
         </div>
         <div className="text-center p-4 bg-card rounded-lg border">
-          <div className="text-2xl font-bold text-primary">94.2%</div>
+          <div className="text-2xl font-bold text-primary">87.3%</div>
           <div className="text-sm text-muted-foreground">Detection Accuracy</div>
         </div>
         <div className="text-center p-4 bg-card rounded-lg border">
