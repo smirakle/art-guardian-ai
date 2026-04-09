@@ -1088,6 +1088,7 @@ const Upload = () => {
                 </Button>
               </div>
             )}
+          </ScreenshotShield>
           </div>
         )}
       </div>
