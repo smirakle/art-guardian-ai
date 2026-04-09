@@ -1,6 +1,7 @@
 /**
  * Enhanced watermarking system with visible and invisible options
  */
+import { embedDCTWatermark, detectDCTWatermarkBlind } from './dctWatermark';
 
 export interface EnhancedWatermarkOptions {
   // Basic options
@@ -116,12 +117,21 @@ export class EnhancedWatermarkSystem {
           // Add metadata watermark
           this.embedMetadataWatermark(text, protectionLevel);
 
-          // Convert to blob
-          this.canvas.toBlob((blob) => {
-            if (blob) {
-              resolve(blob);
-            } else {
-              reject(new Error('Failed to create watermarked image'));
+          // Convert to intermediate blob, then apply DCT frequency-domain watermark
+          this.canvas.toBlob(async (intermediateBlob) => {
+            if (!intermediateBlob) {
+              reject(new Error('Failed to create intermediate image'));
+              return;
+            }
+            try {
+              const dctBlob = await embedDCTWatermark(intermediateBlob, {
+                text,
+                strength: protectionLevel === 'maximum' ? 1.2 : protectionLevel === 'enhanced' ? 1.0 : 0.8,
+              });
+              resolve(dctBlob);
+            } catch (dctErr) {
+              console.warn('DCT watermark failed, using spatial-only:', dctErr);
+              resolve(intermediateBlob);
             }
           }, imageFile.type, 0.98);
         } catch (error) {
@@ -407,7 +417,7 @@ export class EnhancedWatermarkSystem {
   async detectWatermark(imageFile: File): Promise<WatermarkDetectionResult> {
     return new Promise((resolve) => {
       const img = new Image();
-      img.onload = () => {
+      img.onload = async () => {
         this.canvas.width = img.width;
         this.canvas.height = img.height;
         this.ctx.drawImage(img, 0, 0);
@@ -421,11 +431,22 @@ export class EnhancedWatermarkSystem {
           steganography: this.detectSteganographyWatermark()
         };
 
+        // Also run DCT blind detection
+        let dctResult = { detected: false, confidence: 0 };
+        try {
+          dctResult = await detectDCTWatermarkBlind(imageFile);
+        } catch (e) {
+          console.warn('DCT blind detection failed:', e);
+        }
+
         // Combine results for overall confidence
-        const detectionScores = Object.values(results).filter(r => r.detected);
-        const hasWatermark = detectionScores.length > 0;
+        const allResults = [
+          ...Object.values(results).filter(r => r.detected),
+          ...(dctResult.detected ? [{ detected: true, confidence: dctResult.confidence }] : [])
+        ];
+        const hasWatermark = allResults.length > 0;
         const confidence = hasWatermark ? 
-          detectionScores.reduce((sum, r) => sum + r.confidence, 0) / detectionScores.length : 0;
+          allResults.reduce((sum, r) => sum + r.confidence, 0) / allResults.length : 0;
 
         // Determine watermark type
         let type: 'invisible' | 'visible' | 'hybrid' = 'invisible';

@@ -1,6 +1,7 @@
 /**
  * Invisible watermarking utilities for enhanced detection during real-time monitoring
  */
+import { embedDCTWatermark, detectDCTWatermarkBlind } from './dctWatermark';
 
 export interface WatermarkOptions {
   text?: string;
@@ -48,14 +49,20 @@ export class InvisibleWatermark {
           // Apply invisible watermark pattern
           this.applyInvisiblePattern(text, opacity, size, position, frequency);
 
-          // Convert to blob
-          this.canvas.toBlob((blob) => {
-            if (blob) {
-              resolve(blob);
-            } else {
+          // Convert to intermediate blob, then apply DCT frequency-domain watermark
+          this.canvas.toBlob(async (intermediateBlob) => {
+            if (!intermediateBlob) {
               reject(new Error('Failed to create watermarked image'));
+              return;
             }
-          }, imageFile.type, 0.98); // High quality
+            try {
+              const dctBlob = await embedDCTWatermark(intermediateBlob, { text, strength: 1.0 });
+              resolve(dctBlob);
+            } catch (dctErr) {
+              console.warn('DCT watermark failed, using spatial-only:', dctErr);
+              resolve(intermediateBlob);
+            }
+          }, imageFile.type, 0.98);
         } catch (error) {
           reject(error);
         }
@@ -162,7 +169,7 @@ export class InvisibleWatermark {
   }> {
     return new Promise((resolve) => {
       const img = new Image();
-      img.onload = () => {
+      img.onload = async () => {
         this.canvas.width = img.width;
         this.canvas.height = img.height;
         this.ctx.drawImage(img, 0, 0);
@@ -170,7 +177,7 @@ export class InvisibleWatermark {
         const imageData = this.ctx.getImageData(0, 0, img.width, img.height);
         const pixels = imageData.data;
         
-        // Multiple detection methods
+        // Spatial-domain detection methods
         const detectionResults = [
           this.detectVisibleWatermark(pixels, img.width, img.height),
           this.detectTransparencyWatermark(pixels, img.width, img.height),
@@ -178,6 +185,20 @@ export class InvisibleWatermark {
           this.detectEdgeWatermark(pixels, img.width, img.height),
           this.detectTSMOWatermark(pixels, img.width, img.height)
         ];
+
+        // DCT frequency-domain blind detection
+        try {
+          const dctResult = await detectDCTWatermarkBlind(imageFile);
+          if (dctResult.detected) {
+            detectionResults.push({
+              confidence: dctResult.confidence,
+              type: 'dct_frequency_domain',
+              id: 'TSMO-DCT-WATERMARK'
+            });
+          }
+        } catch (e) {
+          console.warn('DCT detection failed:', e);
+        }
 
         // Find the highest confidence detection
         const bestDetection = detectionResults.reduce((best, current) => 
