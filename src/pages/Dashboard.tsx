@@ -281,6 +281,23 @@ const Dashboard = () => {
                         </>
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                      {/* Download button overlay */}
+                      {imageUrl && art.file_paths?.[0] && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDownloadArtwork(art.id, art.file_paths[0], art.title);
+                          }}
+                          className="absolute bottom-2.5 right-2.5 z-10 p-2 rounded-full bg-black/50 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-black/70"
+                          title="Download protected artwork"
+                        >
+                          {downloading.has(art.id) ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Download className="h-4 w-4" />
+                          )}
+                        </button>
+                      )}
                       <div className="absolute top-2.5 right-2.5">
                         <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-green-600/90 backdrop-blur-md shadow-lg">
                           <CheckCircle2 className="h-3 w-3 text-white" />
