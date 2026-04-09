@@ -224,8 +224,25 @@ const ThumbnailCard = ({
             <span className="text-[9px] text-muted-foreground/60 mt-0.5">Protected Locally</span>
           </div>
         )}
+        {/* Download button */}
+        {(record.protected_file_path || record.metadata?.thumbnailPath) && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDownload();
+            }}
+            className="absolute bottom-2.5 right-2.5 z-10 p-2 rounded-full bg-black/50 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-black/70"
+            title="Download protected file"
+          >
+            {isDownloading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
+          </button>
+        )}
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
         {/* Protection badge */}
         <div className="absolute top-2.5 right-2.5">
           <div className={`flex items-center gap-1 px-2 py-1 rounded-full backdrop-blur-md shadow-lg ${getProtectionLevelColor(record.protection_level)}`}>
