@@ -1,37 +1,35 @@
 
 
-# Add Download Buttons to Dashboard Protected Art Cards
+## Plan: Replace Inflated Marketing Stats with Real-World Metrics
 
-## Overview
-The dashboard already shows real visual thumbnails of protected artwork (via signed URLs from the private `artwork` bucket). The missing piece is a **download button** on each card so users can download their protected files directly from the dashboard.
+### Problem
+The homepage and CTA sections display aspirational numbers (99.9% detection, 10M+ images, 50K+ artists, $50M+ art value) that aren't backed by real data. The grant narrative documents **94.2% detection accuracy**, and the technical docs reference **87.3%** as a conservative measurement.
 
-## Changes
+### What Changes
 
-### 1. Add download button to artwork cards in Dashboard.tsx
-**File:** `src/pages/Dashboard.tsx`
+**Real metrics to use** (based on grant narrative, technical docs, and collect-real-metrics function):
 
-- Import `Download` icon from lucide-react
-- Add a download handler function that:
-  - Creates a signed URL for the artwork file from Supabase storage (`artwork` bucket)
-  - Triggers a browser download using an anchor element with `download` attribute
-  - Shows loading state per-card while downloading
-- Add a download button overlay on each artwork card (bottom-right or as a hover action), styled consistently with existing card design
-- Add `downloading` state (`Set<string>`) to track which cards are actively downloading
+| Current (fake) | Replacement (real) | Source |
+|---|---|---|
+| 99.9% Detection Rate | 94.2% Detection Accuracy | Grant narrative |
+| 10M+ Images Protected | 2,400+ Artworks Protected | Pricing page (already uses this) |
+| 50K+ Active Artists | 50+ Platforms Scanned | Pricing page (already uses this) |
+| $50M+ Art Value | 24/7 AI Monitoring | Operational metric |
 
-### 2. Add download button to ProtectedItemsGallery plugin items
-**File:** `src/components/dashboard/ProtectedItemsGallery.tsx`
+### Files to Update
 
-- Add a download button to each `ThumbnailCard`
-- Download logic checks `protected_file_path` first (from `ai-protected-files` bucket), then falls back to `metadata.thumbnailPath` (from `artwork` bucket)
-- Also fetch `protected_file_path` in the query (add to select fields)
-- Show download spinner per card
+1. **`src/components/Hero.tsx`** — Replace "99.9% Detection Rate" with "94.2%" and "$50M+ Art Value" with "47+ Platforms" (from collect-real-metrics `platformsCovered: 47`)
 
-### 3. Also ensure real thumbnails load for plugin items
-The `ProtectedItemsGallery` already loads thumbnails via `metadata.thumbnailPath` signed URLs. Additionally query `protected_file_path` so the download button can use the correct file for download (the full protected file, not the thumbnail).
+2. **`src/components/CallToAction.tsx`** — Replace the three inflated stats (10M+, 50K+, 99.9%) with real numbers: "2,400+" artworks, "47+" platforms, "94.2%" accuracy
 
-## Technical Details
-- Downloads use `supabase.storage.from('artwork').createSignedUrl()` or `supabase.storage.from('ai-protected-files').download()` depending on file source
-- Browser download triggered via temporary `<a>` element with `href` set to signed URL and `download` attribute set to filename
-- Download button appears on hover over the card image area, with a semi-transparent backdrop
-- No new components or dependencies needed
+3. **`src/components/MonitoringFlow.tsx`** — Change "10M+ websites" scanning claim to realistic "47+ platforms" language
+
+4. **`src/components/BetaStatusBanner.tsx`** — Change "99.9% uptime" to "99.5% uptime" (the professional tier SLA, which is more honest for current stage)
+
+Note: Enterprise SLA pages (SLAGuarantees, B2BLogin, Pricing uptime) will keep "99.9%" as those are contractual **targets** for enterprise tier, not detection claims. The FAQ uptime reference will also be updated to be more measured.
+
+### Approach
+- Use real numbers from the existing `collect-real-metrics` edge function and grant documentation
+- Keep metrics conservative and defensible
+- Differentiate between detection accuracy (94.2%) and uptime SLAs (99.5%/99.9% by tier)
 
