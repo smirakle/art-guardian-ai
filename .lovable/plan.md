@@ -1,27 +1,37 @@
 
 
-# Add Screenshot Protection to AI Training Protection Page
+# Add Download Buttons to Dashboard Protected Art Cards
 
-## Current State
-- `ScreenshotShield` component exists and works (blur on tab-leave, block right-click, block print, block keyboard shortcuts, watermark overlay).
-- It is only used inside `DocumentProtectionDashboard` as a demo.
-- The `AITrainingProtection` page has **no screenshot protection**.
+## Overview
+The dashboard already shows real visual thumbnails of protected artwork (via signed URLs from the private `artwork` bucket). The missing piece is a **download button** on each card so users can download their protected files directly from the dashboard.
 
-## Plan
+## Changes
 
-### 1. Wrap AI Training Protection content with ScreenshotShield
-**File:** `src/pages/AITrainingProtection.tsx`
-- Import `ScreenshotShield` and wrap the dashboard content with it.
-- Use dynamic watermark text (e.g., user email or ID from Supabase auth) for traceability.
-- Enable all protection by default (right-click block, keyboard shortcut block, blur-on-leave, print block).
+### 1. Add download button to artwork cards in Dashboard.tsx
+**File:** `src/pages/Dashboard.tsx`
 
-### 2. Add a toggle in the UI to let users enable/disable it
-**File:** `src/pages/AITrainingProtection.tsx`
-- Add a small Shield icon toggle button in the page header area so users can turn screenshot protection on/off for their session.
-- Default: enabled.
+- Import `Download` icon from lucide-react
+- Add a download handler function that:
+  - Creates a signed URL for the artwork file from Supabase storage (`artwork` bucket)
+  - Triggers a browser download using an anchor element with `download` attribute
+  - Shows loading state per-card while downloading
+- Add a download button overlay on each artwork card (bottom-right or as a hover action), styled consistently with existing card design
+- Add `downloading` state (`Set<string>`) to track which cards are actively downloading
+
+### 2. Add download button to ProtectedItemsGallery plugin items
+**File:** `src/components/dashboard/ProtectedItemsGallery.tsx`
+
+- Add a download button to each `ThumbnailCard`
+- Download logic checks `protected_file_path` first (from `ai-protected-files` bucket), then falls back to `metadata.thumbnailPath` (from `artwork` bucket)
+- Also fetch `protected_file_path` in the query (add to select fields)
+- Show download spinner per card
+
+### 3. Also ensure real thumbnails load for plugin items
+The `ProtectedItemsGallery` already loads thumbnails via `metadata.thumbnailPath` signed URLs. Additionally query `protected_file_path` so the download button can use the correct file for download (the full protected file, not the thumbnail).
 
 ## Technical Details
-- No new components needed — reuses existing `ScreenshotShield` and `useScreenshotProtection`.
-- Auth context used to pull the current user's email for the watermark text.
-- Single file change: `src/pages/AITrainingProtection.tsx`.
+- Downloads use `supabase.storage.from('artwork').createSignedUrl()` or `supabase.storage.from('ai-protected-files').download()` depending on file source
+- Browser download triggered via temporary `<a>` element with `href` set to signed URL and `download` attribute set to filename
+- Download button appears on hover over the card image area, with a semi-transparent backdrop
+- No new components or dependencies needed
 
