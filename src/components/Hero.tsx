@@ -62,7 +62,7 @@ const Hero = () => {
             </div>
 
             <div className="text-center p-4">
-              <div className="text-3xl font-bold text-primary mb-2">94.2%</div>
+              <div className="text-3xl font-bold text-primary mb-2">87.3%</div>
               <h3 className="font-semibold mb-1">Detection Accuracy</h3>
               <p className="text-muted-foreground text-sm">Real-world measured</p>
             </div>
