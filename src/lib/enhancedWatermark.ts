@@ -431,11 +431,22 @@ export class EnhancedWatermarkSystem {
           steganography: this.detectSteganographyWatermark()
         };
 
+        // Also run DCT blind detection
+        let dctResult = { detected: false, confidence: 0 };
+        try {
+          dctResult = await detectDCTWatermarkBlind(imageFile);
+        } catch (e) {
+          console.warn('DCT blind detection failed:', e);
+        }
+
         // Combine results for overall confidence
-        const detectionScores = Object.values(results).filter(r => r.detected);
-        const hasWatermark = detectionScores.length > 0;
+        const allResults = [
+          ...Object.values(results).filter(r => r.detected),
+          ...(dctResult.detected ? [{ detected: true, confidence: dctResult.confidence }] : [])
+        ];
+        const hasWatermark = allResults.length > 0;
         const confidence = hasWatermark ? 
-          detectionScores.reduce((sum, r) => sum + r.confidence, 0) / detectionScores.length : 0;
+          allResults.reduce((sum, r) => sum + r.confidence, 0) / allResults.length : 0;
 
         // Determine watermark type
         let type: 'invisible' | 'visible' | 'hybrid' = 'invisible';
