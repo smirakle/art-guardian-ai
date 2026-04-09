@@ -47,6 +47,8 @@ import C2PAProtection from "@/components/ai-protection/C2PAProtection";
 import { watermarkService, InvisibleWatermark } from "@/lib/watermark";
 import { cloakImageFromFile } from "@/lib/styleCloak";
 import { productionMetadataInjection } from "@/lib/productionMetadataInjection";
+import { ScreenshotShield } from "@/components/protection/ScreenshotShield";
+import { ShieldCheck } from "lucide-react";
 
 interface UploadedFile {
   id: string;
