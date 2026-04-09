@@ -245,6 +245,16 @@ const Index = () => {
               <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-primary" /> 50 free scans</span>
             </div>
 
+            {/* Artist ownership disclosure */}
+            <div className="mt-6 opacity-0 animate-stagger-fade-up" style={{ animationDelay: '1.1s' }}>
+              <div className="inline-flex items-center gap-2 bg-primary/5 border border-primary/15 rounded-full px-5 py-2.5">
+                <Shield className="w-4 h-4 text-primary shrink-0" />
+                <span className="text-sm text-muted-foreground">
+                  <strong className="text-foreground">You own your work</strong> — TSMO never claims rights to your uploads. Consult a qualified attorney before pursuing legal action.
+                </span>
+              </div>
+            </div>
+
             {/* Demo link */}
             <div className="mt-10 opacity-0 animate-stagger-fade-up" style={{ animationDelay: '1.2s' }}>
               <button
