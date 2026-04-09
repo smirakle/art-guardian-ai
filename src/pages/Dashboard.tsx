@@ -55,16 +55,32 @@ const Dashboard = () => {
     if (downloading.has(artId)) return;
     setDownloading(prev => new Set(prev).add(artId));
     try {
-      const { data, error } = await supabase.storage
-        .from('artwork')
-        .createSignedUrl(filePath, 60);
-      if (error || !data?.signedUrl) throw error || new Error('No URL');
+      let downloadUrl: string;
+
+      if (filePath.startsWith('http')) {
+        // Full URL — download directly
+        downloadUrl = filePath;
+      } else {
+        // Relative path — create signed URL
+        const { data, error } = await supabase.storage
+          .from('artwork')
+          .createSignedUrl(filePath, 60);
+        if (error || !data?.signedUrl) throw error || new Error('No URL');
+        downloadUrl = data.signedUrl;
+      }
+
+      // Fetch as blob to force download (avoids navigation)
+      const response = await fetch(downloadUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = data.signedUrl;
-      link.download = title || 'artwork';
+      link.href = blobUrl;
+      const ext = filePath.split('.').pop() || 'jpg';
+      link.download = `${title || 'artwork'}.${ext}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
     } catch (e) {
       console.error('Download error:', e);
     } finally {
