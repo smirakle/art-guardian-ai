@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Shield, FileImage, Plus } from 'lucide-react';
+import { Shield, FileImage, Plus, Download, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -15,6 +15,7 @@ interface ProtectionRecord {
   content_type: string;
   created_at: string;
   artwork_id: string | null;
+  protected_file_path: string | null;
   metadata: {
     thumbnailPath?: string;
     [key: string]: unknown;
@@ -33,7 +34,7 @@ export const ProtectedItemsGallery = () => {
       
       const { data, error } = await supabase
         .from('ai_protection_records')
-        .select('id, original_filename, protection_level, content_type, created_at, artwork_id, metadata')
+        .select('id, original_filename, protection_level, content_type, created_at, artwork_id, protected_file_path, metadata')
         .eq('user_id', user.id)
         .eq('content_type', 'image')
         .is('artwork_id', null) // Only unlinked (plugin-protected) items
