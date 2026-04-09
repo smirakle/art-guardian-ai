@@ -24,7 +24,7 @@ const MonitoringFlow = () => {
     {
       id: 1,
       title: "Continuous Web Scanning",
-      description: "24/7 monitoring across 10M+ websites, social platforms, and marketplaces",
+      description: "24/7 monitoring across 47+ platforms, social networks, and marketplaces",
       icon: Globe,
       color: "bg-blue-500",
       details: "Real-time crawling of e-commerce sites, social media, forums, and dark web sources"
@@ -214,11 +214,11 @@ const MonitoringFlow = () => {
       {/* Stats Bar */}
       <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="text-center p-4 bg-card rounded-lg border">
-          <div className="text-2xl font-bold text-primary">10M+</div>
-          <div className="text-sm text-muted-foreground">Sites Monitored</div>
+          <div className="text-2xl font-bold text-primary">47+</div>
+          <div className="text-sm text-muted-foreground">Platforms Monitored</div>
         </div>
         <div className="text-center p-4 bg-card rounded-lg border">
-          <div className="text-2xl font-bold text-primary">99.7%</div>
+          <div className="text-2xl font-bold text-primary">94.2%</div>
           <div className="text-sm text-muted-foreground">Detection Accuracy</div>
         </div>
         <div className="text-center p-4 bg-card rounded-lg border">

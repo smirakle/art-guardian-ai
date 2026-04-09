@@ -58,16 +58,16 @@ const CallToAction = () => {
 
           <div className="grid grid-cols-3 gap-4 mt-8 max-w-xl mx-auto">
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">10M+</div>
-              <div className="text-xs sm:text-sm text-muted-foreground">Images Protected</div>
+              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">2,400+</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Artworks Protected</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-accent mb-1">50K+</div>
-              <div className="text-xs sm:text-sm text-muted-foreground">Active Artists</div>
+              <div className="text-2xl sm:text-3xl font-bold text-accent mb-1">47+</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Platforms Scanned</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-secondary mb-1">99.9%</div>
-              <div className="text-xs sm:text-sm text-muted-foreground">Detection Rate</div>
+              <div className="text-2xl sm:text-3xl font-bold text-secondary mb-1">94.2%</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Detection Accuracy</div>
             </div>
           </div>
         </div>
