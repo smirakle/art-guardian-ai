@@ -135,22 +135,28 @@ const ThumbnailCard = ({
     if (isDownloading) return;
     setIsDownloading(true);
     try {
-      const filePath = record.protected_file_path || record.metadata?.thumbnailPath;
-      if (!filePath) return;
-      const path = filePath as string;
-      let downloadUrl: string;
+      const rawPath = (record.protected_file_path || record.metadata?.thumbnailPath) as string;
+      if (!rawPath) return;
 
-      if (path.startsWith('http')) {
-        downloadUrl = path;
-      } else {
-        const { data, error } = await supabase.storage
-          .from('artwork')
-          .createSignedUrl(path, 60);
-        if (error || !data?.signedUrl) throw error || new Error('No URL');
-        downloadUrl = data.signedUrl;
+      // Extract relative path from full URL if needed
+      let relativePath = rawPath;
+      if (rawPath.startsWith('http')) {
+        try {
+          const url = new URL(rawPath);
+          const parts = url.pathname.split('/');
+          const bucketIndex = parts.indexOf('artwork');
+          if (bucketIndex >= 0) {
+            relativePath = parts.slice(bucketIndex + 1).join('/');
+          }
+        } catch {}
       }
 
-      const response = await fetch(downloadUrl);
+      const { data, error } = await supabase.storage
+        .from('artwork')
+        .createSignedUrl(relativePath, 60);
+      if (error || !data?.signedUrl) throw error || new Error('No URL');
+
+      const response = await fetch(data.signedUrl);
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
