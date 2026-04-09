@@ -981,6 +981,7 @@ const Upload = () => {
                   { label: "Rights Metadata (EXIF/XMP/LSB)", active: protectionResult?.metadataInjected ?? false, delay: "0.2s" },
                   { label: "Monitoring Active", active: protectionResult?.monitoringCreated ?? false, delay: "0.3s" },
                   { label: "DMCA Enforcement", active: protectionResult?.dmcaEnforcement ?? false, delay: "0.4s" },
+                  { label: "Screenshot Shield", active: enableScreenshotShield, delay: "0.5s" },
                 ].map((layer) => (
                   <div
                     key={layer.label}
