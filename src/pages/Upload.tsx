@@ -47,6 +47,8 @@ import C2PAProtection from "@/components/ai-protection/C2PAProtection";
 import { watermarkService, InvisibleWatermark } from "@/lib/watermark";
 import { cloakImageFromFile } from "@/lib/styleCloak";
 import { productionMetadataInjection } from "@/lib/productionMetadataInjection";
+import { ScreenshotShield } from "@/components/protection/ScreenshotShield";
+import { ShieldCheck } from "lucide-react";
 
 interface UploadedFile {
   id: string;
@@ -85,6 +87,7 @@ const Upload = () => {
   const [licenseType, setLicenseType] = useState("");
   const [enableWatermark, setEnableWatermark] = useState(true);
   const [isProtecting, setIsProtecting] = useState(false);
+  const [enableScreenshotShield, setEnableScreenshotShield] = useState(false);
   const [urlInput, setUrlInput] = useState("");
   const [urls, setUrls] = useState<string[]>([]);
   const [rawFiles, setRawFiles] = useState<File[]>([]);
@@ -835,6 +838,7 @@ const Upload = () => {
                 <div className="space-y-3">
                   {[
                     { icon: Sparkles, label: "Invisible Watermark", desc: "Imperceptible markers embedded in your content", checked: enableWatermark, toggle: () => setEnableWatermark(!enableWatermark) },
+                    { icon: ShieldCheck, label: "Screenshot Shield", desc: "Blur content on tab-leave, block right-click & print", checked: enableScreenshotShield, toggle: () => setEnableScreenshotShield(!enableScreenshotShield) },
                     { icon: Zap, label: "AI Training Shield", desc: "Block AI models from learning from your work", checked: true, disabled: true },
                     { icon: Globe, label: "24/7 Monitoring", desc: "Continuous scanning across 52,000+ sources", checked: true, disabled: true },
                     { icon: Shield, label: "DMCA Auto-Enforcement", desc: "Automated takedown notices for violations", checked: true, disabled: true },
@@ -926,6 +930,11 @@ const Upload = () => {
         {/* ========== STEP 4: COMPLETE ========== */}
         {step === 4 && (
           <div className="animate-fade-in max-w-lg mx-auto text-center py-12">
+          <ScreenshotShield
+            watermarkText={user?.email || user?.id || 'PROTECTED'}
+            enabled={enableScreenshotShield}
+            showWatermark={enableScreenshotShield}
+          >
             <div className="w-24 h-24 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-8 ring-8 ring-green-500/5">
               <CheckCircle className="w-12 h-12 text-green-500" />
             </div>
@@ -972,6 +981,7 @@ const Upload = () => {
                   { label: "Rights Metadata (EXIF/XMP/LSB)", active: protectionResult?.metadataInjected ?? false, delay: "0.2s" },
                   { label: "Monitoring Active", active: protectionResult?.monitoringCreated ?? false, delay: "0.3s" },
                   { label: "DMCA Enforcement", active: protectionResult?.dmcaEnforcement ?? false, delay: "0.4s" },
+                  { label: "Screenshot Shield", active: enableScreenshotShield, delay: "0.5s" },
                 ].map((layer) => (
                   <div
                     key={layer.label}
@@ -1079,6 +1089,7 @@ const Upload = () => {
                 </Button>
               </div>
             )}
+          </ScreenshotShield>
           </div>
         )}
       </div>
