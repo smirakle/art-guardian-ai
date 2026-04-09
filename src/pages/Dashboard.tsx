@@ -51,31 +51,36 @@ const Dashboard = () => {
   const [loadingUrls, setLoadingUrls] = useState(false);
   const [downloading, setDownloading] = useState<Set<string>>(new Set());
 
+  const extractRelativePath = (filePath: string): string => {
+    if (!filePath.startsWith('http')) return filePath;
+    try {
+      const url = new URL(filePath);
+      // URL format: /storage/v1/object/public/artwork/<relative-path>
+      const parts = url.pathname.split('/');
+      const bucketIndex = parts.indexOf('artwork');
+      if (bucketIndex >= 0) {
+        return parts.slice(bucketIndex + 1).join('/');
+      }
+    } catch {}
+    return filePath;
+  };
+
   const handleDownloadArtwork = async (artId: string, filePath: string, title: string) => {
     if (downloading.has(artId)) return;
     setDownloading(prev => new Set(prev).add(artId));
     try {
-      let downloadUrl: string;
+      const relativePath = extractRelativePath(filePath);
+      const { data, error } = await supabase.storage
+        .from('artwork')
+        .createSignedUrl(relativePath, 60);
+      if (error || !data?.signedUrl) throw error || new Error('No URL');
 
-      if (filePath.startsWith('http')) {
-        // Full URL — download directly
-        downloadUrl = filePath;
-      } else {
-        // Relative path — create signed URL
-        const { data, error } = await supabase.storage
-          .from('artwork')
-          .createSignedUrl(filePath, 60);
-        if (error || !data?.signedUrl) throw error || new Error('No URL');
-        downloadUrl = data.signedUrl;
-      }
-
-      // Fetch as blob to force download (avoids navigation)
-      const response = await fetch(downloadUrl);
+      const response = await fetch(data.signedUrl);
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = blobUrl;
-      const ext = filePath.split('.').pop() || 'jpg';
+      const ext = relativePath.split('.').pop() || 'jpg';
       link.download = `${title || 'artwork'}.${ext}`;
       document.body.appendChild(link);
       link.click();
