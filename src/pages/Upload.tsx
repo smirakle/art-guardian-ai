@@ -87,6 +87,7 @@ const Upload = () => {
   const [licenseType, setLicenseType] = useState("");
   const [enableWatermark, setEnableWatermark] = useState(true);
   const [isProtecting, setIsProtecting] = useState(false);
+  const [enableScreenshotShield, setEnableScreenshotShield] = useState(false);
   const [urlInput, setUrlInput] = useState("");
   const [urls, setUrls] = useState<string[]>([]);
   const [rawFiles, setRawFiles] = useState<File[]>([]);
