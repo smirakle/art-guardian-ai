@@ -23,6 +23,13 @@ const Hero = () => {
             {t('hero.audience')}
           </p>
           
+          <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-4 py-2 mb-6">
+            <Shield className="w-4 h-4 text-green-500" />
+            <span className="text-sm font-medium text-green-700 dark:text-green-400">
+              You own your work — TSMO never claims rights to your uploads. Always consult a qualified attorney before pursuing legal action.
+            </span>
+          </div>
+
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-8">
             <Button 
               size="lg" 
