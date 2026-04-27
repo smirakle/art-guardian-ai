@@ -557,10 +557,11 @@ const Pricing = () => {
               </div>
               <Button
                 size="lg"
+                disabled={isSingleProofLoading}
                 className="w-full md:w-auto bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground font-semibold shadow-md shadow-primary/20"
-                onClick={() => navigate('/checkout?plan=single_proof')}
+                onClick={handleSingleProofCheckout}
               >
-                Generate a single proof →
+                {isSingleProofLoading ? 'Redirecting to Stripe…' : 'Generate a single proof →'}
               </Button>
             </div>
           </div>
