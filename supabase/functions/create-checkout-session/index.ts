@@ -68,6 +68,53 @@ serve(async (req) => {
       });
     }
 
+    // Handle pay-as-you-go single proof (one-time $0.49 payment, no subscription)
+    if (planId === 'single_proof') {
+      logStep("Creating single-proof one-time checkout session");
+
+      // Look up customer if email provided
+      let payAsYouGoCustomerId: string | undefined;
+      if (email) {
+        const existing = await stripe.customers.list({ email, limit: 1 });
+        if (existing.data.length > 0) payAsYouGoCustomerId = existing.data[0].id;
+      }
+
+      const singleProofSession = await stripe.checkout.sessions.create({
+        customer: payAsYouGoCustomerId,
+        customer_email: payAsYouGoCustomerId ? undefined : email,
+        mode: "payment",
+        line_items: [
+          {
+            price_data: {
+              currency: "usd",
+              product_data: {
+                name: "TSMO Single Proof",
+                description: "One court-ready, blockchain-anchored timestamp proof of ownership. Verifiable forever.",
+              },
+              unit_amount: 49, // $0.49
+            },
+            quantity: 1,
+          },
+        ],
+        success_url: `${req.headers.get("origin")}/success?session_id={CHECKOUT_SESSION_ID}&plan=single_proof`,
+        cancel_url: `${req.headers.get("origin")}/pricing`,
+        metadata: {
+          planId: "single_proof",
+          userId: userId || "",
+        },
+      });
+
+      logStep("Single-proof session created", { sessionId: singleProofSession.id });
+
+      return new Response(JSON.stringify({
+        url: singleProofSession.url,
+        sessionId: singleProofSession.id,
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+
     if (!planPricing[planId]) {
       throw new Error(`Invalid plan selected: ${planId}`);
     }
