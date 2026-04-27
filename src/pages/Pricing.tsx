@@ -415,6 +415,39 @@ const Pricing = () => {
     }, 1500);
   };
 
+  // Pay-as-you-go single proof: jump straight to Stripe one-time payment
+  const [isSingleProofLoading, setIsSingleProofLoading] = useState(false);
+  const handleSingleProofCheckout = async () => {
+    setIsSingleProofLoading(true);
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const userEmail = sessionData?.session?.user?.email || formData.email || undefined;
+      const userId = sessionData?.session?.user?.id;
+
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        body: {
+          planId: 'single_proof',
+          email: userEmail,
+          userId,
+        },
+      });
+
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
+    } catch (err: any) {
+      toast({
+        title: 'Checkout failed',
+        description: err?.message || 'Could not start single-proof checkout. Please try again.',
+        variant: 'destructive',
+      });
+      setIsSingleProofLoading(false);
+    }
+  };
+
   const formatPrice = (price: number | string) => {
     if (typeof price === 'string') return price;
     return `$${price}`;
