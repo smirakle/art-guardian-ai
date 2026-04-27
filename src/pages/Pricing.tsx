@@ -489,6 +489,54 @@ const Pricing = () => {
         </div>
       </section>
 
+      {/* ── Pay-As-You-Go Single Proof Tier ── */}
+      <section className="py-10 lg:py-12 border-y border-border/40 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 rounded-2xl bg-card/60 backdrop-blur-sm border border-border/60 p-6 md:p-8 shadow-lg shadow-primary/5">
+            <div className="flex items-start gap-4 flex-1">
+              <div className="shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-md shadow-primary/20">
+                <FileCheck2 className="w-6 h-6 text-primary-foreground" />
+              </div>
+              <div>
+                <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                  <h3 className="text-xl md:text-2xl font-bold text-foreground">Single Proof — Pay as you go</h3>
+                  <span className="text-[10px] font-bold uppercase tracking-widest bg-accent/15 text-accent px-2 py-0.5 rounded-md">No subscription</span>
+                </div>
+                <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-3">
+                  Need to timestamp <strong className="text-foreground">one file</strong> before you send it to a client?
+                  Generate a court-ready, blockchain-anchored proof of ownership in 30 seconds. No account upgrade required.
+                </p>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-primary" /> 30-second proof</span>
+                  <span className="flex items-center gap-1.5"><Shield className="w-3.5 h-3.5 text-primary" /> SHA-256 + blockchain anchor</span>
+                  <span className="flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 text-primary" /> Verifiable forever</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center md:items-end gap-3 shrink-0 w-full md:w-auto">
+              <div className="text-center md:text-right">
+                <div className="flex items-baseline gap-1.5 justify-center md:justify-end">
+                  <span className="text-4xl md:text-5xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">$0.49</span>
+                  <span className="text-sm text-muted-foreground font-medium">/ proof</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">One-time payment · No card on file</p>
+              </div>
+              <Button
+                size="lg"
+                className="w-full md:w-auto bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground font-semibold shadow-md shadow-primary/20"
+                onClick={() => navigate('/checkout?plan=single_proof')}
+              >
+                Generate a single proof →
+              </Button>
+            </div>
+          </div>
+          <p className="text-center text-xs text-muted-foreground mt-4">
+            Protecting more than one piece? The plans below give you continuous monitoring, DMCA automation, and AI-training defense — not just timestamps.
+          </p>
+        </div>
+      </section>
+
       {/* ── Pricing Cards ── */}
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4 max-w-6xl">
