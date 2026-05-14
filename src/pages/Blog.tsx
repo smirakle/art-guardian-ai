@@ -136,7 +136,9 @@ const Blog = () => {
   return (
     <>
       <Helmet>
-        <title>TSMO Blog | Art Protection Guides, AI Training, and Copyright Tips</title>
+        <title>TSMO Blog — Art Protection & Copyright Guides</title>
+        <link rel="canonical" href="https://tsmowatch.com/blog" />
+        <meta property="og:url" content="https://tsmowatch.com/blog" />
         <meta name="description" content="Expert guides on protecting your art online, understanding AI training, DMCA takedowns, and enforcing your copyright as a digital artist." />
         <meta name="keywords" content="art protection blog, DMCA guide, AI training artists, copyright for artists, digital art theft" />
         <link rel="canonical" href="https://tsmo.lovable.app/blog" />
