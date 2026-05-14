@@ -1,10 +1,24 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { HelpCircle, ArrowRight, Search, MessageCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+
+const FAQ_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "What is TSMO Watch?", "acceptedAnswer": { "@type": "Answer", "text": "TSMO Watch is a digital protection platform that helps artists, creators, and studios safeguard their work online using AI-powered monitoring, C2PA timestamp proofs, and automated DMCA tools. We monitor the web, social media, AI training datasets, and marketplaces 24/7 for stolen or deepfaked versions of your art." } },
+    { "@type": "Question", "name": "Who is TSMO for?", "acceptedAnswer": { "@type": "Answer", "text": "TSMO is built for all creators: writers, filmmakers, social media influencers, photographers, painters, animators, independent artists, illustrators, designers, creative agencies, content studios, and anyone who has created and published online content." } },
+    { "@type": "Question", "name": "How much does TSMO cost?", "acceptedAnswer": { "@type": "Answer", "text": "TSMO offers a free beta tier with 50 scans per day, a $0.49 pay-as-you-go single proof option, and Pro subscriptions starting at $29/month with unlimited protection and monitoring." } },
+    { "@type": "Question", "name": "How does TSMO protect art from AI training?", "acceptedAnswer": { "@type": "Answer", "text": "TSMO injects style-cloaking noise patterns and embedded metadata that signal AI scrapers to opt out, alongside DCT pixel watermarks that survive resizing and recompression." } },
+    { "@type": "Question", "name": "Does TSMO provide legal proof of ownership?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Every protected artwork receives a C2PA v2.2 signed manifest with a SHA-256 hash and timestamp, providing tamper-evident proof of when the work existed and who created it." } }
+  ]
+};
+
 
 const RevealSection: React.FC<{ children: React.ReactNode; className?: string; delay?: number }> = ({ children, className = "", delay = 0 }) => {
   const { ref, isVisible } = useScrollReveal(0.12);
