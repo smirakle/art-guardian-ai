@@ -1,0 +1,32 @@
+# TSMO Watch
+
+> AI-powered art protection platform. Monitors the web 24/7 for stolen artwork, proves ownership with C2PA-signed timestamp proofs, and helps creators take action against copyright infringement and AI training misuse.
+
+TSMO Watch protects creators by combining reverse-image monitoring across the web and social media, AI training opt-out signals, DCT pixel watermarking, and C2PA v2.2 manifest signing. Every protected asset gets a tamper-evident timestamp proof and a downloadable evidence trail for DMCA takedowns.
+
+## Pages
+
+- [Home](/): What TSMO Watch does and how it protects your art.
+- [Pricing](/pricing): Subscription plans and the $0.49 pay-as-you-go single proof tier.
+- [Upload & Protect](/upload): Upload artwork to add watermarking, metadata, and a C2PA timestamp proof.
+- [Monitoring Hub](/monitoring-hub): Web, social, marketplace, deepfake, and trademark monitoring.
+- [Protection Hub](/protection-hub): AI training protection, screenshot shield, and watermark settings.
+- [DMCA Center](/dmca-center): Generate DMCA takedown notices and track responses.
+- [Threat Alerts](/threat-alerts): Real-time match findings from active scans.
+- [Accuracy Dashboard](/accuracy-dashboard): Live detection performance from real scan results.
+- [About](/about-tsmo): Mission, founder story, and the meaning behind TSMO.
+- [FAQ](/faq): Common questions about protection, pricing, and how the platform works.
+- [Contact](/contact): Reach the TSMO team at support@tsmowatch.com.
+- [Blog](/blog): Guides on art protection, AI training, DMCA, and copyright.
+- [Success Stories](/success-stories): Real outcomes from creators using TSMO.
+- [Stop Art Theft](/stop-art-theft): Guide to detecting and stopping online art theft.
+- [Protect Photos](/protect-photos): Photo-specific protection workflow.
+- [Protection Guide](/protection-guide): Step-by-step protection setup.
+- [Press Kit](/press-kit): Logos, brand assets, and media resources.
+
+## Optional
+
+- [Get the App](/get-app): Mobile and desktop install options.
+- [Status](/status): Platform uptime and incident history.
+- [Terms & Privacy](/terms-and-privacy): Legal terms and privacy policy.
+- [Refund Policy](/refund-policy): Subscription refund terms.
