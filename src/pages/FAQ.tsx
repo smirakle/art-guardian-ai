@@ -986,6 +986,15 @@ const FAQ = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>FAQ — TSMO Watch Art Protection Questions</title>
+        <meta name="description" content="Answers to common questions about TSMO Watch: how art protection works, pricing, AI training opt-out, C2PA timestamps, and DMCA takedowns." />
+        <link rel="canonical" href="https://tsmowatch.com/faq" />
+        <meta property="og:title" content="TSMO Watch FAQ — Art Protection Answers" />
+        <meta property="og:description" content="Common questions about TSMO Watch art protection, pricing, and AI training defenses." />
+        <meta property="og:url" content="https://tsmowatch.com/faq" />
+        <script type="application/ld+json">{JSON.stringify(FAQ_SCHEMA)}</script>
+      </Helmet>
       {/* ── Hero ── */}
       <section className="relative pt-24 pb-16 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(var(--primary)/0.08),transparent)]" />
