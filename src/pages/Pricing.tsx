@@ -472,6 +472,14 @@ const Pricing = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Pricing — TSMO Watch Art Protection Plans</title>
+        <meta name="description" content="TSMO Watch pricing: free beta tier, $0.49 pay-as-you-go single proof, and Pro plans with unlimited art protection, monitoring, and DMCA tools." />
+        <link rel="canonical" href="https://tsmowatch.com/pricing" />
+        <meta property="og:title" content="TSMO Watch Pricing — From $0.49 per Proof" />
+        <meta property="og:description" content="Free beta, pay-as-you-go single proofs at $0.49, and Pro subscriptions with unlimited monitoring." />
+        <meta property="og:url" content="https://tsmowatch.com/pricing" />
+      </Helmet>
       {/* ── Dramatic Hero ── */}
       <section className="relative pt-24 pb-20 overflow-hidden">
         {/* Layered background */}
