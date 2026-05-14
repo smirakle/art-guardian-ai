@@ -49,3 +49,5 @@ Disallow: /
 
 User-agent: Bytespider
 Disallow: /
+
+Sitemap: https://tsmowatch.com/sitemap.xml
