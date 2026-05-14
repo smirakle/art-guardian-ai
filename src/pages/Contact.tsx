@@ -73,6 +73,23 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Contact TSMO Watch — Art Protection Support</title>
+        <meta name="description" content="Get in touch with the TSMO Watch team. Email support@tsmowatch.com for art protection questions, partnerships, or press inquiries." />
+        <link rel="canonical" href="https://tsmowatch.com/contact" />
+        <meta property="og:title" content="Contact TSMO Watch" />
+        <meta property="og:description" content="Reach the TSMO Watch team for support, partnerships, and press." />
+        <meta property="og:url" content="https://tsmowatch.com/contact" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          "name": "TSMO Watch",
+          "email": "support@tsmowatch.com",
+          "url": "https://tsmowatch.com/",
+          "address": { "@type": "PostalAddress", "addressLocality": "Cambridge", "addressRegion": "MA", "addressCountry": "US" },
+          "contactPoint": { "@type": "ContactPoint", "contactType": "customer support", "email": "support@tsmowatch.com", "availableLanguage": "English" }
+        })}</script>
+      </Helmet>
       {/* ── Hero ── */}
       <section className="relative pt-24 pb-16 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(var(--primary)/0.08),transparent)]" />
