@@ -84,7 +84,7 @@
     "piexifjs": "^1.0.6",
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
-    "react-day-picker": "^8.10.1",
+    "react-day-picker": "^9.13.2",
     "react-dom": "^18.3.1",
     "react-helmet": "^6.1.0",
     "react-hook-form": "^7.53.0",
