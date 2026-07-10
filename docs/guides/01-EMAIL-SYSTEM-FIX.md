@@ -94,7 +94,7 @@ Depending on your DNS provider:
 #### Check Email Delivery
 
 **Expected Email**:
-- **To**: shirleena.cunningham@tsmowatch.com
+- **To**: shirleenacunningham@gmail.com
 - **From**: TSMO Bug Reports <bugs@tsmowatch.com>
 - **Subject**: 🐛 Bug Report: Test - Email System Verification
 
@@ -110,7 +110,7 @@ Check logs at: https://supabase.com/dashboard/project/utneaqmbyjwxaqrrarpc/funct
 {
   "id": "re_...",
   "from": "bugs@tsmowatch.com",
-  "to": ["shirleena.cunningham@tsmowatch.com"]
+  "to": ["shirleenacunningham@gmail.com"]
 }
 ```
 
@@ -189,7 +189,7 @@ Once emails are working:
 
 ✅ DNS TXT record added and verified
 ✅ Domain status "Verified" in Resend dashboard
-✅ Test email received at shirleena.cunningham@tsmowatch.com
+✅ Test email received at shirleenacunningham@gmail.com
 ✅ Edge function logs show successful sends
 ✅ No errors in browser console during submission
 ✅ User sees success toast message

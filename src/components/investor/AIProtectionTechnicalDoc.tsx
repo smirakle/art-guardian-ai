@@ -323,7 +323,7 @@ const AIProtectionTechnicalDoc = () => {
     
     pdf.setFontSize(10);
     pdf.setFont("helvetica", "normal");
-    pdf.text('Technical Inquiries: shirleena.cunningham@tsmowatch.com', 20, yPosition);
+    pdf.text('Technical Inquiries: shirleenacunningham@gmail.com', 20, yPosition);
     yPosition += lineHeight;
     pdf.text('Partnership Opportunities: Available upon request', 20, yPosition);
     yPosition += lineHeight + 10;

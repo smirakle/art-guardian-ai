@@ -26,7 +26,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`Sending new user signup notification for: ${email}`);
 
-    const adminEmail = "shirleena.cunningham@tsmowatch.com";
+    const adminEmail = "shirleenacunningham@gmail.com";
     const signupDate = new Date(signupTime).toLocaleString('en-US', {
       dateStyle: 'full',
       timeStyle: 'long'

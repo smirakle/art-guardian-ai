@@ -752,7 +752,7 @@ const InvestorPitchDeck = () => {
               <div className="text-center">
                 <Button size="lg" className="px-8">
                   <Mail className="mr-2 h-5 w-5" />
-                  shirleena.cunningham@tsmowatch.com
+                  shirleenacunningham@gmail.com
                 </Button>
               </div>
           </div>
@@ -973,7 +973,7 @@ const InvestorPitchDeck = () => {
       addText('Contact us to schedule a demo and access due diligence materials.', pw / 2, y, { size: 11 }); y += 20;
       addText('Email:', 50, y, { size: 11, style: 'bold' }); addText('investors@tsmo.app', 80, y, { size: 11, color: [30, 58, 138] }); y += 10;
       addText('Website:', 50, y, { size: 11, style: 'bold' }); addText('tsmo.app', 80, y, { size: 11, color: [30, 58, 138] }); y += 10;
-      addText('Founder:', 50, y, { size: 11, style: 'bold' }); addText('shirleena.cunningham@tsmowatch.com', 80, y, { size: 11 });
+      addText('Founder:', 50, y, { size: 11, style: 'bold' }); addText('shirleenacunningham@gmail.com', 80, y, { size: 11 });
 
       doc.save('TSMO_Investor_Pitch_Deck.pdf');
       toast.success('PDF downloaded successfully!');
@@ -1138,7 +1138,7 @@ const InvestorPitchDeck = () => {
             body('Ready to protect the creator economy? Get in touch to schedule a demo and access due diligence materials.'),
             new Paragraph({ children: [new TextRun({ text: 'Email: ', bold: true, size: 22 }), new TextRun({ text: 'investors@tsmo.app', size: 22, color: '1E3A8A' })] }),
             new Paragraph({ children: [new TextRun({ text: 'Website: ', bold: true, size: 22 }), new TextRun({ text: 'tsmo.app', size: 22, color: '1E3A8A' })] }),
-            new Paragraph({ children: [new TextRun({ text: 'Founder: ', bold: true, size: 22 }), new TextRun({ text: 'shirleena.cunningham@tsmowatch.com', size: 22 })] }),
+            new Paragraph({ children: [new TextRun({ text: 'Founder: ', bold: true, size: 22 }), new TextRun({ text: 'shirleenacunningham@gmail.com', size: 22 })] }),
           ],
         }],
       });
@@ -1282,7 +1282,7 @@ const InvestorPitchDeck = () => {
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <Button className="px-6">
                     <Mail className="mr-2 h-4 w-4" />
-                    shirleena.cunningham@tsmowatch.com
+                    shirleenacunningham@gmail.com
                   </Button>
                   <MeetingScheduler />
                 </div>

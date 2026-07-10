@@ -203,7 +203,7 @@ print(f"Risk Score: {result['risk_score']}%")`;
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  Contact our enterprise sales team to obtain API keys: <strong>shirleena.cunningham@tsmowatch.com</strong>
+                  Contact our enterprise sales team to obtain API keys: <strong>shirleenacunningham@gmail.com</strong>
                 </AlertDescription>
               </Alert>
               

@@ -1974,7 +1974,7 @@ export const homeGuide = {
         </ul>
         <p><strong>Contact Support:</strong></p>
         <ul>
-          <li>Email: shirleena.cunningham@tsmowatch.com</li>
+          <li>Email: shirleenacunningham@gmail.com</li>
           <li>Response time: 48 hours (Student), 24 hours (Starter/Professional), 4 hours (Enterprise)</li>
           <li>Include: Username, affected artwork name, screenshots of error</li>
         </ul>

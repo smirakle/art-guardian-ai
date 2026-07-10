@@ -8,7 +8,7 @@
   - Type: `TXT`
   - Value: `p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDoHbg+IS5+c78WxJz4HmYvAOOvocWWvXvlVbV7Ym9qXQ+1M/dwSSnuSkmrCInt/+rM/GOX2cY6V05cqt+p49KqL9Ih+8iABCX0MnyPKaCsOBG01XaJ9KsM/VLakQpE8qz7L7j79DGR5wgnLFRgs3lcI8SIIhKgNzuKytHCXQIbMQIDAQAB`
 - [ ] Verify domain at https://resend.com/domains
-- [ ] Test bug report email delivery to shirleena.cunningham@tsmowatch.com
+- [ ] Test bug report email delivery to shirleenacunningham@gmail.com
 
 ### 2. Critical User Flow Testing
 
@@ -40,7 +40,7 @@
 - [ ] Click "Report Bug" button
 - [ ] Fill out bug report form
 - [ ] Submit report
-- [ ] Verify email arrives at shirleena.cunningham@tsmowatch.com
+- [ ] Verify email arrives at shirleenacunningham@gmail.com
 
 ### 3. Security Review
 - [ ] Review 190 Supabase linter warnings

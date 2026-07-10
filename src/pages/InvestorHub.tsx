@@ -306,7 +306,7 @@ const InvestorHub = () => {
           <div className="flex justify-center gap-3">
             <Button className="gap-2">
               <Users className="h-4 w-4" />
-              shirleena.cunningham@tsmowatch.com
+              shirleenacunningham@gmail.com
             </Button>
             <Button variant="outline">
               Request Data Room Access

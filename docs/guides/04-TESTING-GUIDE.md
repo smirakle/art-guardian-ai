@@ -81,5 +81,5 @@
 2. Fill subject, description
 3. Click "Submit"
 4. **Expected**: Success message
-5. Check shirleena.cunningham@tsmowatch.com
+5. Check shirleenacunningham@gmail.com
 6. **Expected**: Bug report email received

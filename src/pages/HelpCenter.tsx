@@ -102,7 +102,7 @@ Add this TXT record to your domain (tsmowatch.com):
 1. Click "Report Bug" in the app
 2. Fill out the form
 3. Submit
-4. Check email at shirleena.cunningham@tsmowatch.com
+4. Check email at shirleenacunningham@gmail.com
 
 ### Expected Results
 

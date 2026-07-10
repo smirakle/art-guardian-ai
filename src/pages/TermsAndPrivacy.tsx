@@ -247,7 +247,7 @@ const TermsAndPrivacy = () => {
                 <h3 className="text-xl font-semibold mb-3">4. Registered DMCA Agent</h3>
                 <div className="bg-muted p-4 rounded-lg">
                   <p className="font-medium">DMCA Agent: Shirleena Cunningham</p>
-                  <p className="text-muted-foreground">Email: shirleena.cunningham@tsmowatch.com</p>
+                  <p className="text-muted-foreground">Email: shirleenacunningham@gmail.com</p>
                   <p className="text-muted-foreground">
                     Address: P.O. Box [To Be Assigned]
                   </p>
@@ -270,7 +270,7 @@ const TermsAndPrivacy = () => {
               <section>
                 <h3 className="text-xl font-semibold mb-3">6. Licensing Inquiries</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  For authorized licensing of TSMO Technology or content, please contact our legal department at <a href="mailto:shirleena.cunningham@tsmowatch.com" className="text-primary hover:underline">shirleena.cunningham@tsmowatch.com</a> with detailed information about your intended use.
+                  For authorized licensing of TSMO Technology or content, please contact our legal department at <a href="mailto:shirleenacunningham@gmail.com" className="text-primary hover:underline">shirleenacunningham@gmail.com</a> with detailed information about your intended use.
                 </p>
               </section>
             </CardContent>
@@ -288,17 +288,17 @@ const TermsAndPrivacy = () => {
               <div className="space-y-4">
                 <div>
                   <p className="font-medium">Legal Department</p>
-                  <p className="text-muted-foreground">shirleena.cunningham@tsmowatch.com</p>
+                  <p className="text-muted-foreground">shirleenacunningham@gmail.com</p>
                 </div>
                 <div>
                   <p className="font-medium">DMCA Agent</p>
                   <p className="text-muted-foreground">Shirleena Cunningham</p>
-                  <p className="text-muted-foreground">shirleena.cunningham@tsmowatch.com</p>
+                  <p className="text-muted-foreground">shirleenacunningham@gmail.com</p>
                 </div>
                 <div>
                   <p className="font-medium">Privacy Officer</p>
                   <p className="text-muted-foreground">Shirleena Cunningham</p>
-                  <p className="text-muted-foreground">shirleena.cunningham@tsmowatch.com</p>
+                  <p className="text-muted-foreground">shirleenacunningham@gmail.com</p>
                 </div>
                 <div>
                   <p className="font-medium">Mailing Address</p>
