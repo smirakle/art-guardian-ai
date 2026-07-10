@@ -248,8 +248,8 @@ export const EnhancedFooter = () => {
             </div>
           </div>
           <div className="text-xs text-muted-foreground">
-            <a href="mailto:shirleena.cunningham@tsmowatch.com" className="hover:text-foreground transition-colors">
-              shirleena.cunningham@tsmowatch.com
+            <a href="mailto:shirleenacunningham@gmail.com" className="hover:text-foreground transition-colors">
+              shirleenacunningham@gmail.com
             </a>
           </div>
         </div>

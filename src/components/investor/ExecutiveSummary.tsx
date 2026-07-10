@@ -75,7 +75,7 @@ const ExecutiveSummary = () => {
     pdf.text('Seeking $100K seed funding for go-to-market execution.', 20, 310);
     
     pdf.text('CONTACT', 20, 320);
-    pdf.text('shirleena.cunningham@tsmowatch.com', 20, 330);
+    pdf.text('shirleenacunningham@gmail.com', 20, 330);
     pdf.text('Schedule a demo: calendly.com/tsmo-investors', 20, 340);
     
     pdf.text('© 2025 TSMO. Confidential & Proprietary.', 20, 360);
@@ -362,7 +362,7 @@ const ExecutiveSummary = () => {
             </Button>
           </div>
           <p className="text-sm text-muted-foreground mt-4">
-            shirleena.cunningham@tsmowatch.com
+            shirleenacunningham@gmail.com
           </p>
         </CardContent>
       </Card>

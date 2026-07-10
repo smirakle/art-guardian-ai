@@ -66,7 +66,7 @@ const Contact = () => {
   };
 
   const contactInfo = [
-    { icon: Mail, label: "Email", value: "shirleena.cunningham@tsmowatch.com", href: "mailto:shirleena.cunningham@tsmowatch.com" },
+    { icon: Mail, label: "Email", value: "shirleenacunningham@gmail.com", href: "mailto:shirleenacunningham@gmail.com" },
     { icon: MapPin, label: "Location", value: "Cambridge, MA", href: undefined },
     { icon: Clock, label: "Response Time", value: "Within 24 hours", href: undefined },
   ];

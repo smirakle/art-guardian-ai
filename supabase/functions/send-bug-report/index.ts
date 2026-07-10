@@ -107,7 +107,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Send email using Resend
     const emailResponse = await resend.emails.send({
       from: "TSMO Bug Reports <bugs@tsmowatch.com>",
-      to: ["shirleena.cunningham@tsmowatch.com"],
+      to: ["shirleenacunningham@gmail.com"],
       replyTo: userEmail !== 'Anonymous' ? userEmail : undefined,
       subject: `🐛 Bug Report: ${subject}`,
       html: emailHtml,

@@ -605,7 +605,7 @@ export default function ComprehensiveAPIDocumentation() {
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
                   <strong>Get API Access:</strong> Contact our enterprise team at{' '}
-                  <strong>shirleena.cunningham@tsmowatch.com</strong> for production API keys.
+                  <strong>shirleenacunningham@gmail.com</strong> for production API keys.
                 </AlertDescription>
               </Alert>
 
@@ -1142,7 +1142,7 @@ curl -X POST ${baseUrl}/advanced-blockchain-registration \\
             <CheckCircle className="h-4 w-4" />
             <AlertDescription>
               <strong>Ready to Get Started?</strong> Contact our enterprise team at{' '}
-              <strong>shirleena.cunningham@tsmowatch.com</strong> for custom pricing and implementation planning.
+              <strong>shirleenacunningham@gmail.com</strong> for custom pricing and implementation planning.
             </AlertDescription>
           </Alert>
         </TabsContent>

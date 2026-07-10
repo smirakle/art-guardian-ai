@@ -560,7 +560,7 @@ const InvestorDataRoom = () => {
     
     pdf.setFontSize(10);
     pdf.setFont("helvetica", "normal");
-    pdf.text('Algorithm Details: shirleena.cunningham@tsmowatch.com', 20, yPosition);
+    pdf.text('Algorithm Details: shirleenacunningham@gmail.com', 20, yPosition);
     yPosition += lineHeight + 10;
     
     pdf.setFontSize(8);
@@ -1571,7 +1571,7 @@ const InvestorDataRoom = () => {
     yPosition = 250;
     pdf.text('For more information, contact:', 20, yPosition);
     yPosition += lineHeight;
-    pdf.text('shirleena.cunningham@tsmowatch.com', 20, yPosition);
+    pdf.text('shirleenacunningham@gmail.com', 20, yPosition);
     yPosition += lineHeight;
     pdf.text('© 2025 TSMO. All rights reserved.', 20, yPosition);
     
@@ -1699,7 +1699,7 @@ const InvestorDataRoom = () => {
         <CardContent className="grid md:grid-cols-2 gap-6">
           <div>
             <h3 className="font-semibold mb-2">Primary Contact</h3>
-            <p className="text-sm text-muted-foreground mb-1">shirleena.cunningham@tsmowatch.com</p>
+            <p className="text-sm text-muted-foreground mb-1">shirleenacunningham@gmail.com</p>
             <p className="text-sm text-muted-foreground mb-4"></p>
             
             <Button variant="outline" className="w-full">

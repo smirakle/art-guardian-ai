@@ -39,8 +39,8 @@ export const CopyrightFooter = () => {
               </p>
               <p className="flex items-center gap-1.5">
                 <Mail className="h-3 w-3" />
-                <a href="mailto:shirleena.cunningham@tsmowatch.com" className="hover:text-foreground transition-colors">
-                  shirleena.cunningham@tsmowatch.com
+                <a href="mailto:shirleenacunningham@gmail.com" className="hover:text-foreground transition-colors">
+                  shirleenacunningham@gmail.com
                 </a>
               </p>
             </div>
@@ -81,8 +81,8 @@ export const CopyrightFooter = () => {
             </div>
             <p className="text-xs text-muted-foreground">
               Questions? Email us at{' '}
-              <a href="mailto:shirleena.cunningham@tsmowatch.com" className="underline hover:text-foreground">
-                shirleena.cunningham@tsmowatch.com
+              <a href="mailto:shirleenacunningham@gmail.com" className="underline hover:text-foreground">
+                shirleenacunningham@gmail.com
               </a>
             </p>
           </div>
@@ -111,8 +111,8 @@ export const CopyrightFooter = () => {
             </div>
             <div className="text-xs text-muted-foreground text-center md:text-right max-w-md">
               For licensing inquiries:{' '}
-              <a href="mailto:shirleena.cunningham@tsmowatch.com" className="hover:text-foreground transition-colors underline">
-                shirleena.cunningham@tsmowatch.com
+              <a href="mailto:shirleenacunningham@gmail.com" className="hover:text-foreground transition-colors underline">
+                shirleenacunningham@gmail.com
               </a>
             </div>
           </div>
